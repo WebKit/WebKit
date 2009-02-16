@@ -191,13 +191,11 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         actualTraits = [fontManager traitsOfFont:nsFont];
     NSInteger actualWeight = [fontManager weightOfFont:nsFont];
 
-    FontPlatformData* result = new FontPlatformData;
+    NSFont *platformFont = fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont];
+    bool syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
+    bool syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
-    // Use the correct font for print vs. screen.
-    result->setFont(fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont]);
-    result->m_syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
-    result->m_syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
-    return result;
+    return new FontPlatformData(platformFont, syntheticBold, syntheticOblique);
 }
 
 } // namespace WebCore

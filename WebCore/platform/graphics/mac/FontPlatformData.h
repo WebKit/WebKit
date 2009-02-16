@@ -61,7 +61,7 @@ struct FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont *nsFont = 0, bool syntheticBold = false, bool syntheticOblique = false);
+    FontPlatformData(NSFont *nsFont, bool syntheticBold = false, bool syntheticOblique = false);
     
     FontPlatformData(CGFontRef cgFont, ATSUFontID fontID, float size, bool syntheticBold, bool syntheticOblique)
         : m_syntheticBold(syntheticBold)

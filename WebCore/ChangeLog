@@ -1,3 +1,19 @@
+2009-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6516829> FontPlatformData constructor passes NULL to CTFontCopyGraphicsFont and CTFontGetPlatformFont
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontDataCacheKeyTraits::emptyValue): Changed to use the
+        FontPlatformData(float, bool, bool) constructor.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData): Changed to pass a valid
+        NSFont to the FontPlatformData constructor, instead of implicitly
+        passing 0 and then calling setFont().
+        * platform/graphics/mac/FontPlatformData.h: Made the NSFont parameter
+        of the constructor mandatory.
+
 2009-02-15  David Kilzer  <ddkilzer@apple.com>
 
         Move duplicate caretWidth constants to RenderObject.h

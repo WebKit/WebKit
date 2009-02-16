@@ -236,7 +236,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     static const bool needsDestruction = true;
     static const FontPlatformData& emptyValue()
     {
-        DEFINE_STATIC_LOCAL(FontPlatformData, key, ());
+        DEFINE_STATIC_LOCAL(FontPlatformData, key, (0.f, false, false));
         return key;
     }
     static void constructDeletedValue(FontPlatformData& slot)
