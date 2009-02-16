@@ -5130,6 +5130,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyPointerEvents:
     {
+#if ENABLE(DASHBOARD_SUPPORT)
+        // <rdar://problem/6561077> Work around the Stocks widget's misuse of the
+        // pointer-events property by not applying it in Dashboard.
+        Settings* settings = m_checker.m_document->settings();
+        if (settings && settings->usesDashboardBackwardCompatibilityMode())
+            return;
+#endif
         HANDLE_INHERIT_AND_INITIAL(pointerEvents, PointerEvents)
         if (!primitiveValue)
             return;

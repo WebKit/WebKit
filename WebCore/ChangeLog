@@ -1,3 +1,16 @@
+2009-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - fix <rdar://problem/6561077> REGRESSION (r39634): Unable to select an item in stocks widget with the mouse
+
+        Test: platform/mac/fast/events/pointer-events-dashboard.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Do not apply the
+        pointer-events property in Dashboard backwards compatibility mode,
+        in order to work around misuse of that property by the Stocks widget.
+
 2009-02-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric Seidel.

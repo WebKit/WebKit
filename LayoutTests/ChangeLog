@@ -1,3 +1,14 @@
+2009-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - test for <rdar://problem/6561077> REGRESSION (r39634): Unable to select an item in stocks widget with the mouse
+
+        * platform/mac/fast/events/pointer-events-dashboard-expected.checksum: Added.
+        * platform/mac/fast/events/pointer-events-dashboard-expected.png: Added.
+        * platform/mac/fast/events/pointer-events-dashboard-expected.txt: Added.
+        * platform/mac/fast/events/pointer-events-dashboard.html: Copied from LayoutTests/fast/events/pointer-events.html.
+
 2009-02-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric Seidel.
