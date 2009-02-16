@@ -655,11 +655,10 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
 
     // Perform some checks to see if we need to perform work in this function.
     if (isBlock(upstreamStart.node())) {
-        // If the block is the body element, always move content to a new block, so that
-        // we avoid adding styles to the body element, since Mail's Make Plain Text feature
-        // can't handle those.
-        if (upstreamStart.node()->hasTagName(bodyTag)) {
-            // If the block is the body element and there is nothing insde of it, create a new
+        // If the block is the root editable element, always move content to a new block,
+        // since it is illegal to modify attributes on the root editable element for editing.
+        if (upstreamStart.node() == editableRootForPosition(upstreamStart)) {
+            // If the block is the root editable element and there is nothing insde of it, create a new
             // block but don't try and move content into it, since there's nothing to move.
             if (upstreamStart == upstreamEnd)
                 return insertNewDefaultParagraphElementAt(upstreamStart);

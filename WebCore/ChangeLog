@@ -1,3 +1,14 @@
+2009-02-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15381
+        execCommand justify modifies the contentEditable node
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Avoid modifying not just
+        the body element, but any root editable element.
+        
 2009-02-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Adele Peterson.
