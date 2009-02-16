@@ -1,3 +1,14 @@
+2009-02-16  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        The ref data is not properly set unless we use the CreateMatrix function.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23978
+
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        (WebCore::TransformationMatrix::operator wxGraphicsMatrix):
+
 2009-02-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
