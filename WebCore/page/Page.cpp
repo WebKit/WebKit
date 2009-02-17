@@ -229,7 +229,7 @@ void Page::setGroupName(const String& name)
     }
 
     if (name.isEmpty())
-        m_group = 0;
+        m_group = m_singlePageGroup.get();
     else {
         m_singlePageGroup.clear();
         m_group = PageGroup::pageGroup(name);

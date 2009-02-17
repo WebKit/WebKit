@@ -1,3 +1,17 @@
+2009-02-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22966
+        crash when destroying a webview that opened a page containing <script>
+        tags
+
+        Fix m_group being set to 0 instead of to m_singlePageGroup when
+        GroupName is set to empty
+
+        * page/Page.cpp:
+        (WebCore::Page::setGroupName):
+
 2009-02-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
