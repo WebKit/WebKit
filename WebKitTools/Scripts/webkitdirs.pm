@@ -976,6 +976,8 @@ sub buildAutotoolsProject($@)
     my $config = passedConfiguration() || configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
 
+    push @buildArgs, "--prefix=" . $prefix if defined($prefix);
+
     # check if configuration is Debug
     if ($config =~ m/debug/i) {
         push @buildArgs, "--enable-debug";
