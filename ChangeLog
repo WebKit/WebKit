@@ -1,3 +1,13 @@
+2009-02-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23939
+        Release build being built with debugging symbols
+
+        * configure.ac: Revert change done in revision 40790, since we
+        already have a AC_PROG_CXX macro call as part of WEBKIT_INIT
+
 2009-02-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Eric Seidel.
