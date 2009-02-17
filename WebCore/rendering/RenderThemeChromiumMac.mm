@@ -565,7 +565,7 @@ void RenderThemeChromiumMac::updateFocusedState(NSCell* cell, const RenderObject
 void RenderThemeChromiumMac::updatePressedState(NSCell* cell, const RenderObject* o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = (o->element() && o->element()->active());
+    bool pressed = (o->node() && o->node()->active());
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }

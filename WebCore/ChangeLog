@@ -1,3 +1,15 @@
+2009-02-13  Brett Wilson  <brettw@dhcp-172-22-71-167.mtv.corp.google.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/attachment.cgi?id=27666 
+        Fix Chromium build build: forgotten include in RenderObject, sync
+        RenderTheme to the recent changes in RenderObject.
+
+        * rendering/RenderObject.cpp:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::updatePressedState):
+
 2009-02-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Darin Adler.
