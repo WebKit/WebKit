@@ -1,3 +1,16 @@
+2009-02-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        <rdar://problem/6592446> dynamically updating page doesn't seem to draw when updated
+        
+        Need update after callback.
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+
 2009-02-17  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.

@@ -81,6 +81,8 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
         reportCurrentException(exec);
         raisedException = true;
     }
+    
+    Document::updateDocumentsRendering();
 }
 
 } // namespace WebCore

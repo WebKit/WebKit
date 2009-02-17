@@ -79,6 +79,8 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     
     if (exec->hadException())
         reportCurrentException(exec);
+    
+    Document::updateDocumentsRendering();
 }
     
 } // namespace WebCore
