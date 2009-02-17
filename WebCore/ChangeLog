@@ -1,3 +1,26 @@
+2009-02-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16309
+        HTML5: The third execCommand argument for insert{un}orderedlist should be ignored
+        
+        When we originally implemented this command, MSDN documentation said that IE set the
+        id attribute of inserted lists to the third argument to execCommand, but IE doesn't
+        do this nor do any other browsers.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertOrderedList):
+        (WebCore::executeInsertUnorderedList):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::insertList):
+        (WebCore::InsertListCommand::InsertListCommand):
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertListCommand.h:
+        (WebCore::InsertListCommand::create):
+
 2009-02-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -491,9 +491,9 @@ static bool executeInsertNewlineInQuotedContent(Frame* frame, Event*, EditorComm
     return true;
 }
 
-static bool executeInsertOrderedList(Frame* frame, Event*, EditorCommandSource, const String& value)
+static bool executeInsertOrderedList(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::OrderedList, value));
+    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::OrderedList));
     return true;
 }
 
@@ -514,9 +514,9 @@ static bool executeInsertText(Frame* frame, Event*, EditorCommandSource, const S
     return true;
 }
 
-static bool executeInsertUnorderedList(Frame* frame, Event*, EditorCommandSource, const String& value)
+static bool executeInsertUnorderedList(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::UnorderedList, value));
+    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::UnorderedList));
     return true;
 }
 

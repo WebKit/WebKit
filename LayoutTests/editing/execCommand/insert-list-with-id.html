@@ -1,18 +1,24 @@
+<div id="description">This test makes sure InsertOrderedList ignores the third argument passed to execCommand and does not add an id attribute to the inserted list.</div>
+<div id="test" contenteditable="true">list item</div>
+
 <script>
 if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-<p>This test makes sure Insert{Un}OrderedList properly adds an id to the inserted list when requested. The tests inserts a new list using the command, then removes it programmatically from JS using the id.</p>
-<br>
-<div id="test" contenteditable="true">Foo</div>
-<br>
-<script>
+    window.layoutTestController.dumpAsText();
 var s = window.getSelection();
 var div = document.getElementById("test");
 var id = "foo";
 s.setPosition(div, 0);
 document.execCommand("InsertOrderedList", false, id);
-div.blur();
-var list = document.getElementById(id);
-list.parentNode.removeChild(list);
+
+expected = "<ol><li>list item</li></ol>";
+actual = div.innerHTML;
+
+output = document.getElementById("description").innerText + "\n\n";
+
+if (expected == actual)
+    output += "Success";
+else
+    output += "Failure.  Expected: " + expected + ", found: " + actual;
+    
+document.body.innerText = output;
 </script>
