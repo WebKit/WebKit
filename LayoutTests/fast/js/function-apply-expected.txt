@@ -19,6 +19,15 @@ PASS arrayApplyDelete1([1, 2, 3]) is 1
 PASS arrayApplyDelete2([1, 2, 3]) is undefined
 PASS arrayApplyDelete3([1, 2, 3]) is 3
 PASS arrayApplyDeleteLength([1, 2, 3]) is 3
+PASS argumentsApplyChangeLength1(1) is 2
+PASS argumentsApplyChangeLength2(1) is 2
+PASS argumentsApplyChangeLength3(1) is 2
+PASS argumentsApplyChangeLength4(1) is 0
+PASS argumentsApplyChangeLength5(1) is 0
+PASS arrayApplyChangeLength1() is 2
+PASS arrayApplyChangeLength2() is 2
+PASS arrayApplyChangeLength3() is 2
+PASS arrayApplyChangeLength4() is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -71,6 +71,13 @@ void Arguments::mark()
 
 void Arguments::fillArgList(ExecState* exec, ArgList& args)
 {
+    if (UNLIKELY(d->overrodeLength)) {
+        unsigned length = get(exec, exec->propertyNames().length).toUInt32(exec); 
+        for (unsigned i = 0; i < length; i++) 
+            args.append(get(exec, i)); 
+        return;
+   }
+
     if (LIKELY(!d->deletedArguments)) {
         if (LIKELY(!d->numParameters)) {
             args.initialize(d->extraArguments, d->numArguments);

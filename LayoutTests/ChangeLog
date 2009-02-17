@@ -1,3 +1,14 @@
+2009-02-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add tests for <rdar://problem/6468156>
+        REGRESSION (r36779): Adding link, images, flash in TinyMCE blocks entire page (21382)
+
+        * fast/js/function-apply-expected.txt:
+        * fast/js/resources/function-apply.js: Add cases covering setting arugments.length and
+        Array.length explicitly or implicitly using Array.prototype.unshift.
+
 2009-02-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.

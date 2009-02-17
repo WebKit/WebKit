@@ -1,3 +1,16 @@
+2009-02-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6468156>
+        REGRESSION (r36779): Adding link, images, flash in TinyMCE blocks entire page (21382)
+
+        No performance regression.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::fillArgList): Add codepath for when the "length" property has been
+        overridden.
+
 2009-02-16  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
