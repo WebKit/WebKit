@@ -1,3 +1,12 @@
+2009-02-17  Xan Lopez  <xan@gnome.org>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Restoring change landed in r40715, which was accidentally undone
+        by r40918.
+
+        * webkit/webkitwebframe.cpp:
+
 2009-02-12  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
