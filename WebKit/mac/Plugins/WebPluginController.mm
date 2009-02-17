@@ -31,11 +31,15 @@
 
 #import <Foundation/NSURLRequest.h>
 #import <runtime/JSLock.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/DOMNodeInternal.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/ResourceRequest.h>
+#import <WebCore/HTMLMediaElement.h>
+#import <WebCore/HTMLNames.h>
+#import <WebCore/MediaPlayerProxy.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/DocumentLoader.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
@@ -55,6 +59,7 @@
 #import <WebKit/WebViewInternal.h>
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 @interface NSView (PluginSecrets)
 - (void)setContainingWindow:(NSWindow *)w;
@@ -429,5 +434,37 @@ static void cancelOutstandingCheck(const void *item, void *context)
     if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFinishLoading)])
         [pluginView webPlugInMainResourceDidFinishLoading];
 }
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+static WebCore::HTMLMediaElement* mediaProxyClient(DOMElement* element)
+{
+    if (!element) {
+        LOG_ERROR("nil element passed");
+        return nil;
+    }
+
+    Node* node = [element _node];
+    if (!node || (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag))) {
+        LOG_ERROR("invalid media element passed");
+        return nil;
+    }
+
+    return static_cast<WebCore::HTMLMediaElement*>(node);
+}
+
+- (void)_webPluginContainerSetMediaPlayerProxy:(WebMediaPlayerProxy *)proxy forElement:(DOMElement *)element
+{
+    WebCore::HTMLMediaElement* client = mediaProxyClient(element);
+    if (client)
+        client->setMediaPlayerProxy(proxy);
+}
+
+- (void)_webPluginContainerPostMediaPlayerNotification:(int)notification forElement:(DOMElement *)element
+{
+    WebCore::HTMLMediaElement* client = mediaProxyClient(element);
+    if (client)
+        client->deliverNotification((MediaPlayerProxyNotificationType)notification);
+}
+#endif
 
 @end

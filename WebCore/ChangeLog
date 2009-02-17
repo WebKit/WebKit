@@ -1,3 +1,67 @@
+2009-02-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23917
+        Allow a WebKit plug-in to act as a proxy for the <audio> and <video>
+        element.
+
+        * DerivedSources.make: add media element proxy exports to .exp file when feature is defined.
+
+        * WebCore.VideoProxy.exp: New, define the informal protocol exported by a media element proxy.
+
+        * WebCore.xcodeproj/project.pbxproj: Add MediaPlayerProxy.h.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_needWidgetUpdate.
+        (WebCore::HTMLMediaElement::attributeChanged): Don't detach+attach when PLUGIN_PROXY_FOR_VIDEO, the
+        proxy plug-in handles the poster frame.
+        (WebCore::HTMLMediaElement::rendererIsNeeded): New logic for PLUGIN_PROXY_FOR_VIDEO.
+        (WebCore::HTMLMediaElement::createRenderer): Create RenderPartObject when PLUGIN_PROXY_FOR_VIDEO.
+        (WebCore::HTMLMediaElement::attach): Set m_needWidgetUpdate when PLUGIN_PROXY_FOR_VIDEO
+        (WebCore::HTMLMediaElement::load): Don't reallocate MediaPlayer when PLUGIN_PROXY_FOR_VIDEO, we keep the
+        same plug-in for the life of the element.
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged): update m_networkState when media player
+        network state changes to EMPTY, otherwise we can get out of sync with engine.
+        (WebCore::HTMLMediaElement::defaultEventHandler): pass event to widget when PLUGIN_PROXY_FOR_VIDEO
+        (WebCore::HTMLMediaElement::deliverNotification): New, deliver notification from proxy plug-in to
+        media player.
+        (WebCore::HTMLMediaElement::setMediaPlayerProxy): New, pass proxy object to media player.
+        (WebCore::HTMLMediaElement::initialURL): New, return the url from the "src" attr or the appropriate
+        <source> element to be used as the initial url for the proxy.
+        (WebCore::HTMLMediaElement::finishParsingChildren): New, allocate MediaPlayer and update widget.
+        * html/HTMLMediaElement.h: Declare new methods for proxy, add m_needWidgetUpdate.
+        (WebCore::HTMLMediaElement::setNeedWidgetUpdate): 
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::attach): Poster image is handled by proxy when PLUGIN_PROXY_FOR_VIDEO.
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Ditto.
+        * html/HTMLVideoElement.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::toPlugInElement): Allow cast if element is <video> or <audio>
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Remove white space.
+        (WebCore::MediaPlayer::setPoster): New, forward call to private player.
+        (WebCore::MediaPlayer::deliverNotification): Ditto.
+        (WebCore::MediaPlayer::setMediaPlayerProxy): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::mediaPlayerClient):
+
+        * platform/graphics/mac/MediaPlayerProxy.h: New, defines media player proxy interface.
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart): Change constructor to take Element* instead of Node* as a
+        non-element node doesn't need a renderer
+        * rendering/RenderPart.h: Ditto.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::RenderPartObject): Ditto.
+        (WebCore::RenderPartObject::updateWidget): Package params for proxy plug-in when element is 
+        <video> or <audio>.
+        * rendering/RenderPartObject.h:
+
 2009-02-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel

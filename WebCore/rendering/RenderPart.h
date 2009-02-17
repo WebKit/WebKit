@@ -34,7 +34,7 @@ class HTMLFrameOwnerElement;
 
 class RenderPart : public RenderWidget {
 public:
-    RenderPart(Node*);
+    RenderPart(Element*);
     virtual ~RenderPart();
     
     virtual bool isRenderPart() const { return true; }

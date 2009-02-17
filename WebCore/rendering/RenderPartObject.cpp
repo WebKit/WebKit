@@ -34,6 +34,10 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLMediaElement.h"
+#include "HTMLVideoElement.h"
+#endif
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -44,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderPartObject::RenderPartObject(Node* element)
+RenderPartObject::RenderPartObject(Element* element)
     : RenderPart(element)
 {
     // init RenderObject attributes
@@ -290,6 +294,30 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 
         frame->loader()->requestObject(this, url, o->getAttribute(nameAttr), serviceType, paramNames, paramValues);
     }
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
+    else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag)) {
+        HTMLMediaElement* o = static_cast<HTMLMediaElement*>(node());
+
+        o->setNeedWidgetUpdate(false);
+        if (node()->hasTagName(videoTag)) {
+            HTMLVideoElement* vid = static_cast<HTMLVideoElement*>(node());
+            String poster = vid->poster();
+            if (!poster.isEmpty()) {
+                paramNames.append("_media_element_poster_");
+                paramValues.append(poster);
+            }
+        }
+
+        url = o->initialURL();
+        if (!url.isEmpty()) {
+            paramNames.append("_media_element_src_");
+            paramValues.append(url);
+        }
+
+        serviceType = "application/x-media-element-proxy-plugin";
+        frame->loader()->requestObject(this, url, nullAtom, serviceType, paramNames, paramValues);
+    }
+#endif
 }
 
 void RenderPartObject::layout()

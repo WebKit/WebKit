@@ -208,6 +208,13 @@ void MediaPlayer::load(const String& url, const String& mimeType)
         m_private.set(createNullMediaPlayer(this));
 }    
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+void MediaPlayer::setPoster(const String& url)
+{
+    m_private->setPoster(url);
+}    
+#endif
+
 void MediaPlayer::cancelLoad()
 {
     m_private->cancelLoad();
@@ -380,6 +387,18 @@ bool MediaPlayer::isAvailable()
 {
     return !installedMediaEngines().isEmpty();
 } 
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+void MediaPlayer::deliverNotification(MediaPlayerProxyNotificationType notification)
+{
+    m_private->deliverNotification(notification);
+}
+
+void MediaPlayer::setMediaPlayerProxy(WebMediaPlayerProxy* helper)
+{
+    m_private->setMediaPlayerProxy(helper);
+}
+#endif
 
 void MediaPlayer::networkStateChanged()
 {

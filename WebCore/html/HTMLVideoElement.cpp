@@ -52,17 +52,20 @@ bool HTMLVideoElement::rendererIsNeeded(RenderStyle* style)
     return HTMLElement::rendererIsNeeded(style); 
 }
 
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 RenderObject* HTMLVideoElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     if (m_shouldShowPosterImage)
         return new (arena) RenderImage(this);
     return new (arena) RenderVideo(this);
 }
+#endif
 
 void HTMLVideoElement::attach()
 {
     HTMLMediaElement::attach();
-    
+
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (m_shouldShowPosterImage) {
         if (!m_imageLoader)
             m_imageLoader.set(new HTMLImageLoader(this));
@@ -72,7 +75,7 @@ void HTMLVideoElement::attach()
             imageRenderer->setCachedImage(m_imageLoader->image()); 
         }
     }
-
+#endif
 }
 
 void HTMLVideoElement::detach()
@@ -91,9 +94,14 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
     if (attrName == posterAttr) {
         updatePosterImage();
         if (m_shouldShowPosterImage) {
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
+#else
+            if (m_player)
+                m_player->setPoster(poster());
+#endif
         }
     } else if (attrName == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());
@@ -163,12 +171,18 @@ const QualifiedName& HTMLVideoElement::imageSourceAttributeName() const
 
 void HTMLVideoElement::updatePosterImage()
 {
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     bool oldShouldShowPosterImage = m_shouldShowPosterImage;
+#endif
+
     m_shouldShowPosterImage = !poster().isEmpty() && m_networkState < LOADED_FIRST_FRAME;
+
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (attached() && oldShouldShowPosterImage != m_shouldShowPosterImage) {
         detach();
         attach();
     }
+#endif
 }
 
 }

@@ -1,3 +1,21 @@
+2009-02-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23917
+        Allow a WebKit plug-in to act as a proxy for the <audio> and <video>
+        element.
+
+        * Plugins/WebPluginContainerPrivate.h:
+        * Plugins/WebPluginController.mm:
+        (mediaProxyClient): New, cast to HTMLMediaElement if it is a video or audio element
+        (-[WebPluginController _setMediaPlayerProxy:forElement:]): New, pass proxy to HTMLMediaElement
+        (-[WebPluginController _postMediaPlayerNotification:forElement:]): New, deliver event to HTMLMediaElement
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Don't allow a media player proxy plug-in to be chosen by
+        file extension, only want a match for the new MIME type proxy plug-ins should have.
+
 2009-02-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

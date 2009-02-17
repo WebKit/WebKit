@@ -1697,8 +1697,12 @@ static HTMLPlugInElement* toPlugInElement(Node* node)
     if (!node)
         return 0;
 
-    ASSERT(node->hasTagName(objectTag) || node->hasTagName(embedTag) || node->hasTagName(appletTag));
-    
+    ASSERT(node->hasTagName(objectTag) || node->hasTagName(embedTag) 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+        || node->hasTagName(videoTag) || node->hasTagName(audioTag)
+#endif
+        || node->hasTagName(appletTag));
+
     return static_cast<HTMLPlugInElement*>(node);
 }
     

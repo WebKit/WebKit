@@ -80,6 +80,12 @@ public:
     virtual void setRect(const IntRect&) = 0;
 
     virtual void paint(GraphicsContext*, const IntRect&) = 0 ;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    virtual void setPoster(const String& url) = 0;
+    virtual void deliverNotification(MediaPlayerProxyNotificationType) = 0;
+    virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) = 0;
+#endif
 };
 
 }

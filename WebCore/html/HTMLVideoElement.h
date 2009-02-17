@@ -42,7 +42,9 @@ public:
     
     virtual int tagPriority() const { return 5; }
     virtual bool rendererIsNeeded(RenderStyle*);
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+#endif
     virtual void attach();
     virtual void detach();
     virtual void parseMappedAttribute(MappedAttribute* attr);
