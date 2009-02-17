@@ -1555,8 +1555,6 @@ webcore_sources += \
 	WebCore/rendering/RenderInline.h \
 	WebCore/rendering/RenderLayer.cpp \
 	WebCore/rendering/RenderLayer.h \
-	WebCore/rendering/RenderLegend.cpp \
-	WebCore/rendering/RenderLegend.h \
 	WebCore/rendering/RenderLineBoxList.cpp \
 	WebCore/rendering/RenderListBox.cpp \
 	WebCore/rendering/RenderListBox.h \

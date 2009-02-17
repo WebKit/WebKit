@@ -470,7 +470,7 @@ layer at (0,0) size 785x3441
         RenderText {#text} at (0,0) size 74x18
           text run at (0,0) width 74: "LEGEND: "
         RenderFieldSet {FIELDSET} at (74,14) size 4x0
-          RenderLegend {LEGEND} at (0,0) size 4x0
+          RenderBlock {LEGEND} at (0,0) size 4x0
             RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
           RenderBlock (anonymous) at (0,0) size 4x0
             RenderInline {FONT} at (0,0) size 0x0 [color=#008000]

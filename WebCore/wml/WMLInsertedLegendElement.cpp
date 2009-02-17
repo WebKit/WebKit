@@ -23,8 +23,6 @@
 #if ENABLE(WML)
 #include "WMLInsertedLegendElement.h"
 
-#include "RenderLegend.h"
-
 namespace WebCore {
 
 WMLInsertedLegendElement::WMLInsertedLegendElement(const QualifiedName& tagName, Document* doc)
@@ -34,11 +32,6 @@ WMLInsertedLegendElement::WMLInsertedLegendElement(const QualifiedName& tagName,
 
 WMLInsertedLegendElement::~WMLInsertedLegendElement()
 {
-}
-
-RenderObject* WMLInsertedLegendElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderLegend(this);
 }
 
 }

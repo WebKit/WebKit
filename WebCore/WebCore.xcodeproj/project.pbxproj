@@ -2754,8 +2754,6 @@
 		A8E545C10CA9D1C20097D09B /* DOMSVGDescElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */; };
 		A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */; };
 		A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */; };
-		A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */; };
-		A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */; };
 		A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */; };
 		A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */; };
 		A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */; };
@@ -7502,8 +7500,6 @@
 		A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGDescElementInternal.h; sourceTree = "<group>"; };
 		A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFieldset.cpp; sourceTree = "<group>"; };
 		A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFieldset.h; sourceTree = "<group>"; };
-		A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLegend.cpp; sourceTree = "<group>"; };
-		A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLegend.h; sourceTree = "<group>"; };
 		A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOListElement.h; sourceTree = "<group>"; };
 		A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLUListElement.h; sourceTree = "<group>"; };
 		A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLUListElement.cpp; sourceTree = "<group>"; };
@@ -14162,8 +14158,6 @@
 				0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */,
 				0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */,
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
-				A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */,
-				A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
 				0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */,
 				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
@@ -16213,7 +16207,6 @@
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
 				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,
 				0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */,
-				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
@@ -18246,7 +18239,6 @@
 				BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */,
 				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
 				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
-				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */,
 				A8EA7A4E0A191A5200A8EF5F /* RenderListItem.cpp in Sources */,

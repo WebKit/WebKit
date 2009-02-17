@@ -30,8 +30,6 @@ class WMLInsertedLegendElement : public WMLElement {
 public:
     WMLInsertedLegendElement(const QualifiedName& tagName, Document*);
     virtual ~WMLInsertedLegendElement();
-
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
 
 }

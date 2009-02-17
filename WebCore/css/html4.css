@@ -279,7 +279,7 @@ label {
 }
 
 legend {
-    display: block;
+    display: block !important;
     padding-left: 2px;
     padding-right: 2px;
     border: none

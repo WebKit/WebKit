@@ -1,3 +1,24 @@
+2009-02-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23985
+
+        Don't allow legends to be anything but display:block.
+
+        * fast/forms/inline-ignored-on-legend.html: Added.
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt:
+        * platform/mac/fast/forms/006-expected.txt:
+        * platform/mac/fast/forms/007-expected.txt:
+        * platform/mac/fast/forms/fieldset-align-expected.txt:
+        * platform/mac/fast/forms/float-before-fieldset-expected.txt:
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.checksum: Added.
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.png: Added.
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.txt: Added.
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt:
+
 2009-02-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Mark Rowe.

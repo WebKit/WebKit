@@ -8938,22 +8938,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderLegend.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderLegend.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderLineBoxList.cpp"
 				>
 				<FileConfiguration
