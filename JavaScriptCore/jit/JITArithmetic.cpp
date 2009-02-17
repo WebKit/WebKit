@@ -621,17 +621,9 @@ static bool isSSE2Present()
                 cpuid;
                 mov flags, edx;
             }
-#elif COMPILER(GCC)
-            asm (
-                "movl $0x1, %%eax;"
-                "cpuid;"
-                "movl %%edx, %0;"
-                : "=g" (flags)
-                :
-                : "%eax", "%ebx", "%ecx", "%edx"
-            );
 #else
             flags = 0;
+            // FIXME: Add GCC code to do above asm
 #endif
             present = (flags & SSE2FeatureBit) != 0;
         }

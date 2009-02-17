@@ -1,3 +1,12 @@
+2009-02-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Roll out r41022 as it breaks qt and gtk builds
+
+        * jit/JITArithmetic.cpp:
+        (JSC::isSSE2Present):
+
 2009-02-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
