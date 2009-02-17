@@ -1,3 +1,21 @@
+2009-02-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/6386623>
+
+        I made m_numParsedProperties and m_maxParsedProperties unsigned 
+        instead of int, and then added an early return from addPropery() if 
+        m_maxParsedProperties exceeds the max value.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::rollbackLastProperties):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::deleteFontFaceOnlyValues):
+        * css/CSSParser.h:
+
 2009-02-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Mark Rowe.

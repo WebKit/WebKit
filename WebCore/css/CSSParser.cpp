@@ -366,6 +366,8 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
     CSSProperty* prop = new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand);
     if (m_numParsedProperties >= m_maxParsedProperties) {
         m_maxParsedProperties += 32;
+        if (m_maxParsedProperties > UINT_MAX / sizeof(CSSProperty*))
+            return;
         m_parsedProperties = static_cast<CSSProperty**>(fastRealloc(m_parsedProperties,
                                                        m_maxParsedProperties * sizeof(CSSProperty*)));
     }
@@ -375,7 +377,7 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
 void CSSParser::rollbackLastProperties(int num)
 {
     ASSERT(num >= 0);
-    ASSERT(m_numParsedProperties >= num);
+    ASSERT(m_numParsedProperties >= static_cast<unsigned>(num));
 
     for (int i = 0; i < num; ++i)
         delete m_parsedProperties[--m_numParsedProperties];
@@ -383,7 +385,7 @@ void CSSParser::rollbackLastProperties(int num)
 
 void CSSParser::clearProperties()
 {
-    for (int i = 0; i < m_numParsedProperties; i++)
+    for (unsigned i = 0; i < m_numParsedProperties; i++)
         delete m_parsedProperties[i];
     m_numParsedProperties = 0;
     m_hasFontFaceOnlyValues = false;
@@ -4674,7 +4676,7 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
 CSSRule* CSSParser::createFontFaceRule()
 {
     RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
-    for (int i = 0; i < m_numParsedProperties; ++i) {
+    for (unsigned i = 0; i < m_numParsedProperties; ++i) {
         CSSProperty* property = m_parsedProperties[i];
         int id = property->id();
         if ((id == CSSPropertyFontWeight || id == CSSPropertyFontStyle || id == CSSPropertyFontVariant) && property->value()->isPrimitiveValue()) {
@@ -4815,7 +4817,7 @@ void CSSParser::deleteFontFaceOnlyValues()
     ASSERT(m_hasFontFaceOnlyValues);
     int deletedProperties = 0;
 
-    for (int i = 0; i < m_numParsedProperties; ++i) {
+    for (unsigned i = 0; i < m_numParsedProperties; ++i) {
         CSSProperty* property = m_parsedProperties[i];
         int id = property->id();
         if ((id == CSSPropertyFontWeight || id == CSSPropertyFontStyle || id == CSSPropertyFontVariant) && property->value()->isValueList()) {
