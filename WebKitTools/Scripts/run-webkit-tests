@@ -1023,7 +1023,7 @@ close HTML;
 my @configurationArgs = argumentsForConfiguration();
 
 if (isQt() || isGtk()) {
-  system "WebKitTools/Scripts/run-launcher", @configurationArgs, $testResults if $launchSafari;
+  system "WebKitTools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
 } else {

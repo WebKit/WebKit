@@ -1,3 +1,12 @@
+2009-02-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Prepend file:// to the test result filename to make
+        GtkLauncher display the result page.
+
+        * Scripts/run-webkit-tests:
+
 2009-02-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Adam Roben
