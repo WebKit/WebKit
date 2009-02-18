@@ -1,3 +1,9 @@
+2009-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * runtime/FunctionPrototype.cpp:
+
 2009-02-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

@@ -26,6 +26,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "Interpreter.h"
+#include "Lexer.h"
 #include "PrototypeFunction.h"
 
 namespace JSC {
