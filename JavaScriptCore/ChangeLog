@@ -1,3 +1,22 @@
+2009-02-18  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23974: Deque::Remove would be a useful method.
+        <https://bugs.webkit.org/show_bug.cgi?id=23974>
+
+        Add Deque::remove and DequeIteratorBase<T>::operator=.
+
+        Why was operator= added? Every concrete iterator (DequeIterator..DequeConstReverseIterator)
+        was calling DequeIteratorBase::assign(), which called Base::operator=(). Base::operator=()
+        was not implemented. This went unnoticed because the iterator copy code has been unused.
+
+        * wtf/Deque.h:
+        (WTF::Deque<T>::remove):
+        (WTF::DequeIteratorBase<T>::removeFromIteratorsList):
+        (WTF::DequeIteratorBase<T>::operator=):
+        (WTF::DequeIteratorBase<T>::~DequeIteratorBase):
+
 2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
