@@ -35,6 +35,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

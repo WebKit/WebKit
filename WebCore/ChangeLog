@@ -1,3 +1,12 @@
+2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24005
+        Add an include to fix Chromium build.
+
+        * page/animation/AnimationController.cpp: Add UnusedParam.h include.
+
 2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
