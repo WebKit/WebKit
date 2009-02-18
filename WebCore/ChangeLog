@@ -1,3 +1,15 @@
+2009-02-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23992
+        REGRESSION: crash on windows loading http://www.stickam.com/liveStreams.do
+
+        Unable to reduce to a layout test.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::contentRenderer):
+
 2009-02-18  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.

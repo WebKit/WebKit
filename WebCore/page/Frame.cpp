@@ -1110,6 +1110,8 @@ void Frame::clearDOMWindow()
 RenderView* Frame::contentRenderer() const
 {
     Document* doc = document();
+    if (!doc)
+        return 0;
     RenderObject* object = doc->renderer();
     if (!object)
         return 0;
