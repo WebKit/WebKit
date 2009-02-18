@@ -1,3 +1,14 @@
+2009-02-18  Adam Roben  <aroben@apple.com>
+
+        Add SPI to get WebKit's custom pointing-hand cursor
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebView.mm:
+        (+[WebView _pointingHandCursor]): Added. Returns the custom
+        pointing-hand cursor that WebKit uses.
+        * WebView/WebViewPrivate.h: Added +_pointingHandCursor.
+
 2009-02-17  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.

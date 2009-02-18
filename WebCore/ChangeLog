@@ -1,3 +1,12 @@
+2009-02-18  Adam Roben  <aroben@apple.com>
+
+        Export WebCore::handCursor and Cursor.h
+
+        Reviewed by John Sullivan.
+
+        * WebCore.base.exp: Added WebCore::handCursor.
+        * WebCore.xcodeproj/project.pbxproj: Made Cursor.h private.
+
 2009-02-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

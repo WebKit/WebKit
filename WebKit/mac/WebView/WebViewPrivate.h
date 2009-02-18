@@ -406,6 +406,8 @@ Could be worth adding to the API.
 - (void)setMemoryCacheDelegateCallsEnabled:(BOOL)suspend;
 - (BOOL)areMemoryCacheDelegateCallsEnabled;
 
++ (NSCursor *)_pointingHandCursor;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)
