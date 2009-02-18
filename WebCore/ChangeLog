@@ -1,3 +1,11 @@
+2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed.
+
+        Build fix after r41060.
+
+        * GNUmakefile.am:
+
 2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

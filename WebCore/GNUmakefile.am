@@ -2071,7 +2071,7 @@ webcore_sources += \
 	WebCore/html/TimeRanges.cpp \
 	WebCore/html/TimeRanges.h \
 	WebCore/platform/graphics/MediaPlayer.cpp \
-	WebCore/platform/graphics/MediaPlayerPrivate.h
+	WebCore/platform/graphics/MediaPlayerPrivate.h \
 	WebCore/rendering/MediaControlElements.cpp \
 	WebCore/rendering/RenderMedia.cpp \
 	WebCore/rendering/RenderMedia.h \
