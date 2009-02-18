@@ -137,7 +137,6 @@ public:
     virtual void setFocus();
 
     void setCursor(const Cursor&);
-    Cursor cursor();
 
     virtual void show();
     virtual void hide();
@@ -193,7 +192,7 @@ private:
     
     IntRect m_frame; // Not used when a native widget exists.
 
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC)
     WidgetPrivate* m_data;
 #endif
 };
