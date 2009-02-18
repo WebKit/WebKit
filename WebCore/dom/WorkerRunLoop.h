@@ -34,7 +34,6 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
-#include "SharedTimer.h"
 #include <wtf/MessageQueue.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>

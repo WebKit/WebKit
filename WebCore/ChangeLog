@@ -1,3 +1,16 @@
+2009-02-17  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23977: Unnecessary timer related headers in files.
+        <https://bugs.webkit.org/show_bug.cgi?id=23977>
+
+        No observable change in behavior, so no test.
+
+        * dom/Document.cpp:
+        * dom/WorkerRunLoop.cpp:
+        * dom/WorkerRunLoop.h:
+
 2009-02-17  Peter Abrahamsen  <rainhead@gmail.com>
 
         Reviewed by Sam Weinig.

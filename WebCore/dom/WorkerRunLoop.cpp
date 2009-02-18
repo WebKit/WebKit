@@ -33,6 +33,7 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
+#include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
 #include "WorkerRunLoop.h"
