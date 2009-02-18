@@ -1242,8 +1242,9 @@ public:
     static void link(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
-        
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
+        ptrdiff_t linkOffset = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
+        ASSERT(linkOffset == static_cast<int>(linkOffset));
+        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = linkOffset;
     }
     
     static unsigned getCallReturnOffset(JmpSrc call)
