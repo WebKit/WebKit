@@ -73,7 +73,7 @@ static inline void insertSemicolonIfNeeded(UString& functionBody)
     for (size_t i = functionBody.size() - 2; i > 0; --i) {
         UChar ch = functionBody[i];
         if (!Lexer::isWhiteSpace(ch) && !Lexer::isLineTerminator(ch)) {
-            if (ch != ';')
+            if (ch != ';' && ch != '}')
                 functionBody = functionBody.substr(0, i + 1) + ";" + functionBody.substr(i + 1, functionBody.size() - (i + 1));
             return;
         }
