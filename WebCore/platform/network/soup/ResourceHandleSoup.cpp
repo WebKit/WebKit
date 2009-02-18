@@ -490,7 +490,7 @@ bool ResourceHandle::start(Frame* frame)
         return startHttp(urlString);
     else if (equalIgnoringCase(protocol, "file") || equalIgnoringCase(protocol, "ftp") || equalIgnoringCase(protocol, "ftps"))
         // FIXME: should we be doing any other protocols here?
-        return startGio(urlString);
+        return startGio(url);
     else {
         // If we don't call didFail the job is not complete for webkit even false is returned.
         if (d->client()) {
@@ -734,20 +734,21 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
                       openCallback, NULL);
 }
 
-bool ResourceHandle::startGio(String urlString)
+bool ResourceHandle::startGio(KURL url)
 {
     if (request().httpMethod() != "GET") {
-        ResourceError error("webkit-network-error", ERROR_BAD_NON_HTTP_METHOD, urlString, request().httpMethod());
+        ResourceError error("webkit-network-error", ERROR_BAD_NON_HTTP_METHOD, url.string(), request().httpMethod());
         d->client()->didFail(this, error);
         return false;
     }
 
-    // Remove the fragment part of the URL since the file backend doesn't deal with it
-    int fragPos;
-    if ((fragPos = urlString.find("#")) != -1)
-        urlString = urlString.left(fragPos);
+    // GIO doesn't know how to handle refs and queries, so remove them
+    // TODO: use KURL.fileSystemPath after KURLGtk and FileSystemGtk are
+    // using GIO internally, and providing URIs instead of file paths
+    url.removeRef();
+    url.setQuery(String());
 
-    d->m_gfile = g_file_new_for_uri(urlString.utf8().data());
+    d->m_gfile = g_file_new_for_uri(url.string().utf8().data());
     g_object_set_data(G_OBJECT(d->m_gfile), "webkit-resource", this);
     d->m_cancellable = g_cancellable_new();
     g_file_query_info_async(d->m_gfile,

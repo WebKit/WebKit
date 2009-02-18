@@ -1,3 +1,18 @@
+2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        Use KURL in startGio instead of passing a string with the URL, so
+        that we can handle removing refs and queries more elegantly. This
+        is fixing more regressions that came from the curl->soup switch.
+
+        Original work by Zan Dobersek.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::startGio):
+
 2009-02-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alexey Proskuryakov.
