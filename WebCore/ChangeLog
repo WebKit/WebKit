@@ -1,3 +1,23 @@
+2009-02-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement ResourceHandle::loadResourceSynchronously in ResourceHandleSoup.cpp
+
+        The implementation is needed to have synchronous loading, e.g. for
+        JavaScript interaction. This is fixing various regressions that
+        came from the curl->soup switch.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::~WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::run):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2009-02-18  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Mark Rowe.

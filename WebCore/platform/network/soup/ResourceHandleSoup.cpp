@@ -57,6 +57,68 @@ namespace WebCore {
 
 static SoupSession* session = 0;
 
+class WebCoreSynchronousLoader : public ResourceHandleClient, Noncopyable {
+public:
+    WebCoreSynchronousLoader(ResourceError&, ResourceResponse &, Vector<char>&);
+    ~WebCoreSynchronousLoader();
+
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
+    virtual void didFinishLoading(ResourceHandle*);
+    virtual void didFail(ResourceHandle*, const ResourceError&);
+
+    void run();
+
+private:
+    ResourceError& m_error;
+    ResourceResponse& m_response;
+    Vector<char>& m_data;
+    bool m_finished;
+    GMainLoop* m_mainLoop;
+};
+
+WebCoreSynchronousLoader::WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data)
+    : m_error(error)
+    , m_response(response)
+    , m_data(data)
+    , m_finished(false)
+{
+    m_mainLoop = g_main_loop_new(NULL, false);
+}
+
+WebCoreSynchronousLoader::~WebCoreSynchronousLoader()
+{
+    g_main_loop_unref(m_mainLoop);
+}
+
+void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+{
+    m_response = response;
+}
+
+void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data, int length, int)
+{
+    m_data.append(data, length);
+}
+
+void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*)
+{
+    g_main_loop_quit(m_mainLoop);
+    m_finished = true;
+}
+
+void WebCoreSynchronousLoader::didFail(ResourceHandle* handle, const ResourceError& error)
+{
+    m_error = error;
+    didFinishLoading(handle);
+}
+
+void WebCoreSynchronousLoader::run()
+{
+    if (!m_finished)
+        g_main_loop_run(m_mainLoop);
+}
+
 enum
 {
     ERROR_TRANSPORT,
@@ -484,9 +546,13 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest&)
     return false;
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>&, Frame*)
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame* frame)
 {
-    notImplemented();
+    WebCoreSynchronousLoader syncLoader(error, response, data);
+    ResourceHandle handle(request, &syncLoader, true, false, true);
+
+    handle.start(frame);
+    syncLoader.run();
 }
 
 // GIO-based loader
