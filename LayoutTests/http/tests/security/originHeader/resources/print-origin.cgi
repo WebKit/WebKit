@@ -2,7 +2,7 @@
 use strict;
 
 print "Content-Type: text/html\n";
-print "Access-Control-Origin: *\n";
+print "Access-Control-Allow-Origin: *\n";
 print "Cache-Control: no-store\n\n";
 
 print "HTTP_ORIGIN: " . $ENV{"HTTP_ORIGIN"} . "\n";

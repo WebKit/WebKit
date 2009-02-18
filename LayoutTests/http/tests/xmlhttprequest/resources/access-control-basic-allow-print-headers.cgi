@@ -3,7 +3,7 @@ use strict;
 
 print "Content-Type: text/plain\n";
 print "Cache-Control: no-store\n";
-print "Access-Control-Origin: *\n\n";
+print "Access-Control-Allow-Origin: *\n\n";
 
 foreach (keys %ENV) {
     if ($_ =~ "HTTP_") {

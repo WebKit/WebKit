@@ -1,3 +1,24 @@
+2009-02-17  Peter Abrahamsen  <rainhead@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23958
+        <rdar://problem/6587815>
+
+        Updated XMLHttpRequests tests to match the newest Access Control draft.
+
+        * http/tests/security/originHeader/resources/print-origin.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-print-headers.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-star.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi:
+
 2009-02-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

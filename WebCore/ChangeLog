@@ -1,3 +1,18 @@
+2009-02-17  Peter Abrahamsen  <rainhead@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23958
+        <rdar://problem/6587815>
+
+        Updated XMLHttpRequest with new header names from the latest Access
+        Control draft: http://www.w3.org/TR/access-control/
+        - Access-Control-Origin becomes Access-Control-Allow-Origin
+        - Access-Control-Credentials becomes Access-Control-Allow-Credentials
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::accessControlCheck):
+
 2009-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add missing constructor used for empty values.

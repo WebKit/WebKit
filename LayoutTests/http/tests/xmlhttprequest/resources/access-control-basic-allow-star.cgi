@@ -2,6 +2,6 @@
 use strict;
 
 print "Content-Type: text/plain\n";
-print "Access-Control-Origin: *\n\n";
+print "Access-Control-Allow-Origin: *\n\n";
 
 print "PASS: Cross-domain access allowed.\n";

@@ -12,6 +12,6 @@ print "pragma: no-cache\n";
 # not in whitelist
 print "x-webkit: foobar\n";
 
-print "Access-Control-Origin: *\n\n";
+print "Access-Control-Allow-Origin: *\n\n";
 
 print "PASS: Cross-domain access allowed.\n";
