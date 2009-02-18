@@ -736,7 +736,7 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
 
 bool ResourceHandle::startGio(KURL url)
 {
-    if (request().httpMethod() != "GET") {
+    if (request().httpMethod() != "GET" && request().httpMethod() != "POST") {
         ResourceError error("webkit-network-error", ERROR_BAD_NON_HTTP_METHOD, url.string(), request().httpMethod());
         d->client()->didFail(this, error);
         return false;
