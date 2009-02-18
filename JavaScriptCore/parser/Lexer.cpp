@@ -33,7 +33,6 @@
 #include <string.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -589,7 +588,7 @@ int Lexer::lex(void* p1, void* p2)
 
 bool Lexer::isWhiteSpace() const
 {
-    return m_current == '\t' || m_current == 0x0b || m_current == 0x0c || isSeparatorSpace(m_current);
+    return isWhiteSpace(m_current);
 }
 
 bool Lexer::isLineTerminator()

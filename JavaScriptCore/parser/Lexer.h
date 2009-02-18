@@ -27,6 +27,7 @@
 #include "SegmentedVector.h"
 #include "SourceCode.h"
 #include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace JSC {
 
@@ -89,6 +90,16 @@ namespace JSC {
 
         void clear();
         SourceCode sourceCode(int openBrace, int closeBrace, int firstLine) { return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine); }
+
+        static inline bool isWhiteSpace(int ch)
+        {
+            return ch == '\t' || ch == 0x0b || ch == 0x0c || WTF::Unicode::isSeparatorSpace(ch);
+        }
+
+        static inline bool isLineTerminator(int ch)
+        {
+            return ch == '\r' || ch == '\n' || ch == 0x2028 || ch == 0x2029;
+        }
 
     private:
         friend class JSGlobalData;

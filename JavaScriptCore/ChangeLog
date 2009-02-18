@@ -1,3 +1,26 @@
+2009-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/6595040> REGRESSION: http://www.amnestyusa.org/
+        fails to load.
+        
+        amnestyusa.org uses the Optimist JavaScript library, which adds event
+        listeners by concatenating string-ified functions. This is only sure to
+        be syntactically valid if the string-ified functions end in semicolons.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::isWhiteSpace):
+        * parser/Lexer.h:
+        (JSC::Lexer::isWhiteSpace):
+        (JSC::Lexer::isLineTerminator): Added some helper functions for examining
+        whitespace.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::appendSemicolonIfNeeded):
+        (JSC::functionProtoFuncToString): When string-ifying a function, insert
+        a semicolon in the last non-whitespace position, if one doesn't already exist.
+
 2009-02-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

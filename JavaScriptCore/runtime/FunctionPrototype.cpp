@@ -63,11 +63,29 @@ CallType FunctionPrototype::getCallData(CallData& callData)
 
 // Functions
 
+// Compatibility hack for the Optimost JavaScript library. (See <rdar://problem/6595040>.)
+static inline void insertSemicolonIfNeeded(UString& functionBody)
+{
+    ASSERT(functionBody[0] == '{');
+    ASSERT(functionBody[functionBody.size() - 1] == '}');
+
+    for (size_t i = functionBody.size() - 2; i > 0; --i) {
+        UChar ch = functionBody[i];
+        if (!Lexer::isWhiteSpace(ch) && !Lexer::isLineTerminator(ch)) {
+            if (ch != ';')
+                functionBody = functionBody.substr(0, i + 1) + ";" + functionBody.substr(i + 1, functionBody.size() - (i + 1));
+            return;
+        }
+    }
+}
+
 JSValuePtr functionProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     if (thisValue.isObject(&JSFunction::info)) {
         JSFunction* function = asFunction(thisValue);
-        return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + function->body()->paramString() + ") " + function->body()->toSourceString());
+        UString functionBody = function->body()->toSourceString();
+        insertSemicolonIfNeeded(functionBody);
+        return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + function->body()->paramString() + ") " + functionBody);
     }
 
     if (thisValue.isObject(&InternalFunction::info)) {
