@@ -468,7 +468,17 @@ void PlatformContextSkia::beginPath()
 
 void PlatformContextSkia::addPath(const SkPath& path)
 {
-    m_path.addPath(path);
+    m_path.addPath(path, m_canvas->getTotalMatrix());
+}
+
+SkPath PlatformContextSkia::currentPathInLocalCoordinates() const
+{
+    SkPath localPath = m_path;
+    const SkMatrix& matrix = m_canvas->getTotalMatrix();
+    SkMatrix inverseMatrix;
+    matrix.invert(&inverseMatrix);
+    localPath.transform(inverseMatrix);
+    return localPath;
 }
 
 void PlatformContextSkia::setFillRule(SkPath::FillType fr)

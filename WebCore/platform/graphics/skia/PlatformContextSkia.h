@@ -135,7 +135,7 @@ public:
 
     void beginPath();
     void addPath(const SkPath&);
-    const SkPath* currentPath() const { return &m_path; }
+    SkPath currentPathInLocalCoordinates() const;
 
     // Returns the fill color. The returned color has it's alpha adjusted
     // by the current alpha.
@@ -192,7 +192,7 @@ private:
     // mStateStack.back().
     State* m_state;
 
-    // Current path.
+    // Current path in global coordinates.
     SkPath m_path;
 
 #if defined(__linux__)

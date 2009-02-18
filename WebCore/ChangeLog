@@ -1,3 +1,21 @@
+2009-02-18  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23860
+        Resync some graphics/skia files with their chromium counterparts
+
+        This comes from chromium patches <http://codereview.chromium.org/17633>
+        and <http://codereview.chromium.org/17454>
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::addPath):
+        (PlatformContextSkia::currentPath):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed.

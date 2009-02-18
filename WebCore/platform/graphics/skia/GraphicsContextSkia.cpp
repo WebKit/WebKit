@@ -407,8 +407,7 @@ void GraphicsContext::clipPath(WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    const SkPath* oldPath = platformContext()->currentPath();
-    SkPath path(*oldPath);
+    SkPath path = platformContext()->currentPathInLocalCoordinates();
     path.setFillType(clipRule == RULE_EVENODD ? SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
     platformContext()->canvas()->clipPath(path);
 }
@@ -683,7 +682,7 @@ void GraphicsContext::fillPath()
     if (paintingDisabled())
         return;
 
-    const SkPath& path = *platformContext()->currentPath();
+    SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
       return;
 
@@ -693,7 +692,7 @@ void GraphicsContext::fillPath()
     if (colorSpace == SolidColorSpace && !fillColor().alpha())
         return;
 
-    platformContext()->setFillRule(state.fillRule == RULE_EVENODD ?
+    path.setFillType(state.fillRule == RULE_EVENODD ?
         SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
 
     SkPaint paint;
@@ -1073,7 +1072,7 @@ void GraphicsContext::strokePath()
     if (paintingDisabled())
         return;
 
-    const SkPath& path = *platformContext()->currentPath();
+    const SkPath& path = *platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
