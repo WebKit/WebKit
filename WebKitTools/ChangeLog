@@ -1,3 +1,11 @@
+2009-02-13  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Alexey Proskuryakov. 
+
+        Add a few ignores to make-js-test-wrappers.
+
+        * Scripts/make-js-test-wrappers:
+
 2009-02-17  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alexey Proskuryakov.
