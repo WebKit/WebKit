@@ -401,46 +401,6 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
 
 }
 
-const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyName)
-{
-    // Note that mapping to Courier is removed because 
-    // because it's a bitmap font on Windows.
-    // Alias Courier -> Courier New
-    static AtomicString courier("Courier"), courierNew("Courier New");
-    if (equalIgnoringCase(familyName, courier))
-        return courierNew;
-
-    // Alias Times <-> Times New Roman.
-    static AtomicString times("Times"), timesNewRoman("Times New Roman");
-    if (equalIgnoringCase(familyName, times))
-        return timesNewRoman;
-    if (equalIgnoringCase(familyName, timesNewRoman))
-        return times;
-    
-    // Alias Helvetica <-> Arial
-    static AtomicString arial("Arial"), helvetica("Helvetica");
-    if (equalIgnoringCase(familyName, helvetica))
-        return arial;
-    if (equalIgnoringCase(familyName, arial))
-        return helvetica;
-
-    // We block bitmap fonts altogether so that we have to 
-    // alias MS Sans Serif (bitmap font) -> Microsoft Sans Serif (truetype font)
-    static AtomicString msSans("MS Sans Serif");
-    static AtomicString microsoftSans("Microsoft Sans Serif");
-    if (equalIgnoringCase(familyName, msSans))
-        return microsoftSans;
-
-    // Alias MS Serif (bitmap) -> Times New Roman (truetype font). There's no 
-    // 'Microsoft Sans Serif-equivalent' for Serif. 
-    static AtomicString msSerif("MS Serif");
-    if (equalIgnoringCase(familyName, msSerif))
-        return timesNewRoman;
-
-    // FIXME: should we map 'system' to something ('Tahoma') ? 
-    return emptyAtom;
-}
-
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;

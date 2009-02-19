@@ -1,3 +1,19 @@
+2009-02-19  Jungshik Shin <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20531
+        Chromium-part follow-up to the patch landed in r40636
+        for bug 20531.
+        Remove a static member function alternateFamilyName
+        from Chromium's Win/Linux ports of FontCache. In r40636,
+        alternateFamilyName was customized using #ifdef PLATFORM(WIN_OS).
+        So, there's no more need for the static member function per
+        platform.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+
 2009-02-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.
