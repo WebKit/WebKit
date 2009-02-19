@@ -1,3 +1,15 @@
+2009-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/6542390>
+        
+        There's no need to call setDefersLoading here - we already defer anything a plug-in can do that
+        would cause a load to begin.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+
 2009-02-18  Adam Roben  <aroben@apple.com>
 
         Add SPI to get WebKit's custom pointing-hand cursor

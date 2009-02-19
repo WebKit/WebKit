@@ -623,10 +623,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!page)
         return NO;
 
-    bool wasDeferring = page->defersLoading();
-    if (!wasDeferring)
-        page->setDefersLoading(true);
-
     // Can only send drawRect (updateEvt) to CoreGraphics plugins when actually drawing
     ASSERT((drawingModel != NPDrawingModelCoreGraphics) || !eventIsDrawRect || [NSView focusView] == self);
     
@@ -670,9 +666,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             free(portState);
     }
 
-    if (!wasDeferring)
-        page->setDefersLoading(false);
-            
     return acceptedEvent;
 }
 
