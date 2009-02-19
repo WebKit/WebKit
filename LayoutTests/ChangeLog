@@ -1,3 +1,13 @@
+2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24012
+        Clarify objective of the test and clean up.
+
+        * fast/forms/inline-ignored-on-legend-expected.txt:
+        * fast/forms/inline-ignored-on-legend.html:
+
 2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

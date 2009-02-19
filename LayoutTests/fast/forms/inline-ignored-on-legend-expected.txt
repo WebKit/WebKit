@@ -1,3 +1,4 @@
-Member Login:
+This test confirms that legend element can not be made inline. The next two sentences should be on separate lines.
 
-This test confirms that legend element can not be made inline. Succeeds if this message is visible and there's no ASSERT in debug build.
+Mary had a little lamb.
+It was white as snow.
