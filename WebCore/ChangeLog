@@ -1,3 +1,13 @@
+2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24041
+        Correct Skia type conversion issues, fix Chromium Linux build.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawGlyphs): changed parameters to RGBA32, not WebCore::Color.
+
 2009-02-19  Jungshik Shin <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

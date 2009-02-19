@@ -80,7 +80,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         gc->platformContext()->setupPaintForFilling(&paint);
         font->platformData().setupPaint(&paint);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        paint.setColor(gc->fillColor());
+        paint.setColor(gc->fillColor().rgb());
         canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 
@@ -93,7 +93,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         font->platformData().setupPaint(&paint);
         paint.setFlags(SkPaint::kAntiAlias_Flag);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        paint.setColor(gc->strokeColor());
+        paint.setColor(gc->strokeColor().rgb());
 
         if (textMode & cTextFill) {
             // If we also filled, we don't want to draw shadows twice.
