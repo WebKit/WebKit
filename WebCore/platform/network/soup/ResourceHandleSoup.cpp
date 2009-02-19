@@ -747,6 +747,7 @@ bool ResourceHandle::startGio(KURL url)
     // using GIO internally, and providing URIs instead of file paths
     url.removeRef();
     url.setQuery(String());
+    url.setPort(0);
 
     d->m_gfile = g_file_new_for_uri(url.string().utf8().data());
     g_object_set_data(G_OBJECT(d->m_gfile), "webkit-resource", this);

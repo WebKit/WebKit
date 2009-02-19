@@ -2,6 +2,16 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Ignore ports on local URLs. This fixes a regression in
+        fast/loader/file-URL-with-port-number.html
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startGio):
+
+2009-02-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Make setPort remove port if 0 is given to it, as promised by the
         comment in KURL's header.
 
