@@ -1,3 +1,57 @@
+2009-02-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for x86-64. Where the JavaScriptCore text segment lies outside
+        a 2gb range of the heap containing JIT generated code, callbacks
+        from JIT code to the stub functions in Interpreter will be incorrectly
+        linked.
+
+        No performance impact on Sunspider, 1% regression on v8-tests,
+        due to a 3% regression on richards.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::relink):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::linkTailRecursive):
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::tailRecursiveCall):
+        (JSC::MacroAssembler::makeTailRecursiveCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::call):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::moveWithPatch):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::patchJump):
+        (JSC::X86Assembler::patchCall):
+        (JSC::X86Assembler::linkCall):
+        (JSC::X86Assembler::patchAddress):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCTICachePutByID):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompilePutByIdReplace):
+
 2009-02-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

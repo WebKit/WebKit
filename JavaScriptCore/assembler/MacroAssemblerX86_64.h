@@ -45,6 +45,7 @@ public:
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
+    using MacroAssemblerX86Common::call;
 
     void add32(Imm32 imm, AbsoluteAddress address)
     {
@@ -77,6 +78,30 @@ public:
         move(scratchRegister, X86::eax);
     }
 
+    Call call()
+    {
+        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
+        ASSERT(differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
+        return result;
+    }
+
+    Call tailRecursiveCall()
+    {
+        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
+        ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        return Call::fromTailJump(newJump);
+    }
+
+    Call makeTailRecursiveCall(Jump oldJump)
+    {
+        oldJump.link(this);
+        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
+        ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        return Call::fromTailJump(newJump);
+    }
 
 
     void addPtr(RegisterID src, RegisterID dest)
@@ -326,24 +351,27 @@ public:
         return Jump(m_assembler.jCC(cond));
     }
 
+    DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
+    {
+        m_assembler.movq_i64r(initialValue.asIntptr(), dest);
+        return DataLabelPtr(this);
+    }
+
     Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
     {
-        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
+        dataLabel = moveWithPatch(initialRightValue, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
 
     Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
     {
-        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
+        dataLabel = moveWithPatch(initialRightValue, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
 
     DataLabelPtr storePtrWithPatch(Address address)
     {
-        m_assembler.movq_i64r(0, scratchRegister);
-        DataLabelPtr label(this);
+        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
         storePtr(scratchRegister, address);
         return label;
     }

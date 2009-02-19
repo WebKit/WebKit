@@ -529,14 +529,14 @@ public:
         m_assembler.int3();
     }
 
-    Call call()
+    Call nearCall()
     {
-        return Call(m_assembler.call(), true);
+        return Call(m_assembler.call(), Call::LinkableNear);
     }
 
     Call call(RegisterID target)
     {
-        return Call(m_assembler.call(target), false);
+        return Call(m_assembler.call(target), Call::None);
     }
 
     void ret()

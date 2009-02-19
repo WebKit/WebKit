@@ -210,6 +210,11 @@ void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAd
     returnAddress.relinkCallerToFunction(newCalleeFunction);
 }
 
+void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction)
+{
+    returnAddress.relinkNearCallerToFunction(newCalleeFunction);
+}
+
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
@@ -1723,30 +1728,22 @@ void JIT::privateCompile()
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         patchBuffer.patch(iter->storeLocation, patchBuffer.locationOf(iter->target).addressForJSR());
 
+#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
-#else
-        info.callReturnLocation = 0;
-        info.hotPathBegin = 0;
-#endif
     }
+#endif
+#if ENABLE(JIT_OPTIMIZE_CALL)
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-#if ENABLE(JIT_OPTIMIZE_CALL)
-        info.callReturnLocation = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].callReturnLocation);
+        info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
-        info.hotPathOther = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathOther);
+        info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
         info.coldPathOther = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].coldPathOther);
-#else
-        info.callReturnLocation = 0;
-        info.hotPathBegin = 0;
-        info.hotPathOther = 0;
-        info.coldPathOther = 0;
-#endif
     }
+#endif
 
     m_codeBlock->setJITCode(codeRef);
 }
@@ -1905,18 +1902,27 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     jump(regT0);
 
+#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+    Call array_failureCases1Call = makeTailRecursiveCall(array_failureCases1);
+    Call array_failureCases2Call = makeTailRecursiveCall(array_failureCases2);
+    Call array_failureCases3Call = makeTailRecursiveCall(array_failureCases3);
+    Call string_failureCases1Call = makeTailRecursiveCall(string_failureCases1);
+    Call string_failureCases2Call = makeTailRecursiveCall(string_failureCases2);
+    Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
+#endif
+
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
     m_interpreter->m_executablePool = m_globalData->poolForSize(m_assembler.size());
     void* code = m_assembler.executableCopy(m_interpreter->m_executablePool.get());
     PatchBuffer patchBuffer(code);
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    patchBuffer.linkTailRecursive(array_failureCases1, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.linkTailRecursive(array_failureCases2, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.linkTailRecursive(array_failureCases3, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.linkTailRecursive(string_failureCases1, Interpreter::cti_op_get_by_id_string_fail);
-    patchBuffer.linkTailRecursive(string_failureCases2, Interpreter::cti_op_get_by_id_string_fail);
-    patchBuffer.linkTailRecursive(string_failureCases3, Interpreter::cti_op_get_by_id_string_fail);
+    patchBuffer.link(array_failureCases1Call, Interpreter::cti_op_get_by_id_array_fail);
+    patchBuffer.link(array_failureCases2Call, Interpreter::cti_op_get_by_id_array_fail);
+    patchBuffer.link(array_failureCases3Call, Interpreter::cti_op_get_by_id_array_fail);
+    patchBuffer.link(string_failureCases1Call, Interpreter::cti_op_get_by_id_string_fail);
+    patchBuffer.link(string_failureCases2Call, Interpreter::cti_op_get_by_id_string_fail);
+    patchBuffer.link(string_failureCases3Call, Interpreter::cti_op_get_by_id_string_fail);
 
     m_interpreter->m_ctiArrayLengthTrampoline = patchBuffer.trampolineAt(arrayLengthBegin);
     m_interpreter->m_ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);

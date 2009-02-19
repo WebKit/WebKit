@@ -4058,7 +4058,6 @@ NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBloc
     stubInfo->initPutByIdReplace(structure);
 
 #if USE(CTI_REPATCH_PIC)
-    UNUSED_PARAM(callFrame);
     JIT::patchPutByIdReplace(stubInfo, structure, slot.cachedOffset(), returnAddress);
 #else
     JIT::compilePutByIdReplace(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress);
@@ -4827,7 +4826,7 @@ void* Interpreter::cti_vm_dontLazyLinkCall(STUB_ARGS)
     if (!codeBlock->jitCode())
         JIT::compile(ARG_globalData, codeBlock);
 
-    ctiPatchCallByReturnAddress(ARG_returnAddress2, ARG_globalData->interpreter->m_ctiVirtualCallLink);
+    ctiPatchNearCallByReturnAddress(ARG_returnAddress2, ARG_globalData->interpreter->m_ctiVirtualCallLink);
 
     return codeBlock->jitCode().addressForCall();
 }

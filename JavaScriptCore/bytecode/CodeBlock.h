@@ -123,9 +123,9 @@ namespace JSC {
         }
     
         unsigned bytecodeIndex;
-        MacroAssembler::CodeLocationCall callReturnLocation;
+        MacroAssembler::CodeLocationNearCall callReturnLocation;
         MacroAssembler::CodeLocationDataLabelPtr hotPathBegin;
-        MacroAssembler::CodeLocationCall hotPathOther;
+        MacroAssembler::CodeLocationNearCall hotPathOther;
         MacroAssembler::CodeLocationLabel coldPathOther;
         CodeBlock* callee;
         unsigned position;

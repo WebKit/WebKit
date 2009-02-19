@@ -265,38 +265,37 @@ public:
         template<class AssemblerType_T>
         friend class AbstractMacroAssembler;
     public:
+        enum Flags {
+            None = 0x0,
+            Linkable = 0x1,
+            Near = 0x2,
+            LinkableNear = 0x3,
+        };
+
         Call()
+            : m_flags(None)
         {
         }
         
-        Call(JmpSrc jmp, bool isRelative)
+        Call(JmpSrc jmp, Flags flags)
             : m_jmp(jmp)
-#ifndef NDEBUG
-            , isRelative(isRelative)
-#endif
+            , m_flags(flags)
         {
-#ifdef NDEBUG
-#pragma unused(isRelative)
-#endif
         }
-        
-        void link(AbstractMacroAssembler<AssemblerType>* masm)
+
+        bool isFlagSet(Flags flag)
         {
-            ASSERT(isRelative);
-            masm->m_assembler.link(m_jmp, masm->m_assembler.label());
+            return m_flags & flag;
         }
-        
-        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
+
+        static Call fromTailJump(Jump jump)
         {
-            ASSERT(isRelative);
-            masm->m_assembler.link(m_jmp, label.m_label);
+            return Call(jump.m_jmp, Linkable);
         }
 
     private:
         JmpSrc m_jmp;
-#ifndef NDEBUG
-        bool isRelative;
-#endif
+        Flags m_flags;
     };
 
     // Jump:
@@ -309,6 +308,7 @@ public:
         friend class PatchBuffer;
         template<class AssemblerType_T>
         friend class AbstractMacroAssembler;
+        friend class Call;
     public:
         Jump()
         {
@@ -321,12 +321,12 @@ public:
         
         void link(AbstractMacroAssembler<AssemblerType>* masm)
         {
-            masm->m_assembler.link(m_jmp, masm->m_assembler.label());
+            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
         }
         
         void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
         {
-            masm->m_assembler.link(m_jmp, label.m_label);
+            masm->m_assembler.linkJump(m_jmp, label.m_label);
         }
 
     private:
@@ -460,7 +460,7 @@ public:
 
         void relink(CodeLocationLabel destination)
         {
-            AssemblerType::patchBranchOffset(reinterpret_cast<intptr_t>(this->m_location), destination.m_location);
+            AssemblerType::patchJump(reinterpret_cast<intptr_t>(this->m_location), destination.m_location);
         }
 
     private:
@@ -484,7 +484,7 @@ public:
         template<typename FunctionSig>
         void relink(FunctionSig* function)
         {
-            AssemblerType::patchBranchOffset(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(function));
+            AssemblerType::patchMacroAssemblerCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(function));
         }
 
         // This methods returns the value that will be set as the return address
@@ -496,6 +496,37 @@ public:
 
     private:
         explicit CodeLocationCall(void* location)
+            : CodeLocationCommon(location)
+        {
+        }
+    };
+
+    // CodeLocationNearCall:
+    //
+    // A point in the JIT code at which there is a call instruction with near linkage.
+    class CodeLocationNearCall : public CodeLocationCommon {
+        friend class CodeLocationCommon;
+        friend class PatchBuffer;
+    public:
+        CodeLocationNearCall()
+        {
+        }
+
+        template<typename FunctionSig>
+        void relink(FunctionSig* function)
+        {
+            AssemblerType::patchCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(function));
+        }
+
+        // This methods returns the value that will be set as the return address
+        // within a function that has been called from this call instruction.
+        void* calleeReturnAddressValue()
+        {
+            return this->m_location;
+        }
+
+    private:
+        explicit CodeLocationNearCall(void* location)
             : CodeLocationCommon(location)
         {
         }
@@ -560,7 +591,13 @@ public:
         template<typename FunctionSig>
         void relinkCallerToFunction(FunctionSig* newCalleeFunction)
         {
-            AssemblerType::patchBranchOffset(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(newCalleeFunction));
+            AssemblerType::patchMacroAssemblerCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(newCalleeFunction));
+        }
+        
+        template<typename FunctionSig>
+        void relinkNearCallerToFunction(FunctionSig* newCalleeFunction)
+        {
+            AssemblerType::patchCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(newCalleeFunction));
         }
         
         operator void*()
@@ -615,31 +652,42 @@ public:
         template<typename FunctionSig>
         void link(Call call, FunctionSig* function)
         {
-            AssemblerType::link(m_code, call.m_jmp, reinterpret_cast<void*>(function));
+            ASSERT(call.isFlagSet(Call::Linkable));
+#if PLATFORM(X86_64)
+            if (call.isFlagSet(Call::Near)) {
+                AssemblerType::linkCall(m_code, call.m_jmp, reinterpret_cast<void*>(function));
+            } else {
+                intptr_t callLocation = reinterpret_cast<intptr_t>(AssemblerType::getRelocatedAddress(m_code, call.m_jmp));
+                AssemblerType::patchMacroAssemblerCall(callLocation, reinterpret_cast<void*>(function));
+            }
+#else
+            AssemblerType::linkCall(m_code, call.m_jmp, reinterpret_cast<void*>(function));
+#endif
         }
         
         template<typename FunctionSig>
         void linkTailRecursive(Jump jump, FunctionSig* function)
         {
-            AssemblerType::link(m_code, jump.m_jmp, reinterpret_cast<void*>(function));
+            AssemblerType::linkJump(m_code, jump.m_jmp, reinterpret_cast<void*>(function));
         }
 
         template<typename FunctionSig>
         void linkTailRecursive(JumpList list, FunctionSig* function)
         {
-            for (unsigned i = 0; i < list.m_jumps.size(); ++i)
-                AssemblerType::link(m_code, list.m_jumps[i].m_jmp, reinterpret_cast<void*>(function));
+            for (unsigned i = 0; i < list.m_jumps.size(); ++i) {
+                AssemblerType::linkJump(m_code, list.m_jumps[i].m_jmp, reinterpret_cast<void*>(function));
+            }
         }
 
         void link(Jump jump, CodeLocationLabel label)
         {
-            AssemblerType::link(m_code, jump.m_jmp, label.m_location);
+            AssemblerType::linkJump(m_code, jump.m_jmp, label.m_location);
         }
 
         void link(JumpList list, CodeLocationLabel label)
         {
             for (unsigned i = 0; i < list.m_jumps.size(); ++i)
-                AssemblerType::link(m_code, list.m_jumps[i].m_jmp, label.m_location);
+                AssemblerType::linkJump(m_code, list.m_jumps[i].m_jmp, label.m_location);
         }
 
         void patch(DataLabelPtr label, void* value)
@@ -651,8 +699,16 @@ public:
 
         CodeLocationCall locationOf(Call call)
         {
-            ASSERT(call.isRelative);
+            ASSERT(call.isFlagSet(Call::Linkable));
+            ASSERT(!call.isFlagSet(Call::Near));
             return CodeLocationCall(AssemblerType::getRelocatedAddress(m_code, call.m_jmp));
+        }
+
+        CodeLocationNearCall locationOfNearCall(Call call)
+        {
+            ASSERT(call.isFlagSet(Call::Linkable));
+            ASSERT(call.isFlagSet(Call::Near));
+            return CodeLocationNearCall(AssemblerType::getRelocatedAddress(m_code, call.m_jmp));
         }
 
         CodeLocationLabel locationOf(Label label)
@@ -731,6 +787,11 @@ public:
     }
 
     ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
+    }
+
+    ptrdiff_t differenceBetween(DataLabelPtr from, Call to)
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
     }

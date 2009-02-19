@@ -206,6 +206,7 @@ namespace JSC {
 
     void ctiSetReturnAddress(void** addressOfReturnAddress, void* newDestinationToReturnTo);
     void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
+    void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
 
     class JIT : private MacroAssembler {
         using MacroAssembler::Jump;
@@ -284,9 +285,9 @@ namespace JSC {
         static const int patchOffsetGetByIdPropertyMapOffset = 31;
         static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int patchOffsetGetByIdSlowCaseCall = 53 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 61 + ctiArgumentInitSize;
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 30 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 38 + ctiArgumentInitSize;
 #endif
         static const int patchOffsetOpCallCompareToJump = 9;
 #else
@@ -512,7 +513,6 @@ namespace JSC {
         void restoreArgumentReference();
         void restoreArgumentReferenceForTrampoline();
 
-        Call emitNakedCall(RegisterID);
         Call emitNakedCall(void* function);
         Call emitCTICall_internal(void*);
         Call emitCTICall(CTIHelper_j helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }

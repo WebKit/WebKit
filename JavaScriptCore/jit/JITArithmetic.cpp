@@ -663,13 +663,13 @@ void JIT::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
     emitPutVirtualRegister(dst);
     *wroteJSNumberCell = __ jmp();
 
-    __ link(resultIsImm, __ label());
+    __ linkJump(resultIsImm, __ label());
     // value == (double)(JSImmediate)value... or at least, it looks that way...
     // ucomi will report that (0 == -0), and will report true if either input in NaN (result is unordered).
-    __ link(__ jp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
+    __ linkJump(__ jp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
     __ pextrw_irr(3, xmmSource, tempReg2);
     __ cmpl_ir(0x8000, tempReg2);
-    __ link(__ je(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
+    __ linkJump(__ je(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
     // Yes it really really really is representable as a JSImmediate.
     emitFastArithIntToImmNoCheck(tempReg1, X86::eax);
     emitPutVirtualRegister(dst);
@@ -711,11 +711,11 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
         JmpSrc loadedDouble = __ jmp();
         // (1b) if we get here, src1 is an immediate
-        __ link(op1imm, __ label());
+        __ linkJump(op1imm, __ label());
         emitFastArithImmToInt(X86::eax);
         __ cvtsi2sd_rr(X86::eax, X86::xmm0);
         // (1c) 
-        __ link(loadedDouble, __ label());
+        __ linkJump(loadedDouble, __ label());
         if (opcodeID == op_add)
             __ addsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm0);
         else if (opcodeID == op_sub)
@@ -730,7 +730,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
         // (2) This handles cases where src2 is an immediate number.
         //     Two slow cases - either src1 isn't an immediate, or the subtract overflows.
-        __ link(op2imm, __ label());
+        __ linkJump(op2imm, __ label());
         emitJumpSlowCaseIfNotImmediateInteger(X86::eax);
     } else if (types.first().isReusable() && isSSE2Present()) {
         ASSERT(types.first().mightBeNumber());
@@ -758,11 +758,11 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm1);
         JmpSrc loadedDouble = __ jmp();
         // (1b) if we get here, src2 is an immediate
-        __ link(op2imm, __ label());
+        __ linkJump(op2imm, __ label());
         emitFastArithImmToInt(X86::edx);
         __ cvtsi2sd_rr(X86::edx, X86::xmm1);
         // (1c) 
-        __ link(loadedDouble, __ label());
+        __ linkJump(loadedDouble, __ label());
         __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
         if (opcodeID == op_add)
             __ addsd_rr(X86::xmm1, X86::xmm0);
@@ -780,7 +780,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
         // (2) This handles cases where src1 is an immediate number.
         //     Two slow cases - either src2 isn't an immediate, or the subtract overflows.
-        __ link(op1imm, __ label());
+        __ linkJump(op1imm, __ label());
         emitJumpSlowCaseIfNotImmediateInteger(X86::edx);
     } else
         emitJumpSlowCaseIfNotImmediateIntegers(X86::eax, X86::edx, X86::ecx);
@@ -808,7 +808,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         __ addl_rr(X86::edx, X86::ecx);
         addSlowCase(__ js());
         // Skip the above check if neither input is zero
-        __ link(op2NonZero, __ label());
+        __ linkJump(op2NonZero, __ label());
         __ imull_rr(X86::edx, X86::eax);
         addSlowCase(__ jo());
         signExtend32ToPtr(X86::eax, X86::eax);
@@ -817,12 +817,12 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
     emitPutVirtualRegister(dst);
 
     if (types.second().isReusable() && isSSE2Present()) {
-        __ link(wasJSNumberCell2, __ label());
-        __ link(wasJSNumberCell2b, __ label());
+        __ linkJump(wasJSNumberCell2, __ label());
+        __ linkJump(wasJSNumberCell2b, __ label());
     }
     else if (types.first().isReusable() && isSSE2Present()) {
-        __ link(wasJSNumberCell1, __ label());
-        __ link(wasJSNumberCell1b, __ label());
+        __ linkJump(wasJSNumberCell1, __ label());
+        __ linkJump(wasJSNumberCell1b, __ label());
     }
 }
 
