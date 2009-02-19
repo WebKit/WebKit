@@ -29,6 +29,10 @@
 
 #import "MediaPlayerPrivateQTKit.h"
 
+#ifdef BUILDING_ON_TIGER
+#import "AutodrainedPool.h"
+#endif
+
 #import "BlockExceptions.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
@@ -787,6 +791,10 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     context->scale(FloatSize(1.0f, -1.0f));
     context->setImageInterpolationQuality(InterpolationLow);
     IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
+    
+#ifdef BUILDING_ON_TIGER
+    AutodrainedPool pool;
+#endif
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
 
     // draw the current video frame
