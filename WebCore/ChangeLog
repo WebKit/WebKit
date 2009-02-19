@@ -1,3 +1,48 @@
+2009-02-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23980: WorkerRunLoop needs a way to run in a given mode similar to CFRunLoopInMode.
+        <https://bugs.webkit.org/show_bug.cgi?id=23980>
+
+        WorkerRunLoop has the ability to run in a mode which filters the tasks to be run.
+        * When WorkerRunLoop::runInMode is called, only task for that mode will run.
+        * When WorkerRunLoop::run is called (or the default mode is used), then all tasks
+          will run regardless of their posted mode.
+
+        Here's a demonstration of the api:
+
+            RefPtr<NameResolution> nameResolution = NameResolution::create(workerRunLoop);
+
+            //  Internally nameResolution will do workerRunLoop.postTaskForMode(task, "MyCoolMode")
+            //  for any tasks that need to be run during this loop.
+            nameResolution->setTaskMode("MyCoolMode");
+
+            nameResolution->start();
+            while (!nameResolution->done()) {
+                // Only tasks which are posted for "MyCoolMode" will run.
+                workerRunLoop.runInMode(context, "MyCoolMode");
+            }
+
+        No observable change in behavior, so no test.
+
+        * dom/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::ModePredicate):
+        (WebCore::ModePredicate::operator()):
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        (WebCore::WorkerRunLoop::~WorkerRunLoop):
+        (WebCore::WorkerRunLoop::setSharedTimer):
+        (WebCore::WorkerRunLoop::resetSharedTimer):
+        (WebCore::WorkerRunLoop::run):
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::postTask):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        * dom/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::Task::create):
+        (WebCore::WorkerRunLoop::Task::mode):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        (WebCore::WorkerRunLoop::Task::Task):
+
 2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -64,44 +64,135 @@ private:
     double m_nextFireTime;
 };
 
+class WorkerRunLoop::Task : public RefCounted<Task> {
+public:
+    static PassRefPtr<Task> create(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
+    {
+        return adoptRef(new Task(task, mode));
+    }
+
+    const String& mode() const { return m_mode; }
+    void performTask(ScriptExecutionContext* context) { m_task->performTask(context); }
+
+private:
+    Task(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
+        : m_task(task)
+        , m_mode(mode.copy())
+    {
+    }
+
+    RefPtr<ScriptExecutionContext::Task> m_task;
+    String m_mode;
+};
+
+class ModePredicate {
+public:
+    ModePredicate(const String& mode)
+        : m_mode(mode)
+        , m_defaultMode(mode == WorkerRunLoop::defaultMode())
+    {
+    }
+
+    bool isDefaultMode() const
+    {
+        return m_defaultMode;
+    }
+
+    bool operator()(PassRefPtr<WorkerRunLoop::Task> task)
+    {
+        return m_defaultMode || m_mode == task->mode();
+    }
+
+private:
+    String m_mode;
+    bool m_defaultMode;
+};
+
 WorkerRunLoop::WorkerRunLoop()
     : m_sharedTimer(new WorkerSharedTimer)
+    , m_nestedCount(0)
 {
 }
 
 WorkerRunLoop::~WorkerRunLoop()
 {
+    ASSERT(!m_nestedCount);
 }
 
+String WorkerRunLoop::defaultMode()
+{
+    return String();
+}
+
+class RunLoopSetup : Noncopyable
+{
+public:
+    RunLoopSetup(WorkerRunLoop& runLoop)
+        : m_runLoop(runLoop)
+    {
+        if (!m_runLoop.m_nestedCount)
+            threadGlobalData().threadTimers().setSharedTimer(m_runLoop.m_sharedTimer.get());
+        m_runLoop.m_nestedCount++;
+    }
+
+    ~RunLoopSetup()
+    {
+        m_runLoop.m_nestedCount--;
+        if (!m_runLoop.m_nestedCount)
+            threadGlobalData().threadTimers().setSharedTimer(0);
+    }
+private:
+    WorkerRunLoop& m_runLoop;
+};
+
 void WorkerRunLoop::run(WorkerContext* context)
+{
+    RunLoopSetup setup(*this);
+    ModePredicate modePredicate(defaultMode());
+    MessageQueueWaitResult result;
+    do {
+        result = runInMode(context, modePredicate);
+    } while (result != MessageQueueTerminated);
+}
+
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const String& mode)
+{
+    RunLoopSetup setup(*this);
+    ModePredicate modePredicate(mode);
+    MessageQueueWaitResult result = runInMode(context, modePredicate);
+    return result;
+}
+
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, ModePredicate& predicate)
 {
     ASSERT(context);
     ASSERT(context->thread());
     ASSERT(context->thread()->threadID() == currentThread());
 
-    threadGlobalData().threadTimers().setSharedTimer(m_sharedTimer.get());
-
-    while (true) {
-        RefPtr<ScriptExecutionContext::Task> task;
-        MessageQueueWaitResult result;
-
+    RefPtr<Task> task;
+    MessageQueueWaitResult result;
+    if (predicate.isDefaultMode()) {
         if (m_sharedTimer->isActive())
             result = m_messageQueue.waitForMessageTimed(task, m_sharedTimer->fireTime());
         else
-            result = (m_messageQueue.waitForMessage(task) ? MessageQueueMessageReceived : MessageQueueTerminated);
+            result = m_messageQueue.waitForMessage(task) ? MessageQueueMessageReceived : MessageQueueTerminated;
+    } else
+        result = m_messageQueue.waitForMessageFiltered(task, predicate);
 
-        if (result == MessageQueueTerminated)
-            break;
-        
-        if (result == MessageQueueMessageReceived)
-            task->performTask(context);
-        else {
-            ASSERT(result == MessageQueueTimeout);
-            m_sharedTimer->fire();
-        }
+    switch (result) {
+    case MessageQueueTerminated:
+        break;
+
+    case MessageQueueMessageReceived:
+        task->performTask(context);
+        break;
+
+    case MessageQueueTimeout:
+        m_sharedTimer->fire();
+        break;
     }
 
-    threadGlobalData().threadTimers().setSharedTimer(0);
+    return result;
 }
 
 void WorkerRunLoop::terminate()
@@ -111,7 +202,12 @@ void WorkerRunLoop::terminate()
 
 void WorkerRunLoop::postTask(PassRefPtr<ScriptExecutionContext::Task> task)
 {
-    m_messageQueue.append(task);
+    postTaskForMode(task, defaultMode());
+}
+
+void WorkerRunLoop::postTaskForMode(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
+{
+    m_messageQueue.append(Task::create(task, mode.copy()));
 }
 
 } // namespace WebCore
