@@ -1,3 +1,13 @@
+2009-02-19  Jay Campan  <jcampan@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23959
+        LayoutTests/fast/dom/navigator-detached-no-crash.html may fail with other JS engines.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/navigator-detached-no-crash.html:
+
 2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Dave Hyatt.

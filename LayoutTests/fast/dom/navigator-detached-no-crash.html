@@ -5,8 +5,11 @@ if (window.layoutTestController) {
   layoutTestController.waitUntilDone();
 }
 
-function log(msg) {
-  document.getElementById('result').innerHTML += msg + '<br>';
+function log(strings) {
+  var node = document.getElementById('result');
+  for (var i in strings) {
+    node.innerHTML += strings[i] + '<br>';
+  }
 }
 
 function gc()
@@ -47,17 +50,20 @@ function check_navigator_and_done() {
 }
 
 function check_navigator() {
+  var strings = [ ];
   for (p in old_nav) {
     if (typeof old_nav[p] == 'function') {
       var v = old_nav[p]();
       // no crash, it is ok
-      log("navigator."+p+"() is OK");
+      strings.push("navigator."+p+"() is OK");
     } else {
       var v = old_nav[p];
       // no crash, it is ok.
-      log("navigator."+p+" is OK");
+      strings.push("navigator."+p+" is OK");
     }
   }
+  strings.sort();
+  log(strings);
 }
 
 </script>
