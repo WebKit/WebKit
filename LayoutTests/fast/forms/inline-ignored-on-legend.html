@@ -3,6 +3,11 @@
 	<style>
         * {margin:0;padding:0}
 	</style>
+	<script>
+	    if (window.layoutTestController) {
+	        layoutTestController.dumpAsText();
+	    }
+	</script>
 </head>
 <body>
 	<form style="float:left">
@@ -11,6 +16,10 @@
 			<input style="width:80px">
 		</fieldset>
 	</form>
-	<div style="float:left;width:100%"></div>
+	<div style="float:left;width:100%">
+	   This test confirms that <kbd>legend</kbd> element can not be made inline.
+	   Succeeds if this message is visible and there's no <code>ASSERT</code> in
+	   debug build.
+	</div>
 </body>
 </html>

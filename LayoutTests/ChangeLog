@@ -1,3 +1,16 @@
+2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24012
+        Convert inline-ignored-on-legend to text-only test.
+
+        * fast/forms/inline-ignored-on-legend-expected.txt: Added.
+        * fast/forms/inline-ignored-on-legend.html: Changed to text-only.
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.checksum: Removed.
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.png: Removed.
+        * platform/mac/fast/forms/inline-ignored-on-legend-expected.txt: Removed.
+
 2009-02-17  Peter Abrahamsen  <rainhead@gmail.com>
 
         Reviewed by Sam Weinig.

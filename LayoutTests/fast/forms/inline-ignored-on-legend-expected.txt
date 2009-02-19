@@ -1,0 +1,3 @@
+Member Login:
+
+This test confirms that legend element can not be made inline. Succeeds if this message is visible and there's no ASSERT in debug build.
