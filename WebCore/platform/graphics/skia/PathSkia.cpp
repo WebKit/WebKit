@@ -274,7 +274,7 @@ static FloatRect boundingBoxForCurrentStroke(const GraphicsContext* context)
     SkPaint paint;
     context->platformContext()->setupPaintForStroking(&paint, 0, 0);
     SkPath boundingPath;
-    paint.getFillPath(context->platformContext()->currentPath(), &boundingPath);
+    paint.getFillPath(context->platformContext()->currentPathInLocalCoordinates(), &boundingPath);
     SkRect r;
     boundingPath.computeBounds(&r, SkPath::kExact_BoundsType);
     return r;

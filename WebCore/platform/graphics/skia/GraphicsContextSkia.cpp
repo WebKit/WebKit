@@ -1072,7 +1072,7 @@ void GraphicsContext::strokePath()
     if (paintingDisabled())
         return;
 
-    const SkPath& path = *platformContext()->currentPathInLocalCoordinates();
+    SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
