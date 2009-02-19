@@ -1,3 +1,15 @@
+2009-02-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23976: MessageQueue needs a way to wait for a message that satisfies an arbitrary criteria.
+        <https://bugs.webkit.org/show_bug.cgi?id=23976>
+
+        * wtf/Deque.h:
+        (WTF::Deque<T>::findIf):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue<T>::waitForMessageFiltered):
+
 2009-02-18  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

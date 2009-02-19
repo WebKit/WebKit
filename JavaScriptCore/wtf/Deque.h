@@ -81,6 +81,9 @@ namespace WTF {
 
         void clear();
 
+        template<typename Predicate>
+        iterator findIf(Predicate&);
+
     private:
         friend class DequeIteratorBase<T>;
 
@@ -353,7 +356,7 @@ namespace WTF {
         destroyAll();
     }
 
-    template <typename T>
+    template<typename T>
     inline void Deque<T>::swap(Deque<T>& other)
     {
         checkValidity();
@@ -366,7 +369,7 @@ namespace WTF {
         other.checkValidity();
     }
 
-    template <typename T>
+    template<typename T>
     inline void Deque<T>::clear()
     {
         checkValidity();
@@ -375,6 +378,18 @@ namespace WTF {
         m_start = 0;
         m_end = 0;
         checkValidity();
+    }
+
+    template<typename T>
+    template<typename Predicate>
+    inline DequeIterator<T> Deque<T>::findIf(Predicate& predicate)
+    {
+        iterator end_iterator = end();
+        for (iterator it = begin(); it != end_iterator; ++it) {
+            if (predicate(*it))
+                return it;
+        }
+        return end_iterator;
     }
 
     template<typename T>
