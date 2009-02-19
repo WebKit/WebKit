@@ -1,3 +1,12 @@
+2009-02-19  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber-stamped by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=22811
+        Underlinking in Programs_UnitTests (GTK+ build)
+
+        * GNUmakefile.am: Add GLIB_LIBS to unit test library flags.
+
 2009-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
