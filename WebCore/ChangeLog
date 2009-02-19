@@ -1,3 +1,23 @@
+2009-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        Call documentWillBecomeInactive() from Document::detach to ensure that
+        media elements are shut down, because they may be kept alive by references
+        from JS past document teardown.
+        
+        documentWillBecomeInactive() calls  renderView()->willMoveOffscreen(), so no
+        need to do that in detach() as well.
+        
+        We no longer need to call documentWillBecomeInactive() from ~Page() (which
+        was added for <https://bugs.webkit.org/show_bug.cgi?id=21116>), since this
+        supersedes that change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

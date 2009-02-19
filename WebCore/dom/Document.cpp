@@ -1290,11 +1290,10 @@ void Document::detach()
     
     RenderObject* render = renderer();
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (render)
-        renderView()->willMoveOffscreen();
-#endif
-
+    // Send out documentWillBecomeInactive() notifications to registered elements,
+    // in order to stop media elements
+    documentWillBecomeInactive();
+    
     // indicate destruction mode,  i.e. attached() but renderer == 0
     setRenderer(0);
     

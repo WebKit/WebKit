@@ -154,10 +154,9 @@ Page::~Page()
     setGroupName(String());
     allPages->remove(this);
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        frame->document()->documentWillBecomeInactive();
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->pageDestroyed();
-    }
+
     m_editorClient->pageDestroyed();
     if (m_parentInspectorController)
         m_parentInspectorController->pageDestroyed();
