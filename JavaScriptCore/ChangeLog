@@ -1,3 +1,20 @@
+2009-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Simplified .call and .apply in preparation for optimizing them. Also,
+        a little cleanup.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall): No need to do any specific conversion on
+        'this' -- op_convert_this will do it if necessary.
+
+        * runtime/JSImmediate.cpp:
+        (JSC::JSImmediate::toThisObject): Slightly relaxed the rules on
+        toThisObject to allow for 'undefined', which can be passed through
+        .call and .apply.
+
 2009-02-19  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -39,12 +39,8 @@ JSObject* JSImmediate::toThisObject(JSValuePtr v, ExecState* exec)
         return constructNumber(exec, v);
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, v);
-    if (v.isNull())
-        return exec->globalThisValue();
-    
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
-    exec->setException(exception);
-    return new (exec) JSNotAnObject(exec, exception);
+    ASSERT(v.isUndefinedOrNull());
+    return exec->globalThisValue();
 }
 
 JSObject* JSImmediate::toObject(JSValuePtr v, ExecState* exec)
