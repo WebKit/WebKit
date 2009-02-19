@@ -1,3 +1,35 @@
+2009-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - WebCore part of fixing <rdar://problem/6507512> Crash in iChat at CSSStyleSelector::adjustRenderStyle
+
+        The crash results from re-entry into
+        CSSMutableStyleDeclaration::setCssText, which in turn is caused by
+        the first style change causing a cached image to load from the memory
+        cache, causing load delegate dispatch, and iChat's delegate method
+        calling back into WebKit.
+
+        The workaround is to use defer delegate callbacks for memory cache. In
+        this case, deferring callbacks during image load event dispatch was
+        found to be sufficient.
+
+        The crash is a regression. See also the discussion in
+        <https://bugs.webkit.org/show_bug.cgi?id=22521>.
+
+        * WebCore.base.exp: Added
+        Settings::setNeedsIChatMemoryCacheCallsQuirk().
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchImageLoadEventsNow): If the quirk is
+        enabled, defer memory cache callbacks during image load event dispatch.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize
+        m_needsIChatMemoryCacheCallsQuirk.
+        (WebCore::Settings::setNeedsIChatMemoryCacheCallsQuirk): Added this
+        setter.
+        * page/Settings.h:
+        (WebCore::Settings::needsIChatMemoryCacheCallsQuirk): Added this getter.
+
 2009-02-18  Adam Roben  <aroben@apple.com>
 
         Export WebCore::handCursor and Cursor.h

@@ -1,3 +1,13 @@
+2009-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - WebKit part of fixing <rdar://problem/6507512> Crash in iChat at CSSStyleSelector::adjustRenderStyle
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Activate the WebCore
+        workaround for this crash in iChat.
+
 2009-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

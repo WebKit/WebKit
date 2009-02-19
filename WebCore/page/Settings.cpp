@@ -87,6 +87,7 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInStrictMode(true)
     , m_maximumDecodedImageSize(std::numeric_limits<size_t>::max())
     , m_allowScriptsToCloseWindows(false)
+    , m_needsIChatMemoryCacheCallsQuirk(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -415,6 +416,11 @@ void Settings::setShouldPaintNativeControls(bool shouldPaintNativeControls)
 void Settings::setAllowScriptsToCloseWindows(bool allowScriptsToCloseWindows)
 {
     m_allowScriptsToCloseWindows = allowScriptsToCloseWindows;
+}
+
+void Settings::setNeedsIChatMemoryCacheCallsQuirk(bool needsIChatMemoryCacheCallsQuirk)
+{
+    m_needsIChatMemoryCacheCallsQuirk = needsIChatMemoryCacheCallsQuirk;
 }
 
 } // namespace WebCore
