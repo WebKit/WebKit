@@ -678,13 +678,13 @@ void KURL::setPort(unsigned short i)
     if (!m_isValid)
         return;
 
-    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
-    // and to avoid changing more than just the port.
+    if (i) {
+        bool colonNeeded = m_portEnd == m_hostEnd;
+        int portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
 
-    bool colonNeeded = m_portEnd == m_hostEnd;
-    int portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
-
-    parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
+        parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
+    } else
+        parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
 }
 
 void KURL::setHostAndPort(const String& hostAndPort)

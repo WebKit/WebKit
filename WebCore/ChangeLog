@@ -1,3 +1,13 @@
+2009-02-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make setPort remove port if 0 is given to it, as promised by the
+        comment in KURL's header.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::setPort):
+
 2009-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.
