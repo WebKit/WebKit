@@ -1,3 +1,22 @@
+2009-02-19  David Hyatt  <hyatt@apple.com>
+
+        Fix a bug where reflections didn't work properly if opacity was < 1.  Make sure that replaced elements
+        also consider reflections to be part of their visual overflow.  This had already been done for blocks
+        and lines, but it wasn't being done yet for replaced elements.
+
+        Also make sure that when the object being reflected has opacity < 1 that we don't end up popping the outer
+        transparency layer early.  Since the reflected object paints twice, we don't want to end the transparency
+        layer it pushed until we're done painting the real object (rather than the reflection).
+
+        Reviewed by Dan Bernstein
+
+        * fast/reflections/reflection-masks-opacity.html: Added.
+        * platform/mac/fast/reflections/reflection-direction-expected.txt:
+        * platform/mac/fast/reflections/reflection-masks-expected.txt:
+        * platform/mac/fast/reflections/reflection-masks-opacity-expected.checksum: Added.
+        * platform/mac/fast/reflections/reflection-masks-opacity-expected.png: Added.
+        * platform/mac/fast/reflections/reflection-masks-opacity-expected.txt: Added.
+
 2009-02-19  Jay Campan  <jcampan@google.com>
 
         Reviewed by Alexey Proskuryakov.

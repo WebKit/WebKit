@@ -73,7 +73,7 @@ protected:
     virtual void intrinsicSizeChanged();
 
     bool shouldPaint(PaintInfo&, int& tx, int& ty);
-    void adjustOverflowForBoxShadow();
+    void adjustOverflowForBoxShadowAndReflect();
     IntRect localSelectionRect(bool checkWhetherSelected = true) const;
 
 private:

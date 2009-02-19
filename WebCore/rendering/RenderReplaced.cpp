@@ -79,7 +79,7 @@ void RenderReplaced::layout()
     
     calcWidth();
     calcHeight();
-    adjustOverflowForBoxShadow();
+    adjustOverflowForBoxShadowAndReflect();
     
     repainter.repaintAfterLayout();    
 
@@ -310,7 +310,7 @@ void RenderReplaced::setIntrinsicSize(const IntSize& size)
     m_intrinsicSize = size;
 }
 
-void RenderReplaced::adjustOverflowForBoxShadow()
+void RenderReplaced::adjustOverflowForBoxShadowAndReflect()
 {
     IntRect overflow;
     for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
@@ -318,6 +318,14 @@ void RenderReplaced::adjustOverflowForBoxShadow()
         shadow.move(boxShadow->x, boxShadow->y);
         shadow.inflate(boxShadow->blur);
         overflow.unite(shadow);
+    }
+
+    // Now that we have an overflow rect including shadow, let's make sure that
+    // the reflection (which can also include the shadow) is also included.
+    if (hasReflection()) {
+        if (overflow.isEmpty())
+            overflow = borderBoxRect();
+        overflow.unite(reflectedRect(overflow));
     }
 
     if (!overflow.isEmpty()) {

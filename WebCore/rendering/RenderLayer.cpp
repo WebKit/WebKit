@@ -2007,7 +2007,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
 
     // End our transparency layer
-    if (haveTransparency && m_usedTransparency) {
+    if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
         p->endTransparencyLayer();
         p->restore();
         m_usedTransparency = false;
