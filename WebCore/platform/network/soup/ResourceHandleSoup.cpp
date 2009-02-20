@@ -604,7 +604,8 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer)
 
 static void readCallback(GObject* source, GAsyncResult* res, gpointer)
 {
-    ResourceHandle* handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
+    // didReceiveData may cancel the load, which may release the last reference.
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
     if (!handle)
         return;
 
@@ -623,7 +624,7 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
     if (error) {
         ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
         cleanupGioOperation(d);
-        client->didFail(handle, resourceError);
+        client->didFail(handle.get(), resourceError);
         return;
     } else if (!nread) {
         g_input_stream_close_async(d->m_input_stream, G_PRIORITY_DEFAULT,
@@ -632,7 +633,12 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
     }
 
     d->m_total += nread;
-    client->didReceiveData(handle, d->m_buffer, nread, d->m_total);
+    client->didReceiveData(handle.get(), d->m_buffer, nread, d->m_total);
+
+    if (d->m_cancelled) {
+        cleanupGioOperation(d);
+        return;
+    }
 
     g_input_stream_read_async(d->m_input_stream, d->m_buffer, d->m_bufsize,
                               G_PRIORITY_DEFAULT, d->m_cancellable,
