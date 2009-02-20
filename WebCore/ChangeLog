@@ -2,6 +2,16 @@
 
         Reviewed by Holger Freyther.
 
+        When dealing with local files, use a path instead of an URI. GFile
+        has problems decoding URIs with percent signs on them.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startGio):
+
+2009-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         Protect the ResourceHandle instance from being destroyed by
         didReceiveData inside the GIO readCallback call, so that
         cancelling caused by scripts is handled correctly.
