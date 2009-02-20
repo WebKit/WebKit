@@ -1160,7 +1160,7 @@ void JIT::privateCompileMainPass()
             isImmediate.link(this);
 
             andPtr(Imm32(~JSImmediate::ExtendedTagBitUndefined), regT0);
-            set32(Equal, regT0, Imm32(JSImmediate::FullTagTypeNull), regT0);
+            setPtr(Equal, regT0, Imm32(JSImmediate::FullTagTypeNull), regT0);
 
             wasNotImmediate.link(this);
 
@@ -1184,7 +1184,7 @@ void JIT::privateCompileMainPass()
             isImmediate.link(this);
 
             andPtr(Imm32(~JSImmediate::ExtendedTagBitUndefined), regT0);
-            set32(NotEqual, regT0, Imm32(JSImmediate::FullTagTypeNull), regT0);
+            setPtr(NotEqual, regT0, Imm32(JSImmediate::FullTagTypeNull), regT0);
 
             wasNotImmediate.link(this);
 

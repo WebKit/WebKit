@@ -1,3 +1,15 @@
+2009-02-20  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark Rowe.
+
+        <rdar://problem/6606660> 2==null returns true in 64bit jit
+
+        Improved equality test to contain all integer values that could
+        appear to be other immediate values if the type tag were ignored.
+
+        * fast/js/equality-expected.txt:
+        * fast/js/resources/equality.js:
+
 2009-02-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

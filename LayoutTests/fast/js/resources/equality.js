@@ -2,7 +2,7 @@ description(
 'Test for equality of many combinations types.'
 );
 
-var values = [ '0', '1', '0.1', '-0', '"0"', '"1"', '"0.1"', '"-0"', 'null', 'undefined', 'false', 'true', 'new String("0")', 'new Object' ];
+var values = [ '0', '1', '0.1', '2', '3', '4', '5', '6', '7', '-0', '"0"', '"1"', '"0.1"', '"-0"', 'null', 'undefined', 'false', 'true', 'new String("0")', 'new Object' ];
 
 var exceptions = [
     '"-0" == false',

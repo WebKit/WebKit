@@ -254,6 +254,15 @@ public:
         return DataLabel32(this);
     }
 
+    void setPtr(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+            m_assembler.testq_rr(left, left);
+        else
+            m_assembler.cmpq_ir(right.m_value, left);
+        m_assembler.setCC_r(cond, dest);
+        m_assembler.movzbl_rr(dest, dest);
+    }
 
     Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
     {

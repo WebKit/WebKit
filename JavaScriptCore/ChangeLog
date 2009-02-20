@@ -1,3 +1,20 @@
+2009-02-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6606660> 2==null returns true in 64bit jit
+
+        Code for op_eq_null and op_neq_null was incorrectly performing
+        a 32bit compare, which truncated the type tag from an integer
+        immediate, leading to incorrect behaviour.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::setPtr):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::setPtr):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2009-02-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
