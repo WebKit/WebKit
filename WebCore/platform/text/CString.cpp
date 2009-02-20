@@ -47,8 +47,8 @@ void CString::init(const char* str, unsigned length)
         return;
     
     m_buffer = CStringBuffer::create(length + 1);
-    memcpy(m_buffer->data(), str, length); 
-    m_buffer->data()[length] = '\0';
+    memcpy(m_buffer->mutableData(), str, length); 
+    m_buffer->mutableData()[length] = '\0';
 }
 
 const char* CString::data() const
@@ -61,7 +61,7 @@ char* CString::mutableData()
     copyBufferIfNeeded();
     if (!m_buffer)
         return 0;
-    return m_buffer->data();
+    return m_buffer->mutableData();
 }
     
 unsigned CString::length() const
@@ -73,7 +73,7 @@ CString CString::newUninitialized(size_t length, char*& characterBuffer)
 {
     CString result;
     result.m_buffer = CStringBuffer::create(length + 1);
-    char* bytes = result.m_buffer->data();
+    char* bytes = result.m_buffer->mutableData();
     bytes[length] = '\0';
     characterBuffer = bytes;
     return result;
@@ -87,7 +87,7 @@ void CString::copyBufferIfNeeded()
     int len = m_buffer->length();
     RefPtr<CStringBuffer> m_temp = m_buffer;
     m_buffer = CStringBuffer::create(len);
-    memcpy(m_buffer->data(), m_temp->data(), len);
+    memcpy(m_buffer->mutableData(), m_temp->data(), len);
 }
 
 bool operator==(const CString& a, const CString& b)
@@ -99,17 +99,4 @@ bool operator==(const CString& a, const CString& b)
     return !strncmp(a.data(), b.data(), min(a.length(), b.length()));
 }
 
-PassRefPtr<SharedBuffer> CString::releaseBuffer()
-{
-    if (!m_buffer)
-        return 0;
-
-    copyBufferIfNeeded();
-        
-    RefPtr<SharedBuffer> result = m_buffer->releaseBuffer();
-    m_buffer = 0;
-    return result.release();
-}
-
-
-}
+} // namespace WebCore

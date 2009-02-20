@@ -1,3 +1,29 @@
+2009-02-19  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24046
+
+        Several improvements to CString:
+        1- Make it possible to initialize a CString from a CStringBuffer
+        2- Make it possible to get a CStringBuffer from a CString
+        3- Change CStringBuffer::data() to return a const pointer to ward off mutation
+        4- Remove unused releaseBuffer() methods.
+        5- Make CStringBuffer::create() private to force consumers to get a CStringBuffer from a CString.
+
+        * platform/text/CString.cpp:
+        (WebCore::CString::init):
+        (WebCore::CString::mutableData):
+        (WebCore::CString::newUninitialized):
+        (WebCore::CString::copyBufferIfNeeded):
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::data):
+        (WebCore::CStringBuffer::length):
+        (WebCore::CStringBuffer::create):
+        (WebCore::CStringBuffer::mutableData):
+        (WebCore::CString::CString):
+        (WebCore::CString::buffer):
+
 2009-02-19  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
