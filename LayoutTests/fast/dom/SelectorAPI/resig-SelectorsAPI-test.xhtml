@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg"
   xml:lang="en" lang="en" dir="ltr" id="html" class="unitTest" title=":root selector">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>selectorTest</title>
   <!-- (c) Disruptive Innovations 2008 -->
-  <style type="text/css">
+  <style type="text/css"><![CDATA[
     /* TEST 0 : BASIC TESTS */
     /* element type selector */
     body { background-color: red; margin: 10px; padding: 10px; color: red; font-family: sans-serif }
@@ -15,7 +15,6 @@
     .unitTest { width: 10px; background-color: red; color: red; margin: 0px; margin-right: 2px; float: left; }
     .test { margin-bottom: 2px; background-color: green; color: green; }
     /* group of selectors */
-    .unitTest, .test { height: 10px; }
 
     .UI > * { float: left }
     .UI { clear: both; height: auto; padding-top: 6px;}
@@ -35,8 +34,10 @@
     .lastOfType > p { background-color: red }
     .empty > .isEmpty { color: red; }
     html { background-color: red; }
-  </style>
-  <style type="text/test" id="test"><![CDATA[
+
+    html.nopass .pass { display: none; }
+  ]]></style>
+  <style type="text/test" id="test">
     /* :target selector */
     .target :target { background-color: lime; }
 
@@ -191,12 +192,12 @@
     .plus .t1, .plus .t2 { background-color: white; }
     .plus .t1 + .unitTest + .unitTest { background-color: lime; }
     .plus .t1:hover + .unitTest + .unitTest { background-color: red; }
-  ]]></style>
+  </style>
   <style type="text/test" id="error">
     .blox16:not(.blox15[foo="blox14"]) { background-color: red; }
 
     /* Tests from http://www.w3.org/Style/CSS/Test/CSS3/Selectors/20060307/html/index.html */
-    div:not(:not(div)) { background-color : red }
+    div:not(:not(div)) { background: red; }
 
     div, { background: red; }
     .5cm { background: red; }
@@ -223,12 +224,16 @@
     .bar. { background: red; color: yellow; }
   </style>
   <script><![CDATA[
-  if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-  }
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
 
 	window.onload = function(){
+		document.getElementById("toggle").onclick = function(){
+			document.documentElement.className = this.checked ? "unitTest nopass" : "unitTest";
+		};
+
         // if ( window.location.hash.indexOf("target") == -1 )
         //  window.location.hash = "#target";
 
@@ -239,96 +244,19 @@
 		var tests = 0, passed = 0;
 		var cache = {};
 
-		var css = document.getElementById("test").firstChild.nodeValue.split("\n");
+		var cssElem = document.getElementById("test");
+		var css = (cssElem.innerHTML || cssElem.textContent || cssElem.innerText).split("\n");
 		for ( var i = 0; i < css.length; i++ ) {
 			css[i] = css[i].replace(/\/\*.*?\*\//g, "")
 				.replace(/^\s*|\s*$/g, "").split(/\s*{/);
 		}
 
-		var ecss = document.getElementById("error").firstChild.nodeValue.split("\n");
+		var ecssElem = document.getElementById("error");
+		var ecss = (ecssElem.innerHTML || ecssElem.textContent || ecssElem.innerText).split("\n");
 		for ( var i = 0; i < ecss.length; i++ ) {
 			ecss[i] = ecss[i].replace(/\/\*.*?\*\//g, "")
 				.replace(/^\s*|\s*$/g, "").split(/\s*{/);
 		}
-
-		var namespaceCheck = {};
-
-		function verifyResolve(ns){
-			if ( namespaceCheck[ns] != null ) {
-		  		namespaceCheck[ns]++;
-			} else if ( ns !== null ) {
-				assert( false, "Unexpected Namespace Resolve: " + ns );
-			}
-		}
-
-		var goodNamespace = [
-			function(ns){
-				verifyResolve(ns);
-				if ( ns === null )
-					return "http://www.w3.org/1999/xhtml";
-				return ({ xHTML: "http://www.w3.org/1999/xhtml", svg: "http://www.w3.org/2000/svg" })[ns];
-			},
-			function(ns){
-				verifyResolve(ns);
-				return ({ xHTML: "http://www.w3.org/1999/xhtml", svg: "http://www.w3.org/2000/svg" })[ns];
-			},
-			function(ns){
-				verifyResolve(ns);
-				if ( ns === null )
-					return "http://www.w3.org/1999/xhtml";
-				return ({ xHTML: {toString: function(){return "http://www.w3.org/1999/xhtml";}},
-					svg: {toString: function(){return "http://www.w3.org/2000/svg";} }})[ns];
-			},
-			function(ns){
-				verifyResolve(ns);
-				return ({ xHTML: {toString: function(){return "http://www.w3.org/1999/xhtml";}},
-					svg: {toString: function(){return "http://www.w3.org/2000/svg";} }})[ns];
-			},
-			{
-				lookupNamespaceURI: function(ns){
-					verifyResolve(ns);
-					if ( ns === null )
-						return "http://www.w3.org/1999/xhtml";
-					return ({ xHTML: "http://www.w3.org/1999/xhtml", svg: "http://www.w3.org/2000/svg" })[ns];
-				}
-			},
-			{
-				lookupNamespaceURI: function(ns){
-					verifyResolve(ns);
-					return ({ xHTML: "http://www.w3.org/1999/xhtml", svg: "http://www.w3.org/2000/svg" })[ns];
-				}
-			},
-			{
-				lookupNamespaceURI: function(ns){
-					verifyResolve(ns);
-					if ( ns === null )
-						return "http://www.w3.org/1999/xhtml";
-					return ({ xHTML: {toString: function(){return "http://www.w3.org/1999/xhtml";}},
-						svg: {toString: function(){return "http://www.w3.org/2000/svg";} }})[ns];
-				}
-			},
-			{
-				lookupNamespaceURI: function(ns){
-					verifyResolve(ns);
-					return ({ xHTML: {toString: function(){return "http://www.w3.org/1999/xhtml";}},
-						svg: {toString: function(){return "http://www.w3.org/2000/svg";} }})[ns];
-				}
-			}
-		];
-
-		var badNamespace = [
-			{},
-			null,
-			undefined,
-			function(){},
-			function(){ return ""; },
-			function(){ return null; },
-			function(){ throw {message: "bad ERROR"} },
-			{ lookupNamespaceURI: function(){} },
-			{ lookupNamespaceURI: function(){ return ""; } },
-			{ lookupNamespaceURI: function(){ return null; } },
-			{ lookupNamespaceURI: function(){ throw {message: "bad ERROR"}; } }
-		];
 
 		interfaceCheck(root, "Element");
 		runTest( css, "Element", root, true );
@@ -385,6 +313,7 @@
 
 			for ( var i = 0; i < results.length; i++ ) {
 				var li = document.createElement("li");
+				li.className = (results[i][0] === "FAIL" ? "fail" : "pass");
 				var span = document.createElement("span");
 				span.style.color = (results[i][0] === "FAIL" ? "red" : "green");
 				span.appendChild( document.createTextNode( results[i][0] ) );
@@ -419,19 +348,19 @@
 			var pass = false;
 			try {
 				root.querySelectorAll("");
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+			} catch(e){ pass = typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR; }
 			assert( pass, type + ".querySelectorAll Empty String" );
 
 			pass = false;
 			try {
-				root.querySelectorAll(null);
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+				pass = root.querySelectorAll(null).length === 0;
+			} catch(e){ pass = false; }
 			assert( pass, type + ".querySelectorAll null" );
 
 			pass = false;
 			try {
-				root.querySelectorAll(undefined);
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+				pass= root.querySelectorAll(undefined).length === 0;
+			} catch(e){ pass = false; }
 			assert( pass, type + ".querySelectorAll undefined" );
 
 			pass = false;
@@ -444,19 +373,19 @@
 			var pass = false;
 			try {
 				root.querySelector("");
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+			} catch(e){ pass = typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR; }
 			assert( pass, type + ".querySelector Empty String" );
 
 			pass = false;
 			try {
-				root.querySelector(null);
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+				pass = root.querySelector(null) === null;
+			} catch(e){ pass = false; }
 			assert( pass, type + ".querySelector null" );
 
 			pass = false;
 			try {
-				root.querySelector(undefined);
-			} catch(e){ pass = e.code == DOMException.SYNTAX_ERR; }
+				pass = root.querySelector(undefined) === null;
+			} catch(e){ pass = false; }
 			assert( pass, type + ".querySelector undefined" );
 
 			pass = false;
@@ -482,7 +411,7 @@
 
 						assert(expect && pass, type + ".querySelectorAll: " + query);
 					} catch(e){
-						var pass = !expect && e.code == DOMException.SYNTAX_ERR || false;
+						var pass = !expect && typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR || false;
 						assert(pass, type + ".querySelectorAll: " + query);
 					}
 
@@ -505,27 +434,41 @@
 
 						assert(expect, type + ".querySelector: " + query);
 					} catch(e){
-						var pass = !expect && e.code == DOMException.SYNTAX_ERR || false;
+						var pass = !expect && typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR || false;
 						assert(pass, type + ".querySelector: " + query);
 					}
 				}
 			}
 		}
 
-		function check( type, root, expect, fragment ){
-			var walker = document.createTreeWalker( root, NodeFilter.SHOW_ELEMENT, { acceptNode: function(){ return 1; } }, false );
 
-			while ( walker.nextNode() ) {
-				var div = walker.currentNode;
+		function check( type, root, expect, fragment ){
+			traverse( root, function(div){
 				if ( (div.getAttribute("class") || "").toString().indexOf("unitTest") > -1 &&
 						(!fragment || div.getAttribute("id") !== "nofragment") ) {
-				  //var bg = div.style.backgroundColor;
-					var view = document.defaultView.getComputedStyle(div, null);
-					var bg = view.getPropertyValue("background-color") || div.style.backgroundColor;
+					var bg;
+
+					if ( document.defaultView ) {
+						var view = document.defaultView.getComputedStyle(div, null);
+						bg = view.getPropertyValue("background-color") || div.style.backgroundColor;
+					} else if ( div.currentStyle ) {
+						bg = div.currentStyle.backgroundColor || div.style.backgroundColor;
+					}
 
 					var pass = bg && bg.indexOf("(255, 0, 0") == -1 && bg.indexOf("#ff0000") == -1 && bg.indexOf("red") == -1;
-					//var pass = bg && bg.indexOf("(255, 0, 0") == -1 && bg.indexOf("#ff0000") == -1;
 					assert(pass === expect, type + ": " + (div.title || div.parentNode.title));
+				}
+			});
+		}
+
+		function traverse( elem, fn ) {
+			if ( elem.nodeType === 1 ) {
+				fn( elem );
+
+				elem = elem.firstChild;
+				while ( elem ) {
+					traverse( elem, fn );
+					elem = elem.nextSibling;
 				}
 			}
 		}
@@ -543,8 +486,8 @@
 				try {
 					return root[select](q, resolver);
 				} catch(e){
-				  if ( e.message.indexOf("ERR") > -1 || e.code == DOMException.NAMESPACE_ERR ||
-							e.code == DOMException.SYNTAX_ERR)
+				  if ( e.message.indexOf("ERR") > -1 || typeof DOMException !== "undefined" && e.code == DOMException.NAMESPACE_ERR ||
+							typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR)
 						throw e;
 				}
 			}
@@ -555,64 +498,21 @@
 				if ( restrict === false && root != document )
 					return;
 
-				var namespaced = /\|[^=]/.test( q );
-				var prepend = namespaced ? "xHTML|*#root3 " : "#root3 ";
+				var prepend = "#root3 ";
 				q = (restrict === false || restrict === ":root" ? "" : prepend) + q.replace(/,/g, ", " + prepend);
 				var nq = q.replace(/>/g, "&gt;").replace(/</g, "&lt;");
 
-				if ( namespaced ) {
-					for ( var i = 0; i < goodNamespace.length; i++ ) {
-						var resolver = goodNamespace[i], pass = false, results = null;
-						var spaces = q.replace(/(^|\s)(?:([^| ]+)\||())\S*/g, "$1$2$3")
-							.replace(/(^\*\s*|\s*\*$)/g, "").replace(/ [*>+] /g, " ").split(/\s+/).reverse();
+				var pass = false;
 
-						namespaceCheck = {};
-						for ( var s = 0; s < spaces.length; s++ ) {
-							if ( spaces[s] !== "*" ) {
-								namespaceCheck[ spaces[s] || null ] = 0;
-							}
-						}
-
-						try {
-							results = query(q, resolver);
-							pass = hasPassed( results, (ids2 && i % 2 === 0 ? ids2 : ids) );
-						} catch(e) {
-							pass = false;
-						}
-
-						assert( pass, type + ": " + name + " Good Resolver #" + (i+1) + " (" + nq + ")" +
-							(pass ? "" : " Expected: " + extra(ids) + " Received: " + extra(results)) );
-
-						for ( var n in namespaceCheck ) {
-							assert( namespaceCheck[n] != 0, "Namespaces Resolved: " + n );
-						}
-					}
-
-					for ( var i = 0; i < badNamespace.length; i++ ) {
-						var resolver = badNamespace[i], pass = false, results = null;
-
-						try {
-							results = query(q, resolver);
-						} catch(e) {
-							pass = (e.message === "bad ERROR" || e.code == DOMException.NAMESPACE_ERR);
-						}
-
-						assert( pass, type + ": " + name + " Bad Resolver #" + (i+1) + " (" + nq + ")" + 
-							(pass ? "" : " Expected: " + extra(ids) + " Received: " + extra(results)) );
-					}
-				} else {
-					var pass = false;
-
-					try {
-						var results = query(q);
-						pass = hasPassed( results, ids );
-					} catch(e) {
-				  	pass = e.code == DOMException.SYNTAX_ERR;
-					}
-	
-					assert( pass, type + ": " + name + " (" + nq + ")" +
-						(pass ? "" : " Expected: " + extra(ids) + " Received: " + extra(results)) );
+				try {
+					var results = query(q);
+					pass = hasPassed( results, ids );
+				} catch(e) {
+				  	pass = typeof DOMException !== "undefined" && e.code == DOMException.SYNTAX_ERR;
 				}
+	
+				assert( pass, type + ": " + name + " (" + nq + ")" +
+					(pass ? "" : " Expected: " + extra(ids) + " Received: " + extra(results)) );
 
 				function hasPassed(results, ids){
 					var pass = (results && results.length == ids.length) || (!results && !ids);
@@ -643,27 +543,6 @@
 				}
 			}
 
-			t( "SVG", "*|svg", ["svg1","svg2","svg3"] );
-			t( "SVG", "svg|svg", ["svg2","svg3"] );
-			t( "SVG", "svg|svg *|circle", ["circle2","circle3"] );
-			t( "SVG", "svg|svg svg|circle", ["circle2","circle3"] );
-			t( "SVG", "xHTML|div *|svg", ["svg1","svg2","svg3"] );
-			t( "SVG", "div svg|svg", ["svg2","svg3"] );
-			t( "SVG", "xHTML|div svg|svg", ["svg2","svg3"] );
-			t( "SVG", "xHTML|div svg|svg *|circle", ["circle2","circle3"] );
-			t( "SVG", "xHTML|div svg *|circle", ["circle1","circle2","circle3"], true, ["circle1"] );
-			t( "SVG", "xHTML|div svg|svg svg|circle", ["circle2","circle3"] );
-
-			t( "Element Selector", "xHTML|p", ["firstp","ap","sndp","en","sap","first"] );
-			t( "Parent Element", "xHTML|div p", ["firstp","ap","sndp","en","sap","first"] );
-			t( "Parent Element", "xHTML|div xHTML|p", ["firstp","ap","sndp","en","sap","first"] );
-			t( "Parent Element", "*|div xHTML|p", ["firstp","ap","sndp","en","sap","first"] );
-			t( "Parent Element", "*|div *|p", ["firstp","ap","sndp","en","sap","first"] );
-			t( "Child", "xHTML|p > xHTML|a", ["simon1","google","groups","mark","yahoo","simon"] );
-			t( "Adjacent", "xHTML|a + xHTML|a", ["groups"] );
-			t( "Adjacent", "xHTML|a + a", ["groups"] );
-			t( "Nth-child", "xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)", ["option1c"] );
-
 			var all = query("*");
 			assert( all && all.length > 30, type + ": Select all" );
 			var good = all && all.length;
@@ -683,7 +562,8 @@
 			}
 
 			if ( root.parentNode || root == document ) {
-				assert( query(":root *").length == query("*").length - (root == document ? 1 : 0), type + ": :root All Selector" );
+				var rootQuery = query(":root *");
+				assert( rootQuery && rootQuery.length == query("*").length - (root == document ? 1 : 0), type + ": :root All Selector" );
 			}
 
 			t( "Element Selector", "p", ["firstp","ap","sndp","en","sap","first"] );
@@ -848,6 +728,7 @@
 <body id="body" class="unitTest" title="childhood and element type selectors">
 <h1><a href="http://www.w3.org/TR/selectors-api/">Selectors API</a> Test Suite</h1>
 <p>Testrunner by <a href="http://ejohn.org/">John Resig</a>, tests by <a href="http://ejohn.org/">John Resig</a>, <a href="http://disruptive-innovations.com/zoo/css3tests/selectorTest.html">Disruptive Innovations</a>, <a href="http://www.w3.org/Style/CSS/Test/CSS3/Selectors/20060307/html/index.html">W3C CSS Working Group</a>, <a href="http://jquery.com/test/">jQuery JavaScript Library</a>.</p>
+<p><label><input type="checkbox" id="toggle"/> Show only failing tests.</label></p>
 <div id="root">
   <div class="header">
     <h3>CSS 3 Selectors tests</h3>
@@ -1302,7 +1183,7 @@
 		<div id="nothiddendivchild"></div>
 	</div>
 	<!-- this iframe is outside the #main so it won't reload constantly wasting time, but it means the tests must be "safe" and clean up after themselves -->
-	<iframe id="loadediframe" name="loadediframe" style="display:none;" src="data/iframe.html"></iframe>
+	<iframe id="loadediframe" name="loadediframe" style="display:none;"></iframe>
 	<dl id="dl" style="display:none;">
 	<div id="main" style="display: none;">
 		<p id="firstp">See <a id="simon1" href="http://simon.incutio.com/archive/2003/03/25/#getElementsBySelector" rel="bookmark">this blog entry</a> for more information.</p>

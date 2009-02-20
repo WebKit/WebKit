@@ -14,8 +14,8 @@ length: 0
 [object HTMLDivElement], [object HTMLDivElement], [object HTMLDivElement], [object HTMLDivElement], [object HTMLParagraphElement], length: 5
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+length: 0
+length: 0
 [object HTMLDivElement], [object HTMLDivElement], [object HTMLDivElement], [object HTMLDivElement], length: 4
 
 Element.querySelectorAll
@@ -28,8 +28,8 @@ length: 0
 [object HTMLDivElement], [object HTMLParagraphElement], length: 2
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+length: 0
+length: 0
 
 DocumentFragment.querySelectorAll
 
@@ -41,8 +41,8 @@ length: 0
 [object HTMLDivElement], [object HTMLDivElement], [object HTMLParagraphElement], length: 3
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+length: 0
+length: 0
 
 Document.querySelector
 
@@ -53,8 +53,8 @@ TypeError: Result of expression 'node.querySelector(selectorString)' [null] is n
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 
 Element.querySelector
 
@@ -66,8 +66,8 @@ TypeError: Result of expression 'node.querySelector(selectorString)' [null] is n
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 
 DocumentFragment.querySelector
 
@@ -79,6 +79,6 @@ TypeError: Result of expression 'node.querySelector(selectorString)' [null] is n
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
-Error: SYNTAX_ERR: DOM Exception 12
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 

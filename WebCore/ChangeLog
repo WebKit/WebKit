@@ -1,3 +1,20 @@
+2009-02-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=24044
+        Update querySelector/querySelectorAll to match the latest spec
+
+        Update querySelector and querySelectorAll to match the latest version
+        of the Selectors API spec.  We now stringify null and undefined to "null"
+        and "undefined" respectively instead of to "".
+
+        Test: fast/dom/SelectorAPI/undefined-null-stringify.html
+
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+
 2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Geoffrey Garen.

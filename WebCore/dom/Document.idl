@@ -234,9 +234,9 @@ module core {
         NodeList getElementsByClassName(in DOMString tagname);
 
         // NodeSelector - Selector API
-        Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        Element querySelector(in DOMString selectors)
             raises(DOMException);
-        NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
 #if ENABLE_WML

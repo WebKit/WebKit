@@ -25,10 +25,9 @@ module core {
         ImplementationUUID=E57BF71F-3FAA-495c-A307-E288F8E5B2EC
     ] DocumentFragment : Node {
         // NodeSelector - Selector API
-        // FIXME: add support for NSResolver in languages other than JS
-        Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        Element querySelector(in DOMString selectors)
             raises(DOMException);
-        NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
     };
 

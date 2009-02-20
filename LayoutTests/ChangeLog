@@ -1,3 +1,20 @@
+2009-02-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=24044
+        Update querySelector/querySelectorAll to match the latest spec
+
+        * fast/dom/SelectorAPI/dumpNodeList-almost-strict-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt:
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml: Updated.  We now fail 17 tests
+        due to not throwing an exception when no arguments are passed to querySelector
+        or querySelectorAll.
+        * fast/dom/SelectorAPI/resources/undefined-null-stringify.js: Added.
+        * fast/dom/SelectorAPI/undefined-null-stringify-expected.txt: Added.
+        * fast/dom/SelectorAPI/undefined-null-stringify.html: Added.
+
 2009-02-19  David Hyatt  <hyatt@apple.com>
 
         Fix a bug where reflections didn't work properly if opacity was < 1.  Make sure that replaced elements
