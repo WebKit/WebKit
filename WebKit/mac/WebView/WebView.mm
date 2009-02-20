@@ -1345,9 +1345,6 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
-#ifdef BUILDING_ON_LEOPARD
-    settings->setNeedsIChatMemoryCacheCallsQuirk([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iChat"]);
-#endif
 }
 
 static inline IMP getMethod(id o, SEL s)

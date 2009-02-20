@@ -1,3 +1,14 @@
+2009-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - WebKit part of fixing https://bugs.webkit.org/show_bug.cgi?id=24027
+          Do not send loader callbacks during CSS styling
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Reverted the
+        iChat-specific quirk added in <http://trac.webkit.org/changeset/41071>.
+
 2009-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.

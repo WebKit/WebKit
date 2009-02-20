@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "MutationEvent.h"
+#include "Page.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
 #include <wtf/CurrentTime.h>
@@ -42,9 +43,10 @@ static void dispatchChildInsertionEvents(Node*, ExceptionCode&);
 static void dispatchChildRemovalEvents(Node*, ExceptionCode&);
 
 typedef Vector<std::pair<NodeCallback, RefPtr<Node> > > NodeCallbackQueue;
-static NodeCallbackQueue* s_postAttachCallbackQueue = 0;
+static NodeCallbackQueue* s_postAttachCallbackQueue;
 
-static size_t s_attachDepth = 0;
+static size_t s_attachDepth;
+static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
 void ContainerNode::removeAllChildren()
 {
@@ -532,13 +534,29 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
 
 void ContainerNode::suspendPostAttachCallbacks()
 {
+    if (!s_attachDepth) {
+        ASSERT(!s_shouldReEnableMemoryCacheCallsAfterAttach);
+        if (Page* page = document()->page()) {
+            if (page->areMemoryCacheClientCallsEnabled()) {
+                page->setMemoryCacheClientCallsEnabled(false);
+                s_shouldReEnableMemoryCacheCallsAfterAttach = true;
+            }
+        }
+    }
     ++s_attachDepth;
 }
 
 void ContainerNode::resumePostAttachCallbacks()
 {
-    if (s_attachDepth == 1 && s_postAttachCallbackQueue)
-        dispatchPostAttachCallbacks();
+    if (s_attachDepth == 1) {
+        if (s_postAttachCallbackQueue)
+            dispatchPostAttachCallbacks();
+        if (s_shouldReEnableMemoryCacheCallsAfterAttach) {
+            s_shouldReEnableMemoryCacheCallsAfterAttach = false;
+            if (Page* page = document()->page())
+                page->setMemoryCacheClientCallsEnabled(true);
+        }
+    }
     --s_attachDepth;
 }
 
@@ -566,15 +584,13 @@ void ContainerNode::dispatchPostAttachCallbacks()
 
 void ContainerNode::attach()
 {
-    ++s_attachDepth;
+    suspendPostAttachCallbacks();
 
     for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->attach();
     Node::attach();
 
-    if (s_attachDepth == 1 && s_postAttachCallbackQueue)
-        dispatchPostAttachCallbacks();
-    --s_attachDepth;
+    resumePostAttachCallbacks();
 }
 
 void ContainerNode::detach()
