@@ -1,3 +1,7 @@
+2009-02-20  Sam Weinig  <sam@webkit.org>
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt: Update results.
+
 2009-02-20  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark Rowe.
