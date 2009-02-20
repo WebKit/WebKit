@@ -1,3 +1,13 @@
+2009-02-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23999
+        Change license headers to accurately reflect code history.
+
+        * platform/ContentType.cpp:
+        * platform/ContentType.h:
+
 2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Antti Koivisto.
