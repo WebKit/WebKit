@@ -1,3 +1,9 @@
+2009-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix after r41100.
+
+        * GNUmakefile.am:
+
 2009-02-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.
