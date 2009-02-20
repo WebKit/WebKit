@@ -22,11 +22,18 @@
 #ifndef Operations_h
 #define Operations_h
 
+#include "Interpreter.h"
 #include "JSImmediate.h"
 #include "JSNumberCell.h"
 #include "JSString.h"
 
 namespace JSC {
+
+    NEVER_INLINE JSValuePtr throwOutOfMemoryError(ExecState*);
+    NEVER_INLINE JSValuePtr jsAddSlowCase(CallFrame*, JSValuePtr, JSValuePtr);
+    JSValuePtr jsTypeStringForValue(CallFrame*, JSValuePtr);
+    bool jsIsObjectType(JSValuePtr);
+    bool jsIsFunctionType(JSValuePtr);
 
     // ECMA 11.9.3
     inline bool JSValuePtr::equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
@@ -129,7 +136,160 @@ namespace JSC {
         return v1 == v2;
     }
 
-    JSValuePtr throwOutOfMemoryError(ExecState*);
+    inline bool jsLess(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
+    {
+        if (JSValuePtr::areBothInt32Fast(v1, v2))
+            return v1.getInt32Fast() < v2.getInt32Fast();
 
-}
-#endif
+        double n1;
+        double n2;
+        if (v1.getNumber(n1) && v2.getNumber(n2))
+            return n1 < n2;
+
+        Interpreter* interpreter = callFrame->interpreter();
+        if (interpreter->isJSString(v1) && interpreter->isJSString(v2))
+            return asString(v1)->value() < asString(v2)->value();
+
+        JSValuePtr p1;
+        JSValuePtr p2;
+        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+
+        if (wasNotString1 | wasNotString2)
+            return n1 < n2;
+
+        return asString(p1)->value() < asString(p2)->value();
+    }
+
+    inline bool jsLessEq(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
+    {
+        if (JSValuePtr::areBothInt32Fast(v1, v2))
+            return v1.getInt32Fast() <= v2.getInt32Fast();
+
+        double n1;
+        double n2;
+        if (v1.getNumber(n1) && v2.getNumber(n2))
+            return n1 <= n2;
+
+        Interpreter* interpreter = callFrame->interpreter();
+        if (interpreter->isJSString(v1) && interpreter->isJSString(v2))
+            return !(asString(v2)->value() < asString(v1)->value());
+
+        JSValuePtr p1;
+        JSValuePtr p2;
+        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+
+        if (wasNotString1 | wasNotString2)
+            return n1 <= n2;
+
+        return !(asString(p2)->value() < asString(p1)->value());
+    }
+
+    // Fast-path choices here are based on frequency data from SunSpider:
+    //    <times> Add case: <t1> <t2>
+    //    ---------------------------
+    //    5626160 Add case: 3 3 (of these, 3637690 are for immediate values)
+    //    247412  Add case: 5 5
+    //    20900   Add case: 5 6
+    //    13962   Add case: 5 3
+    //    4000    Add case: 3 5
+
+    ALWAYS_INLINE JSValuePtr jsAdd(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
+    {
+        double left;
+        double right = 0.0;
+
+        bool rightIsNumber = v2.getNumber(right);
+        if (rightIsNumber && v1.getNumber(left))
+            return jsNumber(callFrame, left + right);
+        
+        bool leftIsString = v1.isString();
+        if (leftIsString && v2.isString()) {
+            RefPtr<UString::Rep> value = concatenate(asString(v1)->value().rep(), asString(v2)->value().rep());
+            if (!value)
+                return throwOutOfMemoryError(callFrame);
+            return jsString(callFrame, value.release());
+        }
+
+        if (rightIsNumber & leftIsString) {
+            RefPtr<UString::Rep> value = v2.isInt32Fast() ?
+                concatenate(asString(v1)->value().rep(), v2.getInt32Fast()) :
+                concatenate(asString(v1)->value().rep(), right);
+
+            if (!value)
+                return throwOutOfMemoryError(callFrame);
+            return jsString(callFrame, value.release());
+        }
+
+        // All other cases are pretty uncommon
+        return jsAddSlowCase(callFrame, v1, v2);
+    }
+
+    inline StructureChain* cachePrototypeChain(CallFrame* callFrame, Structure* structure)
+    {
+        JSValuePtr prototype = structure->prototypeForLookup(callFrame);
+        if (!prototype.isCell())
+            return 0;
+        RefPtr<StructureChain> chain = StructureChain::create(asObject(prototype)->structure());
+        structure->setCachedPrototypeChain(chain.release());
+        return structure->cachedPrototypeChain();
+    }
+
+    inline size_t countPrototypeChainEntriesAndCheckForProxies(CallFrame* callFrame, JSValuePtr baseValue, const PropertySlot& slot)
+    {
+        JSCell* cell = asCell(baseValue);
+        size_t count = 0;
+
+        while (slot.slotBase() != cell) {
+            JSValuePtr v = cell->structure()->prototypeForLookup(callFrame);
+
+            // If we didn't find slotBase in baseValue's prototype chain, then baseValue
+            // must be a proxy for another object.
+
+            if (v.isNull())
+                return 0;
+
+            cell = asCell(v);
+
+            // Since we're accessing a prototype in a loop, it's a good bet that it
+            // should not be treated as a dictionary.
+            if (cell->structure()->isDictionary()) {
+                RefPtr<Structure> transition = Structure::fromDictionaryTransition(cell->structure());
+                asObject(cell)->setStructure(transition.release());
+                cell->structure()->setCachedPrototypeChain(0);
+            }
+
+            ++count;
+        }
+        
+        ASSERT(count);
+        return count;
+    }
+
+    ALWAYS_INLINE JSValuePtr resolveBase(CallFrame* callFrame, Identifier& property, ScopeChainNode* scopeChain)
+    {
+        ScopeChainIterator iter = scopeChain->begin();
+        ScopeChainIterator next = iter;
+        ++next;
+        ScopeChainIterator end = scopeChain->end();
+        ASSERT(iter != end);
+
+        PropertySlot slot;
+        JSObject* base;
+        while (true) {
+            base = *iter;
+            if (next == end || base->getPropertySlot(callFrame, property, slot))
+                return base;
+
+            iter = next;
+            ++next;
+        }
+
+        ASSERT_NOT_REACHED();
+        return noValue();
+    }
+
+} // namespace JSC
+
+#endif // Operations_h

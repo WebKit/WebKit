@@ -52,4 +52,70 @@ NEVER_INLINE JSValuePtr throwOutOfMemoryError(ExecState* exec)
     return error;
 }
 
+NEVER_INLINE JSValuePtr jsAddSlowCase(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
+{
+    // exception for the Date exception in defaultValue()
+    JSValuePtr p1 = v1.toPrimitive(callFrame);
+    JSValuePtr p2 = v2.toPrimitive(callFrame);
+
+    if (p1.isString() || p2.isString()) {
+        RefPtr<UString::Rep> value = concatenate(p1.toString(callFrame).rep(), p2.toString(callFrame).rep());
+        if (!value)
+            return throwOutOfMemoryError(callFrame);
+        return jsString(callFrame, value.release());
+    }
+
+    return jsNumber(callFrame, p1.toNumber(callFrame) + p2.toNumber(callFrame));
+}
+
+JSValuePtr jsTypeStringForValue(CallFrame* callFrame, JSValuePtr v)
+{
+    if (v.isUndefined())
+        return jsNontrivialString(callFrame, "undefined");
+    if (v.isBoolean())
+        return jsNontrivialString(callFrame, "boolean");
+    if (v.isNumber())
+        return jsNontrivialString(callFrame, "number");
+    if (v.isString())
+        return jsNontrivialString(callFrame, "string");
+    if (v.isObject()) {
+        // Return "undefined" for objects that should be treated
+        // as null when doing comparisons.
+        if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
+            return jsNontrivialString(callFrame, "undefined");
+        CallData callData;
+        if (asObject(v)->getCallData(callData) != CallTypeNone)
+            return jsNontrivialString(callFrame, "function");
+    }
+    return jsNontrivialString(callFrame, "object");
+}
+
+bool jsIsObjectType(JSValuePtr v)
+{
+    if (!v.isCell())
+        return v.isNull();
+
+    JSType type = asCell(v)->structure()->typeInfo().type();
+    if (type == NumberType || type == StringType)
+        return false;
+    if (type == ObjectType) {
+        if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
+            return false;
+        CallData callData;
+        if (asObject(v)->getCallData(callData) != CallTypeNone)
+            return false;
+    }
+    return true;
+}
+
+bool jsIsFunctionType(JSValuePtr v)
+{
+    if (v.isObject()) {
+        CallData callData;
+        if (asObject(v)->getCallData(callData) != CallTypeNone)
+            return true;
+    }
+    return false;
+}
+
 } // namespace JSC

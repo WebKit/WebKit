@@ -80,6 +80,7 @@ SOURCES += \
     jit/JITArithmetic.cpp \
     jit/JITPropertyAccess.cpp \
     jit/ExecutableAllocator.cpp \
+    jit/JITStubs.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     runtime/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \

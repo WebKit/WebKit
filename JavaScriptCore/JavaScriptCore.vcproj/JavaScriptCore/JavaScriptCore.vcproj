@@ -505,10 +505,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Interpreter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\JSActivation.cpp"
 				>
 			</File>
@@ -1287,6 +1283,14 @@
 			</File>
 			<File
 				RelativePath="..\..\interpreter\Interpreter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITStubs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITStubs.cpp"
 				>
 			</File>
 			<File

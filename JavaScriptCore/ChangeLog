@@ -1,3 +1,37 @@
+2009-02-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        First step in splitting JIT functionality out of the Interpreter class:
+        Created JITStubs.h/.cpp, and moved Interpreter::cti_* into JITStubs.cpp.
+        
+        Functions that the Interpreter and JITStubs share moved to Operations.h/.cpp.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::checkTimeout):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JITStubs.cpp: Copied from interpreter/Interpreter.cpp.
+        (JSC::Interpreter::cti_op_resolve_base):
+        * jit/JITStubs.h: Copied from interpreter/Interpreter.h.
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        * runtime/Operations.h:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAdd):
+        (JSC::cachePrototypeChain):
+        (JSC::countPrototypeChainEntriesAndCheckForProxies):
+        (JSC::resolveBase):
+
 2009-02-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
