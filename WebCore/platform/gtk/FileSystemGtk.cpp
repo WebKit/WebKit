@@ -229,7 +229,7 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     if (!isHandleValid(fileDescriptor)) {
         LOG_ERROR("Can't create a temporary file.");
         g_free(tempPath);
-        return 0;
+        return CString();
     }
     CString tempFilePath = tempPath;
     g_free(tempPath);

@@ -124,7 +124,7 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
         return String(temp->fileName()).utf8();
     }
     handle = invalidPlatformFileHandle;
-    return 0;
+    return CString();
 }
 
 void closeFile(PlatformFileHandle& handle)

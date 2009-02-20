@@ -1,3 +1,14 @@
+2009-02-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Use CString() instead of 0.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::openTemporaryFile):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile):
+
 2009-02-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
