@@ -1,3 +1,21 @@
+2009-02-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6077775> Should be able to specify 
+        inactive ::selection color
+
+        This patch makes the ::selction pseudo-element work with 
+        the :window-inactive pseudo type. This was, a user can specify a 
+        different ::selection style when a window is inactive.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+
 2009-02-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

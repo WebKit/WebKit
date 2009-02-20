@@ -1736,7 +1736,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             // a selector is invalid if something follows a pseudo-element
             // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
             // to follow the pseudo elements.
-            if (elementStyle && dynamicPseudo != NOPSEUDO && 
+            if (elementStyle && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION &&
                 !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
                 return SelectorFailsCompletely;
             return checkSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle);
@@ -1920,6 +1920,9 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
             return checkScrollbarPseudoClass(sel, dynamicPseudo);
+        } else if (dynamicPseudo == SELECTION) {
+            if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
+                return !m_document->page()->focusController()->isActive();
         }
         
         // Normal element pseudo class checking.
