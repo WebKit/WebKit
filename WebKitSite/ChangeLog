@@ -1,3 +1,41 @@
+2009-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23983: Remove illegal HTML tags from Sunspider web pages
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23983>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * perf/sunspider-0.9/3d-cube.html: Removed </link> tag.
+        * perf/sunspider-0.9/3d-morph.html: Ditto.
+        * perf/sunspider-0.9/3d-raytrace.html: Ditto.
+        * perf/sunspider-0.9/access-binary-trees.html: Ditto.
+        * perf/sunspider-0.9/access-fannkuch.html: Ditto.
+        * perf/sunspider-0.9/access-nbody.html: Ditto.
+        * perf/sunspider-0.9/access-nsieve.html: Ditto.
+        * perf/sunspider-0.9/bitops-3bit-bits-in-byte.html: Ditto.
+        * perf/sunspider-0.9/bitops-bits-in-byte.html: Ditto.
+        * perf/sunspider-0.9/bitops-bitwise-and.html: Ditto.
+        * perf/sunspider-0.9/bitops-nsieve-bits.html: Ditto.
+        * perf/sunspider-0.9/controlflow-recursive.html: Ditto.
+        * perf/sunspider-0.9/crypto-aes.html: Ditto.
+        * perf/sunspider-0.9/crypto-md5.html: Ditto.
+        * perf/sunspider-0.9/crypto-sha1.html: Ditto.
+        * perf/sunspider-0.9/date-format-tofte.html: Ditto.
+        * perf/sunspider-0.9/date-format-xparb.html: Ditto.
+        * perf/sunspider-0.9/math-cordic.html: Ditto.
+        * perf/sunspider-0.9/math-partial-sums.html: Ditto.
+        * perf/sunspider-0.9/math-spectral-norm.html: Ditto.
+        * perf/sunspider-0.9/regexp-dna.html: Ditto.
+        * perf/sunspider-0.9/string-base64.html: Ditto.
+        * perf/sunspider-0.9/string-fasta.html: Ditto.
+        * perf/sunspider-0.9/string-tagcloud.html: Ditto.
+        * perf/sunspider-0.9/string-unpack-code.html: Ditto.
+        * perf/sunspider-0.9/string-validate-input.html: Ditto.
+        * perf/sunspider-0.9/sunspider-driver.html: Ditto.
+        * perf/sunspider-0.9/sunspider-results.html: Removed </link> and </input> tags.
+        * perf/sunspider-0.9/sunspider.html: Removed </link> tag.
+
 2009-01-19  Adam Roben  <aroben@apple.com>
 
         Add links to some recommended Visual Studio hotfixes
