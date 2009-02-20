@@ -1240,6 +1240,7 @@ sub GenerateImplementation
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
+                            push(@implContent, "    // Shadowing a built-in object\n");
                             push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                         } else {
                             if ($podType) {
