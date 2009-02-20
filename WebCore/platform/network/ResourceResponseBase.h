@@ -97,6 +97,13 @@ public:
         return m_cacheControlContainsMustRevalidate;
     }
 
+    // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
+    unsigned memoryUsage() const
+    {
+        // average size, mostly due to URL and Header Map strings
+        return 1280;
+    }
+
     static bool compare(const ResourceResponse& a, const ResourceResponse& b);
 
 protected:
@@ -128,13 +135,6 @@ protected:
 
     // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
     void platformLazyInit() { }
-
-    // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
-    unsigned memoryUsage() const
-    {
-        // average size, mostly due to URL and Header Map strings
-        return 1280;
-    }
 
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }

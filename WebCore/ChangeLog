@@ -1,3 +1,14 @@
+2009-02-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Build fix after r41092. Make the memoryUsage method
+        public. It will be shadowed by cf/mac and for curl/soup/qt
+        the implementation from ResourceResponseBase will be used.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::memoryUsage):
+
 2009-02-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
