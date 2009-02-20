@@ -149,6 +149,9 @@ private:
     bool m_visible;
     float m_rate;
     float m_volume;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
+#endif
 };
 
 typedef MediaPlayerPrivateInterface* (*CreateMediaEnginePlayer)(MediaPlayer*);

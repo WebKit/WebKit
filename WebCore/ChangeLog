@@ -1,5 +1,27 @@
 2009-02-20  Eric Carlson  <eric.carlson@apple.com>
 
+        Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=24042
+        Bug 24042: MediaPlayer should cache plug-in proxy
+        
+        The changes in https://bugs.webkit.org/show_bug.cgi?id=23917 assume that
+        MediaPlayer will always have created the private media player object before
+        the plug-in is instantiated and calls back with the proxy object. This is not
+        true on all platforms because of threading latency, so MediaPlayer should
+        cache the plug-in proxy so it can pass it to the media engine at a later time.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::setPoster): Null media engine implementation of proxy methods.
+        (WebCore::NullMediaPlayerPrivate::deliverNotification): Ditto.
+        (WebCore::NullMediaPlayerPrivate::setMediaPlayerProxy): Ditto.
+        (WebCore::MediaPlayer::MediaPlayer): Initialize m_playerProxy.
+        (WebCore::MediaPlayer::load): Pass m_playerProxy to newly created engine.
+        (WebCore::MediaPlayer::setMediaPlayerProxy): Cache m_playerProxy.
+        * platform/graphics/MediaPlayer.h: Declare m_playerProxy.
+
+2009-02-20  Eric Carlson  <eric.carlson@apple.com>
+
         Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=24063
