@@ -870,6 +870,7 @@ SOURCES += \
     platform/text/AtomicString.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
+    platform/ContentType.cpp \
     platform/ContextMenu.cpp \
     platform/text/CString.cpp \
     platform/DeprecatedPtrListImpl.cpp \

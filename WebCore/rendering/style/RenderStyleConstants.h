@@ -201,7 +201,7 @@ enum EListStyleType {
      HIRAGANA, KATAKANA, HIRAGANA_IROHA, KATAKANA_IROHA, LNONE
 };
 
-enum ContentType {
+enum StyleContentType {
     CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
 };
 

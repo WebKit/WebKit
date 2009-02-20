@@ -3132,6 +3132,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ContentType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ContentType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ContextMenu.cpp"
 				>
 			</File>

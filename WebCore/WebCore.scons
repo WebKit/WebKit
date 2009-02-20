@@ -718,6 +718,7 @@ sources['bridge/c'] = [
 # These may eventually move to a separate sources file
 sources['platform'] = [
     'platform/Arena.cpp',
+    'platform/ContentType.cpp',
     'platform/ContextMenu.cpp',
     'platform/DeprecatedPtrListImpl.cpp',
     'platform/DragData.cpp',

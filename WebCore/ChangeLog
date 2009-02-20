@@ -1,3 +1,32 @@
+2009-02-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23999
+        Split off MIME type parsing into its own class.
+
+        * GNUmakefile.am: Added ContentType sources.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto. 
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * html/HTMLMediaElement.cpp: Changed to use ContentType.
+        (WebCore::HTMLMediaElement::selectMediaURL):
+        * platform/ContentType.cpp: Added.
+        (WebCore::ContentType::ContentType):
+        (WebCore::ContentType::parameter):
+        (WebCore::ContentType::type):
+        * platform/ContentType.h: Added.
+        (WebCore::ContentType::raw):
+        * platform/MIMETypeRegistry.cpp:
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * rendering/style/ContentData.h: Renamed ContentType to StyleContentType.
+        * rendering/style/RenderStyleConstants.h: Ditto.
+        (WebCore::):
+
 2009-02-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix.

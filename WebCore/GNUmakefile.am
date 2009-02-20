@@ -1212,6 +1212,8 @@ webcore_sources += \
 	WebCore/platform/Arena.cpp \
 	WebCore/platform/Arena.h \
 	WebCore/platform/AutodrainedPool.h \
+	WebCore/platform/ContentType.cpp \
+	WebCore/platform/ContentType.h \
 	WebCore/platform/ContextMenu.cpp \
 	WebCore/platform/ContextMenu.h \
 	WebCore/platform/ContextMenuItem.h \

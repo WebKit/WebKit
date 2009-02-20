@@ -29,6 +29,7 @@
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivate.h"
 
+#include "ContentType.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "FrameView.h"
@@ -187,7 +188,7 @@ void MediaPlayer::load(const String& url, const String& mimeType)
 {
     // if we don't know the MIME type, see if the path can help
     String type = mimeType.isEmpty() ? MIMETypeRegistry::getMIMETypeForPath(url) : mimeType;
-    String codecs = MIMETypeRegistry::getParameterFromMIMEType(type, "codecs");
+    String codecs = ContentType(type).parameter("codecs");
 
     MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, codecs);
 

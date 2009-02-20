@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
+#include "ContentType.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -934,15 +935,12 @@ String HTMLMediaElement::selectMediaURL(String& mediaMIMEType)
                         continue;
                 }
                 if (source->hasAttribute(typeAttr)) {
-                    String type = source->type().stripWhiteSpace();
-                    String codecs = MIMETypeRegistry::getParameterFromMIMEType(type, "codecs");
-                    String simpleType = MIMETypeRegistry::stripParametersFromMIMEType(type);
-
-                    if (!MediaPlayer::supportsType(simpleType, codecs))
+                    ContentType contentType(source->type());
+                    if (!MediaPlayer::supportsType(contentType.type(), contentType.parameter("codecs")))
                         continue;
 
                     // return type with all parameters in place so the media engine can use them
-                    mediaMIMEType = type;
+                    mediaMIMEType = contentType.raw();
                 }
                 mediaSrc = source->src().string();
                 break;
