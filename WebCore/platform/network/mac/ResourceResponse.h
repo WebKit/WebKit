@@ -57,6 +57,18 @@ public:
     {
     }
 
+    unsigned memoryUsage() const
+    {
+        // FIXME: Find some programmatic lighweight way to calculate ResourceResponse and associated classes.
+        // This is a rough estimate of resource overhead based on stats collected from the stress test.
+        return 3072;
+        /*  1280 * 2 +                // average size of ResourceResponse. Doubled to account for the WebCore copy and the CF copy.
+                                      // Mostly due to the size of the hash maps, the Header Map strings and the URL.
+            256 * 2                   // Overhead from ResourceRequest, doubled to account for WebCore copy and CF copy.
+                                      // Mostly due to the URL and Header Map.
+         */
+    }
+
     NSURLResponse *nsURLResponse() const;
 
 private:

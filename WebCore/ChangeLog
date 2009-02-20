@@ -1,3 +1,21 @@
+2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23732
+        Rework CachedResource overhead accounting to allow platforms to diverge
+        in numbers.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::overheadSize): Changed to ask ResourceResponse
+        for its size and to use actual URL size.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::size): Added default size method.
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::size): Added Win/CF size method
+        * platform/network/mac/ResourceResponse.h:
+        (WebCore::ResourceResponse::size): Added Mac size method.
+
 2009-02-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
