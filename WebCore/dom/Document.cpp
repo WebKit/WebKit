@@ -1797,6 +1797,11 @@ void Document::updateBaseURL()
         m_mappedElementSheet->setHref(m_baseURL.string());
 }
 
+String Document::userAgent(const KURL& url) const
+{
+    return frame() ? frame()->loader()->userAgent(url) : String();
+}
+
 void Document::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     m_sheet = CSSStyleSheet::create(this, url, charset);

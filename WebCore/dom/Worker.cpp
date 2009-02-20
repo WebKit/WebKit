@@ -49,28 +49,32 @@
 
 namespace WebCore {
 
-Worker::Worker(const String& url, Document* doc, ExceptionCode& ec)
-    : ActiveDOMObject(doc, this)
+Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+    : ActiveDOMObject(context, this)
     , m_contextProxy(WorkerContextProxy::create(this))
 {
-    m_scriptURL = doc->completeURL(url);
+    m_scriptURL = context->completeURL(url);
     if (url.isEmpty() || !m_scriptURL.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }
 
-    if (!doc->securityOrigin()->canAccess(SecurityOrigin::create(m_scriptURL).get())) {
+    if (!context->securityOrigin()->canAccess(SecurityOrigin::create(m_scriptURL).get())) {
         ec = SECURITY_ERR;
         return;
     }
 
-    m_cachedScript = doc->docLoader()->requestScript(m_scriptURL, document()->charset());
+    // FIXME: 'inherit' charset and actual loading support from original document to enable nested workers.
+    ASSERT(scriptExecutionContext()->isDocument());
+    Document* document = static_cast<Document*>(scriptExecutionContext());
+
+    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, document->charset());
     if (!m_cachedScript) {
         dispatchErrorEvent();
         return;
     }
 
-    setPendingActivity(this);  // The worker context does not exist while loading, so we much ensure that the worker object is not collected, as well as its event listeners.
+    setPendingActivity(this);  // The worker context does not exist while loading, so we must ensure that the worker object is not collected, as well as its event listeners.
     m_cachedScript->addClient(this);
 }
 
@@ -79,12 +83,6 @@ Worker::~Worker()
     ASSERT(isMainThread());
     ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
     m_contextProxy->workerObjectDestroyed();
-}
-
-Document* Worker::document() const
-{
-    ASSERT(scriptExecutionContext()->isDocument());
-    return static_cast<Document*>(scriptExecutionContext());
 }
 
 void Worker::postMessage(const String& message)
@@ -119,10 +117,8 @@ void Worker::notifyFinished(CachedResource* unusedResource)
 
     if (m_cachedScript->errorOccurred())
         dispatchErrorEvent();
-    else {
-        String userAgent = document()->frame() ? document()->frame()->loader()->userAgent(m_scriptURL) : String();
-        m_contextProxy->startWorkerContext(m_scriptURL, userAgent, m_cachedScript->script());
-    }
+    else
+        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), m_cachedScript->script());
 
     m_cachedScript->removeClient(this);
     m_cachedScript = 0;

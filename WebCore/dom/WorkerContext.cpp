@@ -89,6 +89,11 @@ KURL WorkerContext::completeURL(const String& url) const
     return KURL(m_location->url(), url);
 }
 
+String WorkerContext::userAgent(const KURL&) const
+{
+    return m_userAgent;
+}
+
 WorkerNavigator* WorkerContext::navigator() const
 {
     if (!m_navigator)

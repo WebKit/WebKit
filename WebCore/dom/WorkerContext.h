@@ -62,6 +62,8 @@ namespace WebCore {
         const KURL& url() const { return m_url; }
         KURL completeURL(const String&) const;
 
+        virtual String userAgent(const KURL&) const;
+
         WorkerLocation* location() const { return m_location.get(); }
         WorkerNavigator* navigator() const;
 

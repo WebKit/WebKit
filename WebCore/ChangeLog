@@ -1,3 +1,30 @@
+2009-02-19  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24017
+        Remove some usage of Document in Worker.
+
+        * dom/WorkerContext.h:
+        (WebCore::WorkerContext::userAgent):
+        * dom/Document.cpp:
+        (WebCore::Document::userAgent):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        Added virtual ScriptExecutionContext::userAgent(const KURL&).
+        Document implementation uses FrameLoader::userAgent and
+        WorkerContext receives the string on creation and stores it in a member.
+
+        * dom/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::notifyFinished):
+        * dom/Worker.h:
+        (WebCore::Worker::create):
+        Instead of Document the Worker constructor now gets a ScriptExecutionContext.
+        Start using some methods on SEC (like completeURL() and userAgent()).
+        For others, explicitly case to Document and add a FIXME.
+        Remove Worker::document() too.
+
 2009-02-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         Rubber-stamped by Holger Freyther.
