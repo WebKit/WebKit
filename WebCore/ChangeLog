@@ -1,5 +1,28 @@
 2009-02-20  David Kilzer  <ddkilzer@apple.com>
 
+        Make IconDatabaseNone.cpp compile with -Wunused and pass check-for-exit-time-destructors
+
+        Reviewed by Sam Weinig.
+
+        * loader/icon/IconDatabaseNone.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename): Use DEFINE_STATIC_LOCAL().
+        (WebCore::IconDatabase::open): Commented out unused parameter.
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Ditto.
+        (WebCore::IconDatabase::iconForPageURL): Ditto.
+        (WebCore::IconDatabase::iconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::defaultIcon): Ditto.
+        (WebCore::IconDatabase::retainIconForPageURL): Ditto.
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto.
+        (WebCore::IconDatabase::setIconDataForIconURL): Ditto.
+        (WebCore::IconDatabase::setIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::setEnabled): Ditto.
+        (WebCore::IconDatabase::pageURLMappingCount): Added stub.
+        (WebCore::IconDatabase::retainedPageURLCount): Ditto.
+        (WebCore::IconDatabase::iconRecordCount): Ditto.
+        (WebCore::IconDatabase::iconRecordCountWithData): Ditto.
+
+2009-02-20  David Kilzer  <ddkilzer@apple.com>
+
         Add comment to generated code when shadowing a built-in object
 
         Reviewed by Sam Weinig.
