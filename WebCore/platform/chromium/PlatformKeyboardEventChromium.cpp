@@ -42,7 +42,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 #if PLATFORM(WIN_OS)
     // No KeyDown events on Windows to disambiguate.
     ASSERT_NOT_REACHED();
-#elif PLATFORM(DARWIN)
+#else
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
     ASSERT(m_type == KeyDown);
     ASSERT(type == RawKeyDown || type == Char);
@@ -56,6 +56,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     } else {
         m_keyIdentifier = String();
         m_windowsVirtualKeyCode = 0;
+#if PLATFORM(DARWIN)
         if (m_text.length() == 1 && (m_text[0U] >= 0xF700 && m_text[0U] <= 0xF7FF)) {
             // According to NSEvents.h, OpenStep reserves the range 0xF700-0xF8FF for function keys. However, some actual private use characters
             // happen to be in this range, e.g. the Apple logo (Option+Shift+K).
@@ -63,6 +64,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
             m_text = String();
             m_unmodifiedText = String();
         }
+#endif
     }
 #endif
 }
