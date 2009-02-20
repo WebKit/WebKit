@@ -1,3 +1,14 @@
+2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24060
+        Fix up to accommodate for CanvasPixelArray return.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::getImageData): Added an extra data() to call.
+        (WebCore::ImageBuffer::putImageData): Ditto.
+
 2009-02-20  Eric Carlson  <eric.carlson@apple.com>
 
         Simon Fraser

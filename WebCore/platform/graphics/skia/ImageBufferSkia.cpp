@@ -106,7 +106,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     ASSERT(context());
 
     RefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
-    unsigned char* data = result->data()->data();
+    unsigned char* data = result->data()->data()->data();
 
     if (rect.x() < 0 || rect.y() < 0 ||
         (rect.x() + rect.width()) > m_size.width() ||
@@ -193,7 +193,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect,
 
     unsigned srcBytesPerRow = 4 * source->width();
 
-    const unsigned char* srcRow = source->data()->data() + originY * srcBytesPerRow + originX * 4;
+    const unsigned char* srcRow = source->data()->data()->data() + originY * srcBytesPerRow + originX * 4;
 
     for (int y = 0; y < numRows; ++y) {
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
