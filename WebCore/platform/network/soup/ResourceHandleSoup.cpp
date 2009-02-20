@@ -722,7 +722,6 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
 
     response.setMimeType(g_file_info_get_content_type(info));
     response.setExpectedContentLength(g_file_info_get_size(info));
-    response.setHTTPStatusCode(SOUP_STATUS_OK);
 
     GTimeVal tv;
     g_file_info_get_modification_time(info, &tv);

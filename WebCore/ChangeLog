@@ -1,3 +1,14 @@
+2009-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Holger Freyther.
+
+        Do not set httpStatus to SOUP_STATUS_OK when serving local files
+        to match other ports' behavior, fixing xmlhttprequest test
+        regressions.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::queryInfoCallback):
+
 2009-02-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
