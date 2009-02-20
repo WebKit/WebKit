@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,6 +172,11 @@ private:
     void progressEventTimerFired(Timer<HTMLMediaElement>*);
     void seek(float time, ExceptionCode& ec);
     void checkIfSeekNeeded();
+
+    // These "internal" functions do not check user gesture restrictions.
+    void loadInternal(ExceptionCode& ec);
+    void playInternal(ExceptionCode& ec);
+    void pauseInternal(ExceptionCode& ec);
     
     bool processingUserGesture() const;
     bool processingMediaPlayerCallback() const { return m_processingMediaPlayerCallback > 0; }
@@ -188,12 +193,13 @@ private:
     bool activelyPlaying() const;
     bool endedPlayback() const;
 
-    // Control media load restrictions. This is a effectively a compile time choice at the moment
+    // Restrictions to change default behaviors. This is a effectively a compile time choice at the moment
     //  because there are no accessor methods.
-    enum LoadRestrictions 
+    enum BehaviorRestrictions 
     { 
-        NoLoadRestriction = 0,
-        RequireUserGestureLoadRestriction = 1 << 0, 
+        NoRestrictions = 0,
+        RequireUserGestureForLoadRestriction = 1 << 0,
+        RequireUserGestureForRateChangeRestriction = 1 << 1,
     };
 
 
@@ -237,7 +243,7 @@ protected:
 
     OwnPtr<MediaPlayer> m_player;
 
-    LoadRestrictions m_loadRestrictions;
+    BehaviorRestrictions m_restrictions;
 
     // counter incremented while processing a callback from the media player, so we can avoid
     //  calling the media engine recursively

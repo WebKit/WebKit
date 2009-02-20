@@ -1,3 +1,26 @@
+2009-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24063
+        Make it possible for a port to require a user gesture to play/pause an <audio> or <video> element
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):  Rename m_loadRestrictions to m_Restrictions. 
+        Initialize m_internalCall.
+        (WebCore::HTMLMediaElement::loadTimerFired): Increment m_internalCall around call to load().
+        (WebCore::HTMLMediaElement::load): Call loadInternal if restrictions check out.
+        (WebCore::HTMLMediaElement::loadInternal): New, guts of old load()
+        (WebCore::HTMLMediaElement::setNetworkState): Fix bug introduced in r40943
+        (WebCore::HTMLMediaElement::play): Call playInternal if restrictions check out.
+        (WebCore::HTMLMediaElement::playInternal): New, guts of old play()
+        (WebCore::HTMLMediaElement::pause): Call pauseInternal if restrictions check out.
+        (WebCore::HTMLMediaElement::pauseInternal): New, guts of old pause()
+        (WebCore::HTMLMediaElement::togglePlayState): Call playInternal/pauseInternal
+        (WebCore::HTMLMediaElement::deliverNotification): Remove unnecessary white space.
+        * html/HTMLMediaElement.h: Rename m_loadRestrictions to m_Restrictions, add m_internalCall,
+        add RequireUserGestureRateChangeRestriction.
+
 2009-02-20  Darin Fisher  <darin@chromium.org>
 
         Fix build bustage in FileSystemWin.cpp.
