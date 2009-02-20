@@ -1,3 +1,13 @@
+2009-02-20  Darin Fisher  <darin@chromium.org>
+
+        Fix build bustage in FileSystemWin.cpp.
+
+        Need to return CString() instead of 0 since there are now two CString
+        constructors that take a pointer type.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openTemporaryFile):
+
 2009-02-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.
