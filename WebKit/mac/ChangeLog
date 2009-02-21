@@ -1,3 +1,16 @@
+2009-02-20  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by andersca.
+    
+        <rdar://problem/6496140> Safari sometimes hangs in WKSetMetadataURL for several seconds after downloading a file
+         
+         Spawn a background thread for WKSetMetadataURL because this function will not return until mds has journaled the data
+         we are trying to set. Depending on what other I/O is going on, it can take some time. 
+
+        * Misc/WebNSFileManagerExtras.m: Import pthread.h and FoundationExtras.h
+        (setMetaData): Added. Calls WKSetMetadataURL().
+        (-[NSFileManager _webkit_setMetadataURL:referrer:atPath:]): Call setMetaData on a background thread 
+ 
 2009-02-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
