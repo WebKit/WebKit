@@ -1,3 +1,23 @@
+2009-02-21  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23786
+        [Chromium] line-break characters in a complex text are treated as zero-width spaces
+
+        This change prevents the UniscribeHelper class from treating the line-break characters
+        as whitespaces.
+
+        Tests: fast/text/international/bidi-linebreak-001.html
+               fast/text/international/bidi-linebreak-002.html
+               fast/text/international/bidi-linebreak-003.html
+
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::adjustSpaceAdvances):
+        Make the UniscribeHelper::adjustSpaceAdvances() function treat all characters in
+        the treatAsSpace() function (e.g. U+0020, U+000A, U+000D, U+00A0) as whitespaces,
+        so does when Chromium renders a simple text.
+
 2009-02-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

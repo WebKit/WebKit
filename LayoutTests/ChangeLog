@@ -1,3 +1,25 @@
+2009-02-21  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23786
+        [Chromium] line-break characters in a complex text are treated as zero-width spaces
+
+        Added tests which verifies line-break characters in a complex text are treated as defined in CSS 2.1.
+
+        * fast/text/international/bidi-linebreak-001.html: Added.
+        * fast/text/international/bidi-linebreak-002.html: Added.
+        * fast/text/international/bidi-linebreak-003.html: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.txt: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.txt: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.txt: Added.
+
 2009-02-20  Sam Weinig  <sam@webkit.org>
 
         * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt: Update results.

@@ -812,9 +812,6 @@ void UniscribeHelper::adjustSpaceAdvances()
 
             int glyphIndex = shaping.m_logs[i];
             int currentAdvance = shaping.m_advance[glyphIndex];
-            // Don't give zero-width spaces a width.
-            if (!currentAdvance)
-                continue;
 
             // currentAdvance does not include additional letter-spacing, but
             // space_width does. Here we find out how off we are from the
