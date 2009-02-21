@@ -969,9 +969,8 @@ void Document::setTitle(const String& title, Element* titleElement)
             m_titleElement = 0;
         else if (!m_titleElement) {
             if (HTMLElement* headElement = head()) {
+                m_titleElement = createElement(titleTag, false);
                 ExceptionCode ec = 0;
-                m_titleElement = createElement("title", ec);
-                ASSERT(!ec);
                 headElement->appendChild(m_titleElement, ec);
                 ASSERT(!ec);
             }

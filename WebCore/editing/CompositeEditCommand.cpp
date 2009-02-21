@@ -1033,9 +1033,7 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
 {
-    ExceptionCode ec = 0;
-    RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", ec);
-    ASSERT(ec == 0);
+    RefPtr<Element> breakNode = document->createElement(brTag, false);
     return breakNode.release();
 }
 

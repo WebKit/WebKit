@@ -72,17 +72,17 @@ bool PluginTokenizer::write(const SegmentedString&, bool)
 void PluginTokenizer::createDocumentStructure()
 {
     ExceptionCode ec;
-    RefPtr<Element> rootElement = m_doc->createElementNS(xhtmlNamespaceURI, "html", ec);
+    RefPtr<Element> rootElement = m_doc->createElement(htmlTag, false);
     m_doc->appendChild(rootElement, ec);
-        
-    RefPtr<Element> body = m_doc->createElementNS(xhtmlNamespaceURI, "body", ec);
+
+    RefPtr<Element> body = m_doc->createElement(bodyTag, false);
     body->setAttribute(marginwidthAttr, "0");
     body->setAttribute(marginheightAttr, "0");
     body->setAttribute(bgcolorAttr, "rgb(38,38,38)");
 
     rootElement->appendChild(body, ec);
         
-    RefPtr<Element> embedElement = m_doc->createElementNS(xhtmlNamespaceURI, "embed", ec);
+    RefPtr<Element> embedElement = m_doc->createElement(embedTag, false);
         
     m_embedElement = static_cast<HTMLEmbedElement*>(embedElement.get());
     m_embedElement->setAttribute(widthAttr, "100%");

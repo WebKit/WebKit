@@ -819,16 +819,16 @@ Position positionBeforeTabSpan(const Position& pos)
 
 PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> tabTextNode)
 {
-    // make the span to hold the tab
-    ExceptionCode ec = 0;
-    RefPtr<Element> spanElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
-    ASSERT(ec == 0);
+    // Make the span to hold the tab.
+    RefPtr<Element> spanElement = document->createElement(spanTag, false);
     spanElement->setAttribute(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
 
-    // add tab text to that span
+    // Add tab text to that span.
     if (!tabTextNode)
         tabTextNode = document->createEditingTextNode("\t");
+
+    ExceptionCode ec = 0;
     spanElement->appendChild(tabTextNode, ec);
     ASSERT(ec == 0);
 

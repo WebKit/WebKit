@@ -77,15 +77,15 @@ bool MediaTokenizer::write(const SegmentedString&, bool)
 void MediaTokenizer::createDocumentStructure()
 {
     ExceptionCode ec;
-    RefPtr<Element> rootElement = m_doc->createElementNS(xhtmlNamespaceURI, "html", ec);
+    RefPtr<Element> rootElement = m_doc->createElement(htmlTag, false);
     m_doc->appendChild(rootElement, ec);
         
-    RefPtr<Element> body = m_doc->createElementNS(xhtmlNamespaceURI, "body", ec);
+    RefPtr<Element> body = m_doc->createElement(bodyTag, false);
     body->setAttribute(styleAttr, "background-color: rgb(38,38,38);");
 
     rootElement->appendChild(body, ec);
         
-    RefPtr<Element> mediaElement = m_doc->createElementNS(xhtmlNamespaceURI, "video", ec);
+    RefPtr<Element> mediaElement = m_doc->createElement(videoTag, false);
         
     m_mediaElement = static_cast<HTMLVideoElement*>(mediaElement.get());
     m_mediaElement->setAttribute(controlsAttr, "");

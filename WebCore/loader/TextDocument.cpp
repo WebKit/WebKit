@@ -125,13 +125,13 @@ bool TextTokenizer::write(const SegmentedString& s, bool)
     }
 
     if (!m_preElement && !inViewSourceMode()) {
-        RefPtr<Element> rootElement = m_doc->createElementNS(xhtmlNamespaceURI, "html", ec);
+        RefPtr<Element> rootElement = m_doc->createElement(htmlTag, false);
         m_doc->appendChild(rootElement, ec);
 
-        RefPtr<Element> body = m_doc->createElementNS(xhtmlNamespaceURI, "body", ec);
+        RefPtr<Element> body = m_doc->createElement(bodyTag, false);
         rootElement->appendChild(body, ec);
 
-        RefPtr<Element> preElement = m_doc->createElementNS(xhtmlNamespaceURI, "pre", ec);
+        RefPtr<Element> preElement = m_doc->createElement(preTag, false);
         preElement->setAttribute("style", "word-wrap: break-word; white-space: pre-wrap;", ec);
 
         body->appendChild(preElement, ec);

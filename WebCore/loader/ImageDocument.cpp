@@ -166,10 +166,10 @@ void ImageDocument::createDocumentStructure()
 {
     ExceptionCode ec;
     
-    RefPtr<Element> rootElement = createElementNS(xhtmlNamespaceURI, "html", ec);
+    RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
     appendChild(rootElement, ec);
     
-    RefPtr<Element> body = createElementNS(xhtmlNamespaceURI, "body", ec);
+    RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px;");
     
     rootElement->appendChild(body, ec);

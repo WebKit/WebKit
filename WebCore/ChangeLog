@@ -1,3 +1,52 @@
+2009-02-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23940: Use Document::createElement(const QualifiedName&, bool) when creating a known element inside WebCore
+
+        Document::createElement(const QualifiedName&, bool) does not check for the prefix as opposed the the one taking an AtomicString
+        or Document::createElementNS. This is perfectly fine internally because we know the type of element created and the check is
+        unneeded.
+
+        It also removes the use of an ExceptionCode argument which was here only to check that the prefix check was fine. Finally it
+        enables us to use some generated QualifiedName.
+
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::createBlockPlaceholderElement):
+        * editing/htmlediting.cpp:
+        (WebCore::createTabSpanElement):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::appendEntry):
+        (WebCore::FTPDirectoryTokenizer::createTDForFilename):
+        (WebCore::FTPDirectoryTokenizer::loadDocumentTemplate):
+        (WebCore::FTPDirectoryTokenizer::createBasicDocument):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaTokenizer::createDocumentStructure):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::styleForSelectionStart):
+        Document::createElement(const AtomicString&, ...) to Document::createElement(const QualifiedName&, ...) switch.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Re-use langAttr instead of creating a new attribute.
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData): Use the HTMLAnchorElement directly to get rid of the static cast.
+
 2009-02-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

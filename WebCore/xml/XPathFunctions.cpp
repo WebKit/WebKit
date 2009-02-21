@@ -539,7 +539,7 @@ Value FunLang::evaluate() const
     while (node) {
         NamedAttrMap* attrs = node->attributes();
         if (attrs)
-            languageAttribute = attrs->getAttributeItem(QualifiedName(nullAtom, "lang", XMLNames::xmlNamespaceURI));
+            languageAttribute = attrs->getAttributeItem(XMLNames::langAttr);
         if (languageAttribute)
             break;
         node = node->parentNode();

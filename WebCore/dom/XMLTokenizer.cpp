@@ -64,6 +64,8 @@ using namespace std;
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 const int maxErrors = 25;
 
 #if ENABLE(WML)
@@ -200,20 +202,20 @@ void XMLTokenizer::finish()
 
 static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages) 
 {
-    ExceptionCode ec = 0;
-    RefPtr<Element> reportElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "parsererror", ec);
-    reportElement->setAttribute(HTMLNames::styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), false);
+    reportElement->setAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
     
-    RefPtr<Element> h3 = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "h3", ec);
+    ExceptionCode ec = 0;
+    RefPtr<Element> h3 = doc->createElement(h3Tag, false);
     reportElement->appendChild(h3.get(), ec);
     h3->appendChild(doc->createTextNode("This page contains the following errors:"), ec);
-    
-    RefPtr<Element> fixed = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "div", ec);
+
+    RefPtr<Element> fixed = doc->createElement(divTag, false);
     reportElement->appendChild(fixed.get(), ec);
-    fixed->setAttribute(HTMLNames::styleAttr, "font-family:monospace;font-size:12px");
+    fixed->setAttribute(styleAttr, "font-family:monospace;font-size:12px");
     fixed->appendChild(doc->createTextNode(errorMessages), ec);
-    
-    h3 = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "h3", ec);
+
+    h3 = doc->createElement(h3Tag, false);
     reportElement->appendChild(h3.get(), ec);
     h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), ec);
     
@@ -235,16 +237,16 @@ void XMLTokenizer::insertErrorMessageBlock()
     Document* doc = m_doc;
     Node* documentElement = doc->documentElement();
     if (!documentElement) {
-        RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
+        RefPtr<Node> rootElement = doc->createElement(htmlTag, false);
         doc->appendChild(rootElement, ec);
-        RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
+        RefPtr<Node> body = doc->createElement(bodyTag, false);
         rootElement->appendChild(body, ec);
         documentElement = body.get();
     }
 #if ENABLE(SVG)
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
-        RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
-        RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
+        RefPtr<Node> rootElement = doc->createElement(htmlTag, false);
+        RefPtr<Node> body = doc->createElement(bodyTag, false);
         rootElement->appendChild(body, ec);
         body->appendChild(documentElement, ec);
         doc->appendChild(rootElement.get(), ec);
@@ -253,8 +255,8 @@ void XMLTokenizer::insertErrorMessageBlock()
 #endif
 #if ENABLE(WML)
     else if (isWMLDocument()) {
-        RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
-        RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
+        RefPtr<Node> rootElement = doc->createElement(htmlTag, false);
+        RefPtr<Node> body = doc->createElement(bodyTag, false);
         rootElement->appendChild(body, ec);
         body->appendChild(documentElement, ec);
         doc->appendChild(rootElement.get(), ec);
@@ -266,9 +268,9 @@ void XMLTokenizer::insertErrorMessageBlock()
     documentElement->insertBefore(reportElement, documentElement->firstChild(), ec);
 #if ENABLE(XSLT)
     if (doc->transformSourceDocument()) {
-        RefPtr<Element> par = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "p", ec);
+        RefPtr<Element> par = doc->createElement(pTag, false);
         reportElement->appendChild(par, ec);
-        par->setAttribute(HTMLNames::styleAttr, "white-space: normal");
+        par->setAttribute(styleAttr, "white-space: normal");
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
     }
 #endif
