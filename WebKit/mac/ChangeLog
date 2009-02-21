@@ -1,3 +1,12 @@
+2009-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a shared floating text input window implementation, to be used by the hosted plug-in view.
+        
+        * Plugins/Hosted/WebTextInputWindowController.h: Added.
+        * Plugins/Hosted/WebTextInputWindowController.m: Added.
+
 2009-02-20  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by andersca.

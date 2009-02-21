@@ -1,3 +1,11 @@
+2009-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add new files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-02-13  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated for recent changes.
