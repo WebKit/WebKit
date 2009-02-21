@@ -1,3 +1,9 @@
+2009-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        
+        * Plugins/Hosted/WebTextInputWindowController.m:
+
 2009-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

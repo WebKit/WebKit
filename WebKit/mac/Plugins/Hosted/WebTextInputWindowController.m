@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if USE(PLUGIN_HOST_PROCESS)
+
 #import "WebTextInputWindowController.h"
 
 #import <WebKitSystemInterface.h>
@@ -154,3 +156,6 @@
 }
 
 @end
+
+#endif // USE(PLUGIN_HOST_PROCESS)
+
