@@ -140,7 +140,7 @@ static void swizzleAllMethods(Class imposter, Class original)
 
         // Attempt to add the method to the original class.  If it fails, the method already exists and we should
         // instead exchange the implementations.
-        if (class_addMethod(original, imposterMethodName, method_getImplementation(originalMethods[i]), method_getTypeEncoding(originalMethods[i])))
+        if (class_addMethod(original, imposterMethodName, method_getImplementation(imposterMethods[i]), method_getTypeEncoding(imposterMethods[i])))
             continue;
 
         unsigned int j = 0;

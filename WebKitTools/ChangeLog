@@ -1,3 +1,13 @@
+2009-02-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix assertion failures in editing/pasteboard/paste-RTFD.html and editing/pasteboard/paste-TIFF.html in 64-bit.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (swizzleAllMethods): When adding a new method to a class, use the implementation and type of the new method rather
+        than of an arbitrary existing method on the class.
+
 2009-02-13  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Alexey Proskuryakov. 
