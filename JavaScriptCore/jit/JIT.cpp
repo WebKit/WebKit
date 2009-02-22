@@ -79,14 +79,14 @@ asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
-    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPvz) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC8JITStubs12cti_vm_throwEPvz) "\n"
 #else
 #if USE(JIT_STUB_ARGUMENT_REGISTER)
     "movl %esp, %ecx" "\n"
 #else // JIT_STUB_ARGUMENT_STACK
     "movl %esp, 0(%esp)" "\n"
 #endif
-    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC8JITStubs12cti_vm_throwEPPv) "\n"
 #endif
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
@@ -138,7 +138,7 @@ asm(
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if USE(JIT_STUB_ARGUMENT_REGISTER)
     "movq %rsp, %rdi" "\n"
-    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC8JITStubs12cti_vm_throwEPPv) "\n"
 #else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
 #error "JIT_STUB_ARGUMENT configuration not supported."
 #endif
@@ -186,7 +186,7 @@ extern "C" {
 #else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
 #error "JIT_STUB_ARGUMENT configuration not supported."
 #endif
-            call JSC::Interpreter::cti_vm_throw;
+            call JSC::JITStubs::cti_vm_throw;
             add esp, 0x1c;
             pop ebx;
             pop edi;
@@ -284,10 +284,10 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emitSlowScriptCheck()
+void JIT::emitTimeoutCheck()
 {
     Jump skipTimeout = branchSub32(NonZero, Imm32(1), timeoutCheckRegister);
-    emitCTICall(Interpreter::cti_timeout_check);
+    emitCTICall(JITStubs::cti_timeout_check);
     move(regT0, timeoutCheckRegister);
     skipTimeout.link(this);
 
@@ -303,7 +303,7 @@ void JIT::emitSlowScriptCheck()
     case name: { \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2); \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2); \
-        emitCTICall(Interpreter::cti_##name); \
+        emitCTICall(JITStubs::cti_##name); \
         emitPutVirtualRegister(currentInstruction[1].u.operand); \
         NEXT_OPCODE(name); \
     }
@@ -311,7 +311,7 @@ void JIT::emitSlowScriptCheck()
 #define CTI_COMPILE_UNARY_OP(name) \
     case name: { \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2); \
-        emitCTICall(Interpreter::cti_##name); \
+        emitCTICall(JITStubs::cti_##name); \
         emitPutVirtualRegister(currentInstruction[1].u.operand); \
         NEXT_OPCODE(name); \
     }
@@ -348,7 +348,7 @@ void JIT::privateCompileMainPass()
         }
         case op_end: {
             if (m_codeBlock->needsFullScopeChain())
-                emitCTICall(Interpreter::cti_op_end);
+                emitCTICall(JITStubs::cti_op_end);
             ASSERT(returnValueRegister != callFrameRegister);
             emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
             push(Address(callFrameRegister, RegisterFile::ReturnPC * static_cast<int>(sizeof(Register))));
@@ -365,14 +365,14 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_pre_inc);
         }
         case op_loop: {
-            emitSlowScriptCheck();
+            emitTimeoutCheck();
 
             unsigned target = currentInstruction[1].u.operand;
             addJump(jump(), target + 1);
             NEXT_OPCODE(op_end);
         }
         case op_loop_if_less: {
-            emitSlowScriptCheck();
+            emitTimeoutCheck();
 
             unsigned op1 = currentInstruction[1].u.operand;
             unsigned op2 = currentInstruction[2].u.operand;
@@ -395,7 +395,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_loop_if_less);
         }
         case op_loop_if_lesseq: {
-            emitSlowScriptCheck();
+            emitTimeoutCheck();
 
             unsigned op1 = currentInstruction[1].u.operand;
             unsigned op2 = currentInstruction[2].u.operand;
@@ -418,7 +418,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_loop_if_less);
         }
         case op_new_object: {
-            emitCTICall(Interpreter::cti_op_new_object);
+            emitCTICall(JITStubs::cti_op_new_object);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_object);
         }
@@ -485,7 +485,7 @@ void JIT::privateCompileMainPass()
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
             emitPutJITStubArgConstant(ident, 2);
-            emitCTICall(Interpreter::cti_op_del_by_id);
+            emitCTICall(JITStubs::cti_op_del_by_id);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_del_by_id);
         }
@@ -496,7 +496,7 @@ void JIT::privateCompileMainPass()
         case op_new_func: {
             FuncDeclNode* func = m_codeBlock->function(currentInstruction[2].u.operand);
             emitPutJITStubArgConstant(func, 1);
-            emitCTICall(Interpreter::cti_op_new_func);
+            emitCTICall(JITStubs::cti_op_new_func);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_func);
         }
@@ -552,17 +552,17 @@ void JIT::privateCompileMainPass()
         }
         case op_tear_off_activation: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT2);
-            emitCTICall(Interpreter::cti_op_tear_off_activation);
+            emitCTICall(JITStubs::cti_op_tear_off_activation);
             NEXT_OPCODE(op_tear_off_activation);
         }
         case op_tear_off_arguments: {
-            emitCTICall(Interpreter::cti_op_tear_off_arguments);
+            emitCTICall(JITStubs::cti_op_tear_off_arguments);
             NEXT_OPCODE(op_tear_off_arguments);
         }
         case op_ret: {
             // We could JIT generate the deref, only calling out to C when the refcount hits zero.
             if (m_codeBlock->needsFullScopeChain())
-                emitCTICall(Interpreter::cti_op_ret_scopeChain);
+                emitCTICall(JITStubs::cti_op_ret_scopeChain);
 
             ASSERT(callFrameRegister != regT1);
             ASSERT(regT1 != returnValueRegister);
@@ -586,14 +586,14 @@ void JIT::privateCompileMainPass()
         case op_new_array: {
             emitPutJITStubArgConstant(currentInstruction[2].u.operand, 1);
             emitPutJITStubArgConstant(currentInstruction[3].u.operand, 2);
-            emitCTICall(Interpreter::cti_op_new_array);
+            emitCTICall(JITStubs::cti_op_new_array);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_array);
         }
         case op_resolve: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 1);
-            emitCTICall(Interpreter::cti_op_resolve);
+            emitCTICall(JITStubs::cti_op_resolve);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve);
         }
@@ -635,7 +635,7 @@ void JIT::privateCompileMainPass()
         case op_resolve_func: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
             emitPutJITStubArgConstant(ident, 1);
-            emitCTICall(Interpreter::cti_op_resolve_func);
+            emitCTICall(JITStubs::cti_op_resolve_func);
             emitPutVirtualRegister(currentInstruction[2].u.operand, regT1);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve_func);
@@ -674,7 +674,7 @@ void JIT::privateCompileMainPass()
         }
         CTI_COMPILE_BINARY_OP(op_lesseq)
         case op_loop_if_true: {
-            emitSlowScriptCheck();
+            emitTimeoutCheck();
 
             unsigned target = currentInstruction[2].u.operand;
             emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
@@ -691,13 +691,13 @@ void JIT::privateCompileMainPass()
         case op_resolve_base: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 1);
-            emitCTICall(Interpreter::cti_op_resolve_base);
+            emitCTICall(JITStubs::cti_op_resolve_base);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve_base);
         }
         case op_negate: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
-            emitCTICall(Interpreter::cti_op_negate);
+            emitCTICall(JITStubs::cti_op_negate);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_negate);
         }
@@ -705,7 +705,7 @@ void JIT::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 1);
             emitPutJITStubArgConstant(currentInstruction[3].u.operand + m_codeBlock->needsFullScopeChain(), 2);
-            emitCTICall(Interpreter::cti_op_resolve_skip);
+            emitCTICall(JITStubs::cti_op_resolve_skip);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve_skip);
         }
@@ -735,7 +735,7 @@ void JIT::privateCompileMainPass()
             emitPutJITStubArgConstant(globalObject, 1);
             emitPutJITStubArgConstant(ident, 2);
             emitPutJITStubArgConstant(currentIndex, 3);
-            emitCTICall(Interpreter::cti_op_resolve_global);
+            emitCTICall(JITStubs::cti_op_resolve_global);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             end.link(this);
             NEXT_OPCODE(op_resolve_global);
@@ -884,7 +884,7 @@ void JIT::privateCompileMainPass()
         case op_resolve_with_base: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
             emitPutJITStubArgConstant(ident, 1);
-            emitCTICall(Interpreter::cti_op_resolve_with_base);
+            emitCTICall(JITStubs::cti_op_resolve_with_base);
             emitPutVirtualRegister(currentInstruction[2].u.operand, regT1);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve_with_base);
@@ -892,7 +892,7 @@ void JIT::privateCompileMainPass()
         case op_new_func_exp: {
             FuncExprNode* func = m_codeBlock->functionExpression(currentInstruction[2].u.operand);
             emitPutJITStubArgConstant(func, 1);
-            emitCTICall(Interpreter::cti_op_new_func_exp);
+            emitCTICall(JITStubs::cti_op_new_func_exp);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_func_exp);
         }
@@ -940,7 +940,7 @@ void JIT::privateCompileMainPass()
         case op_new_regexp: {
             RegExp* regExp = m_codeBlock->regexp(currentInstruction[2].u.operand);
             emitPutJITStubArgConstant(regExp, 1);
-            emitCTICall(Interpreter::cti_op_new_regexp);
+            emitCTICall(JITStubs::cti_op_new_regexp);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_regexp);
         }
@@ -953,7 +953,7 @@ void JIT::privateCompileMainPass()
         }
         case op_throw: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT2);
-            emitCTICall(Interpreter::cti_op_throw);
+            emitCTICall(JITStubs::cti_op_throw);
             ASSERT(regT0 == returnValueRegister);
 #if PLATFORM(X86_64)
             addPtr(Imm32(0x48), X86::esp);
@@ -976,14 +976,14 @@ void JIT::privateCompileMainPass()
         }
         case op_get_pnames: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
-            emitCTICall(Interpreter::cti_op_get_pnames);
+            emitCTICall(JITStubs::cti_op_get_pnames);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_get_pnames);
         }
         case op_next_pname: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
             unsigned target = currentInstruction[3].u.operand;
-            emitCTICall(Interpreter::cti_op_next_pname);
+            emitCTICall(JITStubs::cti_op_next_pname);
             Jump endOfIter = branchTestPtr(Zero, regT0);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             addJump(jump(), target + 3);
@@ -992,12 +992,12 @@ void JIT::privateCompileMainPass()
         }
         case op_push_scope: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT2);
-            emitCTICall(Interpreter::cti_op_push_scope);
+            emitCTICall(JITStubs::cti_op_push_scope);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_push_scope);
         }
         case op_pop_scope: {
-            emitCTICall(Interpreter::cti_op_pop_scope);
+            emitCTICall(JITStubs::cti_op_pop_scope);
             NEXT_OPCODE(op_pop_scope);
         }
         CTI_COMPILE_UNARY_OP(op_typeof)
@@ -1035,7 +1035,7 @@ void JIT::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 1);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2);
-            emitCTICall(Interpreter::cti_op_push_new_scope);
+            emitCTICall(JITStubs::cti_op_push_new_scope);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_push_new_scope);
         }
@@ -1047,7 +1047,7 @@ void JIT::privateCompileMainPass()
         case op_jmp_scopes: {
             unsigned count = currentInstruction[1].u.operand;
             emitPutJITStubArgConstant(count, 1);
-            emitCTICall(Interpreter::cti_op_jmp_scopes);
+            emitCTICall(JITStubs::cti_op_jmp_scopes);
             unsigned target = currentInstruction[2].u.operand;
             addJump(jump(), target + 2);
             NEXT_OPCODE(op_jmp_scopes);
@@ -1056,7 +1056,7 @@ void JIT::privateCompileMainPass()
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT2);
             emitPutJITStubArgConstant(currentInstruction[2].u.operand, 2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 3, regT2);
-            emitCTICall(Interpreter::cti_op_put_by_index);
+            emitCTICall(JITStubs::cti_op_put_by_index);
             NEXT_OPCODE(op_put_by_index);
         }
         case op_switch_imm: {
@@ -1071,7 +1071,7 @@ void JIT::privateCompileMainPass()
 
             emitPutJITStubArgFromVirtualRegister(scrutinee, 1, regT2);
             emitPutJITStubArgConstant(tableIndex, 2);
-            emitCTICall(Interpreter::cti_op_switch_imm);
+            emitCTICall(JITStubs::cti_op_switch_imm);
             jump(regT0);
             NEXT_OPCODE(op_switch_imm);
         }
@@ -1087,7 +1087,7 @@ void JIT::privateCompileMainPass()
 
             emitPutJITStubArgFromVirtualRegister(scrutinee, 1, regT2);
             emitPutJITStubArgConstant(tableIndex, 2);
-            emitCTICall(Interpreter::cti_op_switch_char);
+            emitCTICall(JITStubs::cti_op_switch_char);
             jump(regT0);
             NEXT_OPCODE(op_switch_char);
         }
@@ -1102,14 +1102,14 @@ void JIT::privateCompileMainPass()
 
             emitPutJITStubArgFromVirtualRegister(scrutinee, 1, regT2);
             emitPutJITStubArgConstant(tableIndex, 2);
-            emitCTICall(Interpreter::cti_op_switch_string);
+            emitCTICall(JITStubs::cti_op_switch_string);
             jump(regT0);
             NEXT_OPCODE(op_switch_string);
         }
         case op_del_by_val: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2);
-            emitCTICall(Interpreter::cti_op_del_by_val);
+            emitCTICall(JITStubs::cti_op_del_by_val);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_del_by_val);
         }
@@ -1118,7 +1118,7 @@ void JIT::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 3, regT2);
-            emitCTICall(Interpreter::cti_op_put_getter);
+            emitCTICall(JITStubs::cti_op_put_getter);
             NEXT_OPCODE(op_put_getter);
         }
         case op_put_setter: {
@@ -1126,7 +1126,7 @@ void JIT::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 3, regT2);
-            emitCTICall(Interpreter::cti_op_put_setter);
+            emitCTICall(JITStubs::cti_op_put_setter);
             NEXT_OPCODE(op_put_setter);
         }
         case op_new_error: {
@@ -1134,7 +1134,7 @@ void JIT::privateCompileMainPass()
             emitPutJITStubArgConstant(currentInstruction[2].u.operand, 1);
             emitPutJITStubArgConstant(JSValuePtr::encode(message), 2);
             emitPutJITStubArgConstant(m_bytecodeIndex, 3);
-            emitCTICall(Interpreter::cti_op_new_error);
+            emitCTICall(JITStubs::cti_op_new_error);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_error);
         }
@@ -1142,7 +1142,7 @@ void JIT::privateCompileMainPass()
             emitPutJITStubArgConstant(currentInstruction[1].u.operand, 1);
             emitPutJITStubArgConstant(currentInstruction[2].u.operand, 2);
             emitPutJITStubArgConstant(currentInstruction[3].u.operand, 3);
-            emitCTICall(Interpreter::cti_op_debug);
+            emitCTICall(JITStubs::cti_op_debug);
             NEXT_OPCODE(op_debug);
         }
         case op_eq_null: {
@@ -1211,16 +1211,16 @@ void JIT::privateCompileMainPass()
             for (size_t j = 0; j < count; ++j)
                 emitInitRegister(j);
 
-            emitCTICall(Interpreter::cti_op_push_activation);
+            emitCTICall(JITStubs::cti_op_push_activation);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
 
             NEXT_OPCODE(op_enter_with_activation);
         }
         case op_create_arguments: {
             if (m_codeBlock->m_numParameters == 1)
-                emitCTICall(Interpreter::cti_op_create_arguments_no_params);
+                emitCTICall(JITStubs::cti_op_create_arguments_no_params);
             else
-                emitCTICall(Interpreter::cti_op_create_arguments);
+                emitCTICall(JITStubs::cti_op_create_arguments);
             NEXT_OPCODE(op_create_arguments);
         }
         case op_convert_this: {
@@ -1236,7 +1236,7 @@ void JIT::privateCompileMainPass()
             emitGetCTIParam(STUB_ARGS_profilerReference, regT0);
             Jump noProfiler = branchTestPtr(Zero, Address(regT0));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT0);
-            emitCTICall(Interpreter::cti_op_profile_will_call);
+            emitCTICall(JITStubs::cti_op_profile_will_call);
             noProfiler.link(this);
 
             NEXT_OPCODE(op_profile_will_call);
@@ -1245,7 +1245,7 @@ void JIT::privateCompileMainPass()
             emitGetCTIParam(STUB_ARGS_profilerReference, regT0);
             Jump noProfiler = branchTestPtr(Zero, Address(regT0));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT0);
-            emitCTICall(Interpreter::cti_op_profile_did_call);
+            emitCTICall(JITStubs::cti_op_profile_did_call);
             noProfiler.link(this);
 
             NEXT_OPCODE(op_profile_did_call);
@@ -1304,7 +1304,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_convert_this);
+            emitCTICall(JITStubs::cti_op_convert_this);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_convert_this);
         }
@@ -1331,7 +1331,7 @@ void JIT::privateCompileSlowCases()
             notImm.link(this);
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_get_by_val);
+            emitCTICall(JITStubs::cti_op_get_by_val);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
 
@@ -1368,14 +1368,14 @@ void JIT::privateCompileSlowCases()
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
-                emitCTICall(Interpreter::cti_op_loop_if_less);
+                emitCTICall(JITStubs::cti_op_loop_if_less);
                 emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
             } else {
                 linkSlowCase(iter);
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArg(regT1, 2);
-                emitCTICall(Interpreter::cti_op_loop_if_less);
+                emitCTICall(JITStubs::cti_op_loop_if_less);
                 emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
             }
             NEXT_OPCODE(op_loop_if_less);
@@ -1395,14 +1395,14 @@ void JIT::privateCompileSlowCases()
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 2, regT2);
-                emitCTICall(Interpreter::cti_op_loop_if_lesseq);
+                emitCTICall(JITStubs::cti_op_loop_if_lesseq);
                 emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
             } else {
                 linkSlowCase(iter);
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArg(regT1, 2);
-                emitCTICall(Interpreter::cti_op_loop_if_lesseq);
+                emitCTICall(JITStubs::cti_op_loop_if_lesseq);
                 emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
             }
             NEXT_OPCODE(op_loop_if_lesseq);
@@ -1422,7 +1422,7 @@ void JIT::privateCompileSlowCases()
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
             emitPutJITStubArg(regT2, 3);
-            emitCTICall(Interpreter::cti_op_put_by_val);
+            emitCTICall(JITStubs::cti_op_put_by_val);
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_put_by_val));
 
             // slow cases for immediate int accesses to arrays
@@ -1432,14 +1432,14 @@ void JIT::privateCompileSlowCases()
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
             emitPutJITStubArg(regT2, 3);
-            emitCTICall(Interpreter::cti_op_put_by_val_array);
+            emitCTICall(JITStubs::cti_op_put_by_val_array);
 
             NEXT_OPCODE(op_put_by_val);
         }
         case op_loop_if_true: {
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_jtrue);
+            emitCTICall(JITStubs::cti_op_jtrue);
             unsigned target = currentInstruction[2].u.operand;
             emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 2);
             NEXT_OPCODE(op_loop_if_true);
@@ -1455,14 +1455,14 @@ void JIT::privateCompileSlowCases()
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 2, regT2);
-                emitCTICall(Interpreter::cti_op_jless);
+                emitCTICall(JITStubs::cti_op_jless);
                 emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
             } else {
                 linkSlowCase(iter);
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArg(regT1, 2);
-                emitCTICall(Interpreter::cti_op_jless);
+                emitCTICall(JITStubs::cti_op_jless);
                 emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
             }
             NEXT_OPCODE(op_jnless);
@@ -1471,14 +1471,14 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_not);
+            emitCTICall(JITStubs::cti_op_not);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_not);
         }
         case op_jfalse: {
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_jtrue);
+            emitCTICall(JITStubs::cti_op_jtrue);
             unsigned target = currentInstruction[2].u.operand;
             emitJumpSlowToHot(branchTest32(Zero, regT0), target + 2); // inverted!
             NEXT_OPCODE(op_jfalse);
@@ -1490,7 +1490,7 @@ void JIT::privateCompileSlowCases()
         case op_bitnot: {
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_bitnot);
+            emitCTICall(JITStubs::cti_op_bitnot);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_bitnot);
         }
@@ -1501,7 +1501,7 @@ void JIT::privateCompileSlowCases()
         case op_jtrue: {
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_jtrue);
+            emitCTICall(JITStubs::cti_op_jtrue);
             unsigned target = currentInstruction[2].u.operand;
             emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 2);
             NEXT_OPCODE(op_jtrue);
@@ -1514,7 +1514,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_bitxor);
+            emitCTICall(JITStubs::cti_op_bitxor);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_bitxor);
         }
@@ -1522,7 +1522,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_bitor);
+            emitCTICall(JITStubs::cti_op_bitor);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_bitor);
         }
@@ -1530,7 +1530,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_eq);
+            emitCTICall(JITStubs::cti_op_eq);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_eq);
         }
@@ -1538,7 +1538,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_neq);
+            emitCTICall(JITStubs::cti_op_neq);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_neq);
         }
@@ -1550,7 +1550,7 @@ void JIT::privateCompileSlowCases()
 #endif
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_stricteq);
+            emitCTICall(JITStubs::cti_op_stricteq);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_stricteq);
         }
@@ -1562,7 +1562,7 @@ void JIT::privateCompileSlowCases()
 #endif
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
-            emitCTICall(Interpreter::cti_op_nstricteq);
+            emitCTICall(JITStubs::cti_op_nstricteq);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_nstricteq);
         }
@@ -1573,7 +1573,7 @@ void JIT::privateCompileSlowCases()
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2);
             emitPutJITStubArgFromVirtualRegister(currentInstruction[4].u.operand, 3, regT2);
-            emitCTICall(Interpreter::cti_op_instanceof);
+            emitCTICall(JITStubs::cti_op_instanceof);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_instanceof);
         }
@@ -1603,7 +1603,7 @@ void JIT::privateCompileSlowCases()
             linkSlowCase(iter);
 
             emitPutJITStubArg(regT0, 1);
-            emitCTICall(Interpreter::cti_op_to_jsnumber);
+            emitCTICall(JITStubs::cti_op_to_jsnumber);
 
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_to_jsnumber);
@@ -1661,7 +1661,7 @@ void JIT::privateCompile()
     if (m_codeBlock->codeType() == FunctionCode) {
         slowRegisterFileCheck.link(this);
         m_bytecodeIndex = 0; // emitCTICall will add to the map, but doesn't actually need this...
-        emitCTICall(Interpreter::cti_register_file_check);
+        emitCTICall(JITStubs::cti_register_file_check);
 #ifndef NDEBUG
         // reset this, in order to guard it's use with asserts
         m_bytecodeIndex = (unsigned)-1;
@@ -1917,24 +1917,24 @@ void JIT::privateCompileCTIMachineTrampolines()
     PatchBuffer patchBuffer(code);
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    patchBuffer.link(array_failureCases1Call, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.link(array_failureCases2Call, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.link(array_failureCases3Call, Interpreter::cti_op_get_by_id_array_fail);
-    patchBuffer.link(string_failureCases1Call, Interpreter::cti_op_get_by_id_string_fail);
-    patchBuffer.link(string_failureCases2Call, Interpreter::cti_op_get_by_id_string_fail);
-    patchBuffer.link(string_failureCases3Call, Interpreter::cti_op_get_by_id_string_fail);
+    patchBuffer.link(array_failureCases1Call, JITStubs::cti_op_get_by_id_array_fail);
+    patchBuffer.link(array_failureCases2Call, JITStubs::cti_op_get_by_id_array_fail);
+    patchBuffer.link(array_failureCases3Call, JITStubs::cti_op_get_by_id_array_fail);
+    patchBuffer.link(string_failureCases1Call, JITStubs::cti_op_get_by_id_string_fail);
+    patchBuffer.link(string_failureCases2Call, JITStubs::cti_op_get_by_id_string_fail);
+    patchBuffer.link(string_failureCases3Call, JITStubs::cti_op_get_by_id_string_fail);
 
     m_interpreter->m_ctiArrayLengthTrampoline = patchBuffer.trampolineAt(arrayLengthBegin);
     m_interpreter->m_ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
 #endif
-    patchBuffer.link(callArityCheck1, Interpreter::cti_op_call_arityCheck);
-    patchBuffer.link(callArityCheck2, Interpreter::cti_op_call_arityCheck);
-    patchBuffer.link(callArityCheck3, Interpreter::cti_op_call_arityCheck);
-    patchBuffer.link(callJSFunction1, Interpreter::cti_op_call_JSFunction);
-    patchBuffer.link(callJSFunction2, Interpreter::cti_op_call_JSFunction);
-    patchBuffer.link(callJSFunction3, Interpreter::cti_op_call_JSFunction);
-    patchBuffer.link(callDontLazyLinkCall, Interpreter::cti_vm_dontLazyLinkCall);
-    patchBuffer.link(callLazyLinkCall, Interpreter::cti_vm_lazyLinkCall);
+    patchBuffer.link(callArityCheck1, JITStubs::cti_op_call_arityCheck);
+    patchBuffer.link(callArityCheck2, JITStubs::cti_op_call_arityCheck);
+    patchBuffer.link(callArityCheck3, JITStubs::cti_op_call_arityCheck);
+    patchBuffer.link(callJSFunction1, JITStubs::cti_op_call_JSFunction);
+    patchBuffer.link(callJSFunction2, JITStubs::cti_op_call_JSFunction);
+    patchBuffer.link(callJSFunction3, JITStubs::cti_op_call_JSFunction);
+    patchBuffer.link(callDontLazyLinkCall, JITStubs::cti_vm_dontLazyLinkCall);
+    patchBuffer.link(callLazyLinkCall, JITStubs::cti_vm_lazyLinkCall);
 
     m_interpreter->m_ctiVirtualCallPreLink = patchBuffer.trampolineAt(virtualCallPreLinkBegin);
     m_interpreter->m_ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);

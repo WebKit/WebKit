@@ -152,6 +152,7 @@ Source files for JSCore.
         bytecode/StructureStubInfo.cpp
         bytecode/JumpTable.cpp
         runtime/ExceptionHelpers.cpp
+        runtime/TimeoutChecker.cpp
         interpreter/Interpreter.cpp
         bytecode/Opcode.cpp
         bytecode/SamplingTool.cpp

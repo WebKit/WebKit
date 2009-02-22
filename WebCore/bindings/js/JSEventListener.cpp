@@ -103,7 +103,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
         JSValuePtr retval;
         if (handleEventFunction) {
-            globalObject->startTimeoutCheck();
+            globalObject->globalData()->timeoutChecker.start();
             retval = call(exec, handleEventFunction, callType, callData, listener, args);
         } else {
             JSValuePtr thisValue;
@@ -111,10 +111,10 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
                 thisValue = globalObject->toThisObject(exec);
             else
                 thisValue = toJS(exec, event->currentTarget());
-            globalObject->startTimeoutCheck();
+            globalObject->globalData()->timeoutChecker.start();
             retval = call(exec, listener, callType, callData, thisValue, args);
         }
-        globalObject->stopTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
 

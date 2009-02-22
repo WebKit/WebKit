@@ -66,28 +66,9 @@
 #include "AssemblerBuffer.h"
 #endif
 
-#if PLATFORM(DARWIN)
-#include <mach/mach.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if PLATFORM(WIN_OS)
-#include <windows.h>
-#endif
-
-#if PLATFORM(QT)
-#include <QDateTime>
-#endif
-
 using namespace std;
 
 namespace JSC {
-
-// Preferred number of milliseconds between each timeout check
-static const int preferredScriptCheckTimeInterval = 1000;
 
 static ALWAYS_INLINE unsigned bytecodeOffsetForPC(CallFrame* callFrame, CodeBlock* codeBlock, void* pc)
 {
@@ -374,13 +355,7 @@ Interpreter::Interpreter()
     , m_ctiVirtualCall(0)
 #endif
     , m_reentryDepth(0)
-    , m_timeoutTime(0)
-    , m_timeAtLastCheckTimeout(0)
-    , m_timeExecuting(0)
-    , m_timeoutCheckCount(0)
-    , m_ticksUntilNextTimeoutCheck(initialTickCountThreshold)
 {
-    initTimeout();
     privateExecute(InitializeAndReturn, 0, 0, 0);
     
     // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
@@ -886,91 +861,6 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     }
 }
 
-void Interpreter::resetTimeoutCheck()
-{
-    m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
-    m_timeAtLastCheckTimeout = 0;
-    m_timeExecuting = 0;
-}
-
-// Returns the time the current thread has spent executing, in milliseconds.
-static inline unsigned getCPUTime()
-{
-#if PLATFORM(DARWIN)
-    mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
-    thread_basic_info_data_t info;
-
-    // Get thread information
-    mach_port_t threadPort = mach_thread_self();
-    thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
-    mach_port_deallocate(mach_task_self(), threadPort);
-    
-    unsigned time = info.user_time.seconds * 1000 + info.user_time.microseconds / 1000;
-    time += info.system_time.seconds * 1000 + info.system_time.microseconds / 1000;
-    
-    return time;
-#elif HAVE(SYS_TIME_H)
-    // FIXME: This should probably use getrusage with the RUSAGE_THREAD flag.
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#elif PLATFORM(QT)
-    QDateTime t = QDateTime::currentDateTime();
-    return t.toTime_t() * 1000 + t.time().msec();
-#elif PLATFORM(WIN_OS)
-    union {
-        FILETIME fileTime;
-        unsigned long long fileTimeAsLong;
-    } userTime, kernelTime;
-    
-    // GetThreadTimes won't accept NULL arguments so we pass these even though
-    // they're not used.
-    FILETIME creationTime, exitTime;
-    
-    GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
-    
-    return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
-#else
-#error Platform does not have getCurrentTime function
-#endif
-}
-
-bool Interpreter::checkTimeout(JSGlobalObject* globalObject)
-{
-    unsigned currentTime = getCPUTime();
-    
-    if (!m_timeAtLastCheckTimeout) {
-        // Suspicious amount of looping in a script -- start timing it
-        m_timeAtLastCheckTimeout = currentTime;
-        return false;
-    }
-    
-    unsigned timeDiff = currentTime - m_timeAtLastCheckTimeout;
-    
-    if (timeDiff == 0)
-        timeDiff = 1;
-    
-    m_timeExecuting += timeDiff;
-    m_timeAtLastCheckTimeout = currentTime;
-    
-    // Adjust the tick threshold so we get the next checkTimeout call in the interval specified in 
-    // preferredScriptCheckTimeInterval
-    m_ticksUntilNextTimeoutCheck = static_cast<unsigned>((static_cast<float>(preferredScriptCheckTimeInterval) / timeDiff) * m_ticksUntilNextTimeoutCheck);
-    // If the new threshold is 0 reset it to the default threshold. This can happen if the timeDiff is higher than the
-    // preferred script check time interval.
-    if (m_ticksUntilNextTimeoutCheck == 0)
-        m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
-    
-    if (m_timeoutTime && m_timeExecuting > m_timeoutTime) {
-        if (globalObject->shouldInterruptScript())
-            return true;
-        
-        resetTimeoutCheck();
-    }
-    
-    return false;
-}
-
 NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFrame, const Instruction* vPC)
 {
     int dst = (++vPC)->u.operand;
@@ -1195,7 +1085,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
 
     Instruction* vPC = callFrame->codeBlock()->instructions().begin();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
-    unsigned tickCount = m_ticksUntilNextTimeoutCheck + 1;
+    unsigned tickCount = globalData->timeoutChecker.ticksUntilNextCheck();
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
@@ -1211,11 +1101,11 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
 
 #define CHECK_FOR_TIMEOUT() \
     if (!--tickCount) { \
-        if (checkTimeout(callFrame->dynamicGlobalObject())) { \
+        if (globalData->timeoutChecker.didTimeOut(callFrame)) { \
             exceptionValue = jsNull(); \
             goto vm_throw; \
         } \
-        tickCount = m_ticksUntilNextTimeoutCheck; \
+        tickCount = globalData->timeoutChecker.ticksUntilNextCheck(); \
     }
     
 #if ENABLE(OPCODE_SAMPLING)

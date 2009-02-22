@@ -120,12 +120,12 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     ArgList args;
     args.append(toJS(exec, transaction));
 
-    globalObject->startTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.start();
     if (handleEventCallType != CallTypeNone)
         call(exec, handleEventFunction, handleEventCallType, handleEventCallData, m_data->callback(), args);
     else
         call(exec, m_data->callback(), callbackCallType, callbackCallData, m_data->callback(), args);
-    globalObject->stopTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.stop();
         
     if (exec->hadException()) {
         reportCurrentException(exec);

@@ -34,6 +34,7 @@
 
 #include "Interpreter.h"
 #include "JITCode.h"
+#include "JITStubs.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
 #include "MacroAssembler.h"
@@ -526,7 +527,7 @@ namespace JSC {
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);
         
-        void emitSlowScriptCheck();
+        void emitTimeoutCheck();
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);
 #endif

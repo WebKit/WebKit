@@ -132,7 +132,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         emitGetVirtualRegister(callee, regT2);
         compileOpCallEvalSetupArgs(instruction);
 
-        emitCTICall(Interpreter::cti_op_call_eval);
+        emitCTICall(JITStubs::cti_op_call_eval);
         wasEval = branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     }
 
@@ -149,7 +149,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
-        emitCTICall(Interpreter::cti_op_construct_JSConstruct);
+        emitCTICall(JITStubs::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
         emitGetVirtualRegister(callee, regT2);
     }
@@ -178,7 +178,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     linkSlowCase(iter);
 
     // This handles host functions
-    emitCTICall(((opcodeID == op_construct) ? Interpreter::cti_op_construct_NotJSConstruct : Interpreter::cti_op_call_NotJSFunction));
+    emitCTICall(((opcodeID == op_construct) ? JITStubs::cti_op_construct_NotJSConstruct : JITStubs::cti_op_call_NotJSFunction));
     // Put the return value in dst. In the interpreter, op_ret does this.
     emitPutVirtualRegister(dst);
 
@@ -200,7 +200,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         emitGetVirtualRegister(callee, regT2);
         compileOpCallEvalSetupArgs(instruction);
 
-        emitCTICall(Interpreter::cti_op_call_eval);
+        emitCTICall(JITStubs::cti_op_call_eval);
         wasEval = branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     }
 
@@ -222,7 +222,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
         emitPutJITStubArg(regT2, 1);
         emitPutJITStubArgFromVirtualRegister(proto, 4, regT0);
-        emitCTICall(Interpreter::cti_op_construct_JSConstruct);
+        emitCTICall(JITStubs::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(thisRegister);
         emitGetVirtualRegister(callee, regT2);
     }
@@ -270,7 +270,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
-        emitCTICall(Interpreter::cti_op_construct_JSConstruct);
+        emitCTICall(JITStubs::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
         emitGetVirtualRegister(callee, regT2);
     }
@@ -304,7 +304,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     isNotObject.link(this);
     callLinkFailNotObject.link(this);
     callLinkFailNotJSFunction.link(this);
-    emitCTICall(((opcodeID == op_construct) ? Interpreter::cti_op_construct_NotJSConstruct : Interpreter::cti_op_call_NotJSFunction));
+    emitCTICall(((opcodeID == op_construct) ? JITStubs::cti_op_construct_NotJSConstruct : JITStubs::cti_op_call_NotJSFunction));
     Jump wasNotJSFunction = jump();
 
     // Next, handle JSFunctions...
@@ -312,7 +312,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
-        emitCTICall(Interpreter::cti_op_construct_JSConstruct);
+        emitCTICall(JITStubs::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
         emitGetVirtualRegister(callee, regT2);
     }

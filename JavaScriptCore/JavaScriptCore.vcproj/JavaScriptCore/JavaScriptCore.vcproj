@@ -1286,6 +1286,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\TimeoutChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\TimeoutChecker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITStubs.h"
 				>
 			</File>

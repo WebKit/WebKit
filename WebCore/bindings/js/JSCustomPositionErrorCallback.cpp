@@ -73,9 +73,9 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     ArgList args;
     args.append(toJS(exec, positionError));
     
-    globalObject->startTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);
-    globalObject->stopTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.stop();
     
     if (exec->hadException())
         reportCurrentException(exec);

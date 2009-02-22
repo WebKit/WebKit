@@ -29,13 +29,14 @@
 #ifndef JSGlobalData_h
 #define JSGlobalData_h
 
+#include "Collector.h"
+#include "ExecutableAllocator.h"
+#include "JSValue.h"
+#include "SmallStrings.h"
+#include "TimeoutChecker.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
-#include "Collector.h"
-#include "ExecutableAllocator.h"
-#include "SmallStrings.h"
-#include "JSValue.h"
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -60,6 +61,10 @@ namespace JSC {
 
     class JSGlobalData : public RefCounted<JSGlobalData> {
     public:
+        struct ClientData {
+            virtual ~ClientData() = 0;
+        };
+
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
@@ -72,16 +77,20 @@ namespace JSC {
         void makeUsableFromMultipleThreads() { heap.makeUsableFromMultipleThreads(); }
 #endif
 
-        const Vector<Instruction>& numericCompareFunction(ExecState*);
-        Vector<Instruction> lazyNumericCompareFunction;
-        bool initializingLazyNumericCompareFunction;
+        bool isSharedInstance;
+        ClientData* clientData;
 
         Interpreter* interpreter;
+        TimeoutChecker timeoutChecker;
 
         JSValuePtr exception;
 #if ENABLE(JIT)
         void* exceptionLocation;
 #endif
+
+        const Vector<Instruction>& numericCompareFunction(ExecState*);
+        Vector<Instruction> lazyNumericCompareFunction;
+        bool initializingLazyNumericCompareFunction;
 
         const HashTable* arrayTable;
         const HashTable* dateTable;
@@ -104,27 +113,17 @@ namespace JSC {
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
         const ArgList* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
-
         SmallStrings smallStrings;
         
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
+        Lexer* lexer;
+        Parser* parser;
         HashSet<ParserRefCounted*>* newParserObjects;
         HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;
 
-        Lexer* lexer;
-        Parser* parser;
-
         JSGlobalObject* head;
         JSGlobalObject* dynamicGlobalObject;
-
-        bool isSharedInstance;
-
-        struct ClientData {
-            virtual ~ClientData() = 0;
-        };
-
-        ClientData* clientData;
 
         HashSet<JSObject*> arrayVisitedElements;
 
@@ -134,6 +133,7 @@ namespace JSC {
 #if ENABLE(ASSEMBLER)
         PassRefPtr<ExecutablePool> poolForSize(size_t n) { return m_executableAllocator.poolForSize(n); }
 #endif
+
     private:
         JSGlobalData(bool isShared = false);
 #if ENABLE(ASSEMBLER)
@@ -142,7 +142,6 @@ namespace JSC {
 
         static JSGlobalData*& sharedInstanceInternal();
     };
+} // namespace JSC
 
-}
-
-#endif
+#endif // JSGlobalData_h

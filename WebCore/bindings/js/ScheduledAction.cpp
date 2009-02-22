@@ -84,9 +84,9 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     for (size_t i = 0; i < size; ++i)
         args.append(m_args[i]);
 
-    globalObject->startTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.start();
     call(exec, m_function, callType, callData, thisValue, args);
-    globalObject->stopTimeoutCheck();
+    globalObject->globalData()->timeoutChecker.stop();
 
     if (exec->hadException())
         reportCurrentException(exec);

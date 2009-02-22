@@ -114,6 +114,7 @@ sources['runtime'] = [
     'runtime/StringPrototype.cpp',
     'runtime/Structure.cpp',
     'runtime/StructureChain.cpp',
+    'runtime/TimeoutChecker.cpp',
     'runtime/UString.cpp',
 ]
 sources['bytecode'] = [

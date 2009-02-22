@@ -122,9 +122,9 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
-        globalObject->startTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.start();
         JSValuePtr resultV = call(exec, function, callType, callData, function, argList);
-        globalObject->stopTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.stop();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -172,9 +172,9 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
-        globalObject->startTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.start();
         JSValuePtr resultV = call(exec, function, callType, callData, obj->imp, argList);
-        globalObject->stopTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.stop();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -202,9 +202,9 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         JSLock lock(false);
         String scriptString = convertNPStringToUTF16(s);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
-        globalObject->startTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.start();
         Completion completion = JSC::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(scriptString));
-        globalObject->stopTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.stop();
         ComplType type = completion.complType();
         
         JSValuePtr result;
@@ -442,9 +442,9 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
-        globalObject->startTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.start();
         JSValuePtr resultV = construct(exec, constructor, constructType, constructData, argList);
-        globalObject->stopTimeoutCheck();
+        globalObject->globalData()->timeoutChecker.stop();
         
         // Convert and return the result.
         convertValueToNPVariant(exec, resultV, result);

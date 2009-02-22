@@ -214,10 +214,6 @@ namespace JSC {
         void setProfileGroup(unsigned value) { d()->profileGroup = value; }
         unsigned profileGroup() const { return d()->profileGroup; }
 
-        void setTimeoutTime(unsigned timeoutTime);
-        void startTimeoutCheck();
-        void stopTimeoutCheck();
-
         Debugger* debugger() const { return d()->debugger; }
         void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
         

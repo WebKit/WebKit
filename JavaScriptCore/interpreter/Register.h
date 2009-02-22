@@ -60,8 +60,9 @@ namespace JSC {
     private:
         friend class ExecState;
         friend class Interpreter;
+        friend class JITStubs;
 
-        // Only CallFrame and Interpreter should use these functions.
+        // Only CallFrame, Interpreter, and JITStubs should use these functions.
 
         Register(intptr_t);
 

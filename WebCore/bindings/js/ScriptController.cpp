@@ -110,9 +110,9 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     // so we start the keep alive timer here.
     m_frame->keepAlive();
 
-    m_windowShell->window()->startTimeoutCheck();
+    m_windowShell->window()->globalData()->timeoutChecker.start();
     Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, m_windowShell);
-    m_windowShell->window()->stopTimeoutCheck();
+    m_windowShell->window()->globalData()->timeoutChecker.stop();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
         m_sourceURL = savedSourceURL;

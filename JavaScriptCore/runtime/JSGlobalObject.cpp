@@ -344,21 +344,6 @@ void JSGlobalObject::resetPrototype(JSValuePtr prototype)
     lastInPrototypeChain(this)->setPrototype(d()->objectPrototype);
 }
 
-void JSGlobalObject::setTimeoutTime(unsigned timeoutTime)
-{
-    globalData()->interpreter->setTimeoutTime(timeoutTime);
-}
-
-void JSGlobalObject::startTimeoutCheck()
-{
-    globalData()->interpreter->startTimeoutCheck();
-}
-
-void JSGlobalObject::stopTimeoutCheck()
-{
-    globalData()->interpreter->stopTimeoutCheck();
-}
-
 void JSGlobalObject::mark()
 {
     JSVariableObject::mark();
