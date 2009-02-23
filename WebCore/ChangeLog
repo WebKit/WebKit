@@ -1,3 +1,27 @@
+2009-02-23  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24098
+        Bugs in ClipboardChromium
+
+        Fixes the following bugs in ClipboardChromium:
+        * It's possible for the extension to be empty, resulting in a bad file
+          name, for example, 'foo.' or just '.'.
+        * We weren't restricting the size of the file to MAX_PATH.
+        * We weren't removing characters that are invalid for file system names.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/ClipboardChromiumLinux.cpp: Added.
+        (WebCore::ClipboardChromium::validateFileName):
+        * platform/chromium/ClipboardChromiumMac.cpp: Added.
+        (WebCore::ClipboardChromium::validateFileName):
+        * platform/chromium/ClipboardChromiumWin.cpp: Added.
+        (WebCore::isInvalidFileCharacter):
+        (WebCore::ClipboardChromium::validateFileName):
+
 2009-02-23  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.
