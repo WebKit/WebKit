@@ -1,3 +1,28 @@
+2009-02-23  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24047: Need to simplify nested if's in WorkerRunLoop::runInMode
+        <https://bugs.webkit.org/show_bug.cgi?id=24047>
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::infiniteTime):
+        Allows for one to call waitForMessageFilteredWithTimeout and wait forever.
+
+        (WTF::MessageQueue::alwaysTruePredicate):
+        (WTF::MessageQueue::waitForMessage):
+        Made waitForMessage call waitForMessageFilteredWithTimeout, so that there is less
+        duplicate code.
+
+        (WTF::MessageQueue::waitForMessageFilteredWithTimeout):
+
+        * wtf/ThreadingQt.cpp:
+        (WTF::ThreadCondition::timedWait):
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::timedWait):
+        Made these two implementations consistent with the pthread and gtk implementations.
+        Currently, the time calculations would overflow when passed large values.
+
 2009-02-23  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Adam Roben.

@@ -457,10 +457,13 @@ bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
     if (absoluteTime < currentTime)
         return false;
 
-    double intervalMilliseconds = (absoluteTime - currentTime) * 1000.0;
-    if (intervalMilliseconds >= INT_MAX)
-        intervalMilliseconds = INT_MAX;
+    // Time is too far in the future (and would overflow unsigned long) - wait forever.
+    if (absoluteTime - currentTime > static_cast<double>(INT_MAX) / 1000.0) {
+        wait(mutex);
+        return true;
+    }
 
+    double intervalMilliseconds = (absoluteTime - currentTime) * 1000.0;
     return m_condition.timedWait(mutex.impl(), static_cast<unsigned long>(intervalMilliseconds));
 }
 

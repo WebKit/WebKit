@@ -65,7 +65,7 @@ namespace WebCore {
         class Task;
     private:
         friend class RunLoopSetup;
-        MessageQueueWaitResult runInMode(WorkerContext*, ModePredicate&);
+        MessageQueueWaitResult runInMode(WorkerContext*, const ModePredicate&);
 
         MessageQueue<RefPtr<Task> > m_messageQueue;
         OwnPtr<WorkerSharedTimer> m_sharedTimer;

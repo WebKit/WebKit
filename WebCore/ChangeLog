@@ -1,3 +1,22 @@
+2009-02-23  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24047: Need to simplify nested if's in WorkerRunLoop::runInMode
+        <https://bugs.webkit.org/show_bug.cgi?id=24047>
+
+        Made a nested if inside of WorkerRunLoop::runInMode a lot simpler by
+        using only MessageQueue::waitForMessageFilteredWithTimeout instead
+        of three different MessageQueue methods.
+
+        No observable change in behavior, so no test.
+
+        * dom/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::operator()):
+        Minor clean-up to able to pass a const ref point for ModePredicate into runInMode.
+        (WebCore::WorkerRunLoop::runInMode):
+        * dom/WorkerRunLoop.h:
+
 2009-02-23  David Hyatt  <hyatt@apple.com>
 
         In preparation for making layers for multicol objects (so that they can properly split child layers
