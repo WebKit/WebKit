@@ -1796,31 +1796,6 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
-# ----
-# curl http backend
-# ----
-if USE_CURL
-
-webcore_cppflags += \
-	-DWTF_USE_CURL=1 \
-	-I$(srcdir)/WebCore/platform/network/curl
-
-webcore_sources += \
-	WebCore/platform/network/curl/AuthenticationChallenge.h \
-	WebCore/platform/network/curl/CookieJarCurl.cpp \
-	WebCore/platform/network/curl/DNSCurl.cpp \
-	WebCore/platform/network/curl/FormDataStreamCurl.cpp \
-	WebCore/platform/network/curl/FormDataStreamCurl.h \
-	WebCore/platform/network/curl/ResourceError.h \
-	WebCore/platform/network/curl/ResourceHandleCurl.cpp \
-	WebCore/platform/network/curl/ResourceHandleManager.cpp \
-	WebCore/platform/network/curl/ResourceHandleManager.h \
-	WebCore/platform/network/curl/ResourceRequest.h \
-	WebCore/platform/network/curl/ResourceResponse.h
-
-endif # END USE_CURL
-
-if USE_SOUP
 webcore_cppflags += \
 	-DWTF_USE_SOUP=1 \
 	-I$(srcdir)/WebCore/platform/network/soup
@@ -1834,7 +1809,6 @@ webcore_sources += \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
 	WebCore/platform/network/soup/ResourceResponse.h
-endif
 
 # ---
 # Freetype font backend

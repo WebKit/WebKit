@@ -175,20 +175,6 @@ if test "$with_hildon" = "yes"; then
     AC_SUBST([HILDON_LIBS])
 fi
 
-# determine the http backend
-AC_MSG_CHECKING([the HTTP backend to use])
-AC_ARG_WITH(http_backend,
-            AC_HELP_STRING([--with-http-backend=@<:@curl/soup@:>@],
-                           [Select HTTP backend [default=soup]]),
-            [],[with_http_backend="soup"])
-
-case "$with_http_backend" in
-     curl|soup) ;;
-     *) AC_MSG_ERROR([Invalid HTTP backend: must be curl, soup.]) ;;
-esac
-
-AC_MSG_RESULT([$with_http_backend])
-
 # minimum base dependencies
 CAIRO_REQUIRED_VERSION=1.2
 FONTCONFIG_REQUIRED_VERSION=2.4
@@ -200,8 +186,7 @@ PANGO_REQUIRED_VERSION=1.0
 GTK_REQUIRED_VERSION=2.8
 
 # optional modules
-LIBCURL_REQUIRED_VERSION=7.15
-LIBSOUP_REQUIRED_VERSION=2.23
+LIBSOUP_REQUIRED_VERSION=2.25.4
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
@@ -511,23 +496,10 @@ else
    CFLAGS="$CFLAGS -O0"
 fi
 
-# check if curl is available
-if test "$with_http_backend" = "curl"; then
-   PKG_CHECK_MODULES([LIBCURL],
-                     [libcurl >= $LIBCURL_REQUIRED_VERSION])
-   if test "$os_win32" = "yes"; then
-      LIBCURL_LIBS="$LIBCURL_LIBS -lws2_32"
-   fi
-   AC_SUBST([LIBCURL_CFLAGS])
-   AC_SUBST([LIBCURL_LIBS])
-fi
-
-if test "$with_http_backend" = "soup"; then
-   PKG_CHECK_MODULES([LIBSOUP],
-                     [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
-   AC_SUBST([LIBSOUP_CFLAGS])
-   AC_SUBST([LIBSOUP_LIBS])
-fi
+PKG_CHECK_MODULES([LIBSOUP],
+                  [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
+AC_SUBST([LIBSOUP_CFLAGS])
+AC_SUBST([LIBSOUP_LIBS])
 
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
@@ -607,10 +579,6 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
-# HTTP backend conditionals
-AM_CONDITIONAL([USE_CURL], [test "$with_http_backend" = "curl"])
-AM_CONDITIONAL([USE_SOUP], [test "$with_http_backend" = "soup"])
-
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
@@ -657,7 +625,6 @@ Build configuration:
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Unicode backend                                          : $unicode_backend
- HTTP backend                                             : $with_http_backend
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
 Features:

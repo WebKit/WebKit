@@ -174,7 +174,6 @@ libWebCore_la_CFLAGS = \
 	$(PANGO_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(XT_CFLAGS) \
-	$(LIBCURL_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
@@ -201,7 +200,6 @@ libWebCore_la_LIBADD = \
 	$(PANGO_LIBS) \
 	$(GTK_LIBS) \
 	$(XT_LIBS) \
-	$(LIBCURL_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(FREETYPE_LIBS) \
 	$(UNICODE_LIBS) \
@@ -483,7 +481,8 @@ Programs_UnitTests_CFLAGS = \
 	-O2 \
 	$(global_cflags) \
 	$(GLIB_CFLAGS) \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_UnitTests_LDADD = \
 	libwebkit-1.0.la \

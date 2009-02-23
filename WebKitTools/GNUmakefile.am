@@ -20,7 +20,8 @@ Programs_GtkLauncher_CFLAGS = \
 	-fno-strict-aliasing \
 	-O2 \
 	$(global_cflags) \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_GtkLauncher_LDADD = \
 	libwebkit-1.0.la \
@@ -67,7 +68,8 @@ Programs_DumpRenderTree_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_DumpRenderTree_LDADD = \
 	libwebkit-1.0.la \

@@ -1,3 +1,15 @@
+2009-02-23  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22624
+        [SOUP][GTK] Need API to get SoupSession from WebKit.
+
+        Remove CURL support, the only supported HTTP backend is SOUP now.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-02-19  Christian Dywan  <christian@twotoasts.de>
 
         Rubber-stamped by Holger Freyther.
@@ -290,7 +302,7 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
-        
+
         Try to fix gtk build.
 
         * configure.ac:
@@ -888,7 +900,7 @@
         Reviewed by Mark.
 
         Add x86_64 rule.
-        
+
         * Makefile:
 
 2008-05-09  Simon Hausmann  <hausmann@webkit.org>
@@ -896,11 +908,11 @@
         Reviewed by Holger.
 
         Removed explicit linkage against libxml and libxslt on Qt/Mac builds.
-        
+
         This dependency is completely unnecessary here and creates only problems by
         propagating through WebCore.pro over libQtWebKit.prl right now customer
         applications.
-        
+
 
         * WebKit.pri:
 
@@ -909,7 +921,7 @@
         Reviewed by Mark.
 
         Add an "x86_64" make rule.
-        
+
         * Makefile.shared:
 
 2008-05-02  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
@@ -1060,7 +1072,7 @@
         http://bugs.webkit.org/show_bug.cgi?id=16476
 
         Add support for multiple http backends, and add soup backend (off by default).
-        
+
         * GNUmakefile.am:
         * configure.ac:
 
@@ -1147,7 +1159,7 @@
         Add separator '\' after libJavaScriptCore_la_LIBADD and cleanup
         whitespaces introduced in the previous commit.
 
-        * GNUmakefile.am: 
+        * GNUmakefile.am:
 
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
@@ -2539,7 +2551,7 @@
         Reviewed by Lars.
 
         Don't compile the ICO plugin when building against Qt >= 4.4
-        
+
 
         * WebKit.pro:
 

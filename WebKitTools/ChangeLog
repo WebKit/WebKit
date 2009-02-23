@@ -1,3 +1,14 @@
+2009-02-23  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22624
+        [SOUP][GTK] Need API to get SoupSession from WebKit.
+
+        Add soup flags now that dependency is explicit.
+
+        * GNUmakefile.am:
+
 2009-02-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -10,7 +21,7 @@
 
 2009-02-13  Eric Seidel  <eric@webkit.org>
 
-        Rubber-stamped by Alexey Proskuryakov. 
+        Rubber-stamped by Alexey Proskuryakov.
 
         Add a few ignores to make-js-test-wrappers.
 
@@ -37,7 +48,7 @@
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
-        
+
         Remove debugging code which was committed by mistake.
 
         * Scripts/run-webkit-tests:
@@ -47,7 +58,7 @@
         Reviewed by Adam Roben
 
         https://bugs.webkit.org/show_bug.cgi?id=23928
-        
+
         Add detection of accelerated compositing and 3d transforms,
         and add various directories to $ignoredDirectories when these
         features are off.
@@ -229,7 +240,7 @@
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         Added support for querying how many history items were created during a
         layout test.
 
@@ -267,17 +278,17 @@
 2009-01-22  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
 
 2009-01-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         Clean up the test plug-in code. We now always use the CG drawing model and the
         Cocoa event model. It is however possible to revert to the old Carbon event model by
         specifying forcecarbon=true in the embed/object tag.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
         (NPP_New):
@@ -360,7 +371,7 @@
         Reviewed by Adam Roben.
 
         Set the count to the right number of elements.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
         (testEnumerate):
 
@@ -484,7 +495,7 @@
 2009-01-11  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Eric Seidel.
-        
+
         <https://bugs.webkit.org/show_bug.cgi?id=23134>
         Update bisect-builds for Safari 3.2 to prevent crashes
 
@@ -767,15 +778,15 @@
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
-        
-        Implement the new policy delegate (including navigation type and permissive mode) for DRT/win 
+
+        Implement the new policy delegate (including navigation type and permissive mode) for DRT/win
 
         * DumpRenderTree/win/DumpRenderTree.cpp:
         * DumpRenderTree/win/DumpRenderTreeWin.h:
-        
+
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::setCustomPolicyDelegate):
-        
+
         * DumpRenderTree/win/PolicyDelegate.cpp:
         (PolicyDelegate::PolicyDelegate):
         (PolicyDelegate::decidePolicyForNavigationAction):
@@ -828,7 +839,7 @@
 2008-12-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
-        
+
         Added a shortcut for --jsDriver-args, which I use a lot.
 
         * Scripts/run-javascriptcore-tests:
@@ -904,7 +915,7 @@
 2008-12-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff Garen.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=22683
         Fix gtk and qt builds which depend on --qt and --gtk being removed from ARGV
         Add a new argumentsForConfiguration() function and clean up some old code to use it.
@@ -937,7 +948,7 @@
 2008-12-03  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.
-        
+
         Remove support for build-webkit --svg-experimental.
         All of the "experimental" svg features have their own toggles anyway.
         I broke --svg-experimental in my last commit (which then broke clean builds)
@@ -948,22 +959,22 @@
 2008-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt (and Mark Rowe).
-        
+
         Move --coverage support from build-webkit to webkitdirs.pm to share it with build-jsc
         Move --coverage support out of run-javascriptcore-tests and into build-jsc
-        
+
         Finally add a buildXCodeProject function to webkitdirs.pm and move --clean support
         there from build-webkit (to allow future sharing with other build-* scripts)
-        
+
         Change run-javascriptcore-tests to expect a --jsDriver-args= argument instead of
         picking through ARGV with a blacklist of what arguments weren't jsDriver args
         this makes run-javascriptcore-tests transparently support all arguments which
         webkitdirs.pm gives it support for.
-        
+
         Make run-javascriptcore-tests actually print what commands it's running before running them.
-        
+
         Add --help support to build-jsc and run-javascriptcore-tests!
-        
+
         Make code to support --svg-experimental defaults take up half as many lines.
 
         * Scripts/build-jsc:
@@ -1016,7 +1027,7 @@
         this latest round of errors, at least make build-webkit --chromium
         actually "work" under CYGWIN instead of forcing users to use
         a cmd shell directly.
-        
+
         This is working around a Scons bug:
         http://scons.tigris.org/issues/show_bug.cgi?id=2266
 
@@ -1061,7 +1072,7 @@
 2008-11-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann and Mark Rowe.
-        
+
         Add support for build-webkit --chromium
         https://bugs.webkit.org/show_bug.cgi?id=22515
         More cleanups changing isCygwin calls to isAppleWinWebKit and deploying isAppleWebKit where necessary.
@@ -1184,11 +1195,11 @@
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=22433
-        
+
         Add script that attempts to detect virtual methods
         whose signatures differ only by constness (which can
         indicate a programming error).
-        
+
         * Scripts/detect-mismatched-virtual-const: Added.
 
 2008-11-24  Zan Dobersek  <zandobersek@gmail.com>
@@ -1246,7 +1257,7 @@
 
         All static C++ objects that create atexit calls are gone. Update script
         to indicate how to fix the problem should a new one appear.
-        
+
         * Scripts/check-for-exit-time-destructors:
 
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
@@ -1280,7 +1291,7 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
-        
+
         Try to fix gtk build.
 
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
@@ -1338,7 +1349,7 @@
 
         Remove .o files from the exclude list that have had their exit-time destructors removed.
         Handle case when there is no current symbol.
-        
+
         * Scripts/check-for-exit-time-destructors:
 
 2008-11-16  Sam Weinig  <sam@webkit.org>
@@ -1365,10 +1376,10 @@
         https://bugs.webkit.org/show_bug.cgi?id=21810
         Remove use of static C++ objects that are destroyed at exit time (destructors)
 
-        Create DEFINE_STATIC_LOCAL macro. Change static local objects to leak to avoid 
-        exit-time destructor. Update code that was changed to fix this issue that ran 
-        into a gcc bug (<rdar://problem/6354696> Codegen issue with C++ static reference 
-        in gcc build 5465). Also typdefs for template types needed to be added in some 
+        Create DEFINE_STATIC_LOCAL macro. Change static local objects to leak to avoid
+        exit-time destructor. Update code that was changed to fix this issue that ran
+        into a gcc bug (<rdar://problem/6354696> Codegen issue with C++ static reference
+        in gcc build 5465). Also typdefs for template types needed to be added in some
         cases so the type could make it through the macro successfully.
 
         Basically code of the form:
@@ -1382,7 +1393,7 @@
         DEFINE_STATIC_LOCAL(T, m, ());
 
         Remove .o files from the exclude list that have had their exit-time destructors removed.
-        
+
         * Scripts/check-for-exit-time-destructors:
 
 2008-11-14  Kevin Ollivier  <kevino@theolliviers.com>
@@ -1462,10 +1473,10 @@
 2008-11-06  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Bug 21810: Remove use of static C++ objects that are destroyed at exit time (destructors)
         https://bugs.webkit.org/show_bug.cgi?id=21810
-        
+
         Remove .o files from the exclude list that have had their exit-time destructors removed.
 
         * Scripts/check-for-exit-time-destructors:
@@ -1491,7 +1502,7 @@
 
         Add AccessibilityObject.o to the exclude list for the
         check for global destructors.
-        
+
         * Scripts/check-for-exit-time-destructors:
 
 2008-11-04  Darin Adler  <darin@apple.com>
@@ -1606,11 +1617,11 @@
 
 2008-10-28  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Sam Weinig. 
+        Reviewed by Sam Weinig.
 
         Specify which Localizable.strings to update since we don't always want to update the file in the same
         directory where we're searching for the strings to localize.
-        
+
         * Scripts/extract-localizable-strings:
         * Scripts/update-webkit-localizable-strings:
 
@@ -1735,33 +1746,33 @@
 2008-10-24  Anders Carlsson  <andersca@apple.com>
 
         Try fixing the 64-bit build.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
         (testGetProperty):
 
 2008-10-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         <rdar://problem/5440917> Support NPN_Construct
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
         (testCallback):
         Fix a memory leak.
-        
+
         (testConstruct):
         New test method that treats it first argument as a constructor and invokes it with the rest of the arguments.
-        
+
         (pluginInvoke):
         Handle testConstruct.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
         (testGetProperty):
         Add objectPointer property.
-        
+
         (testEnumerate):
         Only enumerate the two first properties.
-        
+
         (testConstruct):
         Add a simple construct implementation that just returns the test object.
 
@@ -1793,11 +1804,11 @@
 2008-10-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
-        
+
         <rdar://6261773> - autocomplete="off" doesn't work on Windows
 
         Implement LayoutTestController::elementDoesAutoCompleteForElementWithId() on Windows
-        
+
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
 
 2008-10-22  Darin Adler  <darin@apple.com>
@@ -1813,10 +1824,10 @@
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
-        
+
         - default to 1000 tests per dump tool instance again, now that CTI no longer causes
         excess different stack logs.
-        
+
         (Also fix a small bug in my last change.)
 
         * Scripts/run-webkit-tests:
@@ -1832,7 +1843,7 @@
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
-        
+
         - make sure MallocStackLogging is only on for tools we want to
         leak check, not other random stuff as well.
 
@@ -1841,9 +1852,9 @@
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Stephanie Lewis.
-        
+
         - make run-webkit-tests --leaks default to 100 tests per run instead of 1000
-        
+
         This should reduce or eliminate crashes on the buildbot due to
         running out of memory while stack logging.
 
@@ -2046,9 +2057,9 @@
         about whether to expect PNG dumps by having DRT always
         print two blocks terminated by #EOF, the second of which
         may be empty.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=21483
-        
+
         * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
         (printPNG):
         (dumpWebViewAsPixelsAndCompareWithExpected):
@@ -2102,9 +2113,9 @@
 
         Fix hang when running with --pixel --reset, which occurs
         because DRT spews PNG data when the script does not expect it.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=21323
-        
+
         * Scripts/run-webkit-tests:
 
 2008-09-30  Mark Rowe  <mrowe@apple.com>
@@ -2137,7 +2148,7 @@
 
         Don't run pixel comparison for text-only tests.
         https://bugs.webkit.org/show_bug.cgi?id=21124
-        
+
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (dump):
         * Scripts/run-webkit-tests:
@@ -2147,9 +2158,9 @@
         Reviewed by Simon.
 
         Changed copyright from Trolltech ASA to Nokia.
-        
+
         Nokia acquired Trolltech ASA, assets were transferred on September 26th 2008.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         * DumpRenderTree/qt/jsobjects.cpp:
@@ -2177,12 +2188,12 @@
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=21178
         <rdar://problem/6248651>
-        
+
         Return the result value from getURL.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
         (getURL):
 
@@ -2232,7 +2243,7 @@
 
         Reviewed by Sam Weinig.
 
-        Speculative build fix. 
+        Speculative build fix.
 
         * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
         (AccessibilityUIElement::supportsPressAction):
@@ -2241,7 +2252,7 @@
 
         Reviewed by Sam Weinig.
 
-        This patch extends DumpRenderTree's AccessibilityController to ask 
+        This patch extends DumpRenderTree's AccessibilityController to ask
         if the focused element supports the press action.
 
         * DumpRenderTree/AccessibilityUIElement.cpp:
@@ -2300,9 +2311,9 @@
 
         Reviewed by Oliver Hunt.
 
-        Implement a workaround for an incorrect mime-type on machines with 
+        Implement a workaround for an incorrect mime-type on machines with
         Dashcode 2.0.1.  Dashcode is overriding the UTI type for .js files.
-        See radar <rdar://problem/6234318>.     
+        See radar <rdar://problem/6234318>.
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (convertMIMEType):
@@ -2447,14 +2458,14 @@
 2008-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
-        
-        Protect against tests that call layoutTestController.notifyDone() 
+
+        Protect against tests that call layoutTestController.notifyDone()
         more than once, which would lead to memory corruption, by nulling
         out the LayoutTestController on the JSObjectRef on destruction. Also
         add a finalize callback on the class so that if the LTC outlives
         the JSObjectRef, the JSObjectRef backpointer on the LTC can be
         nulled out.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=20875
 
         * DumpRenderTree/LayoutTestController.cpp:
@@ -2533,8 +2544,8 @@
         Reviewed by Stephanie Lewis.
 
         * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
-        Calling -[NSValue rangeValue] on nil object was returning bogus results on PPC, 
-        but not Intel.  Add a check for nil before calling. 
+        Calling -[NSValue rangeValue] on nil object was returning bogus results on PPC,
+        but not Intel.  Add a check for nil before calling.
         (AccessibilityUIElement::rowIndexRange):
         (AccessibilityUIElement::columnIndexRange):
 
@@ -2571,7 +2582,7 @@
 
         Reviewed by Mark Rowe.
 
-        Fix DRT build 
+        Fix DRT build
 
         * DumpRenderTree/DumpRenderTreePrefix.h:
         * DumpRenderTree/win/DumpRenderTree.vcproj:
@@ -2579,7 +2590,7 @@
 2008-09-06  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows nightlies.
-        
+
         Copy WebKit.dll alongside application so registry-free COM can find it.
         Update embedded manifest to force use registry-free COM.
 
@@ -2639,7 +2650,7 @@
 
 2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
-        wx buildbot fix. More robust handling of clean when makefiles are not built or 
+        wx buildbot fix. More robust handling of clean when makefiles are not built or
         are not completely made.
 
         * wx/build-wxwebkit:
@@ -2693,7 +2704,7 @@
         (AccessibilityController::~AccessibilityController):
         (AccessibilityController::focusedElement): Get the root element, and
         request its focused object.
-        (AccessibilityController::rootElement): Query Windows for the 
+        (AccessibilityController::rootElement): Query Windows for the
         accessible client object for the WebView's window.
         * DumpRenderTree/win/AccessibilityUIElementWin.cpp: Added.
         (AccessibilityUIElement::AccessibilityUIElement):
@@ -2745,7 +2756,7 @@
 2008-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe
-        
+
         Make build-launcher-app work when run from a git repository.
         https://bugs.webkit.org/show_bug.cgi?id=20478
 
@@ -2854,7 +2865,7 @@
 2008-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
-        
+
         Updated project files to XCode 3.1.
 
         * DrawTest/DrawTest.xcodeproj/project.pbxproj:
@@ -2914,18 +2925,18 @@
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
-        
+
         Fix leaks seen on build-bot by fixing memory management of AccessibilityUIElement.
         <https://bugs.webkit.org/show_bug.cgi?id=20297>
         <rdar://problem/6093153>
-        
+
         I've made AccessibilityUIElement a stack object for now.  It could be
         made RefCounted, but I figured that might be overkill for the moment.
         Essentially it's just a RefPtr itself. :)
-        
+
         I also fixed a few typos, such as AccessibilityUIElement() instead of ~AccessibilityUIElement()
         which was causing additional leaks. :)
-        
+
         I added toAXElement to remove a bunch of copy/paste code.
 
         * DumpRenderTree/AccessibilityController.h:
@@ -2976,10 +2987,10 @@
 2008-08-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.
-        
+
         Scripts for building a wxWebKit installer for wxPython on Win, eventually will
         be used for nightlies.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=20036
 
         * wx/packaging: Added.
@@ -3064,7 +3075,7 @@
         Reviewed by Adam Roben.
 
         Slightly stricter checking for previous change, suggested by Adam.
-        
+
         * Scripts/extract-localizable-strings:
 
 2008-07-30  Jessica Kahn  <jess@apple.com>
@@ -3072,7 +3083,7 @@
         Reviewed by Darin Adler.
 
         Added support for UI_STRING and UI_STRING_KEY macros with flexible prefixes.
-        
+
         * Scripts/extract-localizable-strings:
 
 2008-07-30  Anders Carlsson  <andersca@apple.com>
@@ -3080,7 +3091,7 @@
         Reviewed by Adam.
 
         Copy icu38* files instead of icu36* files.
-        
+
         * DumpRenderTree/win/DumpRenderTree.vcproj:
 
 2008-07-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
@@ -3094,7 +3105,7 @@
 
         Reviewed by Sam
 
-        Add the ability to dump whether-or-not an element should have autocomplete enabled, 
+        Add the ability to dump whether-or-not an element should have autocomplete enabled,
         from the perspective of the WebKit API
 
         * DumpRenderTree/LayoutTestController.cpp:
@@ -3111,7 +3122,7 @@
 
         Reviewed by Beth Dakin
 
-        Add support for AXLineForIndex and AXInsertionPointIndex through the 
+        Add support for AXLineForIndex and AXInsertionPointIndex through the
         accessibility controller
 
         * DumpRenderTree/AccessibilityUIElement.cpp:
@@ -3283,7 +3294,7 @@
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
-        
+
         Print <div> backgrounds when printing from DRT.
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
@@ -3318,7 +3329,7 @@
 
         Add Content-Type support to DumpRenderTree and run-webkit-tests
         and move expected.txt files to expected.webarchive
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=15565
 
         * DumpRenderTree/cg/ImageDiffCG.cpp:
@@ -3350,7 +3361,7 @@
 
         Reviewed by Anders.
 
-        This patch extends DRT accessibility tests to add the ability to 
+        This patch extends DRT accessibility tests to add the ability to
         query the intValue, minValue, and maxValue of the focused element.
 
         * DumpRenderTree/AccessibilityController.cpp:
@@ -3382,7 +3393,7 @@
         <rdar://5983747> Safari crashes trying to load the SilverLight plugin,
         caused by WebKit calling NPP_DestroyStream after a plug-in returns an
         error from NPP_NewStream.
-        (pluginGetProperty): 
+        (pluginGetProperty):
         (pluginSetProperty):
         (pluginAllocate):
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: Added new
@@ -3465,7 +3476,7 @@
 
         Add multi-button mouseevent support to DRT
         https://bugs.webkit.org/show_bug.cgi?id=15173
-        
+
         It's now possible to specify the mouse button with:
         eventSender.mouseDown(1); eventSender.mouseUp(1); etc.
 
@@ -3513,7 +3524,7 @@
 
         Reviewed by Sam.
 
-        Do not include AXPosition in the dump of all of the accessibility 
+        Do not include AXPosition in the dump of all of the accessibility
         attributes since it is screen-specific.
 
         * DumpRenderTree/mac/AccessibilityControllerMac.mm:
@@ -3523,11 +3534,11 @@
 
         Reviewed by Anders.
 
-        This is a speculative fix for the failing layout test on the build 
-        bot. It seems that the problem that the Build Bot is having is 
-        Tiger-specific. On Tiger, [NSValue description] was not very smart. 
-        So I replaced our call to description with a hand-rolled equivalent 
-        that will match on both platforms. 
+        This is a speculative fix for the failing layout test on the build
+        bot. It seems that the problem that the Build Bot is having is
+        Tiger-specific. On Tiger, [NSValue description] was not very smart.
+        So I replaced our call to description with a hand-rolled equivalent
+        that will match on both platforms.
 
         * DumpRenderTree/mac/AccessibilityControllerMac.mm:
         (descriptionOfValue):
@@ -3536,8 +3547,8 @@
 
         Reviewed by Sam Weinig.
 
-        This patch adds support to the AccessibilityController to query the 
-        following attributes specifically, without a full attribute dump: 
+        This patch adds support to the AccessibilityController to query the
+        following attributes specifically, without a full attribute dump:
         AXRole, AXTitle, and AXDescription.
 
         * DumpRenderTree/AccessibilityController.cpp:
@@ -3574,10 +3585,10 @@
 
         Reviewed by Darin Adler.
 
-        Fix for <rdar://problem/5884881> Make DumpRenderTree support 
+        Fix for <rdar://problem/5884881> Make DumpRenderTree support
         accessibility tests
 
-        This patch adds some basic support for accessibility layout tests 
+        This patch adds some basic support for accessibility layout tests
         on the Mac.
 
         * DumpRenderTree/AccessibilityController.cpp: Added.
@@ -3603,8 +3614,8 @@
         Reviewed by Dan Bernstein
 
         * Scripts/extract-localizable-strings:
-        add UI_STRING_LOCALIZE_LATER, LPCTSTR_UI_STRING_LOCALIZE_LATER, and LOG_WARNING to the 
-        list of debugging macros, to avoid noise when keeping the list of localized string 
+        add UI_STRING_LOCALIZE_LATER, LPCTSTR_UI_STRING_LOCALIZE_LATER, and LOG_WARNING to the
+        list of debugging macros, to avoid noise when keeping the list of localized string
         exceptions up to date
 
 2008-06-24  Dan Bernstein  <mitz@apple.com>
@@ -3695,7 +3706,7 @@
 2008-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
-        
+
         - rename testkjs to jsc
 
         * Scripts/build-jsc: Copied from Scripts/build-testkjs.
@@ -3767,19 +3778,19 @@
 2008-05-30  Steve Falkenburg  <sfalken@apple.com>
 
         Generate an isolated COM manifest for registry free COM.
-        
+
         * DumpRenderTree/win/DumpRenderTree.vcproj:
 
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Mitz.
 
-        <rdar://problem/5704119> 
+        <rdar://problem/5704119>
         repro crash in WebCore::RenderPart::setWidget (plugin-related?)
-        
+
         Call -[WebView display] in the "plug-in" failed delegate method, simulating
         the sheet that Safari puts up.
-        
+
         * DumpRenderTree/mac/ResourceLoadDelegate.mm:
         (-[ResourceLoadDelegate webView:plugInFailedWithError:dataSource:]):
 
@@ -3810,9 +3821,9 @@
 2008-05-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
-        
+
         Restore original behavior of isOSX() referring to the Mac port, not the OS itself.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=19311
 
         * Scripts/webkitdirs.pm:
@@ -3897,7 +3908,7 @@
 2008-05-21  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Maciej, Mark.
-  
+
         arch doesn't take arguments on tiger.  expand DRT timeout for guardMalloc.
 
         * Scripts/run-webkit-tests:
@@ -3932,7 +3943,7 @@
 2008-04-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
-        
+
         - added support for --ubench mode
 
         * Scripts/run-sunspider:
@@ -3967,7 +3978,7 @@
 
         Reviewed by Steve.
 
-        Print out pending unload event count. Also print out main frame name to match Mac.         
+        Print out pending unload event count. Also print out main frame name to match Mac.
 
         * DumpRenderTree/win/FrameLoadDelegate.cpp:
         (descriptionSuitableForTestResult):
@@ -4159,11 +4170,11 @@
         Reviewed by Adam.
 
         Add support for testing application caches.
-        
+
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (dumpRenderTree):
         Empty the cache.
-        
+
         (resetWebViewToConsistentStateBeforeTesting):
         Turn on support for the application cache.
 
@@ -4305,7 +4316,7 @@
 
         Reviewed by Simon.
 
-        In the Qt's DumpRenderTree, adjust the web view properly (because W3C SVG 
+        In the Qt's DumpRenderTree, adjust the web view properly (because W3C SVG
         tests expect to be 480x360)
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
@@ -4362,7 +4373,7 @@
         Reviewed by Simon.
 
         Reset dumping resource load callbacks to false for the next test
-        
+
 
         * DumpRenderTree/qt/jsobjects.cpp:
         (LayoutTestController::reset):
@@ -4380,10 +4391,10 @@
 2008-04-26  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
-        
+
         Delete the DerivedSources after make clean has been done so that the DerivedSources
         don't get re-created. Also, use the proper extension for the Win wxPython extension.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=18756
 
         * wx/build-wxwebkit:
@@ -4410,9 +4421,9 @@
 2008-04-26  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
-        
+
         Allow the user to set the path to SWIG using an environment variable.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=18660
 
         * wx/build-wxwebkit:
@@ -4429,9 +4440,9 @@
         Reviewed by Simon.
 
         Implement dumping of resource load callbacks to pass http/tests/xmlhttprequest/abort-should-cancel-load.html
-        
+
         Similar to Editing and Frameloading we do the dumping within WebCore
-        
+
 
         * DumpRenderTree/qt/jsobjects.cpp:
         (LayoutTestController::dumpResourceLoadCallbacks):
@@ -4451,7 +4462,7 @@
         Reviewed by Sam.
 
         Don't call fprintf from the signal handler.
-        
+
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (crashHandler):
 
@@ -4720,7 +4731,7 @@
 2008-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
-        
+
         Rename RenderView to RenderViewport in the next rename patch.
 
         * Scripts/do-webcore-rename:
@@ -4732,7 +4743,7 @@
         http://bugs.webkit.org/show_bug.cgi?id=18543
         DumpRenderTree gtk freeze
 
-        fix DumpRenderTree gtk freeze 
+        fix DumpRenderTree gtk freeze
 
         * DumpRenderTree/gtk/DumpRenderTree.cpp:
         (dump):
@@ -4740,9 +4751,9 @@
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Add missing ;
-        
+
         * Scripts/build-webkit:
-        
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
@@ -4818,7 +4829,7 @@
         * run-webkit-tests http/tests(/loading) can now be executed.
         * For tests in loading/ directories we are going to throw away the dirty
         QWebPage to start with something clean.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
 
@@ -4829,7 +4840,7 @@
         * Treat http and https as special URLs as well. Change the main.cpp and
         DumpRenderTree.cpp to handle http and https URIs as input.
         * I'm not doing the clean up and merging of these two checks now.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::readStdin):
@@ -4845,7 +4856,7 @@
         enable dumping.
         * Remove this method from the LayoutTestController as it is unused now and this
         avoids adding it to the DRT of the Qt port.
-        
+
 
         * DumpRenderTree/LayoutTestController.cpp:
         (setPrivateBrowsingEnabledCallback):
@@ -4890,7 +4901,7 @@
 2008-03-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders.
-        
+
         Enable SVG animation support by default.
 
         * Scripts/build-webkit:
@@ -5128,7 +5139,7 @@
 
         Reviewed by Oliver.
 
-        Add Windows part of <rdar://problem/5693690> 
+        Add Windows part of <rdar://problem/5693690>
 
         * DumpRenderTree/win/DumpRenderTree.cpp:
         (dump):
@@ -5154,7 +5165,7 @@
 2008-03-07  Steve Falkenburg  <sfalken@apple.com>
 
         Get pdevenv working with Visual Studio Express.
-        
+
         Reviewed by Adam.
 
         * Scripts/pdevenv:
@@ -5341,7 +5352,7 @@
 
         The fix is to look backwards for "/LayoutTests/" in the URL we're passed, and simply
         remove the current working directory path (no matter what it is) after "file://" but
-        before "/LayoutTests/".  
+        before "/LayoutTests/".
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (normalizeWebResourceURL): Removed unused oldURLBase argument.  We now replace the
@@ -5433,12 +5444,12 @@
 
         Reviewed by Adam.
 
-        <rdar://problem/5748781> 
+        <rdar://problem/5748781>
         https://bugs.webkit.org/show_bug.cgi?id=17413
         REGRESSION: Latest Nightly doesn't load Java plugin w/Safari 3.1b
-        
+
         Copy the Java plug-in over to the new location.
-        
+
         * FindSafari/FindSafari.cpp:
         (_tmain):
 
@@ -5447,7 +5458,7 @@
         Reviewed by Adam.
 
         <rdar://problem/5747325> REGRESSION: HTTP layout tests hang
-        
+
         * DumpRenderTree/win/DumpRenderTree.cpp:
         (runTest):
         Init the URL request with the correct timeout.
@@ -5732,7 +5743,7 @@
 
         Build fix for Windows. willCloseFrame is a pure virtual and we are
         forced to have an implementation.
-        
+
         This partially reverts r30014.
 
         * DumpRenderTree/win/FrameLoadDelegate.cpp:
@@ -5754,7 +5765,7 @@
         In http://bugs.webkit.org/show_bug.cgi?id=16853 it was identified that the
         the output of the willCloseFrame and didClearWindowObject FrameLoadDelegate
         depends on the order the tests are executed.
-        
+
         Propose to remove willCloseFrame and didlCearWindowObject output from the
         FrameLoadDelegate and update the test results. The output of didClearWindowObject
         is not interesting for any of the current tests and we have other ways to find
@@ -5810,7 +5821,7 @@
         Issues include:
           * Uses Sleep() to implement leapForward reliably.
           * 3 DND tests still fail for reasons that i have not yet determined
-          * Has to explicitly ignore an extraneous WM_MOUSELEAVE that i am at a loss to explain 
+          * Has to explicitly ignore an extraneous WM_MOUSELEAVE that i am at a loss to explain
 
         * DumpRenderTree/win/EventSender.cpp:
         (leapForwardCallback):
@@ -5823,7 +5834,7 @@
 
         (replaySavedEvents):
           More complicated now.  Where possible we just use the old while-loop model of execution,
-          but when leapForward has been used we have to jump through some hoops and set up an 
+          but when leapForward has been used we have to jump through some hoops and set up an
           inner event loop so that we can ensure messages get the correct time stamp.
 
         * DumpRenderTree/win/UIDelegate.cpp:
@@ -5904,12 +5915,12 @@
         One more debug (external) fix.
 
         * DumpRenderTree/win/DumpRenderTree.cpp: TestNetscapePlugin is built with a _debug suffix in both DebugInternal
-        and Debug configurations. 
+        and Debug configurations.
 
 2008-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig. Sam Weinig.
-        
+
         Fixed <rdar://problem/5692566> fast/encoding/mailto-always-utf-8.html
         fails when run after fast/dom/Window/window-property-shadowing.html (16902)
 
@@ -5953,7 +5964,7 @@
         (-[UIDelegate webView:frame:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:]):
         (-[UIDelegate webView:frame:quotaForSecurityOrigin:fromProposedQuota:database:]):
         Removed unused (I think) code.
-        
+
         * DumpRenderTree/win/UIDelegate.cpp:
         (UIDelegate::QueryInterface): IWebUIDelegatePrivate3 is now supported.
         (UIDelegate::webViewPainted): A stub implementation.
@@ -6092,19 +6103,19 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Reworked the JavaScriptCore Qt bindings:
-        
+
         * Update JS DRT controller for Qt JS binding changes.
         There were two functions that needed some changes
         so that the layout tests would work, so this makes
         a few tests pass again.
-        
+
         * Bump the timeout for layout tests up to 11s.
         At least some tests have an internal timeout of
         10 seconds, so make the waitUntilDone approach
         wait at least 11s.  fast/dom/open-and-close-by-DOM.html
         is one of these - now the failure message is more
         accurate.
-        
+
 
         * DumpRenderTree/qt/jsobjects.cpp:
         (LayoutTestController::waitUntilDone):
@@ -6116,9 +6127,9 @@
 
         <rdar://problem/5688975>
         div element on microsoft site has wrong left offset.
-        
+
         Add new method for testing the return vale of NPN_GetProperty.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
         (pluginInvoke):
 
@@ -6137,7 +6148,7 @@
         http://bugs.webkit.org/show_bug.cgi?id=16955
         Get errors when cross-compile webkit-gtk
 
-        * GNUmakefile.am: Removed ICU_CFLAGS 
+        * GNUmakefile.am: Removed ICU_CFLAGS
 
 2008-01-21  Darin Adler  <darin@apple.com>
 
@@ -6151,7 +6162,7 @@
         Reviewed by Holger.
 
         Fix focus chain handling and cycling through focusable objects (links) using tab/backtab.
-        
+
         * Fix GraphicsContext::drawFocusRing to also draw single focus rects.
         * Implemented QWebPage::focusNextPrevChild by sending fake tab/shift-tab events
         and make the return value depend on whether we successfully determined a focusable
@@ -6164,7 +6175,7 @@
         * Made inclusion of links in the focus chain configurable through QWebSettings::LinksIncludedInFocusChain.
         The layout tests expect this to be disabled but for the user it seems sensible to have it
         on by default, hence the default in qwebsettings.cpp
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::WebPage::WebPage):
@@ -6210,7 +6221,7 @@
 
         Reviewed by Oliver.
 
-        Update build-webkit to account for foreign-object being disabled by 
+        Update build-webkit to account for foreign-object being disabled by
         default.
 
         * Scripts/build-webkit:
@@ -6246,10 +6257,10 @@
         Reviewed by Holger.
 
         Fix fast/dom/Window/window-resize.html
-        
+
         In DRT connect the page's geometryChangeRequest signal to a slot that
         sets the geometry of the view widget.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::WebPage::setViewGeometry):
@@ -6277,7 +6288,7 @@
 2008-01-17  Steve Falkenburg  <sfalken@apple.com>
 
         Re-add DEBUG_WEBKIT_HAS_SUFFIX.
-        
+
         Rubber-stamped by Jon Honeycutt.
 
         * DumpRenderTree/win/DumpRenderTree.vcproj:
@@ -6307,7 +6318,7 @@
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         Fixed the waitUntilDone watchdog timer -- the old code never added the
         timer to the run loop, so it didn't do anything.
 
@@ -6319,7 +6330,7 @@
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.
-        
+
         Reviewed by Darin Adler.
 
         * Drosera/win/Drosera.vcproj/Drosera.vcproj:
@@ -6331,7 +6342,7 @@
 2008-01-14  Stephanie  <slewis@apple.com>
 
        Reviewed by NOBODY.
-  
+
        revert accidental character.
 
        * Scripts/run-webkit-tests:
@@ -6389,12 +6400,12 @@
 2008-01-13  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.
-        
+
         Unify vsprops files
         Debug:          common.vsprops, debug.vsprops
         Debug_Internal: common.vsprops, debug.vsprops, debug_internal.vsprops
         Release:        common.vsprops, release.vsprops
-        
+
         Shared properties can go into common.vsprops, shared debug settings can go into debug.vsprops.
         debug_internal.vsprops will be mostly empty except for file path prefix modifiers.
 
@@ -6476,7 +6487,7 @@
         Reviewed by Ap.
 
         * Make launching of the WebKit httpd work on GNU/Debian/Linux
-        
+
         The configuration of Apache2 and installation does not depend on
         the kernel but on the distribution policy. Make launching of httpd
         work for Debian derived distributions.
@@ -6584,14 +6595,14 @@
         Reviewed by Simon.
 
         rename QWebPageHistory to QWebHistory.
-        
+
 
         * DumpRenderTree/qt/jsobjects.cpp:
 
 2008-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         - add some more renames, adjust some
 
         * Scripts/do-webcore-rename:
@@ -6633,7 +6644,7 @@
         Reviewed by Lars.
 
         Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
-        
+
 
         * DumpRenderTree/qt/main.cpp:
         * DumpRenderTree/qt/testplugin.cpp:
@@ -6659,7 +6670,7 @@
         Reviewed by Alexey and Darin.
 
         Adding "home" and "end" to DRT's keydown since
-        DOM key events can't handle keyIdentifiers at this point. 
+        DOM key events can't handle keyIdentifiers at this point.
 
         * DumpRenderTree/mac/EventSendingController.mm:
         (-[EventSendingController keyDown:withModifiers:]):
@@ -6671,10 +6682,10 @@
         Reviewed by Simon.
 
         fix DRT after the changes to QWebPage.
-        
+
         The great thing is that we actually don't have
         any regressions from the QWebPage change :)
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::DumpRenderTree):
@@ -6684,9 +6695,9 @@
         Reviewed by Simon.
 
         make QWebPage a QObject and get things to compile.
-        
+
         Nothing works currently though.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::DumpRenderTree):
@@ -6789,7 +6800,7 @@
         Reviewed by Lars.
 
         Moved QWebPage::open to QWebFrame::load and added setHtml.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::open):
@@ -6799,7 +6810,7 @@
         Reviewed by Lars.
 
         Added the first revision of QWebView and started moving functionality from QWebPave over to QWebView and QWebFrame.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::DumpRenderTree):
@@ -6936,7 +6947,7 @@
 2007-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin and Steve.
-        
+
         - check for QuickTime SDK on Windows.
         - build media support on Windows by default
 
@@ -7019,7 +7030,7 @@
 2007-12-18  Steve Falkenburg  <sfalken@apple.com>
 
         Add script to run Drosera as part of the nightly.
-        
+
         Reviewed by Kevin M.
 
         * Scripts/run-drosera.cmd: Added.
@@ -7148,9 +7159,9 @@
 
         Reviewed by Brady.
 
-        Assert that a web frame that's loading a resource always has either a data source or 
+        Assert that a web frame that's loading a resource always has either a data source or
         a provisional data source.
-        
+
         * DumpRenderTree/mac/ResourceLoadDelegate.mm:
         (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
 
@@ -7184,11 +7195,11 @@
 
         Reviewed by Darin and Geoff.
 
-        <rdar://problem/5619295> 
+        <rdar://problem/5619295>
         REGRESSION: 303-304: Embedded YouTube video fails to render- JS errors (16150) (Flash 9)
-        
+
         Add property getting methods to the plug-in.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
         (pluginInvoke):
 
@@ -7254,9 +7265,9 @@
         * DumpRenderTree/win/DumpRenderTree.cpp:
         (main):
         Set the resource load delegate.
-        
+
         * DumpRenderTree/win/DumpRenderTree.vcproj:
-        
+
         * DumpRenderTree/win/ResourceLoadDelegate.cpp: Added.
         * DumpRenderTree/win/ResourceLoadDelegate.h: Added.
 
@@ -7286,7 +7297,7 @@
         Make DumpRenderTree on mac use its own path for Databases testing
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
-        (setDefaultsToConsistentValuesForTesting): Keep a string to ~/Library/Application Support/DumpRenderTree 
+        (setDefaultsToConsistentValuesForTesting): Keep a string to ~/Library/Application Support/DumpRenderTree
           for future DRT-only use, then use it to construct the Databases path and set that default
 
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
@@ -7334,10 +7345,10 @@
         Reviewed by Sam W.
 
         Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
-        
+
         Fixes <rdar://problem/5620249> Must disable SVG animation
         <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
-        
+
         In order to allow finer grained control over the set of SVG features
         this patch splits ENABLE_SVG_EXPERIMENTAL_FEATURES into the following
         distinct flags:
@@ -7346,9 +7357,9 @@
         ENABLE_SVG_FONTS
         ENABLE_SVG_AS_IMAGE
         ENABLE_SVG_USE
-        
+
         by default only ENABLE_SVG_AS_IMAGE and ENABLE_SVG_USE are set.
-        
+
         Script handles all the new build flags, and allows --svg-experimental
         to automatically enable all features.
 
@@ -7389,7 +7400,7 @@
 2007-12-06  Anders Carlsson  <andersca@apple.com>
 
         Rename main.c to main.cpp here too.
-        
+
         * DumpRenderTree/win/TestNetscapePlugin/main.cpp: Copied from DumpRenderTree/win/TestNetscapePlugin/main.c.
 
 2007-12-06  Sam Weinig  <sam@webkit.org>
@@ -7406,7 +7417,7 @@
 
         Restore implementation of testGetIntIdentifier that was accidentally
         removed somehow (possibly when I made PluginObject be a cpp file).
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
         (pluginInvoke):
 
@@ -7414,11 +7425,11 @@
 
         Make the entry points extern "C".
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
-        
+
 2007-12-05  Anders Carlsson  <andersca@apple.com>
 
         C++ warning fixes.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
         (NPP_New):
         (NPP_Destroy):
@@ -7437,7 +7448,7 @@
 2007-12-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
-        
+
         Rename the TestNetscapePlugIn .c files to be .cpp.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
@@ -7484,7 +7495,7 @@
 2007-12-04  Anders Carlsson  <andersca@apple.com>
 
         Remove IWebScriptScope include.
-        
+
         * Drosera/win/DebuggerDocumentPlatform.cpp:
 
 2007-12-04  Sam Weinig  <sam@webkit.org>
@@ -7639,7 +7650,7 @@
 
         - <rdar://5618942> Drosera: Console window does not process everything
         correctly.
-        - <rdar://5619005> Drosera: could be sped up by moving the 
+        - <rdar://5619005> Drosera: could be sped up by moving the
         WebScriptScope stuff into the WebScriptCallFrame.
         - Now the console can correctly process objects and does not receive
         notifications from JavaScriptCore about the JavaScript in Drosera's
@@ -7655,7 +7666,7 @@
 
         Check to see if we are building a debug root
 
-        * Scripts/check-for-global-initializers: 
+        * Scripts/check-for-global-initializers:
 
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
@@ -7806,7 +7817,7 @@
 
         Reviewed by Adam.
 
-        - Removed some unnecessary functions and changed an unused return type. 
+        - Removed some unnecessary functions and changed an unused return type.
 
         * Drosera/win/DebuggerClient.cpp:
         (registerConsoleClass):
@@ -7839,7 +7850,7 @@
 
         <rdar://problem/5230478>
         FrameLoadDelegate callbacks are not dumped in DRT.
-        
+
         * DumpRenderTree/win/DumpRenderTree.cpp:
         (shouldLogFrameLoadDelegates):
         (runTest):
@@ -7906,26 +7917,26 @@
 
         <rdar://problem/5132005>
         setUserStyleSheetEnabled is not fully implemented in Windows DRT.
-        
+
         * DumpRenderTree/win/DumpRenderTree.vcproj:
         Add shlwapi.lib
-        
+
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::setUserStyleSheetEnabled):
         Implement this.
-        
+
         (appendComponentToPath):
         New method which wraps the Win32 API PathAppend.
-        
+
         (followShortcuts):
         New method which checks if a file points to a shortcut and
         follows the shortcut.
-        
+
         (resolveCygwinPath):
         New method that takes a cygwin unix-style path and returns the Win32 path.
-        
+
         (cfStringRefToWString):
-        
+
         (LayoutTestController::setUserStyleSheetLocation):
         Implement this.
 
@@ -7963,12 +7974,12 @@
 
         <rdar://problem/5132001>
         contextClick is not implemented in DRT on Windows.
-        
+
         * DumpRenderTree/win/EventSender.cpp:
         (contextClickCallback):
         Add a callback for contextClick, which sends a WM_RBUTTONDOWN message followed
         by a WM_RBUTTONUP message.
-        
+
         * DumpRenderTree/win/UIDelegate.cpp:
         (UIDelegate::hasCustomMenuImplementation):
         (UIDelegate::trackCustomPopupMenu):
@@ -8009,7 +8020,7 @@
         (DebuggerClient::onSize): Implemented.
         (DebuggerClient::createWebViewWithRequest): Implemented, now creates a
         new window.
-        * Drosera/win/DebuggerClient.h: Added needed method and members for 
+        * Drosera/win/DebuggerClient.h: Added needed method and members for
         creating and maintaining a new window.
         * Drosera/win/Drosera.cpp: Fixed some minor bugs, and moved a couple of
         lines of code to more appropriate places.
@@ -8023,7 +8034,7 @@
         Reviewed by Dave Hyatt.
 
         <rdar://problem/5569233> Add the ability to disable author and user CSS styles
-        
+
         Add support for disabling author and user styles for testing.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
@@ -8306,7 +8317,7 @@
 
         Reviewed by Dan.
 
-        * Scripts/bisect-builds: Check for the 
+        * Scripts/bisect-builds: Check for the
         WebKit.app/Contents/Frameworks/10.[45] directory. If it exists, use
         it for the DYLD_FRAMEWORK_PATH environment variable, else fallback
         to WebKit.app/Contents/Resources.
@@ -8384,12 +8395,12 @@
 
 2007-11-21  Kevin Ollivier  <kevino@theolliviers.com>
 
-        Move install-unix-extras to wx directory as it seems only to be used by that 
-        port now. It now supports universal binaries on Mac and adds libpng and libjpeg. 
+        Move install-unix-extras to wx directory as it seems only to be used by that
+        port now. It now supports universal binaries on Mac and adds libpng and libjpeg.
         Also, have build-wxwebkit run it in order to fix the Mac buildbot, and
         have install-unix-extras install into WebKitLibraries as per
         convention.
-        
+
         Reviewed by Mark Rowe.
 
         * Scripts/install-unix-extras: Removed.
@@ -8484,7 +8495,7 @@
 
         wx build fix for Windows. Don't use WebCore/move-js-headers.sh as
         it indiscriminately copies any headers inside JavaScriptCore,
-        which includes Tiger ICU headers. 
+        which includes Tiger ICU headers.
 
         * wx/build-wxwebkit:
         Don't run WebCore/move-js-headers.sh any longer.
@@ -8544,7 +8555,7 @@
 
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
-        Build script fixes to ensure they do the right thing for the 
+        Build script fixes to ensure they do the right thing for the
         wx port, and update build-wxwebkit to reflect the way the
         build scripts now work.
 
@@ -8578,7 +8589,7 @@
 
 2007-11-18  Kevin Ollivier  <kevino@theolliviers.com>
 
-        Add wxWebKit sample and build script, and integrate it with 
+        Add wxWebKit sample and build script, and integrate it with
         build-webkit. Also make build-webkit --clean work for all
         ports.
 
@@ -8617,7 +8628,7 @@
 
         Reviewed by Adam Roben.
 
-        * Scripts/run-webkit-tests: Avoid an uninitialized warning if WEBKIT_TESTFONTS is not defined. 
+        * Scripts/run-webkit-tests: Avoid an uninitialized warning if WEBKIT_TESTFONTS is not defined.
 
 2007-11-16  Ryan Leavengood  <leavengood@gmail.com>
 
@@ -8672,7 +8683,7 @@
 
         <rdar://problem/5309081>
         In DRT, "plugin.logDestroy = true" not working on Windows.
-        
+
         * DumpRenderTree/win/TestNetscapePlugin/main.c:
         (NPP_Destroy):
 
@@ -8688,9 +8699,9 @@
 
         <rdar://problem/5141186>
         window.layoutTestController.setWindowIsKey is not implemented in DRT.
-        
+
         Implement setWindowIsKey.
-        
+
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::setWindowIsKey):
 
@@ -8699,7 +8710,7 @@
         Reviewed by Adam Roben.
 
         Fix for <rdar://problem/5382579>
-        http/tests/security/cross-frame-access-put.html reports large 
+        http/tests/security/cross-frame-access-put.html reports large
         negative numbers for screenLeft and screenTop (Mac reports "0")
 
         * DumpRenderTree/win/UIDelegate.cpp:
@@ -8773,7 +8784,7 @@
 2007-11-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
-        
+
         Add support for http media tests
 
         * Scripts/run-webkit-tests:
@@ -8811,8 +8822,8 @@
 
         Reviewed by Tim Hatcher.
 
-        Follow up to <rdar://problem/5394877> Safari should not log unsafe JavaScript 
-        attempts when in private browsing mode (only an issue if Log JavaScript Exceptions 
+        Follow up to <rdar://problem/5394877> Safari should not log unsafe JavaScript
+        attempts when in private browsing mode (only an issue if Log JavaScript Exceptions
         is turned on)
 
         - Add LayoutTestController.setPrivateBrowsingEnabled(bool) (stub out implementation for windows)
@@ -8900,11 +8911,11 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Add a QWebPage::frameCreated() signal and fix DRT
-        
+
         The removal of createFrame in QWebPage broke the re-implementation
         in DumpRenderTree. Instead emit a frameCreated() signal and
         connect to it in DumpRenderTree.
-        
+
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
         (WebCore::WebPage::WebPage):
@@ -8917,10 +8928,10 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Moved all the event handlers from QWebFrame into QWebPage.
-        
+
         This cleans up the public API and allows us to remove the
         HackWebFrame hack in DumpRenderTree.
-        
+
 
         * DumpRenderTree/qt/jsobjects.cpp:
         (EventSender::mouseDown):
@@ -9102,7 +9113,7 @@
 2007-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Adam.
-        
+
         - Turn off deprecated function warnings for TestNetscapePlugin because Carbon.h triggers them
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
@@ -9180,7 +9191,7 @@
 2007-10-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by bdash.
-        
+
         Disable media tests when doing leak checking on Tiger.
         They crash in QuickTime (rdar://problem/5537157).
 
@@ -9189,7 +9200,7 @@
 2007-10-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
-        
+
         Build media support by default on OSX only.
 
         * Scripts/build-webkit:
@@ -9212,11 +9223,11 @@
         this will be needed by the DebuggerClient.
         (DebuggerDocument::server):
         * Drosera/win/BaseDelegate.h: Removed unnecessary include.
-        * Drosera/win/DebuggerClient.cpp: 
+        * Drosera/win/DebuggerClient.cpp:
         (DebuggerClient::didFinishLoadForFrame): Finished implementing.
         (DebuggerClient::didReceiveTitle): Added comment about its purpose.
         (DebuggerClient::createWebViewWithRequest): Added comment about its
-        purpose. 
+        purpose.
         * Drosera/win/DebuggerClient.h: Removed unnecessary include, and forward
         declarations.
         (DebuggerClient::webViewLoaded): Moved.
@@ -9243,7 +9254,7 @@
 2007-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John Sullivan.
-        
+
         - Place the Localizable.strings file in mac or win directories
           if that location exists.
         - Also look for UI_STRING in .c files.
@@ -9437,7 +9448,7 @@
 
         Weak link against WebCore so DumpRenderTree can be bundled with production roots.
 
-        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: 
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
 
 2007-10-25  Alice Liu  <alice.liu@apple.com>
 
@@ -9459,7 +9470,7 @@
         Added declspec
         * DumpRenderTree/win/EditingDelegate.h:
 
-        Reset certain values on the webview (or related delegate) that might 
+        Reset certain values on the webview (or related delegate) that might
         have changed while running a test
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::~LayoutTestController):
@@ -9559,7 +9570,7 @@
 
         Fix <rdar://5410959>  editing/selection/drag-to-contenteditable-iframe.html fails on Windows
 
-        Move the call to replaySavedEvents from doDragDrop to doMouseMove because we don't want to 
+        Move the call to replaySavedEvents from doDragDrop to doMouseMove because we don't want to
         replay the saved events when we're still processing the mousedown that starts the drag
         * DumpRenderTree/win/EventSender.cpp:
         (doMouseMove):
@@ -9574,7 +9585,7 @@
         Connection class to prepare it for receiving those callbacks.
         - Also I changed the instantiation of DebuggerClient, DebuggerDocument
         and the ServerConnection to not need to be initialized with a server
-        name, since that is not the way we connect to the WebKit server. 
+        name, since that is not the way we connect to the WebKit server.
 
         * Drosera/DebuggerDocument.cpp: Fixed a bug where I was always logging
         no exception.  Now it only loggs when there is an exception
@@ -9594,7 +9605,7 @@
         (Drosera::initServer):
         * Drosera/win/Drosera.h: No longer need the ServerConnection to be
         instantiated with a server's name.
-        * Drosera/win/ServerConnection.cpp: 
+        * Drosera/win/ServerConnection.cpp:
         (ServerConnection::ServerConnection): No longer needs a server name
         (ServerConnection::~ServerConnection): Only release the global context
         if there is one.
@@ -9723,7 +9734,7 @@
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Don't print a massive pile of setenvs from tools that automatically build testkjs.
 
         * Scripts/build-testkjs:
@@ -9733,7 +9744,7 @@
         Reviewed by Darin Adler.
 
         - add wrapper that finds the right copy of testkjs
-        
+
         * Scripts/sunspider-compare-results: Added.
 
 2007-10-23  Kevin McCullough  <kmccullough@apple.com>
@@ -9755,7 +9766,7 @@
         (Drosera::Drosera): Does the OleInitialize so COM is ready to go and
         it's not manditory to call init before doing COM stuff.
         (Drosera::init): calls initUI and will call attach when the
-        functionality exists. 
+        functionality exists.
         (Drosera::initUI): Has changed very little.
         (Drosera::attach): Changed the signature to reflect that we no longer
         need the dictionary of known server names.
@@ -9763,7 +9774,7 @@
         names.  Also renamed and moved some functions.
         * Drosera/win/Drosera.vcproj/Drosera.rc: Removed the Attach box.
         * Drosera/win/Drosera.vcproj/Drosera.vcproj: Moved resource.h from the
-        headers to the resources folder. 
+        headers to the resources folder.
         * Drosera/win/resource.h: Removed the Attach box.
 
 2007-10-22  Adam Roben  <aroben@apple.com>
@@ -9783,13 +9794,13 @@
         Reviewed by Darin Adler.
 
         - Changed the Client so that the DebuggerDocument now own the
-        ServerConnection.  This simplifies ownership and cleanup. 
+        ServerConnection.  This simplifies ownership and cleanup.
 
         * Drosera/win/DebuggerClient.cpp: The DebuggerDocument now owns the
         ServerConnection.
         (DebuggerClient::initWithServerName):
         (DebuggerClient::didFinishLoadForFrame):
-        * Drosera/win/DebuggerClient.h: DebuggerDocument now owns the 
+        * Drosera/win/DebuggerClient.h: DebuggerDocument now owns the
         ServerConnection.
         * Drosera/win/Drosera.cpp: Moved some WebFrame initialization logic to
         until after we have a server which we are attached to.
@@ -9824,7 +9835,7 @@
 2007-10-22  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.
-        
+
         Fix for local database support after r26879
         Ensure that ENABLE_DATABASE and ENABLE_ICONDATABASE are correctly set
 
@@ -9870,7 +9881,7 @@
 2007-10-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
-        
+
         Add improved argument handling to run-sunspider, including
         --runs=<number>, --shell=<path>, --tests=<pattern>, --shark, and --help
         Also re-factor code into subroutines
@@ -9986,8 +9997,8 @@
         * Drosera/win/DebuggerApplication.cpp: Removed. The functionality of
           these files got moved into Drosera.h/cpp
         * Drosera/win/DebuggerApplication.h: Removed.
-        * Drosera/win/DebuggerClient.cpp: Lots of cleanup and restructuring 
-          happened here to better match the logic flow of the same code on the 
+        * Drosera/win/DebuggerClient.cpp: Lots of cleanup and restructuring
+          happened here to better match the logic flow of the same code on the
           mac side and to use the new ServerConnection class.
         (DebuggerClient::DebuggerClient): Constructor that takes a server name.
         (DebuggerClient::initWithServerName): Initializer that will set up the
@@ -10000,7 +10011,7 @@
         (DebuggerClient::Release): For IUnknown.
         (DebuggerClient::didFinishLoadForFrame): Part of the FrameLoadDelegate
           this still needs to set the global context of the server, but
-          IWebFrame does not have an accessor for the global context yet. 
+          IWebFrame does not have an accessor for the global context yet.
         (DebuggerClient::windowScriptObjectAvailable): Part of FrameLoadDelegate
           this is a pass through for the same function in the document.
         (DebuggerClient::didReceiveTitle): Unimplemented part of
@@ -10033,17 +10044,17 @@
         (attachWndProc): Now if a server is selected the Client becomes it's
           delegate.
         (Drosera::Drosera): Added the construction of the Client and dictionary
-          of server names. 
+          of server names.
         (Drosera::initUI): This is no longer the delegates, the Client is.
         (Drosera::webViewLoaded): Now asks the Client instead of holding local
-          state. 
+          state.
         (Drosera::applicationDidFinishLaunching): Placeholder for needed
           notification registration when it's possible to implement.
         (Drosera::serverLoaded): Ditto
         (Drosera::serverUnloaded): Ditto
         (Drosera::attach): Attach Drosera to the WebKit server.
         * Drosera/win/Drosera.h: Ditto for Drosera.cpp comment.
-        (Drosera::getInst): 
+        (Drosera::getInst):
         (Drosera::setInst):
         (Drosera::knownServers):
         * Drosera/win/Drosera.vcproj/Drosera.vcproj: Removed DebuggerApplication
@@ -10053,7 +10064,7 @@
           Most of the functions are completely unimlemented because they cannot
           connect with the WebKit server, because one does not exist on Windows
           yet.
-        (ServerConnection::initWithServerName): 
+        (ServerConnection::initWithServerName):
         (ServerConnection::~ServerConnection):
         (ServerConnection::setGlobalContext):
         (ServerConnection::pause):
@@ -10071,19 +10082,19 @@
         Reviewed by Darin Adler.
 
         Fix for these broken layout tests on Windows:
-        
+
         fast/forms/focus-selection-input.html
         fast/forms/focus-selection-textarea.html
         fast/forms/select-accesskey.html
-        
+
         * DumpRenderTree/win/EventSender.cpp:
         (keyDownCallback):
         correct the VK code for alt key.
-        
+
 2007-10-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
-        
+
         Make the GtkLauncher code slightly more readable.
 
         * GtkLauncher/main.cpp:
@@ -10094,7 +10105,7 @@
 2007-10-19  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Adam.
-        
+
         - don't delay-load WebKit in DumpRenderTree.
 
         * DumpRenderTree/win/DumpRenderTree.vcproj:
@@ -10277,7 +10288,7 @@
 
 2007-10-16  Kevin McCullough  <kmccullough@apple.com>
 
-        - Updated leaks list because our internal bot upgraded it's version of leopard and 
+        - Updated leaks list because our internal bot upgraded it's version of leopard and
         one of the leaks was fixed between that revision and the bot's previous version of
         leopard.
 
@@ -10434,10 +10445,10 @@
 2007-10-14  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Adam Roben.
-        
+
         Fix run-webkit-tests is too greedy calculating platform hierarchy
         http://bugs.webkit.org/show_bug.cgi?id=15465
-        
+
         Fix run-webkit-tests being too greedy in trying to split the platform name up
         causing it to try and find tests in every directory above the first "-" in the
         path to the LayoutTests
@@ -10484,7 +10495,7 @@
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
-        
+
         Make pixel tests more useful!
         Finally fix the image diff 0.00% mystery problem
         Highlight any image differences in the image diff.
@@ -10517,7 +10528,7 @@
 2007-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
-        
+
         DerivedSources.make was finding "ENABLE_SVG" in the string
         "ENABLE_SVG_EXPERIMENTAL_FEATURES" thus --no-svg wasn't functioning
         quite correctly.
@@ -10542,11 +10553,11 @@
 2007-06-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Weinig.
-        
+
         Add VIDEO flag for timed media features
 
         * Scripts/build-webkit
-        
+
 === End merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Kevin McCullough  <kmccullough@apple.com>
@@ -10733,7 +10744,7 @@
         remove the hack in run-webkit-tests that forced text only test
         to be taken from the platform independent dir. It was only left
         there from early days.
-        
+
         Remove platform dependent results for tests that are text only nowadays,
         and add one platform dependent result for a text only test that requires it.
 
@@ -10808,7 +10819,7 @@
         Fix build-webkit when both QTDIR and --gtk are set.  The presence of --gtk
         should take precedence over QTDIR when determining which port we are working with.
 
-        * Scripts/webkitdirs.pm: 
+        * Scripts/webkitdirs.pm:
 
 2007-10-02  Adam Roben  <aroben@apple.com>
 
@@ -11303,7 +11314,7 @@
         Reviewed by Adam Roben.
 
         Begin sharing code between mac and windows DRT.
-            - both now share LayoutTestController.h/cpp and implement platform dependant 
+            - both now share LayoutTestController.h/cpp and implement platform dependant
               operations in LayoutTestControllerMac/Win.
             - DumpRenderTree.h is now shared.
             - WorkQueue and WorkQueueItem are also shared.
@@ -11910,7 +11921,7 @@
 
         Convert the LayoutTestController to use the JSCore API instead of WebScriptObject.
 
-        * DumpRenderTree/DumpRenderTree.h: Re-order variables. 
+        * DumpRenderTree/DumpRenderTree.h: Re-order variables.
         * DumpRenderTree/DumpRenderTree.m: Removed.
         * DumpRenderTree/DumpRenderTree.mm: Copied from DumpRenderTree/DumpRenderTree.m.
         (stopJavaScriptThreads): Fix initialization.
@@ -11929,7 +11940,7 @@
         (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
         (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
         Convert to use the new JSCore based LayoutTestController and the new WorkQueue.
-        
+
         * DumpRenderTree/LayoutTestController.cpp: Added.
         (LayoutTestController::LayoutTestController):
         (LayoutTestController::~LayoutTestController):
@@ -12154,7 +12165,7 @@
 
         Reviewed by Mark Rowe.
 
-        Remove 'objC' prefix from methods now in the ObjCController. 
+        Remove 'objC' prefix from methods now in the ObjCController.
 
         * DumpRenderTree/ObjCController.m:
         (+[ObjCController isSelectorExcludedFromWebScript:]):
@@ -12169,10 +12180,10 @@
 
         Reviewed by Oliver.
 
-        Initial refactor of DumpRenderTree in preparation of making it more platform independent. 
+        Initial refactor of DumpRenderTree in preparation of making it more platform independent.
         - Move LayoutTestController into its own file.
         - Move Objective-C only functions on LayoutTestController into a new controller called the
-          ObjCController. 
+          ObjCController.
 
         * DumpRenderTree/DumpRenderTree.h:
         * DumpRenderTree/DumpRenderTree.m:
@@ -12501,7 +12512,7 @@
 2007-08-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by John and Adam.
-        
+
         WebDataSource::response can legitimately have a null response, so we
         must check that case.
 
@@ -12588,7 +12599,7 @@
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
         (NPP_SetWindow):
 
@@ -12600,7 +12611,7 @@
         REGRESSION (Tiger-Leopard): ADOBE: Safari calls NPP_SetWindow with bad values sometimes
 
         Add a way for the plug-in to dump the width and height when it gets its  NPP_SetWindow call.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
         (pluginAllocate):
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
@@ -12618,7 +12629,7 @@
         (createWebView):
         Create a DumpRenderTreeWindow instead of a NSWindow, now that a DumpRenderTreeWindow no longer poses as a NSWindow.
         (dumpRenderTree):
-        Don't pose as a NSWindow, since when the spelling panel gets created, it creates an NSWindow which ends up creating a DumpRenderTreeWindow. 
+        Don't pose as a NSWindow, since when the spelling panel gets created, it creates an NSWindow which ends up creating a DumpRenderTreeWindow.
 
 2007-08-16  Kevin McCullough  <kmccullough@apple.com>
 
@@ -12641,9 +12652,9 @@
 2007-08-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin Mccullough.
-        
-        Removed special case that didn't belong. (It would allow a global 
-        initializer to sneak into production builds, which would cause a 
+
+        Removed special case that didn't belong. (It would allow a global
+        initializer to sneak into production builds, which would cause a
         system-wide performance regression on Mac OS X.)
 
         * Scripts/check-for-global-initializers:
@@ -12651,7 +12662,7 @@
 2007-08-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tim.
-        
+
         <rdar://problem/5408255> REGRESSION: In Mail, clicking the containing element's UI closebox doesn't delete element
 
         * DumpRenderTree/EditingDelegate.m:
@@ -12816,7 +12827,7 @@
 
 2007-08-02  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Tim. 
+        Reviewed by Tim.
 
         - It would help if I actually called the right function.
 
@@ -12834,7 +12845,7 @@
         When DRT crashes, record stderr and restart DRT
 
         This prevents a DRT crash from causing the next few hundred tests to
-        "fail" because DRT is no longer running. 
+        "fail" because DRT is no longer running.
 
         I also changed the terminology that run-webkit-tests uses in its
         output a bit, so that crashing tests are referred to as "crashes"
@@ -12975,7 +12986,7 @@
         honor --qmakearg for the Gdk/Gtk build as well.
 
         * GdkLauncher/main.cpp: Switch to the new API
-        * Scripts/webkitdirs.pm: Allow to specify --qmakearg, e.g. to control the WEBKIT_{INC,LIB}_DIR 
+        * Scripts/webkitdirs.pm: Allow to specify --qmakearg, e.g. to control the WEBKIT_{INC,LIB}_DIR
 
 2007-07-22  Darin Adler  <darin@apple.com>
 
@@ -13002,7 +13013,7 @@
 
         http://bugs.webkit.org/show_bug.cgi?id=14710
 
-        Add preliminary support for testing Input Method/WebKit behaviour and interaction 
+        Add preliminary support for testing Input Method/WebKit behaviour and interaction
         in DRT.  This provides the NSTextInput API which is most of what should be necessary
         to mimic the event sequences Input Methods trigger.
 
@@ -13026,8 +13037,8 @@
 2007-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
-        
-        Updated DumpRenderTree for <rdar://problem/5348384> Restore old return 
+
+        Updated DumpRenderTree for <rdar://problem/5348384> Restore old return
         value behavior of stringByEvaluatingJavaScriptFromString
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -13165,7 +13176,7 @@
 
 2007-07-18  Lars Knoll <lars@trolltech.com>
 
-        We really don't want to compare non text only tests to the 
+        We really don't want to compare non text only tests to the
         Mac results if we don't have a result for Qt, as this would
         give a failure and not a notification that the test is new.
 
@@ -13191,7 +13202,7 @@
 2007-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Antti Koivisto.
-        
+
         Added watchdog timer to waitUntilDone to prevent a run-away test from
         hanging the test harness.
 
@@ -13372,7 +13383,7 @@
 2007-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
-        
+
         Made the leaks tests pass on Leopard.
 
         * Scripts/run-webkit-tests: Added some leaks to exclude on Leopard.
@@ -13402,7 +13413,7 @@
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
         (initializePreferences):
-        set editable link behavior to match Mac DRT. 
+        set editable link behavior to match Mac DRT.
 
 2007-07-10  Geoffrey Garen  <ggaren@apple.com>
 
@@ -13421,7 +13432,7 @@
 
         Reviewed by Adam Roben.
 
-        setting DOM Paste Allowed Pref 
+        setting DOM Paste Allowed Pref
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
         (initializePreferences):
@@ -13566,13 +13577,13 @@
 
         Reviewed by Oliver.
 
-        <rdar://problem/4954319> 
-        Acrobat 7 / Safari crash: CrashTracer: 99 crashes in Safari at 
+        <rdar://problem/4954319>
+        Acrobat 7 / Safari crash: CrashTracer: 99 crashes in Safari at
         com.apple.WebCore: WebCore::NetscapePlugInStreamLoader::isDone const + 0
-        
-        If the src url is "data:application/x-webkit-test-netscape,returnerrorfromnewstream", 
+
+        If the src url is "data:application/x-webkit-test-netscape,returnerrorfromnewstream",
         return an error from NPP_NewStream.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
         (pluginAllocate):
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
@@ -13619,7 +13630,7 @@
 
         Don't dump the serialized form of NSURLResponse. Instead, create a dictionary with the
         response's attributes. Also change the JavaScript MIME type to be "text/javascript".
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (convertMIMEType):
         (convertWebResourceDataToString):
@@ -13901,7 +13912,7 @@
         Reviewed by Geoff.
 
         Don't dump didFirstLayout callbacks, they happen intermittently.
-        
+
         * DumpRenderTree/FrameLoadDelegate.m:
 
 2007-06-21  Lars Knoll  <lars@trolltech.com>
@@ -13925,7 +13936,7 @@
 2007-06-19  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.
-        
+
         Support applications with spaces or special characters in their names
 
         * Scripts/run-webkit-app:
@@ -13935,7 +13946,7 @@
         Reviewed by John Sullivan.
 
         Assert that the frame has a dataSource.
-        
+
         * DumpRenderTree/FrameLoadDelegate.m:
         (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
 
@@ -13955,7 +13966,7 @@
           Spinneret doesn't build against the new Win32 port.
 
         * Spinneret/Spinneret/Spinneret.cpp:
-        (_tWinMain): 
+        (_tWinMain):
             -Changed IWebViewExt to IWebViewPrivate
             -Changed Co[Un]initialize to Ole[Un]initialize because WebKit now calls
              the WIN32 function RegisterDragDrop which requires the Ole* calls.
@@ -13997,11 +14008,11 @@
         Reviewed by Mark Rowe.
 
         Fixes Bug 13996: http://bugs.webkit.org/show_bug.cgi?id=13996
-        [Drosera] Items in the file list don't get un-highlighted when 
+        [Drosera] Items in the file list don't get un-highlighted when
         files are selected from the file drop-down
 
         * Drosera/debugger.js: currentFile was getting modified before file in the file
-        browser got un-highlighted. Changed the order in which the functions execute. 
+        browser got un-highlighted. Changed the order in which the functions execute.
 
 2007-06-06  Mark Rowe  <mrowe@apple.com>
 
@@ -14202,12 +14213,12 @@
 2007-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Justin.
-        
+
         - created a new mechanism to log FrameLoadDelegate callbacks in directories named "loading"
-        
+
         The reason for doing things in this slightly odd way is to make sure we don't miss the load delegates
         that happen before the load commits.
-        
+
         Basically I moved WaitUntilDoneDelegate into a separate file (FrameLoadDelegate.m) and added
         optional logging for every FrameLoadDelegate callback, including SPI callbacks.
 
@@ -14317,8 +14328,8 @@
 2007-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.
-        
-        Add new api to DRT to allow us to test a file being dragged 
+
+        Add new api to DRT to allow us to test a file being dragged
         onto <input type="file">
 
         * DumpRenderTree/DumpRenderTree.h:
@@ -14344,7 +14355,7 @@
 
         Reviewed by Darin Adler.
 
-        Updated test now that +[WebScriptObject scriptObjectForJSObject:frame:] 
+        Updated test now that +[WebScriptObject scriptObjectForJSObject:frame:]
         is gone.
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -14356,12 +14367,12 @@
 2007-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
-        
-        - don't clear events whenever an EventSendingController goes away, only do it at predictable times, 
+
+        - don't clear events whenever an EventSendingController goes away, only do it at predictable times,
         since destroying a subframe can make one go away
-        
+
         (Discovered while fixing:
-        
+
         <rdar://problem/5063277> blank screen after login to Citibank Online (accessing document before frame starts loading cancels load)
         <rdar://problem/5159541> REGRESSION (r20972): Wall Street Journal pages replaced by advertisements (13465)
 
@@ -14382,9 +14393,9 @@
 2007-05-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
+
         Added support for testing ObjC/JS type bridging.
-        
+
         Added ASSERT that -JSObject returns nil when the underlying JSObject
         is no longer GC protected.
 
@@ -14419,9 +14430,9 @@
 2007-05-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Added support for testing ObjC object identity.
-        
+
         Added ASSERT to verify that you can round-trip the object passed to you
         in -didClearWindowObject:forFrame:.
 
@@ -14435,11 +14446,11 @@
 2007-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
-        Added tests for new APIs: -[WebFrame windowObject], -[WebFrame globalContext], 
-        and - (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject 
+
+        Added tests for new APIs: -[WebFrame windowObject], -[WebFrame globalContext],
+        and - (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject
         forFrame:(WebFrame *)frame, in the form of ASSERTs.
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (runJavaScriptThread): Fixed quote mismatch that prepare-changelog likes
         to complain about.
@@ -14500,8 +14511,8 @@
         Reviewed by Zack
 
         Remove the old bitmap fonts I tried using to get reliable results from
-        DumpRenderTree on X11. Instead we now use the URW Type1 fonts from 
-        ghostscript. I've added a mirror to simply check them out at 
+        DumpRenderTree on X11. Instead we now use the URW Type1 fonts from
+        ghostscript. I've added a mirror to simply check them out at
         svn://labs.trolltech.com/svn/webkit/testfonts.
 
         Fixed DumpRenderTree to make sure these fonts are the only ones we use
@@ -14546,7 +14557,7 @@
 
         Build fix: Add AllInOneFile.o to the ignore list, since it includes files
         in the ignore list.
-        
+
         * Scripts/check-for-global-initializers:
 
 2007-05-02  Holger Freyther <freyther@kde.org>
@@ -14569,7 +14580,7 @@
         Reviewed by Maciej.
 
         Cleaned up prepare-ChangeLog
-        
+
         * Scripts/prepare-ChangeLog: No code changes, but style now matches
         the prevalent style of our perl scripts.
 
@@ -14638,7 +14649,7 @@
 
         Add a setUseDashboardCompatibilityMode method to LayoutTestController which is used to toggle
         the dashboard compatibility mode.
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (+[LayoutTestController webScriptNameForSelector:]):
@@ -14706,7 +14717,7 @@
         Expose the NSURLConnection delegate willCacheResponse API to WebResourceLoadDelegate
 
         * DumpRenderTree/ResourceLoadDelegate.m:
-        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]): 
+        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]):
           Add the willCacheResponse delegate call
 
 2007-04-18  Adam Roben  <aroben@apple.com>
@@ -14757,9 +14768,9 @@
 
         By default, close any windows that have been opened during a test. This can be overridden by
         calling setCloseRemainingWindowsWhenComplete(false).
-        
+
         Change the windows set to an array so we can gurantee the enumeration order.
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (+[LayoutTestController webScriptNameForSelector:]):
@@ -14797,15 +14808,15 @@
 2007-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
+
         Fixed fast/forms/textarea-paste-newline.html.
-        
+
         This failure was pretty funny. run-webkit-tests kills and respawns
-        DumpRenderTree once every 1000 runs. Adding a few tests caused 
-        textarea-paste-newline.html to run right at the beginning of DumpRenderTree's 
-        lifetime, before any render tree dumps had occurred. However, WebCore 
-        used a render tree dump as the hook that set a global flag to allow 
-        pasting through the DOM API, so running before any render tree dumps had 
+        DumpRenderTree once every 1000 runs. Adding a few tests caused
+        textarea-paste-newline.html to run right at the beginning of DumpRenderTree's
+        lifetime, before any render tree dumps had occurred. However, WebCore
+        used a render tree dump as the hook that set a global flag to allow
+        pasting through the DOM API, so running before any render tree dumps had
         occurred caused this test to fail.
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -14823,35 +14834,35 @@
         Reviewed by Adam.
 
         Add support for opening new windows in DumpRenderTree.
-        
+
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (+[LayoutTestController webScriptNameForSelector:]):
         (-[LayoutTestController setCallCloseOnWebViews:]):
         (-[LayoutTestController setCanOpenWindows]):
         Add two new methods callable from JavaScript. setCanOpenWindows controls whether a test
-        can open new windows, and setCallCloseOnWebViews controls whether -[WebView close] should be called on 
+        can open new windows, and setCallCloseOnWebViews controls whether -[WebView close] should be called on
         web views that are about to be closed.
-        
+
         (runTest):
         Make sure that only the main window is around when a test has finished running.
-        
+
         (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]):
         (-[DumpRenderTreeWindow dealloc]):
         Manage the set of windows.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
         (NPP_Destroy):
         Add a "logDestroy" property which controls whether plugins should print when they are destroyed or not.
-        
+
         * DumpRenderTree/UIDelegate.m:
         (-[UIDelegate webView:createWebViewWithRequest:]):
         Create new windows.
-        
+
         (-[UIDelegate webViewClose:]):
         Close windows.
-        
+
 2007-04-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
@@ -14868,7 +14879,7 @@
         Reviewed by Darin Adler.
 
         Add the notion of a "disallowed URL", which the resource loader won't allow to be loaded.
-        
+
         * DumpRenderTree/DumpRenderTree.h:
         * DumpRenderTree/DumpRenderTree.m:
         (dumpRenderTree):
@@ -14908,22 +14919,22 @@
         Reviewed by Geoff.
 
         Add an "onstreamload" attribute to the plugin which is called when a stream starts loading.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
         (NPP_New):
         Look for the onstreamload attribute.
-        
+
         (NPP_Destroy):
         Free the onstreamload attribute.
-        
+
         (NPP_NewStream):
         Call the onstreamload handler.
 
 2007-03-30  Geoffrey Garen  <ggaren@apple.com>
 
-        Removing an assertion I just added because it's crashing the Leopard 
-        buildbot. The related layout test will still report a failure, so we 
+        Removing an assertion I just added because it's crashing the Leopard
+        buildbot. The related layout test will still report a failure, so we
         don't really need this assertion.
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
@@ -14937,7 +14948,7 @@
         (testAllocate):
         (testEnumerate):
         Add casts.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h:
         Don't use #import, use #include.
 
@@ -14955,21 +14966,21 @@
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
         Add TestObject.c and TestObject.h
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
         (pluginGetProperty):
         Implement the testObject property.
-        
+
         (pluginInvoke):
         Implement testEnumerate which takes an object and an array and enumerates
         the properties of the object and adds them to the array.
-        
+
         (pluginAllocate):
         Allocate the test object.
-        
+
         (pluginDeallocate):
         Free the test object.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.c: Added.
         * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h: Added.
         Add a test object with two enumerable properties.
@@ -14977,11 +14988,11 @@
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
-        
-        Layout test for <rdar://problem/5091330> REGRESSION: Repro crash in 
-        -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] 
+
+        Layout test for <rdar://problem/5091330> REGRESSION: Repro crash in
+        -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:]
         navigating away from page with DivX movie plug-in (13203)
-        
+
         Added hasStream property and destroyStream function, used by layout test.
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
@@ -15104,11 +15115,11 @@
 2007-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
-        
-        Beefed up --threaded mode in light of <rdar://problem/4681051> Installer 
-        crashes in KJS::Collector::markOtherThreadConservatively(KJS::Collector::Thread*) 
+
+        Beefed up --threaded mode in light of <rdar://problem/4681051> Installer
+        crashes in KJS::Collector::markOtherThreadConservatively(KJS::Collector::Thread*)
         trying to install iLife 06 using Rosetta on an Intel Machine
-        
+
         --threaded mode now runs a bunch of different JavaScript threads, randomly
         killing and respawning them. This was sufficient for reproducing the
         bug on my MacBook Pro.
@@ -15225,10 +15236,10 @@
 
         <rdar://problem/5025212>
         In Mail, a crash occurs at WebCore::Frame::tree() when clicking on embedded flash object
-        
+
         Add a "getURLNotify" method to the plugin object. This lets you pass a URL, a target and a callback function
         to be run when the URL has finished (or failed) loading.
-        
+
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
         (pluginInvoke):
         (handleCallback):
@@ -15263,7 +15274,7 @@
         * Drosera/DebuggerDocument.m:
         (-[DebuggerDocument closeCurrentFile:]): Adds delegation to call a JS script to close files
         * Drosera/Drosera.xcodeproj/project.pbxproj:
-        * Drosera/English.lproj/MainMenu.nib/classes.nib: 
+        * Drosera/English.lproj/MainMenu.nib/classes.nib:
         * Drosera/English.lproj/MainMenu.nib/info.nib:
         * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib: Adds Close Current File menu item
         * Drosera/debugger.html: Changed "no files loaded" to "<No files loaded>" to match Xcode style
@@ -15287,7 +15298,7 @@
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Lars.
-        
+
         - set ENABLE_XSLT even when compiling without SVG support, since that is no
         longer hardcoded into config.h.
 
@@ -15304,7 +15315,7 @@
 2007-02-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         * Scripts/run-webkit-tests: Stop ignoring BidiRun leaks, now that they're
         fixed.
 
@@ -15351,7 +15362,7 @@
 
         Used svn merge -r19786:19785 to roll out previous hack to work around
         SVG painting issue in DRT.
-        
+
         Implemented new work-around, which makes --paint paint *after* dumping
         the render tree instead of before, so that painting doesn't influence
         the SVG render tree.
@@ -15366,7 +15377,7 @@
 
         Resetting --leaks mode default to run 1000 tests at a time because setting it
         to 750 didn't stop the stack logging related crashes, and running more tests
-        at a time is faster. The crashes seem to be a real bug in stack logging, 
+        at a time is faster. The crashes seem to be a real bug in stack logging,
         not an out of memory condition.
 
         * Scripts/run-webkit-tests:
@@ -15374,19 +15385,19 @@
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.
-        
+
         Added hack to force painting when running an SVG test. This is a work-around
-        for http://bugs.webkit.org/show_bug.cgi?id=12849 SVG renderers update at 
+        for http://bugs.webkit.org/show_bug.cgi?id=12849 SVG renderers update at
         paint time instead of style resolution time.
 
-        We need this so that --leaks mode, which always paints, doesn't appear to 
-        fail SVG tests. We also need this if we ever want to test style application 
+        We need this so that --leaks mode, which always paints, doesn't appear to
+        fail SVG tests. We also need this if we ever want to test style application
         in SVG, since many SVGs don't apply style to their renderers until they paint.
 
         * Scripts/run-webkit-tests:
 
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
-        
+
         Reduced --leaks mode to running only 750 tests at a time, in the hopes
         of fixing intermittent crasher that may be caused by out of memory
         conditions.
@@ -15408,15 +15419,15 @@
         * Scripts/run-webkit-tests: Use the --paint command line option when checking
         for leaks.
 
-        * Scripts/run-webkit-tests: Added a new, painting leak to the ignore list. 
+        * Scripts/run-webkit-tests: Added a new, painting leak to the ignore list.
         Removed stale comment about THRD leaks -- we now ignore them reliably.
 
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Tools tweak. No review necessary.
-        
+
         * Scripts/parse-malloc-history: Enabled multiple merge-regexp command line
-        arguments. Changed command line argument variables from special implicit 
+        arguments. Changed command line argument variables from special implicit
         no-op values to specific empty values that we test explicitly.
 
 2007-02-21  Vladimir Olexa  <vladimir.olexa@gmail.com>
@@ -15426,21 +15437,21 @@
         Bug 12834: Drosera should remember scroll position of open files like Xcode
         http://bugs.webkit.org/show_bug.cgi?id=12834
 
-        * Drosera/debugger.js: Implemented scrolling memory 
+        * Drosera/debugger.js: Implemented scrolling memory
 
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Tools tweak. No review necessary.
-        
+
         Made parse-malloc-history executable. (Oops!)
-        
-        Made parse-malloc-history parse 'leaks' output in addition to 'malloc_history" 
+
+        Made parse-malloc-history parse 'leaks' output in addition to 'malloc_history"
         output.
-        
-        Added the ability to merge callstacks by regexp, not just depth, so you 
-        can ask questions like, "How many of these allocations were due to that one 
+
+        Added the ability to merge callstacks by regexp, not just depth, so you
+        can ask questions like, "How many of these allocations were due to that one
         call to ...?"
-        
+
         * Scripts/parse-malloc-history:
 
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
@@ -15450,7 +15461,7 @@
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         New script to parse the output from malloc_history, so we can determine
         what's using memory in WebKit.
 
@@ -15459,7 +15470,7 @@
 2007-02-20  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Darin Adler.
-        
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=12802
         WebKit.framework is built with SVG_SUPPORT for No-SVG build
 
@@ -15468,7 +15479,7 @@
 2007-02-19  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
-        
+
         * Scripts/check-for-global-initializers: Ignore the global counter I added
         for SubresourceLoaders.
 
@@ -15491,7 +15502,7 @@
 2007-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
-        
+
         * DumpRenderTree/DumpRenderTree.m: Don't ignore NSAttributedString WebCore::Node
         leaks anymore, either, since r19486 fixed them, too.
         (shouldIgnoreWebCoreNodeLeaks):
@@ -15504,7 +15515,7 @@
 2007-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
-        
+
         Ignore another leak, seen recently on the buildbot.
 
         * Scripts/run-webkit-tests:
@@ -15512,7 +15523,7 @@
 2007-02-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
-        
+
         Ignore another leak, seen recently on the buildbot.
 
         * Scripts/run-webkit-tests:
@@ -15525,7 +15536,7 @@
 2007-02-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mitz.
-        
+
         - add contextClick() operation to eventSender to be able to test this
 
         * DumpRenderTree/EventSendingController.m:
@@ -15571,7 +15582,7 @@
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
-        
+
         Ignore another false leak report.
 
         * Scripts/run-webkit-tests:
@@ -15582,9 +15593,9 @@
 
         * Scripts/run-webkit-tests: Don't try to create /tmp/LayoutTests if it
         already exists, to avoid confusing error message.
-        
-        Also, remove /tmp/LayoutTests after running so unsupecting fools don't 
-        try to rm -rf it, only later to discover that they have completely hosed 
+
+        Also, remove /tmp/LayoutTests after running so unsupecting fools don't
+        try to rm -rf it, only later to discover that they have completely hosed
         their machines.
 
 2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
@@ -15601,7 +15612,7 @@
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Minor fixup based on Maciej's review last night.
-        
+
         * Scripts/run-webkit-tests: Use normal "increment at end of loop" behavior,
         and do a little math to make it work.
 
@@ -15630,28 +15641,28 @@
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak, Adam Roben.
-        
+
         Added 'nthly' support to run-webkit-tests. It's like 'singly', for an
         arbitrary number n.
-        
+
         Plus some renames:
             - DumpRenderTree => "dumpTool" (to match abstraction elsewhere)
             - checkLeaks => "shouldCheckLeaks" (to match style guidelines)
             - tool => dumpTool (to match abstraction elsewhere)
             - httpdOpen => isHttpdOpen (to match style guidelines)
-        
+
         Plus a few logic fixups:
             - Don't check isDumpToolOpen when we know we've called openDumpTool().
             - Use a single code path to decide when to shut down dumpTool and
-              when to check for leaks, since the operations are coincidental. 
-            - Use a single code path for running the leaks tool, since the only 
+              when to check for leaks, since the operations are coincidental.
+            - Use a single code path for running the leaks tool, since the only
               thing that varies between configurations is the output file name.
             - Increment $count after each test finishes, instead of at the end
               of the loop, to help with comparing to the length of the array
               and %-ing by n.
             - Use a more robust test inside the loop to determine if we need to
               close dumpTool, instead of copying the closing code outside the loop.
-        
+
         Layout tests pass.
 
         * Scripts/run-webkit-tests:
@@ -15659,10 +15670,10 @@
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin, evil twin to Bethany P. Dakin.
-        
+
         Ignore known leaks in CFRunLoop. Exclude THRD leaks by type so that we can
         catch all reports of them, not just those inside pthread_create.
-        
+
         Also, use "\\" instead of "\" because we need the actual \ to get into the
         regexp string if it's going to do any escaping. (Oops!)
 
@@ -15671,15 +15682,15 @@
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Bethany P. Dakin.
-        
+
         The 's' is optional when the leaks tool reports 'leaks'.
-        
+
         * Scripts/run-leaks:
 
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Bethany P. Dakin.
-        
+
         Hooked up run-webkit-tests to the run-leaks script. No change in behavior yet.
 
         * Scripts/run-webkit-tests: Changed symbol names to valid regular expressions.
@@ -15696,7 +15707,7 @@
 2007-02-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         New script that allows you to ignore leaks by regular expression.
 
         * Scripts/run-leaks: Added.
@@ -15740,14 +15751,14 @@
 2007-02-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
+
         Added support for selectively ignoring WebCore::Node leaks during layout
         tests, so that we can ignore known leaks in other components.
 
         * DumpRenderTree/DumpRenderTree.m:
         (shouldIgnoreWebCoreNodeLeaks): Implements a black list of tests whose
         WebCore::Node leaks we have to ignore. Does this CFString gobbledy-gook
-        confuse anyone else? 
+        confuse anyone else?
         (runTest):
 
 2007-02-01  Anders Carlsson  <acarlsson@apple.com>
@@ -15770,7 +15781,7 @@
 
         Added Selection::toRange to the leaks -exclude list, since it comes up
         as a false positive (Radar 4967949).
-        
+
         Also added RangeCounter to the global initializer exclude list. I added
         a RangeCounter since leaks won't detect all Range leaks anymore.
 
@@ -15790,19 +15801,19 @@
         Add dumping of resource loads. This isn't completely tweaked yet since the test results would
         rely on resources being delivered in the same order which might not always be true. However, it works good
         enough for the simple webarchive tests I want to do right now.
-        
+
         * DumpRenderTree/DumpRenderTree.h:
         * DumpRenderTree/DumpRenderTree.m:
         (dumpRenderTree):
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (-[LayoutTestController dumpResourceLoadCallbacks]):
         (runTest):
-        
+
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
         * DumpRenderTree/ResourceLoadDelegate.h: Added.
         * DumpRenderTree/ResourceLoadDelegate.m: Added.
         Add new resource load delegate.
-        
+
 2007-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         Backing out the CFRunLoopRunSpecific exclude command because it was overly
@@ -15860,18 +15871,18 @@
         Reviewed by Maciej Stachowiak.
 
         Fixed <rdar://problem/4485644> REGRESSION: JavaScriptCore has init routines
-        
+
         No more mollycoddling for you, FastMalloc.o!
-        
+
         * Scripts/check-for-global-initializers:
 
 2007-01-29  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Maciej.
-        
+
         Enables layout test for: http://bugs.webkit.org/show_bug.cgi?id=10725
         Image data in from RTFD clipboard data thrown away
-        
+
         - This method is needed because NSArrays are bridged to JS Arrays,
           which in turn are bridged back to WebScriptObjects when passed from
           JS to ObjC. Hence it is not possbile to pass an NSArray from JS.
@@ -15882,10 +15893,10 @@
 2007-01-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
-        Added support for test for <rdar://problem/4608404> WebScriptObject's 
+
+        Added support for test for <rdar://problem/4608404> WebScriptObject's
         _rootObject lack of ownership policy causes crashes (e.g., in Dashcode)
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (+[LayoutTestController webScriptNameForSelector:]):
@@ -15898,7 +15909,7 @@
         Reviewed by Zack
 
         Small hack to ensure that our top level frame actually has the
-        correct size. Unfortunately this means I'll have to regenerate 
+        correct size. Unfortunately this means I'll have to regenerate
         all test cases :/
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
@@ -15907,17 +15918,17 @@
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Darin and Zack
-        
+
         Move the test results for Qt into a directory of it's own
         (WebKit/LayoutTestResults/qt). Leave the Mac results where
-        they are for now and share the text only results between 
+        they are for now and share the text only results between
         Mac and Qt.
 
         Add support for a LayoutTestResults/platform/Skipped file
         to run-webkit-tests to be able to ignore certain tests
 
         Remove the old tests-skipped.txt from Qts DumpRenderTree
-        implementation. 
+        implementation.
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::DumpRenderTree):
@@ -16034,10 +16045,10 @@
 
         Reviewed by Adam Roben.
 
-        run-webkit-tests does now not generate new results by default anymore. 
+        run-webkit-tests does now not generate new results by default anymore.
         You'll have to pass the --new-tests flag to it to force it to do so.
 
-        This is required to make it possible to have tests running on multiple 
+        This is required to make it possible to have tests running on multiple
         platforms peacefully together.
 
         * Scripts/run-webkit-tests:
@@ -16142,13 +16153,13 @@
 
         * DumpRenderTree/EventSendingController.m: Send the keyDown event
         to the firstResponder, not the event's locationInWindow.  A
-        key press's locationInWindow is meaningless and just a dummy 
+        key press's locationInWindow is meaningless and just a dummy
         coordinate.
 
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bdash.
-        
+
         Add a script to keep our header guards squeaky clean.
 
         * Scripts/clean-header-guards: Added.
@@ -16365,11 +16376,11 @@
         Reviewed by Eric Seidel. Prose edited by Mitz Pettel.
 
         Some cleanup I did while debugging the regression in plugins/netscape-dom-access.html.
-        
+
         No behavior change. Layout tests pass.
 
         * DumpRenderTree/DumpRenderTree.h: Exported the done BOOL in place of the
-        doneLoading() accessor function. This matches the rest of DRT's exports and 
+        doneLoading() accessor function. This matches the rest of DRT's exports and
         makes it easier to search for clients who check (!done).
 
         * DumpRenderTree/DumpRenderTree.m: Moved fflush() call to runTest() so
@@ -16397,7 +16408,7 @@
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bradee-oh.
-        
+
         Add very simple run-pageloadtest script for running SVG page load test.
 
         * Scripts/run-pageloadtest: Added.
@@ -16406,22 +16417,22 @@
 
         Reviewed by Eric Seidel.
 
-        Some cleanup in preparation for fixing <rdar://problem/4740328> Safari 
+        Some cleanup in preparation for fixing <rdar://problem/4740328> Safari
         crash on quit in _NPN_ReleaseObject from KJS::Bindings::CInstance::~CInstance
-        
+
         (dumpRenderTree): Renamed "installedPlugins" to "sharedDatabase."
 
 2006-12-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
-        
+
         Added --threaded support to run-webkit-tests and DumpRenderTree.
-        
+
         In "threaded" mode, DRT runs a concurrent JavaScript thread with each test,
-        stressing the thread safety of JavaScriptCore and the JavaScriptCore/WebCore 
+        stressing the thread safety of JavaScriptCore and the JavaScriptCore/WebCore
         interface. This is useful for tracking down bugs you might see on a system
         configured to use a PAC file.
-        
+
         Ironically, I can proudly state that very few layout tests pass.
 
         * DumpRenderTree/DumpRenderTree.m: Added javaScriptThread and helper functions
@@ -16461,7 +16472,7 @@
         to be able to get textOnly dumps.
         Added a Qt specific hack to always get the same fonts (the ones
         added in this submit) and the same dpi when running the layout tests.
-        Modified the run-webkit-tests script to also do a comparison to the 
+        Modified the run-webkit-tests script to also do a comparison to the
         Mac generated outputs (by stripping out positioning information).
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
@@ -16524,9 +16535,9 @@
         This is a minor tweak to a hackish implementation. The real solution
         should be to use NSApplication's event sending model instead of rolling
         our own, but I don't have time for that right now.
-        
+
         * DumpRenderTree/EventSendingController.m:
-        (-[EventSendingController mouseUp]): 
+        (-[EventSendingController mouseUp]):
 
 2006-12-15  Marvin Decker  <marv.decker@gmail.com>
 
@@ -16654,7 +16665,7 @@
 2006-12-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Make extract-localizable-strings compatible with cpp file extensions.
 
         * Scripts/extract-localizable-strings:
@@ -16895,11 +16906,11 @@
 2006-11-03  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Maciej.
-        
+
         http://bugs.webkit.org/show_bug.cgi?id=9671
 
         * Scripts/wkstyle:
-        Adds astyle sed script formats according to most of the style guidelines. 
+        Adds astyle sed script formats according to most of the style guidelines.
 
 2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
 
@@ -16908,7 +16919,7 @@
         http://bugs.webkit.org/show_bug.cgi?id=7323
         REGRESSION (10.4.4): ondrag* events don't fire on page in a frame
 
-        When dragging, do not send EventSendingController's events immediately. Dragging 
+        When dragging, do not send EventSendingController's events immediately. Dragging
         is supposed to be modal, so we need to perform it from within the delegate, without
         returning to JS to make the next mouse movement.
 
@@ -16929,8 +16940,8 @@
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Justin Garcia.
-        
-        Made dumping of editing callbacks opt-in, so that editing spew doesn't 
+
+        Made dumping of editing callbacks opt-in, so that editing spew doesn't
         cloud non-editing tests.
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -16965,11 +16976,11 @@
 2006-11-01  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Kevin.
-        
+
         Fixed bug where additional arguments got fed to xcode and jsdriver.pl
-        Since testkjs is being built before the tests are run, we don't need 
+        Since testkjs is being built before the tests are run, we don't need
         to build it with webkit.
-        
+
         Fixes bugs
         http://bugs.webkit.org/show_bug.cgi?id=11462
         http://bugs.webkit.org/show_bug.cgi?id=6168
@@ -17042,10 +17053,10 @@
 2006-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.
-        
-        Reorganized project file into Delegates and Controllers groups, and split 
+
+        Reorganized project file into Delegates and Controllers groups, and split
         UIDelegate stuff into a UIDelegate class.
-        
+
         A little birdy told me that I might end up adding some UIDelegate methods
         to DRT soon.
 
@@ -17073,7 +17084,7 @@
 2006-10-30  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Change Makefiles to return non-zero when module make fails.
         Fix bug where if xcode options are not set, modules can build in the
         wrong directory.
@@ -17261,7 +17272,7 @@
 2006-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         fixo el buildo.
-        
+
         Work around #import of <PDFKit/PDFView.h>.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
@@ -17387,7 +17398,7 @@
 
         Reviewed by Tim H.
 
-        Bug 9778: http://bugs.webkit.org/show_bug.cgi?id=9778 
+        Bug 9778: http://bugs.webkit.org/show_bug.cgi?id=9778
 
         * Drosera/Drosera.xcodeproj/project.pbxproj: Added files
         * Drosera/English.lproj/Debugger.nib/info.nib: Resized the main window and WebView
@@ -17453,7 +17464,7 @@
         Reviewed by Darin Adler.
 
         * Scripts/run-webkit-tests:
-        Add an environment variable, WebKitExpectedTestResultsDirectory, which controls where expected test 
+        Add an environment variable, WebKitExpectedTestResultsDirectory, which controls where expected test
         results should be.
 
 2006-10-05  Nikolas Zimmermann  <zimmermann@kde.org>
@@ -17473,7 +17484,7 @@
         Have JavaScriptCoreTest check the output of run-javascriptcore-tests to
         see if any regressions were spotted, and fail the test if so.
 
-        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: 
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py:
         * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py:
         * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py:
 
@@ -17581,7 +17592,7 @@
 2006-09-28  David Harrison  <harrison@apple.com>
 
         Suggested by Darin Adler.
-        
+
         Moved an extern declaration from inside a method to the top of the file.
 
         * DumpRenderTree/EventSendingController.m:
@@ -17590,7 +17601,7 @@
 2006-09-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
-        
+
         Add clearKillRing so we can test emacs support with empty kill ring.
 
         * DumpRenderTree/EventSendingController.m:
@@ -17630,10 +17641,10 @@
 
         Bug 10923: Frame scroll layout test failures on the buildbot
         http://bugs.webkit.org/show_bug.cgi?id=10923
-        
+
         Added a new method that will toggle on the recursive dump of
         child frame scroll positions.
- 
+
         * DumpRenderTree/DumpRenderTree.m:
         (dumpFrameScrollPosition):
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
@@ -17642,7 +17653,7 @@
 2006-09-19  Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.
-        
+
         Detect that close button was pressed and exit cleanly.
 
         * GdkLauncher/main.cpp:
@@ -17777,7 +17788,7 @@
 2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim Hatcher.
-        
+
         Fixes one chunk of: http://bugs.webkit.org/show_bug.cgi?id=10604
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
@@ -17806,7 +17817,7 @@
 2006-08-27  Anders Carlsson  <acarlsson@apple.com>
 
         Forgot to add these.
-        
+
         * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt: Added.
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp: Added.
         (WebCore::DumpRenderTree::DumpRenderTree):
@@ -18098,7 +18109,7 @@
         Fix http://bugs.webkit.org/show_bug.cgi?id=10060
         Improve iExploder results parsing
 
-        * Scripts/run-iexploder-tests: Fix Apach logs parsing to produce a correct results 
+        * Scripts/run-iexploder-tests: Fix Apach logs parsing to produce a correct results
         in random mode, too.
 
 2006-07-18  David Kilzer  <ddkilzer@kilzer.net>
@@ -18179,7 +18190,7 @@
 2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Timothy.
-        
+
         Lets Drosera build universal for the nightlies. Right now it is not
         possible to build a universal binary on a PPC machine because of a
         conflict with the universal SDK.
@@ -18344,7 +18355,7 @@
 
         In the congratulations message, "capatibilies" should be "capabilities".
 
-        * Scripts/build-webkit: 
+        * Scripts/build-webkit:
 
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
 
@@ -18378,7 +18389,7 @@
 2006-07-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         http://bugs.webkit.org/show_bug.cgi?id=9734
         - add support for dumping non-HTML as text - in this case use textContent
         instead of innerText
@@ -18392,7 +18403,7 @@
 
         Bug 9631: [Drosera] Add "Step Over" and "Step Out"
         http://bugs.webkit.org/show_bug.cgi?id=9631
-        
+
         Adds step over and step out. Along with a little code cleanup
         that was minor enough to piggyback on this fix.
 
@@ -18417,10 +18428,10 @@
 
         Bug 9628: [Drosera] Split Views acting oddly
         http://bugs.webkit.org/show_bug.cgi?id=9628
-        
+
         Only update the last X or Y coordinate if the new
         size was not constrained. Also adds the resize cursor to
-        the body during the drag incase there is a constrained 
+        the body during the drag incase there is a constrained
         over drag off of the resizer element.
 
         * Drosera/debugger.js:
@@ -18537,7 +18548,7 @@
 
         Bug 9591: [Drosera] breakpoints should be dragable and deletable by dragging off the gutter
         http://bugs.webkit.org/show_bug.cgi?id=9591
-        
+
         Makes breakpoints dragable. If dragged off the gutter they are deleted.
 
         * Drosera/debugger.js:
@@ -18546,7 +18557,7 @@
 2006-06-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Bug 9568: assertion failure in Safari after quitting Drosera
         http://bugs.webkit.org/show_bug.cgi?id=9568
 
@@ -18629,7 +18640,7 @@
           add a way to build Objective-C test cases in HTML
 
         Tests running in DumpRenderTree can choose to relax some restrictions of the JavaScript/Objective-C bridge
-        allowing more extensive testing of the Obj-C API.  (and by more extensive, I mean this lets scripts do 
+        allowing more extensive testing of the Obj-C API.  (and by more extensive, I mean this lets scripts do
         pretty much whatever they want, including acting as delegates, generating events, instantiating obj-c
         objects, etc... )
 
@@ -18802,8 +18813,8 @@
 
         Reviewed by Tim Hatcher.
 
-        - More progress toward Javascript Debugger. 
-        - Added some new images to the project. 
+        - More progress toward Javascript Debugger.
+        - Added some new images to the project.
 
 2006-06-21  Alexey Proskuryakov  <ap@nypop.com>
 
@@ -18838,7 +18849,7 @@
 2006-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         Adds a JavaScript debugger, called Drosera. Named after
         a genus of bug eating plants.
 
@@ -19028,7 +19039,7 @@
 2006-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by hyatt.
-        
+
         Switch Spinneret to new hosting mechanism
 
         * Spinneret/Spinneret.sln:
@@ -19062,7 +19073,7 @@
 2006-06-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by darin.
-        
+
         Updated build script
 
         * Scripts/build-webkit:
@@ -19075,14 +19086,14 @@
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (-[LayoutTestController clearBackForwardList]):
         Add clearBackForwardList function to layoutTestController
-        
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=8996
         slow-utf8-text layout test case failing (no longer deterministic?)
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (dump):
         Dump as text when the response MIME type is text/plain
@@ -19097,9 +19108,9 @@
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.
-        
+
         Added 'GCController' to DRT to support garbage collection layout tests.
-        
+
         GCController.collect() and GCController.collectOnAlternateThread() do
         what you would expect. The latter takes a boolean argument sepcifying
         whether to wait for garbage collection to finish before continuing to
@@ -19121,7 +19132,7 @@
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
         Newer Xcode removed some obsolete cruft
-        
+
         * DumpRenderTree/TextInputController.m:
         (-[TextInputController textInput]):
         added (id) cast to make newer compiler happy
@@ -19129,7 +19140,7 @@
 2006-05-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.
-        
+
         Fix build.
 
         * Spinneret/Spinneret.sln:
@@ -19155,7 +19166,7 @@
 
         Reviewed by Hyatt.
 
-        * Scripts/do-webcore-rename: Added RenderTextField => RenderTextControl and 
+        * Scripts/do-webcore-rename: Added RenderTextField => RenderTextControl and
         HTMLTextFieldInnerElement => HTMLTextControlInnerElement to list for future renames.
 
 2006-05-15  Alexey Proskuryakov  <ap@nypop.com>
@@ -19180,19 +19191,19 @@
 
         Fix registry usage from perl script.  Turns out libwin32's
         SetRegValueEx, even for REG_DWORD, always takes its value as a string!
-        
+
         * Scripts/install-win-extras:
 
 2006-05-09  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows build.
         Add load ended callback.
-        
+
         Reviewed by kevin.
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj: Fix include paths
         * Scripts/build-webkit: Build WebKitWin instead of WebCore/JavaScriptCore (WebKitWin builds those indirectly).
-        * Spinneret/Spinneret/Spinneret.cpp: 
+        * Spinneret/Spinneret/Spinneret.cpp:
         (SpinneretWebHost::loadEnd): Add callback for loadEnd() to determine success/failure of page load.
         (_tWinMain): Load built-in test content here instead of in lower-level code.
         * Spinneret/Spinneret/Spinneret.h: Add loadEnd() callback.
@@ -19206,7 +19217,7 @@
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
-        
+
         * Scripts/check-dom-results:
         Add XPath to the list of results.
 
@@ -19219,7 +19230,7 @@
         Reviewed by eric.
 
         Spinneret now links against the new separate lib.
-        
+
         * Spinneret/Spinneret.sln:
         * Spinneret/Spinneret/Spinneret.cpp:
         (SpinneretWebHost::updateLocationBar):
@@ -19237,15 +19248,15 @@
 
         Modify error reporting registry keys to disable Dr. Watson.
         This allows Javascript test cases to complete without blocking UI.
-        
+
         * Scripts/install-win-extras:
          - Use Perl Win32 registry functions to disable blocking UI
-        
+
 
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.
-        
+
         Turned off C++ exceptions, fixed memory leaks
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj:
@@ -19386,7 +19397,7 @@
 
         This script generates artificially mangled HTML documents, to test that the browser
         doesn't crash when handling ill-formed code.
-        
+
         How to use:
          run-iexploder-tests             Open an interactive test page in Safari+ToT.
          run-iexploder-tests nnnnn       Open test #nnnnn.
@@ -19533,10 +19544,10 @@
 2006-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
-        
+
         <http://bugs.webkit.org/show_bug.cgi?id=7567>
         A drag and drop in DumpRenderTree copies the source, instead of cutting it
-        
+
         Tell the source that the drag is over after the drag is performed, not before.
 
         * DumpRenderTree/EventSendingController.m:
@@ -19652,7 +19663,7 @@
         (+[LayoutTestController isSelectorExcludedFromWebScript:]):
         (-[LayoutTestController dumpSelectionRect]):
         (dumpRenderTree):
-        
+
 2006-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
@@ -19759,10 +19770,10 @@
 2006-03-17  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
-        
+
         * Scripts/install-win-extras:
         Fetch "Program Files" location from the environment.
-        
+
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.
@@ -19918,7 +19929,7 @@
           run-webkit-tests fast/dom/HTMLObjectElement/ hangs
 
         * Scripts/run-webkit-tests: Make test paths canonical, to form proper URLs
-        (sequences of slashes are equivalent to a single slash in POSIX paths, but not 
+        (sequences of slashes are equivalent to a single slash in POSIX paths, but not
         in URLs).
 
 2006-03-09  Darin Adler  <darin@apple.com>
@@ -20066,7 +20077,7 @@
 2006-03-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
-        
+
         Sent the windowNumber when sending events.
         Added leapForward so that we don't have to spend time waiting
         in layout tests that do mouse operations that require delays.
@@ -20117,7 +20128,7 @@
 
         Take advantage of new GraphicsContext constructor to implement double buffering to avoid tearing.
         Disable background erase to avoid tearing.
-        Fix potential memory smasher from extra long urls. 
+        Fix potential memory smasher from extra long urls.
 
         * Spinneret/Spinneret/Spinneret.cpp:
         (MyRegisterClass):
@@ -20149,7 +20160,7 @@
 
         Automatically kill httpd if it appears to be already running.
 
-        * Scripts/run-webkit-tests: 
+        * Scripts/run-webkit-tests:
 
 2006-03-04  Maciej Stachowiak  <mjs@apple.com>
 
@@ -20255,7 +20266,7 @@
 2006-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
-        
+
         Give the events that eventSender sends a unique eventNumber
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -20341,7 +20352,7 @@
 2006-02-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Anders.
-        
+
         Prevent rendering to the offscreen window. -[NSWindow displayIfNeeded] was
         getting called from the run loop, making the view render each test and thus slowing
         down the tests.
@@ -20355,10 +20366,10 @@
 
         - Turn http tests back on by default.
         - Wait for Apache to actually start serving requests.
-        - Get user id from a built-in variable rather than an external command; 
-        don't pass the group. 
+        - Get user id from a built-in variable rather than an external command;
+        don't pass the group.
 
-        * Scripts/run-webkit-tests: 
+        * Scripts/run-webkit-tests:
 
 2006-02-23  Alexey Proskuryakov  <ap@nypop.com>
 
@@ -20484,7 +20495,7 @@
         For example, http/tests/xmlhttprequest/post-content-type.html is loaded as
         http://127.0.0.1:8000/xmlhttprequest/post-content-type.html.
 
-        Also added support for .shtml and .text files. Text files give an empty 
+        Also added support for .shtml and .text files. Text files give an empty
         *-expected.txt, but a correct image.
 
         Apache only listens on the loopback interface. It writes logs to /tmp/WebKit.
@@ -20502,7 +20513,7 @@
 
         Reviewed by Darin Adler.
 
-        - Added install-win-extras script which installs some extra 
+        - Added install-win-extras script which installs some extra
         programs and libraries, and does Windows first-time setup.
 
         * Scripts/build-webkit: Add a newline between build results.
@@ -20561,10 +20572,10 @@
 2006-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
-        
+
         <http://bugs.webkit.org/show_bug.cgi?id=7148>
         Add drag and drop support to DumpRenderTree
-        
+
         Intercept the drag start using the new UI delegate method, package an NSDraggingInfo,
         and send dragging updates.  Put DumpRenderTree's WebView into an offscreen window.
 
@@ -20598,16 +20609,16 @@
         * DumpRenderTree/TextInputController.m:
         (-[TextInputController firstRectForCharactersFrom:length:]):
         (-[TextInputController characterIndexForPointX:Y:]):
-        
+
 2006-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric.
 
         * DumpRenderTree/DumpRenderTree.m:
-        (-[LayoutTestController invokeUndefinedMethodFromWebScript:withArguments:]): 
+        (-[LayoutTestController invokeUndefinedMethodFromWebScript:withArguments:]):
         Added a dummy method for the sake of LayoutTests/plugins/
-        undefined-property-crash.html. (It tests a crash due to fallback 
-        object use. WebCore won't create a fallback object if the method is 
+        undefined-property-crash.html. (It tests a crash due to fallback
+        object use. WebCore won't create a fallback object if the method is
         not defined.)
 
 2006-02-14  Eric Seidel  <eseidel@apple.com>
@@ -20640,7 +20651,7 @@
 2006-02-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher
-        
+
         Changes to test fix for:
         <http://bugs.webkit.org/show_bug.cgi?id=3982>
         webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
@@ -20721,9 +20732,9 @@
 2006-02-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher
-        
+
         Enabled spell checking for layout tests.
-        
+
         * DumpRenderTree/DumpRenderTree.m:
         (main):
 
@@ -20787,7 +20798,7 @@
 2006-01-22  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Anders.
-        
+
         Build fix.  build-webkit dies with "invalid build action: (empty string)"
 
         * Scripts/build-webkit:
@@ -20836,7 +20847,7 @@
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
-        
+
         - make prepare-ChangeLog way faster by using svn diff instead of svn status to
         detect if there are any new tests
 
@@ -20941,7 +20952,7 @@
 2006-01-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
-        
+
         - script to generate HTML wrappers for JS tests
         http://bugs.webkit.org/show_bug.cgi?id=6441
 
@@ -20962,7 +20973,7 @@
 
         * DumpRenderTree/DumpRenderTree.m:
         (main): Construct global navigationController on entry, destroy on exit.
-        Set frame to nil on exit too, to match all the other global objects. 
+        Set frame to nil on exit too, to match all the other global objects.
         (Probably academic, since the process is exiting, anyway.)
         (-[WaitUntilDoneDelegate webView:didFinishLoadForFrame:]): Notify the
         navigationController, in case it wants to kick off a load.
@@ -21031,8 +21042,8 @@
         (main):
         (1) Put the WebView in an invisible window, because PlugIns are
         optimized not to load if there's no parent window.
-        (2) Tell WebKit to load any PlugIns in the directory from which we 
-        loaded. This means we can build nasty PlugIns alongside DumpRenderTree 
+        (2) Tell WebKit to load any PlugIns in the directory from which we
+        loaded. This means we can build nasty PlugIns alongside DumpRenderTree
         and they'll load automagically during layout testing, but they won't be
         added to the user's system, hosing apps like Safari.
 
@@ -21255,7 +21266,7 @@
         * Scripts/build-webkit: No longer builds JavaScriptCore+SVG
         * Scripts/prepare-ChangeLog: handles missing LayoutTests directory
         * Scripts/run-webkit-tests: now runs SVG tests using DRT
-        * Scripts/webkitdirs.pm: use SVG symbols instead of RTTI 
+        * Scripts/webkitdirs.pm: use SVG symbols instead of RTTI
         * checkout: no longer symlink kdom
 
 2005-11-10  Eric Seidel  <eseidel@apple.com>
@@ -21276,7 +21287,7 @@
         changed message to say "Starting Safari" instead of odd "Start Safari"
         * Scripts/run-webkit-tests:
         changed the way we pass the file parameter to use -NSOpen rather than relying on
-        unlabeled arguments being treated as files. This was failing on some machines that 
+        unlabeled arguments being treated as files. This was failing on some machines that
         (mysteriously) had NSTreatUnknownArgumentsAsOpen set to NO in com.apple.Safari.plist.
 
 2005-10-27  Geoffrey Garen  <ggaren@apple.com>
@@ -21284,7 +21295,7 @@
         Patch by Alexey Proskuryakov.
 
         Reviewed by Maciej.
-        
+
         Fixes http://bugs.webkit.org/show_bug.cgi?id=5303
         TextInputController should support attributed strings
 
@@ -21361,7 +21372,7 @@
         WebCore/layout-tests -> LayoutTests
 
         * Scripts/check-dom-results:
-        * Scripts/prepare-ChangeLog: 
+        * Scripts/prepare-ChangeLog:
         * Scripts/run-webkit-tests:
         * Scripts/update-webkit: added --no-tests
         * checkout: added --no-tests
@@ -21456,7 +21467,7 @@
 2005-09-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by geoff
-        
+
         Removed a script that is only used by apple internal developers
 
         * Scripts/update-webkitsysteminterface: Removed.
@@ -21710,7 +21721,7 @@
 
 2005-08-17  Maciej Stachowiak  <mjs@apple.com>
 
-        - add file that I forgot in the last checkin 
+        - add file that I forgot in the last checkin
 
         * DumpRenderTree/ImageDiff.m: Added.
         (main):
@@ -22040,10 +22051,10 @@
 
         Moved Tools/Scripts/run-mozilla-tests to WebKitTools/Scripts/run-javascriptcore-tests.
         run-javascriptcore-tests now passes its command-line arguments to jsDriver.pl
-        
-        Moved Tools/Scripts/update-mozilla-js-test-results to 
+
+        Moved Tools/Scripts/update-mozilla-js-test-results to
         WebKitTools/Scripts/update-javascriptcore-test-results.
-        
+
         Reviewed by darin.
 
         * Scripts/run-javascriptcore-tests: Added.

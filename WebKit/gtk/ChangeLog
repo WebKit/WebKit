@@ -1,3 +1,14 @@
+2009-02-23  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22624
+        [SOUP][GTK] Need API to get SoupSession from WebKit.
+
+        Add soup dependency to pc file.
+
+        * webkit.pc.in:
+
 2009-02-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.
@@ -118,7 +129,7 @@
         * webkit/webkitwebframe.cpp:
         * webkit/webkitwebview.cpp:
 
-2009-02-05  Aaron Boodman <aa@chromium.org> 
+2009-02-05  Aaron Boodman <aa@chromium.org>
 
         Reviewed by Dave Hyatt.
 
@@ -170,7 +181,7 @@
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
-        
+
         Track redirects in global history.
 
         Keep GTK building.
@@ -183,7 +194,7 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
-        
+
         * WebCoreSupport/FrameLoaderClientGtk.h:
 
 2009-02-02  Anders Carlsson  <andersca@apple.com>
@@ -367,29 +378,29 @@
         Reviewed by Darin Adler.
 
         [GTK] Fix the reference counting of WebKitWebFrames
-        
+
         The ownership is the following: WebKitWebView owns a WebCore::Page.
         WebKitWebView is creating one WebKitWebFrame which will be the
         mainFrame of the WebCore::Page (having the reference on the Frame).
-        
+
         The FrameLoaderClient has the reference of the WebKitWebFrame for
         the main frame and also any other frame. This means when the
         WebCore::Frame goes away the FrameLoaderClient will go away which
         will normally remove the last reference of the WebKitWebFrame. Because
         an API user might have g_object_ref'ed the WebKitWebFrame null
         checks had to be added to WebKitWebFrame.
-        
+
         For WebCore::Frames created by the FrameLoaderClient the ownership
         will be passed down to the FrameTree, the WebKitWebFrame is not holding
         a reference to the WebCore::Frame.
-        
+
         Do not g_object_unref the mainFrame in the destructor of the
         WebKitWebFrame as this will happen from within the WebCore::Page
         destruction. Do not hold a reference to the WebCore::Frame (circle) in
         WebKitWebFrame, add null checks as the WebCore::Frame might have gone
         away. Do not keep track of the FrameLoaderClient in the private
         structures as it was mostly unusued.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=21837
 
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
@@ -625,7 +636,7 @@
 
         Renderer::caretRect() is now localCaretRect(), which needs
         converting to absolute coordinates (taking transforms into account).
-        
+
         * webkit/webkitwebview.cpp:
 
 2008-12-01  Xan Lopez  <xan@gnome.org>
@@ -1140,7 +1151,7 @@
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.
-        
+
         Reviewed by Sam Weinig
 
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
@@ -1156,11 +1167,11 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21340
-        
+
         Remove "containingWindow()/setContainingWindow()" from Widget.  HostWindow covers this now.
 
         Reviewed by Dan Bernstein & Darin Adler
-        
+
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
         (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
 
@@ -1180,7 +1191,7 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
          Remove addToDirtyRegion.
-        
+
         Reviewed by Oliver Hunt
 
         * WebCoreSupport/ChromeClientGtk.cpp:
@@ -1188,7 +1199,7 @@
 2008-10-02  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21314
-        
+
         Make scrollBackingStore cross-platform.
 
         Reviewed by Sam Weinig
@@ -1201,9 +1212,9 @@
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21282
-        
+
         Make contentsToScreen/screenToContents cross-platform.  Only implemented by Mac/Win right now.
-        
+
         Reviewed by Adam Roben
 
         * WebCoreSupport/ChromeClientGtk.cpp:
@@ -1214,7 +1225,7 @@
 2008-09-30  Dave Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=21250
-        
+
         Rename updateContents to repaintContentRectangle and make it cross-platform by always sending
         repaints up through the ChromeClient.
 
@@ -2606,9 +2617,9 @@
 
         http://bugs.webkit.org/show_bug.cgi?id=16802
         [GTK] Missing gtk properties
-        
+
         Add missing properties to WebKitViewFrame and WebKitWebView.
-        
+
         * WebView/webkitprivate.h: add some useful defines for param specs
         * WebView/webkitwebframe.cpp:
         (webkit_web_frame_get_property): added
@@ -2625,7 +2636,7 @@
         http://bugs.webkit.org/show_bug.cgi?id=16654
         [GTK] Signal "navigation-requested" does not react correctly on
         return TRUE from callbacks
-        
+
         * WebView/webkitwebview.cpp: use our own accumulator for signals
         returning WebKitNavigationResponse. The emission will be stopped
         when any callback returns anything but
@@ -2797,7 +2808,7 @@
         * WebView/webkitwebview.cpp:
         * WebView/webkitwebview.h:
 
-2007-12-19  Christian Dywan  <christian@twotoasts.de> 
+2007-12-19  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.
 
@@ -2812,7 +2823,7 @@
         Reviewed by Holger Freyther.
 
         Delete when Destroy functions are called to avoid leaks
-        
+
         This matches the Mac port.
 
         * WebCoreSupport/ChromeClientGtk.cpp:
@@ -3059,7 +3070,7 @@
 
         * WebView/webkitprivate.h:
         (getFrameFromView): removed
-        
+
         * WebView/webkitwebview.cpp:
         (webkit_web_view_expose_event):
         (webkit_web_view_key_press_event): use focused frame
@@ -3485,7 +3496,7 @@
 
         http://bugs.webkit.org/show_bug.cgi?id=15745
         [GTK] Arrow keys do not Scroll
-        
+
         * Api/webkitgtkpage.cpp:
 
         Support Up/Down/Right/Left keys to scroll. Slight hack, see FIXME for
@@ -4058,12 +4069,12 @@
 2007-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.
-        
-        Fixed <rdar://problem/5326009> Make non-browser WebKit clients have no 
+
+        Fixed <rdar://problem/5326009> Make non-browser WebKit clients have no
         memory cache, or a very tiny one
-        
+
         Keep the GTK build working with an empty stub.
-        
+
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
         (WebKit::FrameLoaderClient::didPerformFirstNavigation):
         * WebCoreSupport/FrameLoaderClientGtk.h:
@@ -4073,7 +4084,7 @@
         Reviewed by Sam.
 
         <rdar://problem/5344848> IME is incorrectly used for key events when on non-editable regions
- 
+
         EditorClient::setInputMethodState stub
 
         * WebCoreSupport/EditorClientGtk.cpp:
@@ -4089,7 +4100,7 @@
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
-        
+
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
         (WebKit::FrameLoaderClient::createPlugin):
         * WebCoreSupport/FrameLoaderClientGtk.h:
@@ -4141,7 +4152,7 @@
 
         Minor changes to the WebKit::EditorClient to allow removing
         of text from TextFields. Remove the selectWordBeforeMenuEvent method
-        which is not used and not within WebCore::EditorClient. 
+        which is not used and not within WebCore::EditorClient.
 
         * WebCoreSupport/EditorClientGtk.cpp:
         (WebKit::EditorClient::shouldDeleteRange):
@@ -4159,7 +4170,7 @@
         classes into the WebKit namespace. Change the class names to not contain Gtk.
         The file names have to contain the Gtk suffix to not clash with files in WebCore (e.g.
         bridge/EditorClient.h).
-        
+
 
         * Api/webkitgtkframe.cpp:
         * Api/webkitgtkpage.cpp:
@@ -4634,7 +4645,7 @@
         GtkAdjustment of the GtkLayout and reimplement the set_scroll_adjustments method and pass
         the GtkAdjustments to ScrollView.
         This makes having one GdkWindow for the complete FrameTree possible.
-        
+
 
         * gtk/Api/webkitgtkframe.cpp:
         * gtk/Api/webkitgtkpage.cpp:
@@ -4725,7 +4736,7 @@
         * gtk/Api/webkitgtkpage.cpp: Implement webkit_gtk_page_can_go_backward() and
         webkit_gtk_page_can_go_forward() functions.
 
-2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org> 
+2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org>
 
         Reviewed by Alp Toker.
 
