@@ -5,6 +5,28 @@
         https://bugs.webkit.org/show_bug.cgi?id=22624
         [SOUP][GTK] Need API to get SoupSession from WebKit.
 
+        Allow to retrieve the Soup session and modify the code to take
+        into account users changing features on it.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::defaultCookieJar):
+        (WebCore::setDefaultCookieJar):
+        * platform/network/soup/CookieJarSoup.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupSession):
+        (WebCore::ensureSessionIsInitialized):
+        (WebCore::ResourceHandle::startHttp):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::defaultSession):
+
+2009-02-23  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22624
+        [SOUP][GTK] Need API to get SoupSession from WebKit.
+
         Remove CURL support.
 
         * GNUmakefile.am:

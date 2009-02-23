@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2008 Xan Lopez <xan@gnome.org>
+ *  Copyright (C) 2009 Igalia S.L.
  *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
@@ -25,15 +26,35 @@
 
 namespace WebCore {
 
-SoupCookieJar* getCookieJar()
+static bool cookiesInitialized;
+static SoupCookieJar* cookieJar;
+
+SoupCookieJar* defaultCookieJar()
 {
-    static SoupCookieJar* jar = soup_cookie_jar_new();
-    return jar;
+    if (!cookiesInitialized) {
+        cookiesInitialized = true;
+        setDefaultCookieJar(soup_cookie_jar_new());
+    }
+
+    return cookieJar;
+}
+
+void setDefaultCookieJar(SoupCookieJar* jar)
+{
+    cookiesInitialized = true;
+
+    if (cookieJar)
+        g_object_unref(cookieJar);
+
+    cookieJar = jar;
+
+    if (cookieJar)
+        g_object_ref(cookieJar);
 }
 
 void setCookies(Document* /*document*/, const KURL& url, const KURL& /*policyURL*/, const String& value)
 {
-    SoupCookieJar* jar = getCookieJar();
+    SoupCookieJar* jar = defaultCookieJar();
     if (!jar)
         return;
 
@@ -45,7 +66,7 @@ void setCookies(Document* /*document*/, const KURL& url, const KURL& /*policyURL
 
 String cookies(const Document* /*document*/, const KURL& url)
 {
-    SoupCookieJar* jar = getCookieJar();
+    SoupCookieJar* jar = defaultCookieJar();
     if (!jar)
         return String();
 
@@ -61,7 +82,7 @@ String cookies(const Document* /*document*/, const KURL& url)
 
 bool cookiesEnabled(const Document* /*document*/)
 {
-    return getCookieJar();
+    return defaultCookieJar();
 }
 
 }

@@ -4,6 +4,8 @@
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2009 Holger Hans Peter Freyther
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
+ * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,8 +56,6 @@
 #endif
 
 namespace WebCore {
-
-static SoupSession* session = 0;
 
 class WebCoreSynchronousLoader : public ResourceHandleClient, Noncopyable {
 public:
@@ -365,22 +365,37 @@ bool ResourceHandle::startData(String urlString)
     return true;
 }
 
+static SoupSession* createSoupSession()
+{
+    return soup_session_async_new();
+}
+
+static void ensureSessionIsInitialized(SoupSession* session)
+{
+    if (g_object_get_data(G_OBJECT(session), "webkit-init"))
+        return;
+ 
+    SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+    if (!jar)
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
+    else
+        setDefaultCookieJar(jar);
+
+    const char* webkit_debug = g_getenv("WEBKIT_DEBUG"); 
+    if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER)
+        && webkit_debug && !strcmp(webkit_debug, "network")) {
+        SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(SOUP_LOGGER_LOG_BODY), -1);
+        soup_logger_attach(logger, session);
+        g_object_unref(logger);
+    }
+ 
+    g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
+}
+
 bool ResourceHandle::startHttp(String urlString)
 {
-    if (!session) {
-        session = soup_session_async_new();
-
-        soup_session_add_feature(session, SOUP_SESSION_FEATURE(getCookieJar()));
-
-        const char* soup_debug = g_getenv("WEBKIT_SOUP_LOGGING");
-        if (soup_debug) {
-            int soup_debug_level = atoi(soup_debug);
-
-            SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(soup_debug_level), -1);
-            soup_logger_attach(logger, session);
-            g_object_unref(logger);
-        }
-    }
+    SoupSession* session = defaultSession();
+    ensureSessionIsInitialized(session);
 
     SoupMessage* msg;
     msg = soup_message_new(request().httpMethod().utf8().data(), urlString.utf8().data());
@@ -505,7 +520,7 @@ void ResourceHandle::cancel()
 {
     d->m_cancelled = true;
     if (d->m_msg) {
-        soup_session_cancel_message(session, d->m_msg, SOUP_STATUS_CANCELLED);
+        soup_session_cancel_message(defaultSession(), d->m_msg, SOUP_STATUS_CANCELLED);
         // For re-entrancy troubles we call didFinishLoading when the message hasn't been handled yet.
         if (client())
             client()->didFinishLoading(this);
@@ -771,6 +786,13 @@ bool ResourceHandle::startGio(KURL url)
                             G_PRIORITY_DEFAULT, d->m_cancellable,
                             queryInfoCallback, NULL);
     return true;
+}
+
+SoupSession* ResourceHandle::defaultSession()
+{
+    static SoupSession* session = createSoupSession();;
+
+    return session;
 }
 
 }

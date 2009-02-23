@@ -1,12 +1,13 @@
 /*
  *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
- *  Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
+ *  Copyright (C) 2007, 2008, 2009 Christian Dywan <christian@imendio.com>
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
  *  Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2008 Collabora Ltd.
+ *  Copyright (C) 2009 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -56,10 +57,10 @@
 #include "InspectorClientGtk.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "Editor.h"
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
+#include "ResourceHandle.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
 #include <wtf/GOwnPtr.h>
@@ -2736,6 +2737,23 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoom
     webkit_web_view_apply_zoom_level(webView, webkit_web_view_get_zoom_level(webView));
 
     g_object_notify(G_OBJECT(webView), "full-content-zoom");
+}
+
+/**
+ * webkit_get_default_session:
+ *
+ * Retrieves the default #SoupSession used by all web views.
+ * Note that the session features are added by WebKit on demand,
+ * so if you insert your own #SoupCookieJar before any network
+ * traffic occurs, WebKit will use it instead of the default.
+ *
+ * Return value: the default #SoupSession
+ *
+ * Since: 1.1.1
+ */
+SoupSession* webkit_get_default_session ()
+{
+    return ResourceHandle::defaultSession();
 }
 
 }

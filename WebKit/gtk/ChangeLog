@@ -5,6 +5,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=22624
         [SOUP][GTK] Need API to get SoupSession from WebKit.
 
+        Add API to get the default soup session.
+
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
+2009-02-23  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22624
+        [SOUP][GTK] Need API to get SoupSession from WebKit.
+
         Add soup dependency to pc file.
 
         * webkit.pc.in:

@@ -23,6 +23,7 @@
 #define WEBKIT_WEB_VIEW_H
 
 #include <gtk/gtk.h>
+#include <libsoup/soup.h>
 #include <JavaScriptCore/JSBase.h>
 
 #include <webkit/webkitdefines.h>
@@ -303,6 +304,9 @@ webkit_web_view_get_full_content_zoom           (WebKitWebView        *web_view)
 WEBKIT_API void
 webkit_web_view_set_full_content_zoom           (WebKitWebView        *web_view,
                                                  gboolean              full_content_zoom);
+
+WEBKIT_API SoupSession*
+webkit_get_default_session                      (void);
 
 G_END_DECLS
 
