@@ -1,3 +1,12 @@
+2009-02-23  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24096
+        PLATFORM(MAC)->PLATFORM(CF) since we want to use the CF functions in Chrome on OS X.
+
+        * wtf/CurrentTime.cpp:
+
 2009-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix?
