@@ -1,3 +1,11 @@
+2009-02-23  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Copyright notices in a few files
+
+        * platform/qt/RenderThemeQt.h:
+
 2009-02-23  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alexey Proskuryakov.

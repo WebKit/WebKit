@@ -1,3 +1,11 @@
+2009-02-23  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Copyright notices in a few files
+
+        * WebKit_pch.h:
+
 2009-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
