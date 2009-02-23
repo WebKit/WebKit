@@ -180,7 +180,8 @@ public:
     virtual void paintObject(PaintInfo&, int tx, int ty);
     void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);
     void paintContents(PaintInfo&, int tx, int ty);
-    void paintColumns(PaintInfo&, int tx, int ty, bool paintFloats = false);
+    void paintColumnContents(PaintInfo&, int tx, int ty, bool paintFloats = false);
+    void paintColumnRules(PaintInfo&, int tx, int ty);
     void paintChildren(PaintInfo&, int tx, int ty);
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);

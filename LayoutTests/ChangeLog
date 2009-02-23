@@ -1,3 +1,16 @@
+2009-02-23  David Hyatt  <hyatt@apple.com>
+
+        Fix the stacking order for column rules in multi-column layout.  Column rules should paint as part of the background of an element, just
+        after all other components of the background have been painted.  This allows negative z-index children to still paint on top of the
+        column rules (rather than ending up above the background of the box but behind the column rules).
+
+        Reviewed by Eric Seidel
+
+        * fast/multicol/column-rules-stacking.html: Added.
+        * platform/mac/fast/multicol/column-rules-stacking-expected.checksum: Added.
+        * platform/mac/fast/multicol/column-rules-stacking-expected.png: Added.
+        * platform/mac/fast/multicol/column-rules-stacking-expected.txt: Added.
+
 2009-02-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alexey Proskuryakov.
