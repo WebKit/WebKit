@@ -744,6 +744,9 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24011
+        KURL's setPort doesn't unset port if 0 is given
+
         Make setPort remove port if 0 is given to it, as promised by the
         comment in KURL's header.
 

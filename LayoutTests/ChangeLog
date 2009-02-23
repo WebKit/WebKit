@@ -1,3 +1,20 @@
+2009-02-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24011
+        KURL's setPort doesn't unset port if 0 is given
+
+        Adding regression tests for change done on KURL's setPort in
+        r41076. It is worth noting that Firefox doesn't render this test
+        correctly since it raises an exception when javascript tries to
+        change the iframe's contentWindow.location.port, though other
+        properties are modifiable.
+
+        * fast/loader/location-port-expected.txt: Added.
+        * fast/loader/location-port.html: Added.
+        * fast/loader/resources/location-port-iframe.html: Added.
+
 2009-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Mark Rowe.
