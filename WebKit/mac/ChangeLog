@@ -1,5 +1,29 @@
 2009-02-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoffrey Garen and Darin Adler.
+
+        WebKit side of <rdar://problem/6613151>.
+        
+        Make sure to vm_deallocate all memory we get from MIG callbacks.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (DataDeallocator::DataDeallocator):
+        (DataDeallocator::~DataDeallocator):
+        Add a simple deallocator class.
+        
+        (WKPCStatusText):
+        (WKPCLoadURL):
+        (WKPCBooleanAndDataReply):
+        (WKPCEvaluate):
+        (WKPCGetStringIdentifier):
+        (WKPCInvoke):
+        (WKPCInvokeDefault):
+        (WKPCConstruct):
+        (WKPCSetProperty):
+        Use the new deallocator class.
+
+2009-02-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix <rdar://problem/6450656>.

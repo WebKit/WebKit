@@ -294,9 +294,33 @@ bool NetscapePluginHostProxy::processRequests()
 
 using namespace WebKit;
 
+// Helper class for deallocating data
+class DataDeallocator {
+public:
+    DataDeallocator(data_t data, mach_msg_type_number_t dataLength)
+        : m_data(reinterpret_cast<vm_address_t>(data))
+        , m_dataLength(dataLength)
+    {
+    }
+    
+    ~DataDeallocator()
+    {
+        if (!m_data)
+            return;
+        
+        vm_deallocate(mach_task_self(), m_data, m_dataLength);
+    }
+    
+private:
+    vm_address_t m_data;
+    vm_size_t m_dataLength;
+};
+
 // MiG callbacks
 kern_return_t WKPCStatusText(mach_port_t clientPort, uint32_t pluginID, data_t text, mach_msg_type_number_t textCnt)
 {
+    DataDeallocator deallocator(text, textCnt);
+    
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -313,6 +337,10 @@ kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url,
                           data_t postData, mach_msg_type_number_t postDataLength, uint32_t flags,
                           uint16_t* outResult, uint32_t* outStreamID)
 {
+    DataDeallocator urlDeallocator(url, urlLength);
+    DataDeallocator targetDeallocator(target, targetLength);
+    DataDeallocator postDataDeallocator(postData, postDataLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -392,6 +420,8 @@ kern_return_t WKPCBooleanReply(mach_port_t clientPort, uint32_t pluginID, boolea
 
 kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID, boolean_t returnValue, data_t resultData, mach_msg_type_number_t resultLength)
 {
+    DataDeallocator deallocator(resultData, resultLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -400,7 +430,7 @@ kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID,
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    RetainPtr<CFDataRef> result = CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength);
+    RetainPtr<CFDataRef> result(AdoptCF, CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength));
     instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::BooleanAndDataReply(returnValue, result));
     
     return KERN_SUCCESS;
@@ -472,6 +502,8 @@ kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint3
 
 kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, data_t scriptData, mach_msg_type_number_t scriptLength)
 {
+    DataDeallocator deallocator(scriptData, scriptLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -497,6 +529,8 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
 
 kern_return_t WKPCGetStringIdentifier(mach_port_t clientPort, data_t name, mach_msg_type_number_t nameCnt, uint64_t* identifier)
 {
+    DataDeallocator deallocator(name, nameCnt);
+
     COMPILE_ASSERT(sizeof(*identifier) == sizeof(IdentifierRep*), identifier_sizes);
     
     *identifier = reinterpret_cast<uint64_t>(IdentifierRep::get(name));
@@ -523,6 +557,8 @@ static Identifier identifierFromIdentifierRep(IdentifierRep* identifier)
 kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t serverIdentifier,
                          data_t argumentsData, mach_msg_type_number_t argumentsLength) 
 {
+    DataDeallocator deallocator(argumentsData, argumentsLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -554,8 +590,10 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
 
 kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID,
                                 data_t argumentsData, mach_msg_type_number_t argumentsLength, 
-                                boolean_t*returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+                                boolean_t* returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
 {
+    DataDeallocator deallocator(argumentsData, argumentsLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -573,8 +611,10 @@ kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint3
 
 kern_return_t WKPCConstruct(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID,
                             data_t argumentsData, mach_msg_type_number_t argumentsLength, 
-                            boolean_t*returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+                            boolean_t* returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
 {
+    DataDeallocator deallocator(argumentsData, argumentsLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
@@ -622,8 +662,10 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCSetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t serverIdentifier, data_t valueData, mach_msg_type_number_t valueLength, boolean_t*returnValue)
+kern_return_t WKPCSetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t serverIdentifier, data_t valueData, mach_msg_type_number_t valueLength, boolean_t* returnValue)
 {
+    DataDeallocator deallocator(valueData, valueLength);
+
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
