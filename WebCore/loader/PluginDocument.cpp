@@ -49,7 +49,7 @@ public:
     PluginTokenizer(Document* doc) : m_doc(doc), m_embedElement(0) {}
         
 private:
-    virtual bool write(const SegmentedString&, bool appendData);
+    virtual void write(const SegmentedString&, bool appendData);
     virtual void stopParsing();
     virtual void finish();
     virtual bool isWaitingForScripts() const;
@@ -63,10 +63,9 @@ private:
     HTMLEmbedElement* m_embedElement;
 };
     
-bool PluginTokenizer::write(const SegmentedString&, bool)
+void PluginTokenizer::write(const SegmentedString&, bool)
 {
     ASSERT_NOT_REACHED();
-    return false;
 }
     
 void PluginTokenizer::createDocumentStructure()

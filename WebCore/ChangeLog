@@ -1,3 +1,29 @@
+2009-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24059
+        Tokenizer::write() return value is never used
+
+        * dom/Tokenizer.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+        * dom/XMLTokenizer.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * html/HTMLTokenizer.h:
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::write):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::write):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaTokenizer::write):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::write):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+        Made write() return void, not bool.
+
 2009-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

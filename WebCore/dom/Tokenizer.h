@@ -37,7 +37,7 @@ namespace WebCore {
         // received during executing a script must be appended, hence the
         // extra bool to be able to distinguish between both cases.
         // document.write() always uses false, while the loader uses true.
-        virtual bool write(const SegmentedString&, bool appendData) = 0;
+        virtual void write(const SegmentedString&, bool appendData) = 0;
         virtual void finish() = 0;
         virtual bool isWaitingForScripts() const = 0;
         virtual void stopParsing() { m_parserStopped = true; }

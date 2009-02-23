@@ -43,7 +43,7 @@ public:
     TextTokenizer(Document*);
     TextTokenizer(HTMLViewSourceDocument*);
 
-    virtual bool write(const SegmentedString&, bool appendData);
+    virtual void write(const SegmentedString&, bool appendData);
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     
@@ -93,7 +93,7 @@ TextTokenizer::TextTokenizer(HTMLViewSourceDocument* doc)
     m_dest = m_buffer;
 }    
 
-bool TextTokenizer::write(const SegmentedString& s, bool)
+void TextTokenizer::write(const SegmentedString& s, bool)
 {
     ExceptionCode ec;
 
@@ -142,7 +142,7 @@ bool TextTokenizer::write(const SegmentedString& s, bool)
     String string = String(m_buffer, m_dest - m_buffer);
     if (inViewSourceMode()) {
         static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceText(string);
-        return false;
+        return;
     }
 
     unsigned charsLeft = string.length();
@@ -151,8 +151,6 @@ bool TextTokenizer::write(const SegmentedString& s, bool)
         RefPtr<Text> text = Text::createWithLengthLimit(m_doc, string, charsLeft);
         m_preElement->appendChild(text, ec);
     }
-
-    return false;
 }
 
 void TextTokenizer::finish()
