@@ -43,11 +43,11 @@ function setUpPage() {
       docsLoaded = 0;
       
        if (docsLoaded == 0) {
-          setUpPage = 'complete';
+          setUpPageStatus = 'complete';
        }
     } catch(ex) {
     	catchInitializationError(builder, ex);
-        setUpPage = 'complete';
+        setUpPageStatus = 'complete';
     }
 }
 
