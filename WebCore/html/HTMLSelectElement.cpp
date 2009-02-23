@@ -422,6 +422,9 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 {
+    if (name().isEmpty())
+        return false;
+
     bool successful = false;
     const Vector<HTMLElement*>& items = listItems();
 
