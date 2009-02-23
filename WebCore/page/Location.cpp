@@ -111,7 +111,8 @@ String Location::search() const
     if (!m_frame)
         return String();
 
-    return url().query();
+    const KURL& url = this->url();
+    return url.query().isEmpty() ? "" : "?" + url.query();
 }
 
 String Location::hash() const
@@ -120,7 +121,7 @@ String Location::hash() const
         return String();
 
     const KURL& url = this->url();
-    return url.ref().isNull() ? "" : "#" + url.ref();
+    return url.ref().isEmpty() ? "" : "#" + url.ref();
 }
 
 String Location::toString() const

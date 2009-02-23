@@ -430,7 +430,8 @@ void HTMLAnchorElement::setType(const AtomicString& value)
 
 String HTMLAnchorElement::hash() const
 {
-    return "#" + href().ref();
+    String ref = href().ref();
+    return ref.isEmpty() ? "" : "#" + ref;
 }
 
 String HTMLAnchorElement::host() const
@@ -463,7 +464,8 @@ String HTMLAnchorElement::protocol() const
 
 String HTMLAnchorElement::search() const
 {
-    return href().query();
+    String query = href().query();
+    return query.isEmpty() ? "" : "?" + query;
 }
 
 String HTMLAnchorElement::text() const

@@ -639,7 +639,10 @@ bool KURL::protocolIs(const char* protocol) const
 
 String KURL::query() const
 {
-    return m_string.substring(m_pathEnd, m_queryEnd - m_pathEnd); 
+    if (m_queryEnd == m_pathEnd)
+        return String();
+
+    return m_string.substring(m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1)); 
 }
 
 String KURL::path() const
@@ -823,7 +826,11 @@ String KURL::prettyURL() const
     }
 
     append(result, path());
-    append(result, query());
+
+    if (m_pathEnd != m_queryEnd) {
+        result.append('?');
+        append(result, query());
+    }
 
     if (m_fragmentEnd != m_queryEnd) {
         result.append('#');
