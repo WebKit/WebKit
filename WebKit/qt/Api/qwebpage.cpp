@@ -64,6 +64,7 @@
 #include "HitTestResult.h"
 #include "WindowFeatures.h"
 #include "LocalizedStrings.h"
+#include "Cache.h"
 #include "runtime/InitializeThreading.h"
 
 #include <QApplication>
@@ -428,6 +429,14 @@ void QWebPagePrivate::_q_webActionTriggered(bool checked)
     QWebPage::WebAction action = static_cast<QWebPage::WebAction>(a->data().toInt());
     q->triggerAction(action, checked);
 }
+
+#ifndef NDEBUG
+void QWebPagePrivate::_q_cleanupLeakMessages()
+{
+    // Need this to make leak messages accurate.
+    cache()->setCapacities(0, 0, 0);
+}
+#endif
 
 void QWebPagePrivate::updateAction(QWebPage::WebAction action)
 {
@@ -1251,6 +1260,9 @@ QWebPage::QWebPage(QObject *parent)
     setView(qobject_cast<QWidget *>(parent));
 
     connect(this, SIGNAL(loadProgress(int)), this, SLOT(_q_onLoadProgressChanged(int)));
+#ifndef NDEBUG
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(_q_cleanupLeakMessages()));
+#endif
 }
 
 /*!

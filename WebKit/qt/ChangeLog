@@ -1,3 +1,19 @@
+2009-02-23  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24094
+        Make sure to empty the cache on exit to get rid of superfluous leak messages
+        for CachedResource's in order to keep the leak messages accurate.  This
+        is analagous to what the Mac port is doing on application exit when all
+        WebView's have been closed.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::_q_cleanupLeakMessages):
+        (QWebPage::QWebPage):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
 2009-02-23  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.
