@@ -242,6 +242,14 @@ void NetscapePluginInstanceProxy::keyEvent(NSView *pluginView, NSEvent *event, N
                                      [event isARepeat], [event keyCode]);
 }
 
+void NetscapePluginInstanceProxy::insertText(NSString *text)
+{
+    NSData *textData = [text dataUsingEncoding:NSUTF8StringEncoding];
+    
+    _WKPHPluginInstanceInsertText(m_pluginHostProxy->port(), m_pluginID,
+                                  const_cast<char*>(reinterpret_cast<const char*>([textData bytes])), [textData length]);
+}
+
 void NetscapePluginInstanceProxy::stopTimers()
 {
     _WKPHPluginInstanceStopTimers(m_pluginHostProxy->port(), m_pluginID);

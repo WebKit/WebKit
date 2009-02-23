@@ -88,7 +88,11 @@ simpleroutine PHPluginInstanceKeyboardEvent(pluginHostPort :mach_port_t;
                                           charactersIgnoringModifiers :data_t;
                                           isARepeat :boolean_t;
                                           keyCode :uint16_t);
-                                          
+
+simpleroutine PHPluginInstanceInsertText(pluginHostPort :mach_port_t;
+                                         pluginID :uint32_t;
+                                         text :data_t);
+                                        
 simpleroutine PHPluginInstanceStartTimers(pluginHostPort :mach_port_t;
                                         pluginID :uint32_t;
                                         throttleTimers :boolean_t);

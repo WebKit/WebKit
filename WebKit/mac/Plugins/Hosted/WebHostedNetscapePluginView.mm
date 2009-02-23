@@ -29,6 +29,7 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginHostProxy.h"
+#import "WebTextInputWindowController.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebUIDelegate.h"
@@ -249,10 +250,24 @@ extern "C" {
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
 }
 
+- (NSTextInputContext *)inputContext
+{
+    return [[WebTextInputWindowController sharedTextInputWindowController] inputContext];
+}
+
 - (void)keyDown:(NSEvent *)event
 {
-    if (_isStarted && _proxy)
-        _proxy->keyEvent(self, event, NPCocoaEventKeyDown);
+    if (!_isStarted || !_proxy)
+        return;
+    
+    NSString *string = nil;
+    if ([[WebTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event string:&string]) {
+        if (string)
+            _proxy->insertText(string);
+        return;
+    }
+    
+    _proxy->keyEvent(self, event, NPCocoaEventKeyDown);
 }
 
 - (void)keyUp:(NSEvent *)event

@@ -92,6 +92,8 @@ public:
     
     void mouseEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
     void keyEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
+    void insertText(NSString *);
+    
     void startTimers(bool throttleTimers);
     void stopTimers();
     

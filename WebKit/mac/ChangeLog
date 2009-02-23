@@ -1,3 +1,24 @@
+2009-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/6450656>.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::insertText):
+        Add insert text which just calls the new WKPH function.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView inputContext]):
+        Get the input context from the shared input panel.
+        
+        (-[WebHostedNetscapePluginView keyDown:]):
+        Let the shared input panel have a go at the event first.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add new InsertText function.
+
 2009-02-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the build after r41126.
