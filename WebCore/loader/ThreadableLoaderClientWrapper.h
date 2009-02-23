@@ -80,6 +80,12 @@ namespace WebCore {
                 m_client->didFail(error);
         }
 
+        void didFailRedirectCheck()
+        {
+            if (m_client)
+                m_client->didFailRedirectCheck();
+        }
+
         void didReceiveAuthenticationCancellation(const ResourceResponse& response)
         {
             if (m_client)

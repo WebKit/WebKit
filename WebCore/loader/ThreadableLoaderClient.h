@@ -44,7 +44,7 @@ namespace WebCore {
         virtual void didReceiveData(const char*, int /*lengthReceived*/) { }
         virtual void didFinishLoading(unsigned long /*identifier*/) { }
         virtual void didFail(const ResourceError&) { }
-        virtual void didFailWillSendRequestCheck() { }
+        virtual void didFailRedirectCheck() { }
 
         virtual void didReceiveAuthenticationCancellation(const ResourceResponse&) { }
 

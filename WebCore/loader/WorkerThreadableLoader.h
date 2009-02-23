@@ -112,6 +112,7 @@ namespace WebCore {
             virtual void didReceiveData(const char*, int lengthReceived);
             virtual void didFinishLoading(int identifier);
             virtual void didFail(const ResourceError&);
+            virtual void didFailRedirectCheck();
             virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
 
             // Only to be used on the main thread.

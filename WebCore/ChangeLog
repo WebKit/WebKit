@@ -2,6 +2,29 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 24088: ThreadableLoaderClient::didFailWillSendRequestCheck isn't wired up completely for workers and could use a better name.
+        <https://bugs.webkit.org/show_bug.cgi?id=24088>
+
+        No observable change in behavior, so no test.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::create):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFailRedirectCheck):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didFailRedirectCheck):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        * loader/WorkerThreadableLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+
+2009-02-23  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 24047: Need to simplify nested if's in WorkerRunLoop::runInMode
         <https://bugs.webkit.org/show_bug.cgi?id=24047>
 
