@@ -1,3 +1,19 @@
+2009-02-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        [GTK] Back / Forward history menus are flipped
+        https://bugs.webkit.org/show_bug.cgi?id=22694
+
+        Don't call g_list_reverse when returning the back or forward list.
+
+        * tests/main.c:
+        (test_webkit_web_back_forward_list_order):
+        (main):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_list_with_limit):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_back_list_with_limit):
+
 2009-02-17  Xan Lopez  <xan@gnome.org>
 
         Rubber-stamped by Alexey Proskuryakov.
