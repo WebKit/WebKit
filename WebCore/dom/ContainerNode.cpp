@@ -387,12 +387,13 @@ bool ContainerNode::removeChildren()
     if (!m_firstChild)
         return false;
 
-    Node* n;
+    RefPtr<Node> protect(this);
+    RefPtr<Node> n;
     
     // do any prep work needed before actually starting to detach
     // and remove... e.g. stop loading frames, fire unload events
     for (n = m_firstChild; n; n = n->nextSibling())
-        willRemoveChild(n);
+        willRemoveChild(n.get());
     
     // exclude this node when looking for removed focusedNode since only children will be removed
     document()->removeFocusedNodeOfSubtree(this, true);
@@ -402,10 +403,8 @@ bool ContainerNode::removeChildren()
     while ((n = m_firstChild) != 0) {
         childCountDelta--;
 
-        Node *next = n->nextSibling();
+        Node* next = n->nextSibling();
         
-        n->ref();
-
         // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744)
         n->setPreviousSibling(0);
         n->setNextSibling(0);
@@ -420,8 +419,6 @@ bool ContainerNode::removeChildren()
         
         if (n->inDocument())
             n->removedFromDocument();
-
-        n->deref();
     }
     allowEventDispatch();
 

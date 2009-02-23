@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=15707
+        Crash when manipulating document from within an iframe onload function
+
+        Test: fast/dom/onload-open.html
+
+        * dom/ContainerNode.cpp: (WebCore::ContainerNode::removeChildren): Protect the container and
+        the current node, because anything can happen when dispatching events.
+
+2009-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=18970
         Numerically named input fields cause document.forms loop problems
 
