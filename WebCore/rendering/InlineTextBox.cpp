@@ -635,15 +635,18 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
 
         if (deco & UNDERLINE) {
             context->setStrokeColor(underline);
+            context->setStrokeStyle(SolidStroke);
             // Leave one pixel of white between the baseline and the underline.
             context->drawLineForText(IntPoint(tx, ty + baseline + 1), width, isPrinting);
         }
         if (deco & OVERLINE) {
             context->setStrokeColor(overline);
+            context->setStrokeStyle(SolidStroke);
             context->drawLineForText(IntPoint(tx, ty), width, isPrinting);
         }
         if (deco & LINE_THROUGH) {
             context->setStrokeColor(linethrough);
+            context->setStrokeStyle(SolidStroke);
             context->drawLineForText(IntPoint(tx, ty + 2 * baseline / 3), width, isPrinting);
         }
     } while (shadow);

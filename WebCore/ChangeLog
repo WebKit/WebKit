@@ -1,3 +1,31 @@
+2009-02-23  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by David Hyatt.
+
+        No testcases have been added or modified since this patch should not result in
+        a behavior change for ports that have layout tests enabled.
+
+        Currently, the implementation of GraphicsContext::drawLineForText amongst
+        the various ports differ in that some of them are honoring the context's
+        strokeStyle when drawing a text-decoration and some of them are not.
+        For instance, Apple's Mac port *does not* honor the context's strokeStyle(),
+        but the Cairo implementation does and has an explicit workaround that
+        sets the strokeStyle() temporarily.
+
+        This patch fixes so that all ports are consistent by explicitly making sure
+        to set the GraphicsContext strokeStyle to SolidStroke whenever
+        painting the text-decoration of an InlineFlowBox or InlineTextBox as these
+        should always use a solid stroke.
+
+        This patch addresses these bugs:
+        https://bugs.webkit.org/show_bug.cgi?id=19364
+        https://bugs.webkit.org/show_bug.cgi?id=15659
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+
 2009-02-23  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.
