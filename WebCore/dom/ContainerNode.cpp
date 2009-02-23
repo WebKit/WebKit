@@ -387,12 +387,13 @@ bool ContainerNode::removeChildren()
     if (!m_firstChild)
         return false;
 
+    // The container node can be removed from event handlers.
     RefPtr<Node> protect(this);
-    RefPtr<Node> n;
     
-    // do any prep work needed before actually starting to detach
-    // and remove... e.g. stop loading frames, fire unload events
-    for (n = m_firstChild; n; n = n->nextSibling())
+    // Do any prep work needed before actually starting to detach
+    // and remove... e.g. stop loading frames, fire unload events.
+    // FIXME: Adding new children from event handlers can cause an infinite loop here.
+    for (RefPtr<Node> n = m_firstChild; n; n = n->nextSibling())
         willRemoveChild(n.get());
     
     // exclude this node when looking for removed focusedNode since only children will be removed
@@ -400,7 +401,7 @@ bool ContainerNode::removeChildren()
 
     forbidEventDispatch();
     int childCountDelta = 0;
-    while ((n = m_firstChild) != 0) {
+    while (RefPtr<Node> n = m_firstChild) {
         childCountDelta--;
 
         Node* next = n->nextSibling();
