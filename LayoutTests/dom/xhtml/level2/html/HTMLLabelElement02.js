@@ -49,11 +49,11 @@ function setUpPage() {
       docsLoaded += preload(docRef, "doc", "label");
         
        if (docsLoaded == 1) {
-          setUpPage = 'complete';
+          setUpPageStatus = 'complete';
        }
     } catch(ex) {
     	catchInitializationError(builder, ex);
-        setUpPage = 'complete';
+        setUpPageStatus = 'complete';
     }
 }
 
