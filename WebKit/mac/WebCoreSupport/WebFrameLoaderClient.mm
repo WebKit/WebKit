@@ -1539,7 +1539,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAp
             }
             if (parameterValue(paramNames, paramValues, "height").isNull()) {
                 [names addObject:@"height"];
-                [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
+                [values addObject:[NSString stringWithFormat:@"%d", size.height()]];
             }
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
         } 
