@@ -284,29 +284,19 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
     }
 
-    my $hasNameGetterGeneration = sub {
-        push(@getOwnPropertySlotImpl, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
-        push(@getOwnPropertySlotImpl, "        slot.setCustom(this, nameGetter);\n");
-        push(@getOwnPropertySlotImpl, "        return true;\n");
-        push(@getOwnPropertySlotImpl, "    }\n");
-        if ($inlined) {
-            $headerIncludes{"AtomicString.h"} = 1;
-        } else {
-            $implIncludes{"AtomicString.h"} = 1;
+    my $manualLookupGetterGeneration = sub {
+        my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
+        if ($requiresManualLookup) {
+            push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
+            push(@getOwnPropertySlotImpl, "    if (entry) {\n");
+            push(@getOwnPropertySlotImpl, "        slot.setCustom(this, entry->propertyGetter());\n");
+            push(@getOwnPropertySlotImpl, "        return true;\n");
+            push(@getOwnPropertySlotImpl, "    }\n");
         }
     };
 
-    if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
-        &$hasNameGetterGeneration();
-    }
-
-    my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
-    if ($requiresManualLookup) {
-        push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
-        push(@getOwnPropertySlotImpl, "    if (entry) {\n");
-        push(@getOwnPropertySlotImpl, "        slot.setCustom(this, entry->propertyGetter());\n");
-        push(@getOwnPropertySlotImpl, "        return true;\n");
-        push(@getOwnPropertySlotImpl, "    }\n");
+    if (!$dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+        &$manualLookupGetterGeneration();
     }
 
     if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
@@ -322,8 +312,20 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "    }\n");
     }
 
-    if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
-        &$hasNameGetterGeneration();
+    if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+        push(@getOwnPropertySlotImpl, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
+        push(@getOwnPropertySlotImpl, "        slot.setCustom(this, nameGetter);\n");
+        push(@getOwnPropertySlotImpl, "        return true;\n");
+        push(@getOwnPropertySlotImpl, "    }\n");
+        if ($inlined) {
+            $headerIncludes{"AtomicString.h"} = 1;
+        } else {
+            $implIncludes{"AtomicString.h"} = 1;
+        }
+    }
+
+    if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+        &$manualLookupGetterGeneration();
     }
 
     if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
