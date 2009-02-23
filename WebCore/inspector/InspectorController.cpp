@@ -1220,10 +1220,10 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    close();
-
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
+
+    close();
 }
 
 bool InspectorController::enabled() const
@@ -1825,10 +1825,12 @@ void InspectorController::stopUserInitiatedProfiling()
     title += ".";
     title += UString::from(m_currentUserInitiatedProfileNumber);
 
-    ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
-    if (profile)
-        addProfile(profile, 0, UString());
+    if (m_inspectedPage) {
+        ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
+        RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
+        if (profile)
+            addProfile(profile, 0, UString());
+    }
 
     toggleRecordButton(false);
 }

@@ -1,3 +1,18 @@
+2009-02-23  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24106
+        The Qt port is crashing on exit because the tear down procedure involves
+        the WebCore::InspectorController trying to access the JS execution context
+        for a page that is being deleted.  This patch amends the inspector so
+        that it does not try and access the execution context of the WebCore::Page
+        in the midst of deletion.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+
 2009-02-23  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
