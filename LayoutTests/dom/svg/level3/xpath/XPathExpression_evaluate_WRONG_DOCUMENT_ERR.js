@@ -52,11 +52,11 @@ function setUpPage() {
       docsLoaded += preload(doc2Ref, "doc2", "staff");
         
        if (docsLoaded == 2) {
-          setUpPage = 'complete';
+          setUpPageStatus = 'complete';
        }
     } catch(ex) {
     	catchInitializationError(builder, ex);
-        setUpPage = 'complete';
+        setUpPageStatus = 'complete';
     }
 }
 
