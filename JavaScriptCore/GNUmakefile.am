@@ -426,6 +426,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StringPrototype.cpp \
 	JavaScriptCore/runtime/StringPrototype.h \
 	JavaScriptCore/runtime/SymbolTable.h \
+	JavaScriptCore/runtime/TimeoutChecker.cpp \
+	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \

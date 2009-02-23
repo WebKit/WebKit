@@ -1,5 +1,11 @@
 2009-02-22  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix?
+
+        * GNUmakefile.am:
+
+2009-02-22  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
 
         * GNUmakefile.am:
