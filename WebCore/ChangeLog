@@ -1,3 +1,27 @@
+2009-02-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23956: Safari crashes when cloneNode fails (cloning a XML element with an invalid nodeName)
+
+        The crash occurred because Document::cloneNode would call Document::createElementNS. Unfortunately
+        element created with createElement could have a wrong nodeName (createElement sets the string as the
+        localName without checking for a prefix).
+
+        The fix is to call Document::createElement(const QualifiedName&, bool) that will not do any checks on the QualifiedName
+        and will always succeed.
+        Also rolled-out the HTMLElement specialisation of clonedNode as it was equivalent to what is done now (added an ASSERT
+        to ensure that).
+
+        Test: fast/dom/cloneNode.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNode): Call createElement(const QualifiedName&, bool) instead of createElementNS as it will
+        always return an element.
+
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h: Removed HTMLElement::clonedNode as it is equivalent to what is now done.
+
 2009-02-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

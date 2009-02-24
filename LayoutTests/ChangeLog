@@ -1,3 +1,12 @@
+2009-02-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for bug 23956: Safari crashes when cloneNode fails (cloning a XML element with an invalid nodeName)
+
+        * fast/dom/cloneNode-expected.txt: Added.
+        * fast/dom/cloneNode.html: Added.
+
 2009-02-23  David Hyatt  <hyatt@apple.com>
 
         Fix the stacking order for column rules in multi-column layout.  Column rules should paint as part of the background of an element, just

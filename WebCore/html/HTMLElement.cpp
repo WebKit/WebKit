@@ -96,23 +96,6 @@ int HTMLElement::tagPriority() const
     return 1;
 }
 
-PassRefPtr<Node> HTMLElement::cloneNode(bool deep)
-{
-    RefPtr<HTMLElement> clone = HTMLElementFactory::createHTMLElement(tagQName(), document(), 0, false);
-    if (!clone)
-        return 0;
-
-    if (namedAttrMap)
-        clone->attributes()->setAttributes(*namedAttrMap);
-
-    clone->copyNonAttributeProperties(this);
-
-    if (deep)
-        cloneChildNodes(clone.get());
-
-    return clone.release();
-}
-
 bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr ||
