@@ -33,6 +33,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "PlatformString.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
@@ -54,9 +55,9 @@ namespace WebCore {
 
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
     public:
-        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* worker, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* worker, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
         {
-            return adoptRef(new WorkerThreadableLoader(worker, client, request, callbacksSetting, contentSniff));
+            return adoptRef(new WorkerThreadableLoader(worker, client, taskMode, request, callbacksSetting, contentSniff));
         }
 
         ~WorkerThreadableLoader();
@@ -93,7 +94,7 @@ namespace WebCore {
         class MainThreadBridge : ThreadableLoaderClient {
         public:
             // All executed on the worker context's thread.
-            MainThreadBridge(ThreadableLoaderClient*, WorkerMessagingProxy&, const ResourceRequest&, LoadCallbacks, ContentSniff);
+            MainThreadBridge(ThreadableLoaderClient*, WorkerMessagingProxy&, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff);
             void cancel();
             void destroy();
 
@@ -124,9 +125,12 @@ namespace WebCore {
 
             // May be used on either thread.
             WorkerMessagingProxy& m_messagingProxy;
+
+            // For use on the main thread.
+            String m_taskMode;
         };
 
-        WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff);
+        WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff);
 
         RefPtr<WorkerContext> m_workerContext;
         MainThreadBridge& m_bridge;

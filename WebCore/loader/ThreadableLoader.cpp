@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerContext.h"
+#include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"
 
 namespace WebCore {
@@ -48,7 +49,7 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext())
-        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, request, callbacksSetting, contentSniff);
+        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff);
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());

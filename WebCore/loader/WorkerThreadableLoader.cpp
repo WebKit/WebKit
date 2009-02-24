@@ -52,9 +52,10 @@ using namespace std;
 namespace WebCore {
 
 // FIXME: The assumption that we can upcast worker object proxy to WorkerMessagingProxy will not be true in multi-process implementation.
-WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting,
+                                               ContentSniff contentSniff)
     : m_workerContext(workerContext)
-    , m_bridge(*(new MainThreadBridge(client, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), request, callbacksSetting, contentSniff)))
+    , m_bridge(*(new MainThreadBridge(client, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), taskMode, request, callbacksSetting, contentSniff)))
 {
 }
 
@@ -68,9 +69,11 @@ void WorkerThreadableLoader::cancel()
     m_bridge.cancel();
 }
 
-WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClient* workerClient, WorkerMessagingProxy& messagingProxy, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClient* workerClient, WorkerMessagingProxy& messagingProxy, const String& taskMode, const ResourceRequest& request,
+                                                           LoadCallbacks callbacksSetting, ContentSniff contentSniff)
     : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(workerClient))
     , m_messagingProxy(messagingProxy)
+    , m_taskMode(taskMode.copy())
 {
     ASSERT(workerClient);
     m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff));
@@ -149,7 +152,7 @@ static void workerContextDidSendData(ScriptExecutionContext* context, RefPtr<Thr
 
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent), m_taskMode);
 }
 
 static void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
@@ -161,7 +164,7 @@ static void workerContextDidReceiveResponse(ScriptExecutionContext* context, Ref
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(const ResourceResponse& response)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response), m_taskMode);
 }
 
 static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<Vector<char> > vectorData)
@@ -174,7 +177,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
 {
     auto_ptr<Vector<char> > vector(new Vector<char>(lengthReceived)); // needs to be an auto_ptr for usage with createCallbackTask.
     memcpy(vector->data(), data, lengthReceived);
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector), m_taskMode);
 }
 
 static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, int identifier)
@@ -185,7 +188,7 @@ static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPt
 
 void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(int identifier)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier), m_taskMode);
 }
 
 static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)
@@ -196,7 +199,7 @@ static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<Threada
 
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper, error));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper, error), m_taskMode);
 }
 
 static void workerContextDidFailRedirectCheck(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
@@ -207,7 +210,7 @@ static void workerContextDidFailRedirectCheck(ScriptExecutionContext* context, R
 
 void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
 }
 
 static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
@@ -219,7 +222,7 @@ static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionCon
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation(const ResourceResponse& response)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidReceiveAuthenticationCancellation, m_workerClientWrapper, response));
+    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveAuthenticationCancellation, m_workerClientWrapper, response), m_taskMode);
 }
 
 } // namespace WebCore

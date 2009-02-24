@@ -1,3 +1,37 @@
+2009-02-24  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24090: WorkerThreadableLoader needs to be able to post tasks for a mode.
+        <https://bugs.webkit.org/show_bug.cgi?id=24090>
+
+        No observable change in behavior, so no test.
+
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        (WebCore::WorkerMessagingProxy::postTaskToWorkerContext):
+        Fixed the bug that m_unconfirmedMessageCount was getting incremented for non-message tasks.
+
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerContext):
+
+        * dom/WorkerMessagingProxy.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation):
+        Changed these methods to post task using a mode.
+
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+
 2009-02-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

@@ -210,19 +210,28 @@ void WorkerMessagingProxy::postMessageToWorkerObject(const String& message)
 
 void WorkerMessagingProxy::postMessageToWorkerContext(const String& message)
 {
-    postTaskToWorkerContext(MessageWorkerContextTask::create(message));
-}
-
-void WorkerMessagingProxy::postTaskToWorkerContext(PassRefPtr<ScriptExecutionContext::Task> task)
-{
     if (m_askedToTerminate)
         return;
 
     if (m_workerThread) {
         ++m_unconfirmedMessageCount;
-        m_workerThread->runLoop().postTask(task);
+        m_workerThread->runLoop().postTask(MessageWorkerContextTask::create(message));
     } else
-        m_queuedEarlyTasks.append(task);
+        m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message));
+}
+
+void WorkerMessagingProxy::postTaskToWorkerContext(PassRefPtr<ScriptExecutionContext::Task> task)
+{
+    postTaskForModeToWorkerContext(task, WorkerRunLoop::defaultMode());
+}
+
+void WorkerMessagingProxy::postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
+{
+    if (m_askedToTerminate)
+        return;
+
+    ASSERT(m_workerThread);
+    m_workerThread->runLoop().postTaskForMode(task, mode);
 }
 
 void WorkerMessagingProxy::postTaskToWorkerObject(PassRefPtr<ScriptExecutionContext::Task> task)
