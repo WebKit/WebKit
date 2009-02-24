@@ -1,3 +1,12 @@
+2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Cameron Zwarich.
+
+        The Qt port does not support these yet nor does the nm check work with
+        QMake based build.
+
+        * Scripts/webkitdirs.pm:
+
 2009-02-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

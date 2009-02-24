@@ -468,8 +468,8 @@ sub checkWebCoreSVGSupport
 
 sub hasAcceleratedCompositingSupport
 {
-    return 0 if isCygwin();
-    
+    return 0 if isCygwin() || isQt();
+
     my $path = shift;
 
     my $useAcceleratedCompositing = 0;
@@ -497,8 +497,8 @@ sub checkWebCoreAcceleratedCompositingSupport
 
 sub has3DTransformsSupport
 {
-    return 0 if isCygwin();
-    
+    return 0 if isCygwin() || isQt();
+
     my $path = shift;
 
     my $has3DTransformsSupport = 0;
