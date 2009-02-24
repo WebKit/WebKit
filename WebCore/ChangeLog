@@ -1,3 +1,16 @@
+2009-02-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24091
+        <rdar://problem/6468660> Start of redirect chain ends up as master entry in Application Cache
+
+        Test: http/tests/appcache/access-via-redirect.php
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource): Use the URL we ended up with,
+        not the original one.
+
 2009-02-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

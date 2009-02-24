@@ -191,7 +191,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
 {
     ASSERT(m_pendingMasterResourceLoaders.contains(loader));
     ASSERT(m_completionType == None || m_pendingEntries.isEmpty());
-    const KURL& url = loader->originalURL();
+    const KURL& url = loader->url();
 
     switch (m_completionType) {
     case None:
