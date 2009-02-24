@@ -121,6 +121,7 @@ EXPORTS
         ?lock@Mutex@WTF@@QAEXXZ
         ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?signal@ThreadCondition@WTF@@QAEXXZ
+        ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
         ?tryLock@Mutex@WTF@@QAE_NXZ
         ?unlock@Mutex@WTF@@QAEXXZ
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
