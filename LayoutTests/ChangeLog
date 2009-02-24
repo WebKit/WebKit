@@ -1,3 +1,11 @@
+2009-02-24  David Levin  <levin@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Update expected results due to better results introduced by r41090.
+
+        * platform/mac/media/video-layer-crash-expected.txt:
+
 2009-02-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
