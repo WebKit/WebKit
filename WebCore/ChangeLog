@@ -1,3 +1,12 @@
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Minor numeric cleanup: convert float literals to doubles.
+        
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+
 2009-02-24  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Eric Seidel.

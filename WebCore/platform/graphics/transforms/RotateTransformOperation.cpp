@@ -82,16 +82,16 @@ PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOp
     double length = sqrt(x * x + y * y + z * z);
     double angle = 0;
     
-    if (length > 0.00001f) {
+    if (length > 0.00001) {
         x /= length;
         y /= length;
         z /= length;
-        angle = rad2deg(acos(decomp.quaternionW) * 2.0);
+        angle = rad2deg(acos(decomp.quaternionW) * 2);
     }
     else {
-        x = 0.0f;
-        y = 0.0f;
-        z = 1.0f;
+        x = 0;
+        y = 0;
+        z = 1;
     }
     return RotateTransformOperation::create(x, y, z, angle, ROTATE_3D);
 }
