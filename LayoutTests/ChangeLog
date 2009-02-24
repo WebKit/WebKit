@@ -1,5 +1,14 @@
 2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
 
+        Reviewed by Simon Fraser.
+
+        Adding these tests back in and removing from the Skipped list as
+        these tests are all now passing on my machine as of latest revision.
+
+        * platform/qt/Skipped:
+
+2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by Cameron Zwarich.
 
         Remove tests from the Qt Skipped list that no longer even exist.
