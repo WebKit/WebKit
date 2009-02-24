@@ -133,7 +133,7 @@ typedef enum {
     @abstract Call this method to return an array of filenames from the file open panel.
     @param fileNames
 */
-- (void)chooseFilenames:(NSArray *)fileNames WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_AFTER_WEBKIT_VERSION_3_1);
+- (void)chooseFilenames:(NSArray *)fileNames WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_IN_WEBKIT_VERSION_4_0);
 
 /*!
     @method cancel
@@ -419,7 +419,7 @@ typedef enum {
     @discussion This method is passed a callback object instead of giving a return
     value so that it can be handled with a sheet.
 */
-- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_AFTER_WEBKIT_VERSION_3_1);
+- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_IN_WEBKIT_VERSION_4_0);
 
 /*!
     @method webView:mouseDidMoveOverElement:modifierFlags:

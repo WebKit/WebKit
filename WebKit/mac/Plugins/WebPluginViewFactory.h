@@ -66,7 +66,7 @@ extern NSString *WebPlugInContainingElementKey;
  For compatibility with older versions of WebKit, the plug-in should assume that the value for
  WebPlugInShouldLoadMainResourceKey is NO if it is absent from the arguments dictionary.
  */
-extern NSString *WebPlugInShouldLoadMainResourceKey AVAILABLE_AFTER_WEBKIT_VERSION_3_1;
+extern NSString *WebPlugInShouldLoadMainResourceKey AVAILABLE_IN_WEBKIT_VERSION_4_0;
 
 /*!
     @protocol WebPlugInViewFactory

@@ -67,7 +67,7 @@ extern "C" {
  *    Non-Carbon CFM:   not available
  */
 extern OSStatus 
-HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
+HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_4_0;
 
 #ifdef __OBJC__
 
@@ -91,7 +91,7 @@ HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_B
  *    Non-Carbon CFM:   not available
  */
 extern WebView *
-HIWebViewGetWebView(HIViewRef inView) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
+HIWebViewGetWebView(HIViewRef inView) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_4_0;
 
 #endif
 
