@@ -1,3 +1,69 @@
+2009-02-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24109
+        Upstream V8 Script abstractions, all except ScriptController.
+
+        * bindings/v8/ScriptCachedFrameData.h: Added.
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::~ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        (WebCore::ScriptCachedFrameData::domWindow):
+        * bindings/v8/ScriptCallFrame.cpp: Added.
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        (WebCore::ScriptCallFrame::~ScriptCallFrame):
+        (WebCore::ScriptCallFrame::argumentAt):
+        * bindings/v8/ScriptCallFrame.h: Added.
+        (WebCore::ScriptCallFrame::functionName):
+        (WebCore::ScriptCallFrame::sourceURL):
+        (WebCore::ScriptCallFrame::lineNumber):
+        (WebCore::ScriptCallFrame::argumentCount):
+        * bindings/v8/ScriptCallStack.cpp: Added.
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::~ScriptCallStack):
+        (WebCore::ScriptCallStack::at):
+        * bindings/v8/ScriptCallStack.h: Added.
+        (WebCore::ScriptCallStack::size):
+        * bindings/v8/ScriptInstance.cpp: Added.
+        (WebCore::V8ScriptInstance::V8ScriptInstance):
+        (WebCore::V8ScriptInstance::~V8ScriptInstance):
+        (WebCore::V8ScriptInstance::instance):
+        (WebCore::V8ScriptInstance::clear):
+        (WebCore::V8ScriptInstance::set):
+        * bindings/v8/ScriptInstance.h: Added.
+        (WebCore::V8ScriptInstance::create):
+        * bindings/v8/ScriptSourceCode.h: Added.
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::isEmpty):
+        (WebCore::ScriptSourceCode::source):
+        (WebCore::ScriptSourceCode::url):
+        (WebCore::ScriptSourceCode::startLine):
+        * bindings/v8/ScriptState.h: Added.
+        (WebCore::ScriptState::hadException):
+        (WebCore::ScriptState::setException):
+        (WebCore::ScriptState::exception):
+        * bindings/v8/ScriptString.h: Added.
+        (WebCore::ScriptString::ScriptString):
+        (WebCore::ScriptString::operator String):
+        (WebCore::ScriptString::isNull):
+        (WebCore::ScriptString::size):
+        (WebCore::ScriptString::operator=):
+        (WebCore::ScriptString::operator+=):
+        * bindings/v8/ScriptValue.cpp: Added.
+        (WebCore::ScriptValue::getString):
+        * bindings/v8/ScriptValue.h: Added.
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::operator=):
+        (WebCore::ScriptValue::operator==):
+        (WebCore::ScriptValue::operator!=):
+        (WebCore::ScriptValue::isNull):
+        (WebCore::ScriptValue::isUndefined):
+        (WebCore::ScriptValue::clear):
+        (WebCore::ScriptValue::~ScriptValue):
+        (WebCore::ScriptValue::v8Value):
+
 2009-02-23  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Timothy Hatcher.
