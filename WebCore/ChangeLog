@@ -1,3 +1,16 @@
+2009-02-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6613796> Extended text codecs registered on webview creation
+
+        Comparing a text encoding with string "GBK" ended up constructing
+        TextEncoding("GBK") which in turn initialized all extended
+        text codecs.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decode):
+
 2009-02-23  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

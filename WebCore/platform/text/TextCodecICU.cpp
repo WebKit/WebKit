@@ -330,7 +330,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     // <http://bugs.webkit.org/show_bug.cgi?id=17014>
     // Simplified Chinese pages use the code A3A0 to mean "full-width space", but ICU decodes it as U+E5E5.
-    if (m_encoding == "GBK" || m_encoding == "gb18030")
+    if (strcmp(m_encoding.name(), "GBK") == 0 || strcmp(m_encoding.name(), "gb18030") == 0)
         resultString.replace(0xE5E5, ideographicSpace);
 
     return resultString;
