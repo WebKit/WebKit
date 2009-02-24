@@ -178,7 +178,7 @@ public:
 
     void positionLineBox(InlineBox*);
 
-    InlineBox* createInlineBox();
+    virtual InlineBox* createInlineBox();
     void dirtyLineBoxes(bool fullLayout);
 
     // For inline replaced elements, this function returns the inline box that owns us.  Enables

@@ -1,3 +1,22 @@
+2009-02-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24004 REGRESSION: 
+        Ordered list item marker misaligned when line height is not 1.2 
+        -and corresponding <rdar://problem/6602506>
+
+        This is a regression from http://trac.webkit.org/changeset/40880 
+        where createInlineBox was taken off of RenderObject and moved to 
+        RenderBox. The problem was that the RenderBox version still needs 
+        to be virtual because there is still an existing implementation in 
+        RenderListMarker. 
+
+        * rendering/RenderBox.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::createInlineBox):
+        * rendering/RenderListMarker.h:
+
 2009-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

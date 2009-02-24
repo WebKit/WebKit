@@ -49,7 +49,7 @@ public:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    virtual InlineBox* createInlineBox(bool, bool, bool);
+    virtual InlineBox* createInlineBox();
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;

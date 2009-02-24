@@ -1,3 +1,16 @@
+2009-02-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=24004 REGRESSION: 
+        Ordered list item marker misaligned when line height is not 1.2 
+        -and corresponding <rdar://problem/6602506>
+
+        * fast/lists/list-marker-with-line-height.html: Added.
+        * platform/mac/fast/lists/list-marker-with-line-height-expected.checksum: Added.
+        * platform/mac/fast/lists/list-marker-with-line-height-expected.png: Added.
+        * platform/mac/fast/lists/list-marker-with-line-height-expected.txt: Added.
+
 2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon Fraser.
