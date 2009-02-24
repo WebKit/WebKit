@@ -1,3 +1,11 @@
+2009-02-24  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        <rdar://problem/6407844> JavaScriptGlue should use -Os rather than -O2
+
+        * Configurations/Base.xcconfig:
+
 2009-01-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.
