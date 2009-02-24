@@ -1,3 +1,15 @@
+2009-02-23  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23787: Allow JIT to generate SSE2 code if using GCC
+        <https://bugs.webkit.org/show_bug.cgi?id=23787>
+
+        GCC version of the cpuid check.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::isSSE2Present): previous assembly code fixed.
+
 2009-02-23  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
