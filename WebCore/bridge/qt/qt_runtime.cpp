@@ -123,7 +123,7 @@ static JSRealType valueRealType(ExecState* exec, JSValuePtr val)
         return Boolean;
     else if (val.isNull())
         return Null;
-    else if (exec->interpreter()->isJSByteArray(val))
+    else if (isJSByteArray(&exec->globalData(), val))
         return JSByteArray;
     else if (val.isObject()) {
         JSObject *object = val.toObject(exec);

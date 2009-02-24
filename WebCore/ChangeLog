@@ -1,3 +1,10 @@
+2009-02-23  Sam Weinig  <sam@webkit.org>
+
+        Fix Qt build.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::valueRealType):
+
 2009-02-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
