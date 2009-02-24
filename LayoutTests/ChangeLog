@@ -1,3 +1,11 @@
+2009-02-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe ("awesome!").
+
+        Make test for <https://bugs.webkit.org/show_bug.cgi?id=15707> more reliable.
+
+        * fast/dom/onload-open.html: Added waitUntilDone().
+
 2009-02-24  David Levin  <levin@chromium.org>
 
         Reviewed by Dave Hyatt.
