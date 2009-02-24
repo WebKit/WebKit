@@ -2426,11 +2426,10 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    if (sendType != nil && [[self pasteboardTypesForSelection] containsObject:sendType] && [self _hasSelection]) {
+    BOOL isSendTypeOK = !sendType || ([[self pasteboardTypesForSelection] containsObject:sendType] && [self _hasSelection]);
+    BOOL isReturnTypeOK = !returnType || ([[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]);
+    if (isSendTypeOK && isReturnTypeOK)
         return self;
-    } else if (returnType != nil && [[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]) {
-        return self;
-    }
     return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
 }
 

@@ -1,3 +1,14 @@
+2009-02-24  Peter Ammon  <pammon@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix <rdar://problem/6251410> Services can modify non-editable content in Safari
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validRequestorForSendType:returnType:]): Return self only if we can handle
+        both the send and return type.  We should also handle a nil send or return type by ignoring
+        the argument and returning whether we can handle the other type passed in.
+
 2009-02-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen and Darin Adler.
