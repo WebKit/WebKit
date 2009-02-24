@@ -60,7 +60,7 @@ namespace JSC {
 
     class JSString : public JSCell {
         friend class JIT;
-        friend class Interpreter;
+        friend class VPtrSet;
 
     public:
         JSString(JSGlobalData* globalData, const UString& value)
@@ -201,6 +201,8 @@ namespace JSC {
 
         return false;
     }
+
+    inline bool isJSString(JSGlobalData* globalData, JSValuePtr v) { return v.isCell() && v.asCell()->vptr() == globalData->jsStringVPtr; }
 
     // --- JSValue inlines ----------------------------
 

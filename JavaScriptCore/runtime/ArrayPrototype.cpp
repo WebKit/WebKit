@@ -300,7 +300,7 @@ JSValuePtr arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValuePtr thisValue
 
 JSValuePtr arrayProtoFuncPop(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    if (exec->interpreter()->isJSArray(thisValue))
+    if (isJSArray(&exec->globalData(), thisValue))
         return asArray(thisValue)->pop();
 
     JSObject* thisObj = thisValue.toThisObject(exec);
@@ -319,7 +319,7 @@ JSValuePtr arrayProtoFuncPop(ExecState* exec, JSObject*, JSValuePtr thisValue, c
 
 JSValuePtr arrayProtoFuncPush(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    if (exec->interpreter()->isJSArray(thisValue) && args.size() == 1) {
+    if (isJSArray(&exec->globalData(), thisValue) && args.size() == 1) {
         JSArray* array = asArray(thisValue);
         array->push(exec, args.begin()->jsValue(exec));
         return jsNumber(exec, array->length());

@@ -67,12 +67,10 @@ namespace JSC {
     class Interpreter {
         friend class JIT;
         friend class JITStubs;
+
     public:
         Interpreter();
-        ~Interpreter();
 
-        void initialize(JSGlobalData*);
-        
         RegisterFile& registerFile() { return m_registerFile; }
         
         Opcode getOpcode(OpcodeID id)
@@ -108,10 +106,6 @@ namespace JSC {
         
         void setSampler(SamplingTool* sampler) { m_sampler = sampler; }
         SamplingTool* sampler() { return m_sampler; }
-
-        bool isJSArray(JSValuePtr v) { return v.isCell() && v.asCell()->vptr() == m_jsArrayVptr; }
-        bool isJSString(JSValuePtr v) { return v.isCell() && v.asCell()->vptr() == m_jsStringVptr; }
-        bool isJSByteArray(JSValuePtr v) { return v.isCell() && v.asCell()->vptr() == m_jsByteArrayVptr; }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
@@ -150,24 +144,10 @@ namespace JSC {
 
         SamplingTool* m_sampler;
 
-#if ENABLE(JIT)
-        RefPtr<ExecutablePool> m_executablePool;
-        void* m_ctiArrayLengthTrampoline;
-        void* m_ctiStringLengthTrampoline;
-        void* m_ctiVirtualCallPreLink;
-        void* m_ctiVirtualCallLink;
-        void* m_ctiVirtualCall;
-#endif
-
         int m_reentryDepth;
 
         RegisterFile m_registerFile;
         
-        void* m_jsArrayVptr;
-        void* m_jsByteArrayVptr;
-        void* m_jsStringVptr;
-        void* m_jsFunctionVptr;
-
 #if HAVE(COMPUTED_GOTO)
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling

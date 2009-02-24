@@ -621,7 +621,7 @@ void JIT::privateCompileMainPass()
             emitFastArithImmToInt(regT1);
 #endif
             emitJumpSlowCaseIfNotJSCell(regT0);
-            addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_interpreter->m_jsArrayVptr)));
+            addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
 
             // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
             loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT2);
@@ -654,7 +654,7 @@ void JIT::privateCompileMainPass()
             emitFastArithImmToInt(regT1);
 #endif
             emitJumpSlowCaseIfNotJSCell(regT0);
-            addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_interpreter->m_jsArrayVptr)));
+            addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
 
             // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
             loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT2);
@@ -1671,7 +1671,7 @@ void JIT::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    RefPtr<ExecutablePool> allocator = m_globalData->poolForSize(m_assembler.size());
+    RefPtr<ExecutablePool> allocator = m_globalData->executableAllocator.poolForSize(m_assembler.size());
     void* code = m_assembler.executableCopy(allocator.get());
     JITCodeRef codeRef(code, allocator);
 #ifndef NDEBUG
@@ -1748,7 +1748,7 @@ void JIT::privateCompile()
     m_codeBlock->setJITCode(codeRef);
 }
 
-void JIT::privateCompileCTIMachineTrampolines()
+void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, void** ctiArrayLengthTrampoline, void** ctiStringLengthTrampoline, void** ctiVirtualCallPreLink, void** ctiVirtualCallLink, void** ctiVirtualCall)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (1) The first function provides fast property access for array length
@@ -1756,7 +1756,7 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check eax is an array
     Jump array_failureCases1 = emitJumpIfNotJSCell(regT0);
-    Jump array_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_interpreter->m_jsArrayVptr));
+    Jump array_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr));
 
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT0);
@@ -1774,7 +1774,7 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check eax is a string
     Jump string_failureCases1 = emitJumpIfNotJSCell(regT0);
-    Jump string_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_interpreter->m_jsStringVptr));
+    Jump string_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
 
     // Checks out okay! - get the length from the Ustring.
     loadPtr(Address(regT0, FIELD_OFFSET(JSString, m_value) + FIELD_OFFSET(UString, m_rep)), regT0);
@@ -1912,10 +1912,10 @@ void JIT::privateCompileCTIMachineTrampolines()
 #endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    m_interpreter->m_executablePool = m_globalData->poolForSize(m_assembler.size());
-    void* code = m_assembler.executableCopy(m_interpreter->m_executablePool.get());
-    PatchBuffer patchBuffer(code);
+    *executablePool = m_globalData->executableAllocator.poolForSize(m_assembler.size());
+    void* code = m_assembler.executableCopy((*executablePool).get());
 
+    PatchBuffer patchBuffer(code);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(array_failureCases1Call, JITStubs::cti_op_get_by_id_array_fail);
     patchBuffer.link(array_failureCases2Call, JITStubs::cti_op_get_by_id_array_fail);
@@ -1924,8 +1924,11 @@ void JIT::privateCompileCTIMachineTrampolines()
     patchBuffer.link(string_failureCases2Call, JITStubs::cti_op_get_by_id_string_fail);
     patchBuffer.link(string_failureCases3Call, JITStubs::cti_op_get_by_id_string_fail);
 
-    m_interpreter->m_ctiArrayLengthTrampoline = patchBuffer.trampolineAt(arrayLengthBegin);
-    m_interpreter->m_ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
+    *ctiArrayLengthTrampoline = patchBuffer.trampolineAt(arrayLengthBegin);
+    *ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
+#else
+    UNUSED_PARAM(ctiArrayLengthTrampoline);
+    UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
     patchBuffer.link(callArityCheck1, JITStubs::cti_op_call_arityCheck);
     patchBuffer.link(callArityCheck2, JITStubs::cti_op_call_arityCheck);
@@ -1936,9 +1939,9 @@ void JIT::privateCompileCTIMachineTrampolines()
     patchBuffer.link(callDontLazyLinkCall, JITStubs::cti_vm_dontLazyLinkCall);
     patchBuffer.link(callLazyLinkCall, JITStubs::cti_vm_lazyLinkCall);
 
-    m_interpreter->m_ctiVirtualCallPreLink = patchBuffer.trampolineAt(virtualCallPreLinkBegin);
-    m_interpreter->m_ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
-    m_interpreter->m_ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
+    *ctiVirtualCallPreLink = patchBuffer.trampolineAt(virtualCallPreLinkBegin);
+    *ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
+    *ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
 }
 
 void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)

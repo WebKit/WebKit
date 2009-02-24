@@ -112,7 +112,7 @@ JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisVal
             return throwError(exec, TypeError);
         if (asObject(array)->classInfo() == &Arguments::info)
             asArguments(array)->fillArgList(exec, applyArgs);
-        else if (exec->interpreter()->isJSArray(array))
+        else if (isJSArray(&exec->globalData(), array))
             asArray(array)->fillArgList(exec, applyArgs);
         else if (asObject(array)->inherits(&JSArray::info)) {
             unsigned length = asArray(array)->get(exec, exec->propertyNames().length).toUInt32(exec);

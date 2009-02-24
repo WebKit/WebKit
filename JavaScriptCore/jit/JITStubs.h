@@ -36,6 +36,8 @@
 
 namespace JSC {
 
+    class ExecutablePool;
+    class JSGlobalData;
     class JSObject;
     class JSPropertyNameIterator;
     class JSValueEncodedAsPointer;
@@ -87,7 +89,10 @@ namespace JSC {
 #define RETURN_PAIR(a,b) VoidPtrPairValue pair = {{ a, b }}; return pair.i
 #endif
 
-    struct JITStubs {
+    class JITStubs {
+    public:
+        JITStubs(JSGlobalData*);
+
         static JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_convert_this(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_array(STUB_ARGS);
@@ -197,6 +202,21 @@ namespace JSC {
 
         static void tryCacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const Identifier& propertyName, const PropertySlot&);
         static void tryCachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const PutPropertySlot&);
+        
+        void* ctiArrayLengthTrampoline() { return m_ctiArrayLengthTrampoline; }
+        void* ctiStringLengthTrampoline() { return m_ctiStringLengthTrampoline; }
+        void* ctiVirtualCallPreLink() { return m_ctiVirtualCallPreLink; }
+        void* ctiVirtualCallLink() { return m_ctiVirtualCallLink; }
+        void* ctiVirtualCall() { return m_ctiVirtualCall; }
+
+    private:
+        RefPtr<ExecutablePool> m_executablePool;
+
+        void* m_ctiArrayLengthTrampoline;
+        void* m_ctiStringLengthTrampoline;
+        void* m_ctiVirtualCallPreLink;
+        void* m_ctiVirtualCallLink;
+        void* m_ctiVirtualCall;
     };
 
 } // namespace JSC

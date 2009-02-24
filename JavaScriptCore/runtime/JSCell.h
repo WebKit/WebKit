@@ -32,15 +32,15 @@
 namespace JSC {
 
     class JSCell : Noncopyable {
-        friend class JIT;
         friend class GetterSetter;
         friend class Heap;
+        friend class JIT;
         friend class JSNumberCell;
         friend class JSObject;
         friend class JSPropertyNameIterator;
         friend class JSString;
         friend class JSValuePtr;
-        friend class Interpreter;
+        friend class VPtrSet;
 
     private:
         explicit JSCell(Structure*);

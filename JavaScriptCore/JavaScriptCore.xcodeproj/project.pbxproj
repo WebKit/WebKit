@@ -92,6 +92,7 @@
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
+		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		180B9B080F16D94F009BDBC5 /* CurrentTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 180B9AF00F16C569009BDBC5 /* CurrentTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */; };
@@ -1524,6 +1525,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */,
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
 				BC18C3E90E16F5CD00B34460 /* ASCIICType.h in Headers */,
 				BC18C3EB0E16F5CD00B34460 /* AVLTree.h in Headers */,

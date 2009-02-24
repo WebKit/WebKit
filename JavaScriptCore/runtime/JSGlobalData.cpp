@@ -35,6 +35,8 @@
 #include "FunctionConstructor.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
+#include "JSArray.h"
+#include "JSByteArray.h"
 #include "JSClassRef.h"
 #include "JSLock.h"
 #include "JSNotAnObject.h"
@@ -64,12 +66,42 @@ extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
-JSGlobalData::JSGlobalData(bool isShared)
+struct VPtrSet {
+    VPtrSet();
+
+    void* jsArrayVPtr;
+    void* jsByteArrayVPtr;
+    void* jsStringVPtr;
+    void* jsFunctionVPtr;
+};
+
+VPtrSet::VPtrSet()
+{
+    // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
+    void* storage = fastMalloc(sizeof(CollectorBlock));
+
+    JSCell* jsArray = new (storage) JSArray(JSArray::createStructure(jsNull()));
+    jsArrayVPtr = jsArray->vptr();
+    jsArray->~JSCell();
+
+    JSCell* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
+    jsByteArrayVPtr = jsByteArray->vptr();
+    jsByteArray->~JSCell();
+
+    JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
+    jsStringVPtr = jsString->vptr();
+    jsString->~JSCell();
+
+    JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()));
+    jsFunctionVPtr = jsFunction->vptr();
+    jsFunction->~JSCell();
+
+    fastFree(storage);
+}
+
+JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     : isSharedInstance(isShared)
     , clientData(0)
-    , interpreter(new Interpreter)
-    , exception(noValue())
-    , initializingLazyNumericCompareFunction(false)
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))
     , mathTable(new HashTable(JSC::mathTable))
@@ -86,22 +118,31 @@ JSGlobalData::JSGlobalData(bool isShared)
 #if !USE(ALTERNATE_JSIMMEDIATE)
     , numberStructure(JSNumberCell::createStructure(jsNull()))
 #endif
+    , jsArrayVPtr(vptrSet.jsArrayVPtr)
+    , jsByteArrayVPtr(vptrSet.jsByteArrayVPtr)
+    , jsStringVPtr(vptrSet.jsStringVPtr)
+    , jsFunctionVPtr(vptrSet.jsFunctionVPtr)
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new ArgList)
     , lexer(new Lexer(this))
     , parser(new Parser)
+    , interpreter(new Interpreter)
+#if ENABLE(JIT)
+    , jitStubs(this)
+#endif
+    , heap(this)
+    , exception(noValue())
+    , initializingLazyNumericCompareFunction(false)
     , newParserObjects(0)
     , parserObjectExtraRefCounts(0)
     , head(0)
     , dynamicGlobalObject(0)
     , scopeNodeBeingReparsed(0)
-    , heap(this)
 {
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
 #endif
-    interpreter->initialize(this);
 }
 
 JSGlobalData::~JSGlobalData()
@@ -145,9 +186,9 @@ JSGlobalData::~JSGlobalData()
     delete clientData;
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create()
+PassRefPtr<JSGlobalData> JSGlobalData::create(bool isShared)
 {
-    return adoptRef(new JSGlobalData);
+    return adoptRef(new JSGlobalData(isShared, VPtrSet()));
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::createLeaked()
@@ -171,7 +212,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = new JSGlobalData(true);
+        instance = create(true).releaseRef();
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif

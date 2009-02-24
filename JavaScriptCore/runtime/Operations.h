@@ -146,8 +146,8 @@ namespace JSC {
         if (v1.getNumber(n1) && v2.getNumber(n2))
             return n1 < n2;
 
-        Interpreter* interpreter = callFrame->interpreter();
-        if (interpreter->isJSString(v1) && interpreter->isJSString(v2))
+        JSGlobalData* globalData = &callFrame->globalData();
+        if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return asString(v1)->value() < asString(v2)->value();
 
         JSValuePtr p1;
@@ -171,8 +171,8 @@ namespace JSC {
         if (v1.getNumber(n1) && v2.getNumber(n2))
             return n1 <= n2;
 
-        Interpreter* interpreter = callFrame->interpreter();
-        if (interpreter->isJSString(v1) && interpreter->isJSString(v2))
+        JSGlobalData* globalData = &callFrame->globalData();
+        if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return !(asString(v2)->value() < asString(v1)->value());
 
         JSValuePtr p1;
