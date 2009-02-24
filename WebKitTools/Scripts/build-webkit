@@ -70,6 +70,7 @@ Usage: $programName [options] [options to pass to build system]
   --cairo-win32                 Build using Cairo (rather than CoreGraphics) on Windows
   --chromium                    Build the Chromium port on Mac/Win/Linux
   --clean                       Cleanup the build directory
+  --gtk                         Build the GTK port
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
   --[no-]3d-transforms          Toggle 3D Transforms support (default: $threeDTransformsSupport)
@@ -200,6 +201,8 @@ if (isGtk()) {
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
+    push @options, autotoolsFlag($threeDTransformsSupport, "3D-transforms");
+    push @options, autotoolsFlag($channelMessagingSupport, "channel-messaging");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
     push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");
@@ -211,7 +214,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($xsltSupport, "xslt");
     push @options, autotoolsFlag($wmlSupport, "wml");
     push @options, autotoolsFlag($videoSupport, "video");
-    push @options, autotoolsFlag($workersSupport, "workers");
+    push @options, autotoolsFlag($workersSupport, "web-workers");
     push @options, autotoolsFlag($coverageSupport, "coverage");
 }
 

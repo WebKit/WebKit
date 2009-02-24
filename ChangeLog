@@ -1,3 +1,17 @@
+2009-02-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Gtk] add options for 3D transforms and HTML5 channel messaging to the build
+        https://bugs.webkit.org/show_bug.cgi?id=24072
+
+        Add options for toggling 3D transforms and HTML5 channel messaging
+        support on or off.
+
+        Also fix the web-workers option. It should be web-workers and not workers.
+
+        * configure.ac:
+
 2009-02-23  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alexey Proskuryakov.
