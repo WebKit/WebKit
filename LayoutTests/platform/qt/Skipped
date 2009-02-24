@@ -9,7 +9,6 @@ editing/selection/caret-and-focus-ring.html
 fast/events/popup-blocking-click-in-iframe.html
 
 # -------- crashes
-fast/events/objc-keyboard-event-creation.html
 
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
@@ -164,7 +163,6 @@ fast/events/mouseout-dead-node.html
 fast/events/mouseover-mouseout2.html
 fast/events/mouseover-mouseout.html
 fast/events/mouseup-outside-document.html
-fast/events/objc-event-api.html
 fast/events/onchange-select-popup.html
 fast/events/ondragenter.html
 fast/events/reveal-link-when-focused.html
@@ -284,7 +282,6 @@ fast/xsl/xslt-relative-path.xml
 fast/xsl/xslt-second-level-import.xml
 fast/xsl/xslt-second-level-import.xml
 fast/xsl/xslt-string-parameters.html
-fast/xsl/xslt-text.xml
 fast/xsl/xslt-url.xml
 fast/xsl/xslt_unicode.xml
 plugins/bindings-test.html
@@ -809,7 +806,6 @@ svg/hixie/data-types/001.xml
 svg/hixie/data-types/002.xhtml
 svg/hixie/dynamic/003.xml
 svg/hixie/dynamic/004.xml
-svg/hixie/dynamic/005-broken.xml
 svg/hixie/dynamic/006.xml
 svg/hixie/error/001.xml
 svg/hixie/error/002.xml
@@ -820,7 +816,6 @@ svg/hixie/error/009.xml
 svg/hixie/error/010.xml
 svg/hixie/error/011.xml
 svg/hixie/error/012.xml
-svg/hixie/error/013-broken.xml
 svg/hixie/error/014-test.xml
 svg/hixie/error/014.xml
 svg/hixie/error/015.xml
@@ -1030,7 +1025,6 @@ fast/css-generated-content/wbr-with-before-content.html
 fast/css/computed-style-without-renderer.html
 fast/css/computed-style.html
 fast/css/css2-system-fonts.html
-fast/css/dashboard-region-parser.html
 fast/css/xml-stylesheet-media-processing.xhtml
 fast/css/namespaces/003.xml
 fast/css/namespaces/007.xml
@@ -1159,7 +1153,6 @@ tables/mozilla/marvin/backgr_simple-table-column.html
 tables/mozilla/marvin/backgr_simple-table-row-group.html
 tables/mozilla/marvin/backgr_simple-table-row.html
 tables/mozilla/marvin/backgr_simple-table.html
-tables/mozilla_expected_failures/bugs/bug8411.xml
 tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html
 tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html
 tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
@@ -2337,7 +2330,6 @@ editing/style/relative-font-size-change-004.html
 editing/style/remove-underline.html
 editing/style/remove-underline-in-bold.html
 editing/style/smoosh-styles-001.html
-editing/style/smoosh-styles-002.html
 editing/style/smoosh-styles-003.html
 editing/style/style-3681552-fix-001.html
 editing/style/style-3690704-fix.html
@@ -2596,7 +2588,6 @@ fast/canvas/canvas-transform-skewed.html
 fast/canvas/fillrect_gradient.html
 fast/canvas/fillrect-gradient-zero-stops.html
 fast/canvas/fill-stroke-clip-reset-path.html
-fast/canvas/gradient-empty-path.html
 fast/canvas/image-object-in-canvas.html
 fast/canvas/patternfill-repeat.html
 fast/canvas/zero-size-fill-rect.html

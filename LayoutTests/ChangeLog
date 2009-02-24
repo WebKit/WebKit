@@ -1,3 +1,11 @@
+2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Remove tests from the Qt Skipped list that no longer even exist.
+
+        * platform/qt/Skipped:
+
 2009-02-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
