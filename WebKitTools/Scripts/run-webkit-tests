@@ -126,7 +126,7 @@ my $treatSkipped = "default";
 my $verbose = 0;
 my $useValgrind = 0;
 my $strictTesting = 0;
-my $generateNewResults = 1;
+my $generateNewResults = isAppleMacWebKit() ? 1 : 0;
 my $stripEditingCallbacks = isCygwin();
 my $runSample = 1;
 my $root;
@@ -809,7 +809,7 @@ for my $test (@tests) {
             writeToFile("$expectedDir/$expectedFileName", $actual);
         }
         deleteExpectedAndActualResults($base);
-        unless ($resetResults) {
+        if ($generateNewResults && !$resetResults) {
             # Always print the file name for new tests, as they will probably need some manual inspection.
             # in verbose mode we already printed the test case, so no need to do it again.
             unless ($verbose) {

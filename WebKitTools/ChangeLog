@@ -1,5 +1,17 @@
 2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Don't print out that you are generating new results if you are not in fact
+        generating new results and disable generating new results by default for
+        the all ports other than the canonical Apple Mac port since this can litter
+        the source directory with hundreds of new results since other ports
+        are not as up to date.
+
+        * Scripts/run-webkit-tests:
+
+2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by Cameron Zwarich.
 
         The Qt port does not support these yet nor does the nm check work with
