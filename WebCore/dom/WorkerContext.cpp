@@ -40,8 +40,8 @@
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "WorkerLocation.h"
-#include "WorkerMessagingProxy.h"
 #include "WorkerNavigator.h"
+#include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 #include <wtf/RefPtr.h>
 

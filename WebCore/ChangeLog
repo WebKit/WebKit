@@ -1,3 +1,13 @@
+2009-02-24  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change to include WorkerObjectProxy.h instead of WorkerMessagingProxy.h in WorkerContext.cpp and WorkerScriptController.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=24112
+
+        * bindings/js/WorkerScriptController.cpp:
+        * dom/WorkerContext.cpp:
+
 2009-02-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

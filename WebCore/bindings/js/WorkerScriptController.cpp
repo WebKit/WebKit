@@ -35,7 +35,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "WorkerContext.h"
-#include "WorkerMessagingProxy.h"
+#include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
