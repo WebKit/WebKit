@@ -233,9 +233,9 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         }
     }
 
-    Vector<RenderLayer*>* overflowList = layer->overflowList();
-    if (overflowList) {
-        for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+    Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
+    if (normalFlowList) {
+        for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
             RenderLayer* curLayer = (*it);
             if (!curLayer->isComposited()) {
                 IntRect curAbsBounds = calculateCompositedBounds(curLayer, layer);
@@ -314,7 +314,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
 {
     layer->updateLayerPosition();
     layer->updateZOrderLists();
-    layer->updateOverflowList();
+    layer->updateNormalFlowList();
     
     // Clear the flag
     layer->setHasCompositingDescendant(false);
@@ -355,10 +355,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
         }
     }
     
-    ASSERT(!layer->m_overflowListDirty);
-    Vector<RenderLayer*>* overflowList = layer->overflowList();
-    if (overflowList && overflowList->size() > 0) {
-        for (Vector<RenderLayer*>::const_iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+    ASSERT(!layer->m_normalFlowListDirty);
+    Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
+    if (normalFlowList && normalFlowList->size() > 0) {
+        for (Vector<RenderLayer*>::const_iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
             RenderLayer* curLayer = (*it);
             computeCompositingRequirements(curLayer, childState);
         }
@@ -493,10 +493,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
         }
     }
 
-    ASSERT(!layer->m_overflowListDirty);
-    Vector<RenderLayer*>* overflowList = layer->overflowList();
-    if (overflowList && overflowList->size() > 0) {
-        for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+    ASSERT(!layer->m_normalFlowListDirty);
+    Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
+    if (normalFlowList && normalFlowList->size() > 0) {
+        for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
             RenderLayer* curLayer = (*it);
             rebuildCompositingLayerTree(curLayer, childState);
             if (curLayer->isComposited())
@@ -552,9 +552,9 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
             }
         }
         
-        Vector<RenderLayer*>* overflowList = layer->overflowList();
-        if (overflowList) {
-            for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+        Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
+        if (normalFlowList) {
+            for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
                 RenderLayer* curLayer = (*it);
                 int x = 0, y = 0;
                 curLayer->convertToLayerCoords(layer, x, y);
@@ -779,9 +779,9 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
         }
     }
 
-    Vector<RenderLayer*>* overflowList = layer->overflowList();
-    if (overflowList) {
-        for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+    Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
+    if (normalFlowList) {
+        for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
             RenderLayer* curLayer = (*it);
             if (layerHas3DContent(curLayer))
                 return true;

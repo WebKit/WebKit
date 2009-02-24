@@ -47,6 +47,21 @@
 
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix build when ACCELERATED_COMPOSITING is turned on
+        (overflowList() -> normalFlowList()).
+    
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::hasNonCompositingContent):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayerRect):
+        (WebCore::RenderLayerCompositor::layerHas3DContent):
+
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
         
         https://bugs.webkit.org/show_bug.cgi?id=24135

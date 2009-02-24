@@ -552,9 +552,9 @@ bool RenderLayerBacking::hasNonCompositingContent() const
         }
     }
 
-    Vector<RenderLayer*>* overflowList = m_owningLayer->overflowList();
-    if (overflowList && overflowList->size() > 0) {
-        for (Vector<RenderLayer*>::const_iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+    Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList();
+    if (normalFlowList && normalFlowList->size() > 0) {
+        for (Vector<RenderLayer*>::const_iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
             RenderLayer* curLayer = (*it);
             if (!curLayer->isComposited())
                 return true;
@@ -820,9 +820,9 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         }
 
         // Paint any child layers that have overflow.
-        Vector<RenderLayer*>* overflowList = m_owningLayer->overflowList();
-        if (overflowList) {
-            for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it)
+        Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList();
+        if (normalFlowList) {
+            for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it)
                 it[0]->paintLayer(rootLayer, context, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
         }
 
