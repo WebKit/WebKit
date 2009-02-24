@@ -143,9 +143,6 @@ IDL_BINDINGS += \
 	WebCore/dom/WebKitAnimationEvent.idl \
 	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
-	WebCore/dom/Worker.idl \
-	WebCore/dom/WorkerContext.idl \
-	WebCore/dom/WorkerLocation.idl \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \
 	WebCore/html/CanvasRenderingContext2D.idl \
@@ -230,6 +227,9 @@ IDL_BINDINGS += \
 	WebCore/plugins/MimeTypeArray.idl \
 	WebCore/plugins/Plugin.idl \
 	WebCore/plugins/PluginArray.idl \
+	WebCore/workers/Worker.idl \
+	WebCore/workers/WorkerContext.idl \
+	WebCore/workers/WorkerLocation.idl \
 	WebCore/xml/DOMParser.idl \
 	WebCore/xml/XMLHttpRequest.idl \
 	WebCore/xml/XMLHttpRequestException.idl \
@@ -1218,6 +1218,8 @@ webcore_sources += \
 	WebCore/platform/ContextMenu.h \
 	WebCore/platform/ContextMenuItem.h \
 	WebCore/platform/CookieJar.h \
+	WebCore/platform/CrossThreadCopier.cpp \
+	WebCore/platform/CrossThreadCopier.h \
 	WebCore/platform/Cursor.h \
 	WebCore/platform/DeprecatedPtrList.h \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
@@ -2174,25 +2176,23 @@ webcore_sources += \
 	WebCore/bindings/js/JSWorkerCustom.cpp \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
-	WebCore/dom/CrossThreadCopier.cpp \
-	WebCore/dom/CrossThreadCopier.h \
-	WebCore/dom/GenericWorkerTask.h \
-	WebCore/dom/Worker.cpp \
-	WebCore/dom/Worker.h \
-	WebCore/dom/WorkerContext.cpp \
-	WebCore/dom/WorkerContext.h \
-	WebCore/dom/WorkerContextProxy.h \
-	WebCore/dom/WorkerLocation.cpp \
-	WebCore/dom/WorkerLocation.h \
-	WebCore/dom/WorkerMessagingProxy.cpp \
-	WebCore/dom/WorkerMessagingProxy.h \
-	WebCore/dom/WorkerObjectProxy.h \
-	WebCore/dom/WorkerRunLoop.cpp \
-	WebCore/dom/WorkerRunLoop.h \
-	WebCore/dom/WorkerThread.cpp \
-	WebCore/dom/WorkerThread.h \
 	WebCore/page/WorkerNavigator.cpp \
 	WebCore/page/WorkerNavigator.h
+	WebCore/workers/GenericWorkerTask.h \
+	WebCore/workers/Worker.cpp \
+	WebCore/workers/Worker.h \
+	WebCore/workers/WorkerContext.cpp \
+	WebCore/workers/WorkerContext.h \
+	WebCore/workers/WorkerContextProxy.h \
+	WebCore/workers/WorkerLocation.cpp \
+	WebCore/workers/WorkerLocation.h \
+	WebCore/workers/WorkerMessagingProxy.cpp \
+	WebCore/workers/WorkerMessagingProxy.h \
+	WebCore/workers/WorkerObjectProxy.h \
+	WebCore/workers/WorkerRunLoop.cpp \
+	WebCore/workers/WorkerRunLoop.h \
+	WebCore/workers/WorkerThread.cpp \
+	WebCore/workers/WorkerThread.h \
 endif
 
 # ----

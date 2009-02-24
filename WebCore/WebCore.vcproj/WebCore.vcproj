@@ -3156,6 +3156,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\CrossThreadCopier.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\platform\CrossThreadCopier.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Cursor.h"
 				>
 			</File>
@@ -10878,22 +10894,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\CrossThreadCopier.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\CrossThreadCopier.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\CSSMappedAttributeDeclaration.cpp"
 				>
 				<FileConfiguration
@@ -11199,10 +11199,6 @@
 			</File>
 			<File
 				RelativePath="..\dom\FormControlElementWithState.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\GenericWorkerTask.h"
 				>
 			</File>
 			<File
@@ -11914,62 +11910,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\Worker.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\Worker.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerContext.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerContext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerContextProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerLocation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerLocation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerMessagingProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerMessagingProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerObjectProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerRunLoop.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerRunLoop.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerThread.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\XMLTokenizer.cpp"
 				>
 				<FileConfiguration
@@ -11996,6 +11936,70 @@
 						WholeProgramOptimization="true"
 					/>
 				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="workers"
+			>
+			<File
+				RelativePath="..\workers\GenericWorkerTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\Worker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\Worker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerContextProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerLocation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerLocation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerMessagingProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerMessagingProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerObjectProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerRunLoop.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerRunLoop.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerThread.h"
+				>
 			</File>
 		</Filter>
 		<Filter

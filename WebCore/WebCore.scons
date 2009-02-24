@@ -78,7 +78,6 @@ sources['dom'] = [
     'dom/ClipboardEvent.cpp',
     'dom/Comment.cpp',
     'dom/ContainerNode.cpp',
-    'dom/CrossThreadCopier.cpp',
     'dom/CSSMappedAttributeDeclaration.cpp',
     'dom/Document.cpp',
     'dom/DocumentFragment.cpp',
@@ -141,9 +140,6 @@ sources['dom'] = [
     'dom/WebKitAnimationEvent.cpp',
     'dom/WebKitTransitionEvent.cpp',
     'dom/WheelEvent.cpp',
-    'dom/Worker.cpp',
-    'dom/WorkerContext.cpp',
-    'dom/WorkerLocation.cpp',
     'dom/XMLTokenizer.cpp',
     'dom/XMLTokenizerLibxml2.cpp',
 ]
@@ -565,6 +561,11 @@ sources['storage'] = [
     'storage/StorageEvent.cpp',
     'storage/StorageMap.cpp'
 ]
+sources['workers'] = [
+    'workers/Worker.cpp',
+    'workers/WorkerContext.cpp',
+    'workers/WorkerLocation.cpp',
+]
 sources['xml'] = [
     'xml/DOMParser.cpp',
     'xml/NativeXPathNSResolver.cpp',
@@ -720,6 +721,7 @@ sources['platform'] = [
     'platform/Arena.cpp',
     'platform/ContentType.cpp',
     'platform/ContextMenu.cpp',
+    'platform/CrossThreadCopier.cpp',
     'platform/DeprecatedPtrListImpl.cpp',
     'platform/DragData.cpp',
     'platform/DragImage.cpp',

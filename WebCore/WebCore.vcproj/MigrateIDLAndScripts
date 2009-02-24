@@ -155,6 +155,11 @@ $(WEBKIT_OUTPUT)/% : $(WEBCORE)/html/%
 $(WEBKIT_OUTPUT)/% : $(WEBCORE)/css/%
 	$(MIGRATE_CMD)
 
+# Migrate workers IDLs
+$(WEBKIT_OUTPUT)/% : $(WEBCORE)/workers/%
+	$(MIGRATE_CMD)
+
+
 # Migrate generation scripts
 $(WEBKIT_OUTPUT)/% : $(WEBCORE)/bindings/scripts/%
 	$(MIGRATE_CMD)
