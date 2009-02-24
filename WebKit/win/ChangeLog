@@ -1,3 +1,15 @@
+2009-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Related to <rdar://problem/6590295>
+        Allow disabling javascript: urls.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::setJavaScriptURLsAreAllowed):
+        * WebView.h:
+
 2009-02-24  Adam Roben  <aroben@apple.com>
 
         Windows build fix

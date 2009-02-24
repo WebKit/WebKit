@@ -157,4 +157,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT registerEmbeddedViewMIMEType([in] BSTR mimeType);
 
     HRESULT setMemoryCacheDelegateCallsEnabled([in] BOOL enabled);
+
+    HRESULT setJavaScriptURLsAreAllowed([in] BOOL areAllowed);
 }

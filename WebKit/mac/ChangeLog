@@ -1,3 +1,14 @@
+2009-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Related to <rdar://problem/6590295>
+        Allow disabling javascript: urls.
+
+        * WebView/WebView.mm:
+        (-[WebView _setJavaScriptURLsAreAllowed:]):
+        * WebView/WebViewPrivate.h:
+
 2009-02-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

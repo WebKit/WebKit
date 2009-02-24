@@ -743,6 +743,9 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
     if (!url.protocolIs("javascript"))
         return false;
 
+    if (m_frame->page() && !m_frame->page()->javaScriptURLsAreAllowed())
+        return true;
+
     String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
     ScriptValue result = executeScript(script, userGesture);
 

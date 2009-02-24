@@ -120,6 +120,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_cookieEnabled(true)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
+    , m_javaScriptURLsAreAllowed(true)
     , m_parentInspectorController(0)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
@@ -636,6 +637,16 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 
     for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->loader()->tellClientAboutPastMemoryCacheLoads();
+}
+
+void Page::setJavaScriptURLsAreAllowed(bool areAllowed)
+{
+    m_javaScriptURLsAreAllowed = areAllowed;
+}
+
+bool Page::javaScriptURLsAreAllowed() const
+{
+    return m_javaScriptURLsAreAllowed;
 }
 
 } // namespace WebCore

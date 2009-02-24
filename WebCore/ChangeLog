@@ -1,3 +1,21 @@
+2009-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Related to <rdar://problem/6590295>
+        Allow disabling javascript: urls.
+
+        * WebCore.base.exp:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setJavaScriptURLsAreAllowed):
+        (WebCore::Page::javaScriptURLsAreAllowed):
+        * page/Page.h:
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
