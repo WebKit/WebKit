@@ -3416,118 +3416,114 @@ Position RenderBlock::positionForRenderer(RenderObject* renderer, bool start) co
     return Position(n, offset);
 }
 
+// FIXME: This function should go on RenderObject as an instance method. Then
+// all cases in which positionForCoordinates recurs could call this instead to
+// prevent crossing editable boundaries. This would require many tests.
+static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBox* parent, RenderBox* child, const IntPoint& parentCoords)
+{
+    int xInChildCoords = parentCoords.x() - child->x();
+    int yInChildCoords = parentCoords.y() - child->y();
+
+    // If this is an anonymous renderer, we just recur normally
+    Node* childNode = child->node();
+    if (!childNode)
+        return child->positionForCoordinates(xInChildCoords, yInChildCoords);
+
+    // Otherwise, first make sure that the editability of the parent and child agree.
+    // If they don't agree, then we return a visible position just before or after the child
+    RenderObject* ancestor = parent;
+    while (ancestor && !ancestor->node())
+        ancestor = ancestor->parent();
+
+    // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
+    if (!ancestor || ancestor->node()->isContentEditable() == childNode->isContentEditable())
+        return child->positionForCoordinates(xInChildCoords, yInChildCoords);
+
+    // Otherwise return before or after the child, depending on if the click was left or right of the child
+    int childMidX = child->width() / 2;
+    if (xInChildCoords < childMidX)
+        return VisiblePosition(ancestor->node(), childNode->nodeIndex(), DOWNSTREAM);
+    return VisiblePosition(ancestor->node(), childNode->nodeIndex() + 1, UPSTREAM);
+}
+
+static VisiblePosition positionForPointWithInlineChildren(RenderBlock* block, const IntPoint& pointInContents)
+{
+    ASSERT(block->childrenInline());
+
+    if (!block->firstRootBox())
+        return VisiblePosition(block->node(), 0, DOWNSTREAM);
+
+    InlineBox* closestBox = 0;
+    // look for the closest line box in the root box which is at the passed-in y coordinate
+    for (RootInlineBox* root = block->firstRootBox(); root; root = root->nextRootBox()) {
+        int bottom;
+        // set the bottom based on whether there is a next root box
+        if (root->nextRootBox())
+            // FIXME: make the break point halfway between the bottom of the previous root box and the top of the next root box
+            bottom = root->nextRootBox()->topOverflow();
+        else
+            bottom = root->bottomOverflow() + verticalLineClickFudgeFactor;
+        // check if this root line box is located at this y coordinate
+        if (pointInContents.y() < bottom && root->firstChild()) {
+            closestBox = root->closestLeafChildForXPos(pointInContents.x());
+            if (closestBox)
+                // pass the box a y position that is inside it
+                break;
+        }
+    }
+
+    // y coordinate is below last root line box, pretend we hit it
+    if (!closestBox)
+        closestBox = block->lastRootBox()->closestLeafChildForXPos(pointInContents.x());
+
+    if (closestBox) {
+        // pass the box a y position that is inside it
+        return closestBox->renderer()->positionForCoordinates(pointInContents.x(), closestBox->m_y);
+    }
+
+    // Can't reach this.  We have a root line box, but it has no kids.
+    ASSERT_NOT_REACHED();
+    return VisiblePosition(block->node(), 0, DOWNSTREAM);
+}
+
 VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 {
     if (isTable())
         return RenderBox::positionForCoordinates(x, y); 
 
-    int top = borderTop();
-    int bottom = top + paddingTop() + contentHeight() + paddingBottom();
-
-    int left = borderLeft();
-    int right = left + paddingLeft() + contentWidth() + paddingRight();
-
-    Node* n = node();
-    
     int contentsX = x;
     int contentsY = y;
     offsetForContents(contentsX, contentsY);
+    IntPoint pointInContents(contentsX, contentsY);
 
     if (isReplaced()) {
         if (y < 0 || y < height() && x < 0)
-            return VisiblePosition(n, caretMinOffset(), DOWNSTREAM);
+            return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM);
         if (y >= height() || y >= 0 && x >= width())
-            return VisiblePosition(n, caretMaxOffset(), DOWNSTREAM);
+            return VisiblePosition(node(), caretMaxOffset(), DOWNSTREAM);
     } 
 
-    // If we start inside the shadow tree, we will stay inside (even if the point is above or below).
-    if (!(n && n->isShadowNode()) && !childrenInline()) {
-        // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside
-        // a document that is entirely editable.
-        bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
-
-        if (y < top || (isEditableRoot && (y < bottom && x < left))) {
-            if (!isEditableRoot)
-                if (RenderBox* c = firstChildBox()) { // FIXME: This code doesn't make any sense.  This child could be an inline or a positioned element or a float, etc.
-                    VisiblePosition p = c->positionForCoordinates(contentsX - c->x(), contentsY - c->y());
-                    if (p.isNotNull())
-                        return p;
-                }
-            if (n) {
-                if (Node* sp = n->shadowParentNode())
-                    n = sp;
-                if (Node* p = n->parent())
-                    return VisiblePosition(p, n->nodeIndex(), DOWNSTREAM);
-            }
-            return VisiblePosition(n, 0, DOWNSTREAM);
-        }
-
-        if (y >= bottom || (isEditableRoot && (y >= top && x >= right))) {
-            if (!isEditableRoot)
-                if (RenderBox* c = lastChildBox()) { // FIXME: This code doesn't make any sense.  This child could be an inline or a positioned element or a float, etc.
-                    VisiblePosition p = c->positionForCoordinates(contentsX - c->x(), contentsY - c->y());
-                    if (p.isNotNull())
-                        return p;
-                }
-            if (n) {
-                if (Node* sp = n->shadowParentNode())
-                    n = sp;
-                if (Node* p = n->parent())
-                    return VisiblePosition(p, n->nodeIndex() + 1, DOWNSTREAM);
-            }
-            return VisiblePosition(n, 0, DOWNSTREAM);
-        }
-    }
-
     if (childrenInline()) {
-        if (!firstRootBox())
-            return VisiblePosition(n, 0, DOWNSTREAM);
-
-        if (contentsY < firstRootBox()->topOverflow() - verticalLineClickFudgeFactor)
-            // y coordinate is above first root line box
-            return VisiblePosition(positionForBox(firstRootBox()->firstLeafChild(), true), DOWNSTREAM);
-        
-        // look for the closest line box in the root box which is at the passed-in y coordinate
-        for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
-            // set the bottom based on whether there is a next root box
-            if (root->nextRootBox())
-                // FIXME: make the break point halfway between the bottom of the previous root box and the top of the next root box
-                bottom = root->nextRootBox()->topOverflow();
-            else
-                bottom = root->bottomOverflow() + verticalLineClickFudgeFactor;
-            // check if this root line box is located at this y coordinate
-            if (contentsY < bottom && root->firstChild()) {
-                InlineBox* closestBox = root->closestLeafChildForXPos(x);
-                if (closestBox)
-                    // pass the box a y position that is inside it
-                    return closestBox->renderer()->positionForCoordinates(contentsX, closestBox->m_y);
-            }
-        }
-
-        if (lastRootBox())
-            // y coordinate is below last root line box
-            return VisiblePosition(positionForBox(lastRootBox()->lastLeafChild(), false), DOWNSTREAM);
-
-        return VisiblePosition(n, 0, DOWNSTREAM);
+        return positionForPointWithInlineChildren(this, pointInContents);
     }
-    
-    // See if any child blocks exist at this y coordinate.
+
+    // Check top/bottom child-margin/parent-padding for clicks and place them in the first/last child
+    // FIXME: This will not correctly handle first or last children being positioned or non-visible
     if (firstChildBox() && contentsY < firstChildBox()->y())
-        return VisiblePosition(n, 0, DOWNSTREAM);
-    for (RenderBox* renderer = firstChildBox(); renderer; renderer = renderer->nextSiblingBox()) {
-        if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
+        return positionForPointRespectingEditingBoundaries(this, firstChildBox(), pointInContents);
+    if (lastChildBox() && contentsY > lastChildBox()->y())
+        return positionForPointRespectingEditingBoundaries(this, lastChildBox(), pointInContents);
+
+    for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
+        if (childBox->height() == 0 || childBox->style()->visibility() != VISIBLE || childBox->isFloatingOrPositioned())
             continue;
-        RenderBox* next = renderer->nextSiblingBox();
-        while (next && next->isFloatingOrPositioned())
-            next = next->nextSiblingBox();
-        if (next) 
-            bottom = next->y();
-        else
-            bottom = top + scrollHeight();
-        if (contentsY >= renderer->y() && contentsY < bottom)
-            return renderer->positionForCoordinates(contentsX - renderer->x(), contentsY - renderer->y());
+        // We hit this child if our click was above the bottom of its padding box (like IE6/7 and FF3)
+        if (contentsY < childBox->y() + childBox->height())
+            return positionForPointRespectingEditingBoundaries(this, childBox, pointInContents);
     }
-    
+
+    // We only get here if there are no, or only floated/positioned, or only
+    // non-visible block children below the click.
     return RenderBox::positionForCoordinates(x, y);
 }
 
@@ -4485,7 +4481,7 @@ void RenderBlock::updateFirstLetter()
 {
     if (!document()->usesFirstLetterRules())
         return;
-    // Don't recurse
+    // Don't recur
     if (style()->styleType() == FIRST_LETTER)
         return;
 

@@ -1,3 +1,38 @@
+2009-02-05 Ojan Vafai <ojan@chromium.org> and Eric Seidel <eric@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Make cursor positions match IE6/IE7/FF3 when clicking in margins/padding
+        around divs inside editable regions.
+        https://bugs.webkit.org/show_bug.cgi?id=23605
+
+        Fix clicks outside editable regions from focusing the editable region.
+        https://bugs.webkit.org/show_bug.cgi?id=23607
+
+        Removed editing/selection/contenteditable-click-outside.html as it's
+        not as useful as our new tests.
+
+        * editing/selection/click-in-margins-inside-editable-div-expected.txt: Added.
+        * editing/selection/click-in-margins-inside-editable-div.html: Added.
+        * editing/selection/click-in-padding-with-multiple-line-boxes-expected.txt: Added.
+        * editing/selection/click-in-padding-with-multiple-line-boxes.html: Added.
+        * editing/selection/click-outside-editable-div-expected.txt: Added.
+        * editing/selection/click-outside-editable-div.html: Added.
+        * editing/selection/contenteditable-click-outside.html: Removed.
+        * editing/selection/resources/TEMPLATE.html: Added.
+        * editing/selection/resources/click-in-margins-inside-editable-div.js: Added.
+        * editing/selection/resources/click-in-padding-with-multiple-line-boxes.js: Added.
+        * editing/selection/resources/click-outside-editable-div.js: Added.
+        * editing/selection/resources/js-test-selection-shared.js: Added.
+        * editing/selection/select-missing-image.html:
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.checksum: Removed.
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.txt: Removed.
+        * platform/mac/editing/selection/select-all-iframe-expected.txt:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/mac/editing/selection/select-missing-image-expected.txt:
+        * platform/qt/editing/selection/contenteditable-click-outside-expected.txt: Removed.
+        * platform/qt/editing/selection/select-all-iframe-expected.txt: Removed.
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
