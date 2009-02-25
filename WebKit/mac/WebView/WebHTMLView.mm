@@ -1934,7 +1934,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (_private->layerHostingView)
-        [[self _webView] _stoppedAcceleratedCompositing:[self _frame]];
+        [[self _webView] _stoppedAcceleratedCompositingForFrame:[self _frame]];
 #endif
 
     [_private clear];
