@@ -99,9 +99,12 @@ void HTMLAppletElement::removedFromDocument()
     HTMLPlugInElement::removedFromDocument();
 }
 
-bool HTMLAppletElement::rendererIsNeeded(RenderStyle*)
+bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
 {
-    return !getAttribute(codeAttr).isNull();
+    if (getAttribute(codeAttr).isNull())
+        return false;
+
+    return HTMLPlugInElement::rendererIsNeeded(style);
 }
 
 RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style)

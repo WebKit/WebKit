@@ -1,3 +1,25 @@
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+        
+        https://bugs.webkit.org/show_bug.cgi?id=15081
+        
+        Add tests for display:none on applets, embeds and object elements.
+
+        * fast/replaced/applet-display-none.html: Added.
+        * fast/replaced/embed-display-none.html: Added.
+        * fast/replaced/object-display-none.html: Added.
+        * fast/replaced/resources/test.swf: Copied from LayoutTests/accessibility/resources/test.swf.
+        * platform/mac/fast/replaced/applet-display-none-expected.checksum: Added.
+        * platform/mac/fast/replaced/applet-display-none-expected.png: Added.
+        * platform/mac/fast/replaced/applet-display-none-expected.txt: Added.
+        * platform/mac/fast/replaced/embed-display-none-expected.checksum: Added.
+        * platform/mac/fast/replaced/embed-display-none-expected.png: Added.
+        * platform/mac/fast/replaced/embed-display-none-expected.txt: Added.
+        * platform/mac/fast/replaced/object-display-none-expected.checksum: Added.
+        * platform/mac/fast/replaced/object-display-none-expected.png: Added.
+        * platform/mac/fast/replaced/object-display-none-expected.txt: Added.
+
 2009-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

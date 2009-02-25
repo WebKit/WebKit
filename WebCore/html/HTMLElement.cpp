@@ -972,7 +972,7 @@ bool HTMLElement::rendererIsNeeded(RenderStyle *style)
         if (settings && settings->isJavaScriptEnabled())
             return false;
     }
-    return (document()->documentElement() == this) || (style->display() != NONE);
+    return StyledElement::rendererIsNeeded(style);
 }
     
 RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style)

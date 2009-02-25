@@ -1,5 +1,27 @@
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson
+
+        https://bugs.webkit.org/show_bug.cgi?id=15081
+        
+        Make display:none work for applet, emebed and object elements
+        by calling rendererIsNeeded() on superclasses.
+
+        Tests: fast/replaced/applet-display-none.html
+               fast/replaced/embed-display-none.html
+               fast/replaced/object-display-none.html
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::rendererIsNeeded):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=24137

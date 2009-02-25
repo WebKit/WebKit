@@ -119,14 +119,11 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 {
-    if (m_useFallbackContent || isImageType())
-        return HTMLPlugInElement::rendererIsNeeded(style);
-
     Frame* frame = document()->frame();
     if (!frame)
         return false;
     
-    return true;
+    return HTMLPlugInElement::rendererIsNeeded(style);
 }
 
 RenderObject *HTMLObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)
