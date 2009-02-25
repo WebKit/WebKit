@@ -1,3 +1,16 @@
+2009-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24141
+        Add clarity to V8 interceptor helper function.
+
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER): Renamed to notHandledByInterceptor.
+        (WebCore::NAMED_PROPERTY_SETTER): Ditto.
+        (WebCore::INDEXED_PROPERTY_GETTER): Ditto.
+        (WebCore::INDEXED_PROPERTY_SETTER): Ditto.
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
