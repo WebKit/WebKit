@@ -2633,10 +2633,13 @@ quint64 QWebPage::bytesReceived() const {
 /*!
     \fn void QWebPage::linkHovered(const QString &link, const QString &title, const QString &textContent)
 
-    This signal is emitted when the mouse is hovering over a link.
-    The first parameter is the \a link url, the second is the link \a title
-    if any, and third \a textContent is the text content. Method is emitter with both
-    empty parameters when the mouse isn't hovering over any link element.
+    This signal is emitted when the mouse hovers over a link.
+
+    \a link contains the link url.
+    \a title is the link element's title, if it is specified in the markup.
+    \a textContent provides text within the link element, e.g., text inside an HTML anchor tag.
+
+    When the mouse leaves the link element the signal is emitted with empty parameters.
 
     \sa linkClicked()
 */
