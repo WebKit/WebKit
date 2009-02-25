@@ -98,9 +98,6 @@ public:
     // ScrollView
     virtual HostWindow* hostWindow() const;
 
-    // Widget
-    virtual void invalidateRect(const IntRect&);
-
     // PopupListBox methods
 
     // Shows the popup
@@ -651,15 +648,6 @@ HostWindow* PopupListBox::hostWindow() const
     return parent() ? parent()->hostWindow() : 0;
 }
 
-void PopupListBox::invalidateRect(const IntRect& rect)
-{
-    // Since we are returning the HostWindow of our parent as our own in
-    // hostWindow(), we need to invalidate in our parent's coordinates.
-    IntRect newRect(rect);
-    newRect.move(kBorderSize, kBorderSize);
-    FramelessScrollView::invalidateRect(newRect);
-}
-
 // From HTMLSelectElement.cpp
 static String stripLeadingWhiteSpace(const String& string)
 {
@@ -905,7 +893,9 @@ void PopupListBox::invalidateRow(int index)
     if (index < 0)
         return;
 
-    invalidateRect(getRowBounds(index));
+    // Invalidate in the window contents, as FramelessScrollView::invalidateRect
+    // paints in the window coordinates.
+    invalidateRect(contentsToWindow(getRowBounds(index)));
 }
 
 void PopupListBox::scrollToRevealRow(int index)

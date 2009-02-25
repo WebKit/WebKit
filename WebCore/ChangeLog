@@ -1,3 +1,16 @@
+2009-02-25  Jay Campan  <jcampan@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24066
+
+        Items in drop-downs were not painted correctly.  Makes sure the
+        PopupListBox invalidates in the coordinates of the window as this is
+        FramelessScrollView::invalidateRect paints to.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::invalidateRow):
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson
