@@ -649,22 +649,17 @@ int RenderTableCell::borderHalfBottom(bool outer) const
 
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    tx += x();
-    ty += y();
-
-    // check if we need to do anything at all...
-    int os = 2 * maximalOutlineSize(paintInfo.phase);
-
     if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
-        if (ty - table()->outerBorderTop() >= paintInfo.rect.bottom() + os ||
-                ty + height() + table()->outerBorderBottom() <= paintInfo.rect.y() - os)
-            return;
-        paintCollapsedBorder(paintInfo.context, tx, ty, width(), height());
-    } else {
-        if (ty + overflowTop(false) >= paintInfo.rect.bottom() + os || ty + overflowHeight(false) <= paintInfo.rect.y() - os)
-            return;
-        RenderBlock::paintObject(paintInfo, tx, ty);
-    }
+        tx += x();
+        ty += y();
+        int os = 2 * maximalOutlineSize(paintInfo.phase);
+        if (ty - table()->outerBorderTop() < paintInfo.rect.bottom() + os &&
+            ty + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
+            paintCollapsedBorder(paintInfo.context, tx, ty, width(), height());
+        return;
+    } 
+    
+    RenderBlock::paint(paintInfo, tx, ty);
 }
 
 static EBorderStyle collapsedBorderStyle(EBorderStyle style)

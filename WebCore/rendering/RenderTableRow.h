@@ -60,6 +60,7 @@ private:
     virtual bool requiresLayer() const { return isTransparent() || hasOverflowClip() || hasTransform() || hasMask(); }
 
     virtual void paint(PaintInfo&, int tx, int ty);
+
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

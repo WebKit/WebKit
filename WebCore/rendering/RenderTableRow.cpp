@@ -183,7 +183,7 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->hasLayer() && !child->isRenderInline() && child->nodeAtPoint(request, result, x, y, tx, ty, action)) {
+        if (child->isTableCell() && !toRenderBox(child)->hasSelfPaintingLayer() && child->nodeAtPoint(request, result, x, y, tx, ty, action)) {
             updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }
@@ -194,10 +194,9 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 
 void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    ASSERT(hasLayer());
+    ASSERT(hasSelfPaintingLayer());
     if (!layer())
         return;
-
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCell()) {
             // Paint the row background behind the cell.
@@ -205,7 +204,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
                 RenderTableCell* cell = static_cast<RenderTableCell*>(child);
                 cell->paintBackgroundsBehindCell(paintInfo, tx, ty, this);
             }
-            if (!child->hasLayer())
+            if (!toRenderBox(child)->hasSelfPaintingLayer())
                 child->paint(paintInfo, tx, ty);
         }
     }

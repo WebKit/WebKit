@@ -555,11 +555,8 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
     // Check kids first.
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        // FIXME: We have to skip over inline flows, since they can show up inside table rows
-        // at the moment (a demoted inline <form> for example). If we ever implement a
-        // table-specific hit-test method (which we should do for performance reasons anyway),
-        // then we can remove this check.
-        if (!child->hasLayer() && !child->isRenderInline() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+        ASSERT(!child->hasLayer());
+        if (!child->hasLayer() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
             updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
             return true;
         }
@@ -851,6 +848,43 @@ void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, b
 }
 
 #endif
+
+bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)
+        return false;
+        
+    bool isControlClip = hasControlClip();
+    bool isOverflowClip = hasOverflowClip() && !layer()->isSelfPaintingLayer();
+    
+    if (!isControlClip && !isOverflowClip)
+        return false;
+    
+    if (paintInfo.phase == PaintPhaseOutline)
+        paintInfo.phase = PaintPhaseChildOutlines;
+    else if (paintInfo.phase == PaintPhaseChildBlockBackground) {
+        paintInfo.phase = PaintPhaseBlockBackground;
+        paintObject(paintInfo, tx, ty);
+        paintInfo.phase = PaintPhaseChildBlockBackgrounds;
+    }
+    IntRect clipRect(isControlClip ? controlClipRect(tx, ty) : overflowClipRect(tx, ty));
+    paintInfo.context->save();
+    paintInfo.context->clip(clipRect);
+    return true;
+}
+
+void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, int tx, int ty)
+{
+    ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
+
+    paintInfo.context->restore();
+    if (originalPhase == PaintPhaseOutline) {
+        paintInfo.phase = PaintPhaseSelfOutline;
+        paintObject(paintInfo, tx, ty);
+        paintInfo.phase = originalPhase;
+    } else if (originalPhase == PaintPhaseChildBlockBackground)
+        paintInfo.phase = originalPhase;
+}
 
 IntRect RenderBox::overflowClipRect(int tx, int ty)
 {

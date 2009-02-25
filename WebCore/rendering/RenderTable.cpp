@@ -450,6 +450,15 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     if (tx + overflowLeft(false) >= paintInfo.rect.right() + os || tx + overflowWidth(false) <= paintInfo.rect.x() - os)
         return;
 
+    bool pushedClip = pushContentsClip(paintInfo, tx, ty);    
+    paintObject(paintInfo, tx, ty);
+    if (pushedClip)
+        popContentsClip(paintInfo, paintPhase, tx, ty);
+}
+
+void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
+{
+    PaintPhase paintPhase = paintInfo.phase;
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasBoxDecorations() && style()->visibility() == VISIBLE)
         paintBoxDecorations(paintInfo, tx, ty);
 
@@ -461,19 +470,20 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     // We're done.  We don't bother painting any children.
     if (paintPhase == PaintPhaseBlockBackground)
         return;
-
+    
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     if (paintPhase == PaintPhaseChildBlockBackgrounds)
         paintPhase = PaintPhaseChildBlockBackground;
+
     PaintInfo info(paintInfo);
     info.phase = paintPhase;
     info.paintingRoot = paintingRootForChildren(paintInfo);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->hasLayer() && (child->isTableSection() || child == m_caption))
+        if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption))
             child->paint(info, tx, ty);
     }
-
+    
     if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style()->visibility() == VISIBLE) {
         // Collect all the unique border styles that we want to paint in a sorted list.  Once we
         // have all the styles sorted, we then do individual passes, painting each style of border
@@ -1133,6 +1143,31 @@ IntRect RenderTable::overflowClipRect(int tx, int ty)
     }
 
     return rect;
+}
+
+bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction action)
+{
+    tx += x();
+    ty += y();
+
+    // Check kids first.
+    if (!hasOverflowClip() || overflowClipRect(tx, ty).contains(xPos, yPos)) {
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+            if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption) &&
+                child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+                updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
+                return true;
+            }
+        }
+    }
+
+    // Check our bounds next.
+    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && IntRect(tx, ty, width(), height()).contains(xPos, yPos)) {
+        updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
+        return true;
+    }
+
+    return false;
 }
 
 }

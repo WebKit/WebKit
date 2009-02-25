@@ -939,8 +939,20 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
     tx += x();
     ty += y();
 
+    PaintPhase phase = paintInfo.phase;
+    bool pushedClip = pushContentsClip(paintInfo, tx, ty);
+    paintObject(paintInfo, tx, ty);
+    if (pushedClip)
+        popContentsClip(paintInfo, phase, tx, ty);
+}
+
+void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
+{
     // Check which rows and cols are visible and only paint these.
     // FIXME: Could use a binary search here.
+    unsigned totalRows = m_gridRows;
+    unsigned totalCols = table()->columns().size();
+
     PaintPhase paintPhase = paintInfo.phase;
     int x = paintInfo.rect.x();
     int y = paintInfo.rect.y();
@@ -1027,11 +1039,11 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 
                     // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
                     // painting the row background for the cell.
-                    if (!row->hasLayer())
+                    if (!row->hasSelfPaintingLayer())
                         cell->paintBackgroundsBehindCell(paintInfo, tx, ty, row);
                 }
 
-                if ((!cell->hasLayer() && !row->hasLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
+                if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
                     cell->paint(paintInfo, tx, ty);
             }
         }
@@ -1124,12 +1136,15 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     tx += x();
     ty += y();
 
+    if (hasOverflowClip() && !overflowClipRect(tx, ty).contains(xPos, yPos))
+        return false;
+
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         // FIXME: We have to skip over inline flows, since they can show up inside table rows
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->hasLayer() && !child->isRenderInline() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+        if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
             updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
             return true;
         }

@@ -60,6 +60,11 @@ void RenderBoxModelObject::destroy()
     RenderObject::destroy();
 }
 
+bool RenderBoxModelObject::hasSelfPaintingLayer() const
+{
+    return m_layer && m_layer->isSelfPaintingLayer();
+}
+
 void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     s_wasFloating = isFloating();

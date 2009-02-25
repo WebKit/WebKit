@@ -1,3 +1,81 @@
+2009-02-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=23740, painting order wrong for normal flow elements with overflow: hidden
+        
+        This patch reworks the painting of overflow.  There is now the concept of a "self-painting layer."  All
+        layers are considered to be self-painting except for overflow layers that are normal flow (and that don't have
+        reflections or masks).
+        
+        If an overflow layer is not self-painting, then it ends up painted by its parent just like any other normal flow object.
+        The only difference is that the clip has to be pushed and popped when painting the object's children.
+        
+        The lightweight clipping scheme used for controls has been extended to cover overflow now in this simplified case.  With
+        the code consolidated into reusable push/pop functions, all of the renderers that use overflow have been patched to
+        use the new functions.
+        
+        Hit testing has also been patched to check the overflow clip rect first before recurring into children.
+        
+        Scrollbar paint has been moved into RenderBlock for now, since none of the table objects support scrollbars
+        yet, and scrollbar hit testing was already there anyway.  Now the two code paths are more symmetrical.
+        
+        Masks are now treated like normal flow layers (just like reflections).
+
+        A couple of test cases have been added to fast/overflow to test the stacking order. 
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::floatRect):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::popContentsClip):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::paintObject):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasSelfPaintingLayer):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::isSelfPaintingLayer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeLayers):
+
 2009-02-24  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (build fix).

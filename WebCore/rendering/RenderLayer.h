@@ -218,6 +218,7 @@ public:
     void suspendMarquees();
 
     bool isNormalFlowOnly() const { return m_isNormalFlowOnly; }
+    bool isSelfPaintingLayer() const;
 
     bool requiresSlowRepaints() const;
 
@@ -457,7 +458,7 @@ private:
 
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
-    bool shouldBeNormalFlowOnly() const;
+    bool shouldBeNormalFlowOnly() const; 
 
     virtual void valueChanged(Scrollbar*);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);

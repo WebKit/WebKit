@@ -1547,7 +1547,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
             // Only repaint the object if it is overhanging, is not in its own layer, and
             // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
             // condition is replaced with being a descendant of us.
-            if (r->m_bottom > height() && (paintAllDescendants && r->m_renderer->isDescendantOf(this) || r->m_shouldPaint) && !r->m_renderer->hasLayer()) {                
+            if (r->m_bottom > height() && (paintAllDescendants && r->m_renderer->isDescendantOf(this) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {                
                 r->m_renderer->repaint();
                 r->m_renderer->repaintOverhangingFloats();
             }
@@ -1574,36 +1574,16 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
     }
 
-    bool useControlClip = phase != PaintPhaseBlockBackground && phase != PaintPhaseSelfOutline && phase != PaintPhaseMask && hasControlClip();
-
-    // Push a clip.
-    if (useControlClip) {
-        if (phase == PaintPhaseOutline)
-            paintInfo.phase = PaintPhaseChildOutlines;
-        else if (phase == PaintPhaseChildBlockBackground) {
-            paintInfo.phase = PaintPhaseBlockBackground;
-            paintObject(paintInfo, tx, ty);
-            paintInfo.phase = PaintPhaseChildBlockBackgrounds;
-        }
-        IntRect clipRect(controlClipRect(tx, ty));
-        if (clipRect.isEmpty())
-            return;
-        paintInfo.context->save();
-        paintInfo.context->clip(clipRect);
-    }
-
+    bool pushedClip = pushContentsClip(paintInfo, tx, ty);
     paintObject(paintInfo, tx, ty);
-    
-    // Pop the clip.
-    if (useControlClip) {
-        paintInfo.context->restore();
-        if (phase == PaintPhaseOutline) {
-            paintInfo.phase = PaintPhaseSelfOutline;
-            paintObject(paintInfo, tx, ty);
-            paintInfo.phase = phase;
-        } else if (phase == PaintPhaseChildBlockBackground)
-            paintInfo.phase = phase;
-    }
+    if (pushedClip)
+        popContentsClip(paintInfo, phase, tx, ty);
+
+    // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
+    // z-index.  We paint after we painted the background/border, so that the scrollbars will
+    // sit above the background/border.
+    if (hasOverflowClip() && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground))
+        layer()->paintOverflowControls(paintInfo.context, tx, ty, paintInfo.rect);
 }
 
 void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
@@ -1727,7 +1707,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             return;
         }
 
-        if (!child->hasLayer() && !child->isFloating())
+        if (!child->hasSelfPaintingLayer() && !child->isFloating())
             child->paint(info, tx, ty);
 
         // Check for page-break-after: always, and if it's set, break and bail.
@@ -1815,7 +1795,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
         if (inlineContinuation() && inlineContinuation()->hasOutline() && inlineContinuation()->style()->visibility() == VISIBLE) {
             RenderInline* inlineRenderer = toRenderInline(inlineContinuation()->node()->renderer());
-            if (!inlineRenderer->hasLayer())
+            if (!inlineRenderer->hasSelfPaintingLayer())
                 containingBlock()->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
                 inlineRenderer->paintOutline(paintInfo.context, tx - x() + inlineRenderer->containingBlock()->x(),
@@ -1842,7 +1822,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         // Only paint the object if our m_shouldPaint flag is set.
-        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
+        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
             int currentTX = tx + r->m_left - r->m_renderer->x() + r->m_renderer->marginLeft();
@@ -2376,7 +2356,7 @@ void RenderBlock::insertFloatingObject(RenderBox* o)
     newObj->m_top = -1;
     newObj->m_bottom = -1;
     newObj->m_width = o->width() + o->marginLeft() + o->marginRight();
-    newObj->m_shouldPaint = !o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
+    newObj->m_shouldPaint = !o->hasSelfPaintingLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
     newObj->m_isDescendant = true;
     newObj->m_renderer = o;
 
@@ -2672,7 +2652,7 @@ IntRect RenderBlock::floatRect() const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
-        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
+        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             IntRect childRect = r->m_renderer->overflowRect(false);
             childRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
             result.unite(childRect);
@@ -2741,7 +2721,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+            if (r->m_shouldPaint || r->m_renderer->hasSelfPaintingLayer()) {
                 int lp = r->m_top + r->m_renderer->marginTop() + r->m_renderer->lowestPosition(false);
                 bottom = max(bottom, lp + relativeOffset);
             }
@@ -2817,7 +2797,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+            if (r->m_shouldPaint || r->m_renderer->hasSelfPaintingLayer()) {
                 int rp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->rightmostPosition(false);
                 right = max(right, rp + relativeOffset);
             }
@@ -2898,7 +2878,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+            if (r->m_shouldPaint || r->m_renderer->hasSelfPaintingLayer()) {
                 int lp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->leftmostPosition(false);
                 left = min(left, lp + relativeOffset);
             }
@@ -3094,7 +3074,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
                 }
                 m_floatingObjects->append(floatingObj);
             }
-        } else if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasLayer() && r->m_renderer->isDescendantOf(child) && r->m_renderer->enclosingLayer() == child->enclosingLayer())
+        } else if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer() &&
+                   r->m_renderer->isDescendantOf(child) && r->m_renderer->enclosingLayer() == child->enclosingLayer())
             // The float is not overhanging from this block, so if it is a descendant of the child, the child should
             // paint it (the other case is that it is intruding into the child), unless it has its own layer or enclosing
             // layer.
@@ -3102,7 +3083,7 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
             // it should paint.
             r->m_shouldPaint = true;
 
-        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
+        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             IntRect floatOverflowRect = r->m_renderer->overflowRect(false);
             floatOverflowRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
             floatsOverflowRect.unite(floatOverflowRect);
@@ -3264,16 +3245,16 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             return false;
     }
 
-    if (isPointInOverflowControl(result, _x, _y, tx, ty)) {
-        if (hitTestAction == HitTestBlockBackground) {
-            updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
-            return true;
-        }
-        return false;
+    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, _x, _y, tx, ty)) {
+        updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
+        return true;
     }
 
-     // If we have lightweight control clipping, then we can't have any spillout. 
-    if (!hasControlClip() || controlClipRect(tx, ty).contains(_x, _y)) {
+    // If we have clipping, then we can't have any spillout.
+    bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
+    bool useClip = (hasControlClip() || useOverflowClip);
+    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(tx, ty).contains(_x, _y) : overflowClipRect(tx, ty).contains(_x, _y));
+    if (checkChildren) {
         // Hit test descendants first.
         int scrolledX = tx;
         int scrolledY = ty;
@@ -3298,7 +3279,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             FloatingObject* o;
             DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
             for (it.toLast(); (o = it.current()); --it) {
-                if (o->m_shouldPaint && !o->m_renderer->hasLayer()) {
+                if (o->m_shouldPaint && !o->m_renderer->hasSelfPaintingLayer()) {
                     int xoffset = scrolledX + o->m_left + o->m_renderer->marginLeft() - o->m_renderer->x();
                     int yoffset =  scrolledY + o->m_top + o->m_renderer->marginTop() - o->m_renderer->y();
                     if (o->m_renderer->hitTest(request, result, IntPoint(_x, _y), xoffset, yoffset)) {
@@ -3369,10 +3350,8 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         HitTestAction childHitTest = hitTestAction;
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
-        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-            // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
-            // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
-            if (!child->hasLayer() && !child->isFloating() && !child->isRenderInline() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
+        for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
+            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
                 updateHitTestResult(result, IntPoint(x - tx, y - ty));
                 return true;
             }

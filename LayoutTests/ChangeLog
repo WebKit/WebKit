@@ -1,3 +1,38 @@
+2009-02-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=23740, painting order wrong for normal flow elements with overflow: hidden
+        
+        This patch reworks the painting of overflow.  There is now the concept of a "self-painting layer."  All
+        layers are considered to be self-painting except for overflow layers that are normal flow (and that don't have
+        reflections or masks).
+        
+        If an overflow layer is not self-painting, then it ends up painted by its parent just like any other normal flow object.
+        The only difference is that the clip has to be pushed and popped when painting the object's children.
+        
+        The lightweight clipping scheme used for controls has been extended to cover overflow now in this simplified case.  With
+        the code consolidated into reusable push/pop functions, all of the renderers that use overflow have been patched to
+        use the new functions.
+        
+        Hit testing has also been patched to check the overflow clip rect first before recurring into children.
+        
+        Scrollbar paint has been moved into RenderBlock for now, since none of the table objects support scrollbars
+        yet, and scrollbar hit testing was already there anyway.  Now the two code paths are more symmetrical.
+        
+        Masks are now treated like normal flow layers (just like reflections).
+        
+        A couple of test cases have been added to fast/overflow to test the stacking order.
+
+        * fast/overflow/overflow-float-stacking.html: Added.
+        * fast/overflow/overflow-stacking.html: Added.
+        * platform/mac/fast/overflow/overflow-float-stacking-expected.checksum: Added.
+        * platform/mac/fast/overflow/overflow-float-stacking-expected.png: Added.
+        * platform/mac/fast/overflow/overflow-float-stacking-expected.txt: Added.
+        * platform/mac/fast/overflow/overflow-stacking-expected.checksum: Added.
+        * platform/mac/fast/overflow/overflow-stacking-expected.png: Added.
+        * platform/mac/fast/overflow/overflow-stacking-expected.txt: Added.
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
