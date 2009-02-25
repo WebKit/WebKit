@@ -1,3 +1,13 @@
+2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Zack Rusin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24158
+        Adding these tests back in as they are now passing with the implementation
+        of the queue*() methods on layoutTestController.
+
+        * platform/qt/Skipped:
+
 2009-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson

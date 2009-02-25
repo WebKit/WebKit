@@ -1052,7 +1052,6 @@ fast/forms/mailto/post-multiple-items.html
 fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
 fast/frames/onlyCommentInIFrame.html
-fast/frames/viewsource-empty-attribute-value.html
 fast/history/subframe-is-visited.html
 fast/inline/positionedLifetime.html
 fast/invalid/junk-data.xml
@@ -2864,10 +2863,6 @@ fast/forms/slider-thumb-shared-style.html
 fast/forms/slider-thumb-stylability.html
 fast/forms/stuff-on-my-optgroup.html
 fast/forms/targeted-frame-submission.html
-fast/forms/textarea-crlf.html
-fast/forms/textarea-linewrap-dynamic.html
-fast/forms/textarea-setvalue-submit.html
-fast/forms/textarea-trailing-newline.html
 fast/forms/textfield-drag-into-disabled.html
 fast/forms/textfield-overflow.html
 fast/forms/text-field-setvalue-crash.html
@@ -2882,13 +2877,7 @@ fast/frames/frame-element-name.html
 fast/frames/iframe-option-crash.xhtml
 fast/frames/iframe-with-frameborder.html
 fast/frames/inline-object-inside-frameset.html
-fast/frames/invalid.html
-fast/frames/location-change.html
-fast/frames/location-put-after-removal.html
-fast/frames/onload-remove-iframe-crash.html
 fast/frames/viewsource-attribute.html
-fast/frames/viewsource-plain-text-tags.html
-fast/gradients/crash-on-remove.html
 fast/html/listing.html
 fast/images/animated-gif-with-offsets.html
 fast/images/imagemap-case.html
@@ -4191,12 +4180,7 @@ fast/dom/Window/window-resize.html
 fast/dynamic/insertAdjacentElement.html
 fast/forms/textarea-align.html
 fast/forms/textarea-setinnerhtml.html
-fast/frames/negative-remaining-length-crash.html
-fast/frames/remove-frame-with-scrollbars-crash.html
-fast/html/body-offset-properties.html
 fast/dom/StyleSheet/ownerNode-lifetime-2.html
-fast/frames/no-frame-borders.html
-fast/frames/repaint-display-none-crash.html
 fast/dom/importNodeHTML.html
 fast/dom/outerText.html
 fast/encoding/char-decoding-mac.html
@@ -4206,13 +4190,7 @@ fast/events/offsetX-offsetY.html
 fast/events/onunload-not-on-body.html
 fast/forms/form-and-frame-interaction-retains-values.html
 fast/forms/radio_checked_name.html
-fast/forms/textarea-initial-caret-position.html
-fast/forms/textarea-no-scroll-on-blur.html
-fast/forms/textarea-scrolled-endline-caret.html
-fast/forms/textarea-type-spaces.html
 fast/forms/willvalidate-000.html
-fast/frames/set-unloaded-frame-location.html
-fast/frames/valid.html
 fast/js/exceptions-thrown-in-callbacks.html
 fast/js/global-constructors.html
 fast/js/navigator-mimeTypes-length.html
@@ -4223,7 +4201,6 @@ fast/events/mouse-click-events.html
 fast/dom/HTMLFontElement/size-attribute.html
 fast/dom/row-inner-text.html
 fast/events/autoscroll-in-textfield.html
-fast/forms/textarea-default-value-leading-newline.html
 fast/dom/dom-parse-serialize-display.html
 fast/canvas/quadraticCurveTo.xml
 fast/css/namespaces/001.xml

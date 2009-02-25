@@ -2,6 +2,7 @@
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -254,6 +255,15 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
     return result;
 }
 
+QString DumpRenderTree::dumpBackForwardList()
+{
+    QString result;
+    result.append(QLatin1String("\n============== Back Forward List ==============\n"));
+    result.append(QLatin1String("FIXME: Unimplemented!\n"));
+    result.append(QLatin1String("===============================================\n"));
+    return result;
+}
+
 void DumpRenderTree::dump()
 {
     QWebFrame *frame = m_page->mainFrame();
@@ -272,6 +282,11 @@ void DumpRenderTree::dump()
     } else {
         renderDump = frame->renderTreeDump();
     }
+
+    if (m_controller->shouldDumpBackForwardList()) {
+        renderDump.append(dumpBackForwardList());
+    }
+
     if (renderDump.isEmpty()) {
         printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
     } else {

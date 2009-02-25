@@ -1,3 +1,35 @@
+2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Zack Rusin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24158
+        Implement the queue*() methods of the layoutTestController and begin
+        implementing the dump of the back/forward list.  This results in 2% more
+        tests passing as well as 23 currently skipped tests now passing.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dumpBackForwardList):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (findFrameNamed):
+        (LoadItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+        (LayoutTestController::reset):
+        (LayoutTestController::processWork):
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::queueBackNavigation):
+        (LayoutTestController::queueForwardNavigation):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::queueScript):
+        * DumpRenderTree/qt/jsobjects.h:
+        (LayoutTestController::shouldDumpBackForwardList):
+        (LayoutTestController::dumpBackForwardList):
+
 2009-02-24  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.

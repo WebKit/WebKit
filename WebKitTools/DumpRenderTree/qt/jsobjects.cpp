@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +33,71 @@
 #include <qevent.h>
 #include <qapplication.h>
 #include <qevent.h>
+#include <qtimer.h>
 
 #include "DumpRenderTree.h"
+#include "WorkQueueItem.h"
+#include "WorkQueue.h"
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
+
+QWebFrame *findFrameNamed(const QString &frameName, QWebFrame *frame)
+{
+    if (frame->frameName() == frameName)
+        return frame;
+
+    foreach (QWebFrame *childFrame, frame->childFrames())
+        if (QWebFrame *f = findFrameNamed(frameName, childFrame))
+            return f;
+
+    return 0;
+}
+
+void LoadItem::invoke() const
+{
+    //qDebug() << ">>>LoadItem::invoke";
+    Q_ASSERT(m_webPage);
+
+    QWebFrame *frame = 0;
+    const QString t = target();
+    if (t.isEmpty())
+        frame = m_webPage->mainFrame();
+    else
+        frame = findFrameNamed(t, m_webPage->mainFrame());
+
+    if (!frame)
+        return;
+
+    frame->load(url());
+}
+
+void ReloadItem::invoke() const
+{
+    //qDebug() << ">>>ReloadItem::invoke";
+    Q_ASSERT(m_webPage);
+    m_webPage->triggerAction(QWebPage::Reload);
+}
+
+void ScriptItem::invoke() const
+{
+    //qDebug() << ">>>ScriptItem::invoke";
+    Q_ASSERT(m_webPage);
+    m_webPage->mainFrame()->evaluateJavaScript(script());
+}
+
+void BackForwardItem::invoke() const
+{
+    //qDebug() << ">>>BackForwardItem::invoke";
+    Q_ASSERT(m_webPage);
+    if (m_howFar > 0) {
+        for (int i = 0; i != m_howFar; ++i)
+            m_webPage->triggerAction(QWebPage::Forward);
+    } else {
+        for (int i = 0; i != m_howFar; --i)
+            m_webPage->triggerAction(QWebPage::Back);
+    }
+}
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree *drt)
     : QObject()
@@ -50,6 +111,7 @@ void LayoutTestController::reset()
 {
     m_isLoading = true;
     m_textDump = false;
+    m_dumpBackForwardList = false;
     m_dumpChildrenAsText = false;
     m_canOpenWindows = false;
     m_waitForDone = false;
@@ -63,13 +125,37 @@ void LayoutTestController::reset()
     qt_dump_resource_load_callbacks(false);
 }
 
+void LayoutTestController::processWork()
+{
+    qDebug() << ">>>processWork";
+
+    // quit doing work once a load is in progress
+    while (WorkQueue::shared()->count() > 0 && !m_topLoadingFrame) {
+        WorkQueueItem* item = WorkQueue::shared()->dequeue();
+        Q_ASSERT(item);
+        item->invoke();
+        delete item;
+    }
+
+    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
+    if (!m_topLoadingFrame && !shouldWaitUntilDone()) {
+        emit done();
+        m_isLoading = false;
+    }
+}
+
 void LayoutTestController::maybeDump(bool)
 {
     m_topLoadingFrame = 0;
+    WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
 
     if (!shouldWaitUntilDone()) {
-        emit done();
-        m_isLoading = false;
+        if (WorkQueue::shared()->count())
+            QTimer::singleShot(0, this, SLOT(processWork()));
+        else {
+            emit done();
+            m_isLoading = false;
+        }
     }
 }
 
@@ -101,7 +187,6 @@ void LayoutTestController::clearBackForwardList()
     m_drt->webPage()->history()->clear();
 }
 
-
 void LayoutTestController::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";
@@ -113,9 +198,36 @@ void LayoutTestController::dumpResourceLoadCallbacks()
     qt_dump_resource_load_callbacks(true);
 }
 
+void LayoutTestController::queueBackNavigation(int howFarBackward)
+{
+    //qDebug() << ">>>queueBackNavigation" << howFarBackward;
+    WorkQueue::shared()->queue(new BackItem(howFarBackward, m_drt->webPage()));
+}
+
+void LayoutTestController::queueForwardNavigation(int howFarForward)
+{
+    //qDebug() << ">>>queueForwardNavigation" << howFarForward;
+    WorkQueue::shared()->queue(new ForwardItem(howFarForward, m_drt->webPage()));
+}
+
+void LayoutTestController::queueLoad(const QString &url, const QString &target)
+{
+    //qDebug() << ">>>queueLoad" << url << target;
+    QUrl mainResourceUrl = m_drt->webPage()->mainFrame()->url();
+    QString absoluteUrl = mainResourceUrl.resolved(QUrl(url)).toEncoded();
+    WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
+}
+
 void LayoutTestController::queueReload()
 {
     //qDebug() << ">>>queueReload";
+    WorkQueue::shared()->queue(new ReloadItem(m_drt->webPage()));
+}
+
+void LayoutTestController::queueScript(const QString &url)
+{
+    //qDebug() << ">>>queueScript" << url;
+    WorkQueue::shared()->queue(new ScriptItem(url, m_drt->webPage()));
 }
 
 void LayoutTestController::provisionalLoad()

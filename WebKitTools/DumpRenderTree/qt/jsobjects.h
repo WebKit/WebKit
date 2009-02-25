@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +49,7 @@ public:
     void setLoading(bool loading) { m_isLoading = loading; }
 
     bool shouldDumpAsText() const { return m_textDump; }
+    bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
     bool canOpenWindows() const { return m_canOpenWindows; }
@@ -68,9 +70,14 @@ public slots:
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void waitUntilDone();
     void notifyDone();
+    void dumpBackForwardList() { m_dumpBackForwardList = true; }
     void dumpEditingCallbacks();
     void dumpResourceLoadCallbacks();
+    void queueBackNavigation(int howFarBackward);
+    void queueForwardNavigation(int howFarForward);
+    void queueLoad(const QString &url, const QString &target = QString());
     void queueReload();
+    void queueScript(const QString &url);
     void provisionalLoad();
     void setCloseRemainingWindowsWhenComplete(bool=false) {}
     int windowCount();
@@ -83,10 +90,14 @@ public slots:
     void setJavaScriptProfilingEnabled(bool enable);
     void setFixedLayoutSize(int width, int height);
     void setUseFixedLayout(bool enable);
-    
+
+private slots:
+    void processWork();
+
 private:
     bool m_isLoading;
     bool m_textDump;
+    bool m_dumpBackForwardList;
     bool m_dumpChildrenAsText;
     bool m_canOpenWindows;
     bool m_waitForDone;
