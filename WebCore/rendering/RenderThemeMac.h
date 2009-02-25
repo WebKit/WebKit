@@ -60,6 +60,8 @@ public:
     virtual Color platformInactiveListBoxSelectionBackgroundColor() const;
     virtual Color platformInactiveListBoxSelectionForegroundColor() const;
 
+    virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return SmallScrollbar; }
+    
     virtual void platformColorsDidChange();
 
     // System fonts.

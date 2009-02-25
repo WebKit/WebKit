@@ -629,7 +629,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, this);
     else
-        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, SmallScrollbar);
+        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme()->scrollbarControlSizeForPart(ListboxPart));
     document()->view()->addChild(widget.get());        
     return widget.release();
 }

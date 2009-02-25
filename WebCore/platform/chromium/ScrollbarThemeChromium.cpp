@@ -96,7 +96,7 @@ IntRect ScrollbarThemeChromium::forwardButtonRect(Scrollbar* scrollbar, Scrollba
 IntRect ScrollbarThemeChromium::trackRect(Scrollbar* scrollbar, bool)
 {
     IntSize bs = buttonSize(scrollbar);
-    int thickness = scrollbarThickness();
+    int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar) {
         if (scrollbar->width() < 2 * thickness)
             return IntRect();
@@ -173,7 +173,7 @@ IntSize ScrollbarThemeChromium::buttonSize(Scrollbar* scrollbar)
     // times thickness pixels left.  This allows the scrollbar to scale down
     // and function even at tiny sizes.
 
-    int thickness = scrollbarThickness();
+    int thickness = scrollbarThickness(scrollbar->controlSize());
 
 #if !defined(__linux__)
     // In layout test mode, we force the button "girth" (i.e., the length of

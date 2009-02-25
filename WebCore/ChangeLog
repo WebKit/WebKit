@@ -1,3 +1,26 @@
+2009-02-25  Scott Violet  <sky@google.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24171
+        Provides a RenderTheme method for getting the scroll bar size and
+        changes RenderListBox to use it. RenderTheme returns a size of regular,
+        and Mac's override to return small. Changes ScrollbarThemeChromium to
+        use the scrollbarsize of the scrollbar when getting the size
+        instead of passing in no-args.
+
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::trackRect):
+        (WebCore::ScrollbarThemeChromium::buttonSize):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::scrollbarControlSizeForPart):
+        * rendering/RenderThemeChromiumMac.h:
+        (WebCore::RenderThemeChromiumMac::scrollbarControlSizeForPart):
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::scrollbarControlSizeForPart):
+
 2009-02-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
