@@ -1,3 +1,18 @@
+2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do not queue the calls to 'DumpRenderTree::dump()' as this can result
+        in more than one call as a test that calls 'notifyDone()' can then be
+        subsequently fully loaded and initiate a second dump.  Also make sure
+        to stop any existing page load that is happening before running the next
+        test.  Combined this serves to produce 217 more passing tests for the
+        Qt port or roughly 5% at this point.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+
 2009-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

@@ -131,7 +131,7 @@ DumpRenderTree::DumpRenderTree()
     , m_notifier(0)
 {
     m_controller = new LayoutTestController(this);
-    connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
+    connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
 
     QWebView *view = new QWebView(0);
     view->resize(QSize(maxViewWidth, maxViewHeight));
@@ -185,6 +185,11 @@ void DumpRenderTree::open(const QUrl& url)
     int height = isW3CTest ? 360 : maxViewHeight;
     m_page->view()->resize(QSize(width, height));
     m_page->setViewportSize(QSize(width, height));
+
+    // Reset so that any current loads are stopped
+    m_page->blockSignals(true);
+    m_page->triggerAction(QWebPage::Stop);
+    m_page->blockSignals(false);
 
     resetJSObjects();
 
