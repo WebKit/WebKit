@@ -1,3 +1,16 @@
+2009-02-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Ported arcTo to Qt. Qt has no native support for arcTo. This changes
+        calculate the behavior of arcTo and draws it with lineTo and arc.
+
+        [QT] implement Canvas arcTo
+        https://bugs.webkit.org/show_bug.cgi?id=23873
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArcTo):
+
 2009-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

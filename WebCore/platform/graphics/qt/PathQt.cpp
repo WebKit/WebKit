@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- *               2006 Rob Buis   <buis@kde.org>
+ * Copyright (C) 2006 Zack Rusin   <zack@kde.org>
+ *               2006 Rob Buis     <buis@kde.org>
+ *               2009 Dirk Schulze <krit@webkit.org>
  *
  * All rights reserved.
  *
@@ -161,9 +162,72 @@ void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const 
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    //FIXME: busted
-    qWarning("arcTo is busted");
-    m_path->arcTo(p1.x(), p1.y(), p2.x(), p2.y(), radius, 90);
+    FloatPoint p0(m_path->currentPosition());
+
+    if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || radius == 0.f) {
+        m_path->lineTo(p1);
+        return;
+    }
+
+    FloatPoint p1p0((p0.x() - p1.x()),(p0.y() - p1.y()));
+    FloatPoint p1p2((p2.x() - p1.x()),(p2.y() - p1.y()));
+    float p1p0_length = sqrtf(p1p0.x() * p1p0.x() + p1p0.y() * p1p0.y());
+    float p1p2_length = sqrtf(p1p2.x() * p1p2.x() + p1p2.y() * p1p2.y());
+
+    double cos_phi = (p1p0.x() * p1p2.x() + p1p0.y() * p1p2.y()) / (p1p0_length * p1p2_length);
+    // all points on a line logic
+    if (cos_phi == -1) {
+        m_path->lineTo(p1);
+        return;
+    }
+    if (cos_phi == 1) {
+        // add infinite far away point
+        unsigned int max_length = 65535;
+        double factor_max = max_length / p1p0_length;
+        FloatPoint ep((p0.x() + factor_max * p1p0.x()), (p0.y() + factor_max * p1p0.y()));
+        m_path->lineTo(ep);
+        return;
+    }
+
+    float tangent = radius / tan(acos(cos_phi) / 2);
+    float factor_p1p0 = tangent / p1p0_length;
+    FloatPoint t_p1p0((p1.x() + factor_p1p0 * p1p0.x()), (p1.y() + factor_p1p0 * p1p0.y()));
+
+    FloatPoint orth_p1p0(p1p0.y(), -p1p0.x());
+    float orth_p1p0_length = sqrt(orth_p1p0.x() * orth_p1p0.x() + orth_p1p0.y() * orth_p1p0.y());
+    float factor_ra = radius / orth_p1p0_length;
+
+    // angle between orth_p1p0 and p1p2 to get the right vector orthographic to p1p0
+    double cos_alpha = (orth_p1p0.x() * p1p2.x() + orth_p1p0.y() * p1p2.y()) / (orth_p1p0_length * p1p2_length);
+    if (cos_alpha < 0.f)
+        orth_p1p0 = FloatPoint(-orth_p1p0.x(), -orth_p1p0.y());
+
+    FloatPoint p((t_p1p0.x() + factor_ra * orth_p1p0.x()), (t_p1p0.y() + factor_ra * orth_p1p0.y()));
+
+    // calculate angles for addArc
+    orth_p1p0 = FloatPoint(-orth_p1p0.x(), -orth_p1p0.y());
+    float sa = acos(orth_p1p0.x() / orth_p1p0_length);
+    if (orth_p1p0.y() < 0.f)
+        sa = 2 * piDouble - sa;
+
+    // anticlockwise logic
+    bool anticlockwise = false;
+
+    float factor_p1p2 = tangent / p1p2_length;
+    FloatPoint t_p1p2((p1.x() + factor_p1p2 * p1p2.x()), (p1.y() + factor_p1p2 * p1p2.y()));
+    FloatPoint orth_p1p2((t_p1p2.x() - p.x()),(t_p1p2.y() - p.y()));
+    float orth_p1p2_length = sqrtf(orth_p1p2.x() * orth_p1p2.x() + orth_p1p2.y() * orth_p1p2.y());
+    float ea = acos(orth_p1p2.x() / orth_p1p2_length);
+    if (orth_p1p2.y() < 0)
+        ea = 2 * piDouble - ea;
+    if ((sa > ea) && ((sa - ea) < piDouble))
+        anticlockwise = true;
+    if ((sa < ea) && ((ea - sa) > piDouble))
+        anticlockwise = true;
+
+    m_path->lineTo(t_p1p0);
+
+    addArc(p, radius, sa, ea, anticlockwise);
 }
 
 void Path::closeSubpath()
