@@ -1,3 +1,13 @@
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=24135
+        
+        Update the expected value after testcase change.
+
+        * fast/events/offsetX-offsetY-expected.txt:
+
 2009-02-05 Ojan Vafai <ojan@chromium.org> and Eric Seidel <eric@webkit.org>
 
         Reviewed by Dave Hyatt.

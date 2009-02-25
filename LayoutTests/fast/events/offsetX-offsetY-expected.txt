@@ -19,5 +19,5 @@ PASS: event at (157, 32) hit rel-box at offset (22, 24)
 PASS: event at (410, 30) hit fixed-box at offset (10, 10)
 PASS: event at (36, 272) hit with-bordertopextra at offset (4, 4)
 PASS: event at (563, 410) hit inside-overflow at offset (7, 6)
-PASS: event at (112, 369) hit transformed at offset (11, 15)
+PASS: event at (112, 369) hit transformed at offset (11, 16)
 
