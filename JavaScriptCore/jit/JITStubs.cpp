@@ -113,17 +113,9 @@ NEVER_INLINE void JITStubs::tryCachePutByID(CallFrame* callFrame, CodeBlock* cod
 
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
-        StructureChain* chain = structure->cachedPrototypeChain();
-        if (!chain) {
-            chain = cachePrototypeChain(callFrame, structure);
-            if (!chain) {
-                // This happens if someone has manually inserted null into the prototype chain 
-                stubInfo->opcodeID = op_put_by_id_generic;
-                return;
-            }
-        }
-        stubInfo->initPutByIdTransition(structure->previousID(), structure, chain);
-        JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), chain, returnAddress);
+        StructureChain* prototypeChain = structure->prototypeChain(callFrame);
+        stubInfo->initPutByIdTransition(structure->previousID(), structure, prototypeChain);
+        JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress);
         return;
     }
     
@@ -205,11 +197,8 @@ NEVER_INLINE void JITStubs::tryCacheGetByID(CallFrame* callFrame, CodeBlock* cod
 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
-        if (slotBaseObject->structure()->isDictionary()) {
-            RefPtr<Structure> transition = Structure::fromDictionaryTransition(slotBaseObject->structure());
-            slotBaseObject->setStructure(transition.release());
-            asCell(baseValue)->structure()->setCachedPrototypeChain(0);
-        }
+        if (slotBaseObject->structure()->isDictionary())
+            slotBaseObject->setStructure(Structure::fromDictionaryTransition(slotBaseObject->structure()));
         
         stubInfo->initGetByIdProto(structure, slotBaseObject->structure());
 
@@ -223,14 +212,9 @@ NEVER_INLINE void JITStubs::tryCacheGetByID(CallFrame* callFrame, CodeBlock* cod
         return;
     }
 
-    StructureChain* chain = structure->cachedPrototypeChain();
-    if (!chain)
-        chain = cachePrototypeChain(callFrame, structure);
-    ASSERT(chain);
-
-    stubInfo->initGetByIdChain(structure, chain);
-
-    JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, chain, count, slot.cachedOffset(), returnAddress);
+    StructureChain* prototypeChain = structure->prototypeChain(callFrame);
+    stubInfo->initGetByIdChain(structure, prototypeChain);
+    JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, slot.cachedOffset(), returnAddress);
 }
 
 #endif
@@ -672,11 +656,8 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
     else if (slot.slotBase() == asCell(baseValue)->structure()->prototypeForLookup(callFrame)) {
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
-        if (slotBaseObject->structure()->isDictionary()) {
-            RefPtr<Structure> transition = Structure::fromDictionaryTransition(slotBaseObject->structure());
-            slotBaseObject->setStructure(transition.release());
-            asCell(baseValue)->structure()->setCachedPrototypeChain(0);
-        }
+        if (slotBaseObject->structure()->isDictionary())
+            slotBaseObject->setStructure(Structure::fromDictionaryTransition(slotBaseObject->structure()));
 
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
@@ -686,15 +667,9 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));
     } else if (size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot)) {
-        StructureChain* chain = structure->cachedPrototypeChain();
-        if (!chain)
-            chain = cachePrototypeChain(callFrame, structure);
-        ASSERT(chain);
-
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
-
-        JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, chain, count, slot.cachedOffset());
+        JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, structure->prototypeChain(callFrame), count, slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));

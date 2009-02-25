@@ -99,7 +99,7 @@ inline JSValuePtr JSPropertyNameIterator::next(ExecState* exec)
     if (m_position == m_end)
         return noValue();
 
-    if (m_data->cachedStructure() == m_object->structure() && structureChainsAreEqual(m_data->cachedPrototypeChain(), m_object->structure()->cachedPrototypeChain()))
+    if (m_data->cachedStructure() == m_object->structure() && m_data->cachedPrototypeChain() == m_object->structure()->prototypeChain(exec))
         return jsOwnedString(exec, (*m_position++).ustring());
 
     do {

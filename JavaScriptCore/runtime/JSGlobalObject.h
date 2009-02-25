@@ -329,7 +329,7 @@ namespace JSC {
         return asGlobalObject(n->object);
     }
 
-    inline JSValuePtr Structure::prototypeForLookup(ExecState* exec)
+    inline JSValuePtr Structure::prototypeForLookup(ExecState* exec) const
     {
         if (typeInfo().type() == ObjectType)
             return m_prototype;
@@ -339,6 +339,32 @@ namespace JSC {
 
         ASSERT(typeInfo().type() == NumberType);
         return exec->lexicalGlobalObject()->numberPrototype();
+    }
+
+    inline StructureChain* Structure::prototypeChain(ExecState* exec) const
+    {
+        // We cache our prototype chain so our clients can share it.
+        if (!isValid(exec, m_cachedPrototypeChain.get())) {
+            JSValuePtr prototype = prototypeForLookup(exec);
+            m_cachedPrototypeChain = StructureChain::create(prototype.isNull() ? 0 : asObject(prototype)->structure());
+        }
+        return m_cachedPrototypeChain.get();
+    }
+
+    inline bool Structure::isValid(ExecState* exec, StructureChain* cachedPrototypeChain) const
+    {
+        if (!cachedPrototypeChain)
+            return false;
+
+        JSValuePtr prototype = prototypeForLookup(exec);
+        RefPtr<Structure>* cachedStructure = cachedPrototypeChain->head();
+        while(*cachedStructure && !prototype.isNull()) {
+            if (asObject(prototype)->structure() != *cachedStructure)
+                return false;
+            ++cachedStructure;
+            prototype = asObject(prototype)->prototype();
+        }
+        return prototype.isNull() && !*cachedStructure;
     }
 
     inline JSGlobalObject* ExecState::dynamicGlobalObject()

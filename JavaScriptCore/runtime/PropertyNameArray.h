@@ -65,14 +65,14 @@ namespace JSC {
         PropertyNameArray(JSGlobalData* globalData)
             : m_data(PropertyNameArrayData::create())
             , m_globalData(globalData)
-            , m_cacheable(true)
+            , m_shouldCache(true)
         {
         }
 
         PropertyNameArray(ExecState* exec)
             : m_data(PropertyNameArrayData::create())
             , m_globalData(&exec->globalData())
-            , m_cacheable(true)
+            , m_shouldCache(true)
         {
         }
 
@@ -95,8 +95,8 @@ namespace JSC {
 
         PassRefPtr<PropertyNameArrayData> releaseData() { return m_data.release(); }
 
-        void setCacheable(bool cacheable) { m_cacheable = cacheable; }
-        bool cacheable() const { return m_cacheable; }
+        void setShouldCache(bool shouldCache) { m_shouldCache = shouldCache; }
+        bool shouldCache() const { return m_shouldCache; }
 
     private:
         typedef HashSet<UString::Rep*, PtrHash<UString::Rep*> > IdentifierSet;
@@ -104,7 +104,7 @@ namespace JSC {
         RefPtr<PropertyNameArrayData> m_data;
         IdentifierSet m_set;
         JSGlobalData* m_globalData;
-        bool m_cacheable;
+        bool m_shouldCache;
     };
 
 } // namespace JSC

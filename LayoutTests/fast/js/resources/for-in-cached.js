@@ -1,0 +1,46 @@
+description(
+"This tests that for/in statements behave correctly when cached."
+);
+
+function forIn1() {
+    var result = [];
+    var o = { x: 1 };
+    for (var p in o)
+        result.push(p);
+    return result;
+}
+forIn1();
+Object.prototype.y = 2;
+shouldBe("forIn1()", "['x', 'y']");
+delete Object.prototype.y;
+
+function forIn2() {
+    var result = [];
+    var o = { x: 1, __proto__: null };
+    for (var p in o)
+        result.push(p);
+    return result;
+}
+forIn2();
+shouldBe("forIn2()", "['x']");
+
+function forIn3(proto) {
+    var result = [];
+    var o = { x: 1, __proto__: proto };
+    for (var p in o)
+        result.push(p);
+    return result;
+}
+forIn3({ __proto__: { y1: 2 } });
+forIn3({ __proto__: { y1: 2 } });
+shouldBe("forIn3({ __proto__: { y1: 2 } })", "['x', 'y1']");
+
+forIn3({ y2 : 2, __proto__: null });
+forIn3({ y2 : 2, __proto__: null });
+shouldBe("forIn3({ y2 : 2, __proto__: null })", "['x', 'y2']");
+
+forIn3({ __proto__: { __proto__: { y3 : 2 } } });
+forIn3({ __proto__: { __proto__: { y3 : 2 } } });
+shouldBe("forIn3({ __proto__: { __proto__: { y3 : 2 } } })", "['x', 'y3']");
+
+var successfullyParsed = true;

@@ -882,16 +882,7 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4] = structure->previousID();
         vPC[5] = structure;
-        StructureChain* chain = structure->cachedPrototypeChain();
-        if (!chain) {
-            chain = cachePrototypeChain(callFrame, structure);
-            if (!chain) {
-                // This happens if someone has manually inserted null into the prototype chain
-                vPC[0] = getOpcode(op_put_by_id_generic);
-                return;
-            }
-        }
-        vPC[6] = chain;
+        vPC[6] = structure->prototypeChain(callFrame);
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
         return;
@@ -976,11 +967,8 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
-        if (baseObject->structure()->isDictionary()) {
-            RefPtr<Structure> transition = Structure::fromDictionaryTransition(baseObject->structure());
-            baseObject->setStructure(transition.release());
-            asCell(baseValue)->structure()->setCachedPrototypeChain(0);
-        }
+        if (baseObject->structure()->isDictionary())
+            baseObject->setStructure(Structure::fromDictionaryTransition(baseObject->structure()));
 
         vPC[0] = getOpcode(op_get_by_id_proto);
         vPC[5] = baseObject->structure();
@@ -996,14 +984,9 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
-    StructureChain* chain = structure->cachedPrototypeChain();
-    if (!chain)
-        chain = cachePrototypeChain(callFrame, structure);
-    ASSERT(chain);
-
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structure;
-    vPC[5] = chain;
+    vPC[5] = structure->prototypeChain(callFrame);
     vPC[6] = count;
     vPC[7] = slot.cachedOffset();
     codeBlock->refStructures(vPC);

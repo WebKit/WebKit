@@ -1,3 +1,73 @@
+2009-02-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/6611174> REGRESSION (r36701): Unable to select
+        messages on hotmail (24052)
+        
+        The bug was that for-in enumeration used a cached prototype chain without
+        validating that it was up-to-date.
+        
+        This led me to refactor prototype chain caching so it was easier to work
+        with and harder to get wrong.
+        
+        After a bit of inlining, this patch is performance-neutral on SunSpider
+        and the v8 benchmarks.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::tryCachePutByID):
+        (JSC::JITStubs::tryCacheGetByID):
+        (JSC::JITStubs::cti_op_get_by_id_proto_list): Use the new refactored goodness. See
+        lines beginning with "-" and smile.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeForLookup): A shout out to const.
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::next): We can use a pointer comparison to
+        see if our cached structure chain is equal to the object's structure chain,
+        since in the case of a cache hit, we share references to the same structure
+        chain.
+
+        * runtime/Operations.h:
+        (JSC::countPrototypeChainEntriesAndCheckForProxies): Use the new refactored
+        goodness.
+
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::setShouldCache):
+        (JSC::PropertyNameArray::shouldCache): Renamed "cacheable" to "shouldCache"
+        to communicate that the client is specifying a recommendation, not a
+        capability.
+        
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure): No need to initialize a RefPtr.
+        (JSC::Structure::getEnumerablePropertyNames): Moved some code into helper
+        functions.
+
+        (JSC::Structure::prototypeChain): New centralized accessor for a prototype
+        chain. Revalidates on every access, since the objects in the prototype
+        chain may have mutated.
+
+        (JSC::Structure::isValid): Helper function for revalidating a cached
+        prototype chain.
+
+        (JSC::Structure::getEnumerableNamesFromPropertyTable):
+        (JSC::Structure::getEnumerableNamesFromClassInfoTable): Factored out of
+        getEnumerablePropertyNames.
+
+        * runtime/Structure.h:
+
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create): No need for structureChainsAreEqual, since
+        we use pointer equality now. Refactored StructureChain to make a little
+        more sense and eliminate special cases for null prototypes.
+
 2009-02-25  Steve Falkenburg  <sfalken@apple.com>
 
         Use timeBeginPeriod to enable timing resolution greater than 16ms in command line jsc for Windows.

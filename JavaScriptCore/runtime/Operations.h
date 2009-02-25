@@ -226,16 +226,6 @@ namespace JSC {
         return jsAddSlowCase(callFrame, v1, v2);
     }
 
-    inline StructureChain* cachePrototypeChain(CallFrame* callFrame, Structure* structure)
-    {
-        JSValuePtr prototype = structure->prototypeForLookup(callFrame);
-        if (!prototype.isCell())
-            return 0;
-        RefPtr<StructureChain> chain = StructureChain::create(asObject(prototype)->structure());
-        structure->setCachedPrototypeChain(chain.release());
-        return structure->cachedPrototypeChain();
-    }
-
     inline size_t countPrototypeChainEntriesAndCheckForProxies(CallFrame* callFrame, JSValuePtr baseValue, const PropertySlot& slot)
     {
         JSCell* cell = asCell(baseValue);
@@ -254,11 +244,8 @@ namespace JSC {
 
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
-            if (cell->structure()->isDictionary()) {
-                RefPtr<Structure> transition = Structure::fromDictionaryTransition(cell->structure());
-                asObject(cell)->setStructure(transition.release());
-                cell->structure()->setCachedPrototypeChain(0);
-            }
+            if (cell->structure()->isDictionary())
+                asObject(cell)->setStructure(Structure::fromDictionaryTransition(cell->structure()));
 
             ++count;
         }

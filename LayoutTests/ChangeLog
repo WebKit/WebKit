@@ -1,3 +1,15 @@
+2009-02-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added a test for <rdar://problem/6611174> REGRESSION (r36701): Unable to
+        select messages on hotmail (24052)
+
+        * fast/js/for-in-cached-expected.txt: Added.
+        * fast/js/for-in-cached.html: Added.
+        * fast/js/resources/for-in-cached.js: Added.
+        (forIn):
+
 2009-02-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

@@ -123,9 +123,6 @@ void Structure::dumpStatistics()
 Structure::Structure(JSValuePtr prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
     , m_prototype(prototype)
-    , m_cachedPrototypeChain(0)
-    , m_previous(0)
-    , m_nameInPrevious(0)
     , m_propertyTable(0)
     , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
     , m_offset(noOffset)
@@ -289,52 +286,27 @@ void Structure::materializePropertyMap()
 
 void Structure::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
 {
-    bool shouldCache = propertyNames.cacheable() && !(propertyNames.size() || m_isDictionary);
+    bool shouldCache = propertyNames.shouldCache() && !(propertyNames.size() || m_isDictionary);
 
-    if (shouldCache) {
-        if (m_cachedPropertyNameArrayData) {
-            if (structureChainsAreEqual(m_cachedPropertyNameArrayData->cachedPrototypeChain(), cachedPrototypeChain())) {
-                propertyNames.setData(m_cachedPropertyNameArrayData);
-                return;
-            }
+    if (shouldCache && m_cachedPropertyNameArrayData) {
+        if (m_cachedPropertyNameArrayData->cachedPrototypeChain() == prototypeChain(exec)) {
+            propertyNames.setData(m_cachedPropertyNameArrayData);
+            return;
         }
-        propertyNames.setCacheable(false);
+        clearEnumerationCache();
     }
 
-    getEnumerablePropertyNamesInternal(propertyNames);
+    getEnumerableNamesFromPropertyTable(propertyNames);
+    getEnumerableNamesFromClassInfoTable(exec, baseObject->classInfo(), propertyNames);
 
-    // Add properties from the static hashtables of properties
-    for (const ClassInfo* info = baseObject->classInfo(); info; info = info->parentClass) {
-        const HashTable* table = info->propHashTable(exec);
-        if (!table)
-            continue;
-        table->initializeIfNeeded(exec);
-        ASSERT(table->table);
-#if ENABLE(PERFECT_HASH_SIZE)
-        int hashSizeMask = table->hashSizeMask;
-#else
-        int hashSizeMask = table->compactSize - 1;
-#endif
-        const HashEntry* entry = table->table;
-        for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key() && !(entry->attributes() & DontEnum))
-                propertyNames.add(entry->key());
-        }
-    }
-
-    if (m_prototype.isObject())
+    if (m_prototype.isObject()) {
+        propertyNames.setShouldCache(false); // No need for our prototypes to waste memory on caching, since they're not being enumerated directly.
         asObject(m_prototype)->getPropertyNames(exec, propertyNames);
+    }
 
     if (shouldCache) {
-        if (m_cachedPropertyNameArrayData)
-            m_cachedPropertyNameArrayData->setCachedStructure(0);
-
         m_cachedPropertyNameArrayData = propertyNames.data();
-
-        StructureChain* chain = cachedPrototypeChain();
-        if (!chain)
-            chain = createCachedPrototypeChain();
-        m_cachedPropertyNameArrayData->setCachedPrototypeChain(chain);
+        m_cachedPropertyNameArrayData->setCachedPrototypeChain(prototypeChain(exec));
         m_cachedPropertyNameArrayData->setCachedStructure(this);
     }
 }
@@ -534,20 +506,6 @@ size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName
     size_t offset = remove(propertyName);
     clearEnumerationCache();
     return offset;
-}
-
-StructureChain* Structure::createCachedPrototypeChain()
-{
-    ASSERT(typeInfo().type() == ObjectType);
-    ASSERT(!m_cachedPrototypeChain);
-
-    JSValuePtr prototype = storedPrototype();
-    if (!prototype.isCell())
-        return 0;
-
-    RefPtr<StructureChain> chain = StructureChain::create(asObject(prototype)->structure());
-    setCachedPrototypeChain(chain.release());
-    return cachedPrototypeChain();
 }
 
 #if DUMP_PROPERTYMAP_STATS
@@ -924,7 +882,7 @@ static int comparePropertyMapEntryIndices(const void* a, const void* b)
     return 0;
 }
 
-void Structure::getEnumerablePropertyNamesInternal(PropertyNameArray& propertyNames)
+void Structure::getEnumerableNamesFromPropertyTable(PropertyNameArray& propertyNames)
 {
     materializePropertyMapIfNecessary();
     if (!m_propertyTable)
@@ -978,6 +936,28 @@ void Structure::getEnumerablePropertyNamesInternal(PropertyNameArray& propertyNa
     } else {
         for (size_t i = 0; i < sortedEnumerables.size(); ++i)
             propertyNames.add(sortedEnumerables[i]->key);
+    }
+}
+
+void Structure::getEnumerableNamesFromClassInfoTable(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames)
+{
+    // Add properties from the static hashtables of properties
+    for (; classInfo; classInfo = classInfo->parentClass) {
+        const HashTable* table = classInfo->propHashTable(exec);
+        if (!table)
+            continue;
+        table->initializeIfNeeded(exec);
+        ASSERT(table->table);
+#if ENABLE(PERFECT_HASH_SIZE)
+        int hashSizeMask = table->hashSizeMask;
+#else
+        int hashSizeMask = table->compactSize - 1;
+#endif
+        const HashEntry* entry = table->table;
+        for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
+            if (entry->key() && !(entry->attributes() & DontEnum))
+                propertyNames.add(entry->key());
+        }
     }
 }
 
