@@ -51,11 +51,15 @@ using namespace std;
 
 namespace WebCore {
 
+static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMode";
+
 // FIXME: The assumption that we can upcast worker object proxy to WorkerMessagingProxy will not be true in multi-process implementation.
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting,
                                                ContentSniff contentSniff)
     : m_workerContext(workerContext)
-    , m_bridge(*(new MainThreadBridge(client, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), taskMode, request, callbacksSetting, contentSniff)))
+    , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
+    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), taskMode, request, callbacksSetting,
+                                      contentSniff)))
 {
 }
 
@@ -64,18 +68,32 @@ WorkerThreadableLoader::~WorkerThreadableLoader()
     m_bridge.destroy();
 }
 
+void WorkerThreadableLoader::loadResourceSynchronously(WorkerContext* workerContext, const ResourceRequest& request, ThreadableLoaderClient& client)
+{
+    WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
+
+    // Create a unique mode just for this synchronous resource load.
+    String mode = loadResourceSynchronouslyMode;
+    mode.append(String::number(runLoop.createUniqueId()));
+
+    ContentSniff contentSniff = request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
+    RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerContext, &client, mode, request, DoNotSendLoadCallbacks, contentSniff);
+    while (!loader->done())
+        runLoop.runInMode(workerContext, mode);
+}
+
 void WorkerThreadableLoader::cancel()
 {
     m_bridge.cancel();
 }
 
-WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClient* workerClient, WorkerMessagingProxy& messagingProxy, const String& taskMode, const ResourceRequest& request,
-                                                           LoadCallbacks callbacksSetting, ContentSniff contentSniff)
-    : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(workerClient))
+WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerMessagingProxy& messagingProxy, const String& taskMode,
+                                                           const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+    : m_workerClientWrapper(workerClientWrapper)
     , m_messagingProxy(messagingProxy)
     , m_taskMode(taskMode.copy())
 {
-    ASSERT(workerClient);
+    ASSERT(m_workerClientWrapper.get());
     m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff));
 }
 

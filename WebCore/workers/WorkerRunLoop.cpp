@@ -111,6 +111,7 @@ private:
 WorkerRunLoop::WorkerRunLoop()
     : m_sharedTimer(new WorkerSharedTimer)
     , m_nestedCount(0)
+    , m_uniqueId(0)
 {
 }
 

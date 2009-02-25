@@ -55,14 +55,17 @@ namespace WebCore {
 
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
     public:
-        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* worker, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+        static void loadResourceSynchronously(WorkerContext*, const ResourceRequest&, ThreadableLoaderClient&);
+        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
         {
-            return adoptRef(new WorkerThreadableLoader(worker, client, taskMode, request, callbacksSetting, contentSniff));
+            return adoptRef(new WorkerThreadableLoader(workerContext, client, taskMode, request, callbacksSetting, contentSniff));
         }
 
         ~WorkerThreadableLoader();
 
         virtual void cancel();
+
+        bool done() const { return m_workerClientWrapper->done(); }
 
         using RefCounted<WorkerThreadableLoader>::ref;
         using RefCounted<WorkerThreadableLoader>::deref;
@@ -94,7 +97,7 @@ namespace WebCore {
         class MainThreadBridge : ThreadableLoaderClient {
         public:
             // All executed on the worker context's thread.
-            MainThreadBridge(ThreadableLoaderClient*, WorkerMessagingProxy&, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff);
+            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerMessagingProxy&, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff);
             void cancel();
             void destroy();
 
@@ -133,6 +136,7 @@ namespace WebCore {
         WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff);
 
         RefPtr<WorkerContext> m_workerContext;
+        RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
         MainThreadBridge& m_bridge;
     };
 

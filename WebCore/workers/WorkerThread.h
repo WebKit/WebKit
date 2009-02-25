@@ -29,7 +29,7 @@
 
 #if ENABLE(WORKERS)
 
-#include <WorkerRunLoop.h>
+#include "WorkerRunLoop.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

@@ -2,6 +2,48 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 23688: ThreadableLoader needs a sync implementation for Workers.
+        <https://bugs.webkit.org/show_bug.cgi?id=23688>
+
+        No observable change in behavior, so no test.
+
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::clearClient):
+        (WebCore::ThreadableLoaderClientWrapper::done):
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        (WebCore::ThreadableLoaderClientWrapper::didFail):
+        (WebCore::ThreadableLoaderClientWrapper::didFailRedirectCheck):
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        Expose whether the loader is done (based on what callbacks were done).
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        Each loader is given its own mode so that only its callbacks get through the run loop.
+
+        The xhr spec says that the readystatechange events are synchronous, so in the case of a
+        nested sync xhr no readystatechange events should be fired for the outer xhr.
+
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        (WebCore::WorkerThreadableLoader::done):
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        * workers/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::createUniqueId):
+        Simple method to create a uniqueId on demand with respect to the run loop.
+
+        * workers/WorkerThread.h:
+
+2009-02-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 24089: ThreadableLoader::loadResourceSynchronously should do callbacks like the async code.
         <https://bugs.webkit.org/show_bug.cgi?id=24089>
 

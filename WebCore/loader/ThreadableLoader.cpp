@@ -57,6 +57,14 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client)
 {
     ASSERT(context);
+
+#if ENABLE(WORKERS)
+    if (context->isWorkerContext()) {
+        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client);
+        return;
+    }
+#endif // ENABLE(WORKERS)
+
     ASSERT(context->isDocument());
     DocumentThreadableLoader::loadResourceSynchronously(static_cast<Document*>(context), request, client);
 }

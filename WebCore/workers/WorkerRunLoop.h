@@ -61,6 +61,8 @@ namespace WebCore {
         void postTask(PassRefPtr<ScriptExecutionContext::Task>);
         void postTaskForMode(PassRefPtr<ScriptExecutionContext::Task>, const String& mode);
 
+        unsigned long createUniqueId() { return ++m_uniqueId; }
+
         static String defaultMode();
         class Task;
     private:
@@ -70,6 +72,7 @@ namespace WebCore {
         MessageQueue<RefPtr<Task> > m_messageQueue;
         OwnPtr<WorkerSharedTimer> m_sharedTimer;
         int m_nestedCount;
+        unsigned long m_uniqueId;
     };
 
 } // namespace WebCore
