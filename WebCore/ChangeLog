@@ -1,3 +1,24 @@
+2009-02-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23368
+
+        Added logic to correctly hit test accelerated layers.
+
+        Tests: animations/animation-hit-test-transform.html
+               animations/animation-hit-test.html
+               transitions/transition-hit-test-transform.html
+               transitions/transition-hit-test.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2009-02-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,21 @@
+2009-02-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23368
+
+        Hit testing tests, for both accelerated and non-accelerated
+        cases, and for both transitions and animations.
+
+        * animations/animation-hit-test-expected.txt: Added.
+        * animations/animation-hit-test-transform-expected.txt: Added.
+        * animations/animation-hit-test-transform.html: Added.
+        * animations/animation-hit-test.html: Added.
+        * transitions/transition-hit-test-expected.txt: Added.
+        * transitions/transition-hit-test-transform-expected.txt: Added.
+        * transitions/transition-hit-test-transform.html: Added.
+        * transitions/transition-hit-test.html: Added.
+
 2009-02-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

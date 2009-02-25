@@ -2078,7 +2078,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                                        const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform)
 {
     // Apply a transform if we have one.
-    if (paintsWithTransform() && !appliedTransform) {
+    if (renderer()->hasTransform() && !appliedTransform) {
         // If the transform can't be inverted, then don't hit test this layer at all.
         if (!m_transform->isInvertible())
             return 0;
@@ -2100,7 +2100,20 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
         convertToLayerCoords(rootLayer, x, y);
         TransformationMatrix transform;
         transform.translate(x, y);
-        transform = *m_transform * transform;
+        
+        TransformationMatrix localTransform;
+        
+#if USE(ACCELERATED_COMPOSITING)
+        if (renderer()->style()->isRunningAcceleratedAnimation()) {
+            const IntRect borderBox = toRenderBox(renderer())->borderBoxRect();
+            RefPtr<RenderStyle> animatedStyle = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
+            const TransformOperations& transformOperations = animatedStyle->transform();
+            transformOperations.apply(borderBox.size(), localTransform);
+        } else
+#endif
+            localTransform = *m_transform;
+
+        transform = localTransform * transform;
         
         // Map the hit test point into the transformed space and then do a hit test with the root layer shifted to be us.
         return hitTestLayer(this, request, result, transform.inverse().mapRect(hitTestRect), transform.inverse().mapPoint(hitTestPoint), true);

@@ -260,15 +260,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
         RenderStyle* style = renderer()->style();
         if (style->hasPerspective()) {
-            FloatPoint perspectiveOrigin = computePerspectiveOrigin(borderBox);
-            
-            float xOffset = perspectiveOrigin.x() - (float)borderBox.width() / 2.0f;
-            float yOffset = perspectiveOrigin.y() - (float)borderBox.height() / 2.0f;
-
-            TransformationMatrix t;
-            t.translate(xOffset, yOffset);
-            t.applyPerspective(style->perspective());
-            t.translate(-xOffset, -yOffset);
+            TransformationMatrix t = owningLayer()->perspectiveTransform();
             
             if (m_clippingLayer) {
                 m_clippingLayer->setChildrenTransform(t);
