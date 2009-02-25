@@ -1,3 +1,13 @@
+2009-02-25  Andreia Gaita  <shana@jitted.com>
+
+        Reviewed by Alp Toker.
+
+        Update Win def files with recent JavaScriptCore API additions.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_Cairo.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2009-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

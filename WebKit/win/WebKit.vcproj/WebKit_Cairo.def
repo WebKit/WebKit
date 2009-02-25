@@ -12,9 +12,14 @@ EXPORTS
 	    JSClassRelease
 	    JSClassRetain
 	    JSContextGetGlobalObject
+	    JSContextGetGroup
+	    JSContextGroupCreate
+	    JSContextGroupRelease
+	    JSContextGroupRetain
 	    JSEvaluateScript
 	    JSGarbageCollect
 	    JSGlobalContextCreate
+	    JSGlobalContextCreateInGroup
 	    JSGlobalContextRelease
 	    JSGlobalContextRetain
 	    JSObjectCallAsConstructor
@@ -32,6 +37,7 @@ EXPORTS
 	    JSObjectMakeArray
 	    JSObjectMakeConstructor
 	    JSObjectMakeDate
+	    JSObjectMakeError
 	    JSObjectMakeFunction
 	    JSObjectMakeFunctionWithCallback
 	    JSObjectMakeRegExp
