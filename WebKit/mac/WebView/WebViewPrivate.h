@@ -410,6 +410,9 @@ Could be worth adding to the API.
 
 + (NSCursor *)_pointingHandCursor;
 
+// SPI for DumpRenderTree
+- (BOOL)_isUsingAcceleratedCompositing;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

@@ -1,3 +1,28 @@
+2009-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23854
+
+        Make an observable property, _isUsingAcceleratedCompositing, on
+        WebView that DumpRenderTree can use to specialize behavior.
+        
+        This is implemented via a count of Frames that are using
+        accelerated compositing.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView close]):
+        (-[WebHTMLView attachRootLayer:]):
+        (-[WebHTMLView detachRootLayer]):
+        * WebView/WebView.mm:
+        (+[WebView automaticallyNotifiesObserversForKey:]):
+        (-[WebView _startedAcceleratedCompositingForFrame:]):
+        (-[WebView _stoppedAcceleratedCompositingForFrame:]):
+        (-[WebView _isUsingAcceleratedCompositing]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2009-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

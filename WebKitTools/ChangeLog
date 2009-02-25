@@ -1,3 +1,27 @@
+2009-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23854
+
+        Have the DumpRenderTreeWindow observe the -_isUsingAcceleratedCompositing
+        property of the WebView, and use that to turn -autodisplay on and off.
+        This is necessary so that accelerated animations start correctly.
+        We can thus remove the -display hack in createBitmapContextFromWebView().
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (dumpRenderTree):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow close]):
+        (-[DumpRenderTreeWindow webView]):
+        (-[DumpRenderTreeWindow startObservingWebView]):
+        (-[DumpRenderTreeWindow stopObservingWebView]):
+        (-[DumpRenderTreeWindow observeValueForKeyPath:ofObject:change:context:]):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
 2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Zack Rusin.

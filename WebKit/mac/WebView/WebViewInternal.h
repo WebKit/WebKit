@@ -147,7 +147,9 @@ typedef WebCore::Page WebCorePage;
 #if USE(ACCELERATED_COMPOSITING)
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
-#endif    
+- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
+- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
+#endif
 
 @end
 

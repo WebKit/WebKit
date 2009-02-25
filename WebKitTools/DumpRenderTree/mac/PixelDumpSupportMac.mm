@@ -44,6 +44,7 @@
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/WebViewPrivate.h>
 
 // To ensure pixel tests consistency, we need to always render in the same colorspace.
 // Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
@@ -103,18 +104,13 @@ void setupMainDisplayColorProfile()
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
+    WebView* view = [mainFrame webView];
+
     // If the WebHTMLView uses accelerated compositing, we need for force the on-screen capture path
     // and also force Core Animation to start its animations with -display since the DRT window has autodisplay disabled.
-    NSView* documentView = [[mainFrame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView* htmlView = (WebHTMLView*)documentView;
-        if ([htmlView respondsToSelector:@selector(_isUsingAcceleratedCompositing)] && [htmlView _isUsingAcceleratedCompositing]) {
-            [[htmlView window] display];
-            onscreen = YES;
-        }
-    }
+    if ([view _isUsingAcceleratedCompositing])
+        onscreen = YES;
 
-    WebView* view = [mainFrame webView];
     NSSize webViewSize = [view frame].size;
     size_t pixelsWide = static_cast<size_t>(webViewSize.width);
     size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
