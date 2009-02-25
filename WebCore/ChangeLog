@@ -1,3 +1,16 @@
+2009-02-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24043
+        When faced with URLs with unsupported protocol on Gtk port,
+        report the error through an idle function and return true, so
+        a proper resource handle is created.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::reportUnknownProtocolError):
+        (WebCore::ResourceHandle::start):
+
 2009-02-25  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

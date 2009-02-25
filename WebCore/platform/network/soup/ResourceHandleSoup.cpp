@@ -486,6 +486,25 @@ bool ResourceHandle::startHttp(String urlString)
     return true;
 }
 
+static gboolean reportUnknownProtocolError(gpointer callback_data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(callback_data);
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled || !client) {
+        handle->deref();
+        return FALSE;
+    }
+
+    KURL url = handle->request().url();
+    ResourceError error("webkit-network-error", ERROR_UNKNOWN_PROTOCOL, url.string(), url.protocol());
+    client->didFail(handle, error);
+
+    handle->deref();
+    return FALSE;
+}
+
 bool ResourceHandle::start(Frame* frame)
 {
     ASSERT(!d->m_msg);
@@ -507,12 +526,12 @@ bool ResourceHandle::start(Frame* frame)
         // FIXME: should we be doing any other protocols here?
         return startGio(url);
     else {
-        // If we don't call didFail the job is not complete for webkit even false is returned.
-        if (d->client()) {
-            ResourceError error("webkit-network-error", ERROR_UNKNOWN_PROTOCOL, urlString, protocol);
-            d->client()->didFail(this, error);
-        }
-        return false;
+        // Error must not be reported immediately, but through an idle function.
+        // Despite error, we should return true so a proper handle is created,
+        // to which this failure can be reported.
+        ref();
+        d->m_idleHandler = g_idle_add(reportUnknownProtocolError, this);
+        return true;
     }
 }
 
