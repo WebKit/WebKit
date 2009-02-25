@@ -1732,6 +1732,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitPoint.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitTransitionEvent.h"
 				>
 			</File>
@@ -2557,6 +2561,14 @@
 			</File>
 			<File
 				RelativePath="..\page\Settings.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitPoint.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitPoint.h"
 				>
 			</File>
 			<File
@@ -14314,6 +14326,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSWebKitCSSMatrixConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWebKitPointConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWebKitPointConstructor.h"
 					>
 				</File>
 				<File

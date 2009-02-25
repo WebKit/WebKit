@@ -29,6 +29,7 @@
 #include "KURLHash.h"
 #include "PlatformString.h"
 #include "TreeShared.h"
+#include "FloatPoint.h"
 #include <wtf/Assertions.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
@@ -402,6 +403,10 @@ public:
 
     // Whether or not a selection can be started in this object
     virtual bool canStartSelection() const;
+
+    // Getting points into and out of screen space
+    FloatPoint convertToPage(const FloatPoint& p) const;
+    FloatPoint convertFromPage(const FloatPoint& p) const;
 
     // -----------------------------------------------------------------------------
     // Integration with rendering tree

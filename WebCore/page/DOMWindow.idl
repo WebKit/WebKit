@@ -136,6 +136,9 @@ module window {
                                        in DOMString pseudoElement,
                                        in [Optional] boolean authorOnly);
         attribute [Replaceable] double devicePixelRatio;
+        
+        WebKitPoint webkitConvertPointFromPageToNode(in Node node, in WebKitPoint p);
+        WebKitPoint webkitConvertPointFromNodeToPage(in Node node, in WebKitPoint p);
 
 #if ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute DOMApplicationCache applicationCache;

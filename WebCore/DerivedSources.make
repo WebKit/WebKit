@@ -359,6 +359,7 @@ DOM_CLASSES = \
     WebKitCSSKeyframesRule \
     WebKitCSSMatrix \
     WebKitCSSTransformValue \
+    WebKitPoint \
     WebKitTransitionEvent \
     WheelEvent \
     Worker \

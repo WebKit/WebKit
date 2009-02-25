@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Test of webkitConvertPointFromNodeToPage function</title>
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <style type="text/css" media="screen">
+      body {
+        height: 1000px;
+      }
+      
+      h1 {
+          font-size: 14pt;
+      }
+      .layer {
+        position: relative;
+        width: 600px;
+        height: 500px;
+        -webkit-transform: translate(0px);
+      }
+      .dot {
+         position: absolute;
+         background-color: #0f0;
+         width: 10px;
+         height: 10px;
+         left: 0px;
+         top: 0px;
+         visibility: hidden;
+       }
+       b.border {
+         border: 5px solid blue;
+       }
+       
+       .a {
+         position: relative;
+         left: 10px;
+         background: #cbc;
+         width: 800px;
+         -webkit-transform-origin: top left;
+         -webkit-transform: translate(130px, 20px) rotate(-35deg) scale(0.6);
+         padding: 5px;
+         margin-bottom: 20px;
+       }
+       .b {
+         position: relative;
+         background: #bcc;
+         -webkit-transform: translate(20px);
+       }
+       .c {
+         position: relative;
+         -webkit-transform: translate(20px);
+         background: #99c;
+       }
+       .d {
+         position: relative;
+         background: #cc9;
+       }
+       
+    </style>
+    </head>
+    <script>
+        function runTest(name, id, x1, y1, x2, y2)
+        {
+            debug("");
+            debug(name);
+            var node = document.getElementById(id);
+            p = webkitConvertPointFromNodeToPage(node, new WebKitPoint(0, 0));
+            x = Math.round(p.x);
+            y = Math.round(p.y);
+            shouldBe('x', x1+"");
+            shouldBe('y', y1+"");
+            
+            debug("Round Trip of (0,0)");
+            p2 = webkitConvertPointFromPageToNode(node, p);
+            x = Math.round(p2.x);
+            y = Math.round(p2.y);
+            if (x == -0)
+                x = 0;
+            if (y == -0)
+                y = 0;
+            shouldBe('x', '0');
+            shouldBe('y', '0');
+            
+            p = webkitConvertPointFromNodeToPage(node, new WebKitPoint(5, 40));
+            x = Math.round(p.x);
+            y = Math.round(p.y);
+            if (x == -0)
+                x = 0;
+            if (y == -0)
+                y = 0;
+            shouldBe('x', x2+"");
+            shouldBe('y', y2+"");
+            
+            debug("Round Trip of (5,40)");
+            p2 = webkitConvertPointFromPageToNode(node, p);
+            x = Math.round(p2.x);
+            y = Math.round(p2.y);
+            if (x == -0)
+                x = 0;
+            if (y == -0)
+                y = 0;
+            shouldBe('x', '5');
+            shouldBe('y', '40');
+        }
+        
+        function run() {
+            description("This test exercises the webkitConvertPointFromNodeToPage() function");
+            
+            debug("Test parameter passing - should not crash");
+            var point = webkitConvertPointFromNodeToPage(new WebKitPoint(0, 0));
+            if (point == null)
+                testPassed("Missing parameter test");
+            else
+                testFailed("Missing parameter test");
+            debug("Test did not crash and therefore was successful");
+            debug("");
+            point = webkitConvertPointFromNodeToPage(null, new WebKitPoint(0, 0));
+            if (point == null)
+                testPassed("null parameter test a");
+            else
+                testFailed("null parameter test a");
+            debug("Test did not crash and therefore was successful");
+            debug("");
+            point = webkitConvertPointFromNodeToPage(null, null);
+            if (point == null)
+                testPassed("null parameter test b");
+            else
+                testFailed("null parameter test b");
+            debug("Test did not crash and therefore was successful");
+
+            runTest("Test 1",  "test1",  8, 12, 13, 52);
+            runTest("Test 2",  "test2",  8, 50, 13, 90);
+            runTest("Test 3",  "test3",  8, 84, 13, 124);
+            runTest("Test 4",  "test4",  8, 118, 13, 158);
+            runTest("Test 5",  "test5",  28, 152, 33, 192);
+            runTest("Test 6",  "test6",  28, 186, 33, 226);
+            runTest("Test 7",  "test7",  8, 238, 13, 278);
+            runTest("Test 8",  "test8",  8, 272, 13, 312);
+            runTest("Test 9",  "test9",  28, 290, 33, 330);
+            runTest("Test 10", "test10", 28, 308, 33, 348);
+            runTest("Test 11", "test11", 158, 355, 174, 373);
+            runTest("Test 12", "test12", 168, 428, 184, 446);
+            runTest("Test 13", "test13", 28, 486, 33, 526);
+            
+            debug('<br /><span class="pass">TEST COMPLETE</span>');
+
+            if (window.layoutTestController)    
+                window.layoutTestController.notifyDone();
+        }
+
+        if (window.layoutTestController)    
+            window.layoutTestController.waitUntilDone();
+        setTimeout(run, 0);
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+    <body>
+        <h1 id="test1">Test 1 - This is a H1 heading.</h1>
+        <p id="test2">Test 2 - This is a simple paragraph.</p>
+        <p id="test3">Test 3 - This is a paragraph with a <b>nested</b> element.</p>
+        <p id="test4">Test 4 - This is a paragraph with a <b class="border">nested</b> element that has a border.</p>
+        <p id="test5" class="c">Test 5 - This is a transformed paragraph with a <b class="border">nested</b> element that has a border.</p>
+        <p id="test6" class="c">Test 6 - This is a transformed paragraph with a <b class="border">nested</b> element that has a border.<br>And then a second line.</p>
+        <div class="d">
+            <p id="test7">Test 7 - This is a paragraph inside something that does not have a compositing layer.</p>
+        </div>
+        <div id="test8" class="d">
+            Test 8 - This is raw text inside something that does not have a compositing layer.
+        </div>
+      
+        <div id="test9" class="b">
+            Test 9 - This is raw text inside something that has a compositing layer.
+            <div id="test10" class="d">
+                Test 10 - This is raw text inside something that does not have a compositing layer.
+            </div>
+        </div>
+
+        <div class="a">
+            <p id="test11">Test 11 - This is a rotated and scaled paragraph</p>
+        </div>
+        <div class="a">
+            <div class="b">
+                <p id="test12">Test 12 - This is a rotated and scaled paragraph with a <b class="border">nested</b> element that has a border.</p>
+            </div>
+        </div>
+        <div class="b">
+            <p id="test13">Test 13 - This is a paragraph with a <b class="border">nested</b> element that has a border.</p>
+        </div>
+        <div id="description"></div>
+        <div id="console"></div>
+    </body>
+</html>

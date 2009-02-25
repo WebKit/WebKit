@@ -154,6 +154,7 @@ PASS WebKitCSSKeyframeRule.toString() is '[object WebKitCSSKeyframeRuleConstruct
 PASS WebKitCSSKeyframesRule.toString() is '[object WebKitCSSKeyframesRuleConstructor]'
 PASS WebKitCSSMatrix.toString() is '[object WebKitCSSMatrixConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
+PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'
 PASS WebKitTransitionEvent.toString() is '[object WebKitTransitionEventConstructor]'
 PASS WheelEvent.toString() is '[object WheelEventConstructor]'
 PASS Worker.toString() is '[object WorkerConstructor]'

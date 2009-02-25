@@ -1,3 +1,16 @@
+2009-02-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23943
+
+        Test for new API and fixed results of window-properties.html
+        to include new API and new WebKitPoint object.
+
+        * fast/dom/Window/webkitConvertPoint-expected.txt: Added.
+        * fast/dom/Window/webkitConvertPoint.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-02-25  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

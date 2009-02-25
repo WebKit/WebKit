@@ -664,6 +664,11 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
+		494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7930F55C8EE00747828 /* WebKitPoint.h */; };
+		494BD7990F55C90E00747828 /* JSWebKitPointConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */; };
+		494BD79A0F55C90E00747828 /* JSWebKitPointConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7980F55C90E00747828 /* JSWebKitPointConstructor.h */; };
+		494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */; };
+		494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD79C0F55C94C00747828 /* JSWebKitPoint.h */; };
 		4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */; };
 		498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */; };
 		498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */; };
@@ -5598,6 +5603,12 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
+		494BD7930F55C8EE00747828 /* WebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPoint.h; sourceTree = "<group>"; };
+		494BD7940F55C8EE00747828 /* WebKitPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPoint.idl; sourceTree = "<group>"; };
+		494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPointConstructor.cpp; sourceTree = "<group>"; };
+		494BD7980F55C90E00747828 /* JSWebKitPointConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPointConstructor.h; sourceTree = "<group>"; };
+		494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPoint.cpp; sourceTree = "<group>"; };
+		494BD79C0F55C94C00747828 /* JSWebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPoint.h; sourceTree = "<group>"; };
 		4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrix.h; sourceTree = "<group>"; };
 		4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSMatrix.h; sourceTree = "<group>"; };
@@ -10276,6 +10287,8 @@
 				BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
+				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
+				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
 				E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */,
@@ -13357,6 +13370,8 @@
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
 				498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */,
 				498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */,
+				494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */,
+				494BD7980F55C90E00747828 /* JSWebKitPointConstructor.h */,
 				E1CA5CD50E8CDEE900E8EF90 /* JSWorkerConstructor.cpp */,
 				E1CA5CD20E8CDE8000E8EF90 /* JSWorkerConstructor.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */,
@@ -13608,6 +13623,8 @@
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
+				494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */,
+				494BD79C0F55C94C00747828 /* JSWebKitPoint.h */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -16795,6 +16812,9 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
+				494BD79A0F55C90E00747828 /* JSWebKitPointConstructor.h in Headers */,
+				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18787,6 +18807,8 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				494BD7990F55C90E00747828 /* JSWebKitPointConstructor.cpp in Sources */,
+				494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

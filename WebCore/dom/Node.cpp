@@ -2004,6 +2004,36 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
                DOCUMENT_POSITION_PRECEDING | DOCUMENT_POSITION_CONTAINS;
 }
 
+FloatPoint Node::convertToPage(const FloatPoint& p) const
+{
+    // If there is a renderer, just ask it to do the conversion
+    if (renderer())
+        return renderer()->localToAbsolute(p, false, true);
+    
+    // Otherwise go up the tree looking for a renderer
+    Element *parent = ancestorElement();
+    if (parent)
+        return parent->convertToPage(p);
+
+    // No parent - no conversion needed
+    return p;
+}
+
+FloatPoint Node::convertFromPage(const FloatPoint& p) const
+{
+    // If there is a renderer, just ask it to do the conversion
+    if (renderer())
+        return renderer()->absoluteToLocal(p, false, true);
+
+    // Otherwise go up the tree looking for a renderer
+    Element *parent = ancestorElement();
+    if (parent)
+        return parent->convertFromPage(p);
+
+    // No parent - no conversion needed
+    return p;
+}
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)

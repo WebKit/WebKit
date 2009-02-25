@@ -387,6 +387,7 @@ IDL_BINDINGS += \
     page/Navigator.idl \
     page/PositionError.idl \
     page/Screen.idl \
+    page/WebKitPoint.idl \
     page/WorkerNavigator.idl \
     plugins/Plugin.idl \
     plugins/MimeType.idl \
@@ -466,6 +467,7 @@ SOURCES += \
     bindings/js/JSTextCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSWebKitCSSMatrixConstructor.cpp \
+    bindings/js/JSWebKitPointConstructor.cpp \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
@@ -857,6 +859,7 @@ SOURCES += \
     page/SecurityOrigin.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
+    page/WebKitPoint.cpp \
     page/WindowFeatures.cpp \
     plugins/PluginData.cpp \
     plugins/PluginArray.cpp \
