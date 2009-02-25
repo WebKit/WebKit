@@ -46,7 +46,7 @@ namespace WebCore {
 
     const int unspecifiedTimeoutInterval = INT_MAX;
 
-    class ResourceRequest;
+    struct ResourceRequest;
     struct CrossThreadResourceRequestData;
 
     // Do not use this type directly.  Use ResourceRequest instead.

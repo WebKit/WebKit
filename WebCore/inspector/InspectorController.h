@@ -60,7 +60,7 @@ class JavaScriptCallFrame;
 class StorageArea;
 class Node;
 class Page;
-class ResourceRequest;
+struct ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;

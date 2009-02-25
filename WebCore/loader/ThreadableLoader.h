@@ -38,7 +38,7 @@
 namespace WebCore {
 
     class ResourceError;
-    class ResourceRequest;
+    struct ResourceRequest;
     class ResourceResponse;
     class ScriptExecutionContext;
     class ThreadableLoaderClient;

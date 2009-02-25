@@ -62,7 +62,7 @@ namespace WebCore {
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
-    class ResourceRequest;
+    struct ResourceRequest;
     class ResourceResponse;
     class SharedBuffer;
     class SubstituteData;

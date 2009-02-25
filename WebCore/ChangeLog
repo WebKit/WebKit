@@ -1,5 +1,26 @@
 2009-02-25  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+        Use struct to forward declare ResourceRequest.
+
+        * history/HistoryItem.h:
+        * inspector/InspectorController.h:
+        * loader/DocumentThreadableLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/ThreadableLoader.h:
+        * loader/WorkerThreadableLoader.h:
+        * platform/CrossThreadCopier.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * xml/XMLHttpRequest.h:
+
+2009-02-25  Steve Falkenburg  <sfalken@apple.com>
+
         Partial Windows build fix.
         
         * DerivedSources.cpp:

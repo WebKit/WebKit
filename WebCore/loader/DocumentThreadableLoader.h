@@ -39,7 +39,7 @@
 
 namespace WebCore {
     class Document;
-    class ResourceRequest;
+    struct ResourceRequest;
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {

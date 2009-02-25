@@ -38,7 +38,7 @@ namespace WebCore {
     class ApplicationCache;
 #endif
     class FormState;
-    class ResourceRequest;
+    struct ResourceRequest;
 
     class MainResourceLoader : public ResourceLoader {
     public:
