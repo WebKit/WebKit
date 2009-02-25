@@ -1,3 +1,10 @@
+2009-02-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Partial Windows build fix.
+        
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-02-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

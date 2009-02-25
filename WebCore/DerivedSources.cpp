@@ -318,6 +318,7 @@
 #include "JSWebKitCSSKeyframesRule.cpp"
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
+#include "JSWebKitPoint.cpp"
 #include "JSWebKitTransitionEvent.cpp"
 #include "JSWheelEvent.cpp"
 #include "JSWorker.cpp"
