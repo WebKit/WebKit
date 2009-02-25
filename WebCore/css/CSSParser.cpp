@@ -534,6 +534,9 @@ bool CSSParser::parseValue(int propId, bool important)
     if (!value)
         return false;
 
+    if (!m_styleSheet)
+        return false;
+
     int id = value->id;
 
     // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
