@@ -1,3 +1,13 @@
+2009-02-24  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        SVG pages don't have a body or an html element! 
+        Don't return early if there is no body.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+
 2009-02-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel
@@ -93,9 +103,9 @@
         * WebCore.pro:
         * webcore-base.bkl:
 
-2009-02-24  Ojan Vafai  <ojan@chromium.org>
+2009-02-24  Ojan Vafai  <ojan@dhcp-172-31-134-214.sfo.corp.google.com>
 
-        Reviewed by Sam Weinig
+        Reviewed by Sam Weinig.
 
         Fix null pointer error. If the node is the Document, then ownerDocument() 
         returns null, document() does not.
