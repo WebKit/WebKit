@@ -223,6 +223,7 @@ IDL_BINDINGS += \
 	WebCore/page/Navigator.idl \
 	WebCore/page/PositionError.idl \
 	WebCore/page/Screen.idl \
+	WebCore/page/WebKitPoint.idl \
 	WebCore/page/WorkerNavigator.idl \
 	WebCore/plugins/MimeType.idl \
 	WebCore/plugins/MimeTypeArray.idl \
@@ -346,6 +347,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.h \
+	WebCore/bindings/js/JSWebKitPointConstructor.cpp \
+	WebCore/bindings/js/JSWebKitPointConstructor.h \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.h \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
@@ -1197,6 +1200,7 @@ webcore_sources += \
 	WebCore/page/SecurityOriginHash.h \
 	WebCore/page/Settings.cpp \
 	WebCore/page/Settings.h \
+	WebCore/page/WebKitPoint.h \
 	WebCore/page/WindowFeatures.cpp \
 	WebCore/page/WindowFeatures.h \
 	WebCore/page/animation/AnimationBase.cpp \

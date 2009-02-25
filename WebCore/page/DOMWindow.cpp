@@ -57,7 +57,7 @@
 #include "Screen.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "WebkitPoint.h"
+#include "WebKitPoint.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 

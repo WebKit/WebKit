@@ -1,3 +1,13 @@
+2009-02-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Not reviewed.
+
+        Add files to the build per r41218.
+        Rename WebkitPoint.h to WebKitPoint.h in DOMWindow.cpp
+
+        * GNUmakefile.am:
+        * page/DOMWindow.cpp:
+
 2009-02-25  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
