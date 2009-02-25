@@ -54,6 +54,7 @@
 #if COMPILER(MSVC) && !PLATFORM(WIN_CE)
 #include <crtdbg.h>
 #include <windows.h>
+#include <mmsystem.h>
 #endif
 
 #if PLATFORM(QT)
@@ -294,6 +295,10 @@ int main(int argc, char** argv)
     _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+#endif
+
+#if COMPILER(MSVC) && !PLATFORM(WIN_CE)
+    timeBeginPeriod(1);
 #endif
 
 #if PLATFORM(QT)
