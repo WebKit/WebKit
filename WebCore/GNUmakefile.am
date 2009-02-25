@@ -1630,6 +1630,8 @@ webcore_sources += \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \
+	WebCore/rendering/TransformState.cpp \
+	WebCore/rendering/TransformState.h \
 	WebCore/rendering/bidi.cpp \
 	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \

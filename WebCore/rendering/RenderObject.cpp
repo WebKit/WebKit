@@ -44,6 +44,7 @@
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "TransformState.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -1636,26 +1637,49 @@ IntRect RenderObject::viewRect() const
 
 FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool useTransforms) const
 {
-    RenderObject* o = parent();
-    if (o) {
-        if (o->hasOverflowClip())
-            localPoint -= toRenderBox(o)->layer()->scrolledContentOffset();
-        return o->localToAbsolute(localPoint, fixed, useTransforms);
-    }
+    TransformState transformState(localPoint, TransformState::ApplyTransformDirection);
+    mapLocalToAbsolutePoint(fixed, useTransforms, transformState);
 
-    return FloatPoint();
+    if (transformState.m_accumulatingTransform) {
+        // Do a final flatten if necessary
+        transformState.flatten();
+    }
+    
+    return transformState.m_lastPlanarPoint;
 }
 
 FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
 {
+    TransformState transformState(containerPoint, TransformState::UnapplyInverseTransformDirection);
+    mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
+    
+    if (transformState.m_accumulatingTransform) {
+        // Do a final flatten if necessary
+        transformState.flatten();
+    }
+    
+    return transformState.m_lastPlanarPoint;
+}
+
+void RenderObject::mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState& transformState) const
+{
     RenderObject* o = parent();
     if (o) {
-        FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
         if (o->hasOverflowClip())
-            localPoint += toRenderBox(o)->layer()->scrolledContentOffset();
-        return localPoint;
+            transformState.move(-toRenderBox(o)->layer()->scrolledContentOffset());
+
+        o->mapLocalToAbsolutePoint(fixed, useTransforms, transformState);
     }
-    return FloatPoint();
+}
+
+void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
+{
+    RenderObject* o = parent();
+    if (o) {
+        o->mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
+        if (o->hasOverflowClip())
+            transformState.move(toRenderBox(o)->layer()->scrolledContentOffset());
+    }
 }
 
 FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const

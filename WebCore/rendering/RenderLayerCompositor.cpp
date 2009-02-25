@@ -625,7 +625,7 @@ static bool requiresCompositingLayerForTransform(RenderObject* renderer)
     RenderStyle* style = renderer->style();
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
     // but the renderer may be an inline that doesn't suppport them.
-    return renderer->hasTransform() && (style->transform().has3DOperation() || style->transformStyle3D() == TransformStyle3DPreserve3D || style->perspective() > 0);
+    return renderer->hasTransform() && (style->transform().has3DOperation() || style->transformStyle3D() == TransformStyle3DPreserve3D || style->hasPerspective());
 }
 
 #define VERBOSE_COMPOSITINGLAYER    0
@@ -755,7 +755,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
 
     if (style && 
         (style->transformStyle3D() == TransformStyle3DPreserve3D ||
-         style->perspective() > 0 ||
+         style->hasPerspective() ||
          style->transform().has3DOperation()))
         return true;
 

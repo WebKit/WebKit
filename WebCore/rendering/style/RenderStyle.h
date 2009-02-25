@@ -669,6 +669,7 @@ public:
     ETransformStyle3D transformStyle3D() const { return rareNonInheritedData->m_transformStyle3D; }
     EBackfaceVisibility backfaceVisibility() const { return rareNonInheritedData->m_backfaceVisibility; }
     float perspective() const { return rareNonInheritedData->m_perspective; }
+    bool hasPerspective() const { return rareNonInheritedData->m_perspective > 0; }
     Length perspectiveOriginX() const { return rareNonInheritedData->m_perspectiveOriginX; }
     Length perspectiveOriginY() const { return rareNonInheritedData->m_perspectiveOriginY; }
     

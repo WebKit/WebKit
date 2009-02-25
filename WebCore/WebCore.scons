@@ -511,6 +511,7 @@ sources['rendering'] = [
     'rendering/SVGRenderTreeAsText.cpp',
     'rendering/SVGRootInlineBox.cpp',
     'rendering/TextControlInnerElements.cpp'
+    'rendering/TransformState.cpp'
 ]
 sources['rendering/style'] = [
     'rendering/style/BindingURI.cpp',

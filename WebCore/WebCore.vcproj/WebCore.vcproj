@@ -9943,6 +9943,14 @@
 				RelativePath="..\rendering\TextControlInnerElements.h"
 				>
 			</File>
+			<File
+				RelativePath="..\rendering\TransformState.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\TransformState.h"
+				>
+			</File>
 			<Filter
 				Name="style"
 				>

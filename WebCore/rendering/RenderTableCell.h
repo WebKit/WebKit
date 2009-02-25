@@ -96,8 +96,6 @@ public:
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
-    virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
-    virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
 
     virtual int baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
 
@@ -119,6 +117,9 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
+
+    virtual void mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState&) const;
+    virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
 
 private:
     int m_row;

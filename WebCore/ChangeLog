@@ -1,3 +1,70 @@
+2009-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24137
+        
+        Fix localToAbsolute() and absoluteToLocal() to map points through 3d transforms,
+        taking perspective and transform-style: preserve-3d into account.
+        
+        In order to support transform-style: preserve-3d, which keeps elements in a
+        3d space, we have to carry along an accumulated matrix in TransformState.
+        We also need to apply the perspective from the parent, if any, with the
+        appropriate origin.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::translate):
+        (WebCore::TransformationMatrix::translate3d):
+        (WebCore::TransformationMatrix::translateRight3d):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToAbsolutePoint):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::perspectiveTransform):
+        (WebCore::RenderLayer::perspectiveOrigin):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::requiresCompositingLayerForTransform):
+        (WebCore::RenderLayerCompositor::layerHas3DContent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::mapLocalToAbsolutePoint):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::mapLocalToAbsolutePoint):
+        (WebCore::RenderTableCell::mapAbsoluteToLocalPoint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToAbsolutePoint):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+        * rendering/RenderView.h:
+        * rendering/TransformState.cpp: Added.
+        (WebCore::TransformState::move):
+        (WebCore::TransformState::applyTransform):
+        (WebCore::TransformState::flatten):
+        * rendering/TransformState.h: Added.
+        (WebCore::TransformState::):
+        (WebCore::TransformState::TransformState):
+        (WebCore::TransformState::move):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasPerspective):
+
 2009-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

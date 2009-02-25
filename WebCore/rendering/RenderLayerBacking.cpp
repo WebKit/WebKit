@@ -259,7 +259,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_graphicsLayer->setAnchorPoint(anchor);
 
         RenderStyle* style = renderer()->style();
-        if (style->perspective() > 0) {
+        if (style->hasPerspective()) {
             FloatPoint perspectiveOrigin = computePerspectiveOrigin(borderBox);
             
             float xOffset = perspectiveOrigin.x() - (float)borderBox.width() / 2.0f;

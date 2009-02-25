@@ -771,6 +771,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
 TransformationMatrix& TransformationMatrix::translate(double tx, double ty)
 {
+    // FIXME: optimize to avoid matrix copy
     TransformationMatrix mat;
     mat.m_matrix[3][0] = tx;
     mat.m_matrix[3][1] = ty;
@@ -781,12 +782,39 @@ TransformationMatrix& TransformationMatrix::translate(double tx, double ty)
 
 TransformationMatrix& TransformationMatrix::translate3d(double tx, double ty, double tz)
 {
+    // FIXME: optimize to avoid matrix copy
     TransformationMatrix mat;
     mat.m_matrix[3][0] = tx;
     mat.m_matrix[3][1] = ty;
     mat.m_matrix[3][2] = tz;
 
     multLeft(mat);
+    return *this;
+}
+
+TransformationMatrix& TransformationMatrix::translateRight3d(double tx, double ty, double tz)
+{
+    if (tx != 0) {
+        m_matrix[0][0] +=  m_matrix[0][3] * tx;
+        m_matrix[1][0] +=  m_matrix[1][3] * tx;
+        m_matrix[2][0] +=  m_matrix[2][3] * tx;
+        m_matrix[3][0] +=  m_matrix[3][3] * tx;
+    }
+
+    if (ty != 0) {
+        m_matrix[0][1] +=  m_matrix[0][3] * ty;
+        m_matrix[1][1] +=  m_matrix[1][3] * ty;
+        m_matrix[2][1] +=  m_matrix[2][3] * ty;
+        m_matrix[3][1] +=  m_matrix[3][3] * ty;
+    }
+
+    if (tz != 0) {
+        m_matrix[0][2] +=  m_matrix[0][3] * tz;
+        m_matrix[1][2] +=  m_matrix[1][3] * tz;
+        m_matrix[2][2] +=  m_matrix[2][3] * tz;
+        m_matrix[3][2] +=  m_matrix[3][3] * tz;
+    }
+
     return *this;
 }
 

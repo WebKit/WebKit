@@ -144,6 +144,8 @@
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
 		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
+		0F500AAF0F54DB1B00EEF928 /* TransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F500AAE0F54DB1B00EEF928 /* TransformState.h */; };
+		0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F500AB00F54DB3100EEF928 /* TransformState.cpp */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F580B050F12A2550051D689 /* GraphicsLayerCA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */; };
@@ -5026,6 +5028,8 @@
 		0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLineBoxList.h; sourceTree = "<group>"; };
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
 		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationControllerPrivate.h; path = animation/AnimationControllerPrivate.h; sourceTree = "<group>"; };
+		0F500AAE0F54DB1B00EEF928 /* TransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformState.h; sourceTree = "<group>"; };
+		0F500AB00F54DB3100EEF928 /* TransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformState.cpp; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsLayerCA.mm; sourceTree = "<group>"; };
@@ -13088,9 +13092,9 @@
 				B275354F0B053814002CE64F /* IntPointMac.mm */,
 				B27535500B053814002CE64F /* IntRectMac.mm */,
 				B27535510B053814002CE64F /* IntSizeMac.mm */,
-				0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */,
 				E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */,
 				E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */,
+				0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */,
 				B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */,
 				0FCF332B0F2B9A25004B6795 /* WebLayer.h */,
 				0FCF332A0F2B9A25004B6795 /* WebLayer.mm */,
@@ -13747,6 +13751,8 @@
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
+				41D015C90F4B5C71004A662F /* ContentType.cpp */,
+				41D015C80F4B5C71004A662F /* ContentType.h */,
 				93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */,
 				93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */,
 				06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */,
@@ -13782,8 +13788,6 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
-				41D015C80F4B5C71004A662F /* ContentType.h */,
-				41D015C90F4B5C71004A662F /* ContentType.cpp */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
 				BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
@@ -14312,6 +14316,8 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
 				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
+				0F500AB00F54DB3100EEF928 /* TransformState.cpp */,
+				0F500AAE0F54DB1B00EEF928 /* TransformState.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
 				BCEA4814097D93020094C9E4 /* bidi.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
@@ -14710,6 +14716,7 @@
 				BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */,
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				BC5EB9810E82072500B25965 /* ContentData.h in Headers */,
+				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
 				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
@@ -14722,6 +14729,7 @@
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
+				2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
@@ -15573,6 +15581,7 @@
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
+				2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */,
 				FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */,
 				FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */,
 				FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */,
@@ -15605,6 +15614,7 @@
 				A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
+				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
 				A871D45C0A127CBC00B12A68 /* HTMLEmbedElement.h in Headers */,
 				A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */,
 				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
@@ -16614,6 +16624,7 @@
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
+				0F500AAF0F54DB1B00EEF928 /* TransformState.h in Headers */,
 				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
@@ -16710,8 +16721,16 @@
 				9380F47409A11AB4001FDB34 /* Widget.h in Headers */,
 				939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */,
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
+				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
+				2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */,
+				2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */,
+				2E43464D0F546A8200B0F1BA /* WorkerLocation.h in Headers */,
+				2E4346500F546A8200B0F1BA /* WorkerMessagingProxy.h in Headers */,
 				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
+				2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */,
+				2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
+				2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */,
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
@@ -16776,18 +16795,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
-				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
-				2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */,
-				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
-				2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */,
-				2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */,
-				2E43464D0F546A8200B0F1BA /* WorkerLocation.h in Headers */,
-				2E4346500F546A8200B0F1BA /* WorkerMessagingProxy.h in Headers */,
-				2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */,
-				2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */,
-				2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */,
-				2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16872,6 +16879,9 @@
 				B25599680D00D8BA00BB825C /* WKSpecularLightingFilter.cikernel in Resources */,
 				B255996B0D00D8BA00BB825C /* WKSpotLightFilter.cikernel in Resources */,
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
+				2E4346470F546A8200B0F1BA /* Worker.idl in Resources */,
+				2E43464A0F546A8200B0F1BA /* WorkerContext.idl in Resources */,
+				2E43464E0F546A8200B0F1BA /* WorkerLocation.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
@@ -16905,9 +16915,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				2E4346470F546A8200B0F1BA /* Worker.idl in Resources */,
-				2E43464A0F546A8200B0F1BA /* WorkerContext.idl in Resources */,
-				2E43464E0F546A8200B0F1BA /* WorkerLocation.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17191,6 +17198,7 @@
 				BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */,
 				BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */,
+				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
@@ -17201,6 +17209,7 @@
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
 				514C766D0CE923A1007EF3CD /* Credential.cpp in Sources */,
+				2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
 				BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */,
@@ -17607,6 +17616,7 @@
 				A8EA7CB10A192B9C00A8EF5F /* HTMLDivElement.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
+				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,
 				A871D45F0A127CBC00B12A68 /* HTMLEmbedElement.cpp in Sources */,
 				A81369D5097374F600D74463 /* HTMLFieldSetElement.cpp in Sources */,
 				A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */,
@@ -18622,6 +18632,7 @@
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
+				0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */,
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
@@ -18712,8 +18723,14 @@
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
 				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
 				BC8243E80D0CFD7500460C8F /* WindowFeatures.cpp in Sources */,
+				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
+				2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */,
+				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,
+				2E43464F0F546A8200B0F1BA /* WorkerMessagingProxy.cpp in Sources */,
 				E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */,
+				2E4346520F546A8200B0F1BA /* WorkerRunLoop.cpp in Sources */,
 				E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */,
+				2E4346540F546A8200B0F1BA /* WorkerThread.cpp in Sources */,
 				0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
@@ -18770,15 +18787,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,
-				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
-				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
-				2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */,
-				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,
-				2E43464F0F546A8200B0F1BA /* WorkerMessagingProxy.cpp in Sources */,
-				2E4346520F546A8200B0F1BA /* WorkerRunLoop.cpp in Sources */,
-				2E4346540F546A8200B0F1BA /* WorkerThread.cpp in Sources */,
-				2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1159,7 +1159,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMarginTopCollapse:
             return CSSPrimitiveValue::create(style->marginTopCollapse());
         case CSSPropertyWebkitPerspective:
-            if (style->perspective() == 0)
+            if (!style->hasPerspective())
                 return CSSPrimitiveValue::createIdentifier(CSSValueNone);
             return CSSPrimitiveValue::create(style->perspective(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitPerspectiveOrigin: {

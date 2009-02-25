@@ -313,7 +313,9 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 
 void RenderLayer::updateTransform()
 {
-    bool hasTransform = renderer()->hasTransform();
+    // hasTransform() on the renderer is also true when there is transform-style: preserve-3d or perspective set,
+    // so check style too.
+    bool hasTransform = renderer()->hasTransform() && renderer()->style()->hasTransform();
     bool hadTransform = m_transform;
     if (hasTransform != hadTransform) {
         if (hasTransform)
@@ -504,7 +506,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
         return TransformationMatrix();
 
     RenderStyle* style = renderer()->style();
-    if (!style->perspective())
+    if (!style->hasPerspective())
         return TransformationMatrix();
 
     // Maybe fetch the perspective from the backing?
@@ -515,6 +517,8 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
     float perspectiveOriginX = style->perspectiveOriginX().calcFloatValue(boxWidth);
     float perspectiveOriginY = style->perspectiveOriginY().calcFloatValue(boxHeight);
 
+    // A perspective origin of 0,0 makes the vanishing point in the center of the element.
+    // We want it to be in the top-left, so subtract half the height and width.
     perspectiveOriginX -= boxWidth / 2.0f;
     perspectiveOriginY -= boxHeight / 2.0f;
     
@@ -524,6 +528,18 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
     t.translate(-perspectiveOriginX, -perspectiveOriginY);
     
     return t;
+}
+
+FloatPoint RenderLayer::perspectiveOrigin() const
+{
+    if (!renderer()->hasTransform())
+        return FloatPoint();
+
+    const IntRect borderBox = toRenderBox(renderer())->borderBoxRect();
+    RenderStyle* style = renderer()->style();
+
+    return FloatPoint(style->perspectiveOriginX().calcFloatValue(borderBox.width()),
+                      style->perspectiveOriginY().calcFloatValue(borderBox.height()));
 }
 
 RenderLayer *RenderLayer::stackingContext() const
