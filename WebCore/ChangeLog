@@ -1,3 +1,12 @@
+2009-02-24  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (build fix).
+
+        Attempted build fixes for qt-linux and wx-mac.
+
+        * WebCore.pro:
+        * webcore-base.bkl:
+
 2009-02-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Sam Weinig
