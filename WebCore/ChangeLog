@@ -1,3 +1,22 @@
+2009-02-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24067
+        REGRESSION: Crash in WebCore::Document::initSecurityContext
+
+        The crash started to happen when we removed a check for frame->document() being null.
+        However, the original document shouldn't be null here, because it is needed to alias
+        security origins. So, this patch fixes the crash by correcting security origin behavior.
+
+        Test: http/tests/security/aboutBlank/window-open-self-about-blank.html
+        This tests for not crashing, and for inheriting the domain from the document being replaced.
+        Preserving the aliasing cannot be tested for automatically, because we'd need a non-trivial
+        domain to remove a prefix from.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::begin): Create a new document before
+        clearing the frame, so that Document::initSecurityContext() could access the old one.
+
 2009-02-25  Jay Campan  <jcampan@google.com>
 
         Reviewed by Darin Fisher.

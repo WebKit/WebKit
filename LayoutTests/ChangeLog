@@ -1,3 +1,13 @@
+2009-02-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24067
+        REGRESSION: Crash in WebCore::Document::initSecurityContext
+
+        * http/tests/security/aboutBlank/window-open-self-about-blank-expected.txt: Added.
+        * http/tests/security/aboutBlank/window-open-self-about-blank.html: Added.
+
 2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Zack Rusin.
