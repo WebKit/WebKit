@@ -1,3 +1,9 @@
+2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build.
+
+        * WebCore.pro:
+
 2009-02-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.

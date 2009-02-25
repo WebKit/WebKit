@@ -859,7 +859,6 @@ SOURCES += \
     page/SecurityOrigin.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
-    page/WebKitPoint.cpp \
     page/WindowFeatures.cpp \
     plugins/PluginData.cpp \
     plugins/PluginArray.cpp \
