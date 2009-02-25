@@ -42,6 +42,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
+	-I$(srcdir)/WebCore/workers \
 	-I$(srcdir)/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js
 
@@ -2177,7 +2178,7 @@ webcore_sources += \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
 	WebCore/page/WorkerNavigator.cpp \
-	WebCore/page/WorkerNavigator.h
+	WebCore/page/WorkerNavigator.h \
 	WebCore/workers/GenericWorkerTask.h \
 	WebCore/workers/Worker.cpp \
 	WebCore/workers/Worker.h \
@@ -2192,7 +2193,7 @@ webcore_sources += \
 	WebCore/workers/WorkerRunLoop.cpp \
 	WebCore/workers/WorkerRunLoop.h \
 	WebCore/workers/WorkerThread.cpp \
-	WebCore/workers/WorkerThread.h \
+	WebCore/workers/WorkerThread.h
 endif
 
 # ----
