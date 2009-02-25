@@ -552,14 +552,11 @@
 		2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */; };
 		2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346330F546A8200B0F1BA /* Worker.cpp */; };
 		2E4346460F546A8200B0F1BA /* Worker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346340F546A8200B0F1BA /* Worker.h */; };
-		2E4346470F546A8200B0F1BA /* Worker.idl in Resources */ = {isa = PBXBuildFile; fileRef = 2E4346350F546A8200B0F1BA /* Worker.idl */; };
 		2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346360F546A8200B0F1BA /* WorkerContext.cpp */; };
 		2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346370F546A8200B0F1BA /* WorkerContext.h */; };
-		2E43464A0F546A8200B0F1BA /* WorkerContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = 2E4346380F546A8200B0F1BA /* WorkerContext.idl */; };
 		2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346390F546A8200B0F1BA /* WorkerContextProxy.h */; };
 		2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E43463A0F546A8200B0F1BA /* WorkerLocation.cpp */; };
 		2E43464D0F546A8200B0F1BA /* WorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463B0F546A8200B0F1BA /* WorkerLocation.h */; };
-		2E43464E0F546A8200B0F1BA /* WorkerLocation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 2E43463C0F546A8200B0F1BA /* WorkerLocation.idl */; };
 		2E43464F0F546A8200B0F1BA /* WorkerMessagingProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E43463D0F546A8200B0F1BA /* WorkerMessagingProxy.cpp */; };
 		2E4346500F546A8200B0F1BA /* WorkerMessagingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463E0F546A8200B0F1BA /* WorkerMessagingProxy.h */; };
 		2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463F0F546A8200B0F1BA /* WorkerObjectProxy.h */; };
@@ -2114,7 +2111,6 @@
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A7094AFA0F27AE6000596CEC /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */; };
-		A7094AFC0F27AEE300596CEC /* CanvasPixelArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
@@ -4130,10 +4126,8 @@
 		BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */; };
 		BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065780F3CE1B700CD2D87 /* ClientRect.h */; };
-		BCC0657F0F3CE1B700CD2D87 /* ClientRect.idl in Resources */ = {isa = PBXBuildFile; fileRef = BCC065790F3CE1B700CD2D87 /* ClientRect.idl */; };
 		BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */; };
 		BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */; };
-		BCC065820F3CE1B700CD2D87 /* ClientRectList.idl in Resources */ = {isa = PBXBuildFile; fileRef = BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */; };
 		BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */; };
 		BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065840F3CE2A700CD2D87 /* JSClientRect.h */; };
 		BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */; };
@@ -16067,6 +16061,8 @@
 				498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */,
 				498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */,
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
+				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
+				494BD79A0F55C90E00747828 /* JSWebKitPointConstructor.h in Headers */,
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
@@ -16728,6 +16724,7 @@
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
+				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
@@ -16812,9 +16809,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
-				494BD79A0F55C90E00747828 /* JSWebKitPointConstructor.h in Headers */,
-				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16883,9 +16877,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7094AFC0F27AEE300596CEC /* CanvasPixelArray.idl in Resources */,
-				BCC0657F0F3CE1B700CD2D87 /* ClientRect.idl in Resources */,
-				BCC065820F3CE1B700CD2D87 /* ClientRectList.idl in Resources */,
 				B25599480D00D8BA00BB825C /* WKArithmeticFilter.cikernel in Resources */,
 				B255994B0D00D8BA00BB825C /* WKComponentMergeFilter.cikernel in Resources */,
 				B255994E0D00D8BA00BB825C /* WKDiffuseLightingFilter.cikernel in Resources */,
@@ -16899,9 +16890,6 @@
 				B25599680D00D8BA00BB825C /* WKSpecularLightingFilter.cikernel in Resources */,
 				B255996B0D00D8BA00BB825C /* WKSpotLightFilter.cikernel in Resources */,
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
-				2E4346470F546A8200B0F1BA /* Worker.idl in Resources */,
-				2E43464A0F546A8200B0F1BA /* WorkerContext.idl in Resources */,
-				2E43464E0F546A8200B0F1BA /* WorkerLocation.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
@@ -18125,6 +18113,8 @@
 				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
 				498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
+				494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */,
+				494BD7990F55C90E00747828 /* JSWebKitPointConstructor.cpp in Sources */,
 				31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */,
 				65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */,
 				E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */,
@@ -18807,8 +18797,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				494BD7990F55C90E00747828 /* JSWebKitPointConstructor.cpp in Sources */,
-				494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
