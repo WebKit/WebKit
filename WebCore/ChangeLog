@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (build fix).
 
+        Attempted build fix for wx-mac.
+
+        * WebCoreSources.bkl:
+
+2009-02-24  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (build fix).
+
         Attempted build fixes for qt-linux and wx-mac.
 
         * WebCore.pro:

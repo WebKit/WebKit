@@ -401,7 +401,6 @@ This file contains the list of files needed to build WebCore.
         dom/ClipboardEvent.cpp
         dom/Comment.cpp
         dom/ContainerNode.cpp
-        dom/CrossThreadCopier.cpp
         dom/DOMImplementation.cpp
         dom/DOMStringList.cpp
         dom/Document.cpp
@@ -726,6 +725,7 @@ This file contains the list of files needed to build WebCore.
         platform/text/CString.cpp
         platform/ContentType.cpp
         platform/ContextMenu.cpp
+        platform/CrossThreadCopier.cpp
         platform/DeprecatedPtrListImpl.cpp
         platform/DragImage.cpp
         platform/FileChooser.cpp
