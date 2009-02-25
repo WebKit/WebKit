@@ -1,3 +1,31 @@
+2009-02-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24089: ThreadableLoader::loadResourceSynchronously should do callbacks like the async code.
+        <https://bugs.webkit.org/show_bug.cgi?id=24089>
+
+        Make threadable loader callbacks to happen during the sync load call.
+
+        Changes the behavior of sync xhr for insecure redirects in two ways:
+        + Sends an error event instead of an abort event (which is the same as async xhr's behavior).
+        + Throws a network exception which is what other browsers do and what the spec
+        says to do (http://www.w3.org/TR/XMLHttpRequest/).
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/ThreadableLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::loadRequestSynchronously):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::didFailRedirectCheck):
+        * xml/XMLHttpRequest.h:
+
 2009-02-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

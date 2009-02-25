@@ -331,6 +331,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_inPreflight(false)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
+    , m_exceptionCode(0)
 {
     initializeXMLHttpRequestStaticData();
 }
@@ -808,34 +809,19 @@ void XMLHttpRequest::handleAsynchronousPreflightResult()
 void XMLHttpRequest::loadRequestSynchronously(ResourceRequest& request, ExceptionCode& ec)
 {
     ASSERT(!m_async);
-    Vector<char> data;
-    ResourceError error;
-    ResourceResponse response;
 
-    unsigned long identifier = ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, error, response, data);
     m_loader = 0;
-
-    // No exception for file:/// resources, see <rdar://problem/4962298>.
-    // Also, if we have an HTTP response, then it wasn't a network error in fact.
-    if (error.isNull() || request.url().isLocalFile() || response.httpStatusCode() > 0) {
-        processSyncLoadResults(identifier, data, response, ec);
-        return;
-    }
-
-    if (error.isCancellation()) {
-        abortError();
-        ec = XMLHttpRequestException::ABORT_ERR;
-        return;
-    }
-
-    networkError();
-    ec = XMLHttpRequestException::NETWORK_ERR;
+    m_exceptionCode = 0;
+    ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, *this);
+    if (!m_exceptionCode && m_error)
+        m_exceptionCode = XMLHttpRequestException::NETWORK_ERR;
+    ec = m_exceptionCode;
 }
-
 
 void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
 {
     ASSERT(m_async);
+    m_exceptionCode = 0;
     // SubresourceLoader::create can return null here, for example if we're no longer attached to a page.
     // This is true while running onunload handlers.
     // FIXME: We need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
@@ -843,7 +829,7 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
     LoadCallbacks callbacks = m_inPreflight ? DoNotSendLoadCallbacks : SendLoadCallbacks;
-    ContentSniff contentSniff =  request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
+    ContentSniff contentSniff = request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, callbacks, contentSniff);
 
     if (m_loader) {
@@ -1135,25 +1121,6 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
     return String();
 }
 
-void XMLHttpRequest::processSyncLoadResults(unsigned long identifier, const Vector<char>& data, const ResourceResponse& response, ExceptionCode& ec)
-{
-    if (m_sameOriginRequest && !scriptExecutionContext()->securityOrigin()->canRequest(response.url())) {
-        abort();
-        return;
-    }
-    
-    didReceiveResponse(response);
-    changeState(HEADERS_RECEIVED);
-
-    const char* bytes = static_cast<const char*>(data.data());
-    int len = static_cast<int>(data.size());
-    didReceiveData(bytes, len);
-
-    didFinishLoading(identifier);
-    if (m_error)
-        ec = XMLHttpRequestException::NETWORK_ERR;
-}
-
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
@@ -1161,10 +1128,12 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         return;
 
     if (error.isCancellation()) {
+        m_exceptionCode = XMLHttpRequestException::ABORT_ERR;
         abortError();
         return;
     }
 
+    m_exceptionCode = XMLHttpRequestException::NETWORK_ERR;
     networkError();
 }
 

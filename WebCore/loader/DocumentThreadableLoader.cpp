@@ -33,12 +33,49 @@
 
 #include "AuthenticationChallenge.h"
 #include "Document.h"
+#include "DocumentThreadableLoader.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
 
 namespace WebCore {
+
+void DocumentThreadableLoader::loadResourceSynchronously(Document* document, const ResourceRequest& request, ThreadableLoaderClient& client)
+{
+    bool sameOriginRequest = document->securityOrigin()->canRequest(request.url());
+
+    Vector<char> data;
+    ResourceError error;
+    ResourceResponse response;
+    unsigned long identifier = std::numeric_limits<unsigned long>::max();
+    if (document->frame())
+        identifier = document->frame()->loader()->loadResourceSynchronously(request, error, response, data);
+
+    // No exception for file:/// resources, see <rdar://problem/4962298>.
+    // Also, if we have an HTTP response, then it wasn't a network error in fact.
+    if (!error.isNull() && !request.url().isLocalFile() && response.httpStatusCode() <= 0) {
+        client.didFail(error);
+        return;
+    }
+
+    // FIXME: This check along with the one in willSendRequest is specific to xhr and
+    // should be made more generic.
+    if (sameOriginRequest && !document->securityOrigin()->canRequest(response.url())) {
+        client.didFailRedirectCheck();
+        return;
+    }
+
+    client.didReceiveResponse(response);
+
+    const char* bytes = static_cast<const char*>(data.data());
+    int len = static_cast<int>(data.size());
+    client.didReceiveData(bytes, len);
+
+    client.didFinishLoading(identifier);
+}
 
 PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document* document, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
 {

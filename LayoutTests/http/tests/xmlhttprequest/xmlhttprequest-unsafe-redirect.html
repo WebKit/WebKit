@@ -8,13 +8,31 @@ function didReadFile()
         layoutTestController.notifyDone();    
 }
 
+function log(message)
+{
+    var logElement = document.getElementById('log');
+    logElement.appendChild(document.createTextNode(message));
+    logElement.appendChild(document.createElement("p"));
+}
+
 function onReqreadystatechange()
 {
+    log('readyState change ' +  req.readyState);
     if (req.readyState == 4)
         didReadFile();
 }
 
-function onReqError() 
+function onReqAbort()
+{
+    log('Abort event.');
+}
+
+function onSyncReqError()
+{
+    log('Error event.');
+}
+
+function onReqError(e)
 {
     document.getElementById('result').innerHTML = 'SUCCESS: Error handler was called with readyState ' + req.readyState;
     if (window.layoutTestController)
@@ -28,23 +46,35 @@ function runTest() {
     }
     
     // First, make a sync request.
+    log ('Sync XHR started.');
     req = new XMLHttpRequest();
+    req.onreadystatechange = onReqreadystatechange;
+    req.onerror = onSyncReqError;
+    req.onabort = onReqAbort;
     req.open('GET', '/xmlhttprequest/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt', false);
-    req.send(null);
+    try {
+        req.send(null);
+    } catch (e) {
+        log('Exception: ' + (e.description ? e.description : e));
+    }
+
     if (req.responseText != '') {
         didReadFile();
         return;
     }
-    
+
+    log ('Async XHR started.');
     req = new XMLHttpRequest();
     req.onreadystatechange = onReqreadystatechange;
     req.onerror = onReqError;
+    req.onabort = onReqAbort;
     req.open('GET', '/xmlhttprequest/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt');
     req.send(null);
 }
 </script>
 <body onload="runTest()">
 <div>This tests that unsafe redirects won't be allowed when making an XMLHttpRequest.</div>
+<div id="log"></div>
 <div id="result">FAILURE</div>
 </body>
 </html>

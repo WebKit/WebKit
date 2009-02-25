@@ -137,7 +137,6 @@ private:
     void didReceiveResponsePreflight(const ResourceResponse&);
     void didFinishLoadingPreflight();
 
-    void processSyncLoadResults(unsigned long identifier, const Vector<char>& data, const ResourceResponse&, ExceptionCode&);
     void updateAndDispatchOnProgress(unsigned int len);
 
     String responseMIMEType() const;
@@ -235,6 +234,7 @@ private:
     
     unsigned m_lastSendLineNumber;
     String m_lastSendURL;
+    ExceptionCode m_exceptionCode;
 };
 
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2009-02-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24089: ThreadableLoader::loadResourceSynchronously should do callbacks like the async code.
+        <https://bugs.webkit.org/show_bug.cgi?id=24089>
+
+        Modified the test to account for behavior change and output more information to better detect
+        future changes in behavior.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html:
+
 2009-02-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

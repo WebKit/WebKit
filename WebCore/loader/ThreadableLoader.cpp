@@ -31,11 +31,9 @@
 #include "config.h"
 #include "ThreadableLoader.h"
 
-#include "DocumentThreadableLoader.h"
-#include "Document.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "ScriptExecutionContext.h"
+#include "Document.h"
+#include "DocumentThreadableLoader.h"
 #include "WorkerContext.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"
@@ -56,15 +54,11 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
     return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff);
 }
 
-unsigned long ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client)
 {
     ASSERT(context);
     ASSERT(context->isDocument());
-
-    Document* document = static_cast<Document*>(context);
-    if (!document->frame())
-        return std::numeric_limits<unsigned long>::max();
-    return document->frame()->loader()->loadResourceSynchronously(request, error, response, data);
+    DocumentThreadableLoader::loadResourceSynchronously(static_cast<Document*>(context), request, client);
 }
 
 } // namespace WebCore
