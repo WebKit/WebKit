@@ -477,7 +477,7 @@ Position VisiblePosition::canonicalPosition(const Position& position)
     Node* prevNode = prev.node();
 
     // If the body is null, there is no visible position.
-    if (!node->ownerDocument()->body())
+    if (!node->document()->body())
         return Position();
 
     // The new position must be in the same editable element. Enforce that first.

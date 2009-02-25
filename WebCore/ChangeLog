@@ -1,3 +1,13 @@
+2009-02-24  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Sam Weinig
+
+        Fix null pointer error. If the node is the Document, then ownerDocument() 
+        returns null, document() does not.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+
 2009-02-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by NOBODY (attempted build fixes).
