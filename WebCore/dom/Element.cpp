@@ -432,6 +432,13 @@ PassRefPtr<ClientRectList> Element::getClientRects() const
 
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
+
+    if (FrameView* view = document()->view()) {
+        IntRect visibleContentRect = view->visibleContentRect();
+        for (size_t i = 0; i < quads.size(); ++i)
+            quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
+    }
+
     return ClientRectList::create(quads);
 }
 
@@ -451,6 +458,11 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
     IntRect result = quads[0].enclosingBoundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].enclosingBoundingBox());
+
+    if (FrameView* view = document()->view()) {
+        IntRect visibleContentRect = view->visibleContentRect();
+        result.move(-visibleContentRect.x(), -visibleContentRect.y());
+    }
 
     return ClientRect::create(result);
 }

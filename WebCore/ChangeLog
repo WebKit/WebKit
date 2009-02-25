@@ -1,3 +1,19 @@
+2009-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23990
+        Regression (r40837): JavaScript image popup doesn't work
+
+        Make the getClientRects and getBoundingClientRect methods return rects
+        relative to the viewport.
+
+        Test: fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+
 2009-02-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,13 @@
+2009-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=23990
+        Regression (r40837): JavaScript image popup doesn't work
+
+        * fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport-expected.txt: Added.
+        * fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport.html: Added.
+
 2009-02-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel
