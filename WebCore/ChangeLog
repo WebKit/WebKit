@@ -1,3 +1,35 @@
+2009-02-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24174
+        Add more V8 custom bindings.
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp: Added.
+        (WebCore::hasCSSPropertyNamePrefix):
+        (WebCore::cssPropertyName):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8DOMStringListCustom.cpp: Added.
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8EventCustom.cpp: Added.
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_DELETER):
+        (WebCore::NAMED_PROPERTY_SETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp: Added.
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8NodeListCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8StyleSheetListCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):
+
 2009-02-25  Scott Violet  <sky@google.com>
 
         Reviewed by Dave Hyatt.
