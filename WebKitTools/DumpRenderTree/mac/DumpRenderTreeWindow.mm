@@ -66,6 +66,8 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (void)close
 {
+    [self stopObservingWebView];
+
     CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(openWindowsRef));
     CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, self);
     assert(i != -1);

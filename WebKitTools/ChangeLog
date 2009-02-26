@@ -1,3 +1,16 @@
+2009-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Fix spew about a WebView being deallocated while key value observers are
+        still registered with it by making sure that we always stop observing
+        _isUsingAcceleratedCompositing in -[DumpRenderTreeWindow close].
+        
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow close]):
+
 2009-02-25  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.

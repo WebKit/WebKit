@@ -513,8 +513,7 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-    DumpRenderTreeWindow *window = static_cast<DumpRenderTreeWindow*>([webView window]);
-    [window stopObservingWebView];
+    NSWindow *window = [webView window];
     [webView close];
     mainFrame = nil;
 
