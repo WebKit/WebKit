@@ -1,3 +1,13 @@
+2009-02-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add canvas to the list of RenderObjects that can mark a page as
+        visually not empty.
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas):
+
 2009-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dave Hyatt.
