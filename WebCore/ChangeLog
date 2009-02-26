@@ -1,3 +1,17 @@
+2009-02-16  Anantanarayanan Iyengar  <ananta@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23973
+        ScrollView::scrollContents can be invoked during view shutdown.  In
+        this scenario the FrameView::hostWindow method can return NULL, which
+        indicates that the frame/page is being destroyed. This causes a crash
+        when we try to dereference a NULL hostWindow pointer.  Fix is to add a
+        NULL check for this.  
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+
 2009-02-26  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Dave Hyatt.

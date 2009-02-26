@@ -436,6 +436,9 @@ const int panIconSizeLength = 20;
 
 void ScrollView::scrollContents(const IntSize& scrollDelta)
 {
+    if (!hostWindow())
+        return;
+
     // Since scrolling is double buffered, we will be blitting the scroll view's intersection
     // with the clip rect every time to keep it smooth.
     IntRect clipRect = windowClipRect();
