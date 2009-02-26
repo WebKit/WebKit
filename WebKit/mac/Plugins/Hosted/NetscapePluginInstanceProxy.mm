@@ -250,6 +250,28 @@ void NetscapePluginInstanceProxy::insertText(NSString *text)
                                   const_cast<char*>(reinterpret_cast<const char*>([textData bytes])), [textData length]);
 }
 
+void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, unsigned height)
+{
+    _WKPHPluginInstancePrint(m_pluginHostProxy->port(), m_pluginID, width, height);
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>();
+    if (!reply.get() || !reply->m_returnValue)
+        return;
+
+    RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(reply->m_result.get()));
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(width, height, 8, 32, width * 4, colorSpace.get(), kCGImageAlphaFirst, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+
+    // Flip the context and draw the image.
+    CGContextSaveGState(context);
+    CGContextTranslateCTM(context, 0.0, height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image.get());
+
+    CGContextRestoreGState(context);
+}
+
 void NetscapePluginInstanceProxy::stopTimers()
 {
     _WKPHPluginInstanceStopTimers(m_pluginHostProxy->port(), m_pluginID);

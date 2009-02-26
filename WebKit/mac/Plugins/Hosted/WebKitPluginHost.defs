@@ -99,6 +99,11 @@ simpleroutine PHPluginInstanceStartTimers(pluginHostPort :mach_port_t;
 simpleroutine PHPluginInstanceStopTimers(pluginHostPort :mach_port_t;
                                        pluginID :uint32_t);
 
+simpleroutine PHPluginInstancePrint(pluginHostPort :mach_port_t;
+                                    pluginID :uint32_t;
+                                    width :uint32_t;
+                                    height :uint32_t);
+
 simpleroutine PHDestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
 

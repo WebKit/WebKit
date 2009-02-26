@@ -293,8 +293,13 @@ extern "C" {
 - (void)drawRect:(NSRect)rect
 {
     if (_proxy) {
-        if (_softwareRenderer)
-            WKSoftwareCARendererRender(_softwareRenderer, (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect));
+        if (_softwareRenderer) {
+            if ([NSGraphicsContext currentContextDrawingToScreen])
+                WKSoftwareCARendererRender(_softwareRenderer, (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect));
+            else
+                _proxy->print(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
+        }
+            
         return;
     }
     
