@@ -447,6 +447,7 @@ static int match(const UChar* subjectPtr, const unsigned char* instructionPtr, i
     int min;
     bool minimize = false; /* Initialization not really needed, but some compilers think so. */
     unsigned remainingMatchCount = matchLimit;
+    int othercase; /* Declare here to avoid errors during jumps */
     
     MatchStack stack;
 
@@ -1186,7 +1187,7 @@ RECURSE:
                 stack.currentFrame->args.instructionPtr += stack.currentFrame->locals.length;
                 
                 if (stack.currentFrame->locals.fc <= 0xFFFF) {
-                    int othercase = md.ignoreCase ? jsc_pcre_ucp_othercase(stack.currentFrame->locals.fc) : -1;
+                    othercase = md.ignoreCase ? jsc_pcre_ucp_othercase(stack.currentFrame->locals.fc) : -1;
                     
                     for (int i = 1; i <= min; i++) {
                         if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc && *stack.currentFrame->args.subjectPtr != othercase)
