@@ -26,6 +26,7 @@
 
 #include "CodeBlock.h"
 #include "Interpreter.h"
+#include "JIT.h"
 #include "ObjectPrototype.h"
 #include "Lookup.h"
 #include "Operations.h"
@@ -67,8 +68,16 @@ static inline bool isNumericCompareFunction(CallType callType, const CallData& c
 {
     if (callType != CallTypeJS)
         return false;
-    
-    return callData.js.functionBody->bytecode(callData.js.scopeChain).isNumericCompareFunction();
+
+    CodeBlock& codeBlock = callData.js.functionBody->bytecode(callData.js.scopeChain);
+#if ENABLE(JIT)
+    // If the JIT is enabled then we need to preserve the invariant that every
+    // function with a CodeBlock also has JIT code.
+    if (!codeBlock.jitCode())
+        JIT::compile(callData.js.scopeChain->globalData, &codeBlock);
+#endif
+
+    return codeBlock.isNumericCompareFunction();
 }
 
 // ------------------------------ ArrayPrototype ----------------------------

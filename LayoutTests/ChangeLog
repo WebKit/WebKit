@@ -1,3 +1,15 @@
+2009-02-25  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Gavin Barraclough.
+
+        Add tests for bug 24086: Regression (r40993): WebKit crashes after logging in to lists.zenbe
+        <https://bugs.webkit.org/show_bug.cgi?id=24086>
+        <rdar://problem/6625111>
+
+        * fast/js/resources/sort-no-jit-code-crash.js: Added.
+        * fast/js/sort-no-jit-code-crash-expected.txt: Added.
+        * fast/js/sort-no-jit-code-crash.html: Added.
+
 2009-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
