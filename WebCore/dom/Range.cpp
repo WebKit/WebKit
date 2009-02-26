@@ -264,17 +264,17 @@ void Range::collapse(bool toStart, ExceptionCode& ec)
 
 bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
-
-    if (!m_start.container() && refNode->attached()) {
+    if (!m_start.container()) {
         ec = INVALID_STATE_ERR;
         return false;
     }
 
-    if (m_start.container() && !refNode->attached()) {
+    if (!refNode) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+
+    if (!refNode->attached()) {
         // Firefox doesn't throw an exception for this case; it returns false.
         return false;
     }
@@ -299,22 +299,17 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
     // This method returns -1, 0 or 1 depending on if the point described by the 
     // refNode node and an offset within the node is before, same as, or after the range respectively.
 
-    if (!refNode) {
-        ec = NOT_FOUND_ERR;
-        return 0;
-    }
-
-    if (!m_start.container() && refNode->attached()) {
+    if (!m_start.container()) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
 
-    if (m_start.container() && !refNode->attached()) {
-        // Firefox doesn't throw an exception for this case; it returns -1.
-        return -1;
+    if (!refNode) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
     }
 
-    if (refNode->document() != m_ownerDocument) {
+    if (!refNode->attached() || refNode->document() != m_ownerDocument) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }

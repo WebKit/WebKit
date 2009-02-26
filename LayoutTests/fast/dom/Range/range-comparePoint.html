@@ -71,14 +71,15 @@ function test()
     }
         
     // test 10 - attached range, detached node
-    // firefox does not throw an exception and returns -1 for this test
-    expectedResult = -1;
+    // firefox throws an exception
     range.selectNode(document.getElementById("a1"));
     var node = document.getElementById("b1");
     node.parentNode.removeChild(node);
-    result = range.comparePoint(node, 0);
-    if (result == expectedResult)
+    try {
+        range.comparePoint(node, 0);
+    } catch (e) {
         document.getElementById("test10").innerHTML = "test 10 passed"; 
+    }
         
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
