@@ -3026,7 +3026,8 @@ IDL_PATH := \
     $(WebCore)/storage \
     $(WebCore)/svg \
     $(WebCore)/xml \
-    $(WebCore)/plugins
+    $(WebCore)/plugins \
+    $(WebCore)/workers
 
 vpath %.idl = $(IDL_PATH)
 

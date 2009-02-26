@@ -1,3 +1,10 @@
+2009-02-25  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix. Add WebCore/workers to the list of paths
+        searched by the bindings generator perl script.
+
+        * GNUmakefile.am:
+
 2009-02-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
