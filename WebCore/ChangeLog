@@ -1,3 +1,20 @@
+2009-02-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        http://codereview.chromium.org/27217
+        Add custom V8 bindings for Navigator, Clipboard, Document, and Node.
+
+        * bindings/v8/custom/V8ClipboardCustom.cpp: Added.
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DocumentCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Added.
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8NodeCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-02-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix for building with GNOME Keyring enabled.
