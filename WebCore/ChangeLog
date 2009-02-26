@@ -1,3 +1,16 @@
+2009-02-26  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Minor cleanup of ChromiumBridge:
+        Removing unused matchesMIMEType method and s/Javascript/JavaScript/
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/MimeTypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+
 2009-02-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig
