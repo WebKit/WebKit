@@ -1,3 +1,15 @@
+2009-02-26  Rahul Kuchhal  <kuchhal@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24003
+        Fix a crash caused by unsafe type conversion.
+
+        Test: fast/block/positioning/absolute-in-inline-rtl-4.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+
 2009-02-26  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Roben.

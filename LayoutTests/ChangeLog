@@ -1,3 +1,13 @@
+2009-02-26  Rahul Kuchhal  <kuchhal@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24003
+        Fix a crash caused by unsafe type conversion.
+
+        * fast/block/positioning/absolute-in-inline-rtl-4-expected.txt: Added.
+        * fast/block/positioning/absolute-in-inline-rtl-4.html: Added.
+
 2009-02-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein & Darin Adler
