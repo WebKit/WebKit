@@ -701,7 +701,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RenderView* root = static_cast<RenderView *>(_private->coreFrame->document()->renderer());
     if (!root)
         return nil;
-    return _private->coreFrame->document()->axObjectCache()->get(root)->wrapper();
+    return _private->coreFrame->document()->axObjectCache()->getOrCreate(root)->wrapper();
 #else
     return nil;
 #endif

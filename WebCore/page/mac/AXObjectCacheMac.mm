@@ -58,9 +58,9 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
     
     // notifications for text input objects are sent to that object
     // all others are sent to the top WebArea
-    RefPtr<AccessibilityObject> obj = get(renderer)->observableObject();
+    RefPtr<AccessibilityObject> obj = getOrCreate(renderer)->observableObject();
     if (!obj)
-        obj = get(renderer->document()->renderer());
+        obj = getOrCreate(renderer->document()->renderer());
 
     if (!obj)
         return;
@@ -74,7 +74,7 @@ void AXObjectCache::postNotificationToElement(RenderObject* renderer, const Stri
     if (!renderer)
         return;
 
-    RefPtr<AccessibilityObject> obj = get(renderer);
+    RefPtr<AccessibilityObject> obj = getOrCreate(renderer);
     if (!obj)
         return;
 

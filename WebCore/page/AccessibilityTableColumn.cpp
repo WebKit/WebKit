@@ -137,7 +137,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     if (!cell)
         return 0;
 
-    return m_parentTable->axObjectCache()->get(cell);
+    return m_parentTable->axObjectCache()->getOrCreate(cell);
 }
     
 void AccessibilityTableColumn::addChildren()

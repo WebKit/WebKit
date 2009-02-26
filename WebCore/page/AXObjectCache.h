@@ -60,10 +60,13 @@ namespace WebCore {
         ~AXObjectCache();
         
         // to be used with render objects
-        AccessibilityObject* get(RenderObject*);
+        AccessibilityObject* getOrCreate(RenderObject*);
         
         // used for objects without backing elements
-        AccessibilityObject* get(AccessibilityRole);
+        AccessibilityObject* getOrCreate(AccessibilityRole);
+        
+        // will only return the AccessibilityObject if it already exists
+        AccessibilityObject* get(RenderObject*);
         
         void remove(RenderObject*);
         void remove(AXID);

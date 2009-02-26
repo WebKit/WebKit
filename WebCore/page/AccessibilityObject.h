@@ -266,6 +266,7 @@ public:
     virtual AccessibilityObject* nextSibling() const;
     virtual AccessibilityObject* parentObject() const;
     virtual AccessibilityObject* parentObjectUnignored() const;
+    virtual AccessibilityObject* parentObjectIfExists() const;
     virtual AccessibilityObject* observableObject() const;
     virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual AccessibilityObject* titleUIElement() const;
@@ -410,7 +411,6 @@ protected:
     mutable bool m_haveChildren;
     
     virtual void clearChildren();
-    virtual void removeAXObjectID();
     virtual bool isDetached() const { return true; }
 
 #if PLATFORM(MAC)

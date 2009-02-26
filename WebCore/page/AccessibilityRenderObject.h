@@ -125,6 +125,7 @@ public:
     virtual AccessibilityObject* previousSibling() const;
     virtual AccessibilityObject* nextSibling() const;
     virtual AccessibilityObject* parentObject() const;
+    virtual AccessibilityObject* parentObjectIfExists() const;
     virtual AccessibilityObject* observableObject() const;
     virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual AccessibilityObject* titleUIElement() const;
@@ -218,7 +219,6 @@ protected:
     mutable bool m_childrenDirty;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
-    virtual void removeAXObjectID();
     
     virtual bool isDetached() const { return !m_renderer; }
 

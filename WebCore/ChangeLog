@@ -1,3 +1,102 @@
+2009-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 24143: Crash occurs at WebCore::AccessibilityTable::isTableExposableThroughAccessibility() when applying a link in GMail
+        https://bugs.webkit.org/show_bug.cgi?id=24143
+
+        When an AX object is marked dirty, do not create AX elements while going up the parent chain.
+        Do not allow AXRenderObjects to remove their own IDs from the cache, all the cache to do that work
+        Make sure the AXObjectWrapper's have an object before calling them
+        In AXObjectCache, change get -> getOrCreate. Use get() to only retrieve an element if it exists
+
+        Test: platform/mac-snowleopard/accessibility/table-updating.html
+
+        * WebCore.base.exp:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::removeAXID):
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        * page/AXObjectCache.h:
+        * page/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::parentObject):
+        * page/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * page/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        (WebCore::AccessibilityListBoxOption::parentObject):
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::parentObjectIfExists):
+        (WebCore::replacedNodeNeedsCharacter):
+        (WebCore::AccessibilityObject::accessibilityObjectForPosition):
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::firstChild):
+        (WebCore::AccessibilityRenderObject::lastChild):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::isAttachment):
+        (WebCore::AccessibilityRenderObject::headingLevel):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::menuForMenuButton):
+        (WebCore::AccessibilityRenderObject::menuButtonForMenu):
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::focusedUIElement):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::setRenderObject):
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::headerContainer):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * page/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::isTableCell):
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * page/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * page/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::isTableRow):
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        (AXLinkElementForNode):
+        (nsStringForReplacedNode):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityFocusedUIElement]):
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper _accessibilityParentForSubview:]):
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2009-02-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff Garen.

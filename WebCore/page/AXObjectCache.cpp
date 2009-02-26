@@ -58,6 +58,7 @@ AXObjectCache::~AXObjectCache()
         AccessibilityObject* obj = (*it).second.get();
         detachWrapper(obj);
         obj->detach();
+        removeAXID(obj);
     }
 }
 
@@ -66,39 +67,52 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     if (!renderer)
         return 0;
     
-    RefPtr<AccessibilityObject> obj = 0;
+    AccessibilityObject* obj = 0;
     AXID axID = m_renderObjectMapping.get(renderer);
     ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
 
     if (axID)
         obj = m_objects.get(axID).get();
-
-    Node* node = renderer->node();
-    if (!obj) {
-        if (renderer->isListBox())
-            obj = AccessibilityListBox::create(renderer);
-        else if (node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
-            obj = AccessibilityList::create(renderer);
-        else if (renderer->isTable())
-            obj = AccessibilityTable::create(renderer);
-        else if (renderer->isTableRow())
-            obj = AccessibilityTableRow::create(renderer);
-        else if (renderer->isTableCell())
-            obj = AccessibilityTableCell::create(renderer);
-        else
-            obj = AccessibilityRenderObject::create(renderer);
-        
-        getAXID(obj.get());
-        
-        m_renderObjectMapping.set(renderer, obj.get()->axObjectID());
-        m_objects.set(obj.get()->axObjectID(), obj);    
-        attachWrapper(obj.get());
-    }
     
-    return obj.get();
+    return obj;
 }
 
-AccessibilityObject* AXObjectCache::get(AccessibilityRole role)
+AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
+{
+    if (!renderer)
+        return 0;
+    
+    AccessibilityObject* obj = get(renderer);
+
+    if (!obj) {
+        Node* node = renderer->node();
+        RefPtr<AccessibilityObject> newObj = 0;
+        if (renderer->isListBox())
+            newObj = AccessibilityListBox::create(renderer);
+        else if (node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
+            newObj = AccessibilityList::create(renderer);
+        else if (renderer->isTable())
+            newObj = AccessibilityTable::create(renderer);
+        else if (renderer->isTableRow())
+            newObj = AccessibilityTableRow::create(renderer);
+        else if (renderer->isTableCell())
+            newObj = AccessibilityTableCell::create(renderer);
+        else
+            newObj = AccessibilityRenderObject::create(renderer);
+        
+        obj = newObj.get();
+        
+        getAXID(obj);
+        
+        m_renderObjectMapping.set(renderer, obj->axObjectID());
+        m_objects.set(obj->axObjectID(), obj);    
+        attachWrapper(obj);
+    }
+    
+    return obj;
+}
+
+AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
 {
     RefPtr<AccessibilityObject> obj = 0;
     
@@ -186,6 +200,9 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
 
 void AXObjectCache::removeAXID(AccessibilityObject* obj)
 {
+    if (!obj)
+        return;
+    
     AXID objID = obj->axObjectID();
     if (objID == 0)
         return;
@@ -221,7 +238,7 @@ void AXObjectCache::handleActiveDescendantChanged(RenderObject* renderer)
 {
     if (!renderer)
         return;
-    AccessibilityObject* obj = get(renderer);
+    AccessibilityObject* obj = getOrCreate(renderer);
     if (obj)
         obj->handleActiveDescendantChanged();
 }
@@ -230,7 +247,7 @@ void AXObjectCache::handleAriaRoleChanged(RenderObject* renderer)
 {
     if (!renderer)
         return;
-    AccessibilityObject* obj = get(renderer);
+    AccessibilityObject* obj = getOrCreate(renderer);
     if (obj && obj->isAccessibilityRenderObject())
         static_cast<AccessibilityRenderObject*>(obj)->setAriaRole();
 }

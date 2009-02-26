@@ -241,7 +241,7 @@ void AccessibilityTable::addChildren()
                 if (!cell)
                     continue;
                 
-                AccessibilityObject* rowObject = axCache->get(cell->parent());
+                AccessibilityObject* rowObject = axCache->getOrCreate(cell->parent());
                 if (!rowObject->isTableRow())
                     continue;
                 
@@ -264,7 +264,7 @@ void AccessibilityTable::addChildren()
     // make the columns based on the number of columns in the first body
     unsigned length = initialTableSection->numColumns();
     for (unsigned i = 0; i < length; ++i) {
-        AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->get(ColumnRole));
+        AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->getOrCreate(ColumnRole));
         column->setColumnIndex((int)i);
         column->setParentTable(this);
         m_columns.append(column);
@@ -281,7 +281,7 @@ AccessibilityObject* AccessibilityTable::headerContainer()
     if (m_headerContainer)
         return m_headerContainer;
     
-    m_headerContainer = static_cast<AccessibilityTableHeaderContainer*>(axObjectCache()->get(TableHeaderContainerRole));
+    m_headerContainer = static_cast<AccessibilityTableHeaderContainer*>(axObjectCache()->getOrCreate(TableHeaderContainerRole));
     m_headerContainer->setParentTable(this);
     
     return m_headerContainer;
@@ -432,7 +432,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     if (!cell)
         return 0;
     
-    AccessibilityObject* cellObject = axObjectCache()->get(cell);
+    AccessibilityObject* cellObject = axObjectCache()->getOrCreate(cell);
     ASSERT(cellObject->isTableCell());
     
     return static_cast<AccessibilityTableCell*>(cellObject);

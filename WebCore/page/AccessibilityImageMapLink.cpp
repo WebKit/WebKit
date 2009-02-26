@@ -65,7 +65,7 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
     if (!m_mapElement || !m_mapElement->renderer())
         return 0;
     
-    return m_mapElement->document()->axObjectCache()->get(m_mapElement->renderer());
+    return m_mapElement->document()->axObjectCache()->getOrCreate(m_mapElement->renderer());
 }
     
 Element* AccessibilityImageMapLink::actionElement() const

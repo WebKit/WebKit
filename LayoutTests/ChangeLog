@@ -1,3 +1,14 @@
+2009-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Test for
+        Bug 24143: Crash occurs at WebCore::AccessibilityTable::isTableExposableThroughAccessibility() when applying a link in GMail
+        https://bugs.webkit.org/show_bug.cgi?id=24143
+
+        * platform/mac-snowleopard/accessibility/table-updating-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-updating.html: Added.
+
 2009-02-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

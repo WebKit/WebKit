@@ -650,7 +650,7 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
     // detachment.
 
     // FIXME: Using fallbackCache->get(ListBoxOptionRole) is a hack.
-    accessible->m_object = fallbackCache->get(ListBoxOptionRole);
+    accessible->m_object = fallbackCache->getOrCreate(ListBoxOptionRole);
 }
 
 }

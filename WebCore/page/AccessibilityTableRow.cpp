@@ -70,7 +70,7 @@ bool AccessibilityTableRow::isTableRow() const
     if (!m_renderer)
         return true;
     
-    AccessibilityObject* renderTable = axObjectCache()->get(static_cast<RenderTableRow*>(m_renderer)->table());
+    AccessibilityObject* renderTable = axObjectCache()->getOrCreate(static_cast<RenderTableRow*>(m_renderer)->table());
     if (!renderTable->isDataTable())
         return false;
     

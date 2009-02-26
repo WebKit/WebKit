@@ -1,3 +1,14 @@
+2009-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Naming change from
+        Bug 24143: Crash occurs at WebCore::AccessibilityTable::isTableExposableThroughAccessibility() when applying a link in GMail
+        https://bugs.webkit.org/show_bug.cgi?id=24143
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _accessibilityTree]):
+
 2009-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix with ACCELERATED_COMPOSITING turned on.

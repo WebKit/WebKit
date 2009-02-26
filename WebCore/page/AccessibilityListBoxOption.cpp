@@ -97,7 +97,7 @@ IntRect AccessibilityListBoxOption::elementRect() const
     if (!listBoxRenderer)
         return rect;
     
-    IntRect parentRect = listBoxRenderer->document()->axObjectCache()->get(listBoxRenderer)->boundingBoxRect();
+    IntRect parentRect = listBoxRenderer->document()->axObjectCache()->getOrCreate(listBoxRenderer)->boundingBoxRect();
     int index = listBoxOptionIndex();
     if (index != -1)
         rect = static_cast<RenderListBox*>(listBoxRenderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), index);
@@ -153,7 +153,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     if (!parentNode)
         return 0;
     
-    return m_optionElement->document()->axObjectCache()->get(parentNode->renderer());
+    return m_optionElement->document()->axObjectCache()->getOrCreate(parentNode->renderer());
 }
 
 void AccessibilityListBoxOption::setSelected(bool selected)
