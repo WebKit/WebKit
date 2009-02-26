@@ -534,9 +534,6 @@ bool CSSParser::parseValue(int propId, bool important)
     if (!value)
         return false;
 
-    if (!m_styleSheet)
-        return false;
-
     int id = value->id;
 
     // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
@@ -839,7 +836,7 @@ bool CSSParser::parseValue(int propId, bool important)
             } else if (m_strict && nrcoords == 2)
                 hotspot = IntPoint(coords[0], coords[1]);
             if (m_strict || coords.size() == 0) {
-                if (!uri.isNull())
+                if (!uri.isNull() && m_styleSheet)
                     list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotspot));
             }
             if ((m_strict && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))
@@ -905,7 +902,7 @@ bool CSSParser::parseValue(int propId, bool important)
         } else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             // ### allow string in non strict mode?
             String uri = parseURL(value->string);
-            if (!uri.isNull()) {
+            if (!uri.isNull() && m_styleSheet) {
                 parsedValue = CSSImageValue::create(m_styleSheet->completeURL(uri));
                 m_valueList->next();
             }
@@ -1117,7 +1114,7 @@ bool CSSParser::parseValue(int propId, bool important)
             CSSParserValue* val;
             RefPtr<CSSValue> parsedValue;
             while ((val = m_valueList->current())) {
-                if (val->unit == CSSPrimitiveValue::CSS_URI) {
+                if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
                     String value = parseURL(val->string);
                     parsedValue = CSSPrimitiveValue::create(m_styleSheet->completeURL(value), CSSPrimitiveValue::CSS_URI);
                 }
@@ -2010,7 +2007,7 @@ bool CSSParser::parseContent(int propId, bool important)
 
     while (CSSParserValue* val = m_valueList->current()) {
         RefPtr<CSSValue> parsedValue;
-        if (val->unit == CSSPrimitiveValue::CSS_URI) {
+        if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
             // url
             String value = parseURL(val->string);
             parsedValue = CSSImageValue::create(m_styleSheet->completeURL(value));
@@ -2083,7 +2080,7 @@ bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
     }
     if (m_valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         String uri = parseURL(m_valueList->current()->string);
-        if (!uri.isNull())
+        if (!uri.isNull() && m_styleSheet)
             value = CSSImageValue::create(m_styleSheet->completeURL(uri));
         return true;
     }
@@ -3131,7 +3128,7 @@ bool CSSParser::parseFontFaceSrc()
     RefPtr<CSSFontFaceSrcValue> uriValue;
     while ((val = m_valueList->current())) {
         RefPtr<CSSFontFaceSrcValue> parsedValue;
-        if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma) {
+        if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma && m_styleSheet) {
             String value = parseURL(val->string);
             parsedValue = CSSFontFaceSrcValue::create(m_styleSheet->completeURL(value));
             uriValue = parsedValue;
@@ -3732,7 +3729,7 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
     // Look for an image initially.  If the first value is not a URI, then we're done.
     BorderImageParseContext context;
     CSSParserValue* val = m_valueList->current();
-    if (val->unit == CSSPrimitiveValue::CSS_URI) {        
+    if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {        
         String uri = parseURL(val->string);
         if (uri.isNull())
             return false;

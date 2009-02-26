@@ -1,3 +1,21 @@
+2009-02-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Re-working of <rdar://problem/6487249> repro crash in 
+        WebCore::CSSParser::parseFillImage copying entire contents of this 
+        page
+        -and corresponding: https://bugs.webkit.org/show_bug.cgi?id=24172
+
+        Fixes a bunch of layout test failures I caused!
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseBorderImage):
+
 2009-02-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
