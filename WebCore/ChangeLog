@@ -1,3 +1,18 @@
+2009-02-26  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24202
+        Have drawNodeHighlight clip instead of clearing. This makes it work for
+        both Safari and Chromium since Chromium draws the inspector highlighting
+        in the same buffer as the page.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::quadToPath):
+        (WebCore::drawOutlinedQuad):
+        (WebCore::drawOutlinedQuadWithClip):
+        (WebCore::drawHighlightForBox):
+
 2009-02-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein & Darin Adler

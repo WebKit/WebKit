@@ -2855,26 +2855,23 @@ void InspectorController::removeBreakpoint(intptr_t sourceID, unsigned lineNumbe
 }
 #endif
 
-static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor)
+static Path quadToPath(const FloatQuad& quad)
 {
-    static const int outlineThickness = 2;
-    static const Color outlineColor(62, 86, 180, 228);
-
     Path quadPath;
     quadPath.moveTo(quad.p1());
     quadPath.addLineTo(quad.p2());
     quadPath.addLineTo(quad.p3());
     quadPath.addLineTo(quad.p4());
     quadPath.closeSubpath();
-    
-    // Clear the quad
-    {
-        context.save();
-        context.setCompositeOperation(CompositeClear);
-        context.addPath(quadPath);
-        context.fillPath();
-        context.restore();
-    }
+    return quadPath;
+}
+
+static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor)
+{
+    static const int outlineThickness = 2;
+    static const Color outlineColor(62, 86, 180, 228);
+
+    Path quadPath = quadToPath(quad);
 
     // Clip out the quad, then draw with a 2px stroke to get a pixel
     // of outline (because inflating a quad is hard)
@@ -2897,6 +2894,15 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     context.fillPath();
 }
 
+static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor)
+{
+    context.save();
+    Path clipQuadPath = quadToPath(clipQuad);
+    context.clipOut(clipQuadPath);
+    drawOutlinedQuad(context, quad, fillColor);
+    context.restore();
+}
+
 static void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad)
 {
     static const Color contentBoxColor(125, 173, 217, 128);
@@ -2905,11 +2911,11 @@ static void drawHighlightForBox(GraphicsContext& context, const FloatQuad& conte
     static const Color marginBoxColor(125, 173, 217, 228);
 
     if (marginQuad != borderQuad)
-        drawOutlinedQuad(context, marginQuad, marginBoxColor);
+        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, marginBoxColor);
     if (borderQuad != paddingQuad)
-        drawOutlinedQuad(context, borderQuad, borderBoxColor);
+        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, borderBoxColor);
     if (paddingQuad != contentQuad)
-        drawOutlinedQuad(context, paddingQuad, paddingBoxColor);
+        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, paddingBoxColor);
 
     drawOutlinedQuad(context, contentQuad, contentBoxColor);
 }
