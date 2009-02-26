@@ -1,3 +1,20 @@
+2009-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=24130
+          <rdar://problem/6618196> Paint very slow when horizontally resizing
+
+        Test: fast/gradients/background-clipped.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Intersect the
+        destination rectangle passed to drawTiledImage() with the dirty
+        rectangle. This makes it more likely for the destination rect to be
+        contained in a single tile rect, which results in a faster code path
+        being taken down the road (just drawing a single tile instead of
+        tiling).
+
 2009-02-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

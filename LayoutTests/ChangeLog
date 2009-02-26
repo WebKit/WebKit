@@ -1,3 +1,15 @@
+2009-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=24130
+          <rdar://problem/6618196> Paint very slow when horizontally resizing
+
+        * fast/gradients/background-clipped.html: Added.
+        * platform/mac/fast/gradients/background-clipped-expected.checksum: Added.
+        * platform/mac/fast/gradients/background-clipped-expected.png: Added.
+        * platform/mac/fast/gradients/background-clipped-expected.txt: Added.
+
 2009-02-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

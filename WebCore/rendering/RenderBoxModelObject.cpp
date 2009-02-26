@@ -346,7 +346,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         IntSize tileSize;
 
         calculateBackgroundImageGeometry(bgLayer, tx, ty, w, h, destRect, phase, tileSize);
+        IntPoint destOrigin = destRect.location();
+        destRect.intersect(paintInfo.rect);
         if (!destRect.isEmpty()) {
+            phase += destRect.location() - destOrigin;
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             context->drawTiledImage(bg->image(this, tileSize), destRect, phase, tileSize, compositeOp);
         }
