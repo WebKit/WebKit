@@ -724,7 +724,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
 
     entryPrivate->setLastVisitWasFailure(wasFailure);
     if (!httpMethod.isEmpty())
-        entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET"));
+        entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET") && (url.protocolIs("http") || url.protocolIs("https")));
 
     COMPtr<WebHistoryItem> item(Query, entry);
     item->historyItem()->setRedirectURLs(std::auto_ptr<Vector<String> >());

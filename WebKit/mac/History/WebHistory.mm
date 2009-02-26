@@ -811,7 +811,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     item->setLastVisitWasFailure(wasFailure);
 
     if ([method length])
-        item->setLastVisitWasHTTPNonGet([method caseInsensitiveCompare:@"GET"]);
+        item->setLastVisitWasHTTPNonGet([method caseInsensitiveCompare:@"GET"] && (![[url scheme] caseInsensitiveCompare:@"http"] || ![[url scheme] caseInsensitiveCompare:@"https"]));
 
     item->setRedirectURLs(std::auto_ptr<Vector<String> >());
 
