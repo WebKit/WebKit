@@ -1,3 +1,12 @@
+2009-02-26  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        make WebKit/Qt compile with SVG disabled
+
+        * WebCore.pro:
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+
 2009-02-25  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix. Add WebCore/workers to the list of paths

@@ -61,12 +61,14 @@ FontPlatformData::FontPlatformData(const QFont& font, bool bold)
 {
 }
 
+#if ENABLE(SVG_FONTS)
 FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
     : m_size(size)
     , m_bold(bold)
     , m_oblique(oblique)
 {
 }
+#endif
 
 FontPlatformData::FontPlatformData()
     : m_size(0.0f)

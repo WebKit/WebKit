@@ -1895,7 +1895,7 @@ SOURCES += \
     # GENERATOR 6-B:
     cssvalues.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.c
     cssvalues.input = WALDOCSSVALUES
-    cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} $$GENERATED_SOURCES_DIR && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssvalues)
