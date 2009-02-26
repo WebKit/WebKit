@@ -1,3 +1,13 @@
+2009-02-26  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add test that custom DOM properties survive garbage collection.
+        https://bugs.webkit.org/show_bug.cgi?id=24142
+
+        * fast/dom/Window/customized-property-survives-gc-expected.txt: Added.
+        * fast/dom/Window/customized-property-survives-gc.html: Added.
+
 2009-02-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
