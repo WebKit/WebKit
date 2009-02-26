@@ -1,3 +1,26 @@
+2009-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make SVG Masking platform independet with the use of ImageBuffer::getImageData(),
+        ImageBuffer::putImageData() and GraphicsContext::clipToImageBuffer(). Every platform has
+        just to implement this three methods to support SVG Masking now.
+ 
+        Make SVG Masking platform aware
+        https://bugs.webkit.org/show_bug.cgi?id=19243
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/cairo/SVGResourceMaskerCairo.cpp: Removed.
+        * svg/graphics/cg/SVGResourceMaskerCg.cpp: Removed.
+        * svg/graphics/cg/SVGResourceMaskerCg.mm: Removed.
+        * svg/graphics/qt/SVGResourceMaskerQt.cpp: Removed.
+        * svg/graphics/skia/SVGResourceMaskerSkia.cpp: Removed.
+
 2009-02-26  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Darin Adler, Antti Koivisto and Alexey Proskuryakov.

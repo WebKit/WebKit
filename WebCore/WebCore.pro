@@ -1825,8 +1825,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGRootInlineBox.cpp
 
 SOURCES += \
-        svg/graphics/qt/SVGResourceFilterQt.cpp \
-        svg/graphics/qt/SVGResourceMaskerQt.cpp
+        svg/graphics/qt/SVGResourceFilterQt.cpp
 
 
         # GENERATOR 5-C:

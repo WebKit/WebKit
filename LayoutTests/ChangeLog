@@ -1,3 +1,18 @@
+2009-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Corrected some tests after the new SVG Masking implementation for Mac.
+
+        Make SVG Masking platform aware
+        https://bugs.webkit.org/show_bug.cgi?id=19243
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+        * svg/custom/mask-excessive-malloc.svg:
+
 2009-02-26  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Darin Adler, Antti Koivisto and Alexey Proskuryakov.

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg">
-<mask id="mask" width="100000000" height="100000000"/>
+<mask id="mask" width="1000000000000000" height="1000000000000000"/>
 <path mask="url(#mask)" fill="blue" d="M 200 200 l 100 0 l 0 200 l -100 0 Z"/>
 </svg>

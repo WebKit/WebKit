@@ -28,8 +28,17 @@
 #if ENABLE(SVG)
 #include "SVGResourceMasker.h"
 
+#include "CanvasPixelArray.h"
+#include "Image.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
+#include "GraphicsContext.h"
+#include "SVGMaskElement.h"
+#include "SVGRenderSupport.h"
+#include "SVGRenderStyle.h"
 #include "TextStream.h"
+
+#include <wtf/ByteArray.h>
 
 using namespace std;
 
@@ -49,6 +58,44 @@ void SVGResourceMasker::invalidate()
 {
     SVGResource::invalidate();
     m_mask.clear();
+}
+
+void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
+{
+    if (!m_mask)
+        m_mask.set(m_ownerElement->drawMaskerContent(boundingBox, m_maskRect).release());
+
+    if (!m_mask)
+        return;
+
+    IntSize imageSize(m_mask->size());
+    IntRect intImageRect(0, 0, imageSize.width(), imageSize.height());
+
+    // Create new ImageBuffer to apply luminance
+    auto_ptr<ImageBuffer> luminancedImage(ImageBuffer::create(imageSize, false));
+    if (!luminancedImage.get())
+        return;
+
+    PassRefPtr<CanvasPixelArray> srcPixelArray(m_mask->getImageData(intImageRect)->data());
+    PassRefPtr<ImageData> destImageData(luminancedImage->getImageData(intImageRect));
+
+    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset++) {
+        unsigned pixelByteOffset = pixelOffset * 4;
+
+        unsigned char r = 0, g = 0, b = 0, a = 0;
+        srcPixelArray->get(pixelByteOffset, r);
+        srcPixelArray->get(pixelByteOffset + 1, g);
+        srcPixelArray->get(pixelByteOffset + 2, b);
+        srcPixelArray->get(pixelByteOffset + 3, a);
+
+        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
+
+        destImageData->data()->set(pixelByteOffset + 3, luma);
+    }
+
+    luminancedImage->putImageData(destImageData.get(), intImageRect, IntPoint(0, 0));
+
+    context->clipToImageBuffer(m_maskRect, luminancedImage.get());
 }
 
 TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const
