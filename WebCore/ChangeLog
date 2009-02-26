@@ -2,7 +2,7 @@
 
         Reviewed by Eric Seidel.
 
-        http://codereview.chromium.org/27217
+        https://bugs.webkit.org/show_bug.cgi?id=24208
         Add custom V8 bindings for Navigator, Clipboard, Document, and Node.
 
         * bindings/v8/custom/V8ClipboardCustom.cpp: Added.
