@@ -13,18 +13,18 @@ file:	file:///BASE/		/BASE/
 file:test	file:///BASE/test		/BASE/test
 file:/	file:///		/
 file:/test	file:///test		/test
-file://	file://		
+file://	file:		
 file://test	file://test	test	
 file:///	file:///		/
 file:///test	file:///test		/test
-file://localhost	file://localhost		
+file://localhost	file:		
 file://localhost/	file:///		/
 file://localhost/test	file:///test		/test
 http:	http:/		/
 http:/	http:/		/
-http://	http://		/
-http:///	http:///		/
-http:////	http:////		//
+http://	http:/		/
+http:///	http:/		/
+http:////	http://		//
 http://localhost	http://localhost/	localhost	/
 http://localhost/	http://localhost/	localhost	/
 http://localhost/test	http://localhost/test	localhost	/test

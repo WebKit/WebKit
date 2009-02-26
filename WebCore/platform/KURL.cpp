@@ -1299,7 +1299,7 @@ void KURL::parse(const char* url, const String* originalString)
 
     // If we didn't end up actually changing the original string and
     // it was already in a String, reuse it to avoid extra allocation.
-    if (originalString && strncmp(buffer.data(), url, m_fragmentEnd) == 0)
+    if (originalString && originalString->length() == static_cast<unsigned>(m_fragmentEnd) && strncmp(buffer.data(), url, m_fragmentEnd) == 0)
         m_string = *originalString;
     else
         m_string = String(buffer.data(), m_fragmentEnd);
