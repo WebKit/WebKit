@@ -80,7 +80,7 @@ void setCookies(Document* document, const KURL& url, const KURL& policyURL, cons
             ++it;
     }
 #endif
-    jar->setCookiesFromUrl(cookies, p);
+    jar->setCookiesFromUrl(cookies, u);
 #else
     QCookieJar::cookieJar()->setCookies(u, p, (QString)value);
 #endif

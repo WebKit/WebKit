@@ -1,3 +1,20 @@
+2009-02-26  Benjamin Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24062
+        QNetworkCookieJar expects the url and not the policy url.  Sending the
+        policy url will cause QNetworkCookieJar to behave incorrectly.  One
+        example would be a cookie that does not have a path or domain.
+        QNetworkCookieJar will use the url it is given to fill in default values.
+        This allows setting cookies on the url of the main frame from an iFrame
+        when the cookie should be set on the url of the iFrame.
+
+        Originally noticed on http://writer.zoho.com/jsp/home.jsp?serviceurl=/index.do
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+
 2009-02-26  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.
