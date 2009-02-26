@@ -1,3 +1,14 @@
+2009-02-26  Jonathon Jongsma  <jonathon@quotidian.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20358
+
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData): the small-caps font data
+        should set the computed size rather than the specified size, otherwise
+        the caps just get rendered normal size.
+
 2009-02-26  Benjamin Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by George Staikos.
