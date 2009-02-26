@@ -497,10 +497,17 @@ static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEvent
     }
 
     Frame* mainFrame = core(webView)->mainFrame();
-    if (!mainFrame->view())
-        return FALSE;
+    if (mainFrame->view())
+        mainFrame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
 
-    return mainFrame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+    /* We always return FALSE here because WebKit can, for the same click, decide
+     * to not handle press-event but handle release-event, which can totally confuse
+     * some GTK+ containers when there are no other events in between. This way we
+     * guarantee that this case never happens, and that if press-event goes through
+     * release-event also goes through.
+     */
+
+    return FALSE;
 }
 
 static gboolean webkit_web_view_motion_event(GtkWidget* widget, GdkEventMotion* event)

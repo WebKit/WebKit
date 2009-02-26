@@ -1,5 +1,24 @@
 2009-02-26  Xan Lopez  <xan@gnome.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24103
+        [GTK] Use correct return value for WebView button-release handler
+
+        We are returning whatever the core code tells us it did, but this
+        does not play well with the GTK+ model. GTK+ in general expects it
+        will see a button-release if it saw a button-press and no
+        motion/leave/etc events in between. EventHandler.cpp will, in some
+        cases, not handle press but handle release, confusing the parent
+        container of the WebView.
+
+        As a workaround return always FALSE for button-release (this is
+        the same than the Windows port does).
+
+        * webkit/webkitwebview.cpp:
+
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
         Reviewed by Holger Freyther.
 
         https://bugs.webkit.org/show_bug.cgi?id=17585
