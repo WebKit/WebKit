@@ -1,3 +1,11 @@
+2009-02-26  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Kevin McCullough.
+
+        Manual test for inspector node highlighting.
+
+        * manual-tests/inspector/highlight-nodes.html: Added.
+
 2009-02-16  Anantanarayanan Iyengar  <ananta@chromium.org>
 
         Reviewed by Darin Fisher.
