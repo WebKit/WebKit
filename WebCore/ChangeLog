@@ -1,3 +1,14 @@
+2009-02-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein & Darin Adler
+
+        Make sure the border/padding are properly omitted at the start of an inline that is a continuation.
+        
+        Added fast/inline/inline-continuation-borders.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+
 2009-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix, no review.

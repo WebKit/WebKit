@@ -216,16 +216,15 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     // any side.
     bool includeLeftEdge = false;
     bool includeRightEdge = false;
-    
-    if (!renderer()->firstChild())
-        includeLeftEdge = includeRightEdge = true; // Empty inlines never split across lines.
-    else if (parent()) { // The root inline box never has borders/margins/padding.
+
+    // The root inline box never has borders/margins/padding.
+    if (parent()) {
         bool ltr = renderer()->style()->direction() == LTR;
-        
+
         // Check to see if all initial lines are unconstructed.  If so, then
-        // we know the inline began on this line.
+        // we know the inline began on this line (unless we are a continuation).
         RenderLineBoxList* lineBoxList = rendererLineBoxes();
-        if (!lineBoxList->firstLineBox()->isConstructed()) {
+        if (!lineBoxList->firstLineBox()->isConstructed() && !renderer()->isInlineContinuation()) {
             if (ltr && lineBoxList->firstLineBox() == this)
                 includeLeftEdge = true;
             else if (!ltr && lineBoxList->lastLineBox() == this)
