@@ -1,5 +1,16 @@
 2009-02-26  Xan Lopez  <xan@gnome.org>
 
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16947
+        [GTK] Missing HTTP Auth challenge
+
+        Add new marshalers list.
+
+        * webkitmarshal.list: Added.
+
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
         Reviewed by Alexey Proskuryakov.
 
         https://bugs.webkit.org/show_bug.cgi?id=24193

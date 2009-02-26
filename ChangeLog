@@ -1,3 +1,21 @@
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16947
+        [GTK] Missing HTTP Auth challenge
+
+        Take marshallers to be built from a manually maintained list
+        instead of grepping the sources.
+
+        It's much faster, especially so now that we want to add
+        marshallers from WebCore too. A system to only take into account
+        the modified files when generating the marshallers from sources
+        could be hacked, but I think it's overkill considering how rarely
+        a new marshaller is added.
+
+        * GNUmakefile.am:
+
 2009-02-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

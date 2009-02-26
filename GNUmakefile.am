@@ -371,18 +371,7 @@ stamp_files := \
 	stamp-webkitenumtypes.h
 
 WEBKIT_MARSHAL = $(GENSOURCES)/webkitmarshal
-WEBKIT_MARSHAL_LIST = $(WEBKIT_MARSHAL).list
-
-$(WEBKIT_MARSHAL_LIST): $(webkitgtk_sources) GNUmakefile.am
-	( cd $(top_srcdir) && \
-	sed -n -e 's/.*webkit_marshal_\([[:upper:][:digit:]]*__[[:upper:][:digit:]_]*\).*/\1/p' \
-	$(webkitgtk_sources) ) \
-	| sed -e 's/__/:/' -e 'y/_/,/' | sort -u > $@.tmp
-	if cmp -s $@.tmp $@; then \
-		rm $@.tmp; \
-	else \
-		mv $@.tmp $@; \
-	fi
+WEBKIT_MARSHAL_LIST = $(top_srcdir)/WebKit/gtk/webkitmarshal.list
 
 $(WEBKIT_MARSHAL).cpp: stamp-webkitmarshal.cpp
 	@true
