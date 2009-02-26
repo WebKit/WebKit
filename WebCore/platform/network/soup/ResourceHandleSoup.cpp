@@ -28,21 +28,25 @@
 
 #include "Base64.h"
 #include "CookieJarSoup.h"
+#include "ChromeClient.h"
 #include "CString.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "TextEncoding.h"
+#include "webkit-soup-auth-dialog.h"
 
 #include <errno.h>
 #include <fcntl.h>
 #include <gio/gio.h>
+#include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <libsoup/soup-message.h>
 #include <sys/types.h>
@@ -370,6 +374,31 @@ static SoupSession* createSoupSession()
     return soup_session_async_new();
 }
 
+static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)
+{
+    gpointer messageData = g_object_get_data(G_OBJECT(message), "resourceHandle");
+    if (!messageData)
+        return NULL;
+
+    ResourceHandle* handle = static_cast<ResourceHandle*>(messageData);
+    if (!handle)
+        return NULL;
+
+    ResourceHandleInternal* d = handle->getInternal();
+    if (!d)
+        return NULL;
+
+    Frame* frame = d->m_frame;
+    if (!frame)
+        return NULL;
+
+    GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(frame->page()->chrome()->platformWindow()));
+    if (GTK_WIDGET_TOPLEVEL(toplevel))
+        return toplevel;
+    else
+        return NULL;
+}
+
 static void ensureSessionIsInitialized(SoupSession* session)
 {
     if (g_object_get_data(G_OBJECT(session), "webkit-init"))
@@ -380,6 +409,11 @@ static void ensureSessionIsInitialized(SoupSession* session)
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
     else
         setDefaultCookieJar(jar);
+
+    SoupSessionFeature* authDialog = static_cast<SoupSessionFeature*>(g_object_new(WEBKIT_TYPE_SOUP_AUTH_DIALOG, NULL));
+    g_signal_connect(authDialog, "current-toplevel", G_CALLBACK(currentToplevelCallback), NULL);
+    soup_session_add_feature(session, authDialog);
+    g_object_unref(authDialog);
 
     const char* webkit_debug = g_getenv("WEBKIT_DEBUG"); 
     if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER)
@@ -400,9 +434,10 @@ bool ResourceHandle::startHttp(String urlString)
     SoupMessage* msg;
     msg = soup_message_new(request().httpMethod().utf8().data(), urlString.utf8().data());
     g_signal_connect(msg, "restarted", G_CALLBACK(restartedCallback), this);
-
     g_signal_connect(msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
     g_signal_connect(msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
+
+    g_object_set_data(G_OBJECT(msg), "resourceHandle", reinterpret_cast<void*>(this));
 
     HTTPHeaderMap customHeaders = d->m_request.httpHeaderFields();
     if (!customHeaders.isEmpty()) {
@@ -517,6 +552,9 @@ bool ResourceHandle::start(Frame* frame)
     KURL url = request().url();
     String urlString = url.string();
     String protocol = url.protocol();
+
+    // Used to set the authentication dialog toplevel; may be NULL
+    d->m_frame = frame;
 
     if (equalIgnoringCase(protocol, "data"))
         return startData(urlString);

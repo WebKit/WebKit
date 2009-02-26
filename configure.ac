@@ -348,6 +348,14 @@ AC_ARG_ENABLE(geolocation,
               [],[enable_geolocation="no"])
 AC_MSG_RESULT([$enable_geolocation])
 
+# check whether to enable gnomekeyring support
+AC_MSG_CHECKING([whether to enable gnomekeyring support])
+AC_ARG_ENABLE(gnomekeyring,
+              AC_HELP_STRING([--enable-gnomekeyring],
+                             [enable support for gnomekeyring [default=no]]),
+              [],[enable_gnomekeyring="no"])
+AC_MSG_RESULT([$enable_gnomekeyring])
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -517,6 +525,13 @@ PKG_CHECK_MODULES([LIBSOUP],
 AC_SUBST([LIBSOUP_CFLAGS])
 AC_SUBST([LIBSOUP_LIBS])
 
+if test "$enable_gnomekeyring" = "yes"; then
+   PKG_CHECK_MODULES([GNOMEKEYRING],
+                     [gnome-keyring-1])
+   AC_SUBST([GNOMEKEYRING_CFLAGS])
+   AC_SUBST([GNOMEKEYRING_LIBS])
+fi
+
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
    if test "$with_target" = "directfb"; then
@@ -594,6 +609,9 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
+# Auth backend conditionals
+AM_CONDITIONAL([USE_GNOMEKEYRING], [test "$enable_gnomekeyring" = "yes"])
+
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
@@ -649,6 +667,7 @@ Features:
  JIT compilation                                          : $enable_jit
  Dashboard support                                        : $enable_dashboard_support
  Geolocation support                                      : $enable_geolocation
+ GNOME Keyring support                                    : $enable_gnomekeyring
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 client-side session and persistent storage support : $enable_dom_storage

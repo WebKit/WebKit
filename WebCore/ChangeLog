@@ -1,3 +1,33 @@
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16947
+        [GTK] Missing HTTP Auth challenge
+
+        Add HTTP authentication dialog with optional GNOME Keyring
+        storage.
+
+        * GNUmakefile.am:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::currentToplevelCallback):
+        (WebCore::ResourceHandle::startHttp):
+        (WebCore::ResourceHandle::start):
+        * platform/network/soup/webkit-soup-auth-dialog.c: Added.
+        (webkit_soup_auth_dialog_class_init):
+        (webkit_soup_auth_dialog_init):
+        (webkit_soup_auth_dialog_session_feature_init):
+        (free_authData):
+        (set_password_callback):
+        (response_callback):
+        (show_auth_dialog):
+        (find_password_callback):
+        (session_authenticate):
+        (attach):
+        * platform/network/soup/webkit-soup-auth-dialog.h: Added.
+
 2009-02-25  Ojan Vafai  <ojan@chromium.org> and Eric Seidel <eric@webkit.org>
 
         Reviewed by Dave Hyatt.

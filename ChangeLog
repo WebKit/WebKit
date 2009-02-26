@@ -5,6 +5,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=16947
         [GTK] Missing HTTP Auth challenge
 
+        Add HTTP authentication dialog with optional GNOME Keyring
+        storage.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16947
+        [GTK] Missing HTTP Auth challenge
+
         Take marshallers to be built from a manually maintained list
         instead of grepping the sources.
 

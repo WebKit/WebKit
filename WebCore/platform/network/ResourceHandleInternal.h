@@ -47,6 +47,7 @@
 
 #if USE(SOUP)
 #include <libsoup/soup.h>
+class Frame;
 #endif
 
 #if PLATFORM(QT)
@@ -117,6 +118,7 @@ namespace WebCore {
             , m_bufsize(0)
             , m_total(0)
             , m_idleHandler(0)
+            , m_frame(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -187,6 +189,7 @@ namespace WebCore {
         char* m_buffer;
         gsize m_bufsize, m_total;
         guint m_idleHandler;
+        Frame* m_frame;
 #endif
 #if PLATFORM(QT)
 #if QT_VERSION < 0x040400

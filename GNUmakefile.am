@@ -181,7 +181,8 @@ libWebCore_la_CFLAGS = \
 	$(LIBXSLT_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(HILDON_CFLAGS) \
-	$(GEOCLUE_CFLAGS)
+	$(GEOCLUE_CFLAGS) \
+	$(GNOMEKEYRING_CFLAGS)
 
 libWebCore_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -210,6 +211,7 @@ libWebCore_la_LIBADD = \
 	$(JPEG_LIBS) \
 	$(PNG_LIBS) \
 	$(GEOCLUE_LIBS) \
+	$(GNOMEKEYRING_LIBS) \
 	-lpthread
 
 # WebKit
