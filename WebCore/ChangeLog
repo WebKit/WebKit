@@ -1,3 +1,10 @@
+2009-02-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix for building with GNOME Keyring enabled.
+
+        * platform/network/soup/webkit-soup-auth-dialog.c:
+        (show_auth_dialog):
+
 2009-02-26  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

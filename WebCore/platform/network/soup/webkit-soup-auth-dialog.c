@@ -266,7 +266,7 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_box_pack_start (GTK_BOX (vbox), rememberBox,
                         FALSE, FALSE, 0);
 
-    checkButton = gtk_checkButton_new_with_label("Remember password");
+    checkButton = gtk_check_button_new_with_label("Remember password");
     if (login && password)
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkButton), TRUE);
     gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(checkButton))), TRUE);
