@@ -1,3 +1,11 @@
+2009-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint): Remove assertion fired when child has layer
+        as RenderMedia with controls always has a layer.
+
 2009-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
