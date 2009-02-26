@@ -44,6 +44,7 @@
 #include "ContextMenuController.h"
 #include "Cursor.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "DragClientGtk.h"
 #include "Editor.h"
 #include "EditorClientGtk.h"
@@ -864,6 +865,16 @@ static void webkit_web_view_dispose(GObject* object)
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 
+static void webkit_web_view_finalize(GObject* object)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    g_free(priv->customEncoding);
+
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
+}
+
 static gboolean webkit_create_web_view_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
 {
     gpointer newWebView = g_value_get_object(handlerReturn);
@@ -1396,6 +1407,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
     objectClass->dispose = webkit_web_view_dispose;
+    objectClass->finalize = webkit_web_view_finalize;
     objectClass->get_property = webkit_web_view_get_property;
     objectClass->set_property = webkit_web_view_set_property;
 
@@ -2756,4 +2768,47 @@ SoupSession* webkit_get_default_session ()
     return ResourceHandle::defaultSession();
 }
 
+}
+
+/**
+ * webkit_web_view_set_custom_encoding:
+ * @web_view: a #WebKitWebView
+ * @encoding: the new encoding, or %NULL to restore the default encoding
+ *
+ * Sets the current #WebKitWebView encoding, without modifying the default one,
+ * and reloads the page.
+ *
+ * Since: 1.1.1
+ */
+void webkit_web_view_set_custom_encoding(WebKitWebView* webView, const char* encoding)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    core(webView)->mainFrame()->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));
+}
+
+/**
+ * webkit_web_view_get_custom_encoding:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the current encoding of the #WebKitWebView, not the default-encoding
+ * of WebKitWebSettings.
+ *
+ * Return value: a string containing the current custom encoding for @web_view, or %NULL if there's none set.
+ *
+ * Since: 1.1.1
+ */
+const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    String overrideEncoding = core(webView)->mainFrame()->loader()->documentLoader()->overrideEncoding();
+
+    if (!overrideEncoding.isEmpty()) {
+        WebKitWebViewPrivate* priv = webView->priv;
+        g_free (priv->customEncoding);
+        priv->customEncoding = g_strdup(overrideEncoding.utf8().data());
+        return priv->customEncoding;
+    } else
+      return NULL;
 }
