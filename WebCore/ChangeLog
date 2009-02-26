@@ -1,3 +1,14 @@
+2009-02-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix test regressions from positionForCoordinates patch.
+        https://bugs.webkit.org/show_bug.cgi?id=24148
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointWithInlineChildren):
+        Remove ASSERT that placeholder text codepath is hitting.
+
 2009-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -1,3 +1,27 @@
+2009-02-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix test regressions from positionForCoordinates patch.
+        These three just need rebaselining.
+        https://bugs.webkit.org/show_bug.cgi?id=24148
+
+        standalone-image-drag now correctly places the image in the text
+        at the x coordinate that it's being dragged on at.
+
+        dirtyLinesForInline now places the cursor at the node below it when clicking
+        in the margin of that node instead of the node above it.
+
+        svg/custom/pointer-events-path.svg previously had the caret at the end of 
+        the last box, and now has the caret at the beginning of the last box, 
+        since the click was to the left of the box.
+
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.checksum:
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.png:
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.txt:
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.txt:
+        * platform/mac/svg/custom/pointer-events-path-expected.txt:
+
 2009-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

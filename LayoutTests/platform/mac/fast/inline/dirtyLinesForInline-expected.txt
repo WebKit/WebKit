@@ -30,4 +30,4 @@ layer at (11,99) size 110x13
   RenderBlock (positioned) {SPAN} at (11,99) size 110x13
     RenderText {#text} at (0,0) size 110x13
       text run at (0,0) width 110: "this is the about us page"
-caret: position 127 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
