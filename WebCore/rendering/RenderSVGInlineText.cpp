@@ -160,22 +160,28 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
     if (!object)
         return VisiblePosition(node(), 0, DOWNSTREAM);
 
-    int offset = 0;
+    int closestOffsetInBox = 0;
 
+    // FIXME: This approach is wrong.  The correct code would first find the
+    // closest SVGInlineTextBox to the point, and *then* ask only that inline box
+    // what the closest text offset to that point is.  This code instead walks
+    // through all boxes in order, so when you click "near" a box, you'll actually
+    // end up returning the nearest offset in the last box, even if the
+    // nearest offset to your click is contained in another box.
     for (SVGInlineTextBox* box = textBox; box; box = static_cast<SVGInlineTextBox*>(box->nextTextBox())) {
-        if (box->svgCharacterHitsPosition(x + object->x(), y + object->y(), offset)) {
+        if (box->svgCharacterHitsPosition(x + object->x(), y + object->y(), closestOffsetInBox)) {
             // If we're not at the end/start of the box, stop looking for other selected boxes.
             if (box->direction() == LTR) {
-                if (offset <= (int) box->end() + 1)
+                if (closestOffsetInBox <= (int) box->end() + 1)
                     break;
             } else {
-                if (offset > (int) box->start())
+                if (closestOffsetInBox > (int) box->start())
                     break;
             }
         }
     }
 
-    return VisiblePosition(node(), offset, DOWNSTREAM);
+    return VisiblePosition(node(), closestOffsetInBox, DOWNSTREAM);
 }
 
 void RenderSVGInlineText::destroy()

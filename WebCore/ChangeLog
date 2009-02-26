@@ -1,3 +1,31 @@
+2009-02-25  Ojan Vafai  <ojan@chromium.org> and Eric Seidel <eric@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        After Ojan's positionForCoordinates fix http://trac.webkit.org/changeset/41191
+        svg/custom/pointer-events-image.svg and svg/custom/pointer-events-text.svg
+        started failing because Ojan's new code was now *correctly* calling through to
+        SVG asking for the closest text offset in the last line box, instead of
+        just returning the offset at the end of the last line box when clicking below a box.
+
+        But!  The SVG code was wrong, in that it returned the character offset of the last
+        character when you asked for a character offset after the end of the box, instead
+        it should return the offset *after* the last character.  This patch fixes
+        that behavior by reordering the last two clauses in svgCharacterHitsPosition.
+
+        The SVG positionForCoordinates function is still wrong, and I've added some FIXMEs
+        to document what's wrong.  I've also cleaned up the code a bit so it's clearer
+        what it is doing (which also makes more obvious what's wrong with it).
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForCoordinates):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::SVGInlineTextBoxClosestCharacterToPositionWalker):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::offsetOfHitCharacter):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+
 2009-02-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

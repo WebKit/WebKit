@@ -126,7 +126,7 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
         , m_distance(FLT_MAX)
         , m_x(x)
         , m_y(y)
-        , m_offset(0)
+        , m_offsetOfHitCharacter(0)
     {
     }
 
@@ -165,7 +165,7 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
         if (closestOffset != UINT_MAX) {
             // Record current chunk, if it contains the current closest character next to the mouse.
             m_character = closestCharacter;
-            m_offset = closestOffset;
+            m_offsetOfHitCharacter = closestOffset;
         }
     }
 
@@ -174,12 +174,12 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
         return m_character;
     }
 
-    int offset() const
+    int offsetOfHitCharacter() const
     {
         if (!m_character)
             return 0;
 
-        return m_offset;
+        return m_offsetOfHitCharacter;
     }
 
 private:
@@ -188,7 +188,7 @@ private:
 
     int m_x;
     int m_y;
-    int m_offset;
+    int m_offsetOfHitCharacter;
 };
 
 // Helper class for selectionRect()
@@ -222,7 +222,7 @@ private:
     FloatRect m_selectionRect;
 };
 
-SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset) const
+SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offsetOfHitCharacter) const
 {
     SVGRootInlineBox* rootBox = svgRootInlineBox();
     if (!rootBox)
@@ -233,25 +233,30 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
 
     rootBox->walkTextChunks(&walker, this);
 
-    offset = walkerCallback.offset();
+    offsetOfHitCharacter = walkerCallback.offsetOfHitCharacter();
     return walkerCallback.character();
 }
 
-bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
+bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& closestOffsetInBox) const
 {
-    SVGChar* charAtPosPtr = closestCharacterToPosition(x, y, offset);
+    int offsetOfHitCharacter = 0;
+    SVGChar* charAtPosPtr = closestCharacterToPosition(x, y, offsetOfHitCharacter);
     if (!charAtPosPtr)
         return false;
 
     SVGChar& charAtPos = *charAtPosPtr;
     RenderStyle* style = textRenderer()->style(m_firstLine);
-    FloatRect glyphRect = calculateGlyphBoundaries(style, offset, charAtPos);
+    FloatRect glyphRect = calculateGlyphBoundaries(style, offsetOfHitCharacter, charAtPos);
 
+    // FIXME: Why?
     if (direction() == RTL)
-        offset++;
+        offsetOfHitCharacter++;
 
-    // FIXME: todo list
-    // (#13910) This code does not handle bottom-to-top/top-to-bottom vertical text.
+    // The caller actually the closest offset before/after the hit char
+    // closestCharacterToPosition returns us offsetOfHitCharacter.
+    closestOffsetInBox = offsetOfHitCharacter;
+
+    // FIXME: (bug 13910) This code does not handle bottom-to-top/top-to-bottom vertical text.
 
     // Check whether y position hits the current character 
     if (y < charAtPos.y - glyphRect.height() || y > charAtPos.y)
@@ -259,21 +264,21 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
 
     // Check whether x position hits the current character
     if (x < charAtPos.x) {
-        if (offset > 0 && direction() == LTR)
+        if (closestOffsetInBox > 0 && direction() == LTR)
             return true;
-        else if (offset < (int) end() && direction() == RTL)
+        else if (closestOffsetInBox < (int) end() && direction() == RTL)
             return true;
 
         return false;
     }
 
-    // If we are past the last glyph of this box, don't mark it as 'hit' anymore.
-    if (x >= charAtPos.x + glyphRect.width() && offset == (int) end())
-        return false;
-
-    // Snap to character at half of it's advance
+    // Adjust the closest offset to after the char if x was after the char midpoint
     if (x >= charAtPos.x + glyphRect.width() / 2.0)
-        offset += direction() == RTL ? -1 : 1;
+        closestOffsetInBox += direction() == RTL ? -1 : 1;
+
+    // If we are past the last glyph of this box, don't mark it as 'hit'
+    if (x >= charAtPos.x + glyphRect.width() && closestOffsetInBox == (int) end())
+        return false;
 
     return true;
 }
