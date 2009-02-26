@@ -6,7 +6,7 @@
         [GTK] Checkbuttons not activated with space
 
         Do not swallow key events with GtkIMContext for non-editable
-        frames (FIXME: I don't think frame is the right name here).
+        content.
 
         * WebCoreSupport/EditorClientGtk.cpp:
         (WebKit::EditorClient::handleInputMethodKeydown):
