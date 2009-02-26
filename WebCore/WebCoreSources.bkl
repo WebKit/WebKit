@@ -365,6 +365,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp
         DerivedSources/WebCore/JSWebKitCSSMatrix.cpp
         DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp
+        DerivedSources/WebCore/JSWebKitPoint.cpp
         DerivedSources/WebCore/JSWebKitTransitionEvent.cpp
         DerivedSources/WebCore/JSWheelEvent.cpp
         DerivedSources/WebCore/JSXMLHttpRequest.cpp
@@ -713,7 +714,6 @@ This file contains the list of files needed to build WebCore.
         page/Screen.cpp
         page/SecurityOrigin.cpp
         page/Settings.cpp
-        page/WebKitPoint.cpp
         page/WindowFeatures.cpp
     </set>
 
