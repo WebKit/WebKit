@@ -1,3 +1,15 @@
+2009-02-26  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Darin Adler, Antti Koivisto and Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24133
+        Add a test that checks for a crash in a particular sequence that invokes
+        the HTML preload scanner and then cancels all loads.
+
+        * http/tests/misc/slow-preload-cancel-expected.txt: Added.
+        * http/tests/misc/slow-preload-cancel.html: Added.
+        * http/tests/misc/resources/slow-preload-cancel-1.html: Added.
+
 2009-02-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

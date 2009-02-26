@@ -1,3 +1,19 @@
+2009-02-26  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Darin Adler, Antti Koivisto and Alexey Proskuryakov.
+
+        Test: http/tests/misc/slow-preload-cancel.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=24133
+        Clear all pending preloads in the DocLoader object when we decide to
+        cancel its all requests.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::clearPendingPreloads):
+        * loader/DocLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::cancelRequests):
+
 2009-02-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

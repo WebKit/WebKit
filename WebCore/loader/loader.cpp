@@ -159,6 +159,8 @@ void Loader::servePendingRequests(Priority minimumPriority)
     
 void Loader::cancelRequests(DocLoader* docLoader)
 {
+    docLoader->clearPendingPreloads();
+
     if (m_nonHTTPProtocolHost.hasRequests())
         m_nonHTTPProtocolHost.cancelRequests(docLoader);
     
@@ -172,10 +174,7 @@ void Loader::cancelRequests(DocLoader* docLoader)
 
     scheduleServePendingRequests();
     
-    if (docLoader->loadInProgress())
-        ASSERT(docLoader->requestCount() == 1);
-    else
-        ASSERT(docLoader->requestCount() == 0);
+    ASSERT(docLoader->requestCount() == (docLoader->loadInProgress() ? 1 : 0));
 }
     
 Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
