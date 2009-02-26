@@ -457,8 +457,11 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
 
 void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    WebKitWebViewPrivate* priv = m_webView->priv;
+    Frame* targetFrame = core(m_webView)->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->editor()->canEdit())
+        return;
 
+    WebKitWebViewPrivate* priv = m_webView->priv;
     // TODO: Dispatch IE-compatible text input events for IM events.
     if (gtk_im_context_filter_keypress(priv->imContext, event->keyEvent()->gdkEventKey()))
         event->setDefaultHandled();

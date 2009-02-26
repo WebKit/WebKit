@@ -2,6 +2,19 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24193
+        [GTK] Checkbuttons not activated with space
+
+        Do not swallow key events with GtkIMContext for non-editable
+        frames (FIXME: I don't think frame is the right name here).
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleInputMethodKeydown):
+
+2009-02-26  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         https://bugs.webkit.org/show_bug.cgi?id=24103
         [GTK] Use correct return value for WebView button-release handler
 
