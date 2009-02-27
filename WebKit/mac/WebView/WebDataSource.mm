@@ -490,9 +490,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     _private->loader->getSubresources(coreSubresources);
 
     NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:coreSubresources.size()];
-    for (unsigned i = 0; i < coreSubresources.size(); ++i)
-        [subresources addObject:[[[WebResource alloc] _initWithCoreResource:coreSubresources[i]] autorelease]];
-    
+    for (unsigned i = 0; i < coreSubresources.size(); ++i) {
+        WebResource *resource = [[WebResource alloc] _initWithCoreResource:coreSubresources[i]];
+        if (resource) {
+            [subresources addObject:resource];
+            [resource release];
+        }
+    }
+
     return [subresources autorelease];
 }
 

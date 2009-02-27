@@ -1,5 +1,17 @@
 2009-02-27  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes an exception by null checking the WebResource before adding it to
+        the subresources array.
+
+        <rdar://problem/5950769> Bug in [WebDataSource subresources] can throw an exception
+
+        Reviewed by Geoff Garen and Anders Carlsson.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource subresources]): Null check the WebResource before adding it.
+
+2009-02-27  Timothy Hatcher  <timothy@apple.com>
+
         Adds a workaround for Automator creating a WebView from a secondary thread.
 
         <rdar://problem/6631951> REGRESSION (Safari 4 Beta): Automator crash on
