@@ -1,3 +1,15 @@
+2009-02-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24213: Web Worker: Worker4 test: onmessage will never be called
+        <https://bugs.webkit.org/show_bug.cgi?id=24213>
+
+        * fast/workers/worker-terminate-expected.txt:
+        * fast/workers/worker-terminate.html:
+        Added a log entry to the onmessage handler for worker4 to make it visible that
+        the handler was called and removed the terminate call that happened outside of onmessage.
+
 2009-02-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice Liu.

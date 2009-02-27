@@ -42,9 +42,9 @@ worker4.onmessage = function(evt) {
     worker4.onmessage = function() { log("FAIL"); }
     worker4.postMessage("eval true");
     worker4.terminate();
+    log("Received message from worker4.");
 }
 worker4.postMessage("eval true");
-worker4.terminate();
 
 setTimeout("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone()", 500);
 
