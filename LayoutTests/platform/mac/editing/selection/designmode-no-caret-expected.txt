@@ -1,3 +1,6 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 2 of HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -9,3 +12,4 @@ layer at (0,0) size 800x600
         text run at (118,18) width 187: "We do this as a convenience. "
         text run at (305,18) width 479: "Right now, we only do this convenience when a document's frame becomes"
         text run at (0,36) width 378: "first responder or when a document's window becomes key."
+caret: position 1 of child 0 {#text} of child 1 {BODY} of child 0 {HTML} of document

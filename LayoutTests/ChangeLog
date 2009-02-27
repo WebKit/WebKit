@@ -1,3 +1,18 @@
+2009-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Updating results for <rdar://problem/6618166>
+        https://bugs.webkit.org/show_bug.cgi?id=24216
+        (REGRESSION r36919) Safari 4 Beta causes MSN Messenger's text entry field to lose focus after entering a message
+
+        We changed these results shortly after r36919, but the original result is actually correct.
+        The test's text indicates that we expect a caret to be placed in this case.
+
+        * platform/mac/editing/selection/designmode-no-caret-expected.checksum:
+        * platform/mac/editing/selection/designmode-no-caret-expected.png:
+        * platform/mac/editing/selection/designmode-no-caret-expected.txt:
+
 2009-02-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig

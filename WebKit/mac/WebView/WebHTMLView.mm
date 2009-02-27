@@ -381,6 +381,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL observingMouseMovedNotifications;
     BOOL observingSuperviewNotifications;
     BOOL observingWindowNotifications;
+    BOOL resigningFirstResponder;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -3441,6 +3442,7 @@ noPromisedData:
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
+        _private->resigningFirstResponder = YES;
         [_private->compController endRevertingChange:NO moveLeft:NO];
         if (![self maintainsInactiveSelection]) { 
             [self deselectAll];
@@ -3448,6 +3450,7 @@ noPromisedData:
                 [self clearFocus];
         }
         [self _updateFocusedAndActiveState];
+        _private->resigningFirstResponder = NO;
     }
     return resign;
 }
@@ -5028,6 +5031,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void) _destroyAllWebPlugins
 {
     [[self _pluginController] destroyAllPlugins];
+}
+
+- (BOOL)_isResigningFirstResponder
+{
+    return _private->resigningFirstResponder;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

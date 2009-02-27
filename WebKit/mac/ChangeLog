@@ -1,3 +1,25 @@
+2009-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix for <rdar://problem/6618166>
+        https://bugs.webkit.org/show_bug.cgi?id=24216
+        (REGRESSION r36919) Safari 4 Beta causes MSN Messenger's text entry field to lose focus after entering a message
+
+        During a series of firstResponder changes, at some point while the WebHTMLView was losing first responder status,
+        we incorrectly marked the page as active, and then when the WebHTMLView became first responder again, setActive did nothing.
+        This change restores behavior from before r36919 to check if the WebHTMLView is in the middle of losing first responder when calling setActive.
+
+        In addition to updating editing/selection/designmode-no-caret.html results, I also made sure the test cases that were 
+        fixed in r36919 and r38570 are still fixed.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView resignFirstResponder]): Keep track if we're in the process of resigning first responder.
+        (-[WebHTMLView _isResigningFirstResponder]): Added.
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebView.mm: (-[WebView _updateFocusedAndActiveStateForFrame:]): Don't set the page to be active
+        if the document view is currently resigning first responder.
+
 2009-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

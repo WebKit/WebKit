@@ -2632,10 +2632,14 @@ static bool needsWebViewInitThreadWorkaround()
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    NSResponder *firstResponder = [window firstResponder]; 
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    id <WebDocumentView> documentView = [mainFrameView documentView];
+    BOOL documentViewIsResigningFirstResponder = [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isResigningFirstResponder];
+        
+    NSResponder *firstResponder = [window firstResponder];
     if ([firstResponder isKindOfClass:[NSView class]] 
-        && [(NSView*)firstResponder isDescendantOf:[[self mainFrame] frameView]])
-        page->focusController()->setActive(windowIsKey);
+        && [(NSView *)firstResponder isDescendantOf:mainFrameView])
+        page->focusController()->setActive(windowIsKey && !documentViewIsResigningFirstResponder);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
     frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
