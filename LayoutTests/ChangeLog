@@ -1,3 +1,14 @@
+2009-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Alice Liu.
+
+        Make the success/failure of this test more obvious.
+
+        * editing/selection/designmode-no-caret.html:
+        * platform/mac/editing/selection/designmode-no-caret-expected.checksum:
+        * platform/mac/editing/selection/designmode-no-caret-expected.png:
+        * platform/mac/editing/selection/designmode-no-caret-expected.txt:
+
 2009-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Geoff Garen.
