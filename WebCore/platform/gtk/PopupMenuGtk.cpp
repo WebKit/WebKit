@@ -52,12 +52,7 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
 
     if (!m_popup) {
         m_popup = GTK_MENU(gtk_menu_new());
-#if GLIB_CHECK_VERSION(2,10,0)
         g_object_ref_sink(G_OBJECT(m_popup));
-#else
-        g_object_ref(G_OBJECT(m_popup));
-        gtk_object_sink(GTK_OBJECT(m_popup));
-#endif
         g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmapped), this);
     } else
         gtk_container_foreach(GTK_CONTAINER(m_popup), reinterpret_cast<GtkCallback>(menuRemoveItem), this);

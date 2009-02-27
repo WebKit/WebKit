@@ -1770,15 +1770,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->horizontalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     priv->verticalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
-#if GLIB_CHECK_VERSION(2,10,0)
     g_object_ref_sink(priv->horizontalAdjustment);
     g_object_ref_sink(priv->verticalAdjustment);
-#else
-    g_object_ref(priv->horizontalAdjustment);
-    gtk_object_sink(GTK_OBJECT(priv->horizontalAdjustment));
-    g_object_ref(priv->verticalAdjustment);
-    gtk_object_sink(GTK_OBJECT(priv->verticalAdjustment));
-#endif
 
     GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));

@@ -39,12 +39,7 @@ ContextMenu::ContextMenu(const HitTestResult& result)
 {
     m_platformDescription = GTK_MENU(gtk_menu_new());
 
-#if GLIB_CHECK_VERSION(2,10,0)
     g_object_ref_sink(G_OBJECT(m_platformDescription));
-#else
-    g_object_ref(G_OBJECT(m_platformDescription));
-    gtk_object_sink(GTK_OBJECT(m_platformDescription));
-#endif
 }
 
 ContextMenu::~ContextMenu()

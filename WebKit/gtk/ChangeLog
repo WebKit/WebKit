@@ -1,3 +1,15 @@
+2009-02-27  Xan Lopez  <xan@gnome.org>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24222
+        [GTK] Remove checks for old glib versions
+
+        libsoup, which is a hard dependency, needs at least glib 2.15.3,
+        so remove all glib checks for versions older than that.
+
+        * webkit/webkitwebview.cpp:
+
 2009-02-26  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

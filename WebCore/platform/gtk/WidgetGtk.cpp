@@ -158,12 +158,7 @@ void Widget::retainPlatformWidget()
 {
     if (!platformWidget())
          return;
-#if GLIB_CHECK_VERSION(2,10,0)
     g_object_ref_sink(platformWidget());
-#else
-    g_object_ref(platformWidget());
-    gtk_object_sink(GTK_OBJECT(platformWidget()));
-#endif
 }
 
 }

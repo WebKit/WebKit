@@ -232,12 +232,7 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
     m_platformDescription.subMenu = menu->releasePlatformDescription();
     m_platformDescription.type = SubmenuType;
 
-#if GLIB_CHECK_VERSION(2,10,0)
     g_object_ref_sink(G_OBJECT(m_platformDescription.subMenu));
-#else
-    g_object_ref(G_OBJECT(m_platformDescription.subMenu));
-    gtk_object_sink(GTK_OBJECT(m_platformDescription.subMenu));
-#endif
 }
 
 void ContextMenuItem::setChecked(bool shouldCheck)

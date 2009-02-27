@@ -217,11 +217,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog)
-#if GLIB_CHECK_VERSION(2,14,0)
         waitToDumpWatchdog = g_timeout_add_seconds(timeoutSeconds, waitToDumpWatchdogFired, 0);
-#else
-        waitToDumpWatchdog = g_timeout_add(timeoutSeconds * 1000, waitToDumpWatchdogFired, 0);
-#endif
 }
 
 int LayoutTestController::windowCount()

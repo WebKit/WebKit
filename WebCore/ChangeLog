@@ -1,3 +1,23 @@
+2009-02-27  Xan Lopez  <xan@gnome.org>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24222
+        [GTK] Remove checks for old glib versions
+
+        libsoup, which is a hard dependency, needs at least glib 2.15.3,
+        so remove all glib checks for versions older than that.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::setSubMenu):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::retainPlatformWidget):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+
 2009-02-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
