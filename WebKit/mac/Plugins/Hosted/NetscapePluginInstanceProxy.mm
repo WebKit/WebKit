@@ -872,8 +872,11 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
     else if (value.isObject()) {
         JSObject* object = asObject(value);
         if (object->classInfo() == &RuntimeObjectImp::s_info) {
-            // FIXME: Handle ProxyInstance objects.
-            ASSERT_NOT_REACHED();
+            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);
+            if (ProxyInstance* instance = static_cast<ProxyInstance*>(imp->getInternalInstance())) {
+                [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
+                [array addObject:[NSNumber numberWithInt:instance->objectID()]];
+            }
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
             [array addObject:[NSNumber numberWithInt:idForObject(object)]];

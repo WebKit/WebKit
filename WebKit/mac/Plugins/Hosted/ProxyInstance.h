@@ -54,6 +54,8 @@ public:
     
     void invalidate();
     
+    uint32_t objectID() const { return m_objectID; }
+    
 private:
     ProxyInstance(PassRefPtr<JSC::Bindings::RootObject>, NetscapePluginInstanceProxy*, uint32_t objectID);
     

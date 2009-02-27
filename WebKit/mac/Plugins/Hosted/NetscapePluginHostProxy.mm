@@ -589,8 +589,7 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
 }
 
 kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID,
-                                data_t argumentsData, mach_msg_type_number_t argumentsLength, 
-                                boolean_t* returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+                                data_t argumentsData, mach_msg_type_number_t argumentsLength)
 {
     DataDeallocator deallocator(argumentsData, argumentsLength);
 
@@ -604,7 +603,13 @@ kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint3
 
     PluginDestroyDeferrer deferrer(instanceProxy);
 
-    *returnValue = instanceProxy->invokeDefault(objectID, argumentsData, argumentsLength, *resultData, *resultLength);
+    data_t resultData;
+    mach_msg_type_number_t resultLength;
+    
+    boolean_t returnValue = instanceProxy->invokeDefault(objectID, argumentsData, argumentsLength, resultData, resultLength);
+    
+    _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), returnValue, resultData, resultLength);
+    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }

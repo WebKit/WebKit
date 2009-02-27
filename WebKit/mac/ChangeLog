@@ -1,3 +1,24 @@
+2009-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        WebKit side of <rdar://problem/6626814>.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvokeDefault):
+        Make InvokeDefault async.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        Handle passing NPObjects back to the plug-in host.
+        
+        * Plugins/Hosted/ProxyInstance.h:
+        (WebKit::ProxyInstance::objectID):
+        Add objectID getter.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Make InvokeDefault a simpleroutine.
+
 2009-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Fixes an exception by null checking the WebResource before adding it to

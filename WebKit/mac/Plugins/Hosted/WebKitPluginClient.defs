@@ -88,12 +88,10 @@ simpleroutine PCInvoke(clientPort :mach_port_t;
                      methodNameIdentifier :uint64_t;
                      arguments :data_t);
 
-routine PCInvokeDefault(clientPort :mach_port_t;
+simpleroutine PCInvokeDefault(clientPort :mach_port_t;
                pluginID :uint32_t;
                objectID :uint32_t;
-               arguments :data_t;
-               out returnValue :boolean_t;
-               out result :data_t, dealloc);
+               arguments :data_t);
 
 routine PCConstruct(clientPort :mach_port_t;
                   pluginID :uint32_t;
