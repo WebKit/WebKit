@@ -1,3 +1,16 @@
+2009-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        https://bugs.webkit.org/show_bug.cgi?id=24242
+        
+        setCursor(), and resetCursorRects() on Tiger, were using global, not local
+        coordinates for elementAtPoint:
+        
+        * WebView/WebHTMLView.mm:
+        (resetCursorRects):
+        (setCursor):
+
 2009-02-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff Garen.

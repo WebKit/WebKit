@@ -145,7 +145,7 @@ static void resetCursorRects(NSWindow* self, SEL cmd)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         WebHTMLView *htmlView = (WebHTMLView*)view;
         NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
-        NSDictionary *dict = [htmlView elementAtPoint:point allowShadowContent:NO];
+        NSDictionary *dict = [htmlView elementAtPoint:localPoint allowShadowContent:NO];
         DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
         if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
             ![element isKindOfClass:[DOMHTMLEmbedElement class]])
@@ -167,7 +167,7 @@ static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         WebHTMLView *htmlView = (WebHTMLView*)view;
         NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
-        NSDictionary *dict = [htmlView elementAtPoint:point allowShadowContent:NO];
+        NSDictionary *dict = [htmlView elementAtPoint:localPoint allowShadowContent:NO];
         DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
         if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
             ![element isKindOfClass:[DOMHTMLEmbedElement class]])
