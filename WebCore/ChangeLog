@@ -1,3 +1,68 @@
+2009-02-26  Brett Wilson  <brettw@chromium.org>
+
+        Fix Windows transparency for the Chromium port. Implement a helper
+        class for handling transparency on Windows. It allows semitransparent
+        ClearType and semitransparent form controls by making new layers in the
+        background.
+
+        It also replaces the "ThemeHelper" which allows better
+        scaling and transforms on Windows form controls. In addition to the
+        functionality that the ThemeHelper did, but additionally handles the
+        antialiasing properly so that the form controls aren't composited on a
+        white square.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24101
+
+        Reviewed by Eric Seidel.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::drawGlyphs):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/ThemeHelperChromiumWin.cpp:
+        * platform/graphics/chromium/ThemeHelperChromiumWin.h:
+        * platform/graphics/chromium/TransparencyWin.cpp: Added.
+        (WebCore::):
+        (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers):
+        (WebCore::TransparencyWin::OwnedBuffers::destBitmap):
+        (WebCore::TransparencyWin::OwnedBuffers::referenceBitmap):
+        (WebCore::TransparencyWin::OwnedBuffers::canHandleSize):
+        (WebCore::TransparencyWin::TransparencyWin):
+        (WebCore::TransparencyWin::~TransparencyWin):
+        (WebCore::TransparencyWin::init):
+        (WebCore::TransparencyWin::computeLayerSize):
+        (WebCore::TransparencyWin::setupLayer):
+        (WebCore::TransparencyWin::setupLayerForNoLayer):
+        (WebCore::TransparencyWin::setupLayerForOpaqueCompositeLayer):
+        (WebCore::TransparencyWin::setupLayerForTextComposite):
+        (WebCore::TransparencyWin::setupLayerForWhiteLayer):
+        (WebCore::TransparencyWin::setupTransform):
+        (WebCore::TransparencyWin::setupTransformForKeepTransform):
+        (WebCore::TransparencyWin::setupTransformForUntransform):
+        (WebCore::TransparencyWin::setupTransformForScaleTransform):
+        (WebCore::TransparencyWin::setTextCompositeColor):
+        (WebCore::TransparencyWin::initializeNewContext):
+        (WebCore::TransparencyWin::compositeOpaqueComposite):
+        (WebCore::TransparencyWin::compositeTextComposite):
+        (WebCore::TransparencyWin::makeLayerOpaque):
+        * platform/graphics/chromium/TransparencyWin.h: Added.
+        (WebCore::TransparencyWin::):
+        (WebCore::TransparencyWin::context):
+        (WebCore::TransparencyWin::platformContext):
+        (WebCore::TransparencyWin::drawRect):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+
 2009-02-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

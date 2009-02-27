@@ -275,11 +275,6 @@ void GraphicsContext::endTransparencyLayer()
 {
     if (paintingDisabled())
         return;
-
-#if PLATFORM(WIN_OS)
-    platformContext()->canvas()->getTopPlatformDevice().
-        fixupAlphaBeforeCompositing();
-#endif
     platformContext()->canvas()->restore();
 }
 

@@ -225,6 +225,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
 {
     SkPaint paint;
     paint.setPorterDuffXfermode(compOp);
+    paint.setFilterBitmap(true);
 
     skia::PlatformCanvas* canvas = platformContext->canvas();
 
@@ -233,7 +234,6 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
                               SkScalarToFloat(destRect.width()),
                               SkScalarToFloat(destRect.height()));
     if (resampling == RESAMPLE_AWESOME) {
-        paint.setFilterBitmap(false);
         drawResampledBitmap(*canvas, paint, bitmap, srcRect, destRect);
     } else {
         // No resampling necessary, we can just draw the bitmap. We want to
@@ -241,7 +241,6 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
         // is something interesting going on with the matrix (like a rotation).
         // Note: for serialization, we will want to subset the bitmap first so
         // we don't send extra pixels.
-        paint.setFilterBitmap(resampling == RESAMPLE_LINEAR);
         canvas->drawBitmapRect(bitmap, &srcRect, destRect, &paint);
     }
 }
