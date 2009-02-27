@@ -31,13 +31,29 @@ WebInspector.DOMStorageItemsView = function(domStorage)
 
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
+    
+    this.deleteButton = document.createElement("button");
+    this.deleteButton.title = WebInspector.UIString("Delete");
+    this.deleteButton.className = "delete-storage-status-bar-item status-bar-item hidden";
+    this.deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
 }
 
 WebInspector.DOMStorageItemsView.prototype = {
+    get statusBarItems()
+    {
+        return [this.deleteButton];
+    },
+
     show: function(parentElement)
     {
         WebInspector.View.prototype.show.call(this, parentElement);
         this.update();
+    },
+
+    hide: function()
+    {
+        WebInspector.View.prototype.hide.call(this);
+        this.deleteButton.addStyleClass("hidden");
     },
 
     update: function()
@@ -51,8 +67,11 @@ WebInspector.DOMStorageItemsView.prototype = {
             var dataGrid = WebInspector.panels.databases.dataGridForDOMStorage(this.domStorage.domStorage);
             if (!dataGrid)
                 hasDOMStorage = 0;
-            else
+            else {
+                this._dataGrid = dataGrid;
                 this.element.appendChild(dataGrid.element);
+                this.deleteButton.removeStyleClass("hidden");
+            }
         }
         if (!hasDOMStorage) {
             var emptyMsgElement = document.createElement("div");
@@ -60,6 +79,17 @@ WebInspector.DOMStorageItemsView.prototype = {
             if (this.domStorage)
             emptyMsgElement.textContent = WebInspector.UIString("This storage is empty.");
             this.element.appendChild(emptyMsgElement);
+            this._dataGrid = null;
+            this.deleteButton.addStyleClass("hidden");
+        }
+    },
+    
+    _deleteButtonClicked: function(event)
+    {
+        if (this._dataGrid) {
+            this._dataGrid.deleteSelectedRow();
+            
+            this.show();
         }
     }
 }

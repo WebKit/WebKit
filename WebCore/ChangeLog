@@ -1,3 +1,37 @@
+2009-02-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Added support for editing/deleting localStorage and sessionStorage items
+        directly from Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23866.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DOMStorageDataGrid.js: Added.
+        (WebInspector.DOMStorageDataGrid):
+        (WebInspector.DOMStorageDataGrid.prototype._ondblclick):
+        (WebInspector.DOMStorageDataGrid.prototype._startEditing):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCommitted):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCancelled):
+        (WebInspector.DOMStorageDataGrid.prototype.deleteSelectedRow):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView):
+        (WebInspector.DOMStorageItemsView.prototype.get statusBarItems):
+        (WebInspector.DOMStorageItemsView.prototype.hide):
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        (WebInspector.DOMStorageItemsView.prototype._deleteButtonClicked):
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel):
+        (WebInspector.DatabasesPanel.prototype.get statusBarItems):
+        (WebInspector.DatabasesPanel.prototype.reset):
+        (WebInspector.DatabasesPanel.prototype.showDOMStorage):
+        (WebInspector.DatabasesPanel.prototype.dataGridForDOMStorage):
+        (WebInspector.DatabasesPanel.prototype._updateSidebarWidth):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-02-26  Brett Wilson  <brettw@chromium.org>
 
         Fix Windows transparency for the Chromium port. Implement a helper

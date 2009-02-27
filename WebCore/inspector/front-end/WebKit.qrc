@@ -11,6 +11,7 @@
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
     <file>DOMStorage.js</file>
+    <file>DOMStorageDataGrid.js</file>
     <file>DOMStorageItemsView.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>

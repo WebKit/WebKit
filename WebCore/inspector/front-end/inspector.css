@@ -3002,3 +3002,21 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 .reset-profile-status-bar-item:active {
     background-position: 32px 0;
 }
+
+.delete-storage-status-bar-item {
+    background-image: url(Images/excludeButtons.png) !important;
+}
+
+.delete-storage-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#storage-view-status-bar-items {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 200px;
+    overflow: hidden;
+    border-left: 1px solid rgb(184, 184, 184);
+    margin-left: -1px;
+}

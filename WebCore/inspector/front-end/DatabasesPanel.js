@@ -62,6 +62,9 @@ WebInspector.DatabasesPanel = function(database)
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
 
+    this.storageViewStatusBarItemsContainer = document.createElement("div");
+    this.storageViewStatusBarItemsContainer.id = "storage-view-status-bar-items";
+
     this.reset();
 }
 
@@ -71,6 +74,11 @@ WebInspector.DatabasesPanel.prototype = {
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Databases");
+    },
+
+    get statusBarItems()
+    {
+        return [this.storageViewStatusBarItemsContainer];
     },
 
     show: function()
@@ -108,6 +116,8 @@ WebInspector.DatabasesPanel.prototype = {
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
         this.storageViews.removeChildren();
+        
+        this.storageViewStatusBarItemsContainer.removeChildren();
     },
 
     handleKeyEvent: function(event)
@@ -183,6 +193,11 @@ WebInspector.DatabasesPanel.prototype = {
         view.show(this.storageViews);
 
         this.visibleView = view;
+
+        this.storageViewStatusBarItemsContainer.removeChildren();
+        var statusBarItems = view.statusBarItems;
+        for (var i = 0; i < statusBarItems.length; ++i)
+            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
     closeVisibleView: function()
@@ -325,7 +340,7 @@ WebInspector.DatabasesPanel.prototype = {
             if (value.length > columns[1].width)
                 columns[1].width = value.length;
             var node = new WebInspector.DataGridNode(data, false);
-            node.selectable = false;
+            node.selectable = true;
             nodes.push(node);
         }
 
@@ -341,11 +356,12 @@ WebInspector.DatabasesPanel.prototype = {
         columns[0].width += "%";
         columns[1].width += "%";
 
-        var dataGrid = new WebInspector.DataGrid(columns);
+        var dataGrid = new WebInspector.DOMStorageDataGrid(columns);
         var length = nodes.length;
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
-
+        if (length > 0)
+            nodes[0].selected = true;
         return dataGrid;
     },
 
@@ -386,6 +402,7 @@ WebInspector.DatabasesPanel.prototype = {
 
         this.sidebarElement.style.width = width + "px";
         this.storageViews.style.left = width + "px";
+        this.storageViewStatusBarItemsContainer.style.left = width + "px";
         this.sidebarResizeElement.style.left = (width - 3) + "px";
     }
 }
