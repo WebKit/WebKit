@@ -32,8 +32,11 @@
 #include "SkiaFontWin.h"
 
 #include "PlatformContextSkia.h"
+#include "Gradient.h"
+#include "Pattern.h"
 #include "SkCanvas.h"
 #include "SkPaint.h"
+#include "SkShader.h"
 #include "TransformationMatrix.h"
 
 #include <wtf/ListHashSet.h>
@@ -232,6 +235,14 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
     if (context->platformContext()->getTextDrawingMode() != cTextFill)
         return false;
 
+    // Check for gradients.
+    if (context->fillGradient() || context->strokeGradient())
+        return false;
+
+    // Check for patterns.
+    if (context->fillPattern() || context->strokePattern())
+        return false;
+
     // Check for shadow effects.
     if (context->platformContext()->getDrawLooper())
         return false;
@@ -239,45 +250,70 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
     return true;
 }
 
+// Draws the given text string using skia.  Note that gradient or
+// pattern may be NULL, in which case a solid colour is used.
 static bool skiaDrawText(HFONT hfont,
                          HDC dc,
                          SkCanvas* canvas,
                          const SkPoint& point,
                          SkPaint* paint,
+                         const TransformationMatrix& transformationMatrix,
+                         Gradient* gradient,
+                         Pattern* pattern,
                          const WORD* glyphs,
                          const int* advances,
                          const GOFFSET* offsets,
                          int numGlyphs)
 {
-    canvas->save();
-    canvas->translate(point.fX, point.fY);
+    SkShader* shader = NULL;
+    SkMatrix oldShaderMatrix;
+    if (gradient) {
+        shader = gradient->platformGradient();
+        // Get the length of the string in pixels.
+        int width = 0;
+        for (int i = 0; i < numGlyphs; i++)
+            width += advances[i];
+
+        // Save the current shader matrix.
+        shader->getLocalMatrix(&oldShaderMatrix);
+
+        // Scale up the gradient matrix by the width of the text string.
+        SkMatrix shaderMatrix(oldShaderMatrix);
+        shaderMatrix.postScale(static_cast<float>(width), 1.0f);
+        shaderMatrix.postTranslate(point.fX, point.fY);
+        shader->setLocalMatrix(shaderMatrix);
+    } else if (pattern)
+        shader = pattern->createPlatformPattern(transformationMatrix);
+
+    paint->setShader(shader);
+    float x = point.fX, y = point.fY;
 
     for (int i = 0; i < numGlyphs; i++) {
         const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
         if (!path)
             return false;
 
-        bool offset = false;
+        float offsetX = 0.0f, offsetY = 0.0f;
         if (offsets && (offsets[i].du != 0 || offsets[i].dv != 0)) {
-            offset = true;
-            canvas->translate(offsets[i].du, offsets[i].dv);
+            offsetX = offsets[i].du;
+            offsetY = offsets[i].dv;
         }
 
-        canvas->drawPath(*path, *paint);
+        SkPath newPath;
+        newPath.addPath(*path, x + offsetX, y + offsetY);
+        canvas->drawPath(newPath, *paint);
         
-        if (offset) {
-            canvas->translate(advances[i] - offsets[i].du, -offsets[i].dv);
-        } else {
-            canvas->translate(advances[i], 0);
-        }
+        x += advances[i];
     }
 
-    canvas->restore();
+    // Restore the previous shader matrix.
+    if (gradient)
+        shader->setLocalMatrix(oldShaderMatrix);
 
     return true;
 }
 
-bool paintSkiaText(PlatformContextSkia* platformContext,
+bool paintSkiaText(GraphicsContext* context,
                    HFONT hfont,
                    int numGlyphs,
                    const WORD* glyphs,
@@ -288,6 +324,7 @@ bool paintSkiaText(PlatformContextSkia* platformContext,
     HDC dc = GetDC(0);
     HGDIOBJ oldFont = SelectObject(dc, hfont);
 
+    PlatformContextSkia* platformContext = context->platformContext();
     int textMode = platformContext->getTextDrawingMode();
 
     // Filling (if necessary). This is the common case.
@@ -298,7 +335,9 @@ bool paintSkiaText(PlatformContextSkia* platformContext,
 
     if ((textMode & cTextFill) && SkColorGetA(paint.getColor())) {
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
-                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
+                          context->getCTM(), context->fillGradient(),
+                          context->fillPattern(), &glyphs[0], &advances[0],
+                          &offsets[0], numGlyphs))
             return false;
         didFill = true;
     }
@@ -325,7 +364,9 @@ bool paintSkiaText(PlatformContextSkia* platformContext,
         }
 
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
-                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
+                          context->getCTM(), context->strokeGradient(),
+                          context->strokePattern(), &glyphs[0], &advances[0],
+                          &offsets[0], numGlyphs))
             return false;
     }
 

@@ -1,3 +1,35 @@
+2009-02-26  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23957
+
+        Fix for SVG gradient and pattern text for Chromium/skia. 
+        Added accessors for the fill and stroke gradients to
+        GraphicsContext.  Changed the paintSkiaText function to take a
+        GraphicsContext, so we can check for gradients/patterns. 
+        Changed the skiaDrawText function to set the SkPaint shader
+        correctly, and to scale up the gradient shader matrix to
+        encompass the entire text string.  Also offset each glyph
+        separately, rather than transforming the canvas, so that the
+        gradient/pattern stays fixed relative to the text origin.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::getFillGradient):
+        (WebCore::GraphicsContext::getStrokeGradient):
+        (WebCore::GraphicsContext::getFillPattern):
+        (WebCore::GraphicsContext::getStrokePattern):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleTextDrawing):
+        (WebCore::skiaDrawText):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2009-02-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

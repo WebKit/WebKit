@@ -131,7 +131,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
                 // Skia's text drawing origin is the baseline, like WebKit, not
                 // the top, like Windows.
                 SkPoint origin = { x, point.y() };
-                success = paintSkiaText(context, font->platformData().hfont(),
+                success = paintSkiaText(graphicsContext, font->platformData().hfont(),
                         numGlyphs, reinterpret_cast<const WORD*>(&glyphs[0]),
                         &advances[0], 0, &origin);
             }

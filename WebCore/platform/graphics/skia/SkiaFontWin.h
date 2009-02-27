@@ -76,7 +76,7 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context);
 //
 // Returns true of the text was drawn successfully. False indicates an error
 // from Windows.
-bool paintSkiaText(PlatformContextSkia* platformContext,
+bool paintSkiaText(GraphicsContext* graphicsContext,
                    HFONT hfont,
                    int numGlyphs,
                    const WORD* glyphs,

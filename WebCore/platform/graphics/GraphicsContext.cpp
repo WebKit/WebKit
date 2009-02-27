@@ -245,6 +245,26 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
     m_common->state.fillGradient = gradient;
 }
 
+Gradient* GraphicsContext::fillGradient() const
+{
+    return m_common->state.fillGradient.get();
+}
+
+Gradient* GraphicsContext::strokeGradient() const
+{
+    return m_common->state.strokeGradient.get();
+}
+
+Pattern* GraphicsContext::fillPattern() const
+{
+    return m_common->state.fillPattern.get();
+}
+
+Pattern* GraphicsContext::strokePattern() const
+{
+    return m_common->state.strokePattern.get();
+}
+
 void GraphicsContext::setShadowsIgnoreTransforms(bool ignoreTransforms)
 {
     m_common->state.shadowsIgnoreTransforms = ignoreTransforms;
