@@ -1,3 +1,16 @@
+2009-02-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Qt: be more reasonable about scrolled lines
+
+        cMouseWheelPixelsPerLineStep is currently a constant set to 13.3. it doesn't
+        match our metrics meaning that Qt scrolls by ~2 lines by default which is quite
+        irritating. so lets scroll vertically by the Qt set number of lines * Qt default
+        single step scroll
+
+        * platform/qt/WheelEventQt.cpp:
+
 2009-02-27  Xan Lopez  <xan@gnome.org>
 
         Rubber-stamped by Alexey Proskuryakov.
