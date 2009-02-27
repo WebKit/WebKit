@@ -237,7 +237,7 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, c
 
 void BitmapImage::checkForSolidColor()
 {
-    m_checkedForSolidColor = true;
+
 }
 
 void BitmapImage::invalidatePlatformData()

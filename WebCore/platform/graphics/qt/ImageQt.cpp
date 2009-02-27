@@ -2,7 +2,6 @@
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * All rights reserved.
  *
@@ -163,18 +162,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
 void BitmapImage::checkForSolidColor()
 {
+    // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
     m_isSolidColor = false;
-    m_checkedForSolidColor = true;
-
-    if (frameCount() > 1)
-        return;
-
-    QPixmap* framePixmap = frameAtIndex(0);
-    if (!framePixmap || framePixmap->width() != 1 || framePixmap->height() != 1)
-        return;
-
-    m_isSolidColor = true;
-    m_solidColor = QColor(framePixmap->toImage().pixel(0, 0));
 }
 
 }

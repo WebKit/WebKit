@@ -1,3 +1,28 @@
+2009-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Revert r41295, the fix for https://bugs.webkit.org/show_bug.cgi?id=24227 
+        because it leads to assertion failures in the Mac port.
+        
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::mayFillWithSolidColor):
+        * platform/graphics/Image.h:
+        (WebCore::Image::mayFillWithSolidColor):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2009-02-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
