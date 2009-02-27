@@ -61,6 +61,7 @@ namespace WebCore {
         virtual void postMessageToWorkerObject(const String& message);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
         virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+        virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
         virtual void reportPendingActivity(bool hasPendingActivity);
         virtual void workerContextDestroyed();
 
@@ -69,8 +70,6 @@ namespace WebCore {
         void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String& mode);
 
         void workerThreadCreated(PassRefPtr<WorkerThread>);
-
-        void confirmWorkerThreadMessage(bool hasPendingActivity);
 
         // Only use this method on the worker object thread.
         bool askedToTerminate() const { return m_askedToTerminate; }

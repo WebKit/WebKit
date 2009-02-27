@@ -62,7 +62,7 @@ private:
 
         context->dispatchMessage(m_message);
 
-        static_cast<WorkerMessagingProxy*>(context->thread()->workerObjectProxy())->confirmWorkerThreadMessage(context->hasPendingActivity());
+        context->thread()->workerObjectProxy()->confirmMessageFromWorkerObject(context->hasPendingActivity());
     }
 
 private:
@@ -311,7 +311,7 @@ void WorkerMessagingProxy::terminateWorkerContext()
         m_workerThread->stop();
 }
 
-void WorkerMessagingProxy::confirmWorkerThreadMessage(bool hasPendingActivity)
+void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
     m_scriptExecutionContext->postTask(WorkerThreadActivityReportTask::create(this, true, hasPendingActivity));
     // Will execute reportPendingActivityInternal() on context's thread.
