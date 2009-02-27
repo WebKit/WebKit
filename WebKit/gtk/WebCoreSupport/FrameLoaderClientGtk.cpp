@@ -247,8 +247,12 @@ void FrameLoaderClient::postProgressEstimateChangedNotification()
 void FrameLoaderClient::postProgressFinishedNotification()
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
+    WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
-    g_signal_emit_by_name(webView, "load-finished", m_frame);
+    // We can get a stopLoad() from dispose when the object is being
+    // destroyed, don't emit the signal in that case.
+    if (!privateData->disposing)
+        g_signal_emit_by_name(webView, "load-finished", m_frame);
 }
 
 void FrameLoaderClient::frameLoaderDestroyed()
