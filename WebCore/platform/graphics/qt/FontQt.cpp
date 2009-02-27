@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2008 Holger Hans Peter Freyther
+    Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,11 +25,18 @@
 #include "FontFallbackList.h"
 #include "FontSelector.h"
 
+#include "Gradient.h"
 #include "GraphicsContext.h"
-#include <QTextLayout>
-#include <QPainter>
-#include <QFontMetrics>
+#include "Pattern.h"
+#include "TransformationMatrix.h"
+
+#include <QBrush>
 #include <QFontInfo>
+#include <QFontMetrics>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPen>
+#include <QTextLayout>
 #include <qalgorithms.h>
 #include <qdebug.h>
 
@@ -72,8 +80,30 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
         to = run.length();
 
     QPainter *p = ctx->platformContext();
-    Color color = ctx->fillColor();
-    p->setPen(QColor(color));
+
+    if (ctx->textDrawingMode() & cTextFill) {
+        if (ctx->fillGradient()) {
+            QBrush brush(*ctx->fillGradient()->platformGradient());
+            brush.setMatrix(ctx->fillGradient()->gradientSpaceTransform());
+            p->setPen(QPen(brush, 0));
+        } else if (ctx->fillPattern()) {
+            TransformationMatrix affine;
+            p->setPen(QPen(QBrush(ctx->fillPattern()->createPlatformPattern(affine)), 0));
+        } else
+            p->setPen(QColor(ctx->fillColor()));
+    }
+
+    if (ctx->textDrawingMode() & cTextStroke) {
+        if (ctx->strokeGradient()) {
+            QBrush brush(*ctx->strokeGradient()->platformGradient());
+            brush.setMatrix(ctx->strokeGradient()->gradientSpaceTransform());
+            p->setPen(QPen(brush, 0));
+        } else if (ctx->strokePattern()) {
+            TransformationMatrix affine;
+            p->setPen(QPen(QBrush(ctx->strokePattern()->createPlatformPattern(affine)), 0));
+        } else
+            p->setPen(QColor(ctx->strokeColor()));
+    }
 
     QString string = qstring(run);
 
