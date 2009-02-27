@@ -112,6 +112,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     ctxt->save();
     ctxt->setCompositeOperation(op);
     QPainter* p = ctxt->platformContext();
+    if (!pixmap.hasAlpha() && p->compositionMode() == QPainter::CompositionMode_SourceOver)
+        p->setCompositionMode(QPainter::CompositionMode_Source);
     p->setBrushOrigin(phase);
     p->fillRect(destRect, b);
     ctxt->restore();
@@ -148,6 +150,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     ctxt->setCompositeOperation(op);
 
     QPainter* painter(ctxt->platformContext());
+
+    if (!image->hasAlpha() && painter->compositionMode() == QPainter::CompositionMode_SourceOver)
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
 
     // Test using example site at
     // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html    

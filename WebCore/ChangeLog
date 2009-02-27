@@ -1,5 +1,16 @@
 2009-02-27  Adam Treat  <adam.treat@torchmobile.com>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24229
+        If an image has no alpha channel there is no reason to use SourceOver.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+
+2009-02-27  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by Eric Seidel and Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=24227
