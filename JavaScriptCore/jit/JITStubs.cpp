@@ -2025,9 +2025,10 @@ void* JITStubs::cti_op_switch_imm(STUB_ARGS)
     if (scrutinee.isInt32Fast())
         return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.getInt32Fast()).addressForSwitch();
     else {
-        int32_t value;
-        if (scrutinee.numberToInt32(value))
-            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(value).addressForSwitch();
+        double value;
+        int32_t intValue;
+        if (scrutinee.getNumber(value) && ((intValue = static_cast<int32_t>(value)) == value))
+            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(intValue).addressForSwitch();
         else
             return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault.addressForSwitch();
     }

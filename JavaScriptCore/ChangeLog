@@ -1,5 +1,21 @@
 2009-02-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Fix bug #23614.  Switches on double precision values were incorrectly
+        truncating the scrutinee value.  E.g.:
+
+            switch (1.1) { case 1: print("FAIL"); }
+
+        Was resulting in FAIL.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_switch_imm):
+
+2009-02-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Integer Immediate representation need not be canonical in x86 JIT code.

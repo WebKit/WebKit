@@ -2753,9 +2753,10 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         if (scrutinee.isInt32Fast())
             vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee.getInt32Fast(), defaultOffset);
         else {
-            int32_t value;
-            if (scrutinee.numberToInt32(value))
-                vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(value, defaultOffset);
+            double value;
+            int32_t intValue;
+            if (scrutinee.getNumber(value) && ((intValue = static_cast<int32_t>(value)) == value))
+                vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(intValue, defaultOffset);
             else
                 vPC += defaultOffset;
         }
