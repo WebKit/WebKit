@@ -1,3 +1,15 @@
+2009-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a workaround for Automator creating a WebView from a secondary thread.
+
+        <rdar://problem/6631951> REGRESSION (Safari 4 Beta): Automator crash on
+        secondary thread beneath -[WebView initWithFrame:frameName:groupName:]
+
+        Reviewed by Geoff Garen.
+
+        * WebView/WebView.mm:
+        (needsWebViewInitThreadWorkaround): Check for com.apple.Automator.
+
 2009-02-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
