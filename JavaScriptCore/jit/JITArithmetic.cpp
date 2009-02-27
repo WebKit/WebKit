@@ -645,53 +645,11 @@ static bool isSSE2Present()
 
 #endif
 
-/*
-  This is required since number representation is canonical - values representable as a JSImmediate should not be stored in a JSNumberCell.
-  
-  In the common case, the double value from 'xmmSource' is written to the reusable JSNumberCell pointed to by 'jsNumberCell', then 'jsNumberCell'
-  is written to the output SF Register 'dst', and then a jump is planted (stored into *wroteJSNumberCell).
-  
-  However if the value from xmmSource is representable as a JSImmediate, then the JSImmediate value will be written to the output, and flow
-  control will fall through from the code planted.
-*/
-void JIT::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSource, X86::RegisterID jsNumberCell, unsigned dst, JmpSrc* wroteJSNumberCell,  X86::XMMRegisterID tempXmm, X86::RegisterID tempReg1, X86::RegisterID tempReg2)
-{
-    // convert (double -> JSImmediate -> double), and check if the value is unchanged - in which case the value is representable as a JSImmediate.
-    __ cvttsd2si_rr(xmmSource, tempReg1);
-    __ addl_rr(tempReg1, tempReg1);
-    __ sarl_i8r(1, tempReg1);
-    __ cvtsi2sd_rr(tempReg1, tempXmm);
-    // Compare & branch if immediate. 
-    __ ucomisd_rr(tempXmm, xmmSource);
-    JmpSrc resultIsImm = __ je();
-    JmpDst resultLookedLikeImmButActuallyIsnt = __ label();
-    
-    // Store the result to the JSNumberCell and jump.
-    __ movsd_rm(xmmSource, FIELD_OFFSET(JSNumberCell, m_value), jsNumberCell);
-    if (jsNumberCell != X86::eax)
-        __ movl_rr(jsNumberCell, X86::eax);
-    emitPutVirtualRegister(dst);
-    *wroteJSNumberCell = __ jmp();
-
-    __ linkJump(resultIsImm, __ label());
-    // value == (double)(JSImmediate)value... or at least, it looks that way...
-    // ucomi will report that (0 == -0), and will report true if either input in NaN (result is unordered).
-    __ linkJump(__ jp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
-    __ pextrw_irr(3, xmmSource, tempReg2);
-    __ cmpl_ir(0x8000, tempReg2);
-    __ linkJump(__ je(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
-    // Yes it really really really is representable as a JSImmediate.
-    emitFastArithIntToImmNoCheck(tempReg1, X86::eax);
-    emitPutVirtualRegister(dst);
-}
-
 void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types)
 {
     Structure* numberStructure = m_globalData->numberStructure.get();
     JmpSrc wasJSNumberCell1;
-    JmpSrc wasJSNumberCell1b;
     JmpSrc wasJSNumberCell2;
-    JmpSrc wasJSNumberCell2b;
 
     emitGetVirtualRegisters(src1, X86::eax, src2, X86::edx);
 
@@ -735,8 +693,11 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
             __ mulsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm0);
         }
 
-        putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::edx, dst, &wasJSNumberCell2, X86::xmm1, X86::ecx, X86::eax);
-        wasJSNumberCell2b = __ jmp();
+        // Store the result to the JSNumberCell and jump.
+        __ movsd_rm(X86::xmm0, FIELD_OFFSET(JSNumberCell, m_value), X86::edx);
+        __ movl_rr(X86::edx, X86::eax);
+        emitPutVirtualRegister(dst);
+        wasJSNumberCell2 = __ jmp();
 
         // (2) This handles cases where src2 is an immediate number.
         //     Two slow cases - either src1 isn't an immediate, or the subtract overflows.
@@ -785,8 +746,10 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         __ movsd_rm(X86::xmm0, FIELD_OFFSET(JSNumberCell, m_value), X86::eax);
         emitPutVirtualRegister(dst);
 
-        putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::eax, dst, &wasJSNumberCell1, X86::xmm1, X86::ecx, X86::edx);
-        wasJSNumberCell1b = __ jmp();
+        // Store the result to the JSNumberCell and jump.
+        __ movsd_rm(X86::xmm0, FIELD_OFFSET(JSNumberCell, m_value), X86::eax);
+        emitPutVirtualRegister(dst);
+        wasJSNumberCell1 = __ jmp();
 
         // (2) This handles cases where src1 is an immediate number.
         //     Two slow cases - either src2 isn't an immediate, or the subtract overflows.
@@ -828,11 +791,9 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
     if (types.second().isReusable() && isSSE2Present()) {
         __ linkJump(wasJSNumberCell2, __ label());
-        __ linkJump(wasJSNumberCell2b, __ label());
     }
     else if (types.first().isReusable() && isSSE2Present()) {
         __ linkJump(wasJSNumberCell1, __ label());
-        __ linkJump(wasJSNumberCell1b, __ label());
     }
 }
 

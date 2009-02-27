@@ -235,7 +235,6 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
 
     emitGetVirtualRegisters(src1, regT0, src2, regT1);
 
-#if USE(ALTERNATE_JSIMMEDIATE)
     // Jump to a slow case if either operand is a number, or if both are JSCell*s.
     move(regT0, regT2);
     orPtr(regT1, regT2);
@@ -247,39 +246,6 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     else
         set32(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
-#else
-    bool negated = (type == OpNStrictEq);
-
-    // Check that both are immediates, if so check if they're equal
-    Jump firstNotImmediate = emitJumpIfJSCell(regT0);
-    Jump secondNotImmediate = emitJumpIfJSCell(regT1);
-    Jump bothWereImmediatesButNotEqual = branchPtr(NotEqual, regT1, regT0);
-
-    // They are equal - set the result to true. (Or false, if negated).
-    move(ImmPtr(JSValuePtr::encode(jsBoolean(!negated))), regT0);
-    Jump bothWereImmediatesAndEqual = jump();
-
-    // eax was not an immediate, we haven't yet checked edx.
-    // If edx is also a JSCell, or is 0, then jump to a slow case,
-    // otherwise these values are not equal.
-    firstNotImmediate.link(this);
-    emitJumpSlowCaseIfJSCell(regT1);
-    addSlowCase(branchPtr(Equal, regT1, ImmPtr(JSValuePtr::encode(js0()))));
-    Jump firstWasNotImmediate = jump();
-
-    // eax was an immediate, but edx wasn't.
-    // If eax is 0 jump to a slow case, otherwise these values are not equal.
-    secondNotImmediate.link(this);
-    addSlowCase(branchPtr(Equal, regT0, ImmPtr(JSValuePtr::encode(js0()))));
-
-    // We get here if the two values are different immediates, or one is 0 and the other is a JSCell.
-    // Vaelues are not equal, set the result to false.
-    bothWereImmediatesButNotEqual.link(this);
-    firstWasNotImmediate.link(this);
-    move(ImmPtr(JSValuePtr::encode(jsBoolean(negated))), regT0);
-    
-    bothWereImmediatesAndEqual.link(this);
-#endif
 
     emitPutVirtualRegister(dst);
 }
@@ -1545,9 +1511,6 @@ void JIT::privateCompileSlowCases()
         case op_stricteq: {
             linkSlowCase(iter);
             linkSlowCase(iter);
-#if !USE(ALTERNATE_JSIMMEDIATE)
-            linkSlowCase(iter);
-#endif
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
             emitCTICall(JITStubs::cti_op_stricteq);
@@ -1557,9 +1520,6 @@ void JIT::privateCompileSlowCases()
         case op_nstricteq: {
             linkSlowCase(iter);
             linkSlowCase(iter);
-#if !USE(ALTERNATE_JSIMMEDIATE)
-            linkSlowCase(iter);
-#endif
             emitPutJITStubArg(regT0, 1);
             emitPutJITStubArg(regT1, 2);
             emitCTICall(JITStubs::cti_op_nstricteq);

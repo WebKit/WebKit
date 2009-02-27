@@ -1,3 +1,24 @@
+2009-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Integer Immediate representation need not be canonical in x86 JIT code.
+        On x86-64 we already have loosened the requirement that the int immediate
+        representation in canonical, we should bring x86 into line.
+
+        This patch is a minor (~0.5%) improvement on sunspider & v8-tests, and
+        should reduce memory footoprint (reduces JIT code size).
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::JIT::emitJumpIfImmediateNumber):
+        (JSC::JIT::emitJumpIfNotImmediateNumber):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+
 2009-02-26  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

@@ -419,7 +419,6 @@ namespace JSC {
         void compileOpConstructSetupArgs(Instruction*);
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
-        void putDoubleResultToJSNumberCellOrJSImmediate(X86Assembler::XMMRegisterID xmmSource, RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell, X86Assembler::XMMRegisterID tempXmm, RegisterID tempReg1, RegisterID tempReg2);
 
         void compileFastArith_op_add(Instruction*);
         void compileFastArith_op_sub(Instruction*);
@@ -481,6 +480,16 @@ namespace JSC {
 #if USE(ALTERNATE_JSIMMEDIATE)
         JIT::Jump emitJumpIfImmediateNumber(RegisterID);
         JIT::Jump emitJumpIfNotImmediateNumber(RegisterID);
+#else
+        JIT::Jump emitJumpIfImmediateNumber(RegisterID reg)
+        {
+            return emitJumpIfImmediateInteger(reg);
+        }
+        
+        JIT::Jump emitJumpIfNotImmediateNumber(RegisterID reg)
+        {
+            return emitJumpIfNotImmediateInteger(reg);
+        }
 #endif
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
