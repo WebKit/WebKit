@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +30,11 @@
 #include "Font.h"
 
 #include "GlyphBuffer.h"
+#include "Gradient.h"
 #include "GraphicsContext.h"
+#include "Pattern.h"
 #include "SimpleFontData.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 
@@ -78,18 +82,51 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     }
 
     if (context->textDrawingMode() & cTextFill) {
-        float red, green, blue, alpha;
-        fillColor.getRGBA(red, green, blue, alpha);
-        cairo_set_source_rgba(cr, red, green, blue, alpha);
-
+        if (context->fillGradient()) {
+            cairo_set_source(cr, context->fillGradient()->platformGradient());
+            if (context->getAlpha() < 1.0f) {
+                cairo_push_group(cr);
+                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_pop_group_to_source(cr);
+            }
+        } else if (context->fillPattern()) {
+            TransformationMatrix affine;
+            cairo_set_source(cr, context->fillPattern()->createPlatformPattern(affine));
+            if (context->getAlpha() < 1.0f) {
+                cairo_push_group(cr);
+                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_pop_group_to_source(cr);
+            }
+        } else {
+            float red, green, blue, alpha;
+            fillColor.getRGBA(red, green, blue, alpha);
+            cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
+        }
         cairo_show_glyphs(cr, glyphs, numGlyphs);
     }
 
     if (context->textDrawingMode() & cTextStroke) {
-        Color strokeColor = context->strokeColor();
-        float red, green, blue, alpha;
-        strokeColor.getRGBA(red, green, blue, alpha);
-        cairo_set_source_rgba(cr, red, green, blue, alpha);       
+        if (context->strokeGradient()) {
+            cairo_set_source(cr, context->strokeGradient()->platformGradient());
+            if (context->getAlpha() < 1.0f) {
+                cairo_push_group(cr);
+                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_pop_group_to_source(cr);
+            }
+        } else if (context->strokePattern()) {
+            TransformationMatrix affine;
+            cairo_set_source(cr, context->strokePattern()->createPlatformPattern(affine));
+            if (context->getAlpha() < 1.0f) {
+                cairo_push_group(cr);
+                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_pop_group_to_source(cr);
+            }
+        } else {
+            Color strokeColor = context->strokeColor();
+            float red, green, blue, alpha;
+            strokeColor.getRGBA(red, green, blue, alpha);
+            cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
+        } 
         cairo_glyph_path(cr, glyphs, numGlyphs);
         cairo_set_line_width(cr, context->strokeThickness());
         cairo_stroke(cr);

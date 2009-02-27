@@ -1,3 +1,18 @@
+2009-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Added support for Gradients and Patterns on filled or stroked Fonts
+        in Cairo. I also added support for globalAlpha on FontCairo.
+
+        [CAIRO] SVG/Canvas fonts miss gradients/pattern support
+        https://bugs.webkit.org/show_bug.cgi?id=18617
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2009-02-26  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.
