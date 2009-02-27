@@ -75,9 +75,6 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     // By default, only local SecurityOrigins can load local resources.
     m_canLoadLocalResources = isLocal();
 
-    // By default, grant universalAccess to local SecurityOrigins
-    m_universalAccess = isLocal();
-
     if (isDefaultPortForProtocol(m_port, m_protocol))
         m_port = 0;
 }

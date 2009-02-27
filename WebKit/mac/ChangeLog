@@ -1,3 +1,18 @@
+2009-02-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a preference to reduce the power of file:// URLs.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences allowUniversalAccessFromFileUrls]):
+        (-[WebPreferences setAllowUniversalAccessFromFileUrls:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson
@@ -10,6 +25,21 @@
         * WebView/WebHTMLView.mm:
         (resetCursorRects):
         (setCursor):
+
+2009-02-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a preference to reduce the power of file:// URLs.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences allowUniversalAccessFromFileUrls]):
+        (-[WebPreferences setAllowUniversalAccessFromFileUrls:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
 
 2009-02-26  Adele Peterson  <adele@apple.com>
 

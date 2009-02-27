@@ -1317,6 +1317,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     settings->setJavaEnabled([preferences isJavaEnabled]);
     settings->setJavaScriptEnabled([preferences isJavaScriptEnabled]);
     settings->setWebSecurityEnabled([preferences isWebSecurityEnabled]);
+    settings->setAllowUniversalAccessFromFileUrls([preferences allowUniversalAccessFromFileUrls]);
     settings->setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
     settings->setMinimumFontSize([preferences minimumFontSize]);
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);

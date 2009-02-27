@@ -72,4 +72,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT isWebSecurityEnabled([out, retval] BOOL* enabled);
     HRESULT setWebSecurityEnabled([in] BOOL enabled);
+
+    HRESULT allowUniversalAccessFromFileUrls([out, retval] BOOL *allowAccess);
+    HRESULT setAllowUniversalAccessFromFileUrls([in] BOOL allowAccess);
 }

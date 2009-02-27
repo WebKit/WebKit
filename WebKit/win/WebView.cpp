@@ -4052,6 +4052,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setJavaScriptEnabled(!!enabled);
 
+    hr = preferences->allowUniversalAccessFromFileUrls(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setAllowUniversalAccessFromFileUrls(!!enabled);
+
     hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
     if (FAILED(hr))
         return hr;

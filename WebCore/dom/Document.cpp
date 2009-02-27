@@ -4144,11 +4144,18 @@ void Document::initSecurityContext()
             securityOrigin()->grantLoadLocalResources();
     }
 
-    if (settings() && !settings()->isWebSecurityEnabled()) {
-        // Web security is turned off.  We should let this document access every
-        // other document.  This is used primary by testing harnesses for web
-        // sites.
-        securityOrigin()->grantUniversalAccess();
+    if (Settings* settings = this->settings()) {
+        if (!settings->isWebSecurityEnabled()) {
+          // Web security is turned off.  We should let this document access every
+          // other document.  This is used primary by testing harnesses for web
+          // sites.
+          securityOrigin()->grantUniversalAccess();
+
+        } else if(settings->allowUniversalAccessFromFileUrls() && securityOrigin()->isLocal()) {
+          // Some clients want file:// URLs to have universal access, but that
+          // setting is dangerous for other clients.
+          securityOrigin()->grantUniversalAccess();
+        }
     }
 
     if (!securityOrigin()->isEmpty())

@@ -1,3 +1,24 @@
+2009-02-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20249
+
+        Add a preference to allow universal access from local URLs to mitigate
+        some attacks.  Some clients still want to allow this access, so we
+        expose this as a preference.
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setAllowUniversalAccessFromFileUrls):
+        * page/Settings.h:
+        (WebCore::Settings::allowUniversalAccessFromFileUrls):
+
 2009-02-27  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Eric Seidel.

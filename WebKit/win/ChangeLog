@@ -1,3 +1,19 @@
+2009-02-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a preference to reduce the power of file:// URLs.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::allowUniversalAccessFromFileUrls):
+        (WebPreferences::setAllowUniversalAccessFromFileUrls):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-02-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

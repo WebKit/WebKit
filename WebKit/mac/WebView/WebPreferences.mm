@@ -314,6 +314,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebSecurityEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowUniversalAccessFromFileUrlsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
@@ -871,6 +872,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setWebSecurityEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitWebSecurityEnabledPreferenceKey];
+}
+
+- (BOOL)allowUniversalAccessFromFileUrls
+{
+    return [self _boolValueForKey: WebKitAllowUniversalAccessFromFileUrlsPreferenceKey];
+}
+
+- (void)setAllowUniversalAccessFromFileUrls:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitAllowUniversalAccessFromFileUrlsPreferenceKey];
 }
 
 - (NSTimeInterval)_backForwardCacheExpirationInterval
