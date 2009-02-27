@@ -576,11 +576,25 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
         return false;
+
+    JSLock lock(false);
     
-    ExecState* exec = frame->script()->globalObject()->globalExec();
-    JSValuePtr value = frame->loader()->executeScript(script).jsValue();
+    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
+    ExecState* exec = globalObject->globalExec();
+
+    globalObject->globalData()->timeoutChecker.start();
+    Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
+    globalObject->globalData()->timeoutChecker.stop();
+    ComplType type = completion.complType();
     
-    marshalValue(exec, value, resultData, resultLength);
+    JSValuePtr result;
+    if (type == Normal)
+        result = completion.value();
+    
+    if (!result)
+        result = jsUndefined();
+    
+    marshalValue(exec, result, resultData, resultLength);
     exec->clearException();
     return true;
 }

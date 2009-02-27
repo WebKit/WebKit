@@ -2,6 +2,18 @@
 
         Reviewed by Geoffrey Garen.
 
+        <rdar://problem/6631436>
+        CrashTracer: [USER] 1 crash in Safari at com.apple.WebKit • WebKit::NetscapePluginInstanceProxy::addValueToArray + 55
+        
+        Port the NPN_Evaluate code over from WebCore instead of using the frame loader.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+
+2009-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
         WebKit side of <rdar://problem/6626814>.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:
