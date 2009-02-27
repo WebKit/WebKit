@@ -1,5 +1,31 @@
 2009-02-27  Yael Aharon  <yael.aharon@nokia.com>
 
+        Added a refresh button to storage views.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24040
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView):
+        (WebInspector.DOMStorageItemsView.prototype.get statusBarItems):
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        (WebInspector.DOMStorageItemsView.prototype._refreshButtonClicked):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView):
+        (WebInspector.DatabaseTableView.prototype.get statusBarItems):
+        (WebInspector.DatabaseTableView.prototype._refreshButtonClicked):
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel):
+        (WebInspector.DatabasesPanel.prototype.get statusBarItems):
+        (WebInspector.DatabasesPanel.prototype.reset):
+        (WebInspector.DatabasesPanel.prototype.showDatabase):
+        (WebInspector.DatabasesPanel.prototype.showDOMStorage):
+        (WebInspector.DatabasesPanel.prototype._updateSidebarWidth):
+        * inspector/front-end/inspector.css:
+
+2009-02-27  Yael Aharon  <yael.aharon@nokia.com>
+
         Added support for editing/deleting localStorage and sessionStorage items
         directly from Web Inspector.
 

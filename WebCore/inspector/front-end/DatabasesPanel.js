@@ -173,6 +173,11 @@ WebInspector.DatabasesPanel.prototype = {
         view.show(this.storageViews);
 
         this.visibleView = view;
+
+        this.storageViewStatusBarItemsContainer.removeChildren();
+        var statusBarItems = view.statusBarItems;
+        for (var i = 0; i < statusBarItems.length; ++i)
+            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
     showDOMStorage: function(domStorage)
