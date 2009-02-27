@@ -1,3 +1,17 @@
+2009-02-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24211
+        Add ScheduledAction for V8.
+
+        * bindings/v8/ScheduledAction.cpp: Added.
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::~ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScheduledAction.h: Added.
+        (WebCore::ScheduledAction::ScheduledAction):
+
 2009-02-27  Zack Rusin  <zack@kde.org>
 
         Reviewed by Nikolas Zimmermann.
