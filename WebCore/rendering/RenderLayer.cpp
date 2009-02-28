@@ -2078,7 +2078,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                                        const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform)
 {
     // Apply a transform if we have one.
-    if (renderer()->hasTransform() && !appliedTransform) {
+    if (transform() && !appliedTransform) {
         // If the transform can't be inverted, then don't hit test this layer at all.
         if (!m_transform->isInvertible())
             return 0;

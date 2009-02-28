@@ -1,3 +1,17 @@
+2009-02-27  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        renderer()->hasTransform() returns true for elements
+        with perspective, but no transform, so test for transform
+        when hit testing. This fixes ASSERT from
+        https://bugs.webkit.org/show_bug.cgi?id=24252
+
+        Test: transforms/no_transform_hit_testing.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-02-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

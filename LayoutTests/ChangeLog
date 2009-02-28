@@ -1,3 +1,13 @@
+2009-02-27  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add test for crash - transform is null in hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=24252
+
+        * transforms/no_transform_hit_testing-expected.txt: Added.
+        * transforms/no_transform_hit_testing.html: Added.
+
 2009-02-27  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
