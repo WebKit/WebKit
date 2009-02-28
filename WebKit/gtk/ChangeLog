@@ -1,3 +1,15 @@
+2009-02-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by David Hyatt.
+
+        Automatically ignore empty requests to avoid crashing. This fixes
+        the crash in fast/loader/empty-embed-src-attribute.html.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2009-02-27  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alexey Proskuryakov.
