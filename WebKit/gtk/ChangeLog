@@ -1,3 +1,10 @@
+2009-02-28  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        * webkit/webkitwebview.cpp: Let webkit_web_view_open add file:// if a
+        locale path is passed for compatibility, since we used to support that.
+
 2009-02-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by David Hyatt.
