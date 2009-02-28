@@ -107,7 +107,7 @@ public:
 
     void clear()
     {
-        if (!m_value.IsEmpty())
+        if (m_value.IsEmpty())
             return;
 
 #ifndef NDEBUG

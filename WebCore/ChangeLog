@@ -1,3 +1,12 @@
+2009-02-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix scrubbing error -- a reversed condition.
+
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::clear): Change early exit for empty value, not the opposite.
+
 2009-02-27  Jian Li  <jianli@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
