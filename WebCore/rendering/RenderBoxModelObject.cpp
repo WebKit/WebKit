@@ -68,6 +68,19 @@ bool RenderBoxModelObject::hasSelfPaintingLayer() const
 void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     s_wasFloating = isFloating();
+
+    // If our z-index changes value or our visibility changes,
+    // we need to dirty our stacking context's z-order list.
+    if (style() && newStyle) {
+        if (hasLayer() && (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
+                           style()->zIndex() != newStyle->zIndex() ||
+                           style()->visibility() != newStyle->visibility())) {
+            layer()->dirtyStackingContextZOrderLists();
+            if (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() || style()->visibility() != newStyle->visibility())
+                layer()->dirtyZOrderLists();
+        }
+    }
+
     RenderObject::styleWillChange(diff, newStyle);
 }
 

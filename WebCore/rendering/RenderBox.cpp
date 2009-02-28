@@ -127,18 +127,6 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
     s_hadOverflowClip = hasOverflowClip();
 
     if (style()) {
-        // If our z-index changes value or our visibility changes,
-        // we need to dirty our stacking context's z-order list.
-        if (newStyle) {
-            if (hasLayer() && (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                               style()->zIndex() != newStyle->zIndex() ||
-                               style()->visibility() != newStyle->visibility())) {
-                layer()->dirtyStackingContextZOrderLists();
-                if (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() || style()->visibility() != newStyle->visibility())
-                    layer()->dirtyZOrderLists();
-            }
-        }
-        
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
         if (diff >= StyleDifferenceRepaint && node() &&

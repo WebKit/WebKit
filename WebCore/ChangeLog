@@ -1,3 +1,20 @@
+2009-02-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=23848
+          <rdar://problem/6573250> REGRESSION: Crash when mouse cursor moves over a link on www.opportuno.de
+
+        Test: fast/layers/inline-dirty-z-order-lists.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange): Moved the code that dirties a
+        layer's and its stacking context's z-order lists when the layer's
+        z-index or visibility change from here...
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange): ...to here, so that
+        it will apply to RenderInline too.
+
 2009-02-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by David Hyatt.
