@@ -40,7 +40,7 @@ activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
     const gchar* uri = gtk_entry_get_text (GTK_ENTRY (entry));
     g_assert (uri);
-    webkit_web_view_open (web_view, uri);
+    webkit_web_view_load_uri (web_view, uri);
 }
 
 static void
@@ -195,7 +195,7 @@ main (int argc, char* argv[])
     gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
     gchar* uri = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
-    webkit_web_view_open (web_view, uri);
+    webkit_web_view_load_uri (web_view, uri);
 
     gtk_widget_grab_focus (GTK_WIDGET (web_view));
     gtk_widget_show_all (main_window);

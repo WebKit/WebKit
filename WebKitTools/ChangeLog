@@ -1,3 +1,11 @@
+2009-02-28  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber-stamped by Holger Freyther.
+
+        * GtkLauncher/main.c:
+        (activate_uri_entry_cb):
+        (main): Use the new webkit_web_view_load_uri to open URIs.
+
 2009-02-27  Xan Lopez  <xan@gnome.org>
 
         Rubber-stamped by Alexey Proskuryakov.
