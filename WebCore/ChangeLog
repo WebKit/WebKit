@@ -1,3 +1,15 @@
+2009-02-28  Adam Bergkvist <adam.bergkvist@ericsson.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24226
+        [SOUP] HTTP status text is never set
+
+        Set HTTP status text to SoupMessage reason_phrase.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+
 2009-02-28  Dan Bernstein  <mitz@apple.com>
 
         - fix malformed project file

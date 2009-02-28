@@ -181,6 +181,7 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     response->setTextEncodingName(extractCharsetFromMediaType(contentType));
     response->setExpectedContentLength(soup_message_headers_get_content_length(msg->response_headers));
     response->setHTTPStatusCode(msg->status_code);
+    response->setHTTPStatusText(msg->reason_phrase);
     response->setSuggestedFilename(filenameFromHTTPContentDisposition(response->httpHeaderField("Content-Disposition")));
 }
 
