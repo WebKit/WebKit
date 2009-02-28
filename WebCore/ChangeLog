@@ -1,3 +1,20 @@
+2009-02-27  Matt Pennig  <pennig@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Resolves: https://bugs.webkit.org/show_bug.cgi?id=24107
+        "Fixed elements have 0 as an offsetLeft property"
+        
+        Code also brings offsetLeft/Top in full conformance with the spec.
+        Added two tests, one for fixed-position elements, and one for <html>.
+        
+        Tests: fast/dom/Element/fixed-position-offset-parent.html
+               fast/dom/Element/offsetLeft-offsetTop-html.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::offsetLeft):
+        (WebCore::RenderBoxModelObject::offsetTop):
+
 2009-02-27  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

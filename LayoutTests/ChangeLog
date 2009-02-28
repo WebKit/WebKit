@@ -1,3 +1,16 @@
+2009-02-27  Matt Pennig  <pennig@apple.com>
+
+        Reviewed by David Hyatt.
+        
+        Added two tests:
+            1. Tests offsetParent, offsetLeft and offsetTop on fixed-position elements.
+            2. Tests offsetLeft and offsetTop on static and positioned <html> elements.
+
+        * fast/dom/Element/fixed-position-offset-parent-expected.txt: Added.
+        * fast/dom/Element/fixed-position-offset-parent.html: Added.
+        * fast/dom/Element/offsetLeft-offsetTop-html-expected.txt: Added.
+        * fast/dom/Element/offsetLeft-offsetTop-html.html: Added.
+
 2009-02-27  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser

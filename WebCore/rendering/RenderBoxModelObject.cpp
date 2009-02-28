@@ -137,48 +137,67 @@ int RenderBoxModelObject::relativePositionOffsetY() const
 
 int RenderBoxModelObject::offsetLeft() const
 {
-    RenderBoxModelObject* offsetPar = offsetParent();
-    if (!offsetPar)
+    // If the element is the HTML body element or does not have an associated box
+    // return 0 and stop this algorithm.
+    if (isBody())
         return 0;
+    
+    RenderBoxModelObject* offsetPar = offsetParent();
     int xPos = (isBox() ? toRenderBox(this)->x() : 0);
-    if (offsetPar->isBox())
-        xPos -= toRenderBox(offsetPar)->borderLeft();
-    if (!isPositioned()) {
-        if (isRelPositioned())
-            xPos += relativePositionOffsetX();
-        RenderObject* curr = parent();
-        while (curr && curr != offsetPar) {
-            // FIXME: What are we supposed to do inside SVG content?
-            if (curr->isBox() && !curr->isTableRow())
-                xPos += toRenderBox(curr)->x();
-            curr = curr->parent();
+    
+    // If the offsetParent of the element is null, or is the HTML body element,
+    // return the distance between the canvas origin and the left border edge 
+    // of the element and stop this algorithm.
+    if (offsetPar) {
+        if (offsetPar->isBox() && !offsetPar->isBody())
+            xPos -= toRenderBox(offsetPar)->borderLeft();
+        if (!isPositioned()) {
+            if (isRelPositioned())
+                xPos += relativePositionOffsetX();
+            RenderObject* curr = parent();
+            while (curr && curr != offsetPar) {
+                // FIXME: What are we supposed to do inside SVG content?
+                if (curr->isBox() && !curr->isTableRow())
+                    xPos += toRenderBox(curr)->x();
+                curr = curr->parent();
+            }
+            if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
+                xPos += toRenderBox(offsetPar)->x();
         }
-        if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
-            xPos += toRenderBox(offsetPar)->x();
     }
+
     return xPos;
 }
 
 int RenderBoxModelObject::offsetTop() const
 {
-    RenderBoxModelObject* offsetPar = offsetParent();
-    if (!offsetPar)
+    // If the element is the HTML body element or does not have an associated box
+    // return 0 and stop this algorithm.
+    if (isBody())
         return 0;
+    
+    RenderBoxModelObject* offsetPar = offsetParent();
     int yPos = (isBox() ? toRenderBox(this)->y() : 0);
-    if (offsetPar->isBox())
-        yPos -= toRenderBox(offsetPar)->borderTop();
-    if (!isPositioned()) {
-        if (isRelPositioned())
-            yPos += relativePositionOffsetY();
-        RenderObject* curr = parent();
-        while (curr && curr != offsetPar) {
-            // FIXME: What are we supposed to do inside SVG content?
-            if (curr->isBox() && !curr->isTableRow())
-                yPos += toRenderBox(curr)->y();
-            curr = curr->parent();
+    
+    // If the offsetParent of the element is null, or is the HTML body element,
+    // return the distance between the canvas origin and the top border edge 
+    // of the element and stop this algorithm.
+    if (offsetPar) {
+        if (offsetPar->isBox() && !offsetPar->isBody())
+            yPos -= toRenderBox(offsetPar)->borderTop();
+        if (!isPositioned()) {
+            if (isRelPositioned())
+                yPos += relativePositionOffsetY();
+            RenderObject* curr = parent();
+            while (curr && curr != offsetPar) {
+                // FIXME: What are we supposed to do inside SVG content?
+                if (curr->isBox() && !curr->isTableRow())
+                    yPos += toRenderBox(curr)->y();
+                curr = curr->parent();
+            }
+            if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
+                yPos += toRenderBox(offsetPar)->y();
         }
-        if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
-            yPos += toRenderBox(offsetPar)->y();
     }
     return yPos;
 }
