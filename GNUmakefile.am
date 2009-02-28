@@ -444,7 +444,8 @@ EXTRA_DIST = \
 	WebKit/LICENSE \
 	$(javascriptcore_dist) \
 	$(webcore_dist) \
-	$(srcdir)/autotools/symbols.filter
+	$(srcdir)/autotools/symbols.filter \
+	$(srcdir)/WebKit/gtk/webkitmarshal.list
 
 # Files that will be cleaned
 MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES)

@@ -1,3 +1,10 @@
+2009-02-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix. Adding the WebKit/gtk/webkitmarshal.list
+        file to EXTRA_DIST to fix make dist.
+
+        * GNUmakefile.am:
+
 2009-02-26  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
