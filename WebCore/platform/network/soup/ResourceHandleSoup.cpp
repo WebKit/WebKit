@@ -253,7 +253,7 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
 // Doesn't get called for redirects.
 static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer data)
 {
-    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    RefPtr<ResourceHandle>handle = adoptRef(static_cast<ResourceHandle*>(data));
     // TODO: maybe we should run this code even if there's no client?
     if (!handle)
         return;
@@ -271,21 +271,21 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         char* uri = soup_uri_to_string(soup_message_get_uri(msg), FALSE);
         ResourceError error("webkit-network-error", ERROR_TRANSPORT, uri, String::fromUTF8(msg->reason_phrase));
         g_free(uri);
-        client->didFail(handle, error);
+        client->didFail(handle.get(), error);
         return;
     } else if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
         fillResponseFromMessage(msg, &d->m_response);
-        client->didReceiveResponse(handle, d->m_response);
+        client->didReceiveResponse(handle.get(), d->m_response);
 
         // WebCore might have cancelled the job in the while
         if (d->m_cancelled)
             return;
 
         if (msg->response_body->data)
-            client->didReceiveData(handle, msg->response_body->data, msg->response_body->length, true);
+            client->didReceiveData(handle.get(), msg->response_body->data, msg->response_body->length, true);
     }
 
-    client->didFinishLoading(handle);
+    client->didFinishLoading(handle.get());
 }
 
 // parseDataUrl() is taken from the CURL http backend.
@@ -515,6 +515,8 @@ bool ResourceHandle::startHttp(String urlString)
     }
 
     d->m_msg = static_cast<SoupMessage*>(g_object_ref(msg));
+    // balanced by a deref() in finishedCallback, which should always run
+    ref();
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;

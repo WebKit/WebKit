@@ -1,3 +1,20 @@
+2009-02-28  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24263
+        [GTK] ref ResourceHandle until we are finished with it
+
+        Add a ref to the ResourceHandle in startHttp so we can keep it
+        alive untill all callbacks have been executed, and unref it when
+        soup tells us it's done with the SoupMessage (in
+        finishedCallback). Fixes a number of crashes when calling
+        didReceiveData whould crash because of the handle dying.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::finishedCallback):
+        (WebCore::ResourceHandle::startHttp):
+
 2009-02-28  Adam Bergkvist <adam.bergkvist@ericsson.com>
 
         Reviewed by Alexey Proskuryakov.
