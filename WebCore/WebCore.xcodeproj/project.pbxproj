@@ -12938,7 +12938,7 @@
 		B255988F0D00D8B800BB825C /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */
+				B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */,
 			);
 			path = cg;
 			sourceTree = "<group>";
