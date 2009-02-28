@@ -33,7 +33,6 @@
 #include "HTMLFormElement.h"
 #include "ScriptExecutionContext.h"
 #include "StringHash.h"
-#include "TextResourceDecoder.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
@@ -983,20 +982,9 @@ public:
     void setDecoder(PassRefPtr<TextResourceDecoder>);
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
 
-    String displayStringModifiedByEncoding(const String& str) const {
-        if (m_decoder)
-            return m_decoder->encoding().displayString(str.impl());
-        return str;
-    }
-    PassRefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl> str) const {
-        if (m_decoder)
-            return m_decoder->encoding().displayString(str);
-        return str;
-    }
-    void displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const {
-        if (m_decoder)
-            m_decoder->encoding().displayBuffer(buffer, len);
-    }
+    String displayStringModifiedByEncoding(const String&) const;
+    PassRefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl>) const;
+    void displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const;
 
     // Quirk for the benefit of Apple's Dictionary application.
     void setFrameElementsShouldIgnoreScrolling(bool ignore) { m_frameElementsShouldIgnoreScrolling = ignore; }

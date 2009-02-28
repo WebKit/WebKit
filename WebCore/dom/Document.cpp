@@ -4426,4 +4426,24 @@ Element* Document::findAnchor(const String& name)
     return 0;
 }
 
+String Document::displayStringModifiedByEncoding(const String& str) const
+{
+    if (m_decoder)
+        return m_decoder->encoding().displayString(str.impl());
+    return str;
+}
+
+PassRefPtr<StringImpl> Document::displayStringModifiedByEncoding(PassRefPtr<StringImpl> str) const
+{
+    if (m_decoder)
+        return m_decoder->encoding().displayString(str);
+    return str;
+}
+
+void Document::displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const
+{
+    if (m_decoder)
+        m_decoder->encoding().displayBuffer(buffer, len);
+}
+
 } // namespace WebCore

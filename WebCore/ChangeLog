@@ -1,3 +1,18 @@
+2009-02-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Don't include TextResourceDecoder.h in Document.h
+
+        This undoes inlining of Document::displayStringModifiedByEncoding() to avoid world rebuilds
+        when TextResourceDecoder.h is modified. Performance impact is expected to be negligible.
+
+        * dom/Document.cpp:
+        (WebCore::Document::displayStringModifiedByEncoding):
+        (WebCore::Document::displayBufferModifiedByEncoding):
+        * dom/Document.h:
+        * WebCore.base.exp:
+
 2009-02-27  Matt Pennig  <pennig@apple.com>
 
         Reviewed by David Hyatt.
