@@ -1,3 +1,16 @@
+2009-02-27  Alice Liu  <alice.liu@apple.com>
+
+        Fix <rdar://problem/6531265> REGRESSION (r39185): adding ".jpeg"
+        extension to images that already have .jpg extension
+
+        Reviewed by Oliver Hunt.
+
+        * WebView/WebHTMLView.mm:
+        (-[NSString matchesExtensionEquivalent:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        Relax the check for the proper extension to allow for known
+        equivalents, special-cased in matchesExtensionEquivalent function.
+
 2009-02-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.
