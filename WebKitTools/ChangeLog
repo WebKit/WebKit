@@ -1,3 +1,14 @@
+2009-02-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] webkitdirs.pm modify path in when detecting 3D transforms and accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=24076
+
+        Refactor gtk lib detection and put it in builtDylibPathForName
+
+        * Scripts/webkitdirs.pm:
+
 2009-02-28  Christian Dywan  <christian@twotoasts.de>
 
         Rubber-stamped by Holger Freyther.

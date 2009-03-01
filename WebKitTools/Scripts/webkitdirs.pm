@@ -388,8 +388,11 @@ sub builtDylibPathForName
 {
     my $libraryName = shift;
     determineConfigurationProductDir();
-    if (isQt() or isGtk() or isChromium()) {
+    if (isQt() or isChromium()) {
         return "$configurationProductDir/$libraryName";
+    }
+    if (isGtk()) {
+        return "$configurationProductDir/$libraryName/../.libs/libwebkit-1.0.so";
     }
     if (isAppleMacWebKit()) {
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
@@ -425,10 +428,6 @@ sub hasSVGSupport
 
     if (isQt()) {
         return 1;
-    }
-
-    if (isGtk() and $path =~ /WebCore/) {
-        $path .= "/../.libs/libwebkit-1.0.so";
     }
 
     my $hasSVGSupport = 0;
@@ -533,10 +532,6 @@ sub hasWMLSupport
     if (isQt()) {
         # FIXME: Check built library for WML support, just like Gtk does it below.
         return 0;
-    }
-
-    if (isGtk() and $path =~ /WebCore/) {
-        $path .= "/../.libs/webkit-1.0.so";
     }
 
     my $hasWMLSupport = 0;
