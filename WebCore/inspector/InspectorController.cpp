@@ -2295,7 +2295,7 @@ JSObjectRef InspectorController::addDOMStorageScriptResource(InspectorDOMStorage
         domStorage = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, resource->domStorage.get())));
     }
 
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->frame->document()->securityOrigin()->domain()).get());
+    JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->frame->document()->securityOrigin()->host()).get());
     JSValueRef isLocalStorageValue = JSValueMakeBoolean(m_scriptContext, resource->isLocalStorage);
 
     JSValueRef arguments[] = { domStorage, domainValue, isLocalStorageValue };
@@ -2734,7 +2734,7 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
     for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {
         InspectorDOMStorageResource* resource = it->get();
-        if (equalIgnoringCase(resource->frame->document()->securityOrigin()->domain(), frame->document()->securityOrigin()->domain()) && resource->isLocalStorage == isLocalStorage)
+        if (equalIgnoringCase(resource->frame->document()->securityOrigin()->host(), frame->document()->securityOrigin()->host()) && resource->isLocalStorage == isLocalStorage)
             return;
     }
     RefPtr<Storage> domStorage = Storage::create(frame, storageArea);

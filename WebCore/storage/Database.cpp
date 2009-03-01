@@ -114,7 +114,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
     document->setHasOpenDatabases();
 
     if (Page* page = document->frame()->page())
-        page->inspectorController()->didOpenDatabase(database.get(), document->domain(), name, expectedVersion);
+        page->inspectorController()->didOpenDatabase(database.get(), document->securityOrigin()->host(), name, expectedVersion);
 
     return database;
 }
