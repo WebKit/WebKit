@@ -2,6 +2,17 @@
 
         Reviewed by Holger Freyther.
 
+        Avoid leaking errors when reporting GIO errors.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::readCallback):
+        (WebCore::openCallback):
+        (WebCore::queryInfoCallback):
+
+2009-03-01  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         Fixes crash when the GIO backend is given the URI for a directory.
 
         * platform/network/soup/ResourceHandleSoup.cpp:

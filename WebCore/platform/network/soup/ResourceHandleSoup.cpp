@@ -696,6 +696,7 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
     nread = g_input_stream_read_finish(d->m_input_stream, res, &error);
     if (error) {
         ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle.get(), resourceError);
         return;
@@ -737,6 +738,7 @@ static void openCallback(GObject* source, GAsyncResult* res, gpointer)
     in = g_file_read_finish(G_FILE(source), res, &error);
     if (error) {
         ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
         return;
@@ -784,6 +786,7 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
         // for a while).
 
         ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
         return;
@@ -793,7 +796,7 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
         // FIXME: what if the URI points to a directory? Should we
         // generate a listing? How? What do other backends do here?
 
-        ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        ResourceError resourceError = networkErrorForFile(d->m_gfile, 0);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
         return;
