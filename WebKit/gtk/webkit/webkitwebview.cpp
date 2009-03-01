@@ -148,7 +148,9 @@ enum {
     PROP_WINDOW_FEATURES,
     PROP_TRANSPARENT,
     PROP_ZOOM_LEVEL,
-    PROP_FULL_CONTENT_ZOOM
+    PROP_FULL_CONTENT_ZOOM,
+    PROP_ENCODING,
+    PROP_CUSTOM_ENCODING
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -306,6 +308,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_FULL_CONTENT_ZOOM:
         g_value_set_boolean(value, webkit_web_view_get_full_content_zoom(webView));
         break;
+    case PROP_ENCODING:
+        g_value_set_string(value, webkit_web_view_get_encoding(webView));
+        break;
+    case PROP_CUSTOM_ENCODING:
+        g_value_set_string(value, webkit_web_view_get_custom_encoding(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -333,6 +341,9 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_FULL_CONTENT_ZOOM:
         webkit_web_view_set_full_content_zoom(webView, g_value_get_boolean(value));
+        break;
+    case PROP_CUSTOM_ENCODING:
+        webkit_web_view_set_custom_encoding(webView, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -879,6 +890,7 @@ static void webkit_web_view_finalize(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
 
+    g_free(priv->encoding);
     g_free(priv->customEncoding);
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
@@ -1590,6 +1602,34 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          "Whether the full content is scaled when zooming",
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
+
+    /**
+     * WebKitWebView:encoding:
+     *
+     * The default encoding of the web view.
+     *
+     * Since: 1.1.2
+     */
+    g_object_class_install_property(objectClass, PROP_ENCODING,
+                                    g_param_spec_string("encoding",
+                                                        "Encoding",
+                                                        "The default encoding of the web view",
+                                                        NULL,
+                                                        WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView:custom-encoding:
+     *
+     * The custom encoding of the web view.
+     *
+     * Since: 1.1.2
+     */
+    g_object_class_install_property(objectClass, PROP_CUSTOM_ENCODING,
+                                    g_param_spec_string("custom-encoding",
+                                                        "Custom Encoding",
+                                                        "The custom encoding of the web view",
+                                                        NULL,
+                                                        WEBKIT_PARAM_READWRITE));
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
@@ -2779,6 +2819,31 @@ SoupSession* webkit_get_default_session ()
     return ResourceHandle::defaultSession();
 }
 
+}
+
+/**
+ * webkit_web_view_get_encoding:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the default encoding of the #WebKitWebView.
+ *
+ * Return value: the default encoding
+ *
+ * Since: 1.1.1
+ */
+const gchar* webkit_web_view_get_encoding(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    String encoding = core(webView)->mainFrame()->loader()->encoding();
+
+    if (!encoding.isEmpty()) {
+        WebKitWebViewPrivate* priv = webView->priv;
+        g_free(priv->encoding);
+        priv->encoding = g_strdup(encoding.utf8().data());
+        return priv->encoding;
+    } else
+      return NULL;
 }
 
 /**

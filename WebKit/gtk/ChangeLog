@@ -1,3 +1,13 @@
+2009-03-01  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding):
+        * webkit/webkitwebview.h: Implement 'encoding' and 'custom-encoding'
+        properties as well as webkit_web_view_get_encoding.
+
 2009-03-01  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed simple wording fix for the NEWS file.

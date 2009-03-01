@@ -308,6 +308,9 @@ webkit_web_view_set_full_content_zoom           (WebKitWebView        *web_view,
 WEBKIT_API SoupSession*
 webkit_get_default_session                      (void);
 
+WEBKIT_API const gchar*
+webkit_web_view_get_encoding                    (WebKitWebView        * webView);
+
 WEBKIT_API void
 webkit_web_view_set_custom_encoding             (WebKitWebView        * webView,
                                                  const gchar          * encoding);
