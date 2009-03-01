@@ -51,7 +51,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
         return throwError(state->exception());
 
     if (!object)
-        return v8::Undefined();
+        return v8::Null();
 
     return V8Proxy::NodeToV8Object(object.get());
 }

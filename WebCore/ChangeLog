@@ -5,6 +5,23 @@
         https://bugs.webkit.org/show_bug.cgi?id=24261
         Fix V8 custom binding scrubbing error.
 
+        Test: fast/dom/TreeWalker/TreeWalker-currentNode.html
+        Test: traversal/exception-forwarding.html
+        TesT: traversal/stay-within-root.html
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        (WebCore::toV8): Replace v8::Undefined() return value with v8::Null().
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        (WebCore::toV8): Ditto.
+
+2009-02-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24261
+        Fix V8 custom binding scrubbing error.
+
         Test: fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html
 
         * WebCore.xcodeproj/project.pbxproj:
