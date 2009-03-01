@@ -1089,8 +1089,8 @@ void Document::setDocumentChanged(bool b)
 void Document::recalcStyle(StyleChange change)
 {
     // we should not enter style recalc while painting
-    if (frame() && frame()->view() && frame()->view()->isPainting()) {
-        ASSERT(!frame()->view()->isPainting());
+    if (view() && view()->isPainting()) {
+        ASSERT(!view()->isPainting());
         return;
     }
     
@@ -1099,6 +1099,8 @@ void Document::recalcStyle(StyleChange change)
 
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
+    if (view())
+        view()->pauseScheduledEvents();
     
     ASSERT(!renderer() || renderArena());
     if (!renderer() || !renderArena())
@@ -1160,10 +1162,12 @@ bail_out:
     setChanged(NoStyleChange);
     setHasChangedChild(false);
     setDocumentChanged(false);
-    
+
+    if (view())
+        view()->resumeScheduledEvents();
     resumePostAttachCallbacks();
     m_inStyleRecalc = false;
-    
+
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
     if (m_closeAfterStyleRecalc) {
         m_closeAfterStyleRecalc = false;

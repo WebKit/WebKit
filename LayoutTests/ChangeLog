@@ -1,3 +1,12 @@
+2009-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6634768> Reproducible crash in RenderLayer::updateScrollCornerStyle() using full-page zoom at MobileMe Contacts
+
+        * fast/events/scroll-during-zoom-change-expected.txt: Added.
+        * fast/events/scroll-during-zoom-change.html: Added.
+
 2009-02-28  Dan Bernstein  <mitz@apple.com>
 
         - correct a color profile mismatch in expected pixel results

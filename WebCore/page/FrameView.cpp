@@ -596,7 +596,7 @@ void FrameView::layout(bool allowSubtree)
         // Calls resumeScheduledEvents()
         performPostLayoutTasks();
 
-        if (needsLayout()) {
+        if (!m_postLayoutTasksTimer.isActive() && needsLayout()) {
             // Post-layout widget updates or an event handler made us need layout again.
             // Lay out again, but this time defer widget updates and event dispatch until after
             // we return.

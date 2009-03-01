@@ -1,3 +1,21 @@
+2009-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6634768> Reproducible crash in RenderLayer::updateScrollCornerStyle() using full-page zoom at MobileMe Contacts
+
+        Test: fast/events/scroll-during-zoom-change.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Pause scheduled events during style
+        reclaculation. Changes to the zoom property result in scroll events
+        being generated during style recalc, and those events need to be
+        deferred until the render tree is consistent.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Changed to account for a case in which the
+        post-layout tasks trigger a nested layout, which reactivates the
+        post-layout task timer.
+
 2009-03-01  Ross Boucher  <rboucher@gmail.com>
 
         Alphabetically sort scripts in the Script's panel file popup menu.
