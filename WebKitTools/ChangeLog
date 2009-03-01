@@ -2,6 +2,15 @@
 
         Reviewed by Holger Freyther.
 
+        Adds a WebKitMakeArguments environment variable to enable passing
+        of arguments such as '-j2' to make for the autotools build.
+
+        * Scripts/webkitdirs.pm:
+
+2009-02-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         Add a GTK+-only option to enable GNOME Keyring when building.
 
         * Scripts/build-webkit:

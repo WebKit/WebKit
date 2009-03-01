@@ -1013,7 +1013,9 @@ sub buildAutotoolsProject($@)
         die "Failed to setup build environment using 'autotools'!\n";
     }
 
-    $result = system $make;
+    my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
+
+    $result = system "$make $makeArgs";
     if ($result ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }
