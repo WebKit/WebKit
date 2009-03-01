@@ -30,7 +30,6 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>

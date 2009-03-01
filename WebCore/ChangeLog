@@ -1,3 +1,51 @@
+2009-03-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24271: XMLHttpRequest needs js bindings for Workers.
+        <https://bugs.webkit.org/show_bug.cgi?id=24271>
+
+        Tests: http/tests/xmlhttprequest/workers/methods-async.html
+               http/tests/xmlhttprequest/workers/methods.html
+
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::getOwnPropertySlot):
+        (jsWorkerContextBaseXMLHttpRequest):
+        (setJSWorkerContextBaseXMLHttpRequest):
+        Expose XMLHttpRequest to Workers.
+
+        * bindings/js/JSWorkerContextBase.h:
+
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        (WebCore::constructXMLHttpRequest):
+        (WebCore::JSXMLHttpRequestConstructor::mark):
+        Removed the dependencies on Document.
+
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        (WebCore::JSXMLHttpRequestConstructor::scriptExecutionContext):
+        * dom/EventException.idl:
+        * dom/EventListener.idl:
+        Chnage to have the NoStaticTables attribute since they are used from XHR.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        Fixed identifier to be unsigned long.
+
+        * loader/WorkerThreadableLoader.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        Stop active objects when the thread is getting shutdown so that xhr gets properly shutdown.
+
+        * xml/XMLHttpRequestUpload.cpp:
+
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XMLHttpRequestProgressEvent.idl:
+        * xml/XMLHttpRequestUpload.idl:
+        Chnage to have the NoStaticTables attribute since they are used from XHR.
+
 2009-03-01  Horia Olaru  <olaru@adobe.com>
 
         Adding manual debugger test cases for bug.

@@ -198,13 +198,13 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector), m_taskMode);
 }
 
-static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, int identifier)
+static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didFinishLoading(identifier);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(int identifier)
+void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier)
 {
     m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier), m_taskMode);
 }

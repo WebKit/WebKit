@@ -122,6 +122,7 @@ void* WorkerThread::workerThread()
 
     ThreadIdentifier threadID = m_threadID;
 
+    m_workerContext->stopActiveDOMObjects();
     m_workerContext->clearScript();
     ASSERT(m_workerContext->hasOneRef());
     // The below assignment will destroy the context, which will in turn notify messaging proxy.

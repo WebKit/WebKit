@@ -29,7 +29,8 @@
 module xml {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        NoStaticTables
     ] XMLHttpRequestException {
 
         readonly attribute unsigned short   code;

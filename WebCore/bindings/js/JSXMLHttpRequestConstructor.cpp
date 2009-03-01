@@ -32,18 +32,17 @@ ASSERT_CLASS_FITS_IN_CELL(JSXMLHttpRequestConstructor)
 
 const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstructor", 0, 0, 0 };
 
-JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, ScriptExecutionContext* context)
+JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, ScriptExecutionContext* scriptExecutionContext)
     : DOMObject(JSXMLHttpRequestConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    , m_scriptExecutionContext(scriptExecutionContext)
+    , m_contextWrapper(toJSDOMGlobalObject(scriptExecutionContext))
 {
-    ASSERT(context->isDocument());
-    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
-
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
 }
 
 static JSObject* constructXMLHttpRequest(ExecState* exec, JSObject* constructor, const ArgList&)
 {
-    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(static_cast<JSXMLHttpRequestConstructor*>(constructor)->document());
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(static_cast<JSXMLHttpRequestConstructor*>(constructor)->scriptExecutionContext());
     return CREATE_DOM_OBJECT_WRAPPER(exec, XMLHttpRequest, xmlHttpRequest.get());
 }
 
@@ -56,8 +55,8 @@ ConstructType JSXMLHttpRequestConstructor::getConstructData(ConstructData& const
 void JSXMLHttpRequestConstructor::mark()
 {
     DOMObject::mark();
-    if (!m_document->marked())
-        m_document->mark();
+    if (!m_contextWrapper.marked())
+        m_contextWrapper.mark();
 }
 
 } // namespace WebCore

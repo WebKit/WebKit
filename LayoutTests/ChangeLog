@@ -1,3 +1,30 @@
+2009-03-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24271: XMLHttpRequest needs js bindings for Workers.
+        <https://bugs.webkit.org/show_bug.cgi?id=24271>
+
+        Some sanity checks for xhr done from workers. These are the same as
+        tests done for normal workers.
+
+        * http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/methods-async.html: Added.
+        * http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/methods.html: Added.
+        * http/tests/xmlhttprequest/workers/resources/methods-async.js: Added.
+        (onmessage):
+        (log):
+        (done):
+        (onReqAbort):
+        (onSyncReqError):
+        (start):
+        (processStateChange):
+        * http/tests/xmlhttprequest/workers/resources/methods.cgi: Copied from LayoutTests/http/tests/xmlhttprequest/methods.cgi.
+        * http/tests/xmlhttprequest/workers/resources/methods.js: Added.
+        (log):
+        (done):
+
 2009-02-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

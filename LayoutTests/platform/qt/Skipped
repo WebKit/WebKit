@@ -902,6 +902,7 @@ fast/text/monospace-width-cache.html
 # Disabled worker threads
 fast/workers
 fast/events/dispatchEvent-crash.html
+http/tests/xmlhttprequest/workers
 
 # Tests that fail randomly. Is this style related?
 fast/forms/listbox-width-change.html

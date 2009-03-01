@@ -30,7 +30,8 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        NoStaticTables
     ] EventException {
 
         readonly attribute unsigned short   code;
