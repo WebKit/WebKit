@@ -1,3 +1,17 @@
+2009-03-01  Horia Olaru  <olaru@adobe.com>
+
+        Adding manual debugger test cases for bug.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21073
+
+        Reviewed by Kevin McCullough.
+
+        * manual-tests/inspector/debugger-step-on-do-while-statements.html: Added.
+        * manual-tests/inspector/debugger-step-on-for-in-statements.html: Added.
+        * manual-tests/inspector/debugger-step-on-for-statements.html: Added.
+        * manual-tests/inspector/debugger-step-on-while-statements.html: Added.
+        * manual-tests/inspector/resources/loop-statements.js: Added.
+
 2009-03-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

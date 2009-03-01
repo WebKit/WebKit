@@ -1,3 +1,38 @@
+2009-03-01  Horia Olaru  <olaru@adobe.com>
+
+        By looking in grammar.y there are only a few types of statement nodes
+        on which the debugger should stop. 
+
+        Removed isBlock and isLoop virtual calls. No need to emit debug hooks in
+        the "statementListEmitCode" method as long as the necessary hooks can be
+        added in each "emitCode".
+
+        https://bugs.webkit.org/show_bug.cgi?id=21073
+
+        Reviewed by Kevin McCullough.
+
+        * parser/Nodes.cpp:
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::statementListEmitCode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        * parser/Nodes.h:
+
 2009-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

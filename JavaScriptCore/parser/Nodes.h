@@ -194,9 +194,6 @@ namespace JSC {
         virtual bool isReturnNode() const JSC_FAST_CALL { return false; }
         virtual bool isExprStatement() const JSC_FAST_CALL { return false; }
 
-        virtual bool isBlock() const JSC_FAST_CALL { return false; }
-        virtual bool isLoop() const JSC_FAST_CALL { return false; }
-
     private:
         int m_lastLine;
     };
@@ -1708,8 +1705,6 @@ namespace JSC {
 
         StatementVector& children() { return m_children; }
 
-        virtual bool isBlock() const JSC_FAST_CALL { return true; }
-
     private:
         StatementVector m_children;
     };
@@ -1821,8 +1816,6 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual bool isLoop() const JSC_FAST_CALL { return true; }
-
     private:
         RefPtr<StatementNode> m_statement;
         RefPtr<ExpressionNode> m_expr;
@@ -1841,8 +1834,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1867,8 +1858,6 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual bool isLoop() const JSC_FAST_CALL { return true; }
-
     private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
@@ -1886,8 +1875,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
     private:
         Identifier m_ident;
