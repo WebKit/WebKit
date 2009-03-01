@@ -42,6 +42,7 @@ my $originalWorkingDirectory = getcwd();
 my $channelMessagingSupport = 0;
 my $databaseSupport = 1;
 my $domStorageSupport = 1;
+my $gnomeKeyringSupport = 0;
 my $iconDatabaseSupport = 1;
 my $offlineWebApplicationSupport = 1;
 my $svgSupport = 1;
@@ -70,7 +71,7 @@ Usage: $programName [options] [options to pass to build system]
   --cairo-win32                 Build using Cairo (rather than CoreGraphics) on Windows
   --chromium                    Build the Chromium port on Mac/Win/Linux
   --clean                       Cleanup the build directory
-  --gtk                         Build the GTK port
+  --gtk                         Build the GTK+ port
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
   --[no-]3d-transforms          Toggle 3D Transforms support (default: $threeDTransformsSupport)
@@ -78,6 +79,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
+  --[no-]gnomekeyring           Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
   --[no-]svg-animation          Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
@@ -99,6 +101,7 @@ GetOptions(
            'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
+           'gnomekeyring!' => \$gnomeKeyringSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
            'svg!' => \$svgSupport,
@@ -199,6 +202,7 @@ if ($buildSixtyFourBit && isAppleMacWebKit()) {
 if (isGtk()) {
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
+    push @options, autotoolsFlag($gnomeKeyringSupport, "gnomekeyring");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
     push @options, autotoolsFlag($threeDTransformsSupport, "3D-transforms");
