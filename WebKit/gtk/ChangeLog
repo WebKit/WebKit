@@ -2,6 +2,20 @@
 
         Reviewed by Holger Freyther.
 
+         [Gtk] get the HTTP layout tests going
+         https://bugs.webkit.org/show_bug.cgi?id=24259
+
+        Added API to get the response mime type from a frame. We need this
+        so we can decide if we need to dump the frame as text or its
+        render tree
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+
+2009-03-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [Gtk] get the HTTP layout tests going
         https://bugs.webkit.org/show_bug.cgi?id=24259
 

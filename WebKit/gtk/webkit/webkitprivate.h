@@ -159,6 +159,10 @@ extern "C" {
     void
     webkit_web_policy_decision_cancel (WebKitWebPolicyDecision* decision);
 
+    // FIXME: move this functionality into a 'WebKitWebDataSource' once implemented
+    WEBKIT_API gchar*
+    webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
+
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 
     WEBKIT_API GSList*

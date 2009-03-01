@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Jan Alonzo <jmalonzo@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +32,7 @@
 
 #include "AnimationController.h"
 #include "CString.h"
+#include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
@@ -715,6 +717,14 @@ unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)
         return 0;
 
     return controller->numberOfActiveAnimations();
+}
+
+gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    DocumentLoader* docLoader = coreFrame->loader()->documentLoader();
+    String mimeType = docLoader->responseMIMEType();
+    return g_strdup(mimeType.utf8().data());
 }
 
 }

@@ -2,6 +2,19 @@
 
         Reviewed by Holger Freyther.
 
+         [Gtk] get the HTTP layout tests going
+         https://bugs.webkit.org/show_bug.cgi?id=24259
+
+        Determine the frame's response and decide whether to dump as text
+        or the render tree
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+
+2009-03-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [Gtk] get the HTTP layout tests going
         https://bugs.webkit.org/show_bug.cgi?id=24259
 

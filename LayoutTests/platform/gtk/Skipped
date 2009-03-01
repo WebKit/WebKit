@@ -2151,7 +2151,6 @@ css2.1
 css3
 editing
 geolocation
-http
 media
 platform
 printing
@@ -2216,3 +2215,72 @@ plugins/netscape-dom-access.html
 # Tests in transitions/ directory
 # Tests generating new results
 transitions/transition-drt-api.html
+
+# HTTP tests
+# Tests in http/ directory
+
+# blacklist untested/failing folders
+http/tests/appcache
+http/tests/history
+http/tests/media
+http/tests/misc
+http/tests/navigation
+http/tests/plugins
+http/tests/security
+http/tests/ssl
+http/tests/webarchive
+http/tests/wml
+
+# tests that failed
+http/tests/incremental/slow-utf8-text.pl
+http/tests/loading/bad-scheme-subframe.html
+http/tests/loading/bad-server-subframe.html
+http/tests/loading/basic.html
+http/tests/loading/empty-subframe.html
+http/tests/loading/gmail-assert-on-load.html
+http/tests/loading/location-hash-reload-cycle.html
+http/tests/loading/onload-vs-immediate-refresh.pl
+http/tests/loading/slow-parsing-subframe.html
+http/tests/loading/text-content-type-with-binary-extension.html
+http/tests/xmlhttprequest/abort-should-cancel-load.html
+http/tests/xmlhttprequest/basic-auth.html
+http/tests/xmlhttprequest/close-window.html
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/frame-load-cancelled-abort.html
+http/tests/xmlhttprequest/methods-async.html
+http/tests/xmlhttprequest/methods-lower-case.html
+http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+http/tests/xmlhttprequest/upload-onload-event.html
+http/tests/xmlhttprequest/upload-onprogress-event.html
+http/tests/xmlhttprequest/upload-progress-events.html
+http/tests/xmlhttprequest/xhr-onunload.html
+
+# Tests that timed out
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+http/tests/xmlhttprequest/connection-error-sync.html
+
+# Crashing tests
+http/tests/xmlhttprequest/web-apps/002.html
+http/tests/xmlhttprequest/zero-length-response.html
+
+# Tests that had stderr output
+http/tests/incremental/frame-focus-before-load.html
+http/tests/incremental/pause-in-script-element.pl
+http/tests/multipart/invalid-image-data-standalone.html
+http/tests/multipart/invalid-image-data.html
+http/tests/xmlhttprequest/abort-crash.html
+http/tests/xmlhttprequest/abort-should-cancel-load.html
+http/tests/xmlhttprequest/basic-auth.html
+http/tests/xmlhttprequest/close-window.html
+http/tests/xmlhttprequest/cookies.html
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/web-apps/003.html
+http/tests/xmlhttprequest/web-apps/004.html
+
+# Tests that had no expected results (probably new):
+http/tests/loading/simple-subframe.html
+http/tests/local/file-url-sent-as-referer.html
+http/tests/multipart/invalid-image-data-standalone.html
+http/tests/multipart/invalid-image-data.html
+http/tests/uri/css-href.php

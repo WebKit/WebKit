@@ -1,3 +1,14 @@
+2009-02-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] get the HTTP layout tests going
+        https://bugs.webkit.org/show_bug.cgi?id=24259
+
+        Enable http tests, excluding tests/folders that fail or untested
+
+        * platform/gtk/Skipped:
+
 2009-03-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
