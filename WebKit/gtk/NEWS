@@ -1,0 +1,30 @@
+================
+WebKitGTK+ 1.1.1
+================
+
+What's new in WebKitGTK+ 1.1.1?
+
+  - ABI was broken since 1.0.3, you'll need to recompile your
+    application against 1.1.1
+  - Support for the CURL backend was dropped, libsoup is the only HTTP
+    backend now.
+  - webkit_get_default_session, to get the SoupSession used internally
+    by WebKit.
+  - 'create-web-view' signal, emitted when the creation of a new
+    window is requested.
+  - 'navigation-policy-decision-requested' signal, emitted when a
+    navigation to another page is requested.
+  - 'mime-type-policy-decision-requested' signal, emitted each time
+    WebKit is about to show a URI with a given MIME type.
+  - Support for the Web Inspector
+    (see http://webkit.org/blog/197/web-inspector-redesign/)
+  - HTTP authentication support, with optional gnome-keyring storage.
+  - New load functions: webkit_web_view_open, webkit_web_view_load_uri
+    and webkit_web_view_load_request. The old
+    webkit_web_view_load_string and webkit_web_view_load_html_string
+    are now deprecated.
+  - webkit_web_view_reload_bypass_cache
+  - webkit_web_view_{get,set}_custom_encoding, to override the
+    encoding of the current page.
+  - Improved stability and lots of bugfixes.
+

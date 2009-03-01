@@ -1,3 +1,9 @@
+2009-03-01  Xan Lopez  <xan@gnome.org>
+
+        Add NEWS file to track progress between releases.
+
+        * NEWS: Added.
+
 2009-02-28  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
