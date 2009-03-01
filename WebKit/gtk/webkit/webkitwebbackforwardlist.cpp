@@ -189,7 +189,7 @@ GList* webkit_web_back_forward_list_get_forward_list_with_limit(WebKitWebBackFor
     backForwardList->forwardListWithLimit(limit, items);
 
     for (unsigned i = 0; i < items.size(); i++) {
-        WebKitWebHistoryItem* webHistoryItem = webkit_web_history_item_new_with_core_item(items[i].get());
+        WebKitWebHistoryItem* webHistoryItem = webkit_web_history_item_new_with_core_item(items[i]);
         forwardItems = g_list_prepend(forwardItems, g_object_ref(webHistoryItem));
     }
 
@@ -219,7 +219,7 @@ GList* webkit_web_back_forward_list_get_back_list_with_limit(WebKitWebBackForwar
     backForwardList->backListWithLimit(limit, items);
 
     for (unsigned i = 0; i < items.size(); i++) {
-        WebKitWebHistoryItem* webHistoryItem = webkit_web_history_item_new_with_core_item(items[i].get());
+        WebKitWebHistoryItem* webHistoryItem = webkit_web_history_item_new_with_core_item(items[i]);
         backItems = g_list_prepend(backItems, g_object_ref(webHistoryItem));
     }
 

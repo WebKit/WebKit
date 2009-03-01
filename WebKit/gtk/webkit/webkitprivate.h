@@ -57,7 +57,7 @@ namespace WebKit {
     WebKitWebView* kit(WebCore::Page*);
 
     WebCore::HistoryItem* core(WebKitWebHistoryItem*);
-    WebKitWebHistoryItem* kit(WebCore::HistoryItem*);
+    WebKitWebHistoryItem* kit(PassRefPtr<WebCore::HistoryItem>);
 
     WebCore::BackForwardList* core(WebKitWebBackForwardList*);
 
@@ -124,8 +124,19 @@ extern "C" {
     void
     webkit_web_frame_core_frame_gone(WebKitWebFrame*);
 
+    // WebKitWebHistoryItem private
     WebKitWebHistoryItem*
-    webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
+    webkit_web_history_item_new_with_core_item(PassRefPtr<WebCore::HistoryItem> historyItem);
+
+    WEBKIT_API G_CONST_RETURN gchar*
+    webkit_web_history_item_get_target(WebKitWebHistoryItem*);
+
+    WEBKIT_API gboolean
+    webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
+
+    WEBKIT_API GList*
+    webkit_web_history_item_get_children(WebKitWebHistoryItem*);
+    // end WebKitWebHistoryItem private
 
     void
     webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebKit::InspectorClient*);

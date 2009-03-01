@@ -1,3 +1,28 @@
+2009-03-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] get the HTTP layout tests going
+        https://bugs.webkit.org/show_bug.cgi?id=24259
+
+        Create a WebKitWebHistoryItem for each WebCore::HistoryItem when
+        necessary.
+        Add necessary API additions for us to be able to dump a WebKitWebHistoryItem
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_list_with_limit):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_back_list_with_limit):
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_core_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_target):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_is_target_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_children):
+        (WebKit::core):
+        (WebKit::kit):
+
 2009-03-01  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
