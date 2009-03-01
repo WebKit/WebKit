@@ -69,8 +69,7 @@ void LayoutTestController::clearBackForwardList()
     gint limit = webkit_web_back_forward_list_get_limit(list);
     webkit_web_back_forward_list_set_limit(list, 0);
     webkit_web_back_forward_list_set_limit(list, limit);
-    // FIXME: implement add_item()
-    //webkit_web_back_forward_list_add_item(list, item);
+    webkit_web_back_forward_list_add_item(list, item);
     webkit_web_back_forward_list_go_to_item(list, item);
     g_object_unref(item);
 }

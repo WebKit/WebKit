@@ -70,5 +70,13 @@ void ScriptItem::invoke() const
 void BackForwardItem::invoke() const
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    webkit_web_view_go_back_or_forward(webView, m_howFar);
+    if (m_howFar == 1)
+        webkit_web_view_go_forward(webView);
+    else if (m_howFar == -1)
+        webkit_web_view_go_back(webView);
+    else {
+        WebKitWebBackForwardList* webBackForwardList = webkit_web_view_get_back_forward_list(webView);
+        WebKitWebHistoryItem* item = webkit_web_back_forward_list_get_nth_item(webBackForwardList, m_howFar);
+        webkit_web_view_go_to_back_forward_item(webView, item);
+    }
 }
