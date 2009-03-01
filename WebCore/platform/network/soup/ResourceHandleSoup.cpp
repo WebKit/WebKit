@@ -634,7 +634,7 @@ static inline ResourceError networkErrorForFile(GFile* file, GError* error)
 {
     // FIXME: Map gio errors to a more detailed error code when we have it in WebKit.
     gchar* uri = g_file_get_uri(file);
-    ResourceError resourceError("webkit-network-error", ERROR_TRANSPORT, uri, String::fromUTF8(error->message));
+    ResourceError resourceError("webkit-network-error", ERROR_TRANSPORT, uri, error ? String::fromUTF8(error->message) : String());
     g_free(uri);
     return resourceError;
 }
