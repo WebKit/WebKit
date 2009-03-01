@@ -1,3 +1,19 @@
+2009-02-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24261
+        Fix V8 custom binding scrubbing error.
+
+        Test: fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyName):  Remove dubious checks, left over from
+            incomplete conversion of parameter from pointer to pass-by-ref.
+        (WebCore::NAMED_PROPERTY_GETTER): Initialize parameter.
+        (WebCore::NAMED_PROPERTY_SETTER): Ditto.
+
 2009-02-28  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
