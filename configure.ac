@@ -2,7 +2,7 @@ AC_PREREQ(2.59)
 
 m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [1])
-m4_define([webkit_micro_version], [0])
+m4_define([webkit_micro_version], [1])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
@@ -23,8 +23,8 @@ AC_SUBST(WEBKIT_MICRO_VERSION)
 AC_CONFIG_SRCDIR([WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
-dnl # see http://www.gnu.org/software/libtool/manual.html#Versioning
-LIBWEBKITGTK_VERSION=1:0:0
+dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html#Libtool-versioning
+LIBWEBKITGTK_VERSION=2:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
@@ -186,7 +186,7 @@ PANGO_REQUIRED_VERSION=1.0
 GTK_REQUIRED_VERSION=2.8
 
 # optional modules
-LIBSOUP_REQUIRED_VERSION=2.25.4
+LIBSOUP_REQUIRED_VERSION=2.25.91
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10

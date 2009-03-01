@@ -1,3 +1,7 @@
+2009-03-01  Christian Dywan  <christian@twotoasts.de>
+
+        * configure.ac: Bump GTK port version to 1.1.1.
+
 2009-02-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix. Adding the WebKit/gtk/webkitmarshal.list
