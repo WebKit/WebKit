@@ -1,5 +1,12 @@
 2009-02-28  Dan Bernstein  <mitz@apple.com>
 
+        - correct a color profile mismatch in expected pixel results
+
+        * platform/mac/fast/gradients/background-clipped-expected.checksum:
+        * platform/mac/fast/gradients/background-clipped-expected.png:
+
+2009-02-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - test for https://bugs.webkit.org/show_bug.cgi?id=23848
