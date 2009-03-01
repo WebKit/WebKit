@@ -1,3 +1,13 @@
+2009-02-28  Zan Dobersek  <zandobersek@gmail.com>
+
+         Reviewed by Holger Freyther.
+
+         Set the resolution for the default screen to 72.0.
+         This way, setting font sizes results in expected values.
+
+         * DumpRenderTree/gtk/DumpRenderTree.cpp:
+         (setDefaultsToConsistentStateValuesForTesting):
+
 2009-02-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.

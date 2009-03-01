@@ -198,8 +198,9 @@ void dump()
 
 static void setDefaultsToConsistentStateValuesForTesting()
 {
-    WebKitWebSettings *settings = webkit_web_view_get_settings(webView);
+    gdk_screen_set_resolution(gdk_screen_get_default(), 72.0);
 
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
     g_object_set(G_OBJECT(settings),
                  "default-font-family", "Times",
                  "monospace-font-family", "Courier",
