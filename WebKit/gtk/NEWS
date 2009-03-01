@@ -4,8 +4,8 @@ WebKitGTK+ 1.1.1
 
 What's new in WebKitGTK+ 1.1.1?
 
-  - ABI was broken since 1.0.3, you'll need to recompile your
-    application against 1.1.1
+  - ABI compatibility with 1.0.3 was broken, so you will need to
+    recompile your application against 1.1.1
   - Support for the CURL backend was dropped, libsoup is the only HTTP
     backend now.
   - webkit_get_default_session, to get the SoupSession used internally

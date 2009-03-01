@@ -1,3 +1,9 @@
+2009-03-01  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed simple wording fix for the NEWS file.
+
+        * NEWS:
+
 2009-03-01  Xan Lopez  <xan@gnome.org>
 
         Add NEWS file to track progress between releases.
