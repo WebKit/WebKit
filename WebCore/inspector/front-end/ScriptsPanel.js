@@ -569,11 +569,29 @@ WebInspector.ScriptsPanel.prototype = {
 
         var select = this.filesSelectElement;
 
-        // FIXME: Append in some meaningful order.
         var option = document.createElement("option");
         option.representedObject = (script.resource || script);
         option.text = (script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)"));
-        select.appendChild(option);
+
+        var insertionIndex = -1;
+        if (select.childNodes) {
+            insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, function(a, b) {    
+                a = a.text.toLowerCase();
+                b = b.text.toLowerCase();
+                
+                if (a < b)
+                    return -1;
+                else if (a > b)
+                    return 1;
+
+                return 0;
+            });
+        }
+
+        if (insertionIndex < 0)
+            select.appendChild(option);
+        else
+            select.insertBefore(option, select.childNodes.item(insertionIndex));
 
         script.filesSelectOption = option;
 

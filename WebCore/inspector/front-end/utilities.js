@@ -937,6 +937,40 @@ Array.prototype.remove = function(value, onlyFirst)
     }
 }
 
+function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunction)
+{
+    // indexOf returns (-lowerBound - 1). Taking (-result - 1) works out to lowerBound.
+    return (-indexOfObjectInListSortedByFunction(anObject, aList, aFunction) - 1);
+}
+
+function indexOfObjectInListSortedByFunction(anObject, aList, aFunction)
+{
+    var first = 0;
+    var last = aList.length - 1;
+    var floor = Math.floor;
+    var mid, c;
+
+    while (first <= last) {
+        mid = floor((first + last) / 2);
+        c = aFunction(anObject, aList[mid]);
+
+        if (c > 0)
+            first = mid + 1;
+        else if (c < 0)
+            last = mid - 1;
+        else {
+            //we return the first occurance of an item in the list.
+            while (mid > 0 && aFunction(anObject, aList[mid - 1]) === 0)
+                mid--;
+            return mid;
+        }
+    }
+
+    // By returning 1 less than the negative lower search bound, we can reuse this function
+    // for both indexOf and insertionIndexFor, with some simple arithmetic.
+    return (-first - 1);
+}
+
 String.sprintf = function(format)
 {
     return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));

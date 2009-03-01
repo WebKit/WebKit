@@ -1,3 +1,17 @@
+2009-03-01  Ross Boucher  <rboucher@gmail.com>
+
+        Alphabetically sort scripts in the Script's panel file popup menu.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23395
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        * inspector/front-end/utilities.js:
+        (insertionIndexForObjectInListSortedByFunction):
+        (indexOfObjectInListSortedByFunction):
+
 2009-03-01  Yael Aharon  <yael.aharon@nokia.com>
 
         Pass securityOrigin->host() instead of securityOrigin->domain() to WebInspector
