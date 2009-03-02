@@ -422,7 +422,24 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     matchData.m_chosen.lfQuality = DEFAULT_QUALITY;
     matchData.m_chosen.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
 
-    return CreateFontIndirect(&matchData.m_chosen);
+    HFONT result = CreateFontIndirect(&matchData.m_chosen);
+    if (!result)
+        return 0;
+
+    HDC dc = GetDC(0);
+    SaveDC(dc);
+    SelectObject(dc, result);
+    WCHAR actualName[LF_FACESIZE];
+    GetTextFace(dc, LF_FACESIZE, actualName);
+    RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+
+    if (wcsicmp(matchData.m_chosen.lfFaceName, actualName)) {
+        DeleteObject(result);
+        result = 0;
+    }
+
+    return result;
 }
 
 struct TraitsInFamilyProcData {

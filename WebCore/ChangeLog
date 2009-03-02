@@ -1,3 +1,14 @@
+2009-03-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21811
+          REGRESSION: Windows Build Not Selecting Proper Font
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): Added back code to verify that the created
+        HFONT has the requested face name.
+
 2009-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a regression caused by splitting the input and output of console commands.
