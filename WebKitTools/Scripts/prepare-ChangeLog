@@ -929,6 +929,7 @@ sub get_function_line_ranges_for_javascript($$)
     my @ranges;
 
     my $inComment = 0;
+    my $inQuotedText = "";
     my $parenthesesDepth = 0;
     my $bracesDepth = 0;
 
@@ -946,6 +947,13 @@ sub get_function_line_ranges_for_javascript($$)
             $inComment = 0;
         }
 
+        # Handle continued quoted text.
+        if ($inQuotedText ne "") {
+            next if /\\$/;
+            s-([^\\]|\\.)*?$inQuotedText--;
+            $inQuotedText = "";
+        }
+
         # Handle comments and quoted text.
         while (m-(/\*|//|\'|\")-) { # \' and \" keep emacs perl mode happy
             my $match = $1;
@@ -958,7 +966,8 @@ sub get_function_line_ranges_for_javascript($$)
                 s-//.*--;
             } else { # ' or "
                 if (!s-$match([^\\]|\\.)*?$match--) {
-                    warn "mismatched quotes at line $. in $fileName\n";
+                    $inQuotedText = $match if /\\$/;
+                    warn "mismatched quotes at line $. in $fileName\n" if $inQuotedText eq "";
                     s-$match.*--;
                 }
             }

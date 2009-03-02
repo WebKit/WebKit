@@ -1,3 +1,13 @@
+2009-03-02  Timothy Hatcher  <timothy@apple.com>
+
+        Allow for multiline quoted text in JavaScript files when looking for function names.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24296
+
+        Reviewed by David Kilzer.
+
+        * Scripts/prepare-ChangeLog:
+
 2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Eric Seidel.
