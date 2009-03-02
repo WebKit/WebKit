@@ -1,3 +1,11 @@
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Rename WebNetscapePluginPackage.m to WebNetscapePluginPackage.mm
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

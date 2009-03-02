@@ -1,3 +1,12 @@
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Rename WebNetscapePluginPackage.m to WebNetscapePluginPackage.mm
+
+        * Plugins/WebNetscapePluginPackage.m: Removed.
+        * Plugins/WebNetscapePluginPackage.mm: Copied from mac/Plugins/WebNetscapePluginPackage.m.
+
 2009-03-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
