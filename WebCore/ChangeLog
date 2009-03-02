@@ -1,3 +1,40 @@
+2009-03-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Bug 24048: extra windows button padding doesn't apply when there's no appearance
+        <https://bugs.webkit.org/show_bug.cgi?id=24048>
+
+        Replace adjustButtonInnerStyle with buttonInternalPaddingLeft/Right/Top/Bottom.
+
+        No tests added as existing tests already cover this behavior.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setupInnerStyle):
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::buttonInternalPaddingLeft):
+        (WebCore::RenderTheme::buttonInternalPaddingRight):
+        (WebCore::RenderTheme::buttonInternalPaddingTop):
+        * rendering/RenderThemeChromiumGtk.cpp:
+        (WebCore::RenderThemeWin::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeWin::buttonInternalPaddingRight):
+        (WebCore::RenderThemeWin::buttonInternalPaddingTop):
+        (WebCore::RenderThemeWin::buttonInternalPaddingBottom):
+        * rendering/RenderThemeChromiumGtk.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumWin::buttonInternalPaddingRight):
+        (WebCore::RenderThemeChromiumWin::buttonInternalPaddingTop):
+        (WebCore::RenderThemeChromiumWin::buttonInternalPaddingBottom):
+        * rendering/RenderThemeChromiumWin.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeWin::buttonInternalPaddingRight):
+        (WebCore::RenderThemeWin::buttonInternalPaddingTop):
+        (WebCore::RenderThemeWin::buttonInternalPaddingBottom):
+        * rendering/RenderThemeWin.h:
+
 2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
 
         Build fix for Qt port.  Remove unnecessary assert.

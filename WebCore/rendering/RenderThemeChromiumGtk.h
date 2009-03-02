@@ -100,7 +100,10 @@ namespace WebCore {
         virtual int popupInternalPaddingTop(RenderStyle*) const;
         virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
-        virtual void adjustButtonInnerStyle(RenderStyle* style) const;
+        virtual int buttonInternalPaddingLeft() const;
+        virtual int buttonInternalPaddingRight() const;
+        virtual int buttonInternalPaddingTop() const;
+        virtual int buttonInternalPaddingBottom() const;
 
         // A method asking if the control changes its tint when the window has focus or not.
         virtual bool controlSupportsTints(const RenderObject*) const;

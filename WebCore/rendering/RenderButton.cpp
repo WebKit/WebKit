@@ -108,8 +108,11 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
     innerStyle->setBoxFlex(1.0f);
-    if (style()->hasAppearance())
-        theme()->adjustButtonInnerStyle(innerStyle);
+
+    innerStyle->setPaddingTop(Length(theme()->buttonInternalPaddingTop(), Fixed));
+    innerStyle->setPaddingRight(Length(theme()->buttonInternalPaddingRight(), Fixed));
+    innerStyle->setPaddingBottom(Length(theme()->buttonInternalPaddingBottom(), Fixed));
+    innerStyle->setPaddingLeft(Length(theme()->buttonInternalPaddingLeft(), Fixed));
 }
 
 void RenderButton::updateFromElement()

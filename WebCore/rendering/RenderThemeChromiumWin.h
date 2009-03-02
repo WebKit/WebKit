@@ -104,7 +104,10 @@ namespace WebCore {
         virtual int popupInternalPaddingTop(RenderStyle*) const;
         virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
-        virtual void adjustButtonInnerStyle(RenderStyle*) const;
+        virtual int buttonInternalPaddingLeft() const;
+        virtual int buttonInternalPaddingRight() const;
+        virtual int buttonInternalPaddingTop() const;
+        virtual int buttonInternalPaddingBottom() const;
 
         // Provide a way to pass the default font size from the Settings object
         // to the render theme.  FIXME: http://b/1129186 A cleaner way would be

@@ -522,13 +522,24 @@ int RenderThemeChromiumWin::popupInternalPaddingBottom(RenderStyle* style) const
     return menuListInternalPadding(style, BottomPadding);
 }
 
-void RenderThemeChromiumWin::adjustButtonInnerStyle(RenderStyle* style) const
+int RenderThemeChromiumWin::buttonInternalPaddingLeft() const
 {
-    // This inner padding matches Firefox.
-    style->setPaddingTop(Length(1, Fixed));
-    style->setPaddingRight(Length(3, Fixed));
-    style->setPaddingBottom(Length(1, Fixed));
-    style->setPaddingLeft(Length(3, Fixed));
+    return 3;
+}
+
+int RenderThemeChromiumWin::buttonInternalPaddingRight() const
+{
+    return 3;
+}
+
+int RenderThemeChromiumWin::buttonInternalPaddingTop() const
+{
+    return 1;
+}
+
+int RenderThemeChromiumWin::buttonInternalPaddingBottom() const
+{
+    return 1;
 }
 
 // static

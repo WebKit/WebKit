@@ -737,10 +737,6 @@ void RenderTheme::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Ele
 {
 }
 
-void RenderTheme::adjustButtonInnerStyle(RenderStyle*) const
-{
-}
-
 void RenderTheme::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {
 }

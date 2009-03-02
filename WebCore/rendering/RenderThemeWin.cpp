@@ -712,13 +712,24 @@ void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
     }
 }
 
-void RenderThemeWin::adjustButtonInnerStyle(RenderStyle* style) const
+int RenderThemeWin::buttonInternalPaddingLeft() const
 {
-    // This inner padding matches Firefox.
-    style->setPaddingTop(Length(1, Fixed));
-    style->setPaddingRight(Length(3, Fixed));
-    style->setPaddingBottom(Length(1, Fixed));
-    style->setPaddingLeft(Length(3, Fixed));
+    return 3;
+}
+
+int RenderThemeWin::buttonInternalPaddingRight() const
+{
+    return 3;
+}
+
+int RenderThemeWin::buttonInternalPaddingTop() const
+{
+    return 1;
+}
+
+int RenderThemeWin::buttonInternalPaddingBottom() const
+{
+    return 1;
 }
 
 bool RenderThemeWin::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
