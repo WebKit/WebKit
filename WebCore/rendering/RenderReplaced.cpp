@@ -204,7 +204,7 @@ unsigned RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-VisiblePosition RenderReplaced::positionForCoordinates(int xPos, int yPos)
+VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
@@ -217,19 +217,19 @@ VisiblePosition RenderReplaced::positionForCoordinates(int xPos, int yPos)
     int top = root->topOverflow();
     int bottom = root->nextRootBox() ? root->nextRootBox()->topOverflow() : root->bottomOverflow();
 
-    if (yPos + y() < top)
+    if (point.y() + y() < top)
         return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM); // coordinates are above
     
-    if (yPos + y() >= bottom)
+    if (point.y() + y() >= bottom)
         return VisiblePosition(node(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (node()) {
-        if (xPos <= width() / 2)
+        if (point.x() <= width() / 2)
             return VisiblePosition(node(), 0, DOWNSTREAM);
         return VisiblePosition(node(), 1, DOWNSTREAM);
     }
 
-    return RenderBox::positionForCoordinates(xPos, yPos);
+    return RenderBox::positionForPoint(point);
 }
 
 IntRect RenderReplaced::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)

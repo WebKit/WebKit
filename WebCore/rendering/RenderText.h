@@ -61,7 +61,7 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void absoluteQuadsForRange(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
-    virtual VisiblePosition positionForCoordinates(int x, int y);
+    virtual VisiblePosition positionForPoint(const IntPoint&);
 
     const UChar* characters() const { return m_text->characters(); }
     unsigned textLength() const { return m_text->length(); } // non virtual implementation of length()

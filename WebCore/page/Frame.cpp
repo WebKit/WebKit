@@ -1713,7 +1713,7 @@ VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return VisiblePosition();
-    VisiblePosition visiblePos = renderer->positionForCoordinates(result.localPoint().x(), result.localPoint().y());
+    VisiblePosition visiblePos = renderer->positionForPoint(result.localPoint());
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(Position(node, 0));
     return visiblePos;

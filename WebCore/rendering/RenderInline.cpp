@@ -501,19 +501,19 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return m_lineBoxes.hitTest(this, request, result, x, y, tx, ty, hitTestAction);
 }
 
-VisiblePosition RenderInline::positionForCoordinates(int x, int y)
+VisiblePosition RenderInline::positionForPoint(const IntPoint& point)
 {
     // FIXME: Does not deal with relative positioned inlines (should it?)
     RenderBlock* cb = containingBlock();
     if (firstLineBox()) {
         // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
         // should try to find a result by asking our containing block.
-        return cb->positionForCoordinates(x, y);
+        return cb->positionForPoint(point);
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
-    int parentBlockX = cb->x() + x;
-    int parentBlockY = cb->y() + y;
+    int parentBlockX = cb->x() + point.x();
+    int parentBlockY = cb->y() + point.y();
     RenderBoxModelObject* c = continuation();
     while (c) {
         RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
@@ -522,7 +522,7 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
         c = toRenderBlock(c)->inlineContinuation();
     }
     
-    return RenderBoxModelObject::positionForCoordinates(x, y);
+    return RenderBoxModelObject::positionForPoint(point);
 }
 
 IntRect RenderInline::linesBoundingBox() const

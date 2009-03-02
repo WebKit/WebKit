@@ -3466,20 +3466,20 @@ static VisiblePosition positionForPointWithInlineChildren(RenderBlock* block, co
     return VisiblePosition(block->node(), 0, DOWNSTREAM);
 }
 
-VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
+VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
 {
     if (isTable())
-        return RenderBox::positionForCoordinates(x, y); 
+        return RenderBox::positionForPoint(point);
 
-    int contentsX = x;
-    int contentsY = y;
+    int contentsX = point.x();
+    int contentsY = point.y();
     offsetForContents(contentsX, contentsY);
     IntPoint pointInContents(contentsX, contentsY);
 
     if (isReplaced()) {
-        if (y < 0 || y < height() && x < 0)
+        if (point.y() < 0 || point.y() < height() && point.x() < 0)
             return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM);
-        if (y >= height() || y >= 0 && x >= width())
+        if (point.y() >= height() || point.y() >= 0 && point.x() >= width())
             return VisiblePosition(node(), caretMaxOffset(), DOWNSTREAM);
     } 
 
@@ -3504,7 +3504,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
     // We only get here if there are no, or only floated/positioned, or only
     // non-visible block children below the click.
-    return RenderBox::positionForCoordinates(x, y);
+    return RenderBox::positionForPoint(point);
 }
 
 void RenderBlock::offsetForContents(int& tx, int& ty) const

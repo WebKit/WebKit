@@ -55,7 +55,7 @@ public:
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual VisiblePosition positionForCoordinates(int x, int y);
+    virtual VisiblePosition positionForPoint(const IntPoint&);
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

@@ -1,3 +1,42 @@
+2009-03-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24251: Cleanup: replace positionForCoordinates with positionForPoint
+        <https://bugs.webkit.org/show_bug.cgi?id=24251>
+        
+        Make RenderObject::positionForCoordinate non-virtual and
+        RenderObject::positionForPoint virtual in preparation for
+        removing positionFor* from RenderObject/RenderText.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::positionForPoint):
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::positionForCoordinates):
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/RenderText.h:
+
 2009-03-01  Larry Ewing  <lewing@novell.com>
 
         Reviewed by Alexey Proskuryakov.

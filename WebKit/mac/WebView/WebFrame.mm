@@ -948,18 +948,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
-    IntPoint outerPoint(point);
-    HitTestResult result = _private->coreFrame->eventHandler()->hitTestResultAtPoint(outerPoint, true);
-    Node* node = result.innerNode();
-    if (!node)
-        return VisiblePosition();
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return VisiblePosition();
-    VisiblePosition visiblePos = renderer->positionForCoordinates(result.localPoint().x(), result.localPoint().y());
-    if (visiblePos.isNull())
-        visiblePos = VisiblePosition(Position(node, 0));
-    return visiblePos;
+    // FIXME: Someone with access to Apple's sources could remove this needless wrapper call.
+    return _private->coreFrame->visiblePositionForPoint(IntPoint(point));
 }
 
 - (DOMRange *)_characterRangeAtPoint:(NSPoint)point

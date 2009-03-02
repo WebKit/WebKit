@@ -45,7 +45,7 @@ public:
     virtual bool isSVGText() const { return true; }
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
-    virtual VisiblePosition positionForCoordinates(int x, int y);
+    virtual VisiblePosition positionForPoint(const IntPoint&);
 
     virtual void destroy();
 

@@ -312,7 +312,7 @@ InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
     return s;
 }
 
-VisiblePosition RenderText::positionForCoordinates(int x, int y)
+VisiblePosition RenderText::positionForPoint(const IntPoint& point)
 {
     if (!firstTextBox() || textLength() == 0)
         return VisiblePosition(node(), 0, DOWNSTREAM);
@@ -321,37 +321,37 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     int offset;
 
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
-    if (firstTextBox() && y <  firstTextBox()->root()->bottomOverflow() && x < firstTextBox()->m_x) {
+    if (firstTextBox() && point.y() <  firstTextBox()->root()->bottomOverflow() && point.x() < firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
-        offset = firstTextBox()->offsetForPosition(x);
+        offset = firstTextBox()->offsetForPosition(point.x());
         return VisiblePosition(node(), offset + firstTextBox()->start(), DOWNSTREAM);
     }
-    if (lastTextBox() && y >= lastTextBox()->root()->topOverflow() && x >= lastTextBox()->m_x + lastTextBox()->m_width) {
+    if (lastTextBox() && point.y() >= lastTextBox()->root()->topOverflow() && point.x() >= lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
-        offset = lastTextBox()->offsetForPosition(x);
+        offset = lastTextBox()->offsetForPosition(point.x());
         return VisiblePosition(node(), offset + lastTextBox()->start(), DOWNSTREAM);
     }
 
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (y >= box->root()->topOverflow()) {
+        if (point.y() >= box->root()->topOverflow()) {
             int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->topOverflow() : box->root()->bottomOverflow();
-            if (y < bottom) {
-                offset = box->offsetForPosition(x);
+            if (point.y() < bottom) {
+                offset = box->offsetForPosition(point.x());
 
-                if (x == box->m_x)
+                if (point.x() == box->m_x)
                     // the x coordinate is equal to the left edge of this box
                     // the affinity must be downstream so the position doesn't jump back to the previous line
                     return VisiblePosition(node(), offset + box->start(), DOWNSTREAM);
 
-                if (x < box->m_x + box->m_width)
+                if (point.x() < box->m_x + box->m_width)
                     // and the x coordinate is to the left of the right edge of this box
                     // check to see if position goes in this box
                     return VisiblePosition(node(), offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
-                if (!box->prevOnLine() && x < box->m_x)
+                if (!box->prevOnLine() && point.x() < box->m_x)
                     // box is first on line
                     // and the x coordinate is to the left of the first text box left edge
                     return VisiblePosition(node(), offset + box->start(), DOWNSTREAM);

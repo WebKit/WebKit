@@ -94,7 +94,7 @@ unsigned RenderBR::caretMaxRenderedOffset() const
     return 1;
 }
 
-VisiblePosition RenderBR::positionForCoordinates(int /*x*/, int /*y*/)
+VisiblePosition RenderBR::positionForPoint(const IntPoint&)
 {
     return VisiblePosition(node(), 0, DOWNSTREAM);
 }

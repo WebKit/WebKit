@@ -58,7 +58,7 @@ public:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
 
     virtual unsigned caretMaxRenderedOffset() const;
-    virtual VisiblePosition positionForCoordinates(int x, int y);
+    virtual VisiblePosition positionForPoint(const IntPoint&);
     
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState);

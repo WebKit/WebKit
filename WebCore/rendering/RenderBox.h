@@ -271,7 +271,7 @@ public:
 
     IntRect maskClipRect();
 
-    virtual VisiblePosition positionForCoordinates(int x, int y);
+    virtual VisiblePosition positionForPoint(const IntPoint&);
 
     void removeFloatingOrPositionedChildFromBlockLists();
     

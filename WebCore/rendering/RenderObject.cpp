@@ -1854,14 +1854,14 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
     arena->free(*(size_t*)base, base);
 }
 
-VisiblePosition RenderObject::positionForCoordinates(int, int)
+VisiblePosition RenderObject::positionForCoordinates(int x, int y)
 {
-    return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM);
+    return positionForPoint(IntPoint(x, y));
 }
 
-VisiblePosition RenderObject::positionForPoint(const IntPoint& point)
+VisiblePosition RenderObject::positionForPoint(const IntPoint&)
 {
-    return positionForCoordinates(point.x(), point.y());
+    return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM);
 }
 
 void RenderObject::updateDragState(bool dragOn)
