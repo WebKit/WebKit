@@ -35,6 +35,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+@interface NSObject (WebKitAccessibilityArrayCategory)
+- (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
+@end
+
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
 {
