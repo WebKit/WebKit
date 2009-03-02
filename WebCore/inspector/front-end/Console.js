@@ -462,8 +462,7 @@ WebInspector.Console.prototype = {
         this.prompt.historyOffset = 0;
         this.prompt.text = "";
 
-        var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
-        this.addMessage(new WebInspector.ConsoleCommandResult(result, level, commandMessage));
+        this.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
     },
 
     _mouseOverNode: function(event)
@@ -546,7 +545,7 @@ WebInspector.Console.prototype = {
     _formatnode: function(node, elem, inline)
     {
         var anchor = document.createElement("a");
-        anchor.className = "inspectible-node";
+        anchor.className = "inspectable-node";
         anchor.innerHTML = nodeTitleInfo.call(node).title;
         anchor.representedNode = node;
         anchor.addEventListener("mouseover", this._mouseOverNode.bind(this), false);
@@ -568,21 +567,26 @@ WebInspector.Console.prototype = {
 
     _formaterror: function(obj, elem, inline)
     {
-        elem.appendChild(document.createTextNode(obj.name + ": " + obj.message + " "));
+        var messageElement = document.createElement("span");
+        messageElement.className = "error-message";
+        messageElement.textContent = obj.name + ": " + obj.message;
+        elem.appendChild(messageElement);
 
         if (obj.sourceURL) {
             var urlElement = document.createElement("a");
-            urlElement.className = "console-message-url webkit-html-resource-link";
+            urlElement.className = "webkit-html-resource-link";
             urlElement.href = obj.sourceURL;
             urlElement.lineNumber = obj.line;
             urlElement.preferredPanel = "scripts";
 
             if (obj.line > 0)
-                urlElement.textContent = WebInspector.UIString("%s (line %d)", obj.sourceURL, obj.line);
+                urlElement.textContent = WebInspector.displayNameForURL(obj.sourceURL) + ":" + obj.line;
             else
-                urlElement.textContent = obj.sourceURL;
+                urlElement.textContent = WebInspector.displayNameForURL(obj.sourceURL);
 
+            elem.appendChild(document.createTextNode(" ("));
             elem.appendChild(urlElement);
+            elem.appendChild(document.createTextNode(")"));
         }
     },
 }
@@ -761,7 +765,7 @@ WebInspector.ConsoleMessage.prototype = {
                 urlElement.preferredPanel = "scripts";
 
             if (this.line > 0)
-                urlElement.textContent = WebInspector.UIString("%s (line %d)", WebInspector.displayNameForURL(this.url), this.line);
+                urlElement.textContent = WebInspector.displayNameForURL(this.url) + ":" + this.line;
             else
                 urlElement.textContent = WebInspector.displayNameForURL(this.url);
 
@@ -883,9 +887,14 @@ WebInspector.ConsoleCommand.prototype = {
     }
 }
 
-WebInspector.ConsoleCommandResult = function(result, level, originatingCommand)
+WebInspector.ConsoleCommandResult = function(result, exception, originatingCommand)
 {
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, -1, null, null, 1, result);
+    var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+    var message = (exception ? String(result) : result);
+    var line = (exception ? result.line : -1);
+    var url = (exception ? result.sourceURL : null);
+
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, line, url, null, 1, message);
 
     this.originatingCommand = originatingCommand;
 }

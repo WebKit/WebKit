@@ -1,3 +1,28 @@
+2009-03-02  Timothy Hatcher  <timothy@apple.com>
+
+        Make exception messages and logged Error objects display consistently.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18983
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js: Remove a string for line numbers.
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype._enterKeyPressed): Pass the exception
+        boolean to the ConsoleCommandResult constructor and don't pass level.
+        (WebInspector.Console.prototype._formatnode): Fix a className typo.
+        (WebInspector.Console.prototype._formaterror): Add an error-message
+        classed span around the message to show in red and remove the
+        console-message-url class from the link so it doesn't float right.
+        Instead enclose the link in parentheses and use displayNameForURL
+        to shorten the URL in the link.
+        (WebInspector.ConsoleMessage.prototype.toMessageElement): Simplify
+        how line numbers are shown since link underlining a string with
+        parentheses looks bad.
+        (WebInspector.ConsoleCommandResult): Take an exception boolean flag
+        instead of a level and get line and URL based on that flag.
+        * inspector/front-end/inspector.css: Tweaks to the styles.
+
 2009-03-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adele Peterson.

@@ -463,7 +463,7 @@ body.console-visible #console {
     background-image: url(Images/userInputIcon.png);
 }
 
-.console-user-command-result::before {
+.console-user-command-result.console-log-level::before {
     background-image: url(Images/userInputResultIcon.png);
 }
 
@@ -478,7 +478,7 @@ body.console-visible #console {
     border-bottom: none;
 }
 
-.console-adjacent-user-command-result + .console-user-command-result::before {
+.console-adjacent-user-command-result + .console-user-command-result.console-log-level::before {
     background-image: none;
 }
 
@@ -573,18 +573,17 @@ body.console-visible #console {
     color: rgb(0, 128, 255);
 }
 
-.console-message-url {
-    color: rgb(33%, 33%, 33%) !important;
+#console-messages a {
+    color: rgb(33%, 33%, 33%);
     cursor: pointer;
-    float: right;
 }
 
-.console-message-url:hover {
+#console-messages a:hover {
     color: rgb(15%, 15%, 15%);
 }
 
-.console-message-url:hover::after {
-    opacity: 1;
+.console-message-url {
+    float: right;
 }
 
 .console-group-messages .section {
@@ -643,13 +642,21 @@ body.console-visible #console {
     padding-left: 0 !important;
 }
 
+.error-message {
+    color: red;
+}
+
 .auto-complete-text {
     color: rgb(128, 128, 128);
     -webkit-user-select: none;
     -webkit-user-modify: read-only;
 }
 
-.inspectible-node:hover {
+.inspectable-node {
+    color: black !important;
+}
+
+.inspectable-node:hover {
     background-color: rgba(56, 121, 217, 0.1);
     -webkit-border-radius: 5px;
     padding: 0 5px 1px;
