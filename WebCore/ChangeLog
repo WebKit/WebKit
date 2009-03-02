@@ -1,3 +1,10 @@
+2009-03-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix; adding missing files to EXTRA_DIST, so that
+        they show up in the tarball.
+
+        * GNUmakefile.am:
+
 2009-03-02  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Holger Freyther.

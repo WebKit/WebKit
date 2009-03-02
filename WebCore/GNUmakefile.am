@@ -3086,6 +3086,7 @@ noinst_HEADERS += \
 	$(IDL_BINDINGS)
 
 webcore_dist += \
+	WebCore/ChangeLog \
 	WebCore/LICENSE-APPLE \
 	WebCore/LICENSE-LGPL-2 \
 	WebCore/LICENSE-LGPL-2.1 \

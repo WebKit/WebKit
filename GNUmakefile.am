@@ -445,6 +445,8 @@ EXTRA_DIST = \
 	$(javascriptcore_dist) \
 	$(webcore_dist) \
 	$(srcdir)/autotools/symbols.filter \
+	$(srcdir)/WebKit/gtk/ChangeLog \
+	$(srcdir)/WebKit/gtk/NEWS \
 	$(srcdir)/WebKit/gtk/webkitmarshal.list
 
 # Files that will be cleaned

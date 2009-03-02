@@ -1,3 +1,10 @@
+2009-03-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix; adding missing files to EXTRA_DIST, so that
+        they show up in the tarball.
+
+        * GNUmakefile.am:
+
 2009-03-01  Christian Dywan  <christian@twotoasts.de>
 
         * configure.ac: Bump GTK port version to 1.1.1.
