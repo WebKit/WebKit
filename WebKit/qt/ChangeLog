@@ -1,3 +1,15 @@
+2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Add three new drt helper functions that enable all of the tests in
+        LayoutTests/animation/* and LayoutTests/transitions/* to now pass.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_pauseAnimation):
+        (qt_drt_pauseTransitionOfProperty):
+        (qt_drt_numberOfActiveAnimations):
+
 2009-03-02  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by George Staikos.

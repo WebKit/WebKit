@@ -1,3 +1,16 @@
+2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Add three new drt helper functions that enable all of the tests in
+        LayoutTests/animation/* and LayoutTests/transitions/* to now pass.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::numberOfActiveAnimations):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-03-02  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r41349

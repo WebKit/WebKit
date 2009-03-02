@@ -91,6 +91,10 @@ public slots:
     void setFixedLayoutSize(int width, int height);
     void setUseFixedLayout(bool enable);
 
+    bool pauseAnimationAtTimeOnElementWithId(const QString &animationName, double time, const QString &elementId);
+    bool pauseTransitionAtTimeOnElementWithId(const QString &propertyName, double time, const QString &elementId);
+    unsigned numberOfActiveAnimations() const;
+
 private slots:
     void processWork();
 

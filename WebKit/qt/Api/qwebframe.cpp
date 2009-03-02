@@ -106,6 +106,63 @@ void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* qframe, bool
         controller->disableProfiler();
 }
 
+// Pause a given CSS animation or transition on the target node at a specific time.
+// If the animation or transition is already paused, it will update its pause time.
+// This method is only intended to be used for testing the CSS animation and transition system.
+bool QWEBKIT_EXPORT qt_drt_pauseAnimation(QWebFrame *qframe, const QString &animationName, double time, const QString &elementId)
+{
+    Frame* frame = QWebFramePrivate::core(qframe);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    Document* doc = frame->document();
+    Q_ASSERT(doc);
+
+    Node* coreNode = doc->getElementById(elementId);
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    return controller->pauseAnimationAtTime(coreNode->renderer(), animationName, time);
+}
+
+bool QWEBKIT_EXPORT qt_drt_pauseTransitionOfProperty(QWebFrame *qframe, const QString &propertyName, double time, const QString &elementId)
+{
+    Frame* frame = QWebFramePrivate::core(qframe);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    Document* doc = frame->document();
+    Q_ASSERT(doc);
+
+    Node* coreNode = doc->getElementById(elementId);
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    return controller->pauseTransitionAtTime(coreNode->renderer(), propertyName, time);
+}
+
+// Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
+int QWEBKIT_EXPORT qt_drt_numberOfActiveAnimations(QWebFrame *qframe)
+{
+    Frame* frame = QWebFramePrivate::core(qframe);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    return controller->numberOfActiveAnimations();
+}
+
 void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebFrameData *frameData)
 {
     q = qframe;

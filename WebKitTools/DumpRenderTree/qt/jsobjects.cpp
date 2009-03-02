@@ -41,6 +41,9 @@
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
+extern bool qt_drt_pauseAnimation(QWebFrame*, const QString &name, double time, const QString &elementId);
+extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString &name, double time, const QString &elementId);
+extern int qt_drt_numberOfActiveAnimations(QWebFrame*);
 
 QWebFrame *findFrameNamed(const QString &frameName, QWebFrame *frame)
 {
@@ -272,6 +275,31 @@ void LayoutTestController::setFixedLayoutSize(int width, int height)
 void LayoutTestController::setUseFixedLayout(bool enable)
 {
     m_topLoadingFrame->page()->setUseFixedLayout(enable);
+}
+
+bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString &animationName,
+                                                               double time,
+                                                               const QString &elementId)
+{
+    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    return qt_drt_pauseAnimation(frame, animationName, time, elementId);
+}
+
+bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const QString &propertyName,
+                                                                double time,
+                                                                const QString &elementId)
+{
+    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    return qt_drt_pauseTransitionOfProperty(frame, propertyName, time, elementId);
+}
+
+unsigned LayoutTestController::numberOfActiveAnimations() const
+{
+    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    return qt_drt_numberOfActiveAnimations(frame);
 }
 
 EventSender::EventSender(QWebPage *parent)
