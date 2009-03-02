@@ -400,6 +400,7 @@ void BitmapImage::invalidatePlatformData()
 
 void BitmapImage::checkForSolidColor()
 {
+    m_checkedForSolidColor = true;
 }
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,

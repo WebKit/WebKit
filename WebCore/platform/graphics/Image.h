@@ -155,7 +155,7 @@ protected:
     void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator);
 
     // Supporting tiled drawing
-    virtual bool mayFillWithSolidColor() const { return false; }
+    virtual bool mayFillWithSolidColor() { return false; }
     virtual Color solidColor() const { return Color(); }
     
     virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) { }

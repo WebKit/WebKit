@@ -60,6 +60,7 @@ BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
     , m_isSolidColor(false)
+    , m_checkedForSolidColor(false)
     , m_animationFinished(true)
     , m_allDataReceived(true)
     , m_haveSize(true)
@@ -182,6 +183,7 @@ void BitmapImage::checkForSolidColor()
 {
     // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
     m_isSolidColor = false;
+    m_checkedForSolidColor = true;
 }
 
 }

@@ -1,3 +1,36 @@
+2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Adam Roben and previously by Eric Seidel and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24227
+        Ensure that the checkForSolidColor() optimization is correctly triggered
+        for all cases of drawPattern.  Currently, the optimization was not triggered
+        when the check had not been previously performed via a request for the
+        image's NativeImagePtr.
+
+        Implement the Qt version of the checkForSolidColor() method.  Combined with
+        the bug fix this reduces the time it takes to draw a repeating background
+        of a 1x1 image from ~50msecs to ~0msecs on my machine.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::mayFillWithSolidColor):
+        * platform/graphics/Image.h:
+        (WebCore::Image::mayFillWithSolidColor):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2009-03-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix; adding missing files to EXTRA_DIST, so that
