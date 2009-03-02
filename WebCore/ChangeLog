@@ -1,3 +1,15 @@
+2009-03-02  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Holger Freyther, rubber-stamped by Ariya Hidayat.
+
+        Added putImageData to Qt.
+
+        [Qt] lacks putImageData support in Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=22186
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::putImageData):
+
 2009-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Show exception messages again when evaluating bad expressions in the

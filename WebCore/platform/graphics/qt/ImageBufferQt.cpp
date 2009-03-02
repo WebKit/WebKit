@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +32,6 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
-#include "NotImplemented.h"
 #include "StillImageQt.h"
 
 #include <QBuffer>
@@ -111,9 +111,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         endy = m_size.height();
     int numRows = endy - originy;
 
-    QImage image = m_data.m_pixmap.toImage();
-    if (image.format() != QImage::Format_ARGB32)
-        image = image.convertToFormat(QImage::Format_ARGB32);
+    QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
     ASSERT(!image.isNull());
 
     unsigned destBytesPerRow = 4 * rect.width();
@@ -134,9 +132,58 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     return result;
 }
 
-void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
+void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    notImplemented();
+    ASSERT(sourceRect.width() > 0);
+    ASSERT(sourceRect.height() > 0);
+
+    int originx = sourceRect.x();
+    int destx = destPoint.x() + sourceRect.x();
+    ASSERT(destx >= 0);
+    ASSERT(destx < m_size.width());
+    ASSERT(originx >= 0);
+    ASSERT(originx <= sourceRect.right());
+
+    int endx = destPoint.x() + sourceRect.right();
+    ASSERT(endx <= m_size.width());
+
+    int numColumns = endx - destx;
+
+    int originy = sourceRect.y();
+    int desty = destPoint.y() + sourceRect.y();
+    ASSERT(desty >= 0);
+    ASSERT(desty < m_size.height());
+    ASSERT(originy >= 0);
+    ASSERT(originy <= sourceRect.bottom());
+
+    int endy = destPoint.y() + sourceRect.bottom();
+    ASSERT(endy <= m_size.height());
+    int numRows = endy - desty;
+
+    unsigned srcBytesPerRow = 4 * source->width();
+
+    bool isPainting = m_data.m_painter->isActive();
+    if (isPainting)
+        m_data.m_painter->end();
+
+    QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    ASSERT(image);
+
+    unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y + desty));
+        for (int x = 0; x < numColumns; x++) {
+            int basex = x * 4;
+            scanLine[x + destx] = reinterpret_cast<quint32*>(srcRows + basex)[0];
+        }
+
+        srcRows += srcBytesPerRow;
+    }
+
+    m_data.m_pixmap = QPixmap::fromImage(image);
+
+    if (isPainting)
+        m_data.m_painter->begin(&m_data.m_pixmap);
 }
 
 // We get a mimeType here but QImageWriter does not support mimetypes but
