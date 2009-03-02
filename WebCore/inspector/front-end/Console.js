@@ -446,6 +446,9 @@ WebInspector.Console.prototype = {
         if (!str.length)
             return;
 
+        var commandMessage = new WebInspector.ConsoleCommand(str);
+        this.addMessage(commandMessage);
+
         var result;
         var exception = false;
         try {
@@ -459,8 +462,8 @@ WebInspector.Console.prototype = {
         this.prompt.historyOffset = 0;
         this.prompt.text = "";
 
-        var level = exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
-        this.addMessage(new WebInspector.ConsoleCommand(str, result, this._format(result), level));
+        var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+        this.addMessage(new WebInspector.ConsoleCommandResult(result, level, commandMessage));
     },
 
     _mouseOverNode: function(event)
@@ -859,11 +862,9 @@ WebInspector.ConsoleMessage.MessageLevel = {
     EndGroup: 8
 }
 
-WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)
+WebInspector.ConsoleCommand = function(command)
 {
     this.command = command;
-    this.formattedResultElement = formattedResultElement;
-    this.level = level;
 }
 
 WebInspector.ConsoleCommand.prototype = {
@@ -878,29 +879,27 @@ WebInspector.ConsoleCommand.prototype = {
         commandTextElement.textContent = this.command;
         element.appendChild(commandTextElement);
 
-        var resultElement = document.createElement("div");
-        resultElement.className = "console-message";
-        element.appendChild(resultElement);
-
-        switch (this.level) {
-            case WebInspector.ConsoleMessage.MessageLevel.Log:
-                resultElement.addStyleClass("console-log-level");
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                resultElement.addStyleClass("console-warning-level");
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.Error:
-                resultElement.addStyleClass("console-error-level");
-        }
-
-        var resultTextElement = document.createElement("span");
-        resultTextElement.className = "console-message-text";
-        resultTextElement.appendChild(this.formattedResultElement);
-        resultElement.appendChild(resultTextElement);
-
         return element;
     }
 }
+
+WebInspector.ConsoleCommandResult = function(result, level, originatingCommand)
+{
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, -1, null, null, 1, result);
+
+    this.originatingCommand = originatingCommand;
+}
+
+WebInspector.ConsoleCommandResult.prototype = {
+    toMessageElement: function()
+    {
+        var element = WebInspector.ConsoleMessage.prototype.toMessageElement.call(this);
+        element.addStyleClass("console-user-command-result");
+        return element;
+    }
+}
+
+WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
 
 WebInspector.ConsoleGroup = function(parentGroup, level)
 {
@@ -928,8 +927,11 @@ WebInspector.ConsoleGroup.prototype = {
             element.addEventListener("click", this._titleClicked.bind(this), true);
         } else
             this.messagesElement.appendChild(element);
+
+        if (element.previousSibling && msg.originatingCommand && element.previousSibling.command === msg.originatingCommand)
+            element.previousSibling.addStyleClass("console-adjacent-user-command-result");
     },
-    
+
     _titleClicked: function(event)
     {
         var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title-level");

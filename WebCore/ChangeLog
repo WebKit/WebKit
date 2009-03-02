@@ -1,3 +1,26 @@
+2009-02-28  Timothy Hatcher  <timothy@apple.com>
+
+        Make input in the Web Inspector console print before any output
+        that might be added by the called function.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19931
+
+        Reviewed by Oliver Hunt.
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype._enterKeyPressed): Add the command
+        message before evaluating the result. Associate the originating
+        command to the result, so if they are adjacent there is no divider.
+        (WebInspector.ConsoleCommand): No longer take a result.
+        (WebInspector.ConsoleCommand.prototype.toMessageElement): Result
+        code removed since it isn't used now.
+        (WebInspector.ConsoleCommandResult): Subclass ConsoleMessage.
+        (WebInspector.ConsoleCommandResult.prototype.toMessageElement):
+        Call the ConsoleMessage toMessageElement and add a style class.
+        * inspector/front-end/inspector.css: Add a new style class for
+        adjacent results to hide the divider. Also tweak the position of
+        the disclosure triangle for objects to not use the left margin.
+
 2009-03-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

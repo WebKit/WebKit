@@ -463,11 +463,23 @@ body.console-visible #console {
     background-image: url(Images/userInputIcon.png);
 }
 
+.console-user-command-result::before {
+    background-image: url(Images/userInputResultIcon.png);
+}
+
 .console-message, .console-user-command {
     position: relative;
     border-bottom: 1px solid rgb(240, 240, 240);
     padding: 1px 22px 1px 24px;
     min-height: 16px;
+}
+
+.console-adjacent-user-command-result {
+    border-bottom: none;
+}
+
+.console-adjacent-user-command-result + .console-user-command-result::before {
+    background-image: none;
 }
 
 .console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title-level::before {
@@ -576,20 +588,20 @@ body.console-visible #console {
 }
 
 .console-group-messages .section {
-    margin: 0;
+    margin: 0 0 0 12px !important;
 }
 
 .console-group-messages .section .header {
     padding: 0 8px 0 0;
     background-image: none;
     border: none;
-    min-height: 16px;
+    min-height: 0;
 }
 
 .console-group-messages .section .header::before {
     position: absolute;
     top: 1px;
-    left: 12px;
+    left: 1px;
     width: 8px;
     height: 8px;
     content: url(Images/treeRightTriangleBlack.png);
@@ -618,8 +630,17 @@ body.console-visible #console {
     margin-top: -1px;
 }
 
+.console-formatted-object, .console-formatted-node {
+    position: relative;
+    display: block;
+}
+
 .console-formatted-object .section, .console-formatted-node .section {
     position: static;
+}
+
+.console-formatted-object .properties, .console-formatted-node .properties {
+    padding-left: 0 !important;
 }
 
 .auto-complete-text {
