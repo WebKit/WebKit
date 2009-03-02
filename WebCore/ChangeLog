@@ -1,3 +1,9 @@
+2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxGTK missing header build fix.
+
+        * platform/wx/wxcode/gtk/fontprops.cpp:
+
 2009-03-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
