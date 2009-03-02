@@ -1,3 +1,19 @@
+2009-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 24282: AX Palindrome error when asking for a specific index of the AXChildren array
+
+        Change getChildAtIndex() to get a range of children instead of all the children.
+        This exercises code in WebCore that returns elements when asked for from a range.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::getChildrenWithRange):
+        (AccessibilityUIElement::getChildAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::getChildrenWithRange):
+
 2009-03-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

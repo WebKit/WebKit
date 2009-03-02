@@ -1,3 +1,17 @@
+2009-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 24282: AX Palindrome error when asking for a specific index of the AXChildren array
+        <https://bugs.webkit.org/show_bug.cgi?id=24282>
+
+        When fetching an array of elements with a range, attachment views need to be returned
+        instead of the actual attachment.
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2009-03-01  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

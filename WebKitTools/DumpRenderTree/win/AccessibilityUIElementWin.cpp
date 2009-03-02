@@ -63,6 +63,16 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& childre
         children.append(getChildAtIndex(i));
 }
 
+void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
+{
+    long childCount;
+    unsigned appendedCount = 0;
+    if (FAILED(m_element->get_accChildCount(&childCount)))
+        return;
+    for (long i = location; i < childCount && appendedCount < length; ++i, ++appendedCount)
+        children.append(getChildAtIndex(i));
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     COMPtr<IDispatch> child;

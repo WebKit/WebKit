@@ -2064,7 +2064,8 @@ static RenderObject* rendererForView(NSView* view)
     
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
-        if (children[k]->wrapper() == child)
+        AccessibilityObjectWrapper* wrapper = children[k]->wrapper();
+        if (wrapper == child || (children[k]->isAttachment() && [wrapper attachmentView] == child)) 
             return k;
     }
 
@@ -2118,8 +2119,16 @@ static RenderObject* rendererForView(NSView* view)
         unsigned available = min(childCount - index, maxCount);
         
         NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
-        for (unsigned added = 0; added < available; ++index, ++added)
-            [subarray addObject:children[index]->wrapper()];
+        for (unsigned added = 0; added < available; ++index, ++added) {
+            AccessibilityObjectWrapper* wrapper = children[index]->wrapper();
+            if (wrapper) {
+                // The attachment view should be returned, otherwise AX palindrome errors occur.
+                if (children[index]->isAttachment() && [wrapper attachmentView])
+                    [subarray addObject:[wrapper attachmentView]];
+                else
+                    [subarray addObject:wrapper];
+            }
+        }
         
         return subarray;
     }

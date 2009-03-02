@@ -193,13 +193,19 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& element
     convertNSArrayToVector(children, elementVector);
 }
 
+void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
+{
+    NSArray* children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
+    convertNSArrayToVector(children, elementVector);
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     Vector<AccessibilityUIElement> children;
-    getChildren(children);
+    getChildrenWithRange(children, index, 1);
 
-    if (index < children.size())
-        return children[index];
+    if (children.size() == 1)
+        return children[0];
     return nil;
 }
 
