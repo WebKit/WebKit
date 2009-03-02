@@ -87,8 +87,9 @@ void JSQuarantinedObjectWrapper::transferExceptionToExecState(ExecState* exec) c
     if (!unwrappedExecState()->hadException())
         return;
 
-    exec->setException(wrapOutgoingValue(unwrappedExecState(), unwrappedExecState()->exception()));
+    JSValuePtr exception = unwrappedExecState()->exception();
     unwrappedExecState()->clearException();
+    exec->setException(wrapOutgoingValue(unwrappedExecState(), exception));
 }
 
 void JSQuarantinedObjectWrapper::mark()

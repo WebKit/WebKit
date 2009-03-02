@@ -1,3 +1,17 @@
+2009-03-02  Timothy Hatcher  <timothy@apple.com>
+
+        Show exception messages again when evaluating bad expressions in the
+        Web Inspector's console.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19890
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::transferExceptionToExecState):
+        Fix the order in which the exception is set and cleared now that the
+        exception is stored in the shared GlobalData, not per ExecState.
+
 2009-02-28  Timothy Hatcher  <timothy@apple.com>
 
         Make input in the Web Inspector console print before any output
