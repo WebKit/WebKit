@@ -141,7 +141,7 @@ WebInspector.Console.prototype = {
 
     addMessage: function(msg)
     {
-        if (msg instanceof WebInspector.ConsoleMessage) {
+        if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
             msg.totalRepeatCount = msg.repeatCount;
             msg.repeatDelta = msg.repeatCount;
 

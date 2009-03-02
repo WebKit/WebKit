@@ -1,5 +1,17 @@
 2009-03-02  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a regression caused by splitting the input and output of console commands.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24293
+
+        Reviewed by Kevin McCullough.
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype.addMessage): Don't treat ConsoleCommandResult as a
+        normal ConsoleMessage when appending. This prevents resetting repeatCounts incorrectly.
+
+2009-03-02  Timothy Hatcher  <timothy@apple.com>
+
         Make exception messages and logged Error objects display consistently.
 
         https://bugs.webkit.org/show_bug.cgi?id=18983
