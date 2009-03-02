@@ -167,7 +167,6 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
         m_data.m_painter->end();
 
     QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
-    ASSERT(image);
 
     unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {

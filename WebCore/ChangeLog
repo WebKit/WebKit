@@ -1,5 +1,12 @@
 2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
 
+        Build fix for Qt port.  Remove unnecessary assert.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::putImageData):
+
+2009-03-02  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by Adam Roben and previously by Eric Seidel and Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=24227
