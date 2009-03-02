@@ -70,7 +70,7 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
     if (FAILED(m_element->get_accChildCount(&childCount)))
         return;
     for (long i = location; i < childCount && appendedCount < length; ++i, ++appendedCount)
-        children.append(getChildAtIndex(i));
+        elementVector.append(getChildAtIndex(i));
 }
 
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
