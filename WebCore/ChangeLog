@@ -1,3 +1,36 @@
+2009-03-01  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24197 and
+        https://bugs.webkit.org/show_bug.cgi?id=23512
+
+        The Windows version of cgColor() is conditionally compiled using
+        !PLATFORM(MAC) change this to PLATFORM(WIN_OS) so that Chrome
+        can use the OS X version instead of the Windows version.
+
+        Also rename cgColor() -> createCGColor()
+
+        No observable change in behavior, so no test.
+
+        * platform/graphics/Color.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::createCGColor):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::createCGColor):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::setLayerBorderColor):
+        (WebCore::setLayerBackgroundColor):
+        (WebCore::GraphicsLayerCA::setBackgroundColor):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm:
+        (WebCore::ciColor):
+
 2009-03-01  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

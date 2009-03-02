@@ -67,9 +67,9 @@ Color::Color(CGColorRef color)
     m_color = makeRGBA(r * 255, g * 255, b * 255, a * 255);
 }
 
-#if !PLATFORM(MAC)
+#if PLATFORM(WIN_OS)
 
-CGColorRef cgColor(const Color& c)
+CGColorRef createCGColor(const Color& c)
 {
     CGColorRef color = NULL;
     CMProfileRef prof = NULL;
@@ -89,7 +89,7 @@ CGColorRef cgColor(const Color& c)
     return color;
 }
 
-#endif // !PLATFORM(MAC)
+#endif // PLATFORM(WIN_OS)
 
 }
 

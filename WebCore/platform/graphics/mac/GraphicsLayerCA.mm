@@ -227,7 +227,7 @@ static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction& tim
 #ifndef NDEBUG
 static void setLayerBorderColor(PlatformLayer* layer, const Color& color)
 {
-    CGColorRef borderColor = cgColor(color);
+    CGColorRef borderColor = createCGColor(color);
     [layer setBorderColor:borderColor];
     CGColorRelease(borderColor);
 }
@@ -240,7 +240,7 @@ static void clearBorderColor(PlatformLayer* layer)
 
 static void setLayerBackgroundColor(PlatformLayer* layer, const Color& color)
 {
-    CGColorRef bgColor = cgColor(color);
+    CGColorRef bgColor = createCGColor(color);
     [layer setBackgroundColor:bgColor];
     CGColorRelease(bgColor);
 }
@@ -766,7 +766,7 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color, const Animation* tr
         // Get the current value of the background color from the layer
         CGColorRef fromBackgroundColor = [presLayer backgroundColor];
 
-        CGColorRef bgColor = cgColor(color);
+        CGColorRef bgColor = createCGColor(color);
         setBasicAnimation(AnimatedPropertyBackgroundColor, TransformOperation::NONE, 0, fromBackgroundColor, bgColor, true, transition, beginTime);
         CGColorRelease(bgColor);
     } else {

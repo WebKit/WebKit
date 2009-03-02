@@ -59,7 +59,7 @@ CIVector* getVectorForChannel(ChannelSelectorType channel)
 
 CIColor* ciColor(const Color& c)
 {
-    CGColorRef colorCG = cgColor(c);
+    CGColorRef colorCG = createCGColor(c);
     CIColor* colorCI = [CIColor colorWithCGColor:colorCG];
     CGColorRelease(colorCG);
     return colorCI;

@@ -47,7 +47,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
 
     int radius = (focusRingWidth() - 1) / 2;
     int offset = radius + focusRingOffset();
-    CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
+    CGColorRef colorRef = color.isValid() ? createCGColor(color) : 0;
 
     CGMutablePathRef focusRingPath = CGPathCreateMutable();
     const Vector<IntRect>& rects = focusRingRects();
