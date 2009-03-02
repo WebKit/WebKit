@@ -300,9 +300,6 @@
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 #define HAVE_READLINE 1
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-#define HAVE_DTRACE 1
-#endif
 #endif
 
 #if PLATFORM(CHROMIUM) && PLATFORM(DARWIN)

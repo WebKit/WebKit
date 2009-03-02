@@ -1,3 +1,19 @@
+2009-03-01  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6635688> Move HAVE_DTRACE check to Base.xcconfig
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Set HAVE_DTRACE Xcode variable
+        based on PLATFORM_NAME and MAC_OS_X_VERSION_MAJOR.  Also define
+        it as a preprocessor macro by modifying
+        GCC_PREPROCESSOR_DEFINITIONS.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Changed "Generate
+        DTrace header" script phase to check for HAVE_DTRACE instead of
+        MACOSX_DEPLOYMENT_TARGET.
+        * wtf/Platform.h: Removed definition of HAVE_DTRACE macro since
+        it's defined in Base.xcconfig now.
+
 2009-03-01  Horia Olaru  <olaru@adobe.com>
 
         By looking in grammar.y there are only a few types of statement nodes
