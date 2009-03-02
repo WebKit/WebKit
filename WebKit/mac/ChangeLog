@@ -1,3 +1,14 @@
+2009-03-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit side of <rdar://problem/6449689>
+
+        Pass the visible name to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
 2009-02-27  Alice Liu  <alice.liu@apple.com>
 
         Fix <rdar://problem/6531265> REGRESSION (r39185): adding ".jpeg"

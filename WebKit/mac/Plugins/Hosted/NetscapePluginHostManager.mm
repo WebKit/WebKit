@@ -123,7 +123,10 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
         return false;
     }
     
+    NSString *visibleName = [NSString stringWithFormat:@"%@ Plug-in Host - %@", [[NSProcessInfo processInfo] processName], [package filename]];
+    
     NSDictionary *hostProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    visibleName, @"visibleName",
                                     [package path], @"bundlePath",
                                     nil];
     
