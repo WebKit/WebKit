@@ -1,3 +1,14 @@
+2009-03-02  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21230
+        On X11 match the behavior of Firefox and also copy the url to the
+        clipboard selection when the action Copy Link Location is executed.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2009-02-25  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
 
         Reviewed by Simon Hausmann.
