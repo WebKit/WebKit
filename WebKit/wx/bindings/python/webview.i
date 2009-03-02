@@ -31,11 +31,12 @@
 #include "WebView.h"
 #include "WebBrowserShell.h"
 %}
-
 //---------------------------------------------------------------------------
 
 %import core.i
 %import windows.i
+
+MAKE_CONST_WXSTRING(WebViewNameStr);
 
 MustHaveApp(wxWebView);
 MustHaveApp(wxWebBrowserShell);

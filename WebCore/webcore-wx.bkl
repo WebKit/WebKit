@@ -110,7 +110,7 @@ wxWebCore port Bakefile project file.
                 platform/wx/wxcode/gtk/non-kerned-drawing.cpp
                 platform/wx/SharedTimerWx.cpp
             </if>
-            <if cond="WX_PORT=='mac'">
+            <if cond="PLATFORM_OS=='mac'">
                 platform/mac/PurgeableBufferMac.cpp
                 platform/wx/wxcode/mac/carbon/fontprops.cpp
                 platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp

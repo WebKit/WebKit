@@ -88,8 +88,7 @@ else
     
     CONFIG=`wx-config --selected-config`
     if [ "${CONFIG:0:4}" != "gtk2" -a "${CONFIG:0:3}" != "mac" ]; then
-        echo "ERROR: This configuration '$CONFIG' is not currently supported by wxWebKit. Please use the win, mac, or gtk2 port depending on your platform."
-        exit 1
+        echo "WARNING: This configuration '$CONFIG' is not currently supported by wxWebKit. Please use the win, mac, or gtk2 port depending on your platform."
     fi
     
     if [ ! -d "$WX_PREFIX/share/bakefile" ]; then
@@ -335,6 +334,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             #    a wx source tree from a tarball where wxPython is in the wx dir
             #    a wx source tree from SVN where wxPython is a sibling of the wx dir
             WXPY_INCLUDE=`find_existing_dir \
+                $WX_PREFIX/include/wx-2.9/wx/wxPython/i_files \
                 $WX_PREFIX/include/wx-2.8/wx/wxPython/i_files \
                 $WX_PREFIX/include/wx/wxPython/i_files \
                 $WX_PREFIX/wxPython/src \

@@ -1,5 +1,14 @@
 2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Build fixes for wxWidgets Mac trunk build.
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+        (GetTextExtent):
+        * webcore-wx.bkl:
+
+2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         wxGTK missing header build fix.
 
         * platform/wx/wxcode/gtk/fontprops.cpp:

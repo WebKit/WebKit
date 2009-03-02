@@ -139,11 +139,11 @@ and WebCore. Include this file to use these settings.
         <if cond="FORMAT=='gnu'">
             <!-- Mac includes ICU with the system, but doesn't include headers or
                  icu-config, so we have to hardcode settings there. -->
-            <set var="ICU_INCLUDE"><if cond="WX_PORT=='mac'">$(WK_ROOT)/JavaScriptCore/icu</if></set>
-            <set var="ICU_INCLUDE"><if cond="WX_PORT=='mac'">$(WK_ROOT)/WebCore/icu</if></set>
-            <set var="ICU_LIB"><if cond="WX_PORT=='mac'">icucore</if></set>
-            <set var="ICU_LDFLAGS"><if cond="WX_PORT=='gtk2'">$(DOLLAR)(shell icu-config --ldflags)</if></set>
-            <set var="ICU_CFLAGS"><if cond="WX_PORT=='gtk2'">$(DOLLAR)(shell icu-config --cppflags)</if></set>
+            <set var="ICU_INCLUDE"><if cond="PLATFORM_OS=='mac'">$(WK_ROOT)/JavaScriptCore/icu</if></set>
+            <set var="ICU_INCLUDE"><if cond="PLATFORM_OS=='mac'">$(WK_ROOT)/WebCore/icu</if></set>
+            <set var="ICU_LIB"><if cond="PLATFORM_OS=='mac'">icucore</if></set>
+            <set var="ICU_LDFLAGS"><if cond="PLATFORM_OS=='linux'">$(DOLLAR)(shell icu-config --ldflags)</if></set>
+            <set var="ICU_CFLAGS"><if cond="PLATFORM_OS=='linux'">$(DOLLAR)(shell icu-config --cppflags)</if></set>
             
             <include>$(ICU_INCLUDE)</include>
             <sys-lib>$(ICU_LIB)</sys-lib>

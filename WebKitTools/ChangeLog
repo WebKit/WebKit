@@ -1,3 +1,9 @@
+2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fixes for wxWidgets Mac trunk build.
+
+        * wx/build-wxwebkit:
+
 2009-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Allow for multiline quoted text in JavaScript files when looking for function names.

@@ -81,9 +81,10 @@ Bakefile for wxWebKit Python bindings.
         <if cond="FORMAT=='gnu'">
             <sys-lib>png</sys-lib>
             <set var="MAC_FLAGS">
-                <if cond="WX_PORT=='mac'">-bundle -undefined dynamic_lookup</if>
+                <if cond="PLATFORM_OS=='mac'">-bundle -undefined dynamic_lookup</if>
             </set>
             
+            <sys-lib>python2.5</sys-lib>
             <ldflags>$(MAC_FLAGS)</ldflags>
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">

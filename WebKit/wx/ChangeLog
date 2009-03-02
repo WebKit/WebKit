@@ -1,3 +1,13 @@
+2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fixes for wxWidgets Mac trunk build.
+
+        * WebView.h:
+        * bindings/python/webview.i:
+        * bindings/python/wxwebkit-py.bkl:
+        * dependencies.bkl:
+        * presets/wxwebkit.bkl:
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Stub out InspectorClientWx::hiddenPanels.

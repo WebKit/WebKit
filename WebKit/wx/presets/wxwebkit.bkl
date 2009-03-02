@@ -71,6 +71,17 @@ and WebCore. Include this file to use these settings.
         </option>
     </if>
     
+    <if cond="not isdefined('PLATFORM_OS')">
+        <option name="PLATFORM_OS">
+            <values>linux,mac,win</values>
+            <default-value force="1">win</default-value>
+            <description>
+                Platform the wx library is being built on
+            </description>
+        </option>
+    </if>
+    
+    
     <if cond="not isdefined('DEBUG')">
         <option name="DEBUG">
             <values>0,1</values>
