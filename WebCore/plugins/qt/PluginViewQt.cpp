@@ -301,15 +301,15 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
 {
     switch (variable) {
     case NPNVToolkit:
-        *((uint32 *)value) = 0;
+        *static_cast<uint32*>(value) = 0;
         return NPERR_NO_ERROR;
 
     case NPNVSupportsXEmbedBool:
-        *((uint32 *)value) = true;
+        *static_cast<NPBool*>(value) = true;
         return NPERR_NO_ERROR;
 
     case NPNVjavascriptEnabledBool:
-        *((uint32 *)value) = true;
+        *static_cast<NPBool*>(value) = true;
         return NPERR_NO_ERROR;
 
     default:

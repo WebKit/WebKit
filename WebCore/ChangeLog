@@ -1,3 +1,18 @@
+2009-03-01  Larry Ewing  <lewing@novell.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24080
+        NPN_GetValue casting to the wrong type and writing outside bounds
+
+        Make sure to cast the value to the correct type so that only
+        memory owned by the value is written to.
+
+        * plugins/gtk/PluginViewGtk.cpp (PluginView::getValueStatic): 
+        * plugins/qt/PluginViewQt.cpp (PluginView::getValueStatic):
+        * plugins/mac/PluginViewMac.cpp (PluginView::getValueStatic): 
+        (PluginView::getValue):
+
 2009-03-01  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Simon Fraser.

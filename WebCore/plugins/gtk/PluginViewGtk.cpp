@@ -349,22 +349,22 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
     switch (variable) {
     case NPNVToolkit:
 #if PLATFORM(GTK)
-        *((uint32 *)value) = 2;
+        *static_cast<uint32*>(value) = 2;
 #else
-        *((uint32 *)value) = 0;
+        *static_cast<uint32*>(value) = 0;
 #endif
         return NPERR_NO_ERROR;
 
     case NPNVSupportsXEmbedBool:
 #if PLATFORM(X11)
-        *((uint32 *)value) = true;
+        *static_cast<NPBool*>(value) = true;
 #else
-        *((uint32 *)value) = false;
+        *static_cast<NPBool*>(value) = false;
 #endif
         return NPERR_NO_ERROR;
 
     case NPNVjavascriptEnabledBool:
-        *((uint32 *)value) = true;
+        *static_cast<NPBool*>(value) = true;
         return NPERR_NO_ERROR;
 
     default:
