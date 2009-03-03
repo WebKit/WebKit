@@ -37,6 +37,8 @@ Object.type = function(obj, win)
 
     win = win || window;
 
+    if (obj instanceof win.Node)
+        return "node";
     if (obj instanceof win.String)
         return "string";
     if (obj instanceof win.Array)
@@ -70,6 +72,7 @@ Object.describe = function(obj, abbreviated)
 
     switch (type1) {
     case "object":
+    case "node":
         return type2;
     case "array":
         return "[" + obj.toString() + "]";

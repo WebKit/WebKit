@@ -64,8 +64,8 @@ namespace WebCore {
         LogMessageLevel,
         WarningMessageLevel,
         ErrorMessageLevel,
+        // FIXME: the remaining levels should become a new MessageType enum.
         ObjectMessageLevel,
-        NodeMessageLevel,
         TraceMessageLevel,
         StartGroupMessageLevel,
         EndGroupMessageLevel

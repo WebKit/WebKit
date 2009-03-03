@@ -99,11 +99,12 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
         case CSSMessageSource:
             sourceString = "CSS";
             break;
-        default:
-            ASSERT_NOT_REACHED();
-            // Fall thru.
         case OtherMessageSource:
             sourceString = "OTHER";
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            sourceString = "UNKNOWN";
             break;
     }
 
@@ -112,9 +113,6 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
         case TipMessageLevel:
             levelString = "TIP";
             break;
-        default:
-            ASSERT_NOT_REACHED();
-            // Fall thru.
         case LogMessageLevel:
             levelString = "LOG";
             break;
@@ -123,6 +121,22 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
             break;
         case ErrorMessageLevel:
             levelString = "ERROR";
+            break;
+        case ObjectMessageLevel:
+            levelString = "OBJECT";
+            break;
+        case TraceMessageLevel:
+            levelString = "TRACE";
+            break;
+        case StartGroupMessageLevel:
+            levelString = "START GROUP";
+            break;
+        case EndGroupMessageLevel:
+            levelString = "END GROUP";
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            levelString = "UNKNOWN";
             break;
     }
 
@@ -207,7 +221,8 @@ void Console::dir(ScriptCallStack* callStack)
 
 void Console::dirxml(ScriptCallStack* callStack)
 {
-    addMessage(NodeMessageLevel, callStack);
+    // The standard behavior of our console.log will print the DOM tree for nodes.
+    log(callStack);
 }
 
 void Console::trace(ScriptCallStack* callStack)

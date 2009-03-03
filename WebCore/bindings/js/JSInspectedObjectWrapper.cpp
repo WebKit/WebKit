@@ -57,7 +57,7 @@ JSValuePtr JSInspectedObjectWrapper::wrap(ExecState* unwrappedExec, JSValuePtr u
     if (unwrappedObject->inherits(&JSInspectedObjectWrapper::s_info))
         return unwrappedObject;
 
-    if (WrapperMap* wrapperMap = wrappers().get(unwrappedExec->dynamicGlobalObject()))
+    if (WrapperMap* wrapperMap = wrappers().get(unwrappedExec->lexicalGlobalObject()))
         if (JSInspectedObjectWrapper* wrapper = wrapperMap->get(unwrappedObject))
             return wrapper;
 

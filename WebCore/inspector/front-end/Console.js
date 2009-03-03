@@ -465,27 +465,9 @@ WebInspector.Console.prototype = {
         this.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
     },
 
-    _mouseOverNode: function(event)
+    _format: function(output, forceObjectFormat)
     {
-        var anchorElement = event.target.enclosingNodeOrSelfWithNodeName("a");
-        WebInspector.hoveredDOMNode = (anchorElement ? anchorElement.representedNode : null);
-    },
-
-    _mouseOutOfNode: function(event)
-    {
-        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
-        var anchorElement = nodeUnderMouse.enclosingNodeOrSelfWithNodeName("a");
-        if (!anchorElement || !anchorElement.representedNode)
-            WebInspector.hoveredDOMNode = null;
-    },
-
-    _format: function(output, inline)
-    {
-        var type = Object.type(output, InspectorController.inspectedWindow());
-        if (type === "object") {
-            if (output instanceof InspectorController.inspectedWindow().Node)
-                type = "node";
-        }
+        var type = (forceObjectFormat ? "object" : Object.type(output, InspectorController.inspectedWindow()));
 
         // We don't perform any special formatting on these types, so we just
         // pass them through the simple _formatvalue function.
@@ -499,7 +481,9 @@ WebInspector.Console.prototype = {
         };
 
         var formatter;
-        if (type in undecoratedTypes)
+        if (forceObjectFormat)
+            formatter = "_formatobject";
+        else if (type in undecoratedTypes)
             formatter = "_formatvalue";
         else {
             formatter = "_format" + type;
@@ -511,61 +495,53 @@ WebInspector.Console.prototype = {
 
         var span = document.createElement("span");
         span.addStyleClass("console-formatted-" + type);
-        this[formatter](output, span, inline);
+        this[formatter](output, span);
         return span;
     },
 
-    _formatvalue: function(val, elem, inline)
+    _formatvalue: function(val, elem)
     {
         elem.appendChild(document.createTextNode(val));
     },
 
-    _formatstring: function(str, elem, inline)
+    _formatstring: function(str, elem)
     {
         elem.appendChild(document.createTextNode("\"" + str + "\""));
     },
 
-    _formatregexp: function(re, elem, inline)
+    _formatregexp: function(re, elem)
     {
         var formatted = String(re).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
         elem.appendChild(document.createTextNode(formatted));
     },
 
-    _formatarray: function(arr, elem, inline)
+    _formatarray: function(arr, elem)
     {
         elem.appendChild(document.createTextNode("["));
         for (var i = 0; i < arr.length; ++i) {
-            elem.appendChild(this._format(arr[i], true));
+            elem.appendChild(this._format(arr[i]));
             if (i < arr.length - 1)
                 elem.appendChild(document.createTextNode(", "));
         }
         elem.appendChild(document.createTextNode("]"));
     },
 
-    _formatnode: function(node, elem, inline)
+    _formatnode: function(node, elem)
     {
-        var anchor = document.createElement("a");
-        anchor.className = "inspectable-node";
-        anchor.innerHTML = nodeTitleInfo.call(node).title;
-        anchor.representedNode = node;
-        anchor.addEventListener("mouseover", this._mouseOverNode.bind(this), false);
-        anchor.addEventListener("mouseout", this._mouseOutOfNode.bind(this), false);
-
-        if (inline)
-            elem.appendChild(anchor);
-        else
-            elem.appendChild(new WebInspector.ObjectPropertiesSection(node, anchor, null, null, true).element);
+        var treeOutline = new WebInspector.ElementsTreeOutline();
+        treeOutline.rootDOMNode = node;
+        treeOutline.element.addStyleClass("outline-disclosure");
+        if (!treeOutline.children[0].hasChildren)
+            treeOutline.element.addStyleClass("single-node");
+        elem.appendChild(treeOutline.element);
     },
 
-    _formatobject: function(obj, elem, inline)
+    _formatobject: function(obj, elem)
     {
-        if (inline)
-            elem.appendChild(document.createTextNode(Object.describe(obj)));
-        else
-            elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, null, null, null, true).element);
+        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, null, null, null, true).element);
     },
 
-    _formaterror: function(obj, elem, inline)
+    _formaterror: function(obj, elem)
     {
         var messageElement = document.createElement("span");
         messageElement.className = "error-message";
@@ -603,18 +579,6 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
     this.repeatCount = repeatCount;
 
     switch (this.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Object:
-            var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[6], null, null, null, true);
-            propertiesSection.element.addStyleClass("console-message");
-            this.propertiesSection = propertiesSection;
-            break;
-        case WebInspector.ConsoleMessage.MessageLevel.Node:
-            var node = arguments[6];
-            if (!(node instanceof InspectorController.inspectedWindow().Node))
-                return;
-            this.elementsTreeOutline = new WebInspector.ElementsTreeOutline();
-            this.elementsTreeOutline.rootDOMNode = node;
-            break;
         case WebInspector.ConsoleMessage.MessageLevel.Trace:
             var span = document.createElement("span");
             span.addStyleClass("console-formatted-trace");
@@ -625,14 +589,16 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
             span.appendChild(document.createTextNode(funcNames.join("\n")));
             this.formattedMessage = span;
             break;
+        case WebInspector.ConsoleMessage.MessageLevel.Object:
+            this.formattedMessage = this._format(["%O", arguments[6]]);
+            break;
         default:
-            // The formatedMessage property is used for the rich and interactive console.
             this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
-
-            // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
-            this.message = this.formattedMessage.textContent;
             break;
     }
+
+    // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
+    this.message = this.formattedMessage.textContent;
 }
 
 WebInspector.ConsoleMessage.prototype = {
@@ -650,6 +616,11 @@ WebInspector.ConsoleMessage.prototype = {
 
         function formatForConsole(obj)
         {
+            return WebInspector.console._format(obj);
+        }
+
+        function formatAsObjectForConsole(obj)
+        {
             return WebInspector.console._format(obj, true);
         }
 
@@ -662,6 +633,8 @@ WebInspector.ConsoleMessage.prototype = {
             formatters.o = formatForConsole;
             // Firebug allows both %i and %d for formatting integers.
             formatters.i = formatters.d;
+            // Support %O to force object formating, instead of the type-based %o formatting.
+            formatters.O = formatAsObjectForConsole;
 
             function append(a, b)
             {
@@ -682,10 +655,9 @@ WebInspector.ConsoleMessage.prototype = {
         for (var i = 0; i < parameters.length; ++i) {
             if (typeof parameters[i] === "string")
                 formattedResult.appendChild(WebInspector.linkifyStringAsFragment(parameters[i]));
-            else if (parameters.length === 1)
-                formattedResult.appendChild(WebInspector.console._format(parameters[0]));
             else
                 formattedResult.appendChild(formatForConsole(parameters[i]));
+
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
@@ -821,14 +793,20 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Object:
                 levelString = "Object";
                 break;
-            case WebInspector.ConsoleMessage.MessageLevel.GroupTitle:
-                levelString = "GroupTitle";
+            case WebInspector.ConsoleMessage.MessageLevel.Trace:
+                levelString = "Trace";
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.StartGroup:
+                levelString = "Start Group";
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.EndGroup:
+                levelString = "End Group";
                 break;
         }
 
         return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
-    
+
     isEqual: function(msg, disreguardGroup)
     {
         if (!msg)
@@ -860,10 +838,9 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Warning: 2,
     Error: 3,
     Object: 4,
-    Node: 5,
-    Trace: 6,
-    StartGroup: 7,
-    EndGroup: 8
+    Trace: 5,
+    StartGroup: 6,
+    EndGroup: 7
 }
 
 WebInspector.ConsoleCommand = function(command)

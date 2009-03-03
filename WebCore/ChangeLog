@@ -1,3 +1,44 @@
+2009-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a regression that broke dirxml and caused an ASSERT in debug builds. Also simplified
+        the console code and refactored things to have fewer code paths and duplication.
+
+        Reviewed by Kevin McCullough.
+
+        Test: manual-tests/inspector/console-dir.html
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap): Use the lexicalGlobalObject instead of dynamicGlobalObject
+        to fix an ASSERT about using a wrapper from the wrong ExecState.
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper): Ditto.
+        (WebCore::JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom): Ditto.
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype._format): Remove the inline argument and add forceObjectFormat.
+        When forceObjectFormat is true, the only formatter used is _formatobject.
+        (WebInspector.Console.prototype._formatvalue): Remove the inline argument.
+        (WebInspector.Console.prototype._formatstring): Ditto.
+        (WebInspector.Console.prototype._formatregexp): Ditto.
+        (WebInspector.Console.prototype._formatarray): Ditto.
+        (WebInspector.Console.prototype._formatnode): Remove the inline argument and make a DOM tree instead of an anchor.
+        (WebInspector.Console.prototype._formatobject): Remove the inline argument and always make a property graph.
+        (WebInspector.Console.prototype._formaterror): Remove the inline argument.
+        (WebInspector.ConsoleMessage): Remove the case for MessageLevel.Node and
+        simplify the case for MessageLevel.Object to use the normal _format code path with the %O formatter.
+        (WebInspector.ConsoleMessage.prototype._format.formatForConsole): Don't pass an additional true argument for inline.
+        (WebInspector.ConsoleMessage.prototype._format.formatAsObjectForConsole): Added. Pass a true argument for forceObjectFormat.
+        (WebInspector.ConsoleMessage.prototype._format): Added support for the %O formatter. Use formatForConsole for all arguments.
+        (WebInspector.ConsoleMessage.prototype.toString): Add the other message levels.
+        * inspector/front-end/inspector.css: Tweak styles to look and work correctly.
+        * inspector/front-end/utilities.js:
+        (Object.type): Return "node" for Node objects.
+        (Object.describe): Handle the "node" type.
+        * page/Console.cpp:
+        (WebCore::printMessageSourceAndLevelPrefix): Fix an assert by adding the other message level types.
+        (WebCore::Console::dirxml): Use the standard log fuction since it prints a DOM tree for nodes by default.
+        * page/Console.h:
+        (WebCore::enum MessageLevel): Removed NodeMessageLevel. Added a FIXME.
+
 2009-03-03  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.

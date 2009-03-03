@@ -415,6 +415,7 @@ body.detached #dock-status-bar-item.toggled-on:active {
 #console {
     display: none;
     position: absolute;
+    z-index: 1;
     bottom: 0;
     left: 0;
     right: 0;
@@ -612,6 +613,21 @@ body.console-visible #console {
 
 .console-group-messages .section .header .title {
     color: black;
+    font-weight: normal;
+}
+
+.console-group-messages .section .properties li .info {
+    padding-top: 0;
+    padding-bottom: 0;
+    color: rgb(60%, 60%, 60%);
+}
+
+.console-group-messages .outline-disclosure {
+    padding-left: 0;
+}
+
+.console-group-messages .outline-disclosure > ol {
+    padding: 0 0 0 12px !important;
 }
 
 .console-group-messages .outline-disclosure, .console-group-messages .outline-disclosure ol {
@@ -619,19 +635,19 @@ body.console-visible #console {
     line-height: 1em;
 }
 
-.console-group-messages .outline-disclosure li {
-    padding-top: 2px;
-    padding-bottom: 2px;
+.console-group-messages .outline-disclosure.single-node li {
+    padding-left: 2px;
 }
 
 .console-group-messages .outline-disclosure li .selection {
-    z-index: 0;
-    margin-top: -1px;
+    margin-left: -6px;
+    margin-right: -6px;
 }
 
 .console-formatted-object, .console-formatted-node {
     position: relative;
-    display: block;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .console-formatted-object .section, .console-formatted-node .section {
@@ -650,17 +666,6 @@ body.console-visible #console {
     color: rgb(128, 128, 128);
     -webkit-user-select: none;
     -webkit-user-modify: read-only;
-}
-
-.inspectable-node {
-    color: black !important;
-}
-
-.inspectable-node:hover {
-    background-color: rgba(56, 121, 217, 0.1);
-    -webkit-border-radius: 5px;
-    padding: 0 5px 1px;
-    margin: 0 -5px -1px;
 }
 
 .panel {
