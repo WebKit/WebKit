@@ -1,3 +1,16 @@
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        Remove last vestiges of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR from WebKit
+
+        Reviewed by Adam Roben.
+
+        Use of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR was removed in r37465
+        since NPAPI headers had migrated from JavaScriptCore to WebCore
+        before that.
+
+        * Configurations/WebKit.xcconfig: Removed definition of
+        JAVASCRIPTCORE_PRIVATE_HEADERS_DIR used in Production builds.
+
 2009-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

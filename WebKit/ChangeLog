@@ -1,3 +1,17 @@
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        Remove last vestiges of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR from WebKit
+
+        Reviewed by Adam Roben.
+
+        Use of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR was removed in r37465
+        since NPAPI headers had migrated from JavaScriptCore to WebCore
+        before that.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed
+        JAVASCRIPTCORE_PRIVATE_HEADERS_DIR build setting from from Debug
+        and Release configurations.
+
 2009-03-02  Anders Carlsson  <andersca@apple.com>
 
         WebNetscapePluginPackage.mm is an Objective-C++ file.
