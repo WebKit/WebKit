@@ -1,3 +1,21 @@
+2009-03-03  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=23028
+        Enable dynamic web font support to Chromium on Windows: Part 1
+        - Move OpenTypeUtilities.{cpp,h} to platform/graphics/opentype
+          from platform/graphics/win because both Windows port and Chromium Windows
+          port will use them.
+        - Adjust WebCore.vcproj accordingly.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/opentype: Added.
+        * platform/graphics/opentype/OpenTypeUtilities.cpp: Copied from WebCore/platform/graphics/win/OpenTypeUtilities.cpp.
+        * platform/graphics/opentype/OpenTypeUtilities.h: Copied from WebCore/platform/graphics/win/OpenTypeUtilities.h.
+        * platform/graphics/win/OpenTypeUtilities.cpp: Removed.
+        * platform/graphics/win/OpenTypeUtilities.h: Removed.
+
 2009-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
