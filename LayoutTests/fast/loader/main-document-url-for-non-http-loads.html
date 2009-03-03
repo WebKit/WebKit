@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpResourceLoadCallbacks();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+</script>
+<body>
+Radar 6616664 - Non-HTTP/HTTPS loads need to have their main document URL set.<br>
+When run in DumpRenderTree, this test will dump the resource load callback for the following subframe to make sure it had its main document URL set in its NSURLRequest.<br>
+<iframe src="resources/subframe-notify-done.html"></iframe>
+</body>
+</html>

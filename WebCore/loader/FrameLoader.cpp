@@ -3579,7 +3579,16 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource, bool cookiePolicyURLFromRequest)
 {
-    // These modifications are only necessary for HTTP and HTTPS.
+    // Don't set the cookie policy URL if it's already been set.
+    // But make sure to set it on all requests, as it has significance beyond the cookie policy for all protocols (<rdar://problem/6616664>).
+    if (request.mainDocumentURL().isEmpty()) {
+        if (mainResource && (isLoadingMainFrame() || cookiePolicyURLFromRequest))
+            request.setMainDocumentURL(request.url());
+        else if (Page* page = m_frame->page())
+            request.setMainDocumentURL(page->mainFrame()->loader()->url());
+    }
+    
+    // The remaining modifications are only necessary for HTTP and HTTPS.
     if (!request.url().isEmpty() && !request.url().protocolInHTTPFamily())
         return;
 
@@ -3592,14 +3601,6 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         request.setCachePolicy(ReloadIgnoringCacheData);
         request.setHTTPHeaderField("Cache-Control", "no-cache");
         request.setHTTPHeaderField("Pragma", "no-cache");
-    }
-    
-    // Don't set the cookie policy URL if it's already been set.
-    if (request.mainDocumentURL().isEmpty()) {
-        if (mainResource && (isLoadingMainFrame() || cookiePolicyURLFromRequest))
-            request.setMainDocumentURL(request.url());
-        else if (Page* page = m_frame->page())
-            request.setMainDocumentURL(page->mainFrame()->loader()->url());
     }
     
     if (mainResource)

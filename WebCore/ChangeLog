@@ -1,3 +1,22 @@
+2009-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6616664> - Quick looks of various file types is broken
+
+        In http://trac.webkit.org/changeset/40553 there was an attempt to prevent NSURLRequest churn
+        for non-HTTP loads when the underlying ResourceRequest changed.  Unfortunately it was a little
+        overzealous as the mainDocumentURL is relevant for all loads, not only HTTP/HTTPS loads.
+
+        Partially reverted behavior to always set the mainDocumentURL in situations when we would've
+        before that patch.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setMainDocumentURL):
+
 2009-03-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

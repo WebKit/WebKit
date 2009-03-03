@@ -1,4 +1,4 @@
-http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - willSendRequest <NSURLRequest http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html> redirectResponse (null)
+http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html, main document URL http://127.0.0.1:8000/misc/willCacheResponse-delegate-callback.html> redirectResponse (null)
 http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - willCacheResponse: called
 http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html>
 This tests for the willCacheResponse resource delegate callback as added for radar 5008925.

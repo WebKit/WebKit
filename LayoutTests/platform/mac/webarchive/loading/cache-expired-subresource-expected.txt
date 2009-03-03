@@ -1,12 +1,12 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest resources/cache-expired-subresource.webarchive> redirectResponse (null)
+resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
 <unknown> - didFinishLoading
 resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive>
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-http://localhost/pink-bullet.png - willSendRequest <NSURLRequest http://localhost/pink-bullet.png> redirectResponse (null)
+http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html> redirectResponse (null)
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 resources/cache-expired-subresource.webarchive - didFinishLoading
 http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php>

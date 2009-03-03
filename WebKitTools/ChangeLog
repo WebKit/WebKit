@@ -1,3 +1,18 @@
+2009-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Support layout test covering <rdar://problem/6616664>
+
+        Change NSURLRequest/IWebURLRequest dumping to include the mainDocumentURL
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSURLRequest _drt_descriptionSuitableForTestResult]): Return both the request URL and the 
+          mainDocumentURL.
+        
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (descriptionSuitableForTestResult): Return both the request URL and the mainDocumentURL.
+
 2009-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,24 @@
+2009-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Layout test covering <rdar://problem/6616664> - Quick looks of various file types is broken
+
+        Added to test the changes:
+        * fast/loader/main-document-url-for-non-http-loads-expected.txt: Added.
+        * fast/loader/main-document-url-for-non-http-loads.html: Added.
+        * fast/loader/resources/subframe-notify-done.html: Added.
+
+        Updated the following for the new info from dumpResourceLoadCallbacks():
+        * http/tests/misc/window-dot-stop-expected.txt:
+        * http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt:
+        * platform/mac-leopard/security/block-test-expected.txt:
+        * platform/mac-tiger/http/tests/misc/willCacheResponse-delegate-callback-expected.txt:
+        * platform/mac/http/tests/misc/willCacheResponse-delegate-callback-expected.txt:
+        * platform/mac/webarchive/loading/cache-expired-subresource-expected.txt:
+        * security/block-test-expected.txt:
+        * webarchive/loading/test-loading-archive-expected.txt:
+
 2009-03-02  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.

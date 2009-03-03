@@ -97,7 +97,7 @@
 
 - (NSString *)_drt_descriptionSuitableForTestResult
 {
-    return [NSString stringWithFormat:@"<NSURLRequest %@>", [[self URL] _drt_descriptionSuitableForTestResult]];
+    return [NSString stringWithFormat:@"<NSURLRequest URL %@, main document URL %@>", [[self URL] _drt_descriptionSuitableForTestResult], [[self mainDocumentURL] _drt_descriptionSuitableForTestResult]];
 }
 
 @end

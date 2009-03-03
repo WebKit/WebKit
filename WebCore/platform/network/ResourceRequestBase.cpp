@@ -164,8 +164,7 @@ void ResourceRequestBase::setMainDocumentURL(const KURL& mainDocumentURL)
     
     m_mainDocumentURL = mainDocumentURL; 
     
-    if (url().protocolInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 const String& ResourceRequestBase::httpMethod() const
