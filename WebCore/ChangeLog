@@ -1,3 +1,15 @@
+2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24321
+        Add V8 bindings headers.
+
+        * bindings/v8/V8Binding.h: Added.
+        * bindings/v8/V8Proxy.h: Added.
+        * bindings/v8/custom/V8CustomBinding.h: Added.
+        * bindings/v8/custom/V8CustomEventListener.h: Added.
+
 2009-03-03  Jungshik Shin <jshin@chromium.org>
 
         Reviewed by Eric Seidel.
