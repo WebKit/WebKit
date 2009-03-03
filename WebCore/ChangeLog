@@ -2,7 +2,7 @@
 
         Reviewed by Anders Carlsson.
 
-        https://bugs.webkit.org/show_bug.cgi?id=27385
+        https://bugs.webkit.org/show_bug.cgi?id=23707
         resizing plugins does not work, because the plugin never gets informed
 
         Make gtk plugins resize correctly, by sending them the setwindow event
