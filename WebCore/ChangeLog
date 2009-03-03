@@ -3,7 +3,7 @@
         Fix uninitialized memory reads in the Chromium Windows transparency
         code that were identified by Purify,
 
-        Reviewed by Darin Disher.
+        Reviewed by Darin Fisher.
 
         * platform/graphics/chromium/TransparencyWin.cpp:
         (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers):
