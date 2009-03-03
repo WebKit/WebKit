@@ -271,12 +271,14 @@ void Console::profile(const JSC::UString& title, ScriptCallStack* callStack)
     if (!page)
         return;
 
-    if (title.isNull())
-        return;
-
     // FIXME: log a console message when profiling is disabled.
     if (!page->inspectorController()->profilerEnabled())
         return;
+
+    if (title.isNull()) {   // no title so give it the next user intiated profile title.
+        page->inspectorController()->startUserInitiatedProfiling(0);
+        return;
+    }
 
     JSC::Profiler::profiler()->startProfiling(callStack->state(), title);
 }

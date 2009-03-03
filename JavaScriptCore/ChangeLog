@@ -1,3 +1,13 @@
+2009-03-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6639110> console.profile() doesn't work without a title
+
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::startProfiling): assert if there is not title to ensure
+        we don't start profiling without one.
+
 2009-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

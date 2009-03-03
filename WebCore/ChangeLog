@@ -1,3 +1,13 @@
+2009-03-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6639110> console.profile() doesn't work without a title
+
+        * page/Console.cpp:
+        (WebCore::Console::profile): If there is no title assume this is a user
+        initiated profile and give it the next incremented title name.
+
 2009-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Fix a regression that broke dirxml and caused an ASSERT in debug builds. Also simplified

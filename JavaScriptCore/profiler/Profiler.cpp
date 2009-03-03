@@ -58,6 +58,8 @@ Profiler* Profiler::profiler()
 
 void Profiler::startProfiling(ExecState* exec, const UString& title)
 {
+    ASSERT_ARG(title, !title.isNull());
+
     // Check if we currently have a Profile for this global ExecState and title.
     // If so return early and don't create a new Profile.
     ExecState* globalExec = exec ? exec->lexicalGlobalObject()->globalExec() : 0;

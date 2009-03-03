@@ -1,3 +1,12 @@
+2009-03-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6639110> console.profile() doesn't work without a title
+
+        * fast/profiler/profile-with-no-title-expected.txt: Added.
+        * fast/profiler/profile-with-no-title.html: Added.
+
 2009-03-03  Pamela Greene  <pam@chromium.org>
 
         Remove junk files that must have been accidentally committed.
