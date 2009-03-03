@@ -16,7 +16,7 @@
         * platform/graphics/win/OpenTypeUtilities.cpp: Removed.
         * platform/graphics/win/OpenTypeUtilities.h: Removed.
 
-2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+2009-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
 
@@ -73,7 +73,7 @@
         (WebCore::HitTestingTransformState::move):
         (WebCore::HitTestingTransformState::HitTestingTransformState):
 
-2009-03-02  Brett Wilson  <brettw@chromium.org>
+2009-03-03  Brett Wilson  <brettw@chromium.org>
 
         Fix uninitialized memory reads in the Chromium Windows transparency
         code that were identified by Purify,
@@ -84,7 +84,7 @@
         (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers):
         (WebCore::TransparencyWin::initializeNewContext):
 
-2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+2009-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
 
@@ -100,7 +100,7 @@
         (WebCore::RenderObject::transformFromContainer):
         * rendering/RenderObject.h:
 
-2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+2009-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
 
