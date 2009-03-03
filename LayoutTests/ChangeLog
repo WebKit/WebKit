@@ -1,3 +1,15 @@
+2009-03-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=4343
+        XMLHttpRequest doesn't work in a JavaScript-created window
+
+        The problem was fixed a while ago (r34506), just adding a test.
+
+        * http/tests/xmlhttprequest/request-from-popup-expected.txt: Added.
+        * http/tests/xmlhttprequest/request-from-popup.html: Added.
+
 2009-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson
