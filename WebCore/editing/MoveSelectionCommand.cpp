@@ -70,6 +70,10 @@ void MoveSelectionCommand::doApply()
         pos = endingSelection().start();
 
     setEndingSelection(VisibleSelection(pos, endingSelection().affinity()));
+    if (!positionNode->inDocument()) {
+        // Document was modified out from under us.
+        return;
+    }
     applyCommandToComposite(ReplaceSelectionCommand::create(positionNode->document(), m_fragment, true, m_smartMove));
 }
 

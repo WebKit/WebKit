@@ -1,3 +1,17 @@
+2009-03-03  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24325
+        Crash on replacing document contents during drop.
+
+        Makes sure a node is in the document during a move before using it.
+
+        Test: fast/events/crash-on-mutate-during-drop.html
+
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+
 2009-03-03  Jungshik Shin <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

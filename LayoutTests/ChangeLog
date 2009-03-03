@@ -1,3 +1,16 @@
+2009-03-03  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24325
+        Crash on replacing document contents during drop
+
+        Makes sure we don't crash during dnd with DOM mutation event listener
+        that mutates the document on drop.
+
+        * fast/events/crash-on-mutate-during-drop-expected.txt: Added.
+        * fast/events/crash-on-mutate-during-drop.html: Added.
+
 2009-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
