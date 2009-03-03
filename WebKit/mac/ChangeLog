@@ -1,5 +1,15 @@
 2009-03-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan, Ada Chan.
+
+        Factor loading code out into its own method and get rid of a bunch of goots.
+        
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+        (-[WebNetscapePluginPackage load]):
+
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * Plugins/WebNetscapeDeprecatedFunctions.h:

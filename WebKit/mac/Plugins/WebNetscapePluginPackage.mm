@@ -323,8 +323,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     [self _unloadWithShutdown:YES];
 }
 
-- (BOOL)load
-{    
+- (BOOL)_tryLoad
+{
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
     NP_InitializeFuncPtr NP_Initialize = NULL;
     NPError npErr;
@@ -347,7 +347,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isBundle) {
 #endif
         if (!CFBundleLoadExecutable(cfBundle))
-            goto abort;
+            return NO;
 #if !LOG_DISABLED
         currentTime = CFAbsoluteTimeGetCurrent();
         duration = currentTime - start;
@@ -366,7 +366,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
             NP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
             if (!NP_Initialize || !NP_GetEntryPoints || !NP_Shutdown)
-                goto abort;
+                return NO;
 #ifdef SUPPORT_CFM
         }
     } else {
@@ -586,7 +586,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
         npErr = NP_Initialize(&browserFuncs);
         if (npErr != NPERR_NO_ERROR)
-            goto abort;
+            return NO;
 #if !LOG_DISABLED
         currentTime = CFAbsoluteTimeGetCurrent();
         duration = currentTime - initializeStart;
@@ -597,7 +597,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         npErr = NP_GetEntryPoints(&pluginFuncs);
         if (npErr != NPERR_NO_ERROR)
-            goto abort;
+            return NO;
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
@@ -617,9 +617,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     LOG(Plugins, "%f Total load time: %f seconds", currentTime, duration);
 
-    return [super load];
+    return YES;
+}
 
-abort:
+- (BOOL)load
+{    
+    if ([self _tryLoad])
+        return [super load];
+
     [self _unloadWithShutdown:NO];
     return NO;
 }
