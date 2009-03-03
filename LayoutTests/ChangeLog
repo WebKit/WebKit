@@ -1,3 +1,15 @@
+2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24313
+        
+        Test hit testing on the border and padding of inputs, after
+        touching code that referenced <rdar://problem/4617841>.
+
+        * fast/forms/input-hit-test-border-expected.txt: Added.
+        * fast/forms/input-hit-test-border.html: Added.
+
 2009-03-01  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

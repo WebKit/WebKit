@@ -1,3 +1,19 @@
+2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson
+
+        https://bugs.webkit.org/show_bug.cgi?id=24313
+        
+        If RenderTextControlSingleLine::nodeAtPoint() pokes a node into the
+        HitTestResult, then it had better well return |true|. And m_innerBlock
+        could never have been set as the hit node by the superclass, because
+        the superclass knows nothing about m_innerBlock.
+        
+        Test: fast/forms/input-hit-test-border.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+
 2009-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
