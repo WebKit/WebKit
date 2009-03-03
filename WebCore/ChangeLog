@@ -1,3 +1,13 @@
+2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23657
+        Remove Database API callback IDLs from the project. 
+        They were removed in r40633.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed IDL files from the project.
+
 2009-03-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.
