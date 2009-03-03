@@ -359,7 +359,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if (isCFM) {
             pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
             if (!pluginMainFunc)
-                goto abort;
+                return NO;
         } else {
 #endif
             NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
@@ -378,17 +378,17 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
             LOG_ERROR("FSPathMakeRef failed. Error=%d", err);
-            goto abort;
+            return NO;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if (err != noErr) {
             LOG_ERROR("FSGetCatalogInfo failed. Error=%d", err);
-            goto abort;
+            return NO;
         }
         err = WebGetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if (err != noErr) {
             LOG_ERROR("WebGetDiskFragment failed. Error=%d", err);
-            goto abort;
+            return NO;
         }
 #if !LOG_DISABLED
         currentTime = CFAbsoluteTimeGetCurrent();
@@ -399,7 +399,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
         if (!pluginMainFunc) {
-            goto abort;
+            return NO;
         }
 
         // NOTE: pluginMainFunc is freed after it is called. Be sure not to return before that.
@@ -480,14 +480,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
         if (!isBundle)
             // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
-            free(pluginMainFunc);
+            free(reinterpret_cast<void*>(pluginMainFunc));
         
         // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
         // Launch the RealPlayer application to refresh the file.
         if (npErr != NPERR_NO_ERROR) {
             if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && [[self filename] isEqualToString:RealPlayerPluginFilename])
                 [self launchRealPlayer];
-            goto abort;
+            return NO;
         }
 #if !LOG_DISABLED
         currentTime = CFAbsoluteTimeGetCurrent();
@@ -514,7 +514,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         pluginFuncs.setvalue = (NPP_SetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setvalue);
 
         // LiveConnect support
-        pluginFuncs.javaClass = (NPP_GetJavaClassProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
+        pluginFuncs.javaClass = (JRIGlobalRef)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
         if (pluginFuncs.javaClass) {
             LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", [self name], pluginFuncs.javaClass);
         } else {

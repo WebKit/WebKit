@@ -1,5 +1,12 @@
 2009-03-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix PowerPC build.
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan, Ada Chan.
 
         Factor loading code out into its own method and get rid of a bunch of gotos.
