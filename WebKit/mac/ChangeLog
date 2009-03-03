@@ -1,3 +1,17 @@
+2009-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/6633834>.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        Create a new plug-in instance if the plug-in host has crashed.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invalidate):
+        Add a null check for the plug-in host proxy.
+
 2009-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

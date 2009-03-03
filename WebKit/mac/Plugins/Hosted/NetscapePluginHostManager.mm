@@ -222,6 +222,8 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         // Try to spawn it again.
         hostProxy = hostForPackage(pluginPackage);
         
+        // Create a new instance.
+        instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
         kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], instance->pluginID());
     }
 

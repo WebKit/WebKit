@@ -152,6 +152,10 @@ void NetscapePluginInstanceProxy::cleanup()
 
 void NetscapePluginInstanceProxy::invalidate()
 {
+    // If the plug-in host has died, the proxy will be null.
+    if (!m_pluginHostProxy)
+        return;
+    
     m_pluginHostProxy->removePluginInstance(this);
     m_pluginHostProxy = 0;
 }
