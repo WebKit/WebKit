@@ -1,3 +1,33 @@
+2009-03-03  Onne Gorter  <onne.gorter@avinity.net>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27385
+        resizing plugins does not work, because the plugin never gets informed
+
+        Make gtk plugins resize correctly, by sending them the setwindow event
+        correctly. Also ensure that all plugin eventing is done with correct
+        locking/calling. Mostly copied from mac implementation.
+
+        manual test: manual-tests/gtk/plugin-resize-scroll.html
+
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        ensure locking/calling for NPEvents
+        (WebCore::PluginView::updatePluginWidget):
+        if something changed, let setNPWindowIfNeeded handle it
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        ensure calling conventions
+        (WebCore::PluginView::setNPWindowRect):
+        just pass control to setNPWindowIfNeeded
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        event the plugin correctly of new window
+        (WebCore::PluginView::init):
+        init through the new setup
+
 2009-03-03  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Fisher.

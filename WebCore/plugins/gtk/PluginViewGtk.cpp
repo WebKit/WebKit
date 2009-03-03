@@ -82,6 +82,23 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+bool PluginView::dispatchNPEvent(NPEvent& event)
+{
+    // sanity check
+    if (!m_plugin->pluginFuncs()->event)
+        return false;
+
+    PluginView::setCurrentPluginView(this);
+    JSC::JSLock::DropAllLocks dropAllLocks(false);
+    setCallingPlugin(true);
+
+    bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
+
+    setCallingPlugin(false);
+    PluginView::setCurrentPluginView(0);
+    return accepted;
+}
+
 void PluginView::updatePluginWidget()
 {
     if (!parent() || !m_isWindowed)
@@ -97,16 +114,8 @@ void PluginView::updatePluginWidget()
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
-    GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
-    if (platformPluginWidget()) {
-        gtk_widget_size_allocate(platformPluginWidget(), &allocation);
-#if PLATFORM(X11)
-        if (!m_needsXEmbed) {
-            gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
-            gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
-        }
-#endif
-    }
+    if (platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect))
+        setNPWindowIfNeeded();
 }
 
 void PluginView::setFocus()
@@ -144,7 +153,12 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    if (m_isWindowed || context->paintingDisabled())
+    if (context->paintingDisabled())
+        return;
+
+    setNPWindowIfNeeded();
+
+    if (m_isWindowed)
         return;
 
     NPEvent npEvent;
@@ -154,12 +168,8 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     ASSERT(parent()->isFrameView());
 
-    if (m_plugin->pluginFuncs()->event) {
-        JSC::JSLock::DropAllLocks dropAllLocks(false);
-        m_plugin->pluginFuncs()->event(m_instance, &npEvent);
-    }
-
-    setNPWindowRect(frameRect());
+    if (!dispatchNPEvent(npEvent))
+        LOG(Events, "PluginView::paint(): Paint event not accepted");
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -169,7 +179,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     /* FIXME: Synthesize an XEvent to pass through */
 
     JSC::JSLock::DropAllLocks dropAllLocks(false);
-    if (!m_plugin->pluginFuncs()->event(m_instance, &npEvent))
+    if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 
@@ -184,7 +194,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(IntPoint(event->pageX(), event->pageY()));
 
     JSC::JSLock::DropAllLocks dropAllLocks(false);
-    if (!m_plugin->pluginFuncs()->event(m_instance, &npEvent))
+    if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 
@@ -200,40 +210,41 @@ void PluginView::setParent(ScrollView* parent)
     }
 }
 
-void PluginView::setNPWindowRect(const IntRect& rect)
+void PluginView::setNPWindowRect(const IntRect&)
 {
-    if (!m_isStarted || !parent())
+    setNPWindowIfNeeded();
+}
+
+void PluginView::setNPWindowIfNeeded()
+{
+    if (!m_isStarted || !parent() || !m_plugin->pluginFuncs()->setwindow)
         return;
 
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(rect.location());
-    m_npWindow.x = p.x();
-    m_npWindow.y = p.y();
+    m_npWindow.x = m_windowRect.x();
+    m_npWindow.y = m_windowRect.y();
+    m_npWindow.width = m_windowRect.width();
+    m_npWindow.height = m_windowRect.height();
 
-    m_npWindow.width = rect.width();
-    m_npWindow.height = rect.height();
+    m_npWindow.clipRect.left = m_clipRect.x();
+    m_npWindow.clipRect.top = m_clipRect.y();
+    m_npWindow.clipRect.right = m_clipRect.width();
+    m_npWindow.clipRect.bottom = m_clipRect.height();
 
-    m_npWindow.clipRect.left = 0;
-    m_npWindow.clipRect.top = 0;
-    m_npWindow.clipRect.right = rect.width();
-    m_npWindow.clipRect.bottom = rect.height();
-
-    if (m_npWindow.x < 0 || m_npWindow.y < 0 ||
-        m_npWindow.width <= 0 || m_npWindow.height <= 0)
-        return;
-
-    if (m_plugin->pluginFuncs()->setwindow) {
-        PluginView::setCurrentPluginView(this);
-        JSC::JSLock::DropAllLocks dropAllLocks(false);
-        setCallingPlugin(true);
-        m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
-        setCallingPlugin(false);
-        PluginView::setCurrentPluginView(0);
-
-        if (!m_isWindowed)
-            return;
-
-        ASSERT(platformPluginWidget());
+    GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
+    gtk_widget_size_allocate(platformPluginWidget(), &allocation);
+#if PLATFORM(X11)
+    if (!m_needsXEmbed) {
+        gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
+        gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
     }
+#endif
+
+    PluginView::setCurrentPluginView(this);
+    JSC::JSLock::DropAllLocks dropAllLocks(false);
+    setCallingPlugin(true);
+    m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
+    setCallingPlugin(false);
+    PluginView::setCurrentPluginView(0);
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -576,10 +587,12 @@ void PluginView::init()
         m_npWindow.window = 0;
     }
 
+    // TODO remove in favor of null events, like mac port?
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
-        setNPWindowRect(frameRect());
+        updatePluginWidget(); // was: setNPWindowIfNeeded(), but this doesn't produce 0x0 rects at first go
 
     m_status = PluginStatusLoadedSuccessfully;
 }
 
 } // namespace WebCore
+
