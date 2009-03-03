@@ -114,6 +114,7 @@ public:
         if (needReferenceBuffer) {
             m_referenceBitmap.setConfig(SkBitmap::kARGB_8888_Config, size.width(), size.height());
             m_referenceBitmap.allocPixels();
+            m_referenceBitmap.eraseARGB(0, 0, 0, 0);
         }
     }
 
@@ -353,7 +354,9 @@ void TransparencyWin::initializeNewContext()
         // all layer modes will clear it in their initialization.
         m_layerBuffer = m_cachedBuffers->destBitmap();
         m_drawContext = m_cachedBuffers->destBitmap()->context();
+        bitmapForContext(*m_drawContext).eraseARGB(0, 0, 0, 0);
         m_referenceBitmap = m_cachedBuffers->referenceBitmap();
+        m_referenceBitmap->eraseARGB(0, 0, 0, 0);
         return;
     }
 

@@ -1,3 +1,14 @@
+2009-03-02  Brett Wilson  <brettw@chromium.org>
+
+        Fix uninitialized memory reads in the Chromium Windows transparency
+        code that were identified by Purify,
+
+        Reviewed by Darin Disher.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers):
+        (WebCore::TransparencyWin::initializeNewContext):
+
 2009-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
