@@ -77,7 +77,7 @@ private:
     private:
         GeoNotifier(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
     };
-    
+
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
     void sendErrorToOneShots(PositionError*);
@@ -86,10 +86,13 @@ private:
     void sendPositionToWatchers(Geoposition*);
     
     void handleError(PositionError*);
-    
+
+    // GeolocationServiceClient
     virtual void geolocationServicePositionChanged(GeolocationService*);
     virtual void geolocationServiceErrorOccurred(GeolocationService*);
-            
+
+    bool shouldAllowGeolocation();
+
     typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
     typedef HashMap<int, RefPtr<GeoNotifier> > GeoNotifierMap;
     
@@ -97,6 +100,12 @@ private:
     GeoNotifierMap m_watchers;
     Frame* m_frame;
     OwnPtr<GeolocationService> m_service;
+
+    enum {
+        Unknown,
+        Yes,
+        No
+    } m_allowGeolocation;
 };
     
 } // namespace WebCore

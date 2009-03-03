@@ -1,3 +1,19 @@
+2009-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6507404> Add Geolocation support.
+
+        This is not yet turned on for any Mac platform.
+
+        Add SPI to ask the embedding application whether to allow
+        Geolocation for an origin.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldAllowGeolocationForFrame):
+        * WebView/WebUIDelegatePrivate.h:
+
 2009-03-02  Anders Carlsson  <andersca@apple.com>
 
         Fix PowerPC build.

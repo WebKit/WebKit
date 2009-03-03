@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -139,6 +139,8 @@ public:
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();
 #endif
+
+    virtual bool shouldAllowGeolocationForFrame(WebCore::Frame*);
 
 private:
     WebView *m_webView;

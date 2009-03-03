@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,5 +109,7 @@ enum {
 
 - (BOOL)webView:(WebView *)sender shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename;
 - (NSString *)webView:(WebView *)sender generateReplacementFile:(NSString *)path;
- 
+
+- (BOOL)webView:(WebView *)sender shouldAllowLocationServicesForFrame:(WebFrame *)frame securityOrigin:(WebSecurityOrigin *)origin;
+
 @end

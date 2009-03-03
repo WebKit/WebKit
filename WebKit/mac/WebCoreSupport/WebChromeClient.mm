@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -663,6 +663,21 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     [m_webView _setNeedsOneShotDrawingSynchronization:YES];
 }
 #endif
+
+bool WebChromeClient::shouldAllowGeolocationForFrame(Frame* frame)
+{
+    BOOL result = NO;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
+    result = CallUIDelegateReturningBoolean(NO, m_webView, @selector(webView:shouldAllowLocationServicesForFrame:securityOrigin:), kit(frame), webOrigin);
+    [webOrigin release];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return result;
+}
 
 @implementation WebOpenPanelResultListener
 

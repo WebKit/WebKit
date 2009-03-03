@@ -1,3 +1,49 @@
+2009-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6507404> Add Geolocation support.
+
+        This is not yet turned on for any Mac platform.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::shouldAllowGeolocationForFrame):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldAllowGeolocationForFrame):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::disconnectFrame): Remove call to setUsingGeolocation as the document
+        will not be alive at this point.
+        (WebCore::Geolocation::getCurrentPosition): Check if the embedding app allows geolocation and
+        return a PERMISSION_DENIED if not.
+        (WebCore::Geolocation::watchPosition): Ditto.
+        (WebCore::Geolocation::shouldAllowGeolocation): Perform request to embedding layer of whether
+        to allow geolocation and cache the result. 
+        * page/Geolocation.h:
+        (WebCore::Geolocation::):
+        * platform/GeolocationService.cpp:
+        * platform/GeolocationService.h:
+        (WebCore::GeolocationService::~GeolocationService):
+        (WebCore::GeolocationService::stopUpdating):
+        * platform/mac/GeolocationServiceMac.h: Added.
+        (WebCore::GeolocationServiceMac::lastPosition):
+        (WebCore::GeolocationServiceMac::lastError):
+        * platform/mac/GeolocationServiceMac.mm: Added.
+        (WebCore::GeolocationService::create):
+        (WebCore::GeolocationServiceMac::GeolocationServiceMac):
+        (WebCore::GeolocationServiceMac::~GeolocationServiceMac):
+        (WebCore::GeolocationServiceMac::startUpdating):
+        (WebCore::GeolocationServiceMac::stopUpdating):
+        (WebCore::GeolocationServiceMac::suspend):
+        (WebCore::GeolocationServiceMac::resume):
+        (WebCore::GeolocationServiceMac::positionChanged):
+        (WebCore::GeolocationServiceMac::errorOccurred):
+        (-[WebCoreCoreLocationObserver initWithCallback:]):
+        (-[WebCoreCoreLocationObserver locationManager:didUpdateToLocation:fromLocation:]):
+        (-[WebCoreCoreLocationObserver locationManager:didFailWithError:]):
+
 2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for wxWidgets Mac trunk build.

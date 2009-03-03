@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GeolocationService_h
-#define GeolocationService_h
+#ifndef GeolocationServiceMac_h
+#define GeolocationServiceMac_h
 
-#include <wtf/Noncopyable.h>
+#if ENABLE(GEOLOCATION)
+
+#include "GeolocationService.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+#ifdef __OBJC__
+@class CLLocationManager;
+@class WebCoreCoreLocationObserver;
+#else
+class CLLocationManager;
+class WebCoreCoreLocationObserver;
+#endif
 
 namespace WebCore {
 
-class GeolocationService;
-class Geoposition;
-class PositionError;
-class PositionOptions;
-
-class GeolocationServiceClient {
+class GeolocationServiceMac : public GeolocationService {
 public:
-    virtual ~GeolocationServiceClient() { }
-    virtual void geolocationServicePositionChanged(GeolocationService*) = 0;
-    virtual void geolocationServiceErrorOccurred(GeolocationService*) = 0;
-};
-
-class GeolocationService : public Noncopyable {
-public:
-    static GeolocationService* create(GeolocationServiceClient*);
-    virtual ~GeolocationService() { }
+    GeolocationServiceMac(GeolocationServiceClient*);
+    virtual ~GeolocationServiceMac();
     
-    virtual bool startUpdating(PositionOptions*) { return false; }
-    virtual void stopUpdating() { }
-    
-    virtual void suspend() { }
-    virtual void resume() { }
+    virtual bool startUpdating(PositionOptions*);
+    virtual void stopUpdating();
 
-    virtual Geoposition* lastPosition() const { return 0; }
-    virtual PositionError* lastError() const { return 0; }
+    virtual void suspend();
+    virtual void resume();
 
-    void positionChanged();
-    void errorOccurred();
+    virtual Geoposition* lastPosition() const { return m_lastPosition.get(); }
+    virtual PositionError* lastError() const { return m_lastError.get(); }
 
-protected:
-    GeolocationService(GeolocationServiceClient*);
+    void positionChanged(PassRefPtr<Geoposition>);
+    void errorOccurred(PassRefPtr<PositionError>);
 
 private:
-    GeolocationServiceClient* m_geolocationServiceClient;
+    RetainPtr<CLLocationManager> m_locationManager;
+    RetainPtr<WebCoreCoreLocationObserver> m_objcObserver;
+    
+    RefPtr<Geoposition> m_lastPosition;
+    RefPtr<PositionError> m_lastError;
 };
-
+    
 } // namespace WebCore
 
-#endif // GeolocationService_h
+#endif // ENABLE(GEOLOCATION)
+
+#endif // GeolocationServiceMac_h

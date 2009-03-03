@@ -26,9 +26,7 @@
 #include "config.h"
 #include "GeolocationService.h"
 
-#include "Geoposition.h"
-#include "PositionError.h"
-#include "PositionOptions.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

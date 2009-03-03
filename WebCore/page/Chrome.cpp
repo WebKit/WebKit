@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -385,6 +385,16 @@ void Chrome::disableSuddenTermination()
 void Chrome::enableSuddenTermination()
 {
     m_client->enableSuddenTermination();
+}
+
+bool Chrome::shouldAllowGeolocationForFrame(Frame* frame)
+{
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
+    ASSERT(frame);
+    return m_client->shouldAllowGeolocationForFrame(frame);
 }
 
 void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)

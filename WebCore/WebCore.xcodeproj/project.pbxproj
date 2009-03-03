@@ -4190,6 +4190,8 @@
 		BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
+		BCE494AB0F4F5E9E0084E319 /* GeolocationServiceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */; settings = {ATTRIBUTES = (); }; };
+		BCE494AC0F4F5E9E0084E319 /* GeolocationServiceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */; };
 		BCE658FF0EA9248A007E4533 /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE658FE0EA9248A007E4533 /* Theme.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659A80EA927B9007E4533 /* ThemeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659E50EA92FB2007E4533 /* ThemeMac.h */; };
@@ -4455,7 +4457,7 @@
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
 		FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */; };
-		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; };
+		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -9000,6 +9002,8 @@
 		BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocationCustom.cpp; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
 		BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagNodeList.h; sourceTree = "<group>"; };
+		BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationServiceMac.h; sourceTree = "<group>"; };
+		BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GeolocationServiceMac.mm; sourceTree = "<group>"; };
 		BCE658FE0EA9248A007E4533 /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
 		BCE659A80EA927B9007E4533 /* ThemeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeTypes.h; sourceTree = "<group>"; };
 		BCE659E50EA92FB2007E4533 /* ThemeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeMac.h; sourceTree = "<group>"; };
@@ -10124,8 +10128,10 @@
 				066C772C0AB603D200238CC4 /* FileChooserMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
-				6593923909AE435C002C531F /* KURLMac.mm */,
+				BCE494A90F4F5E9E0084E319 /* GeolocationServiceMac.h */,
+				BCE494AA0F4F5E9E0084E319 /* GeolocationServiceMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
+				6593923909AE435C002C531F /* KURLMac.mm */,
 				9352084409BD43B900F2038D /* Language.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
@@ -10138,17 +10144,17 @@
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
-				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
-				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
 				BCEF869E0E844E9D00A85CD5 /* ScrollbarThemeMac.mm */,
+				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.mm */,
 				0A4844980CA44CB200B7BD48 /* SoftLinking.h */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
+				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				BCE659E50EA92FB2007E4533 /* ThemeMac.h */,
 				BCE659E80EA92FFA007E4533 /* ThemeMac.mm */,
@@ -16806,6 +16812,7 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				BCE494AB0F4F5E9E0084E319 /* GeolocationServiceMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18793,6 +18800,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				BCE494AC0F4F5E9E0084E319 /* GeolocationServiceMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

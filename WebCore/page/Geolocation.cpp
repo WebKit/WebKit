@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #include "config.h"
 #include "Geolocation.h"
 
+#include "Chrome.h"
 #include "Document.h"
 #include "Frame.h"
+#include "Page.h"
 #include "PositionError.h"
 
 namespace WebCore {
@@ -54,6 +56,7 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
 Geolocation::Geolocation(Frame* frame)
     : m_frame(frame)
     , m_service(GeolocationService::create(this))
+    , m_allowGeolocation(Unknown)
 {
     ASSERT(m_frame->document());
     m_frame->document()->setUsingGeolocation(true);
@@ -62,13 +65,20 @@ Geolocation::Geolocation(Frame* frame)
 void Geolocation::disconnectFrame()
 {
     m_service->stopUpdating();
-    m_frame->document()->setUsingGeolocation(false);
     m_frame = 0;
 }
 
 void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PositionOptions* options)
 {
     RefPtr<GeoNotifier> notifier = GeoNotifier::create(successCallback, errorCallback, options);
+
+    if (!shouldAllowGeolocation()) {
+        if (notifier->m_errorCallback) {
+            RefPtr<PositionError> error = WebCore::PositionError::create(PositionError::PERMISSION_DENIED, "Disallowed Geolocation");
+            notifier->m_errorCallback->handleEvent(error.get());
+        }
+        return;
+    }
 
     if (!m_service->startUpdating(options)) {
         if (notifier->m_errorCallback) {
@@ -84,6 +94,14 @@ void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallbac
 int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PositionOptions* options)
 {
     RefPtr<GeoNotifier> notifier = GeoNotifier::create(successCallback, errorCallback, options);
+
+    if (!shouldAllowGeolocation()) {
+        if (notifier->m_errorCallback) {
+            RefPtr<PositionError> error = WebCore::PositionError::create(PositionError::PERMISSION_DENIED, "Disallowed Geolocation");
+            notifier->m_errorCallback->handleEvent(error.get());
+        }
+        return 0;
+    }
 
     if (!m_service->startUpdating(options)) {
         if (notifier->m_errorCallback) {
@@ -216,6 +234,20 @@ void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)
     ASSERT(service->lastError());
     
     handleError(service->lastError());
+}
+
+bool Geolocation::shouldAllowGeolocation()
+{
+    if (!m_frame)
+        return false;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
+    if (m_allowGeolocation == Unknown)
+        m_allowGeolocation = page->chrome()->shouldAllowGeolocationForFrame(m_frame) ? Yes : No;
+    return m_allowGeolocation == Yes;
 }
 
 } // namespace WebCore

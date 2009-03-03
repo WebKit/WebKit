@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,7 +48,7 @@ namespace WebCore {
     class Page;
     class String;
     class Widget;
-    
+
     struct FrameLoadRequest;
     struct WindowFeatures;
 
@@ -151,6 +151,8 @@ namespace WebCore {
                                           ScrollbarControlState, ScrollbarPart pressedPart, bool vertical,
                                           float value, float proportion, ScrollbarControlPartMask);
         virtual bool paintCustomScrollCorner(GraphicsContext*, const FloatRect&);
+
+        virtual bool shouldAllowGeolocationForFrame(Frame*) { return false; }
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
 
