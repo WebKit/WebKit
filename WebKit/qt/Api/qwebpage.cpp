@@ -490,6 +490,7 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         case QWebPage::MoveToEndOfBlock:
         case QWebPage::MoveToStartOfDocument:
         case QWebPage::MoveToEndOfDocument:
+        case QWebPage::SelectAll:
         case QWebPage::SelectNextChar:
         case QWebPage::SelectPreviousChar:
         case QWebPage::SelectNextWord:
@@ -550,6 +551,7 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::MoveToEndOfBlock);
     updateAction(QWebPage::MoveToStartOfDocument);
     updateAction(QWebPage::MoveToEndOfDocument);
+    updateAction(QWebPage::SelectAll);
     updateAction(QWebPage::SelectNextChar);
     updateAction(QWebPage::SelectPreviousChar);
     updateAction(QWebPage::SelectNextWord);
@@ -1808,6 +1810,9 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case MoveToEndOfDocument:
             text = tr("Move the cursor to the end of the document");
+            break;
+        case SelectAll:
+            text = tr("Select all");
             break;
         case SelectNextChar:
             text = tr("Select to the next character");
