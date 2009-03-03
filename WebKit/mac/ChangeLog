@@ -1,5 +1,11 @@
 2009-03-02  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * Plugins/WebNetscapeDeprecatedFunctions.h:
+
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Rename WebNetscapePluginPackage.m to WebNetscapePluginPackage.mm
