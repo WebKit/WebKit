@@ -1,3 +1,15 @@
+2009-03-03  Pamela Greene  <pam@chromium.org>
+
+        Remove junk files that must have been accidentally committed.
+        Submitted without review.
+
+        * fast/block/float/t0905-c414-flt-fit-01-d-g.html.orig: Removed.
+        * fast/block/float/t0905-c414-flt-fit-01-d-g.html.rej: Removed.
+        * fast/block/float/t0905-c5525-fltblck-00-d-ag.html.orig: Removed.
+        * fast/block/float/t0905-c5525-fltblck-00-d-ag.html.rej: Removed.
+        * fast/block/float/t0905-c5526-flthw-00-c-g.html.orig: Removed.
+        * fast/block/float/t0905-c5526-flthw-00-c-g.html.rej: Removed.
+
 2009-03-03  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.
