@@ -1,3 +1,16 @@
+2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24317
+        
+        Always return |true| from RenderTextControlMultiLine::nodeAtPoint() if
+        the superclass found a node, otherwise we set the innerNode of the
+        HitTestResult, but don't actually report that we found a hit.
+
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+
 2009-03-03  Onne Gorter  <onne.gorter@avinity.net>
 
         Reviewed by Anders Carlsson.
