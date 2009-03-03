@@ -3,6 +3,9 @@
         Fix a regression that broke dirxml and caused an ASSERT in debug builds. Also simplified
         the console code and refactored things to have fewer code paths and duplication.
 
+        rdar://problem/6367127
+        https://bugs.webkit.org/show_bug.cgi?id=24329
+
         Reviewed by Kevin McCullough.
 
         Test: manual-tests/inspector/console-dir.html
