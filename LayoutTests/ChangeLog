@@ -1,3 +1,36 @@
+2009-03-03  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=23482
+        Add the following CSS 2.1 tests, with YinYang character (U+262F)
+        and SouthEast Arrow (U+2798) replaced by png images, 
+        to fast/block/float. Leftward white arrow (U+21E6) is also 
+        replaced by an ASCII-equivalent of '<-'.
+
+              css2.1/t0905-c414-flt-fit-01-d-g.html
+              css2.1/t0905-c5525-fltblck-00-d-ag.html           
+              css2.1/t0905-c5526-flthw-00-c-g.html
+
+        On platforms where no font covers those characters (e.g. Windows),
+        the above tests can be skipped and the new tests can be used, instead.
+        They're equivalent in terms of what they test.
+
+        * fast/block/float/resources/se_arrow.png: Added.
+        * fast/block/float/resources/yinyang.png: Added.
+        * fast/block/float/t0905-c414-flt-fit-01-d-g.html: Copied from LayoutTests/css2.1/t0905-c414-flt-fit-01-d-g.html.
+        * fast/block/float/t0905-c5525-fltblck-00-d-ag.html: Copied from LayoutTests/css2.1/t0905-c5525-fltblck-00-d-ag.html.
+        * fast/block/float/t0905-c5526-flthw-00-c-g.html: Copied from LayoutTests/css2.1/t0905-c5526-flthw-00-c-g.html.
+        * platform/mac/fast/block/float/t0905-c414-flt-fit-01-d-g-expected.checksum: Added.
+        * platform/mac/fast/block/float/t0905-c414-flt-fit-01-d-g-expected.png: Added.
+        * platform/mac/fast/block/float/t0905-c414-flt-fit-01-d-g-expected.txt: Added.
+        * platform/mac/fast/block/float/t0905-c5525-fltblck-00-d-ag-expected.checksum: Added.
+        * platform/mac/fast/block/float/t0905-c5525-fltblck-00-d-ag-expected.png: Added.
+        * platform/mac/fast/block/float/t0905-c5525-fltblck-00-d-ag-expected.txt: Added.
+        * platform/mac/fast/block/float/t0905-c5526-flthw-00-c-g-expected.checksum: Added.
+        * platform/mac/fast/block/float/t0905-c5526-flthw-00-c-g-expected.png: Added.
+        * platform/mac/fast/block/float/t0905-c5526-flthw-00-c-g-expected.txt: Added.
+
 2009-03-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

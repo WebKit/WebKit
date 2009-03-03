@@ -1,0 +1,26 @@
+***************
+*** 10,21 ****
+    <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#floats" title="9.5 Floats">
+   </head>
+   <body>
+-   <p>There should be a complete unbroken drawing of a yin-yang (‰÷ø) symbol below, slightly on the left (‰à?) inside a blue box.</p>
+    <div>
+-    <p> <img alt="FAIL: You need images enabled." src="support/test-tl.png"> </p>
+-    <p> <img alt="FAIL: You need images enabled." src="support/test-tr.png"> </p>
+-    <p> <img alt="FAIL: You need images enabled." src="support/test-bl.png"> </p>
+-        <img alt="FAIL: You need images enabled." src="support/test-br.png">
+    </div>
+   </body>
+- </html>--- 10,21 ----
+    <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#floats" title="9.5 Floats">
+   </head>
+   <body>
++   <p>There should be a complete unbroken drawing of a yin-yang (<img src="resources/yinyang.png">) symbol below, slightly on the left (&lt;-) inside a blue box.</p>
+    <div>
++    <p> <img alt="FAIL: You need images enabled." src="../../../css2.1/support/test-tl.png"> </p>
++    <p> <img alt="FAIL: You need images enabled." src="../../../css2.1/support/test-tr.png"> </p>
++    <p> <img alt="FAIL: You need images enabled." src="../../../css2.1/support/test-bl.png"> </p>
++        <img alt="FAIL: You need images enabled." src="../../../css2.1/support/test-br.png">
+    </div>
+   </body>
++ </html>
