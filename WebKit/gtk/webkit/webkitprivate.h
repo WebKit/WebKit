@@ -28,6 +28,7 @@
  */
 
 #include <webkit/webkitdefines.h>
+#include <webkit/webkitdownload.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebpolicydecision.h>
@@ -43,9 +44,13 @@
 #include "Frame.h"
 #include "InspectorClientGtk.h"
 #include "FrameLoaderClient.h"
+#include "ResourceHandle.h"
+#include "ResourceResponse.h"
 #include "WindowFeatures.h"
 
 #include <glib.h>
+
+class DownloadClient;
 
 namespace WebKit {
     WebKitWebView* getViewFromFrame(WebKitWebFrame*);

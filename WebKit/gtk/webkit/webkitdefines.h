@@ -68,6 +68,9 @@ typedef struct _WebKitWebWindowFeaturesClass WebKitWebWindowFeaturesClass;
 typedef struct _WebKitWebView WebKitWebView;
 typedef struct _WebKitWebViewClass WebKitWebViewClass;
 
+typedef struct _WebKitDownload WebKitDownload;
+typedef struct _WebKitDownloadClass WebKitDownloadClass;
+
 G_END_DECLS
 
 #endif

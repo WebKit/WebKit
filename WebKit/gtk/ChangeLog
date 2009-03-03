@@ -1,3 +1,60 @@
+2009-03-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16826
+        [Gtk] Implement WebKitDownload
+
+        Implement download, and provide a nice object wrapping the
+        download process. Initial work done by Marco Barisione and
+        Pierre-Luc Beaudoin for Collabora.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::ContextMenuClient::downloadURL):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::download):
+        (WebKit::FrameLoaderClient::startDownload):
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitdownload.cpp: Added.
+        (_WebKitDownloadPrivate::):
+        (_WebKitDownloadPrivate::webkit_download_dispose):
+        (_WebKitDownloadPrivate::webkit_download_finalize):
+        (_WebKitDownloadPrivate::webkit_download_get_property):
+        (_WebKitDownloadPrivate::webkit_download_set_property):
+        (_WebKitDownloadPrivate::webkit_download_class_init):
+        (_WebKitDownloadPrivate::webkit_download_init):
+        (_WebKitDownloadPrivate::webkit_download_new):
+        (_WebKitDownloadPrivate::webkit_download_open_stream_for_uri):
+        (_WebKitDownloadPrivate::webkit_download_close_stream):
+        (_WebKitDownloadPrivate::webkit_download_start):
+        (_WebKitDownloadPrivate::webkit_download_cancel):
+        (_WebKitDownloadPrivate::webkit_download_get_uri):
+        (_WebKitDownloadPrivate::webkit_download_get_network_request):
+        (_WebKitDownloadPrivate::webkit_download_set_response):
+        (_WebKitDownloadPrivate::webkit_download_get_suggested_filename):
+        (_WebKitDownloadPrivate::webkit_download_get_destination_uri):
+        (_WebKitDownloadPrivate::webkit_download_set_destination_uri):
+        (_WebKitDownloadPrivate::webkit_download_get_state):
+        (_WebKitDownloadPrivate::webkit_download_get_total_size):
+        (_WebKitDownloadPrivate::webkit_download_get_current_size):
+        (_WebKitDownloadPrivate::webkit_download_get_progress):
+        (_WebKitDownloadPrivate::webkit_download_get_elapsed_time):
+        (_WebKitDownloadPrivate::webkit_download_received_data):
+        (_WebKitDownloadPrivate::webkit_download_finished_loading):
+        (_WebKitDownloadPrivate::webkit_download_error):
+        (_WebKitDownloadPrivate::DownloadClient::DownloadClient):
+        (_WebKitDownloadPrivate::DownloadClient::didReceiveResponse):
+        (_WebKitDownloadPrivate::DownloadClient::didReceiveData):
+        (_WebKitDownloadPrivate::DownloadClient::didFinishLoading):
+        (_WebKitDownloadPrivate::DownloadClient::didFail):
+        (_WebKitDownloadPrivate::DownloadClient::wasBlocked):
+        (_WebKitDownloadPrivate::DownloadClient::cannotShowURL):
+        * webkit/webkitdownload.h: Added.
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkitmarshal.list:
+
 2009-03-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

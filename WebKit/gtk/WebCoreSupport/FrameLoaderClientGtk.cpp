@@ -3,6 +3,7 @@
  *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *  Copyright (C) 2008 Collabora Ltd.  All rights reserved.
+ *  Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,6 +43,7 @@
 #include "PlatformString.h"
 #include "PluginDatabase.h"
 #include "RenderPart.h"
+#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "CString.h"
 #include "ProgressTracker.h"
@@ -774,9 +776,13 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
     g_signal_emit_by_name(m_frame, "load-done", false);
 }
 
-void FrameLoaderClient::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&)
+void FrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse&)
 {
-    notImplemented();
+    // FIXME: We could reuse the same handle here, but when I tried
+    // implementing that the main load would fail and stop, so I have
+    // simplified this case for now.
+    handle->cancel();
+    startDownload(request);
 }
 
 ResourceError FrameLoaderClient::cancelledError(const ResourceRequest&)
@@ -862,9 +868,23 @@ void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceErro
     }
 }
 
-void FrameLoaderClient::startDownload(const ResourceRequest&)
+void FrameLoaderClient::startDownload(const ResourceRequest& request)
 {
-    notImplemented();
+    WebKitNetworkRequest* networkRequest = webkit_network_request_new(request.url().string().utf8().data());
+    WebKitDownload* download = webkit_download_new(networkRequest);
+    g_object_unref(networkRequest);
+
+    WebKitWebView* view = getViewFromFrame(m_frame);
+    gboolean handled;
+    g_signal_emit_by_name(view, "download-requested", download, &handled);
+
+    if (!handled) {
+        webkit_download_cancel(download);
+        g_object_unref(download);
+        return;
+    }
+
+    webkit_download_start(download);
 }
 
 void FrameLoaderClient::updateGlobalHistory()

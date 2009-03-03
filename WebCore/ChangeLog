@@ -1,3 +1,17 @@
+2009-03-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16826
+        [Gtk] Implement WebKitDownload
+
+        Make the Soup backend able to handle requests without a frame,
+        since we may have such things now that we support downloads.
+
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+
 2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

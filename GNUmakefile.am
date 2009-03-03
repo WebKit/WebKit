@@ -304,6 +304,7 @@ endif
 webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkit.h \
 	WebKit/gtk/webkit/webkitdefines.h \
+	WebKit/gtk/webkit/webkitdownload.h \
 	WebKit/gtk/webkit/webkitnetworkrequest.h \
 	WebKit/gtk/webkit/webkitversion.h \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.h \
@@ -348,6 +349,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
+	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
 

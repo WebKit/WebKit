@@ -545,9 +545,12 @@ bool ResourceHandle::start(Frame* frame)
 {
     ASSERT(!d->m_msg);
 
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if (!frame->page())
+
+    // The frame could be null if the ResourceHandle is not associated to any
+    // Frame, e.g. if we are downloading a file.
+    // If the frame is not null but the page is null this must be an attempted
+    // load from an onUnload handler, so let's just block it.
+    if (frame && !frame->page())
         return false;
 
     KURL url = request().url();
