@@ -2,7 +2,7 @@
 
         Reviewed by John Sullivan, Ada Chan.
 
-        Factor loading code out into its own method and get rid of a bunch of goots.
+        Factor loading code out into its own method and get rid of a bunch of gotos.
         
         * Plugins/WebNetscapePluginPackage.mm:
         (-[WebNetscapePluginPackage _tryLoad]):
