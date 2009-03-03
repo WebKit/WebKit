@@ -1,3 +1,11 @@
+2009-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Enable Geolocation (except on Tiger and Leopard).
+
+        * Configurations/WebCore.xcconfig:
+
 2009-03-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adele Peterson.

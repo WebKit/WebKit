@@ -1,3 +1,11 @@
+2009-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Enable Geolocation (except on Tiger and Leopard).
+
+        * Scripts/build-webkit:
+
 2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for wxWidgets Mac trunk build.
