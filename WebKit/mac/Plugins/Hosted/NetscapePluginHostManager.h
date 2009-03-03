@@ -47,6 +47,8 @@ public:
 
     void pluginHostDied(NetscapePluginHostProxy*);
 
+    static void createPropertyListFile(WebNetscapePluginPackage *);
+    
 private:
     NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *);
 

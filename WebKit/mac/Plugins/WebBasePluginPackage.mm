@@ -198,12 +198,18 @@
 {
 }
 
-- (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
+- (void)createPropertyListFile
 {
-    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
+    if ([self load] && BP_CreatePluginMIMETypesPreferences) {
         BP_CreatePluginMIMETypesPreferences();
         [self unload];
     }
+}
+
+- (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
+{
+    if (createFile)
+        [self createPropertyListFile];
     
     NSDictionary *pList = nil;
     NSData *data = [NSData dataWithContentsOfFile:pListPath];

@@ -35,6 +35,12 @@
 #import "WebNetscapeDeprecatedFunctions.h"
 #import <WebCore/npruntime_impl.h>
 
+#if USE(PLUGIN_HOST_PROCESS)
+#import "NetscapePluginHostManager.h"
+
+using namespace WebKit;
+#endif
+
 #ifdef SUPPORT_CFM
 typedef void (* FunctionPointer)(void);
 typedef void (* TransitionVector)(void);
@@ -288,6 +294,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {
     return pluginHostArchitecture;
 }
+
+- (void)createPropertyListFile
+{
+    NetscapePluginHostManager::createPropertyListFile(self);
+}
+
 #endif
 
 - (void)launchRealPlayer
