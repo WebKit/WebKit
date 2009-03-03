@@ -2,6 +2,9 @@
 
         Reviewed by Darin Fisher.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24311
+        Make IDL returning DOMObject use [V8Custom]
+
         * dom/Document.idl:
         * html/HTMLCanvasElement.idl:
 
