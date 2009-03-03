@@ -1,3 +1,24 @@
+2009-03-03  Jungshik Shin <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23028
+        Enable dynamic web font support to Chromium on Windows.
+        Files that were omitted by mistake in the latest patch
+        that was landed.
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        (WebCore::CachedFont::allClientsRemoved):
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::EOTStream::EOTStream):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::EOTStream::EOTStream):
+        (WebCore::createFontCustomPlatformData):
+
 2009-03-03  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alexey Proskuryakov.

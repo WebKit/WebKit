@@ -120,7 +120,7 @@ size_t getBytesWithOffset(void *info, void* buffer, size_t offset, size_t count)
 // Streams the concatenation of a header and font data.
 class EOTStream {
 public:
-    EOTStream(const Vector<UInt8, 512>& eotHeader, const SharedBuffer* fontData, size_t overlayDst, size_t overlaySrc, size_t overlayLength)
+    EOTStream(const Vector<uint8_t, 512>& eotHeader, const SharedBuffer* fontData, size_t overlayDst, size_t overlaySrc, size_t overlayLength)
         : m_eotHeader(eotHeader)
         , m_fontData(fontData)
         , m_overlayDst(overlayDst)
@@ -134,7 +134,7 @@ public:
     size_t read(void* buffer, size_t count);
 
 private:
-    const Vector<UInt8, 512>& m_eotHeader;
+    const Vector<uint8_t, 512>& m_eotHeader;
     const SharedBuffer* m_fontData;
     size_t m_overlayDst;
     size_t m_overlaySrc;
@@ -210,7 +210,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     // TTLoadEmbeddedFont works only with Embedded OpenType (.eot) data, so we need to create an EOT header
     // and prepend it to the font data.
-    Vector<UInt8, 512> eotHeader;
+    Vector<uint8_t, 512> eotHeader;
     size_t overlayDst;
     size_t overlaySrc;
     size_t overlayLength;
