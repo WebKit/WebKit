@@ -1,3 +1,14 @@
+2009-03-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24307
+        Null out m_highlightedNode on hideHighlight().
+        Ran WebCore/manual-tests/inspector/highlight-nodes.html.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::hideHighlight):
+
 2009-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
