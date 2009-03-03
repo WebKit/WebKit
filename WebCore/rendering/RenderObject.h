@@ -678,6 +678,8 @@ public:
     virtual void mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState&) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
     
+    TransformationMatrix transformFromContainer(const RenderObject* container, const IntSize& offsetInContainer) const;
+    
     virtual void addFocusRingRects(GraphicsContext*, int /*tx*/, int /*ty*/) { };
 
     IntRect absoluteOutlineBounds() const

@@ -1682,6 +1682,30 @@ void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Trans
     }
 }
 
+TransformationMatrix RenderObject::transformFromContainer(const RenderObject* containerObject, const IntSize& offsetInContainer) const
+{
+    TransformationMatrix containerTransform;
+    containerTransform.translate(offsetInContainer.width(), offsetInContainer.height());
+    RenderLayer* layer;
+    if (hasLayer() && (layer = toRenderBox(this)->layer()) && layer->transform())
+        containerTransform.multLeft(*layer->transform());
+    
+    if (containerObject && containerObject->style()->hasPerspective()) {
+        // Perpsective on the container affects us, so we have to factor it in here.
+        ASSERT(containerObject->hasLayer());
+        FloatPoint perspectiveOrigin = toRenderBox(containerObject)->layer()->perspectiveOrigin();
+
+        TransformationMatrix perspectiveMatrix;
+        perspectiveMatrix.applyPerspective(containerObject->style()->perspective());
+        
+        containerTransform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
+        containerTransform.multiply(perspectiveMatrix);
+        containerTransform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
+    }
+
+    return containerTransform;
+}
+
 FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
 {
     if (repaintContainer == this)
