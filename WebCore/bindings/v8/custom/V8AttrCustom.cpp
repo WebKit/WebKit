@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,10 +14,10 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * "AS IS" AND ANY EXPRESS OR iframeLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE iframeLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
  * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
@@ -27,23 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef V8CustomBinding_h
-#define V8CustomBinding_h
 
-// FIXME: This is a temporary forwarding header until all bindings have migrated
-// over and v8_custom actually becomes V8CustomBinding.
-#include "v8_custom.h"
+#include "config.h"
+#include "Attr.h"
+
+#include "Element.h"
+#include "ExceptionCode.h"
+
+#include "V8Binding.h"
+#include "V8CustomBinding.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
-    class HTMLFrameElementBase;
-    class Element;
-    class String;
+ACCESSOR_SETTER(AttrValue)
+{
+    Attr* imp = V8Proxy::DOMWrapperToNode<Attr>(info.Holder());
+    String attrValue = toWebCoreStringWithNullCheck(value);
+    Element* ownerElement = imp->ownerElement();
 
-    bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase*, String value);
-    bool allowSettingSrcToJavascriptURL(Element*, String name, String value);
+    if (ownerElement && !allowSettingSrcToJavascriptURL(ownerElement, imp->name(), attrValue))
+        return;
+
+    ExceptionCode ec = 0;
+    imp->setValue(attrValue, ec);
+    if (ec)
+        throwError(ec);
+}
 
 } // namespace WebCore
-
-#endif // V8CustomBinding_h

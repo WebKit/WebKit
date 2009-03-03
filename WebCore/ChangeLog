@@ -1,3 +1,17 @@
+2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24331
+        Add custom V8 bindings for Element, Attr, HTMLFrame, and HTMLIFrame.
+
+        * bindings/v8/custom/V8AttrCustom.cpp: Added.
+        * bindings/v8/custom/V8CustomBinding.cpp: Added.
+        * bindings/v8/custom/V8CustomBinding.h: Added attribute-checking helpers.
+        * bindings/v8/custom/V8ElementCustom.cpp: Added.
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp: Added.
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp: Added.
+
 2009-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
