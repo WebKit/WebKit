@@ -1,3 +1,17 @@
+2009-03-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24256
+
+        Added a WebCoreForceSoftwareAnimation flag.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::forceSoftwareAnimation):
+        (WebCore::GraphicsLayerCA::setOpacity):
+        (WebCore::GraphicsLayerCA::animateTransform):
+        (WebCore::GraphicsLayerCA::animateFloat):
+
 2009-03-02  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -265,6 +265,12 @@ static bool caValueFunctionSupported()
     return sHaveValueFunction;
 }
 
+static bool forceSoftwareAnimation()
+{
+    static bool forceSoftwareAnimation = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreForceSoftwareAnimation"];
+    return forceSoftwareAnimation;
+}
+
 bool GraphicsLayer::graphicsContextsFlipped()
 {
     return true;
@@ -273,13 +279,13 @@ bool GraphicsLayer::graphicsContextsFlipped()
 #ifndef NDEBUG
 bool GraphicsLayer::showDebugBorders()
 {
-    static int showDebugBorders = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerBorders"];
+    static bool showDebugBorders = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerBorders"];
     return showDebugBorders;
 }
 
 bool GraphicsLayer::showRepaintCounter()
 {
-    static int showRepaintCounter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerRepaintCounter"];
+    static bool showRepaintCounter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerRepaintCounter"];
     return showRepaintCounter;
 }
 #endif
@@ -809,6 +815,9 @@ void GraphicsLayerCA::setBackfaceVisibility(bool visible)
 
 bool GraphicsLayerCA::setOpacity(float opacity, const Animation* transition, double beginTime)
 {
+    if (forceSoftwareAnimation())
+        return false;
+        
     float clampedOpacity = max(0.0f, min(opacity, 1.0f));
     
     bool opacitiesDiffer = (m_opacity != clampedOpacity);
@@ -899,7 +908,7 @@ void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& rect)
 
 bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, const IntSize& size, const Animation* anim, double beginTime, bool isTransition)
 {
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+    if (forceSoftwareAnimation() || !anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
         
     TransformValueList::FunctionList functionList;
@@ -1016,7 +1025,7 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
 
 bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValueList& valueList, const Animation* animation, double beginTime)
 {
-    if (valueList.size() < 2)
+    if (forceSoftwareAnimation() || valueList.size() < 2)
         return false;
         
     // if there is already is an animation for this property and it hasn't changed, ignore it.
