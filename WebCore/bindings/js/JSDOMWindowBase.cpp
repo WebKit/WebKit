@@ -410,7 +410,7 @@ JSValuePtr jsDOMWindowBaseWebKitCSSMatrix(ExecState* exec, const Identifier&, co
 {
     if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
+    return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec);
 }
  
 JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)

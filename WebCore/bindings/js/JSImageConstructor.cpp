@@ -22,6 +22,7 @@
 
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "JSHTMLImageElement.h"
 #include "JSNode.h"
 #include "ScriptExecutionContext.h"
 
@@ -38,6 +39,7 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, ScriptExecutionContext* 
 {
     ASSERT(context->isDocument());
     m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
+    putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec), None);
 }
 
 static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)

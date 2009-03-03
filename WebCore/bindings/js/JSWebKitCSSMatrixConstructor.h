@@ -33,7 +33,7 @@ namespace WebCore {
 
 class JSWebKitCSSMatrixConstructor : public DOMObject {
 public:
-    JSWebKitCSSMatrixConstructor(JSC::ExecState*, ScriptExecutionContext*);
+    JSWebKitCSSMatrixConstructor(JSC::ExecState*);
     static const JSC::ClassInfo s_info;
 
 private:

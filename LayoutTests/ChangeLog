@@ -1,3 +1,17 @@
+2009-03-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24257
+
+        Test for all newly added constructor prototypes.
+        This addition also changes window-properties.html
+        results, so that is updated as well.
+
+        * fast/dom/Window/custom-constructors-expected.txt: Added.
+        * fast/dom/Window/custom-constructors.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-03-03  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.
