@@ -51,12 +51,54 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
 
 void TransformState::flatten()
 {
-    if (m_direction == ApplyTransformDirection)
-        m_lastPlanarPoint = m_accumulatedTransform.mapPoint(m_lastPlanarPoint);
-    else
-        m_lastPlanarPoint = m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
+    m_lastPlanarPoint = mappedPoint();
     m_accumulatedTransform.makeIdentity();
     m_accumulatingTransform = false;
+}
+
+FloatPoint TransformState::mappedPoint() const
+{
+    if (m_direction == ApplyTransformDirection)
+        return m_accumulatedTransform.mapPoint(m_lastPlanarPoint);
+
+    return m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
+}
+
+// HitTestingTransformState methods
+void HitTestingTransformState::move(int x, int y)
+{
+    if (m_accumulatingTransform)
+        flatten();
+
+    m_lastPlanarPoint.move(x, y);
+    m_lastPlanarQuad.move(x, y);
+}
+
+void HitTestingTransformState::applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform)
+{
+    m_accumulatedTransform.multLeft(transformFromContainer);    
+    if (!accumulateTransform)
+        flatten();
+
+    m_accumulatingTransform = accumulateTransform;
+}
+
+void HitTestingTransformState::flatten()
+{
+    m_lastPlanarPoint = mappedPoint();
+    m_lastPlanarQuad = mappedQuad();
+    m_accumulatedTransform.makeIdentity();
+    m_accumulatingTransform = false;
+}
+
+FloatPoint HitTestingTransformState::mappedPoint() const
+{
+    return m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
+}
+
+FloatQuad HitTestingTransformState::mappedQuad() const
+{
+    return m_accumulatedTransform.inverse().mapQuad(m_lastPlanarQuad);      // or project?
 }
 
 } // namespace WebCore

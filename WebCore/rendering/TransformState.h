@@ -27,8 +27,11 @@
 #define TransformState_h
 
 #include "FloatPoint.h"
+#include "FloatQuad.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -41,6 +44,14 @@ public:
         , m_direction(mappingDirection)
     {
     }
+    
+    TransformState(const TransformState& other)
+        : m_lastPlanarPoint(other.m_lastPlanarPoint)
+        , m_accumulatedTransform(other.m_accumulatedTransform)
+        , m_accumulatingTransform(other.m_accumulatingTransform)
+        , m_direction(other.m_direction)
+    {
+    }
 
     void move(const IntSize& s)
     {
@@ -49,12 +60,59 @@ public:
     
     void move(int x, int y);
     void applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform);
+    FloatPoint mappedPoint() const;
     void flatten();
 
     FloatPoint m_lastPlanarPoint;
     TransformationMatrix m_accumulatedTransform;
     bool m_accumulatingTransform;
     TransformDirection m_direction;
+};
+
+class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
+public:
+    static PassRefPtr<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad)
+    {
+        return adoptRef(new HitTestingTransformState(p, quad));
+    }
+
+    static PassRefPtr<HitTestingTransformState> create(const HitTestingTransformState& other)
+    {
+        return adoptRef(new HitTestingTransformState(other));
+    }
+    
+    void move(const IntSize& s)
+    {
+        move(s.width(), s.height());
+    }
+    
+    void move(int x, int y);
+    void applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform);
+    FloatPoint mappedPoint() const;
+    FloatQuad mappedQuad() const;
+    void flatten();
+
+    FloatPoint m_lastPlanarPoint;
+    FloatQuad m_lastPlanarQuad;
+    TransformationMatrix m_accumulatedTransform;
+    bool m_accumulatingTransform;
+
+private:
+    HitTestingTransformState(const FloatPoint& p, const FloatQuad& quad)
+        : m_lastPlanarPoint(p)
+        , m_lastPlanarQuad(quad)
+        , m_accumulatingTransform(false)
+    {
+    }
+    
+    HitTestingTransformState(const HitTestingTransformState& other)
+        : RefCounted<HitTestingTransformState>()
+        , m_lastPlanarPoint(other.m_lastPlanarPoint)
+        , m_lastPlanarQuad(other.m_lastPlanarQuad)
+        , m_accumulatedTransform(other.m_accumulatedTransform)
+        , m_accumulatingTransform(other.m_accumulatingTransform)
+    {
+    }
 };
 
 } // namespace WebCore

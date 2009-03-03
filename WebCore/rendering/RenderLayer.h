@@ -54,6 +54,7 @@ namespace WebCore {
 class CachedResource;
 class HitTestRequest;
 class HitTestResult;
+class HitTestingTransformState;
 class RenderFrameSet;
 class RenderMarquee;
 class RenderReplica;
@@ -405,6 +406,8 @@ public:
     // Note that this transform has the perspective-origin baked in.
     TransformationMatrix perspectiveTransform() const;
     FloatPoint perspectiveOrigin() const;
+    bool preserves3D() const { return renderer()->style()->transformStyle3D() == TransformStyle3DPreserve3D; }
+    bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
 
     void destroy(RenderArena*);
 
@@ -455,8 +458,17 @@ private:
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
                     bool haveTransparency, PaintRestriction, RenderObject* paintingRoot,
                     bool appliedTransform = false, bool temporaryClipRects = false);
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform = false);
 
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+                            const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
+                            const HitTestingTransformState* transformState = 0, double* zOffset = 0);
+
+    PassRefPtr<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
+                            const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                            const HitTestingTransformState* containerTransformState) const;
+    
+    bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntRect& layerBounds, const IntPoint& hitTestPoint, HitTestFilter) const;
+    
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
     bool shouldBeNormalFlowOnly() const; 
@@ -471,6 +483,14 @@ private:
     void childVisibilityChanged(bool newVisibility);
     void dirtyVisibleDescendantStatus();
     void updateVisibilityStatus();
+
+    // This flag is computed by RenderLayerCompositor, which knows more about 3d hierarchies than we do.
+    void setHas3DTransformedDescendant(bool b) { m_has3DTransformedDescendant = b; }
+    bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
+    
+    void dirty3DTransformedDescendantStatus();
+    // Both updates the status, and returns true if descendants of this have 3d.
+    bool update3DTransformedDescendantStatus();
 
     Node* enclosingElement() const;
 
@@ -572,6 +592,9 @@ protected:
     bool m_visibleDescendantStatusDirty : 1;
     bool m_hasVisibleDescendant : 1;
 
+    bool m_3DTransformedDescendantStatusDirty : 1;
+    bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
+                                            // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
 #if USE(ACCELERATED_COMPOSITING)
     bool m_hasCompositingDescendant : 1;
 #endif

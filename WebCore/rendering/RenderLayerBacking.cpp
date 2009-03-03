@@ -33,8 +33,6 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "HitTestRequest.h"
-#include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "RenderBox.h"
 #include "RenderImage.h"

@@ -1,3 +1,60 @@
+2009-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24312
+        
+        Take 3D transforms into account when hit testing:
+        
+        1. Maintain a bit on each RenderLayer that is set when the layer
+           has 3d descendants, so that we know when to fall into the slow
+           hit testing path.
+           
+        2. Make a ref-counted HitTestingTransformState, which is used to store
+           an accumulated transform, and the hit test point, and hitTestRect
+           in the plane of the ancestor non-3d ('flattening') layer.
+           
+           It's ref-counted so we can heap allocate it (to avoid stack bloat),
+           and avoid copying when hitTestLayer calls itself after applying the transform.
+           
+        3. Add logic to hitTestLayer to depth-test just direct descendants, if any have
+           3D transforms, or to do deep depth-testing when traversing a preserves-3d
+           hierarchy. When hit, layers compute a z-offset from the ancestor flattening
+           layer, which allows for correct depth testing.
+           
+           The existing early-return codepath is unaffected when there are no 3d transforms
+           and no preserve-3d.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::dirty3DTransformedDescendantStatus):
+        (WebCore::RenderLayer::update3DTransformedDescendantStatus):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::computeZOffset):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestContents):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::preserves3D):
+        (WebCore::RenderLayer::has3DTransform):
+        (WebCore::RenderLayer::setHas3DTransformedDescendant):
+        (WebCore::RenderLayer::has3DTransformedDescendant):
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::flatten):
+        (WebCore::TransformState::mappedPoint):
+        (WebCore::HitTestingTransformState::move):
+        (WebCore::HitTestingTransformState::applyTransform):
+        (WebCore::HitTestingTransformState::flatten):
+        (WebCore::HitTestingTransformState::mappedPoint):
+        (WebCore::HitTestingTransformState::mappedQuad):
+        * rendering/TransformState.h:
+        (WebCore::TransformState::TransformState):
+        (WebCore::HitTestingTransformState::create):
+        (WebCore::HitTestingTransformState::move):
+        (WebCore::HitTestingTransformState::HitTestingTransformState):
+
 2009-03-02  Brett Wilson  <brettw@chromium.org>
 
         Fix uninitialized memory reads in the Chromium Windows transparency

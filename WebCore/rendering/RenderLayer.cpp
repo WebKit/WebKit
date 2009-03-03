@@ -50,6 +50,7 @@
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -76,6 +77,7 @@
 #include "ScrollbarTheme.h"
 #include "SelectionController.h"
 #include "TransformationMatrix.h"
+#include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -165,6 +167,8 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_hasVisibleContent(false)
     , m_visibleDescendantStatusDirty(false)
     , m_hasVisibleDescendant(false)
+    , m_3DTransformedDescendantStatusDirty(true)
+    , m_has3DTransformedDescendant(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_hasCompositingDescendant(false)
 #endif
@@ -316,6 +320,8 @@ void RenderLayer::updateTransform()
     // hasTransform() on the renderer is also true when there is transform-style: preserve-3d or perspective set,
     // so check style too.
     bool hasTransform = renderer()->hasTransform() && renderer()->style()->hasTransform();
+    bool had3DTransform = has3DTransform();
+
     bool hadTransform = m_transform;
     if (hasTransform != hadTransform) {
         if (hasTransform)
@@ -330,6 +336,9 @@ void RenderLayer::updateTransform()
         m_transform->makeIdentity();
         box->style()->applyTransform(*m_transform, box->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
     }
+
+    if (had3DTransform != has3DTransform())
+        dirty3DTransformedDescendantStatus();
 }
 
 void RenderLayer::setHasVisibleContent(bool b)
@@ -422,6 +431,48 @@ void RenderLayer::updateVisibilityStatus()
         }    
         m_visibleContentStatusDirty = false; 
     }
+}
+
+void RenderLayer::dirty3DTransformedDescendantStatus()
+{
+    RenderLayer* curr = stackingContext();
+    if (curr)
+        curr->m_3DTransformedDescendantStatusDirty = true;
+        
+    // This propagates up through preserve-3d hierarchies to the enclosing flattening layer.
+    // Note that preserves3D() creates stacking context, so we can just run up the stacking contexts.
+    while (curr && curr->preserves3D()) {
+        curr->m_3DTransformedDescendantStatusDirty = true;
+        curr = curr->stackingContext();
+    }
+}
+
+// Return true if this layer or any preserve-3d descendants have 3d.
+bool RenderLayer::update3DTransformedDescendantStatus()
+{
+    if (m_3DTransformedDescendantStatusDirty) {
+        m_has3DTransformedDescendant = false;
+
+        // Transformed or preserve-3d descendants can only be in the z-order lists, not
+        // in the normal flow list, so we only need to check those.
+        if (m_posZOrderList) {
+            for (unsigned i = 0; i < m_posZOrderList->size(); ++i)
+                m_has3DTransformedDescendant |= m_posZOrderList->at(i)->update3DTransformedDescendantStatus();
+        }
+
+        // Now check our negative z-index children.
+        if (m_negZOrderList) {
+            for (unsigned i = 0; i < m_negZOrderList->size(); ++i)
+                m_has3DTransformedDescendant |= m_negZOrderList->at(i)->update3DTransformedDescendantStatus();
+        }
+    }
+    
+    // If we live in a 3d hierarchy, then the layer at the root of that hierarchy needs
+    // the m_has3DTransformedDescendant set.
+    if (preserves3D())
+        return has3DTransform() || m_has3DTransformedDescendant;
+
+    return has3DTransform();
 }
 
 void RenderLayer::updateLayerPosition()
@@ -2044,7 +2095,16 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
     if (!request.ignoreClipping())
         boundsRect.intersect(frameVisibleRect(renderer()));
 
-    RenderLayer* insideLayer = hitTestLayer(this, request, result, boundsRect, result.point());
+    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, boundsRect, result.point(), false);
+    if (!insideLayer) {
+        // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
+        // return ourselves. We do this so mouse events continue getting delivered after a drag has 
+        // exited the WebView, and so hit testing over a scrollbar hits the content document.
+        if ((request.active() || request.mouseUp()) && renderer()->isRenderView()) {
+            renderer()->updateHitTestResult(result, result.point());
+            insideLayer = this;
+        }
+    }
 
     // Now determine if the result is inside an anchor; make sure an image map wins if
     // it already set URLElement and only use the innermost.
@@ -2074,15 +2134,64 @@ Node* RenderLayer::enclosingElement() const
     return 0;
 }
 
-RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                       const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform)
+// Compute the z-offset of the point in the transformState.
+// This is effectively projecting a ray normal to the plane of ancestor, finding where that
+// ray intersects target, and computing the z delta between those two points.
+static double computeZOffset(const HitTestingTransformState& transformState)
 {
+    // We got an affine transform, so no z-offset
+    if (transformState.m_accumulatedTransform.isAffine())
+        return 0;
+
+    // Flatten the point into the target plane
+    FloatPoint targetPoint = transformState.mappedPoint();
+    
+    // Now map the point back through the transform, which computes Z.
+    FloatPoint3D backmappedPoint = transformState.m_accumulatedTransform.mapPoint(FloatPoint3D(targetPoint));
+    return backmappedPoint.z();
+}
+
+PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
+                                        const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                        const HitTestingTransformState* containerTransformState) const
+{
+    RefPtr<HitTestingTransformState> transformState;
+    int offsetX = 0;
+    int offsetY = 0;
+    if (containerTransformState) {
+        // If we're already computing transform state, then it's relative to the container (which we know is non-null).
+        transformState = HitTestingTransformState::create(*containerTransformState);
+        convertToLayerCoords(containerLayer, offsetX, offsetY);
+    } else {
+        // If this is the first time we need to make transform state, then base it off of hitTestPoint,
+        // which is relative to rootLayer.
+        transformState = HitTestingTransformState::create(hitTestPoint, FloatQuad(hitTestRect));
+        convertToLayerCoords(rootLayer, offsetX, offsetY);
+    }
+    
+    // FIXME: need to have transformFromContainer be able to use getAnimatedStyleForRenderer()
+    // when doing accelerated animations.
+    TransformationMatrix containerTransform = renderer()->transformFromContainer(containerLayer ? containerLayer->renderer() : 0, IntSize(offsetX, offsetY));
+    transformState->applyTransform(containerTransform, true);
+    return transformState;
+}
+
+// hitTestPoint and hitTestRect are relative to rootLayer.
+// A 'flattening' layer is one preserves3D() == false.
+// transformState.m_accumulatedTransform holds the transform from the containing flattening layer.
+// transformState.m_lastPlanarPoint is the hitTestPoint in the plane of the containing flattening layer.
+// transformState.m_lastPlanarQuad is the hitTestRect as a quad in the plane of the containing flattening layer.
+// 
+// If zOffset is non-null (which indicates that the caller wants z offset information), 
+//  *zOffset on return is the z offset of the hit point relative to the containing flattening layer.
+RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+                                                const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
+                                                const HitTestingTransformState* transformState, double* zOffset)
+{
+    // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
+    
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
-        // If the transform can't be inverted, then don't hit test this layer at all.
-        if (!m_transform->isInvertible())
-            return 0;
-  
         // Make sure the parent's clip rects have been calculated.
         if (parent()) {
             parent()->updateClipRects(rootLayer);
@@ -2093,32 +2202,46 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                 return 0;
         }
 
-        // Adjust the transform such that the renderer's upper left corner is at (0,0) in user space.
-        // This involves subtracting out the position of the layer in our current coordinate space.
-        int x = 0;
-        int y = 0;
-        convertToLayerCoords(rootLayer, x, y);
-        TransformationMatrix transform;
-        transform.translate(x, y);
-        
-        TransformationMatrix localTransform;
-        
-#if USE(ACCELERATED_COMPOSITING)
-        if (renderer()->style()->isRunningAcceleratedAnimation()) {
-            const IntRect borderBox = toRenderBox(renderer())->borderBoxRect();
-            RefPtr<RenderStyle> animatedStyle = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
-            const TransformOperations& transformOperations = animatedStyle->transform();
-            transformOperations.apply(borderBox.size(), localTransform);
-        } else
-#endif
-            localTransform = *m_transform;
+        // Create a transform state to accumulate this transform.
+        RefPtr<HitTestingTransformState> newTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestPoint, transformState);
 
-        transform = localTransform * transform;
+        // If the transform can't be inverted, then don't hit test this layer at all.
+        if (!newTransformState->m_accumulatedTransform.isInvertible())
+            return 0;
+
+        // Compute the point and the hit test rect in the coords of this layer by using the values
+        // from the transformState, which store the point and quad in the coords of the last flattened
+        // layer, and the accumulated transform which lets up map through preserve-3d layers.
+        //
+        // We can't just map hitTestPoint and hitTestRect because they may have been flattened (losing z)
+        // by our container.
+        IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
+        IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
+
+        // FIXME: check for hit test on backface if backface-visibility is 'hidden'
         
-        // Map the hit test point into the transformed space and then do a hit test with the root layer shifted to be us.
-        return hitTestLayer(this, request, result, transform.inverse().mapRect(hitTestRect), transform.inverse().mapPoint(hitTestPoint), true);
+        // Now do a hit test with the root layer shifted to be us.
+        return hitTestLayer(this, containerLayer, request, result, localHitTestRect, localPoint, true, newTransformState.get(), zOffset);
+    }
+    
+    RefPtr<HitTestingTransformState> localTransformState;
+    if (appliedTransform) {
+        // We computed the correct state in the caller (above code), so just reference it.
+        ASSERT(transformState);
+        localTransformState = const_cast<HitTestingTransformState*>(transformState);
+    } else if (transformState || m_has3DTransformedDescendant) {
+        // We need transform state for the first time, or to offset the container state, so create it here.
+        localTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestPoint, transformState);
     }
 
+    RefPtr<HitTestingTransformState> unflattenedTransformState = localTransformState;
+    if (localTransformState && !preserves3D()) {
+        // Keep a copy of the pre-flattening state, for computing z-offsets for the container
+        unflattenedTransformState = HitTestingTransformState::create(*localTransformState);
+        // This layer is flattening, so flatten the state passed to descendants.
+        localTransformState->flatten();
+    }
+    
     // Calculate the clip rects we should use.
     IntRect layerBounds;
     IntRect bgRect;
@@ -2126,89 +2249,143 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
     IntRect outlineRect;
     calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect);
     
-    // Ensure our lists are up-to-date.
+    // Ensure our lists and 3d status are up-to-date.
     updateLayerListsIfNeeded();
+    update3DTransformedDescendantStatus();
 
-    // This variable tracks which layer the mouse ends up being inside.  The minute we find an insideLayer,
-    // we are done and can return it.
-    RenderLayer* insideLayer = 0;
+    // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
+    // descendants.
+    double localZOffset = -numeric_limits<double>::infinity();
+    double* zOffsetForDescendantsPtr = 0;
+    double* zOffsetForContentsPtr = 0;
     
-    // Begin by walking our list of positive layers from highest z-index down to the lowest
-    // z-index.
+    bool depthSortDescendants = false;
+    if (preserves3D()) {
+        depthSortDescendants = true;
+        // Our layers can depth-test with our container, so share the z depth pointer with the container, if it passed one down.
+        zOffsetForDescendantsPtr = zOffset ? zOffset : &localZOffset;
+        zOffsetForContentsPtr = zOffset ? zOffset : &localZOffset;
+    } else if (m_has3DTransformedDescendant) {
+        // Flattening layer with 3d children; use a local zOffset pointer to depth-test children and foreground.
+        depthSortDescendants = true;
+        zOffsetForDescendantsPtr = zOffset ? zOffset : &localZOffset;
+        zOffsetForContentsPtr = zOffset ? zOffset : &localZOffset;
+    } else if (zOffset) {
+        zOffsetForDescendantsPtr = 0;
+        // Container needs us to give back a z offset for the hit layer.
+        zOffsetForContentsPtr = zOffset;
+    }
+    
+    // This variable tracks which layer the mouse ends up being inside. 
+    RenderLayer* candidateLayer = 0;
+
+    // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
     if (m_posZOrderList) {
         for (int i = m_posZOrderList->size() - 1; i >= 0; --i) {
-            insideLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, request, result, hitTestRect, hitTestPoint);
-            if (insideLayer)
-                return insideLayer;
+            RenderLayer* hitLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            if (hitLayer) {
+                if (depthSortDescendants) {
+                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
+                    candidateLayer = hitLayer;
+                } else {
+                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
+                    if (zOffset && !zOffsetForDescendantsPtr)
+                        *zOffset = computeZOffset(*unflattenedTransformState);
+                    return hitLayer;
+                }
+            }
         }
     }
 
     // Now check our overflow objects.
     if (m_normalFlowList) {
         for (int i = m_normalFlowList->size() - 1; i >= 0; --i) {
-            if (m_normalFlowList->at(i)->isSelfPaintingLayer())
-                insideLayer = m_normalFlowList->at(i)->hitTestLayer(rootLayer, request, result, hitTestRect, hitTestPoint);
-            if (insideLayer)
-                return insideLayer;
+            RenderLayer* currLayer = m_normalFlowList->at(i);
+            if (!currLayer->isSelfPaintingLayer())
+                continue;
+            RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            if (depthSortDescendants) {
+                // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
+                candidateLayer = hitLayer;
+            } else {
+                // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
+                if (zOffset && !zOffsetForDescendantsPtr)
+                    *zOffset = computeZOffset(*unflattenedTransformState);
+                return hitLayer;
+            }
         }
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
-    if (fgRect.contains(hitTestPoint) && 
-        renderer()->hitTest(request, result, hitTestPoint,
-                            layerBounds.x() - renderBoxX(),
-                            layerBounds.y() - renderBoxY(), 
-                            HitTestDescendants)) {
-        // For positioned generated content, we might still not have a
-        // node by the time we get to the layer level, since none of
-        // the content in the layer has an element. So just walk up
-        // the tree.
-        if (!result.innerNode() || !result.innerNonSharedNode()) {
-            Node* e = enclosingElement();
-            if (!result.innerNode())
-                result.setInnerNode(e);
-            if (!result.innerNonSharedNode())
-                result.setInnerNonSharedNode(e);
+    if (fgRect.contains(hitTestPoint)) {
+        // Hit test with a temporary HitTestResult, because we onlyl want to commit to 'result' if we know we're frontmost.
+        HitTestResult tempResult(result.point());
+        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants)) {
+            if (zOffsetForContentsPtr) {
+                double foregroundZOffset = computeZOffset(*unflattenedTransformState);
+                if (foregroundZOffset > *zOffsetForContentsPtr) {
+                    *zOffsetForContentsPtr = foregroundZOffset;
+                    result = tempResult;
+                    if (depthSortDescendants)
+                        candidateLayer = this;
+                    else
+                        return this;
+                }
+            } else {
+                result = tempResult;
+                return this;
+            }
         }
-
-        return this;
     }
-        
+
     // Now check our negative z-index children.
     if (m_negZOrderList) {
         for (int i = m_negZOrderList->size() - 1; i >= 0; --i) {
-            insideLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, request, result, hitTestRect, hitTestPoint);
-            if (insideLayer)
-                return insideLayer;
+            RenderLayer* hitLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            if (hitLayer) {
+                if (depthSortDescendants) {
+                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
+                    candidateLayer = hitLayer;
+                } else {
+                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
+                    if (zOffset && !zOffsetForDescendantsPtr)
+                        *zOffset = computeZOffset(*unflattenedTransformState);
+                    return hitLayer;
+                }
+            }
         }
     }
+    
+    // If we found a layer, return. Child layers, and foreground always render in front of background.
+    if (candidateLayer)
+        return candidateLayer;
 
-    // Next we want to see if the mouse is inside this layer but not any of its children.
-    if (bgRect.contains(hitTestPoint) &&
-        renderer()->hitTest(request, result, hitTestPoint,
-                            layerBounds.x() - renderBoxX(),
-                            layerBounds.y() - renderBoxY(),
-                            HitTestSelf)) {
-        if (!result.innerNode() || !result.innerNonSharedNode()) {
-            Node* e = enclosingElement();
-            if (!result.innerNode())
-                result.setInnerNode(e);
-            if (!result.innerNonSharedNode())
-                result.setInnerNonSharedNode(e);
+    if (bgRect.contains(hitTestPoint)) {
+        HitTestResult tempResult(result.point());
+        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestSelf)) {
+            if (zOffsetForContentsPtr) {
+                double backgroundZOffset = computeZOffset(*unflattenedTransformState);
+                if (backgroundZOffset > *zOffsetForContentsPtr) {
+                    *zOffsetForContentsPtr = backgroundZOffset;
+                    result = tempResult;
+                    return this;
+                }
+            } else {
+                result = tempResult;
+                return this;
+            }
         }
-
-        return this;
     }
-
-    // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
-    // return ourselves. We do this so mouse events continue getting delivered after a drag has 
-    // exited the WebView, and so hit testing over a scrollbar hits the content document.
-    if ((request.active() || request.mouseUp()) && renderer()->isRenderView()) {
-        renderer()->updateHitTestResult(result, hitTestPoint);
-        return this;
-    }
-
+    
     return 0;
+}
+
+bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntRect& layerBounds, const IntPoint& hitTestPoint, HitTestFilter hitTestFilter) const
+{
+    return renderer()->hitTest(request, result, hitTestPoint,
+                            layerBounds.x() - renderBoxX(),
+                            layerBounds.y() - renderBoxY(), 
+                            hitTestFilter);
 }
 
 void RenderLayer::updateClipRects(const RenderLayer* rootLayer)
