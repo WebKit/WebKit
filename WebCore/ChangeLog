@@ -1,3 +1,10 @@
+2009-03-03  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Darin Fisher.
+
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.idl:
+
 2009-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson
