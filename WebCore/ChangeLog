@@ -1,3 +1,13 @@
+2009-03-03  Jungshik Shin <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23803
+        Fix an 'off-by-1' error in ChromiumWin's font fallback.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2009-03-03  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

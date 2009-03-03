@@ -394,7 +394,12 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         family = panUniFonts[i]; 
         data = getCachedFontPlatformData(font.fontDescription(), AtomicString(family, wcslen(family)));
     }
-    if (i < numFonts) // we found the font that covers this character !
+    // When i-th font (0-base) in |panUniFonts| contains a character and
+    // we get out of the loop, |i| will be |i + 1|. That is, if only the
+    // last font in the array covers the character, |i| will be numFonts.
+    // So, we have to use '<=" rather than '<' to see if we found a font
+    // covering the character.
+    if (i <= numFonts) 
        return getCachedFontData(data);
 
     return 0;
