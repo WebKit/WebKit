@@ -36,10 +36,6 @@
 #include "ResourceRequest.h"
 #include "Timer.h"
 
-#if USE(LOW_BANDWIDTH_DISPLAY)
-#include "CachedResourceClient.h"
-#endif
-
 namespace WebCore {
 
     class Archive;
@@ -115,11 +111,7 @@ namespace WebCore {
         void* m_argument;
     };
 
-    class FrameLoader : Noncopyable
-#if USE(LOW_BANDWIDTH_DISPLAY)
-        , private CachedResourceClient
-#endif
-    {
+    class FrameLoader : Noncopyable {
     public:
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
@@ -436,16 +428,6 @@ namespace WebCore {
         static bool shouldTreatURLAsLocal(const String&);
         static bool shouldTreatSchemeAsLocal(const String&);
 
-#if USE(LOW_BANDWIDTH_DISPLAY)    
-        bool addLowBandwidthDisplayRequest(CachedResource*);
-        void needToSwitchOutLowBandwidthDisplay() { m_needToSwitchOutLowBandwidthDisplay = true; }
-
-        // Client can control whether to use low bandwidth display on a per frame basis.
-        // However, this should only be used for the top frame, not sub-frame.
-        void setUseLowBandwidthDisplay(bool lowBandwidth) { m_useLowBandwidthDisplay = lowBandwidth; }
-        bool useLowBandwidthDisplay() const { return m_useLowBandwidthDisplay; }
-#endif
-
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
 
         void iconLoadDecisionAvailable();
@@ -567,14 +549,6 @@ namespace WebCore {
         void startRedirectionTimer();
         void stopRedirectionTimer();
 
-#if USE(LOW_BANDWIDTH_DISPLAY)
-        // implementation of CachedResourceClient        
-        virtual void notifyFinished(CachedResource*);
-
-        void removeAllLowBandwidthDisplayRequests();    
-        void switchOutLowBandwidthDisplayIfReady();        
-#endif
-
         void dispatchDidCommitLoad();
         void dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
         void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -674,26 +648,11 @@ namespace WebCore {
         bool m_didDispatchDidCommitLoad;
 #endif
 
-#if USE(LOW_BANDWIDTH_DISPLAY)
-        // whether to use low bandwidth dislay, set by client
-        bool m_useLowBandwidthDisplay;
-
-        // whether to call finishParsing() in switchOutLowBandwidthDisplayIfReady() 
-        bool m_finishedParsingDuringLowBandwidthDisplay;
-
-        // whether to call switchOutLowBandwidthDisplayIfReady;
-        // true if there is external css, javascript, or subframe/plugin
-        bool m_needToSwitchOutLowBandwidthDisplay;
-        
-        String m_pendingSourceInLowBandwidthDisplay;        
-        HashSet<CachedResource*> m_externalRequestsInLowBandwidthDisplay;
-#endif
-
 #if ENABLE(WML)
         bool m_forceReloadWmlDeck;
 #endif
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // FrameLoader_h

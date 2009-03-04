@@ -1,3 +1,32 @@
+2009-03-04  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Antti Koivisto.
+
+        Remove LOW_BANDWIDTH_DISPLAY as it is not being used by any platforms.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::haveStylesheetsLoaded):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/DocLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::endIfNotLoadingMainResource):
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::requestObject):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+
 2009-03-02  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Mark Rowe.

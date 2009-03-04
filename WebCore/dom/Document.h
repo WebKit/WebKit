@@ -330,11 +330,7 @@ public:
      */
     bool haveStylesheetsLoaded() const
     {
-        return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets
-#if USE(LOW_BANDWIDTH_DISPLAY)
-            || m_inLowBandwidthDisplay
-#endif
-            ;
+        return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets;
     }
 
     /**
@@ -771,13 +767,7 @@ public:
 
     void setUseSecureKeyboardEntryWhenActive(bool);
     bool useSecureKeyboardEntryWhenActive() const;
-    
-#if USE(LOW_BANDWIDTH_DISPLAY)
-    void setDocLoader(DocLoader* loader) { m_docLoader = loader; }
-    bool inLowBandwidthDisplay() const { return m_inLowBandwidthDisplay; }
-    void setLowBandwidthDisplay(bool lowBandWidth) { m_inLowBandwidthDisplay = lowBandWidth; }
-#endif
-    
+
     void addNodeListCache() { ++m_numNodeListCaches; }
     void removeNodeListCache() { ASSERT(m_numNodeListCaches > 0); --m_numNodeListCaches; }
     bool hasNodeListCaches() const { return m_numNodeListCaches; }
@@ -1115,11 +1105,6 @@ private:
 #endif
     
     bool m_usingGeolocation;
-
-#if USE(LOW_BANDWIDTH_DISPLAY)
-    bool m_inLowBandwidthDisplay;
-#endif
-
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

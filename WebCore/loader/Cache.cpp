@@ -141,13 +141,6 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     if (resource->type() != type)
         return 0;
 
-#if USE(LOW_BANDWIDTH_DISPLAY)
-    // addLowBandwidthDisplayRequest() returns true if requesting CSS or JS during low bandwidth display.
-    // Here, return 0 to not block parsing or layout.
-    if (docLoader->frame() && docLoader->frame()->loader()->addLowBandwidthDisplayRequest(resource))
-        return 0;
-#endif
-
     if (!disabled()) {
         // This will move the resource to the front of its LRU list and increase its access count.
         resourceAccessed(resource);

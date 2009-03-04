@@ -114,15 +114,6 @@ void CachedCSSStyleSheet::checkNotify()
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
         c->setCSSStyleSheet(m_response.url().string(), m_decoder->encoding().name(), this);
-
-#if USE(LOW_BANDWIDTH_DISPLAY)        
-    // if checkNotify() is called from error(), client's setCSSStyleSheet(...)
-    // can't find "this" from url, so they can't do clean up if needed.
-    // call notifyFinished() to make sure they have a chance.
-    CachedResourceClientWalker n(m_clients);
-    while (CachedResourceClient* s = n.next())
-        s->notifyFinished(this);
-#endif        
 }
 
 void CachedCSSStyleSheet::error()
