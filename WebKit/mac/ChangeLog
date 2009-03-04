@@ -1,3 +1,20 @@
+2009-03-04  Adam Barth  <abath@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24356
+
+        Fix WebKit style for allowUniversalAccessFromFileURLs.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences allowUniversalAccessFromFileURLs]):
+        (-[WebPreferences setAllowUniversalAccessFromFileURLs:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-03-03  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase

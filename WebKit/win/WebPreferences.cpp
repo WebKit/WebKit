@@ -204,7 +204,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileUrlsPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitDatabasesEnabledPreferenceKey), kCFBooleanTrue);
@@ -767,17 +767,17 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setWebSecurityEnabled(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebPreferences::allowUniversalAccessFromFileUrls(
+HRESULT STDMETHODCALLTYPE WebPreferences::allowUniversalAccessFromFileURLs(
     /* [retval][out] */ BOOL* allowAccess)
 {
-    *allowAccess = boolValueForKey(CFSTR(WebKitAllowUniversalAccessFromFileUrlsPreferenceKey));
+    *allowAccess = boolValueForKey(CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey));
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebPreferences::setAllowUniversalAccessFromFileUrls(
+HRESULT STDMETHODCALLTYPE WebPreferences::setAllowUniversalAccessFromFileURLs(
     /* [in] */ BOOL allowAccess)
 {
-    setBoolValue(CFSTR(WebKitAllowUniversalAccessFromFileUrlsPreferenceKey), allowAccess);
+    setBoolValue(CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), allowAccess);
     return S_OK;
 }
 

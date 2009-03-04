@@ -186,7 +186,7 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::AllowUniversalAccessFromFileUrls,
                                       global->attributes.value(QWebSettings::AllowUniversalAccessFromFileUrls));
-        settings->setAllowUniversalAccessFromFileUrls(value);
+        settings->setAllowUniversalAccessFromFileURLs(value);
     } else {
         QList<QWebSettingsPrivate *> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
@@ -316,7 +316,7 @@ QWebSettings *QWebSettings::globalSettings()
     \value LocalStorageDatabaseEnabled Specifies whether support for the HTML 5
         local storage feature is enabled or not.
     \value AllowUniversalAccessFromFileUrls Specifies whether documents from file
-        URLs should be granted universal access (e.g., to HTTP and HTTPS documents).
+        Urls should be granted universal access (e.g., to HTTP and HTTPS documents).
 */
 
 /*!

@@ -92,8 +92,8 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)isWebSecurityEnabled;
 - (void)setWebSecurityEnabled:(BOOL)flag;
 
-- (BOOL)allowUniversalAccessFromFileUrls;
-- (void)setAllowUniversalAccessFromFileUrls:(BOOL)flag;
+- (BOOL)allowUniversalAccessFromFileURLs;
+- (void)setAllowUniversalAccessFromFileURLs:(BOOL)flag;
 
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
