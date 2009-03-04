@@ -99,7 +99,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_POSTURL_FILE        14
 #define ID_TEST_CONSTRUCT           15
 #define ID_TEST_THROW_EXCEPTION_METHOD 16
-#define NUM_METHOD_IDENTIFIERS      17
+#define ID_DESTROY_NULL_STREAM 17
+#define NUM_METHOD_IDENTIFIERS      18
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -120,6 +121,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testPostURLFile",
     "testConstruct",
     "testThrowException",
+    "destroyNullStream"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -382,6 +384,13 @@ static bool destroyStream(PluginObject* obj, const NPVariant* args, uint32_t arg
     return true;
 }
 
+static bool destroyNullStream(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    NPError npError = browser->destroystream(obj->npp, 0, NPRES_USER_BREAK);
+    INT32_TO_NPVARIANT(npError, *result);
+    return true;
+}
+
 static bool testEnumerate(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (argCount != 2 || !NPVARIANT_IS_OBJECT(args[0]) || !NPVARIANT_IS_OBJECT(args[1]))
@@ -578,7 +587,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
     else if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
         browser->setexception(header, "plugin object testThrowException SUCCESS");
         return true;
-    }
+    } else if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM]) 
+        return destroyNullStream(plugin, args, argCount, result);
     
     return false;
 }

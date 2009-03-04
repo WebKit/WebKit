@@ -25,6 +25,8 @@ function runTest()
     shouldBe("document.getElementById('plugin').destroyStream()", "2"); // we expect to fail because the stream should already have completed loading and destroyed itself
     shouldBe("document.getElementById('plugin').destroyStream()", "2"); // try again, just for good measure
 
+    shouldBe("document.getElementById('plugin').destroyNullStream()", "2"); // Now try destroying a null stream
+
     debug("PASS: You didn't crash.\n");
 
     shouldBeTrue("successfullyParsed");

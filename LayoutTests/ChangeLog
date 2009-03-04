@@ -1,3 +1,15 @@
+2009-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22884
+        <rdar://problem/6449783>
+        modified layout test crashes Safari
+        
+        Update tests.
+        * plugins/destroy-stream-twice-expected.txt:
+        * plugins/destroy-stream-twice.html:
+
 2009-03-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

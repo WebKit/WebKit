@@ -7,6 +7,7 @@ destroyStream() returns zero to indicate success, or a non-zero error code to in
 PASS document.getElementById('plugin').hasStream is true
 PASS document.getElementById('plugin').destroyStream() is 2
 PASS document.getElementById('plugin').destroyStream() is 2
+PASS document.getElementById('plugin').destroyNullStream() is 2
 PASS: You didn't crash.
 
 PASS successfullyParsed is true

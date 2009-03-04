@@ -397,12 +397,12 @@ int32 PluginView::write(NPStream* stream, int32 len, void* buffer)
 
 NPError PluginView::destroyStream(NPStream* stream, NPReason reason)
 {
-    PluginStream* browserStream = static_cast<PluginStream*>(stream->ndata);
-
     if (!stream || PluginStream::ownerForStream(stream) != m_instance)
         return NPERR_INVALID_INSTANCE_ERROR;
 
+    PluginStream* browserStream = static_cast<PluginStream*>(stream->ndata);
     browserStream->cancelAndDestroyStream(reason);
+
     return NPERR_NO_ERROR;
 }
 
