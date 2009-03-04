@@ -1,7 +1,7 @@
 
-TEST(video.getAttribute('poster') == 'content/greenbox.png') OK
-TEST(relativeURL(video.poster) == 'content/greenbox.png') OK
-TEST(video.getAttribute('poster') == 'content/abe.png') OK
-TEST(relativeURL(video.poster) == 'content/abe.png') OK
+EXPECTED (video.getAttribute('poster') == 'content/greenbox.png') OK
+EXPECTED (relativeURL(video.poster) == 'content/greenbox.png') OK
+EXPECTED (video.getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(video.poster) == 'content/abe.png') OK
 END OF TEST
 

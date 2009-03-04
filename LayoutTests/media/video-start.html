@@ -1,7 +1,9 @@
 <video start=1s controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.start == 1.0");
-waitForEventTestAndEnd('canplaythrough', "video.currentTime == 1.0");
-video.src = "content/test.mp4";
+    testExpected("video.start", 1.0);
+
+    waitForEvent("canplaythrough", function () { testExpected("video.currentTime", 1.0); endTest(); });
+
+    video.src = "content/test.mp4";
 </script>

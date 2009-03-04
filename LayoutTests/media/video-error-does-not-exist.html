@@ -2,15 +2,15 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("!video.error");
+testExpected("video.error", null);
 waitForEventAndTest("load", "false");
 waitForEvent("emptied", function () {
-    test("video.error.code == MediaError.MEDIA_ERR_NETWORK");
-    test("video.duration == 0");
-    test("video.currentTime == 0");
-    test("video.buffered.length == 0");
-    test("video.seekable.length == 0");
-    test("video.buffered.length == 0");
+    testExpected("video.error.code", MediaError.MEDIA_ERR_NETWORK);
+    testExpected("video.duration", 0);
+    testExpected("video.currentTime", 0);
+    testExpected("video.buffered.length", 0);
+    testExpected("video.seekable.length", 0);
+    testExpected("video.buffered.length", 0);
     endTest();
 });
 video.src = "content/does-not-exist.mpeg";

@@ -1,6 +1,7 @@
-TEST(video.currentTime == 0) OK
-EVENT(load) TEST(video.currentTime == 0) OK
+EXPECTED (video.currentTime == '0') OK
+EVENT(load)
+EXPECTED (video.currentTime == '0') OK
 EVENT(play)
-TEST(video.currentTime > 0) OK
+EXPECTED (video.currentTime > '0') OK
 END OF TEST
 

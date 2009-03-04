@@ -1,10 +1,17 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.networkState == HTMLMediaElement.EMPTY");
-waitForEventAndTest("loadstart", "video.networkState == HTMLMediaElement.LOADING");
-waitForEventAndTest("loadedmetadata", "video.networkState == HTMLMediaElement.LOADED_METADATA");
-waitForEventAndTest("loadedfirstframe", "video.networkState == HTMLMediaElement.LOADED_FIRST_FRAME");
-waitForEventTestAndEnd("load", "video.networkState == HTMLMediaElement.LOADED");
-video.src = "content/test.mp4";
+    function testNetworkState(expected, endIt)
+    {
+        testExpected("video.networkState", expected);
+        if (endIt)
+            endTest();
+    }
+
+    testExpected("video.networkState", HTMLMediaElement.EMPTY);
+    waitForEvent("loadstart", function () { testNetworkState(HTMLMediaElement.LOADING); } );
+    waitForEvent("loadedmetadata", function () { testNetworkState(HTMLMediaElement.LOADED_METADATA); } );
+    waitForEvent("loadedfirstframe", function () { testNetworkState(HTMLMediaElement.LOADED_FIRST_FRAME); } );
+    waitForEvent("load", function () { testNetworkState(HTMLMediaElement.LOADED, true); } );
+    video.src = "content/test.mp4";
 </script>

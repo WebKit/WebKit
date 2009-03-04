@@ -1,7 +1,8 @@
 Test that playcount attribute causes playback to end after right number of repeats.
 
-TEST(video.playCount == 3) OK
-TEST(video.currentLoop == 0) OK
-EVENT(ended) TEST(video.currentLoop == 2) OK
+EXPECTED (video.playCount == '3') OK
+EXPECTED (video.currentLoop == '0') OK
+EVENT(ended)
+EXPECTED (video.currentLoop == '2') OK
 END OF TEST
 

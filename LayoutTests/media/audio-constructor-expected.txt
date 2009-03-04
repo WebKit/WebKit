@@ -1,8 +1,9 @@
 Test that Audio() object loads the resource after src attribute is set and load() is called.
 
-TEST(audio instanceof HTMLAudioElement) OK
+EXPECTED (audio instanceof HTMLAudioElement == 'true') OK
 RUN(audio.load())
-EVENT(loadstart) TEST(relativeURL(audio.currentSrc)=='content/test.wav') OK
+EVENT(loadstart)
+EXPECTED (relativeURL(audio.currentSrc) == 'content/test.wav') OK
 EVENT(load)
 END OF TEST
 

@@ -1,7 +1,7 @@
 Test that QuickTime file with RTSP URL generates a load error.
 
 EVENT(error)
-TEST(video.error) OK
-TEST(video.error.code = MediaError.MEDIA_ERR_NETWORK) OK
+EXPECTED (video.error != 'null') OK
+EXPECTED (video.error.code == '2') OK
 END OF TEST
 

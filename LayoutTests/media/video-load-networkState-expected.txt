@@ -1,7 +1,11 @@
-TEST(video.networkState == HTMLMediaElement.EMPTY) OK
-EVENT(loadstart) TEST(video.networkState == HTMLMediaElement.LOADING) OK
-EVENT(loadedmetadata) TEST(video.networkState == HTMLMediaElement.LOADED_METADATA) OK
-EVENT(loadedfirstframe) TEST(video.networkState == HTMLMediaElement.LOADED_FIRST_FRAME) OK
-EVENT(load) TEST(video.networkState == HTMLMediaElement.LOADED) OK
+EXPECTED (video.networkState == '0') OK
+EVENT(loadstart)
+EXPECTED (video.networkState == '1') OK
+EVENT(loadedmetadata)
+EXPECTED (video.networkState == '2') OK
+EVENT(loadedfirstframe)
+EXPECTED (video.networkState == '3') OK
+EVENT(load)
+EXPECTED (video.networkState == '4') OK
 END OF TEST
 

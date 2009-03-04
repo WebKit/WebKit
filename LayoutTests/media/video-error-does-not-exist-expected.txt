@@ -1,12 +1,12 @@
 Test that the media element is in correct state after load fails.
 
-TEST(!video.error) OK
+EXPECTED (video.error == 'null') OK
 EVENT(emptied)
-TEST(video.error.code == MediaError.MEDIA_ERR_NETWORK) OK
-TEST(video.duration == 0) OK
-TEST(video.currentTime == 0) OK
-TEST(video.buffered.length == 0) OK
-TEST(video.seekable.length == 0) OK
-TEST(video.buffered.length == 0) OK
+EXPECTED (video.error.code == '2') OK
+EXPECTED (video.duration == '0') OK
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.buffered.length == '0') OK
+EXPECTED (video.seekable.length == '0') OK
+EXPECTED (video.buffered.length == '0') OK
 END OF TEST
 

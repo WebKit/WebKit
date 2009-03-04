@@ -1,12 +1,12 @@
 Test that playing video rewinds to time specified by the loopstart attribute when it loops.
 
-TEST(video.loopStart==1.0) OK
+EXPECTED (video.loopStart == '1') OK
 RUN(video.play())
 EVENT(load)
 EVENT(timeupdate)
 EVENT(timeupdate)
 EVENT(timeupdate)
-TEST(video.currentLoop == 1) OK
-TEST(video.currentTime.toFixed(1) == 1.0) OK
+EXPECTED (video.currentLoop == '1') OK
+EXPECTED (video.currentTime.toFixed(1) == '1') OK
 END OF TEST
 

@@ -1,6 +1,6 @@
 Test that QuickTime file with broken content generates an error.
 
 EVENT(error)
-TEST(video.error) OK
+EXPECTED (video.error == '[object MediaError]') OK
 END OF TEST
 

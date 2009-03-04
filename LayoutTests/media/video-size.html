@@ -1,7 +1,14 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.videoWidth == 0 && video.videoHeight == 0");
-waitForEventTestAndEnd('loadedmetadata', "video.videoWidth > 0 && video.videoHeight > 0");
-video.src = "content/test.mp4";
+    testExpected("video.videoWidth", 0, "==");
+    testExpected("video.videoHeight", 0, "==");
+
+    waitForEvent('loadedmetadata', function () { 
+        testExpected("video.videoWidth", 0, ">");
+        testExpected("video.videoHeight", 0, ">");
+        endTest();
+    } );
+
+    video.src = "content/test.mp4";
 </script>

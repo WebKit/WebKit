@@ -1,7 +1,30 @@
 <video controls></video>
 <script src=video-test.js></script>
+
 <script>
-waitForEventAndTest("loadstart", "!event.lengthComputable && event.loaded==0 && event.total==0");
-waitForEventTestAndEnd("load", "event.lengthComputable && event.loaded>0 && event.total>0");
-video.src = "content/test.mp4";
+    var event;
+
+    function testOnLoadStart(evt)
+    {
+        event = evt;
+
+        testExpected("!event.lengthComputable", true);
+        testExpected("event.total", 0);
+        testExpected("event.loaded", 0);
+    }
+
+    function testOnLoad(evt)
+    {
+        event = evt;
+
+        testExpected("event.lengthComputable", true);
+        testExpected("event.loaded", 0, '>');
+        testExpected("event.total", 0, '>');
+        endTest();
+    }
+
+    waitForEvent("loadstart", testOnLoadStart);
+    waitForEvent("load", testOnLoad, true);
+
+    video.src = "content/test.mp4";
 </script>

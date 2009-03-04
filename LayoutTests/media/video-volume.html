@@ -2,21 +2,21 @@
 <p>Test 'volume' attribute<p>
 <script src=video-test.js></script>
 <script>
-test("video.volume == 1.0");
-run("video.volume = 0.5");
-test("video.volume == 0.5");
-run("video.volume = 0");
-test("video.volume == 0");
-testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
-testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
-video.src = "content/test.mp4";
-run("video.load()");
-waitForEvent("load", function () {
-    test("video.volume == 0");
+    testExpected("video.volume", 1.0);
     run("video.volume = 0.5");
-    test("video.volume == 0.5");
+    testExpected("video.volume", 0.5);
+    run("video.volume = 0");
+    testExpected("video.volume", 0);
     testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
     testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
-    endTest();
-}); 
+    video.src = "content/test.mp4";
+    run("video.load()");
+    waitForEvent("load", function () {
+        testExpected("video.volume", 0);
+        run("video.volume = 0.5");
+        testExpected("video.volume", 0.5);
+        testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
+        testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
+        endTest();
+    }); 
 </script>

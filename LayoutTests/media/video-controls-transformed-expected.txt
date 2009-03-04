@@ -2,8 +2,8 @@ Test controls on transformed video.
 
 This test only runs in DRT!
 
-TEST(video.controls) OK
+EXPECTED (video.controls != 'null') OK
 EVENT(load)
-TEST(!video.paused) OK
+EXPECTED (video.paused == 'false') OK
 END OF TEST
 

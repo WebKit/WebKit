@@ -2,16 +2,16 @@
 <p>Test that seeking video with remaining loops past it's end rewinds to the beginning and continues playback.</p>
 <script src=video-test.js></script>
 <script>
-waitForEvent('load', function () { 
-    waitForEvent('timeupdate', function () {
-        failTestIn(1000);
-        if (video.currentLoop == 1) {
-            test("video.currentLoop == 1");
-            endTest();
-        }
+    waitForEvent('load', function () { 
+        waitForEvent('timeupdate', function () {
+            failTestIn(1000);
+            if (video.currentLoop == 1) {
+                testExpected("video.currentLoop", 1);
+                endTest();
+            }
+        });
+        video.currentTime = 500;
     });
-    video.currentTime = 500;
-});
-video.src = "content/test.mp4";
-run("video.play()");
+    video.src = "content/test.mp4";
+    run("video.play()");
 </script>

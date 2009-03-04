@@ -1,8 +1,13 @@
-TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
-EVENT(loadstart) TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
-EVENT(loadedmetadata) TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
-EVENT(loadedfirstframe) TEST(video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME) OK
-EVENT(canshowcurrentframe) TEST(video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME) OK
-EVENT(canplaythrough) TEST(video.readyState == HTMLMediaElement.CAN_PLAY_THROUGH) OK
+EXPECTED (video.readyState == '0') OK
+EVENT(loadstart)
+EXPECTED (video.readyState == '0') OK
+EVENT(loadedmetadata)
+EXPECTED (video.readyState == '0') OK
+EVENT(loadedfirstframe)
+EXPECTED (video.readyState == '1') OK
+EVENT(canshowcurrentframe)
+EXPECTED (video.readyState == '1') OK
+EVENT(canplaythrough)
+EXPECTED (video.readyState == '3') OK
 END OF TEST
 

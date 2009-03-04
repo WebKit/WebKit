@@ -2,10 +2,18 @@
 <p>Test that play() from EMPTY network state triggers load() and async play event.</p>
 <script src=video-test.js></script>
 <script>
-video.src = "content/test.mp4";
-test("video.networkState == HTMLMediaElement.EMPTY");
-waitForEventAndTest('loadstart', "video.paused");
-waitForEventTestAndEnd('play', "!video.paused");
-run("video.play()");
-consoleWrite("SCRIPT DONE");
+    video.src = "content/test.mp4";
+    testExpected("video.networkState", HTMLMediaElement.EMPTY);
+
+    waitForEvent('loadstart', function () { 
+        testExpected("video.paused", true);
+    } );
+
+    waitForEvent('play', function () { 
+        testExpected("video.paused", false);
+        endTest();
+    } );
+
+    run("video.play()");
+    consoleWrite("SCRIPT DONE");
 </script>

@@ -2,10 +2,14 @@
 <p>Test that when start DOM attribute is set, playback starts from that time.</p>
 <script src=video-test.js></script>
 <script>
-video.start = 1.0;
-test("video.start == 1.0");
-test("video.getAttribute('start') == '1s'");
-waitForEventTestAndEnd('canplaythrough', "video.currentTime == 1.0");
-video.src = "content/test.mp4";
-run("video.load()");
+
+    video.start = 1.0;
+    testExpected("video.loopStart", 1.0);
+
+    testExpected("video.getAttribute('start') ", '1s');
+
+    waitForEvent("canplaythrough", function () { testExpected("video.currentTime", 1.0); endTest(); });
+
+    video.src = "content/test.mp4";
+    run("video.load()");
 </script>

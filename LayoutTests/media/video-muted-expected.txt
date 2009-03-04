@@ -1,12 +1,12 @@
 Test 'muted' attribute
 
-TEST(!video.muted) OK
+EXPECTED (video.muted == 'false') OK
 RUN(video.muted = true)
-TEST(video.muted) OK
+EXPECTED (video.muted == 'true') OK
 RUN(video.load())
 EVENT(load)
-TEST(video.muted) OK
+EXPECTED (video.muted == 'true') OK
 RUN(video.muted = false)
-TEST(!video.muted) OK
+EXPECTED (video.muted == 'false') OK
 END OF TEST
 

@@ -1,17 +1,17 @@
 Test 'volume' attribute
 
-TEST(video.volume == 1.0) OK
+EXPECTED (video.volume == '1') OK
 RUN(video.volume = 0.5)
-TEST(video.volume == 0.5) OK
+EXPECTED (video.volume == '0.5') OK
 RUN(video.volume = 0)
-TEST(video.volume == 0) OK
+EXPECTED (video.volume == '0') OK
 TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 RUN(video.load())
 EVENT(load)
-TEST(video.volume == 0) OK
+EXPECTED (video.volume == '0') OK
 RUN(video.volume = 0.5)
-TEST(video.volume == 0.5) OK
+EXPECTED (video.volume == '0.5') OK
 TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 END OF TEST

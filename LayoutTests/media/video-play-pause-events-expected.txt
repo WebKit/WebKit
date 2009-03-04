@@ -3,8 +3,11 @@ Test that calling play() and pause() triggers async play, timeupdate and pause e
 RUN(video.play())
 RUN(video.pause())
 SCRIPT DONE
-EVENT(play) TEST(video.paused) OK
-EVENT(timeupdate) TEST(video.paused) OK
-EVENT(pause) TEST(video.paused) OK
+EVENT(play)
+EXPECTED (video.paused == 'true') OK
+EVENT(timeupdate)
+EXPECTED (video.paused == 'true') OK
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
 END OF TEST
 

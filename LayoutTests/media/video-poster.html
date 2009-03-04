@@ -1,10 +1,10 @@
 <video poster="content/greenbox.png" controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.getAttribute('poster') == 'content/greenbox.png'");
-test("relativeURL(video.poster) == 'content/greenbox.png'");
-video.setAttribute('poster', 'content/abe.png');
-test("video.getAttribute('poster') == 'content/abe.png'");
-test("relativeURL(video.poster) == 'content/abe.png'");
-endTest();
+    testExpected("video.getAttribute('poster')", "content/greenbox.png");
+    testExpected("relativeURL(video.poster)", "content/greenbox.png");
+    video.setAttribute('poster', 'content/abe.png');
+    testExpected("video.getAttribute('poster')", "content/abe.png");
+    testExpected("relativeURL(video.poster)", "content/abe.png");
+    endTest();
 </script>

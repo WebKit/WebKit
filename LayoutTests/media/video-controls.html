@@ -2,23 +2,23 @@
 <p>Test 'controls' attribute<p>
 <script src=video-test.js></script>
 <script>
-test("video.controls");
-waitForEvent('load', function () {
-    document.body.offsetTop;
-    test("video.controls");
-    run("video.removeAttribute('controls')");
-    document.body.offsetTop;
-    test("!video.controls");
-    run("video.controls = true");
-    document.body.offsetTop;
-    test("video.getAttribute('controls') == 'controls'");
-    run("video.controls = false");
-    document.body.offsetTop;
-    test("!video.getAttribute('controls')");
-    run("video.setAttribute('controls','controls')");
-    document.body.offsetTop;
-    test("video.controls");
-    endTest();
-} );
-video.src = 'content/test.mp4';
+    testExpected("video.controls", null, '!=');
+    waitForEvent('load', function () {
+        document.body.offsetTop;
+        testExpected("video.controls", null, '!=');
+        run("video.removeAttribute('controls')");
+        document.body.offsetTop;
+        testExpected("video.controls", false, '==');
+        run("video.controls = true");
+        document.body.offsetTop;
+        testExpected("video.getAttribute('controls')", "controls");
+        run("video.controls = false");
+        document.body.offsetTop;
+        testExpected("video.controls", false, '==');
+        run("video.setAttribute('controls','controls')");
+        document.body.offsetTop;
+        testExpected("video.controls", null, '!=');
+        endTest();
+    } );
+    video.src = 'content/test.mp4';
 </script>

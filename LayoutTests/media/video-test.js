@@ -27,16 +27,12 @@ function testAndEnd(testFuncString)
 
 function test(testFuncString, endit)
 {
-    if (eval(testFuncString))
-        consoleWrite("TEST(" + testFuncString + ") <span style='color:green'>OK</span>");
-    else
-        consoleWrite("TEST(" + testFuncString + ") <span style='color:red'>FAIL</span>");    
-
+    logResult(eval(testFuncString), "TEST(" + testFuncString + ")");
     if (endit)
         endTest();  
 }
 
-function testExpected(testFuncString, expected)
+function testExpected(testFuncString, expected, comparison)
 {
     try {
         var observed = eval(testFuncString);
@@ -45,12 +41,23 @@ function testExpected(testFuncString, expected)
         return;
     }
     
-    var msg = "expected " + testFuncString + "=='" + expected + "', observed '" + observed + "'";
+    if (comparison === undefined)
+        comparison = '==';
 
-    if (observed == expected)
-        consoleWrite(msg + " - <span style='color:green'>OK</span>");
-    else
-        consoleWrite(msg + " - <span style='color:red'>FAIL</span>");
+    var success = false;
+    switch (comparison)
+    {
+        case '<':  success = observed <  expected; break;
+        case '>':  success = observed >  expected; break;
+        case '!=': success = observed != expected; break;
+        case '==': success = observed == expected; break;
+    }
+
+    var msg = "EXPECTED (<em>" + testFuncString + " </em>" + comparison + " '<em>" + expected + "</em>')";
+    if (!success)
+        msg +=  ", OBSERVED '<em>" + observed + "</em>'";
+
+    logResult(success, msg);
 }
 
 function run(testFuncString)
@@ -75,7 +82,7 @@ function waitForEvent(eventName, func, endit)
         consoleWrite("EVENT(" + eventName + ")");
         
         if (func)
-            func();
+            func(event);
         
         if (endit)
             endTest();    
@@ -98,11 +105,7 @@ function waitForEventAndTest(eventName, testFuncString, endit)
 {
     function _eventCallback(event)
     {
-        if (eval(testFuncString))
-            consoleWrite("EVENT(" + eventName + ") TEST(" + testFuncString + ") <span style='color:green'>OK</span>");
-        else
-            consoleWrite("EVENT(" + eventName + ") TEST(" + testFuncString + ") <span style='color:red'>FAIL</span>");
-        
+        logResult(eval(testFuncString), "EVENT(" + eventName + ") TEST(" + testFuncString + ")");
         if (endit)
             endTest();    
     }
@@ -115,10 +118,7 @@ function testException(testString, exceptionString)
     try {
         eval(testString);
     } catch (ex) { 
-        if (ex.code == eval(exceptionString))
-            consoleWrite("TEST(" + testString + ") THROWS("+exceptionString+") <span style='color:green'>OK</span>");
-        else
-            consoleWrite("TEST(" + testString + ") THROWS("+exceptionString+") <span style='color:red'>FAIL</span>");    
+        logResult(ex.code == eval(exceptionString), "TEST(" + testString + ") THROWS("+exceptionString+")");
     }
 }
 
@@ -143,6 +143,14 @@ function failTestIn(ms)
         consoleWrite("FAIL: did not end fast enough");
         endTest();
     }, ms);
+}
+
+function logResult(success, text)
+{
+    if (success)
+        consoleWrite(text + " <span style='color:green'>OK</span>");
+    else
+        consoleWrite(text + " <span style='color:red'>FAIL</span>");
 }
 
 function consoleWrite(text)

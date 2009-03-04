@@ -2,23 +2,23 @@
 Test loopend attribute parsing, limits, and defaults.
 
 <video loopend=1.5> - loopend specified, should not change
-expected video.loopEnd=='1.5', observed '1.5' - OK
-expected audio.loopEnd=='1.5', observed '1.5' - OK
+EXPECTED (video.loopEnd == '1.5') OK
+EXPECTED (audio.loopEnd == '1.5') OK
 
 <video end=1.0> - loopend not specified, should return end attr
-expected video.loopEnd=='1', observed '1' - OK
-expected audio.loopEnd=='1', observed '1' - OK
+EXPECTED (video.loopEnd == '1') OK
+EXPECTED (audio.loopEnd == '1') OK
 
 <video > - no loopend and no end, default should be infinity (end default)
-expected video.loopEnd=='Infinity', observed 'Infinity' - OK
-expected audio.loopEnd=='Infinity', observed 'Infinity' - OK
+EXPECTED (video.loopEnd == 'Infinity') OK
+EXPECTED (audio.loopEnd == 'Infinity') OK
 
 <video loopend='s1.0'> - bogus loopend and no end, default should be infinity (end default)
-expected video.loopEnd=='Infinity', observed 'Infinity' - OK
-expected audio.loopEnd=='Infinity', observed 'Infinity' - OK
+EXPECTED (video.loopEnd == 'Infinity') OK
+EXPECTED (audio.loopEnd == 'Infinity') OK
 
 <video loopend='s1.0' end=1.0> - bogus loopend, default should be end attr
-expected video.loopEnd=='1', observed '1' - OK
-expected audio.loopEnd=='1', observed '1' - OK
+EXPECTED (video.loopEnd == '1') OK
+EXPECTED (audio.loopEnd == '1') OK
 END OF TEST
 

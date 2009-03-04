@@ -1,4 +1,5 @@
 Test that setting src attribute triggers load
-EVENT(loadstart) TEST(relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 END OF TEST
 

@@ -1,10 +1,17 @@
 <video controls></video>
 <script src=video-test.js></script>
+
 <script>
-test("video.currentSrc==''");
-var source = document.createElement("source");
-source.setAttribute("src", "content/test.mp4");
-video.appendChild(source);
-test("video.currentSrc==''");
-waitForEventTestAndEnd("load", "relativeURL(video.currentSrc)=='content/test.mp4'");
+    testExpected("video.currentSrc", "");
+    var source = document.createElement("source");
+    source.setAttribute("src", "content/test.mp4");
+    video.appendChild(source);
+
+    testExpected("video.currentSrc", "");
+
+    waitForEvent("load", function () {
+        testExpected("relativeURL(video.currentSrc) ", "content/test.mp4");
+        endTest();
+    });
+
 </script>

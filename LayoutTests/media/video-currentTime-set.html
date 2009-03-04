@@ -5,9 +5,9 @@ waitForEvent('load',
 function () { 
     video.currentTime = video.duration - 0.2; 
     video.play(); 
-    waitForEvent('timeupdate',
-    function () {
-        setTimeout(function () { test("false") }, 800);
+    waitForEvent('timeupdate', function () {
+        var timeout = 800;
+        setTimeout(function () { logResult("No timeupdate event in " + timeout/1000  + "seconds", false); }, timeout);
     });
     waitForEventAndEnd('ended');
 });

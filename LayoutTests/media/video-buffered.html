@@ -1,23 +1,23 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.buffered.length == 0");
-testException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
-testException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
-testException("video.buffered.start(0)", "DOMException.INDEX_SIZE_ERR");
-testException("video.buffered.end(0)", "DOMException.INDEX_SIZE_ERR");
-waitForEvent('load', 
-    function () 
-    {
-        test("video.buffered.length == 1");
-        test("video.buffered.start(0) == 0");
-        test("video.buffered.end(0) > 0");
-        testException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.buffered.start(1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.buffered.end(1)", "DOMException.INDEX_SIZE_ERR");
-        endTest();
-    }
-);
-video.src = "content/test.mp4";
+    testExpected("video.buffered.length", 0);
+    testException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.buffered.start(0)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.buffered.end(0)", "DOMException.INDEX_SIZE_ERR");
+    waitForEvent('load', 
+        function () 
+        {
+            testExpected("video.buffered.length", 1);
+            testExpected("video.buffered.start(0)", 0);
+            testExpected("video.buffered.end(0)", 0, '>');
+            testException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.buffered.start(1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.buffered.end(1)", "DOMException.INDEX_SIZE_ERR");
+            endTest();
+        }
+    );
+    video.src = "content/test.mp4";
 </script>

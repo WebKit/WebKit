@@ -1,10 +1,14 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.currentSrc==''");
-video.src = "content/test.mp4";
-test("video.currentSrc==''");
-waitForEventTestAndEnd("load", "relativeURL(video.currentSrc)=='content/test.mp4'");
+    testExpected("video.currentSrc", "");
+    video.src = "content/test.mp4";
+    testExpected("video.currentSrc", "");
 
-video.load();
+    waitForEvent('load', function () { 
+        testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+        endTest();
+    } );
+    
+    video.load();
 </script>

@@ -5,6 +5,6 @@ EVENT(load)
 EVENT(timeupdate)
 EVENT(timeupdate)
 EVENT(timeupdate)
-TEST(video.currentLoop == 1) OK
+EXPECTED (video.currentLoop == '1') OK
 END OF TEST
 

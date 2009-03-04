@@ -1,7 +1,8 @@
 Test that Audio("url") constructor loads the specified resource.
 
-TEST(audio instanceof HTMLAudioElement) OK
-EVENT(loadstart) TEST(relativeURL(audio.currentSrc)=='content/test.wav') OK
+EXPECTED (audio instanceof HTMLAudioElement == 'true') OK
+EVENT(loadstart)
+EXPECTED (relativeURL(audio.currentSrc) == 'content/test.wav') OK
 EVENT(load)
 END OF TEST
 

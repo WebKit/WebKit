@@ -2,11 +2,13 @@
 <p>Test that calling play() and pause() triggers async play, timeupdate and pause events.</p>
 <script src=video-test.js></script>
 <script>
-video.src = "content/test.mp4";
-waitForEventAndTest('play', "video.paused");
-waitForEventAndTest('timeupdate', "video.paused");
-waitForEventTestAndEnd('pause', "video.paused");
-run("video.play()");
-run("video.pause()");
-consoleWrite("SCRIPT DONE");
+    video.src = "content/test.mp4";
+
+    waitForEvent('play', function () { testExpected("video.paused", true);} );
+    waitForEvent('timeupdate', function () { testExpected("video.paused", true);} );
+    waitForEvent('pause', function () { testExpected("video.paused", true); endTest(); } );
+
+    run("video.play()");
+    run("video.pause()");
+    consoleWrite("SCRIPT DONE");
 </script>

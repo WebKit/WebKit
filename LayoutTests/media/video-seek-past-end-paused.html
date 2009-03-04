@@ -2,21 +2,21 @@
 <p>Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.</p>
 <script src=video-test.js></script>
 <script>
-waitForEvent('load', function () { 
-    // exact amount of timeupdate events is timing and implementation dependent
-    var first = true;
-    video.addEventListener("timeupdate", function () {
-        if (first) {
-            consoleWrite("EVENT(timeupdate)");
-            test("video.currentTime == video.duration");
-        }
-        else if (video.currentTime != video.duration)
-            test("video.currentTime == video.duration");
-        first = false;
+    waitForEvent('load', function () { 
+        // exact amount of timeupdate events is timing and implementation dependent
+        var first = true;
+        video.addEventListener("timeupdate", function () {
+            if (first) {
+                consoleWrite("EVENT(timeupdate)");
+                testExpected("video.currentTime", video.duration);
+            }
+            else if (video.currentTime != video.duration)
+                testExpected("video.currentTime", video.duration);
+            first = false;
+        });
+        run("video.currentTime = 500");
+        endTestLater();
     });
-    run("video.currentTime = 500");
-    endTestLater();
-});
-video.src = "content/test.mp4";
-run("video.load()");
+    video.src = "content/test.mp4";
+    run("video.load()");
 </script>

@@ -1,9 +1,10 @@
 Test that changing src attribute triggers load when network state is empty.
 Test that it does not trigger load when network state is non-empty.
 EVENT(emptied)
-TEST(video.networkState == HTMLMediaElement.EMPTY) OK
-EVENT(loadstart) TEST(relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EXPECTED (video.networkState == '0') OK
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 EVENT(load)
-TEST(video.networkState != HTMLMediaElement.EMPTY) OK
+EXPECTED (video.networkState != '0') OK
 END OF TEST
 

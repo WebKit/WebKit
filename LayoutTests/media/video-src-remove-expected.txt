@@ -1,5 +1,6 @@
 Test that removing src attribute triggers load
 EVENT(emptied)
-EVENT(loadstart) TEST(relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 END OF TEST
 

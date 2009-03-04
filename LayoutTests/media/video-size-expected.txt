@@ -1,4 +1,7 @@
-TEST(video.videoWidth == 0 && video.videoHeight == 0) OK
-EVENT(loadedmetadata) TEST(video.videoWidth > 0 && video.videoHeight > 0) OK
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+EVENT(loadedmetadata)
+EXPECTED (video.videoWidth > '0') OK
+EXPECTED (video.videoHeight > '0') OK
 END OF TEST
 

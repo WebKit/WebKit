@@ -2,9 +2,12 @@
 <p>Test that Audio("url") constructor loads the specified resource.</p>
 <script src=video-test.js></script>
 <script>
-var audio = new Audio("content/test.wav");
-media = audio;
-test("audio instanceof HTMLAudioElement");
-waitForEventAndTest("loadstart", "relativeURL(audio.currentSrc)=='content/test.wav'");
-waitForEventAndEnd("load");
+    var audio = new Audio("content/test.wav");
+    media = audio;
+
+    testExpected("audio instanceof HTMLAudioElement", true);
+
+    waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", "content/test.wav"); });
+
+    waitForEventAndEnd("load");
 </script>

@@ -9,22 +9,25 @@
   </style>
 </head>
 <body>
-  <video controls></video>
-<p>Test controls on transformed video.</p>
-<p>This test only runs in DRT!</p>
-<script src=video-test.js></script>
-<script>
-test("video.controls");
-waitForEvent('load', function () {
-  if (window.eventSender) {
-     eventSender.mouseMoveTo(54,240); // over play button
-     eventSender.mouseDown();
-     eventSender.mouseUp();
-  }
-  test("!video.paused");
-  endTest();
-} );
-video.src = 'content/test.mp4';
-</script>
+    <video controls></video>
+    <p>Test controls on transformed video.</p>
+    <p>This test only runs in DRT!</p>
+    <script src=video-test.js></script>
+    <script>
+        testExpected("video.controls", null, '!=');
+        waitForEvent('load', function () {
+            if (window.eventSender) 
+            {
+                eventSender.mouseMoveTo(54,240); // over play button
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+            testExpected("video.paused", false);
+            endTest();
+        } );
+        video.src = 'content/test.mp4';
+    </script>
 </body>
 </html>
+
+

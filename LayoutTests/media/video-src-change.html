@@ -5,15 +5,21 @@ Test that it does not trigger load when network state is non-empty.
 </div>
 <script src=video-test.js></script>
 <script>
-waitForEvent('emptied', function () {
-    test('video.networkState == HTMLMediaElement.EMPTY');
-    video.setAttribute('src', 'content/test.mp4')
-    waitForEventAndTest('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
-    waitForEvent('load', function () {
-        test('video.networkState != HTMLMediaElement.EMPTY');
-        video.setAttribute('src', 'content/test.wav');
-        waitForEventAndFail('loadstart');
-        setTimeout(endTest, 500);
+    waitForEvent('emptied', function () {
+        testExpected("video.networkState", HTMLMediaElement.EMPTY);
+        video.setAttribute('src', 'content/test.mp4')
+        waitForEvent("loadstart", function () { testExpected("relativeURL(video.currentSrc)", "content/test.mp4"); });
+
+        waitForEvent('load', function () {
+            testExpected("video.networkState", HTMLMediaElement.EMPTY, "!=");
+            video.setAttribute('src', 'content/test.wav');
+
+            waitForEvent('loadstart', function () { 
+                logResult("LOADSTART fired");
+                endTest();
+            } );
+
+            setTimeout(endTest, 500);
+        });
     });
-});
 </script>

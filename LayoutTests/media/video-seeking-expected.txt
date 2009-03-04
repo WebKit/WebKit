@@ -1,11 +1,11 @@
 Test that seeking attribute is true in timeupdate event after seek and goes back to false when seeking completes
 
 EVENT(load)
-TEST(!video.seeking) OK
+EXPECTED (video.seeking == 'false') OK
 RUN(video.currentTime = 2)
 EVENT(timeupdate)
-TEST(video.seeking) OK
-TEST(video.currentTime == 2) OK
-TEST(!video.seeking) OK
+EXPECTED (video.seeking == 'true') OK
+EXPECTED (video.currentTime == '2') OK
+EXPECTED (video.seeking == 'false') OK
 END OF TEST
 

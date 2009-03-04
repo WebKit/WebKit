@@ -2,8 +2,13 @@
 <p>Test that playcount attribute causes playback to end after right number of repeats.</p>
 <script src=video-test.js></script>
 <script>
-test("video.playCount == 3");
-test("video.currentLoop == 0");
-waitForEventTestAndEnd('ended', "video.currentLoop == 2");
-video.play();
+    testExpected("video.playCount", 3);
+    testExpected("video.currentLoop", 0);
+
+    waitForEvent('ended', function () { 
+        testExpected("video.currentLoop", 2);
+        endTest();
+    } );
+
+    video.play();
 </script>

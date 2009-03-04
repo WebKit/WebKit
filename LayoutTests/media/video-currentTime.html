@@ -1,14 +1,14 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.currentTime == 0")
-waitForEventAndTest('load', "video.currentTime == 0");
-video.addEventListener('load', function() { video.play(); setTimeout(testCurrentTime, 500) });
-waitForEvent('play');
-function testCurrentTime()
-{
-    test("video.currentTime > 0")
-    endTest();
-}
-video.src = "content/test.mp4";
+    testExpected("video.currentTime", 0)
+    waitForEvent('load', function() { testExpected("video.currentTime", 0); } );
+    video.addEventListener('load', function() { video.play(); setTimeout(testCurrentTime, 500) });
+    waitForEvent('play');
+    function testCurrentTime()
+    {
+        testExpected("video.currentTime", 0, '>')
+        endTest();
+    }
+    video.src = "content/test.mp4";
 </script>

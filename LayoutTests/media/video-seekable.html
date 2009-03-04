@@ -1,23 +1,23 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.seekable.length == 0");
-testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
-testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
-testException("video.seekable.start(0)", "DOMException.INDEX_SIZE_ERR");
-testException("video.seekable.end(0)", "DOMException.INDEX_SIZE_ERR");
-waitForEvent('load',
-    function () 
-    {
-        test("video.seekable.length == 1");
-        test("video.seekable.start(0) == 0");
-        test("video.seekable.end(0) > 0");
-        testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.seekable.start(1)", "DOMException.INDEX_SIZE_ERR");
-        testException("video.seekable.end(1)", "DOMException.INDEX_SIZE_ERR");
-        endTest();
-    }
-);
-video.src = "content/test.mp4";
+    testExpected("video.seekable.length", 0);
+    testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.start(0)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.end(0)", "DOMException.INDEX_SIZE_ERR");
+    waitForEvent('load',
+        function () 
+        {
+            testExpected("video.seekable.length", 1);
+            testExpected("video.seekable.start(0)", 0);
+            testExpected("video.seekable.end(0)",  0, ">");
+            testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.start(1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.end(1)", "DOMException.INDEX_SIZE_ERR");
+            endTest();
+        }
+    );
+    video.src = "content/test.mp4";
 </script>

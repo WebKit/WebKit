@@ -1,15 +1,15 @@
 Test 'controls' attribute
 
-TEST(video.controls) OK
+EXPECTED (video.controls != 'null') OK
 EVENT(load)
-TEST(video.controls) OK
+EXPECTED (video.controls != 'null') OK
 RUN(video.removeAttribute('controls'))
-TEST(!video.controls) OK
+EXPECTED (video.controls == 'false') OK
 RUN(video.controls = true)
-TEST(video.getAttribute('controls') == 'controls') OK
+EXPECTED (video.getAttribute('controls') == 'controls') OK
 RUN(video.controls = false)
-TEST(!video.getAttribute('controls')) OK
+EXPECTED (video.controls == 'false') OK
 RUN(video.setAttribute('controls','controls'))
-TEST(video.controls) OK
+EXPECTED (video.controls != 'null') OK
 END OF TEST
 

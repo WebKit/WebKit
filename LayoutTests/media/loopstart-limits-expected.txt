@@ -2,23 +2,23 @@
 Test loopstart attribute parsing, limits, and defaults.
 
 <video loopstart=1.5> - loopstart specified, should not change
-expected video.loopStart=='1.5', observed '1.5' - OK
-expected audio.loopStart=='1.5', observed '1.5' - OK
+EXPECTED (video.loopStart == '1.5') OK
+EXPECTED (audio.loopStart == '1.5') OK
 
 <video start=1.0> - loopstart not specified, should return start attr
-expected video.loopStart=='1', observed '1' - OK
-expected audio.loopStart=='1', observed '1' - OK
+EXPECTED (video.loopStart == '1') OK
+EXPECTED (audio.loopStart == '1') OK
 
 <video> - no loopstart and no start, default should be 0
-expected video.loopStart=='0', observed '0' - OK
-expected audio.loopStart=='0', observed '0' - OK
+EXPECTED (video.loopStart == '0') OK
+EXPECTED (audio.loopStart == '0') OK
 
 <video loopstart='s1.0'> - bogus loopstart and no start, default should be 0 (start default)
-expected video.loopStart=='0', observed '0' - OK
-expected audio.loopStart=='0', observed '0' - OK
+EXPECTED (video.loopStart == '0') OK
+EXPECTED (audio.loopStart == '0') OK
 
 <video loopstart='s1.0' start=1.0> - bogus loopstart, default should be start attr
-expected video.loopStart=='1', observed '1' - OK
-expected audio.loopStart=='1', observed '1' - OK
+EXPECTED (video.loopStart == '1') OK
+EXPECTED (audio.loopStart == '1') OK
 END OF TEST
 

@@ -4,7 +4,7 @@
 <script>
 video.src = "content/unsupported_track.mp4";
 waitForEvent("error", function () {
-    test("video.error");
+    testExpected("video.error", null, "!=");
     endTest();
 });
 </script>

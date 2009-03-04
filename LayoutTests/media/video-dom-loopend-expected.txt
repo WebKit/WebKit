@@ -1,11 +1,11 @@
 Test that video loops when time reaches the value specified by the loopEnd DOM attribute.
 
-TEST(video.loopEnd==0.5) OK
-TEST(video.getAttribute('loopend') == '0.5s') OK
+EXPECTED (video.loopEnd == '0.5') OK
+EXPECTED (video.getAttribute('loopend') == '0.5s') OK
 RUN(video.play())
 EVENT(timeupdate)
 EVENT(timeupdate)
-TEST(video.currentLoop == 1) OK
-TEST(video.currentTime.toFixed(1) == 0) OK
+EXPECTED (video.currentLoop == '1') OK
+EXPECTED (video.currentTime.toFixed(1) == '0') OK
 END OF TEST
 

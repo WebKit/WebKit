@@ -5,12 +5,13 @@
 waitForEvent('load',
     function () 
     {
-        test("!video.seeking");
+        testExpected("video.seeking", false);
         waitForEvent('timeupdate', function () {
-            test("video.seeking");
-            test("video.currentTime == 2");
+            testExpected("video.seeking", true);
+            testExpected("video.currentTime", 2);
             setTimeout(function () {
-                testAndEnd("!video.seeking");
+                testExpected("video.seeking", false);
+                endTest();
             }, 200);
         });
         run("video.currentTime = 2");

@@ -1,3 +1,140 @@
+2009-03-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24294
+        Bug 24294: Improve media layout test logging
+        
+        Make all media layout tests log the condition that is being tested,
+        success or failure, plus observed value when a test condition fails
+        so it is possible to see exactly what failed without having to hack
+        the test source. Consolidate some of the logic in the shared JavaScript file.
+
+        * media/audio-constructor-expected.txt:
+        * media/audio-constructor-src-expected.txt:
+        * media/audio-constructor-src.html:
+        * media/audio-constructor.html:
+        * media/audio-mpeg-supported-expected.txt:
+        * media/audio-mpeg-supported.html:
+        * media/broken-video-expected.txt:
+        * media/broken-video.html:
+        * media/constructors-expected.txt:
+        * media/constructors.html:
+        * media/loopend-limits-expected.txt:
+        * media/loopstart-limits-expected.txt:
+        * media/progress-event-expected.txt:
+        * media/progress-event-total-expected.txt:
+        * media/progress-event-total.html:
+        * media/progress-event.html:
+        * media/remove-from-document-expected.txt:
+        * media/remove-from-document-no-load-expected.txt:
+        * media/remove-from-document-no-load.html:
+        * media/remove-from-document.html:
+        * media/unsupported-rtsp-expected.txt:
+        * media/unsupported-rtsp.html:
+        * media/unsupported-tracks-expected.txt:
+        * media/unsupported-tracks.html:
+        * media/video-append-source-expected.txt:
+        * media/video-append-source.html:
+        * media/video-autoplay-expected.txt:
+        * media/video-autoplay.html:
+        * media/video-buffered-expected.txt:
+        * media/video-buffered.html:
+        * media/video-controls-expected.txt:
+        * media/video-controls-transformed-expected.txt:
+        * media/video-controls-transformed.html:
+        * media/video-controls.html:
+        * media/video-currentTime-expected.txt:
+        * media/video-currentTime-set.html:
+        * media/video-currentTime-set2-expected.txt:
+        * media/video-currentTime-set2.html:
+        * media/video-currentTime.html:
+        * media/video-dom-autoplay-expected.txt:
+        * media/video-dom-autoplay.html:
+        * media/video-dom-end-expected.txt:
+        * media/video-dom-end.html:
+        * media/video-dom-loopcount-expected.txt:
+        * media/video-dom-loopcount.html:
+        * media/video-dom-loopend-expected.txt:
+        * media/video-dom-loopend.html:
+        * media/video-dom-loopstart-expected.txt:
+        * media/video-dom-loopstart.html:
+        * media/video-dom-src-expected.txt:
+        * media/video-dom-src.html:
+        * media/video-dom-start-expected.txt:
+        * media/video-dom-start.html:
+        * media/video-end-expected.txt:
+        * media/video-end.html:
+        * media/video-error-abort-expected.txt:
+        * media/video-error-abort.html:
+        * media/video-error-does-not-exist-expected.txt:
+        * media/video-error-does-not-exist.html:
+        * media/video-load-networkState-expected.txt:
+        * media/video-load-networkState.html:
+        * media/video-load-readyState-expected.txt:
+        * media/video-load-readyState.html:
+        * media/video-loopcount-expected.txt:
+        * media/video-loopcount.html:
+        * media/video-loopend-expected.txt:
+        * media/video-loopend.html:
+        * media/video-loopstart-expected.txt:
+        * media/video-loopstart.html:
+        * media/video-muted-expected.txt:
+        * media/video-muted.html:
+        * media/video-no-autoplay-expected.txt:
+        * media/video-no-autoplay.html:
+        * media/video-pause-empty-events-expected.txt:
+        * media/video-pause-empty-events.html:
+        * media/video-play-empty-events-expected.txt:
+        * media/video-play-empty-events.html:
+        * media/video-play-pause-events-expected.txt:
+        * media/video-play-pause-events.html:
+        * media/video-poster-expected.txt:
+        * media/video-poster.html:
+        * media/video-seek-past-end-paused-expected.txt:
+        * media/video-seek-past-end-paused.html:
+        * media/video-seek-past-end-playing-expected.txt:
+        * media/video-seek-past-end-playing.html:
+        * media/video-seekable-expected.txt:
+        * media/video-seekable.html:
+        * media/video-seeking-expected.txt:
+        * media/video-seeking.html:
+        * media/video-size-expected.txt:
+        * media/video-size.html:
+        * media/video-source-expected.txt:
+        * media/video-source-media-expected.txt:
+        * media/video-source-media.html:
+        * media/video-source-type-expected.txt:
+        * media/video-source-type-params-expected.txt:
+        * media/video-source-type-params.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-change-expected.txt:
+        * media/video-src-change.html:
+        * media/video-src-expected.txt:
+        * media/video-src-remove-expected.txt:
+        * media/video-src-remove.html:
+        * media/video-src-set-expected.txt:
+        * media/video-src-set.html:
+        * media/video-src-source-expected.txt:
+        * media/video-src-source.html:
+        * media/video-src.html:
+        * media/video-start-expected.txt:
+        * media/video-start.html:
+        * media/video-test.js:
+        (test):
+        (testExpected):
+        (waitForEvent._eventCallback):
+        (waitForEvent):
+        (waitForEventAndTest._eventCallback):
+        (waitForEventAndTest):
+        (testException):
+        (logResult):
+        * media/video-volume-expected.txt:
+        * media/video-volume.html:
+        * media/video-width-height-expected.txt:
+        * media/video-width-height.html:
+
 2009-03-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -3,7 +3,11 @@
 <video controls>
     <source src=content/test.mp4>
 </video>
+
 <script>
-video = media = document.getElementsByTagName('video')[0];
-waitForEventTestAndEnd('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+    video = media = document.getElementsByTagName('video')[0];
+    waitForEvent("loadstart", function () {
+        testExpected("relativeURL(video.currentSrc) ", "content/test.mp4");
+        endTest();
+    });
 </script>

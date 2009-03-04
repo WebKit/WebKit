@@ -2,9 +2,9 @@
 <p>Test that pause() from EMPTY network state triggers load()</p>
 <script src=video-test.js></script>
 <script>
-video.src = "content/test.mp4";
-test("video.networkState == HTMLMediaElement.EMPTY");
-waitForEventAndEnd('loadstart');
-run("video.pause()");
-consoleWrite("SCRIPT DONE");
+    video.src = "content/test.mp4";
+    testExpected("video.networkState", HTMLMediaElement.EMPTY);
+    waitForEventAndEnd('loadstart');
+    run("video.pause()");
+    consoleWrite("SCRIPT DONE");
 </script>

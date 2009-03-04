@@ -1,5 +1,5 @@
 EVENT(load)
-TEST(video.currentTime.toFixed(1) == 1.5) OK
-TEST(video.currentTime.toFixed(1) == 3.1) OK
+EXPECTED (video.currentTime.toFixed(1) == '1.5') OK
+EXPECTED (video.currentTime.toFixed(1) == '3.1') OK
 END OF TEST
 

@@ -4,6 +4,6 @@ RUN(video.load())
 EVENT(load)
 RUN(video.currentTime = 500)
 EVENT(timeupdate)
-TEST(video.currentTime == video.duration) OK
+EXPECTED (video.currentTime == '8.399999618530273') OK
 END OF TEST
 

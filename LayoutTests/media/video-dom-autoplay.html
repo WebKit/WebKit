@@ -1,10 +1,14 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("!video.autoplay");
-video.autoplay = true;
-test("video.autoplay");
-test("video.getAttribute('autoplay') != null");
-waitForEventTestAndEnd('play', "!video.paused");
-video.src = "content/test.mp4";
+    testExpected("video.autoplay", false);
+    video.autoplay = true;
+    testExpected("video.autoplay", true);
+    testExpected("video.getAttribute('autoplay')", null, "!=");
+    waitForEvent('play', function () { 
+        testExpected("video.paused", false);
+        endTest();
+    } );
+
+    video.src = "content/test.mp4";
 </script>

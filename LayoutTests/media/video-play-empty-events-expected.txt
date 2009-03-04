@@ -1,9 +1,11 @@
 Test that play() from EMPTY network state triggers load() and async play event.
 
-TEST(video.networkState == HTMLMediaElement.EMPTY) OK
+EXPECTED (video.networkState == '0') OK
 RUN(video.play())
-EVENT(loadstart) TEST(video.paused) OK
+EVENT(loadstart)
+EXPECTED (video.paused == 'true') OK
 SCRIPT DONE
-EVENT(play) TEST(!video.paused) OK
+EVENT(play)
+EXPECTED (video.paused == 'false') OK
 END OF TEST
 

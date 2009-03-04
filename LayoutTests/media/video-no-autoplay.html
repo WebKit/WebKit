@@ -1,8 +1,20 @@
 <video controls></video>
+<p>Test that play event does not fire when "src" set with no autoplay attribute.</p>
 <script src=video-test.js></script>
 <script>
-test("video.paused");
-waitForEventAndTest("play", "false");
-waitForEvent("load", function () { setTimeout(testAndEnd('video.paused', 500)) });
-video.src = "content/test.mp4";
+    testExpected("video.paused", true);
+
+    waitForEvent('play', function () { 
+        logResult(false, "PLAY fired");
+        endTest();
+    } );
+
+    function testPaused () 
+    { 
+        testExpected("video.paused", true);
+        endTest();
+    }
+    waitForEvent('load', function () { setTimeout(testPaused, 500);} );
+
+    video.src = "content/test.mp4";
 </script>

@@ -1,10 +1,17 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("!video.error");
-var didLoad = false;
-waitForEvent("loadstart", function () { if (didLoad) return; didLoad = true; video.load(); });
-waitForEventAndTest("abort", "video.error.code == MediaError.MEDIA_ERR_ABORTED");
-waitForEventTestAndEnd("load", "!video.error");
-video.src = "content/test.mp4";
+    testExpected("video.error", null);
+    var didLoad = false;
+
+    waitForEvent("loadstart", function () { if (didLoad) return; didLoad = true; video.load(); });
+
+    waitForEvent("abort", function () { testExpected("video.error.code", MediaError.MEDIA_ERR_ABORTED); } );
+
+    waitForEvent('load', function () { 
+        testExpected("video.error", null);
+        endTest();
+    } );
+
+    video.src = "content/test.mp4";
 </script>

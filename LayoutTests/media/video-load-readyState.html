@@ -1,11 +1,18 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-test("video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
-waitForEventAndTest("loadstart", "video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
-waitForEventAndTest("loadedmetadata", "video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
-waitForEventAndTest("loadedfirstframe", "video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME");
-waitForEventAndTest("canshowcurrentframe", "video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME");
-waitForEventTestAndEnd("canplaythrough", "video.readyState == HTMLMediaElement.CAN_PLAY_THROUGH");
-video.src = "content/test.mp4";
+    function testReadyState(expected, endIt)
+    {
+        testExpected("video.readyState", expected);
+        if (endIt)
+            endTest();
+    }
+
+    testExpected("video.readyState", HTMLMediaElement.DATA_UNAVAILABLE);
+    waitForEvent("loadstart", function () { testReadyState(HTMLMediaElement.DATA_UNAVAILABLE); } );
+    waitForEvent("loadedmetadata", function () { testReadyState(HTMLMediaElement.DATA_UNAVAILABLE); } );
+    waitForEvent("loadedfirstframe", function () { testReadyState(HTMLMediaElement.CAN_SHOW_CURRENT_FRAME); } );
+    waitForEvent("canshowcurrentframe", function () { testReadyState(HTMLMediaElement.CAN_SHOW_CURRENT_FRAME); } );
+    waitForEvent("canplaythrough", function () { testReadyState(HTMLMediaElement.CAN_PLAY_THROUGH, true); } );
+    video.src = "content/test.mp4";
 </script>

@@ -2,16 +2,18 @@
 <p>Test that video loops when time reaches the value specified by the loopEnd DOM attribute.</p>
 <script src=video-test.js></script>
 <script>
-video.loopEnd=0.5;
-test("video.loopEnd==0.5");
-test("video.getAttribute('loopend') == '0.5s'");
-setTimeout(function () { test("video.currentTime<=0.5"); }, 2000);
-waitForEvent('timeupdate', function () {
-    if (video.currentLoop == 1) {
-        test("video.currentLoop == 1");
-        test("video.currentTime.toFixed(1) == 0");
-        endTest();
-    }
-});
-run("video.play()");
+    video.loopEnd=0.5;
+    testExpected("video.loopEnd", 0.5);
+    testExpected("video.getAttribute('loopend')", "0.5s");
+
+    setTimeout(function () { testExpected("video.currentTime", 0.5, "<="); }, 2000);
+
+    waitForEvent('timeupdate', function () {
+        if (video.currentLoop == 1) {
+            testExpected("video.currentLoop", 1);
+            testExpected("video.currentTime.toFixed(1)", 0);
+            endTest();
+        }
+    });
+    run("video.play()");
 </script>

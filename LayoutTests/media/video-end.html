@@ -1,15 +1,12 @@
 <video src=content/test.mp4 end=0.5s controls></video>
 <script src=video-test.js></script>
 <script>
-test("!video.ended");
-test("video.end == 0.5");
-waitForEvent('ended', 
-    function () 
-    {
-        test("video.currentTime == 0.5");
-        test("video.ended");
+    testExpected("video.ended", false);
+    testExpected("video.end", 0.5);
+    waitForEvent('ended', function () {
+        testExpected("video.currentTime", 0.5);
+        testExpected("video.ended", true);
         endTest();
-    }
-);
-video.play();
+    } );
+    video.play();
 </script>
