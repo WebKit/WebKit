@@ -65,6 +65,9 @@ DocLoader::~DocLoader()
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
         it->second->setDocLoader(0);
     m_cache->removeDocLoader(this);
+
+    // Make sure no requests still point to this DocLoader
+    ASSERT(m_requestCount == 0);
 }
 
 Frame* DocLoader::frame() const

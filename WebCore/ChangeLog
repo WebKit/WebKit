@@ -1,3 +1,13 @@
+2009-03-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add an ASSERT to better demonstrate the cause of the crash in
+        https://bugs.webkit.org/show_bug.cgi?id=23736
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::~DocLoader):
+
 2009-03-04  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
