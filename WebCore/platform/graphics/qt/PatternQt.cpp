@@ -39,7 +39,7 @@ QBrush Pattern::createPlatformPattern(const TransformationMatrix&) const
 
     // Qt merges patter space and user space itself
     QBrush brush(*pixmap);
-    brush.setMatrix(m_patternSpaceTransformation);
+    brush.setTransform(m_patternSpaceTransformation);
 
     return brush;
 }

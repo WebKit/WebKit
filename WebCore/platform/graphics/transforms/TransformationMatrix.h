@@ -31,7 +31,7 @@
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
 #elif PLATFORM(QT)
-#include <QMatrix>
+#include <QTransform>
 #elif PLATFORM(SKIA)
 #include <SkMatrix.h>
 #elif PLATFORM(WX) && USE(WXGC)
@@ -287,7 +287,7 @@ public:
 #elif PLATFORM(CAIRO)
     operator cairo_matrix_t() const;
 #elif PLATFORM(QT)
-    operator QMatrix() const;
+    operator QTransform() const;
 #elif PLATFORM(SKIA)
     operator SkMatrix() const;
 #elif PLATFORM(WX) && USE(WXGC)

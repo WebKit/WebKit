@@ -84,7 +84,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
     if (ctx->textDrawingMode() & cTextFill) {
         if (ctx->fillGradient()) {
             QBrush brush(*ctx->fillGradient()->platformGradient());
-            brush.setMatrix(ctx->fillGradient()->gradientSpaceTransform());
+            brush.setTransform(ctx->fillGradient()->gradientSpaceTransform());
             p->setPen(QPen(brush, 0));
         } else if (ctx->fillPattern()) {
             TransformationMatrix affine;
@@ -96,7 +96,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
     if (ctx->textDrawingMode() & cTextStroke) {
         if (ctx->strokeGradient()) {
             QBrush brush(*ctx->strokeGradient()->platformGradient());
-            brush.setMatrix(ctx->strokeGradient()->gradientSpaceTransform());
+            brush.setTransform(ctx->strokeGradient()->gradientSpaceTransform());
             p->setPen(QPen(brush, 0));
         } else if (ctx->strokePattern()) {
             TransformationMatrix affine;

@@ -266,8 +266,11 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
 
 TransformationMatrix GraphicsContext::getCTM() const
 {
-    QMatrix matrix(platformContext()->combinedMatrix());
-    return TransformationMatrix(matrix.m11(), matrix.m12(), matrix.m21(), matrix.m22(), matrix.dx(), matrix.dy());
+    QTransform matrix(platformContext()->combinedTransform());
+    return TransformationMatrix(matrix.m11(), matrix.m12(), 0, matrix.m13(), 
+                                matrix.m21(), matrix.m22(), 0, matrix.m23(),
+                                           0,            0, 1,            0,
+                                matrix.m31(), matrix.m32(), 0, matrix.m33());
 }
 
 void GraphicsContext::savePlatformState()
@@ -280,7 +283,7 @@ void GraphicsContext::restorePlatformState()
     m_data->p()->restore();
 
     if (!m_data->currentPath.isEmpty() && m_common->state.pathTransform.isInvertible()) {
-        QMatrix matrix = m_common->state.pathTransform;
+        QTransform matrix = m_common->state.pathTransform;
         m_data->currentPath = m_data->currentPath * matrix;
     }
 }
@@ -539,7 +542,7 @@ void GraphicsContext::fillPath()
     }
     case GradientColorSpace:
         QBrush brush(*m_common->state.fillGradient->platformGradient());
-        brush.setMatrix(m_common->state.fillGradient->gradientSpaceTransform());
+        brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
         p->fillPath(path, brush);
         break;
     }
@@ -569,7 +572,7 @@ void GraphicsContext::strokePath()
     }
     case GradientColorSpace: {
         QBrush brush(*m_common->state.strokeGradient->platformGradient());
-        brush.setMatrix(m_common->state.strokeGradient->gradientSpaceTransform());
+        brush.setTransform(m_common->state.strokeGradient->gradientSpaceTransform());
         pen.setBrush(brush);
         p->setPen(pen);
         p->strokePath(path, pen);
@@ -598,7 +601,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     }
     case GradientColorSpace:
         QBrush brush(*m_common->state.fillGradient->platformGradient());
-        brush.setMatrix(m_common->state.fillGradient->gradientSpaceTransform());
+        brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
         p->fillRect(rect, brush);
         break;
     }
@@ -923,7 +926,7 @@ void GraphicsContext::translate(float x, float y)
     m_data->p()->translate(x, y);
 
     if (!m_data->currentPath.isEmpty()) {
-        QMatrix matrix;
+        QTransform matrix;
         m_data->currentPath = m_data->currentPath * matrix.translate(-x, -y);
         m_common->state.pathTransform.translate(x, y);
     }
@@ -945,7 +948,7 @@ void GraphicsContext::rotate(float radians)
     m_data->p()->rotate(180/M_PI*radians);
 
     if (!m_data->currentPath.isEmpty()) {
-        QMatrix matrix;
+        QTransform matrix;
         m_data->currentPath = m_data->currentPath * matrix.rotate(-180/M_PI*radians);
         m_common->state.pathTransform.rotate(radians);
     }
@@ -959,7 +962,7 @@ void GraphicsContext::scale(const FloatSize& s)
     m_data->p()->scale(s.width(), s.height());
 
     if (!m_data->currentPath.isEmpty()) {
-        QMatrix matrix;
+        QTransform matrix;
         m_data->currentPath = m_data->currentPath * matrix.scale(1 / s.width(), 1 / s.height());
         m_common->state.pathTransform.scaleNonUniform(s.width(), s.height());
     }
@@ -1025,12 +1028,12 @@ void GraphicsContext::concatCTM(const TransformationMatrix& transform)
     if (paintingDisabled())
         return;
 
-    m_data->p()->setMatrix(transform, true);
+    m_data->p()->setWorldTransform(transform, true);
 
     // Transformations to the context shouldn't transform the currentPath. 
     // We have to undo every change made to the context from the currentPath to avoid wrong drawings.
     if (!m_data->currentPath.isEmpty() && transform.isInvertible()) {
-        QMatrix matrix = transform.inverse();
+        QTransform matrix = transform.inverse();
         m_data->currentPath = m_data->currentPath * matrix;
         m_common->state.pathTransform.multiply(transform);
     }

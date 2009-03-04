@@ -37,7 +37,7 @@
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include <QPainterPath>
-#include <QMatrix>
+#include <QTransform>
 #include <QString>
 
 #define _USE_MATH_DEFINES
@@ -109,7 +109,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
 void Path::translate(const FloatSize& size)
 {
-    QMatrix matrix;
+    QTransform matrix;
     matrix.translate(size.width(), size.height());
     *m_path = (*m_path) * matrix;
 }
@@ -380,7 +380,7 @@ void Path::apply(void* info, PathApplierFunction function) const
 void Path::transform(const TransformationMatrix& transform)
 {
     if (m_path) {
-        QMatrix mat = transform;
+        QTransform mat = transform;
         QPainterPath temp = mat.map(*m_path);
         delete m_path;
         m_path = new QPainterPath(temp);

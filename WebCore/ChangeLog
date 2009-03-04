@@ -1,3 +1,34 @@
+2009-03-02  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        Improvement to 3d transformations rendering in QtWebKit. QTransform is used
+        instead of QMatrix. This allows perspective transformations since QTransform is
+        a true 3x3 matrix.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp: Use QTransform instead of QMatrix everywhere.
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::translate):
+        (WebCore::Path::transform):
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/qt/TransformationMatrixQt.cpp:
+        (WebCore::TransformationMatrix::operator QTransform): Replace the conversion operator
+        to QMatrix with one to QTransform.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/qt/FontQt.cpp:
+
 2009-02-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

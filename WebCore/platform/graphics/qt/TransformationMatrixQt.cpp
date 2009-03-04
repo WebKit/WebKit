@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-TransformationMatrix::operator QMatrix() const
-{
-    return QMatrix(a(), b(), c(), d(), e(), f());
+TransformationMatrix::operator QTransform() const
+{          
+    return QTransform(m11(), m12(), m14(), m21(), m22(), m24(), m41(), m42(), m44());
 }
 
 }

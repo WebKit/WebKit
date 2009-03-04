@@ -108,7 +108,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     }
 
     QBrush b(pixmap);
-    b.setMatrix(patternTransform);
+    b.setTransform(patternTransform);
     ctxt->save();
     ctxt->setCompositeOperation(op);
     QPainter* p = ctxt->platformContext();
