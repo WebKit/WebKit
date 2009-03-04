@@ -1,3 +1,16 @@
+2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24261
+        Fix return types.
+
+        Test: LayoutTests/dom/svg/level3/xpath/XPathEvaluator_evaluate_TYPE_ERR.svg
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::toInt32): change return type to int
+        (WebCore::toFloat): change return type to float.
+
 2009-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

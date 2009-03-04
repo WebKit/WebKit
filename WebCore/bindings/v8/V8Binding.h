@@ -38,12 +38,12 @@
 namespace WebCore {
 
     // FIXME: Remove once migration is complete
-    inline bool toInt32(v8::Handle<v8::Value> value)
+    inline int toInt32(v8::Handle<v8::Value> value)
     {
         return ToInt32(value);
     }
 
-    inline bool toFloat(v8::Local<v8::Value> value)
+    inline float toFloat(v8::Local<v8::Value> value)
     {
         return static_cast<float>(value->NumberValue());
     }
