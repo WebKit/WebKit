@@ -1,3 +1,19 @@
+2009-03-04  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24330: Sync xhr in workers should send an abort exception when the worker is terminated.
+        <https://bugs.webkit.org/show_bug.cgi?id=24330>
+
+        Added test to verify to terminate a worker while it is doing a synchronous xhr.
+        It does not verify that the exception is a ABORT_ERR because I couldn't figure out a way
+        to actually do this.
+
+        * http/tests/xmlhttprequest/workers/abort-exception-assert-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/abort-exception-assert.html: Added.
+        * http/tests/xmlhttprequest/workers/resources/endless-response.php: Copied from LayoutTests/http/tests/xmlhttprequest/resources/endlessxml.php.
+        * http/tests/xmlhttprequest/workers/resources/endless-sync-xhr.js: Added.
+
 2009-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.

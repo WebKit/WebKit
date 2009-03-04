@@ -71,7 +71,8 @@ static const char* const eventExceptionNames[] = {
 };
 
 static const char* const xmlHttpRequestExceptionNames[] = {
-    "NETWORK_ERR"
+    "NETWORK_ERR",
+    "ABORT_ERR"
 };
 
 #if ENABLE(XPATH)

@@ -1,3 +1,21 @@
+2009-03-04  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24330: Sync xhr in workers should send an abort exception when the worker is terminated.
+        <https://bugs.webkit.org/show_bug.cgi?id=24330>
+
+        Test: http/tests/xmlhttprequest/workers/abort-exception-assert.html
+
+        * dom/ExceptionCode.cpp:
+        (WebCore::xmlHttpRequestExceptionNames):
+        Added missing ABORT_ERR whose absence caused an assert.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        Add more logic to handle the termination case for sync xhr.
+
 2009-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.

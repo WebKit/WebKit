@@ -78,8 +78,13 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerContext* workerCont
 
     ContentSniff contentSniff = request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
     RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerContext, &client, mode, request, DoNotSendLoadCallbacks, contentSniff);
-    while (!loader->done())
-        runLoop.runInMode(workerContext, mode);
+
+    MessageQueueWaitResult result = MessageQueueMessageReceived;
+    while (!loader->done() && result != MessageQueueTerminated)
+        result = runLoop.runInMode(workerContext, mode);
+
+    if (!loader->done() && result == MessageQueueTerminated)
+        loader->cancel();
 }
 
 void WorkerThreadableLoader::cancel()
@@ -154,6 +159,14 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCancel(ScriptExecutionC
 void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
     m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCancel, this));
+    ThreadableLoaderClientWrapper* clientWrapper = static_cast<ThreadableLoaderClientWrapper*>(m_workerClientWrapper.get());
+    if (!clientWrapper->done()) {
+        // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
+        // Note: no more client callbacks will be done after this method -- the clearClientWrapper() call ensures that.
+        ResourceError error(String(), 0, String(), String());
+        error.setIsCancellation(true);
+        clientWrapper->didFail(error);
+    }
     clearClientWrapper();
 }
 
