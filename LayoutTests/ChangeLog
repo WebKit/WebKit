@@ -1,3 +1,16 @@
+2009-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24361
+        
+        Test hit testing on generated content.
+
+        * fast/css-generated-content/hit-test-generated-content.html: Added.
+        * platform/mac/fast/css-generated-content/hit-test-generated-content-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/hit-test-generated-content-expected.png: Added.
+        * platform/mac/fast/css-generated-content/hit-test-generated-content-expected.txt: Added.
+
 2009-03-03  David Hyatt  <hyatt@apple.com>
 
         Test case for https://bugs.webkit.org/show_bug.cgi?id=24201

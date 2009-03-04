@@ -1,3 +1,17 @@
+2009-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24361
+        
+        Reinstate code that sets result.innerNode when hitTest() returns true,
+        but never filled in the innerNode. Fixes hit testing of generated content.
+
+        Test: fast/css-generated-content/hit-test-generated-content.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestContents):
+
 2009-03-04  Adam Barth  <abath@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
