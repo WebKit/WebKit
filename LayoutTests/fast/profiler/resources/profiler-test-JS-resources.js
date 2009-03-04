@@ -27,6 +27,7 @@ function arrayOperatorFunction(arrayElement) {
 }
 
 var anonymousFunction = function () { insertNewText(); };
+var anotherAnonymousFunction = function () { insertGivenText("Another anonymous function was called.") };
 
 function intermediaryFunction()
 {

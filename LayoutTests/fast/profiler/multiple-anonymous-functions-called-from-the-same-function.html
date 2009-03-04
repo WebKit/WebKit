@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
+
+function startTest()
+{
+    console.profile("Multiple calls to different anonymous functions");
+
+    anonymousFunction();
+    anotherAnonymousFunction();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls the different anonymous functions the same scope.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be a call two entries named to (anonymous function),
+as opposed to one entry called twice.
+<div id="output"></div>
+</body>
+</html>

@@ -2,6 +2,20 @@
 
         Reviewed by Oliver Hunt.
 
+        <rdar://problem/6031674> JSProfiler: Multiple anonymous functions get
+        the same entry in profiler if called from same function
+
+        - This no longer happens but I thought I'd make a test case anyway. 
+
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function-expected.txt: Added.
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function.html: Added.
+        * fast/profiler/resources/profiler-test-JS-resources.js:
+        (anotherAnonymousFunction):
+
+2009-03-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         <rdar://problem/6639110> console.profile() doesn't work without a title
 
         * fast/profiler/profile-with-no-title-expected.txt: Added.
