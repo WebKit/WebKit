@@ -1,3 +1,13 @@
+2009-03-04  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a regression where the Web Inspector console would not animate
+        in or out correctly.
+
+        Reviewed by Anders Carlsson.
+
+        * inspector/front-end/inspector.css: Move a z-index to a child element
+        to get the correct stacking order during the animation.
+
 2009-03-03  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=24201, pathologically bad block layout.

@@ -415,7 +415,6 @@ body.detached #dock-status-bar-item.toggled-on:active {
 #console {
     display: none;
     position: absolute;
-    z-index: 1;
     bottom: 0;
     left: 0;
     right: 0;
@@ -440,6 +439,7 @@ body.console-visible #console {
 
 #console-messages {
     position: absolute;
+    z-index: 0;
     top: 0;
     left: 0;
     right: 0;
