@@ -275,7 +275,7 @@ void Console::profile(const JSC::UString& title, ScriptCallStack* callStack)
     if (!page->inspectorController()->profilerEnabled())
         return;
 
-    if (title.isNull()) {   // no title so give it the next user intiated profile title.
+    if (title.isNull()) {   // no title so give it the next user initiated profile title.
         page->inspectorController()->startUserInitiatedProfiling(0);
         return;
     }

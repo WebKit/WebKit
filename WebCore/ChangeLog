@@ -1,3 +1,10 @@
+2009-03-03  Kevin McCullough  <kmccullough@apple.com>
+
+        - Spelling fix.
+
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+
 2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.
