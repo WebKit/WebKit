@@ -389,7 +389,7 @@ void MediaPlayerPrivate::tearDownVideoRendering()
 
 QTTime MediaPlayerPrivate::createQTTime(float time) const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return QTMakeTime(0, 600);
     long timeScale = [[m_qtMovie.get() attributeForKey:QTMovieTimeScaleAttribute] longValue];
     return QTMakeTime(time * timeScale, timeScale);
@@ -418,7 +418,7 @@ void MediaPlayerPrivate::load(const String& url)
 
 void MediaPlayerPrivate::play()
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return;
     m_startedPlaying = true;
 #if DRAW_FRAME_RATE
@@ -432,7 +432,7 @@ void MediaPlayerPrivate::play()
 
 void MediaPlayerPrivate::pause()
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return;
     m_startedPlaying = false;
 #if DRAW_FRAME_RATE
@@ -446,7 +446,7 @@ void MediaPlayerPrivate::pause()
 
 float MediaPlayerPrivate::duration() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return 0;
     QTTime time = [m_qtMovie.get() duration];
     if (time.flags == kQTTimeIsIndefinite)
@@ -456,7 +456,7 @@ float MediaPlayerPrivate::duration() const
 
 float MediaPlayerPrivate::currentTime() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return 0;
     QTTime time = [m_qtMovie.get() currentTime];
     return min(static_cast<float>(time.timeValue) / time.timeScale, m_endTime);
@@ -466,7 +466,7 @@ void MediaPlayerPrivate::seek(float time)
 {
     cancelSeek();
     
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return;
     
     if (time > duration())
@@ -503,7 +503,7 @@ void MediaPlayerPrivate::cancelSeek()
 
 void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
 {        
-    if (!m_qtMovie || !seeking() || currentTime() == m_seekTo) {
+    if (!metaDataAvailable()|| !seeking() || currentTime() == m_seekTo) {
         cancelSeek();
         updateStates();
         m_player->timeChanged(); 
@@ -547,42 +547,42 @@ void MediaPlayerPrivate::endPointTimerFired(Timer<MediaPlayerPrivate>*)
 
 bool MediaPlayerPrivate::paused() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return true;
     return [m_qtMovie.get() rate] == 0;
 }
 
 bool MediaPlayerPrivate::seeking() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return false;
     return m_seekTo >= 0;
 }
 
 IntSize MediaPlayerPrivate::naturalSize() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return IntSize();
     return IntSize([[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue]);
 }
 
 bool MediaPlayerPrivate::hasVideo() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return false;
     return [[m_qtMovie.get() attributeForKey:QTMovieHasVideoAttribute] boolValue];
 }
 
 void MediaPlayerPrivate::setVolume(float volume)
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return;
     [m_qtMovie.get() setVolume:volume];  
 }
 
 void MediaPlayerPrivate::setRate(float rate)
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return;
     if (!paused())
         [m_qtMovie.get() setRate:rate];
@@ -590,7 +590,7 @@ void MediaPlayerPrivate::setRate(float rate)
 
 int MediaPlayerPrivate::dataRate() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return 0;
     return wkQTMovieDataRate(m_qtMovie.get()); 
 }
@@ -610,7 +610,7 @@ float MediaPlayerPrivate::maxTimeSeekable() const
 
 float MediaPlayerPrivate::maxTimeLoaded() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return 0;
     return wkQTMovieMaxTimeLoaded(m_qtMovie.get()); 
 }
@@ -630,7 +630,7 @@ bool MediaPlayerPrivate::totalBytesKnown() const
 
 unsigned MediaPlayerPrivate::totalBytes() const
 {
-    if (!m_qtMovie)
+    if (!metaDataAvailable())
         return 0;
     return [[m_qtMovie.get() attributeForKey:QTMovieDataSizeAttribute] intValue];
 }

@@ -1,3 +1,30 @@
+2009-03-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/6641045>
+        Don't call QTKit to get movie properties until movie metadata has been loaded.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (WebCore::MediaPlayerPrivate::metaDataAvailable): defined
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTTime): return default if !metaDataAvailable.
+        (WebCore::MediaPlayerPrivate::play): Ditto.
+        (WebCore::MediaPlayerPrivate::pause): Ditto.
+        (WebCore::MediaPlayerPrivate::duration): Ditto.
+        (WebCore::MediaPlayerPrivate::currentTime): Ditto.
+        (WebCore::MediaPlayerPrivate::seek): Ditto.
+        (WebCore::MediaPlayerPrivate::seekTimerFired): Ditto.
+        (WebCore::MediaPlayerPrivate::paused): Ditto.
+        (WebCore::MediaPlayerPrivate::seeking): Ditto.
+        (WebCore::MediaPlayerPrivate::naturalSize): Ditto.
+        (WebCore::MediaPlayerPrivate::hasVideo): Ditto.
+        (WebCore::MediaPlayerPrivate::setVolume): Ditto.
+        (WebCore::MediaPlayerPrivate::setRate): Ditto.
+        (WebCore::MediaPlayerPrivate::dataRate): Ditto.
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded): Ditto.
+        (WebCore::MediaPlayerPrivate::totalBytes): Ditto.
+
 2009-03-03  Kevin McCullough  <kmccullough@apple.com>
 
         - Spelling fix.
