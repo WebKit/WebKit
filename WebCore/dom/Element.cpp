@@ -346,7 +346,7 @@ int Element::clientWidth()
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view())
-            return view->layoutWidth();
+            return adjustForAbsoluteZoom(view->layoutWidth(), document()->renderer());
     }
     
     if (RenderBox* rend = renderBox())
@@ -365,7 +365,7 @@ int Element::clientHeight()
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view())
-            return view->layoutHeight();
+            return adjustForAbsoluteZoom(view->layoutHeight(), document()->renderer());
     }
     
     if (RenderBox* rend = renderBox())

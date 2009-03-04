@@ -1,3 +1,14 @@
+2009-03-03  David Hyatt  <hyatt@apple.com>
+
+        Test case for https://bugs.webkit.org/show_bug.cgi?id=24201
+
+        Reviewed by Dan Bernstein
+
+        * fast/block/float/nested-clearance.html: Added.
+        * platform/mac/fast/block/float/nested-clearance-expected.checksum: Added.
+        * platform/mac/fast/block/float/nested-clearance-expected.png: Added.
+        * platform/mac/fast/block/float/nested-clearance-expected.txt: Added.
+
 2009-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

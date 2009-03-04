@@ -194,7 +194,7 @@ public:
     // Returns ture if and only if it has positioned any floats.
     bool positionNewFloats();
     void clearFloats();
-    int getClearDelta(RenderBox* child);
+    int getClearDelta(RenderBox* child, int yPos);
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markPositionedObjectsForLayout();
 
@@ -454,8 +454,8 @@ protected:
     RenderBox* handleFloatingChild(RenderBox* child, const MarginInfo&, bool& handled);
     RenderBox* handlePositionedChild(RenderBox* child, const MarginInfo&, bool& handled);
     RenderBox* handleRunInChild(RenderBox* child, bool& handled);
-    void collapseMargins(RenderBox* child, MarginInfo&, int yPosEstimate);
-    void clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin);
+    int collapseMargins(RenderBox* child, MarginInfo&);
+    int clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
     int estimateVerticalPosition(RenderBox* child, const MarginInfo&);
     void determineHorizontalPosition(RenderBox* child);
     void handleBottomOfBlock(int top, int bottom, MarginInfo&);

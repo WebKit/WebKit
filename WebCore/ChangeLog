@@ -1,3 +1,23 @@
+2009-03-03  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=24201, pathologically bad block layout.
+
+        Make sure to factor clear deltas into y position estimates.  Also avoid doing the comparison of
+        the final position against the y position estimate until after the clear has happened.  This gets rid
+        of some duplicated cut/pasted code and also ensures a layout delta only has to be put in once.
+
+        Reviewed by Dan Bernstein
+
+        Added fast/block/float/nested-clearance.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::estimateVerticalPosition):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBlock.h:
+
 2009-03-02  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Simon Hausmann.
