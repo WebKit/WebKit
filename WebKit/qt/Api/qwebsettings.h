@@ -63,7 +63,8 @@ public:
         PrintElementBackgrounds,
         OfflineStorageDatabaseEnabled,
         OfflineWebApplicationCacheEnabled,
-        LocalStorageDatabaseEnabled
+        LocalStorageDatabaseEnabled,
+        AllowUniversalAccessFromFileUrls
     };
     enum WebGraphic {
         MissingImageGraphic,

@@ -183,6 +183,10 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::LocalStorageDatabaseEnabled,
                                       global->attributes.value(QWebSettings::LocalStorageDatabaseEnabled));
         settings->setLocalStorageEnabled(value);
+
+        value = attributes.value(QWebSettings::AllowUniversalAccessFromFileUrls,
+                                      global->attributes.value(QWebSettings::AllowUniversalAccessFromFileUrls));
+        settings->setAllowUniversalAccessFromFileUrls(value);
     } else {
         QList<QWebSettingsPrivate *> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
@@ -311,6 +315,8 @@ QWebSettings *QWebSettings::globalSettings()
         web application cache feature is enabled or not.
     \value LocalStorageDatabaseEnabled Specifies whether support for the HTML 5
         local storage feature is enabled or not.
+    \value AllowUniversalAccessFromFileUrls Specifies whether documents from file
+        URLs should be granted universal access (e.g., to HTTP and HTTPS documents).
 */
 
 /*!
@@ -339,6 +345,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::OfflineStorageDatabaseEnabled, true);
     d->attributes.insert(QWebSettings::OfflineWebApplicationCacheEnabled, true);
     d->attributes.insert(QWebSettings::LocalStorageDatabaseEnabled, true);
+    d->attributes.insert(QWebSettings::AllowUniversalAccessFromFileUrls, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
 
 }

@@ -1,3 +1,16 @@
+2009-03-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24340
+
+        Expose AllowUniversalAccessFromFileUrls to Qt clients.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2009-03-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.
