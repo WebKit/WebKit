@@ -1,3 +1,13 @@
+2009-03-04  Kevin McCullough  <kmccullough@apple.com>
+
+        - Build bot fix.
+
+        * fast/profiler/many-calls-in-the-same-scope-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-function-calls-expected.txt:
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt:
+        * fast/profiler/profile-calls-in-included-file-expected.txt:
+
 2009-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
