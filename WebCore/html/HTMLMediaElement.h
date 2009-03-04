@@ -86,6 +86,8 @@ public:
     float bufferingRate();
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
+    
+    String canPlayType(const String& mimeType) const;
 
 // ready state
     enum ReadyState { DATA_UNAVAILABLE, CAN_SHOW_CURRENT_FRAME, CAN_PLAY, CAN_PLAY_THROUGH };
@@ -183,7 +185,7 @@ private:
     void beginProcessingMediaPlayerCallback() { ++m_processingMediaPlayerCallback; }
     void endProcessingMediaPlayerCallback() { ASSERT(m_processingMediaPlayerCallback); --m_processingMediaPlayerCallback; }
 
-    String selectMediaURL(String& mediaMIMEType);
+    String selectMediaURL(ContentType& contentType);
     void updateVolume();
     void updatePlayState();
     float effectiveStart() const;

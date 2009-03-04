@@ -1,3 +1,28 @@
+2009-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24364
+        Add support for HTMLMediaElement canPlayType method. Make
+        MediaPlayer::supportsType take a ContentType instead of a
+        separate mime type and codecs parameter.
+
+        Test: media/video-can-play-type.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType): Add canPlayType method.
+        (WebCore::HTMLMediaElement::loadInternal): selectMediaURL returns a ContentType.
+        (WebCore::HTMLMediaElement::selectMediaURL): Return a ContentType instead of raw MIME type.
+        (WebCore::HTMLMediaElement::initialURL): selectMediaURL returns a ContentType.
+        * html/HTMLMediaElement.h: Add prototype.
+        * html/HTMLMediaElement.idl: Ditto.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Take a ContentType instead of raw MIME type.
+        (WebCore::MediaPlayer::supportsType): Ditto.
+        * platform/graphics/MediaPlayer.h:
+
 2009-03-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
@@ -1105,7 +1130,7 @@
         (WebCore::JSXMLHttpRequestConstructor::scriptExecutionContext):
         * dom/EventException.idl:
         * dom/EventListener.idl:
-        Chnage to have the NoStaticTables attribute since they are used from XHR.
+        Change to have the NoStaticTables attribute since they are used from XHR.
 
         * loader/WorkerThreadableLoader.cpp:
         (WebCore::workerContextDidFinishLoading):
@@ -1123,7 +1148,7 @@
         * xml/XMLHttpRequestException.idl:
         * xml/XMLHttpRequestProgressEvent.idl:
         * xml/XMLHttpRequestUpload.idl:
-        Chnage to have the NoStaticTables attribute since they are used from XHR.
+        Change to have the NoStaticTables attribute since they are used from XHR.
 
 2009-03-01  Horia Olaru  <olaru@adobe.com>
 
@@ -12129,7 +12154,7 @@
 
         Rubber-stamped by Ada Chan.
 
-        * dom/Document.h: Chnaged HitTestRequest to a class from a struct.
+        * dom/Document.h: Changed HitTestRequest to a class from a struct.
         * page/EventHandler.h: Ditto.
         * rendering/EllipsisBox.h: Ditto.
         * rendering/InlineBox.h: Ditto.

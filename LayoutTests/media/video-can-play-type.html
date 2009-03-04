@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;} 
+        </style>
+    </head>
+    <body>
+
+        <video controls ></video>
+
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method.</p>
+
+        <script src=video-test.js></script>
+        <script>
+        
+            video = media = document.getElementsByTagName('video')[0];
+
+            testExpected("video.canPlayType()", "no");
+            testExpected("video.canPlayType('video/')", "no");
+            testExpected("video.canPlayType('video/blahblah')", "no");
+            testExpected("video.canPlayType('video/mpeg; codecs=&quot;avc1.4D400C&quot;')", "maybe");
+            testExpected("video.canPlayType('        video/mp4  ; video/mp4; codecs=&quot;mp4v.20.8, mp4a.40.2&quot;')", "maybe");
+            testExpected("video.canPlayType('audio/mpeg')", "probably");
+            testExpected("video.canPlayType('audio/wav')", "probably");
+
+            endTest();
+        </script>
+    </body>
+</html>

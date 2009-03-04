@@ -43,6 +43,9 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
+    
+    DOMString canPlayType(in DOMString type);
+
 
     // ready state
     const unsigned short DATA_UNAVAILABLE = 0;

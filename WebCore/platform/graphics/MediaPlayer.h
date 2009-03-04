@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class ContentType;
 class FrameView;
 class GraphicsContext;
 class IntRect;
@@ -65,7 +66,7 @@ public:
 
     // media engine support
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs = "");
+    static MediaPlayer::SupportsType supportsType(ContentType contentType);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
     
@@ -82,7 +83,7 @@ public:
     IntRect rect() const { return m_rect; }
     void setRect(const IntRect& r);
     
-    void load(const String& url, const String& mimeType);
+    void load(const String& url, const ContentType& contentType);
     void cancelLoad();
     
     bool visible() const;

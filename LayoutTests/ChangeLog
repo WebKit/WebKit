@@ -1,3 +1,13 @@
+2009-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24364
+        Test HTMLMediaElement canPlayType method.
+
+        * media/video-can-play-type-expected.txt: Added.
+        * media/video-can-play-type.html: Added.
+
 2009-03-04  Kevin McCullough  <kmccullough@apple.com>
 
         - Build bot fix.

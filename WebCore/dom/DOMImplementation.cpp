@@ -25,6 +25,7 @@
 #include "config.h"
 #include "DOMImplementation.h"
 
+#include "ContentType.h"
 #include "CSSStyleSheet.h"
 #include "DocumentType.h"
 #include "Element.h"
@@ -347,7 +348,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 
 #if ENABLE(VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
-     if (MediaPlayer::supportsType(type))
+     if (MediaPlayer::supportsType(ContentType(type)))
          return MediaDocument::create(frame);
 #endif
 
