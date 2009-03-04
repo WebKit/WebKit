@@ -149,6 +149,8 @@ public:
 
     void beginDeferredRepaints();
     void endDeferredRepaints();
+    void checkStopDelayingDeferredRepaints();
+    void resetDeferredRepaintDelay();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void updateDashboardRegions();
@@ -203,6 +205,11 @@ private:
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
     virtual void contentsResized() { setNeedsLayout(); }
     virtual void visibleContentsResized() { layout(); }
+    
+    void deferredRepaintTimerFired(Timer<FrameView>*);
+    void doDeferredRepaints();
+    void updateDeferredRepaintDelay();
+    double adjustedDeferredRepaintDelay() const;
 
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
@@ -254,8 +261,10 @@ private:
     
     unsigned m_deferringRepaints;
     unsigned m_repaintCount;
-    IntRect m_repaintRect;
     Vector<IntRect> m_repaintRects;
+    Timer<FrameView> m_deferredRepaintTimer;
+    double m_deferredRepaintDelay;
+    double m_lastPaintTime;
 
     bool m_shouldUpdateWhileOffscreen;
 

@@ -1,3 +1,14 @@
+2009-03-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24359
+        Repaint throttling mechanism
+        
+        Set ENABLE_REPAINT_THROTTLING to 0 by default.
+
+        * wtf/Platform.h:
+
 2009-03-03  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase

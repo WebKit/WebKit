@@ -441,6 +441,10 @@
 #define WTF_USE_ALTERNATE_JSIMMEDIATE 1
 #endif
 
+#if !defined(ENABLE_REPAINT_THROTTLING)
+#define ENABLE_REPAINT_THROTTLING 0
+#endif
+
 #if !defined(ENABLE_JIT)
 /* The JIT is tested & working on x86_64 Mac */
 #if PLATFORM(X86_64) && PLATFORM(MAC)

@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
 #include "ChromeClient.h"
+#include "DocLoader.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -61,6 +62,25 @@ using namespace HTMLNames;
 
 double FrameView::sCurrentPaintTimeStamp = 0.0;
 
+#if ENABLE(REPAINT_THROTTLING)
+// Normal delay
+static const double deferredRepaintDelay = 0.025;
+// Negative value would mean that first few repaints happen without a delay
+static const double initialDeferredRepaintDelayDuringLoading = 0;
+// The delay grows on each repaint to this maximum value
+static const double maxDeferredRepaintDelayDuringLoading = 2.5;
+// On each repaint the delay increses by this amount
+static const double deferredRepaintDelayIncrementDuringLoading = 0.5;
+#else
+// FIXME: Repaint throttling could be good to have on all platform.
+// The balance between CPU use and repaint frequency will need some tuning for desktop.
+// More hooks may be needed to reset the delay on things like GIF and CSS animations.
+static const double deferredRepaintDelay = 0;
+static const double initialDeferredRepaintDelayDuringLoading = 0;
+static const double maxDeferredRepaintDelayDuringLoading = 0;
+static const double deferredRepaintDelayIncrementDuringLoading = 0;
+#endif
+
 struct ScheduledEvent {
     RefPtr<Event> m_event;
     RefPtr<Node> m_eventTarget;
@@ -84,6 +104,7 @@ FrameView::FrameView(Frame* frame)
     , m_viewportRenderer(0)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
+    , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
     , m_shouldUpdateWhileOffscreen(true)
 {
     init();
@@ -108,6 +129,7 @@ FrameView::FrameView(Frame* frame, const IntSize& initialSize)
     , m_viewportRenderer(0)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
+    , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
     , m_shouldUpdateWhileOffscreen(true)
 {
     init();
@@ -160,8 +182,10 @@ void FrameView::reset()
     m_lastZoomFactor = 1.0f;
     m_deferringRepaints = 0;
     m_repaintCount = 0;
-    m_repaintRect = IntRect();
     m_repaintRects.clear();
+    m_deferredRepaintDelay = initialDeferredRepaintDelayDuringLoading;
+    m_deferredRepaintTimer.stop();
+    m_lastPaintTime = 0;
     m_paintRestriction = PaintRestrictionNone;
     m_isPainting = false;
     m_isVisuallyNonEmpty = false;
@@ -703,17 +727,27 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!m_frame->document()->ownerElement());
 
-    if (m_deferringRepaints && !immediate) {
+    double delay = adjustedDeferredRepaintDelay();
+    if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
         IntRect visibleContent = visibleContentRect();
         visibleContent.intersect(r);
-        if (!visibleContent.isEmpty()) {
-            m_repaintCount++;
-            m_repaintRect.unite(r);
-            if (m_repaintCount == cRepaintRectUnionThreshold)
-                m_repaintRects.clear();
-            else if (m_repaintCount < cRepaintRectUnionThreshold)
-                m_repaintRects.append(r);
+        if (visibleContent.isEmpty())
+            return;
+        if (m_repaintCount == cRepaintRectUnionThreshold) {
+            IntRect unionedRect;
+            for (unsigned i = 0; i < cRepaintRectUnionThreshold; ++i)
+                unionedRect.unite(m_repaintRects[i]);
+            m_repaintRects.clear();
+            m_repaintRects.append(unionedRect);
         }
+        if (m_repaintCount < cRepaintRectUnionThreshold)
+            m_repaintRects.append(r);
+        else
+            m_repaintRects[0].unite(r);
+        m_repaintCount++;
+    
+        if (!m_deferringRepaints && !m_deferredRepaintTimer.isActive())
+             m_deferredRepaintTimer.startOneShot(delay);
         return;
     }
     
@@ -730,9 +764,6 @@ void FrameView::beginDeferredRepaints()
         return page->mainFrame()->view()->beginDeferredRepaints();
 
     m_deferringRepaints++;
-    m_repaintCount = 0;
-    m_repaintRect = IntRect();
-    m_repaintRects.clear();
 }
 
 
@@ -743,17 +774,85 @@ void FrameView::endDeferredRepaints()
         return page->mainFrame()->view()->endDeferredRepaints();
 
     ASSERT(m_deferringRepaints > 0);
-    if (--m_deferringRepaints == 0) {
-        if (m_repaintCount >= cRepaintRectUnionThreshold)
-            repaintContentRectangle(m_repaintRect, false);
-        else {
-            unsigned size = m_repaintRects.size();
-            for (unsigned i = 0; i < size; i++)
-                repaintContentRectangle(m_repaintRects[i], false);
-            m_repaintRects.clear();
-        }
+
+    if (--m_deferringRepaints)
+        return;
+    
+    if (m_deferredRepaintTimer.isActive())
+        return;
+
+    if (double delay = adjustedDeferredRepaintDelay()) {
+        m_deferredRepaintTimer.startOneShot(delay);
+        return;
+    }
+    
+    doDeferredRepaints();
+}
+
+void FrameView::checkStopDelayingDeferredRepaints()
+{
+    if (!m_deferredRepaintTimer.isActive())
+        return;
+
+    Document* document = m_frame->document();
+    if (document && (document->parsing() || document->docLoader()->requestCount()))
+        return;
+    
+    m_deferredRepaintTimer.stop();
+
+    doDeferredRepaints();
+}
+    
+void FrameView::doDeferredRepaints()
+{
+    ASSERT(!m_deferringRepaints);
+    if (isOffscreen() && !shouldUpdateWhileOffscreen()) {
+        m_repaintRects.clear();
+        m_repaintCount = 0;
+        return;
+    }
+    unsigned size = m_repaintRects.size();
+    for (unsigned i = 0; i < size; i++)
+        ScrollView::repaintContentRectangle(m_repaintRects[i], false);
+    m_repaintRects.clear();
+    m_repaintCount = 0;
+    
+    updateDeferredRepaintDelay();
+}
+
+void FrameView::updateDeferredRepaintDelay()
+{
+    Document* document = m_frame->document();
+    if (!document || (!document->parsing() && !document->docLoader()->requestCount())) {
+        m_deferredRepaintDelay = deferredRepaintDelay;
+        return;
+    }
+    if (m_deferredRepaintDelay < maxDeferredRepaintDelayDuringLoading) {
+        m_deferredRepaintDelay += deferredRepaintDelayIncrementDuringLoading;
+        if (m_deferredRepaintDelay > maxDeferredRepaintDelayDuringLoading)
+            m_deferredRepaintDelay = maxDeferredRepaintDelayDuringLoading;
     }
 }
+
+void FrameView::resetDeferredRepaintDelay()
+{
+    m_deferredRepaintDelay = 0;
+    if (m_deferredRepaintTimer.isActive())
+        m_deferredRepaintTimer.startOneShot(0);
+}
+
+double FrameView::adjustedDeferredRepaintDelay() const
+{
+    if (!m_deferredRepaintDelay)
+        return 0;
+    double timeSinceLastPaint = currentTime() - m_lastPaintTime;
+    return max(0., m_deferredRepaintDelay - timeSinceLastPaint);
+}
+    
+void FrameView::deferredRepaintTimerFired(Timer<FrameView>*)
+{
+    doDeferredRepaints();
+}    
 
 void FrameView::layoutTimerFired(Timer<FrameView>*)
 {
@@ -1224,8 +1323,9 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (m_paintRestriction == PaintRestrictionNone)
         document->invalidateRenderedRectsForMarkersInRect(rect);
     contentRenderer->layer()->paint(p, rect, m_paintRestriction, eltRenderer);
-        
+    
     m_isPainting = false;
+    m_lastPaintTime = currentTime();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Regions may have changed as a result of the visibility/z-index of element changing.

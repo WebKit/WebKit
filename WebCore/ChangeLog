@@ -1,3 +1,36 @@
+2009-03-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24359
+        Repaint throttling mechanism
+        
+        Excessive repainting can slow down page loadind. This implements a timer
+        based throttling mechanism. It is behind ENABLE(REPAINT_THROTTLING) and not 
+        enabled by default.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::beginDeferredRepaints):
+        (WebCore::FrameView::endDeferredRepaints):
+        (WebCore::FrameView::checkStopDelayingDeferredRepaints):
+        (WebCore::FrameView::doDeferredRepaints):
+        (WebCore::FrameView::updateDeferredRepaintDelay):
+        (WebCore::FrameView::resetDeferredRepaintDelay):
+        (WebCore::FrameView::adjustedDeferredRepaintDelay):
+        (WebCore::FrameView::deferredRepaintTimerFired):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+
 2009-03-04  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Antti Koivisto.
