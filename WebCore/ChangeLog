@@ -1,3 +1,24 @@
+2009-03-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6619630> Quick Look of vCards stuck on image of first card opened.
+
+        I narrowed this down to http://trac.webkit.org/changeset/39304 which, among other things,
+        consolidated some of the various decision making pieces of the Cache into the new method
+        FrameLoader::cachePolicy().
+
+        Before 39304, when deciding whether to use an existing CachedResource, we checked if the FrameLoader 
+        is reloading.  If it is, we'd evict any existing resource then recreate it.  Quick looks uses the
+        same URL for this image every time and expects it to be reloaded with each new card.
+
+        The FrameLoader::isReloading() check did one thing - Ask the DocumentLoader if it's cache policy
+        is "ReloadIgnoringCacheData".  This check was lost in the consolidation to the new method.  
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cachePolicy): Restore the DocumentLoader's cachePolicy check as a possible
+          condition for returning CachePolicyReload.
+
 2009-03-04  Timothy Hatcher  <timothy@apple.com>
 
         * English.lproj/localizedStrings.js: Update strings to include "DATABASES",

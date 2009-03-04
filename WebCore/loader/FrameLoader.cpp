@@ -3237,7 +3237,7 @@ CachePolicy FrameLoader::cachePolicy() const
     if (m_isComplete)
         return CachePolicyVerify;
     
-    if (m_loadType == FrameLoadTypeReloadFromOrigin)
+    if (m_loadType == FrameLoadTypeReloadFromOrigin || documentLoader()->request().cachePolicy() == ReloadIgnoringCacheData)
         return CachePolicyReload;
     
     if (Frame* parentFrame = m_frame->tree()->parent()) {
