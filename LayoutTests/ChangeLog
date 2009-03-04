@@ -2,6 +2,21 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 24337: Assert when doing sync XHR in a worker for a cacheable response.
+        <https://bugs.webkit.org/show_bug.cgi?id=24337>
+
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html: Added.
+        * http/tests/xmlhttprequest/workers/resources/xmlhttprequest-file-not-found.js: Added.
+        (log):
+        (done):
+        * http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html: Added.
+
+2009-03-04  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 24330: Sync xhr in workers should send an abort exception when the worker is terminated.
         <https://bugs.webkit.org/show_bug.cgi?id=24330>
 

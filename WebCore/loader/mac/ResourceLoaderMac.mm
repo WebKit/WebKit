@@ -37,6 +37,8 @@ namespace WebCore {
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
+    if (!m_sendResourceLoadCallbacks)
+        return 0;
     return frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), response);
 }
 

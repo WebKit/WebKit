@@ -2,6 +2,21 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 24337: Assert when doing sync XHR in a worker for a cacheable response.
+        <https://bugs.webkit.org/show_bug.cgi?id=24337>
+
+        Tests: http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+               http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html
+
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponse):
+        An identifier is only asssigned if resource load callbacks are done.  So don't send
+        willCacheResponse which uses identifier if resource load callbacks aren't being sent.
+
+2009-03-04  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 24330: Sync xhr in workers should send an abort exception when the worker is terminated.
         <https://bugs.webkit.org/show_bug.cgi?id=24330>
 

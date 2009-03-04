@@ -1,0 +1,3 @@
+Test async xhr preflight cache denial. If this test passes, there should be a single PASS below.
+
+PASS
