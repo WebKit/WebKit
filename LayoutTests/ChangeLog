@@ -1,3 +1,13 @@
+2009-03-04  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add test to ensure that window.frames is self-referential
+        https://bugs.webkit.org/show_bug.cgi?id=24341
+
+        * fast/dom/Window/window-frames-self-referential-expected.txt: Added.
+        * fast/dom/Window/window-frames-self-referential.html: Added.
+
 2009-03-04  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
