@@ -17002,7 +17002,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
 		};
 		5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -17032,7 +17032,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
 		};
 		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -17046,7 +17046,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -17060,7 +17060,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nif [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" ]; then\n    make -f \"WebCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport CREATE_HASH_TABLE=\"${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}/create_hash_table\"\n\nln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"WebCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

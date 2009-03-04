@@ -1,3 +1,13 @@
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Defined REAL_PLATFORM_NAME based
+        on PLATFORM_NAME to work around the missing definition on Tiger.
+        Updated HAVE_DTRACE to use REAL_PLATFORM_NAME.
+
 2009-03-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.

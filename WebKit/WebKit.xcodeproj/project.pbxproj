@@ -1510,7 +1510,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
 		};
 		5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1540,7 +1540,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1570,7 +1570,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1760,7 +1760,6 @@
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Debug;
 		};
@@ -1774,7 +1773,6 @@
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Release;
 		};

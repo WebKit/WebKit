@@ -11,8 +11,16 @@ FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frame
 HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 $(SQLITE3_HEADER_SEARCH_PATHS) "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+INSTALLHDRS_COPY_PHASE = YES;
+INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
 OTHER_LDFLAGS = -l$(SQLITE3_LIBRARY) -lobjc -sub_library libobjc -umbrella WebKit;
+
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_$(REAL_PLATFORM_NAME)_$(CONFIGURATION));
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_macosx_Release = $(JAVASCRIPTCORE_PRIVATE_HEADERS_engineering);
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_macosx_Debug = $(JAVASCRIPTCORE_PRIVATE_HEADERS_engineering);
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_macosx_Production = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework/PrivateHeaders;
+JAVASCRIPTCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders;
 
 // This needs to be kept sorted, and in sync with FEATURE_DEFINES in JavaScriptCore.xcconfig, WebKit.xcconfig and the default settings of build-webkit.
 FEATURE_DEFINES = $(FEATURE_DEFINES_$(MAC_OS_X_VERSION_MAJOR));

@@ -34,6 +34,11 @@ WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
 HEADER_SEARCH_PATHS = . icu $(HEADER_SEARCH_PATHS);
 
 
+REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
+REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_macosx = macosx;
+
+
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
 DEBUG_DEFINES_debug = ;
@@ -58,8 +63,7 @@ GCC_VERSION_0310 = 4.2;
 
 
 // HAVE_DTRACE is disabled on Leopard due to <rdar://problem/5628149>
-HAVE_DTRACE = $(HAVE_DTRACE_$(PLATFORM_NAME));
-HAVE_DTRACE_ = $(HAVE_DTRACE_macosx);
+HAVE_DTRACE = $(HAVE_DTRACE_$(REAL_PLATFORM_NAME));
 HAVE_DTRACE_macosx = $(HAVE_DTRACE_macosx_$(MAC_OS_X_VERSION_MAJOR));
 HAVE_DTRACE_macosx_ = $(HAVE_DTRACE_macosx_1040);
 HAVE_DTRACE_macosx_1040 = 0;

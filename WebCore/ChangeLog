@@ -1,3 +1,30 @@
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase
+
+        Reviewed by Mark Rowe.
+
+        The fix is to add INSTALLHDRS_COPY_PHASE = YES and
+        INSTALLHDRS_SCRIPT_PHASE = YES to WebCore.xcconfig, then to make
+        sure various build phase scripts work with the installhdrs build
+        phase.
+
+        * Configurations/Base.xcconfig: Defined REAL_PLATFORM_NAME
+        based on PLATFORM_NAME to work around the missing definition on
+        Tiger.
+        * Configurations/WebCore.xcconfig: Added
+        JAVASCRIPTCORE_PRIVATE_HEADERS_DIR variable to simplify logic in
+        the "Generate Derived Sources" script.  Added
+        INSTALLHDRS_COPY_PHASE = YES and INSTALLHDRS_SCRIPT_PHASE = YES.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        - Added shell code to prevent running "Check For Global
+          Initializers", "Check For Exit Time Destructors" and "Check
+          For Weak VTables" scripts during the installhdrs build phase.
+        - Made "Generate Derived Sources" work for the installhdrs build
+          phase.  Also simplified setting of CREATE_HASH_TABLE by using
+          JAVASCRIPTCORE_PRIVATE_HEADERS_DIR.
+
 2009-03-02  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.

@@ -30,6 +30,11 @@ WARNING_CFLAGS_ppc64 = $(WARNING_CFLAGS_BASE);
 WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
 
 
+REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
+REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_macosx = macosx;
+
+
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
 DEBUG_DEFINES_debug = DISABLE_THREAD_CHECK;
