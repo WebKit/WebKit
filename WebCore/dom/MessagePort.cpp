@@ -137,6 +137,7 @@ void MessagePort::postMessage(const String& message, MessagePort* dataPort, Exce
             ec = INVALID_ACCESS_ERR;
             return;
         }
+        ec = 0;
         newMessagePort = dataPort->clone(ec);
         if (ec)
             return;

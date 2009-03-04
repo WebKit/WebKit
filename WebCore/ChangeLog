@@ -1,3 +1,13 @@
+2009-03-03  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21939
+        Uninitialized ExceptionCode in DOMWindow::postMessage
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+
 2009-03-03  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase
