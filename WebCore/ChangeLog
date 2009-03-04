@@ -1,5 +1,10 @@
 2009-03-04  Timothy Hatcher  <timothy@apple.com>
 
+        * English.lproj/localizedStrings.js: Update strings to include "DATABASES",
+        "LOCAL STORAGE" and "SESSION STORAGE".
+
+2009-03-04  Timothy Hatcher  <timothy@apple.com>
+
         Fix a regression where the Web Inspector console would not animate
         in or out correctly.
 
