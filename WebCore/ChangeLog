@@ -1,3 +1,37 @@
+2009-03-02  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Chromium Linux: Switch to using Skia to render widgets.
+
+        In order to sandbox the Chromium renderer on Linux we need to remove
+        the X connection. GTK cannot render without an X connection so, for
+        now, we render widgets ourselves.
+
+        Previously didn't use anti-alias fonts in order to match Windows font
+        rendering exactly. This was helpful when bootstrapping our layout
+        tests. Now, however, we are ready to enable it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24244
+
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::buttonSize):
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromium::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromium::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromium::paintButton):
+        (WebCore::ScrollbarThemeChromium::paintThumb):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::PlatformContextSkia):
+        (PlatformContextSkia::~PlatformContextSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * rendering/RenderThemeChromiumGtk.cpp: Removed.
+        * rendering/RenderThemeChromiumGtk.h: Removed.
+        * rendering/RenderThemeChromiumLinux.cpp: Added.
+        * rendering/RenderThemeChromiumLinux.h: Added.
+
 2009-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

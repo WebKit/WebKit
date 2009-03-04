@@ -46,10 +46,6 @@
 
 #include <wtf/MathExtras.h>
 
-#if defined(__linux__)
-#include "GdkSkia.h"
-#endif
-
 // State -----------------------------------------------------------------------
 
 // Encapsulates the additional painting state information we store for each
@@ -181,19 +177,10 @@ PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
-#if defined(OS_LINUX)
-    m_gdkskia = m_canvas ? gdk_skia_new(m_canvas) : 0;
-#endif
 }
 
 PlatformContextSkia::~PlatformContextSkia()
 {
-#if defined(OS_LINUX)
-    if (m_gdkskia) {
-        g_object_unref(m_gdkskia);
-        m_gdkskia = 0;
-    }
-#endif
 }
 
 void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)

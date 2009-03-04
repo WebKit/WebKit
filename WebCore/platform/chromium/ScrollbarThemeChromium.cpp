@@ -167,6 +167,11 @@ bool ScrollbarThemeChromium::shouldCenterOnThumb(Scrollbar*, const PlatformMouse
 
 IntSize ScrollbarThemeChromium::buttonSize(Scrollbar* scrollbar)
 {
+#if defined(__linux__)
+    // On Linux, we don't use buttons
+    return IntSize(0, 0);
+#endif
+
     // Our desired rect is essentially thickness by thickness.
 
     // Our actual rect will shrink to half the available space when we have < 2
@@ -175,18 +180,13 @@ IntSize ScrollbarThemeChromium::buttonSize(Scrollbar* scrollbar)
 
     int thickness = scrollbarThickness(scrollbar->controlSize());
 
-#if !defined(__linux__)
     // In layout test mode, we force the button "girth" (i.e., the length of
     // the button along the axis of the scrollbar) to be a fixed size.
     // FIXME: This is retarded!  scrollbarThickness is already fixed in layout
     // test mode so that should be enough to result in repeatable results, but
     // preserving this hack avoids having to rebaseline pixel tests.
     const int kLayoutTestModeGirth = 17;
-
     int girth = ChromiumBridge::layoutTestMode() ? kLayoutTestModeGirth : thickness;
-#else
-    int girth = thickness;
-#endif
 
     if (scrollbar->orientation() == HorizontalScrollbar) {
         int width = scrollbar->width() < 2 * girth ? scrollbar->width() / 2 : girth;

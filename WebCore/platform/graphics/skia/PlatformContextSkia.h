@@ -43,8 +43,6 @@
 
 #include <wtf/Vector.h>
 
-typedef struct _GdkDrawable GdkSkia;
-
 // This class holds the platform-specific state for GraphicsContext. We put
 // most of our Skia wrappers on this class. In theory, a lot of this stuff could
 // be moved to GraphicsContext directly, except that some code external to this
@@ -167,11 +165,6 @@ public:
     // possible quality.
     bool isPrinting();
 
-#if defined(__linux__)
-    // FIXME: should be camelCase.
-    GdkSkia* gdk_skia() const { return m_gdkskia; }
-#endif
-
 private:
 #if defined(__linux__) || PLATFORM(WIN_OS)
     // Used when restoring and the state has an image clip. Only shows the pixels in
@@ -194,11 +187,6 @@ private:
 
     // Current path in global coordinates.
     SkPath m_path;
-
-#if defined(__linux__)
-    // A pointer to a GDK Drawable wrapping of this Skia canvas
-    GdkSkia* m_gdkskia;
-#endif
 
 #if PLATFORM(WIN_OS)
     bool m_drawingToImageBuffer;
