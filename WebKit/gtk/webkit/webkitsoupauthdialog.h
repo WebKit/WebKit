@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Igalia S.L., Author: Xan Lopez <xlopez@igalia.com>
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,6 +18,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <libsoup/soup.h>
 
 #ifndef WEBKIT_SOUP_AUTH_DIALOG_H
 #define WEBKIT_SOUP_AUTH_DIALOG_H 1

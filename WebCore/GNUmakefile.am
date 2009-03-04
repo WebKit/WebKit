@@ -1817,9 +1817,7 @@ webcore_sources += \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
-	WebCore/platform/network/soup/ResourceResponse.h \
-	WebCore/platform/network/soup/webkit-soup-auth-dialog.c \
-	WebCore/platform/network/soup/webkit-soup-auth-dialog.h
+	WebCore/platform/network/soup/ResourceResponse.h
 
 if USE_GNOMEKEYRING
 webcore_cppflags += \

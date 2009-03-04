@@ -181,8 +181,7 @@ libWebCore_la_CFLAGS = \
 	$(LIBXSLT_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(HILDON_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GNOMEKEYRING_CFLAGS)
+	$(GEOCLUE_CFLAGS)
 
 libWebCore_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -211,7 +210,6 @@ libWebCore_la_LIBADD = \
 	$(JPEG_LIBS) \
 	$(PNG_LIBS) \
 	$(GEOCLUE_LIBS) \
-	$(GNOMEKEYRING_LIBS) \
 	-lpthread
 
 # WebKit
@@ -237,7 +235,8 @@ libwebkit_1_0_la_CXXFLAGS = \
 	$(libWebCore_la_CXXFLAGS)
 
 libwebkit_1_0_la_CFLAGS = \
-	$(libWebCore_la_CFLAGS)
+	$(libWebCore_la_CFLAGS) \
+	$(GNOMEKEYRING_CFLAGS)
 
 libwebkit_1_0_la_CPPFLAGS = \
 	$(libWebCore_la_CPPFLAGS) \
@@ -250,7 +249,8 @@ libwebkit_1_0_la_LDFLAGS = \
 	$(no_undefined)
 
 libwebkit_1_0_la_LIBADD = \
-	libWebCore.la
+	libWebCore.la \
+	$(GNOMEKEYRING_LIBS)
 
 #
 # Extra checks and flags
@@ -306,6 +306,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkitdefines.h \
 	WebKit/gtk/webkit/webkitdownload.h \
 	WebKit/gtk/webkit/webkitnetworkrequest.h \
+	WebKit/gtk/webkit/webkitsoupauthdialog.h \
 	WebKit/gtk/webkit/webkitversion.h \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.h \
 	WebKit/gtk/webkit/webkitwebframe.h \
@@ -341,6 +342,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
 	WebKit/gtk/webkit/webkitprivate.cpp \
 	WebKit/gtk/webkit/webkitprivate.h \
+	WebKit/gtk/webkit/webkitsoupauthdialog.c \
 	WebKit/gtk/webkit/webkitversion.cpp \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
 	WebKit/gtk/webkit/webkitwebframe.cpp \

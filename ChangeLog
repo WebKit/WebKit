@@ -1,3 +1,14 @@
+2009-03-02  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24287
+        [GTK] Move auth dialog feature to WebKit/
+
+        Add WebKitSoupAuthDialog files to build.
+
+        * GNUmakefile.am:
+
 2009-03-03  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alexey Proskuryakov.

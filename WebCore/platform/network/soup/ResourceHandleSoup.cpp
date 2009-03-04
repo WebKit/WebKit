@@ -41,7 +41,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "TextEncoding.h"
-#include "webkit-soup-auth-dialog.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -373,31 +372,6 @@ static SoupSession* createSoupSession()
     return soup_session_async_new();
 }
 
-static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)
-{
-    gpointer messageData = g_object_get_data(G_OBJECT(message), "resourceHandle");
-    if (!messageData)
-        return NULL;
-
-    ResourceHandle* handle = static_cast<ResourceHandle*>(messageData);
-    if (!handle)
-        return NULL;
-
-    ResourceHandleInternal* d = handle->getInternal();
-    if (!d)
-        return NULL;
-
-    Frame* frame = d->m_frame;
-    if (!frame)
-        return NULL;
-
-    GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(frame->page()->chrome()->platformWindow()));
-    if (GTK_WIDGET_TOPLEVEL(toplevel))
-        return toplevel;
-    else
-        return NULL;
-}
-
 static void ensureSessionIsInitialized(SoupSession* session)
 {
     if (g_object_get_data(G_OBJECT(session), "webkit-init"))
@@ -408,11 +382,6 @@ static void ensureSessionIsInitialized(SoupSession* session)
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
     else
         setDefaultCookieJar(jar);
-
-    SoupSessionFeature* authDialog = static_cast<SoupSessionFeature*>(g_object_new(WEBKIT_TYPE_SOUP_AUTH_DIALOG, NULL));
-    g_signal_connect(authDialog, "current-toplevel", G_CALLBACK(currentToplevelCallback), NULL);
-    soup_session_add_feature(session, authDialog);
-    g_object_unref(authDialog);
 
     const char* webkit_debug = g_getenv("WEBKIT_DEBUG"); 
     if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER)

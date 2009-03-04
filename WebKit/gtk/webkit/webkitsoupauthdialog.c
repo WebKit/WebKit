@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Igalia S.L., Author: Xan Lopez <xlopez@igalia.com>
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
 #endif
 
 #include "webkitmarshal.h"
-#include "webkit-soup-auth-dialog.h"
+#include "webkitsoupauthdialog.h"
 
 static void webkit_soup_auth_dialog_session_feature_init(SoupSessionFeatureInterface* feature_interface, gpointer interface_data);
 static void attach(SoupSessionFeature* manager, SoupSession* session);
@@ -212,7 +212,7 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     g_signal_emit(authData->manager, signals[CURRENT_TOPLEVEL], 0, authData->msg, &toplevel);
 
     if (toplevel)
-        gtk_window_set_transient_for(window, toplevel);
+        gtk_window_set_transient_for(window, GTK_WINDOW(toplevel));
 
     /* Build contents */
     hbox = gtk_hbox_new(FALSE, 12);

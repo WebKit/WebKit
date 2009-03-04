@@ -20,8 +20,10 @@
 
 #include "config.h"
 
+#include "webkitsoupauthdialog.h"
 #include "webkitprivate.h"
 #include "ChromeClientGtk.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "Logging.h"
@@ -30,6 +32,9 @@
 #include "PageGroup.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
+#include "ResourceHandleInternal.h"
 #include <runtime/InitializeThreading.h>
 
 #if ENABLE(DATABASE)
@@ -96,6 +101,31 @@ WebCore::NavigationType core(WebKitWebNavigationReason type)
 
 } /** end namespace WebKit */
 
+static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)
+{
+    gpointer messageData = g_object_get_data(G_OBJECT(message), "resourceHandle");
+    if (!messageData)
+        return NULL;
+
+    ResourceHandle* handle = static_cast<ResourceHandle*>(messageData);
+    if (!handle)
+        return NULL;
+
+    ResourceHandleInternal* d = handle->getInternal();
+    if (!d)
+        return NULL;
+
+    WebCore::Frame* frame = d->m_frame;
+    if (!frame)
+        return NULL;
+
+    GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(frame->page()->chrome()->platformWindow()));
+    if (GTK_WIDGET_TOPLEVEL(toplevel))
+        return toplevel;
+    else
+        return NULL;
+}
+
 void webkit_init()
 {
     static bool isInitialized = false;
@@ -121,4 +151,10 @@ void webkit_init()
     PageGroup::setShouldTrackVisitedLinks(true);
 
     Pasteboard::generalPasteboard()->setHelper(new WebKit::PasteboardHelperGtk());
+
+    SoupSession* session = webkit_get_default_session();
+    SoupSessionFeature* authDialog = static_cast<SoupSessionFeature*>(g_object_new(WEBKIT_TYPE_SOUP_AUTH_DIALOG, NULL));
+    g_signal_connect(authDialog, "current-toplevel", G_CALLBACK(currentToplevelCallback), NULL);
+    soup_session_add_feature(session, authDialog);
+    g_object_unref(authDialog);
 }

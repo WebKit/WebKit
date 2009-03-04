@@ -1,3 +1,18 @@
+2009-03-02  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24287
+        [GTK] Move auth dialog feature to WebKit/
+
+        Remove WebKitSoupAuthDialog files from build and stop using it.
+
+        * GNUmakefile.am:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized):
+        * platform/network/soup/webkit-soup-auth-dialog.c: Removed.
+        * platform/network/soup/webkit-soup-auth-dialog.h: Removed.
+
 2009-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
