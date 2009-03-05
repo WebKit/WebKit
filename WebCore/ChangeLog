@@ -1,3 +1,12 @@
+2009-03-05  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24391
+        Frame.cpp uses JSC specific includes
+
+        * page/Frame.cpp:
+
 2009-03-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alexey Proskuryakov.
