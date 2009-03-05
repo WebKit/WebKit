@@ -112,10 +112,10 @@ namespace WebCore {
             , m_msg(0)
             , m_cancelled(false)
             , m_gfile(0)
-            , m_input_stream(0)
+            , m_inputStream(0)
             , m_cancellable(0)
             , m_buffer(0)
-            , m_bufsize(0)
+            , m_bufferSize(0)
             , m_total(0)
             , m_idleHandler(0)
             , m_frame(0)
@@ -184,10 +184,10 @@ namespace WebCore {
         ResourceResponse m_response;
         bool m_cancelled;
         GFile* m_gfile;
-        GInputStream* m_input_stream;
+        GInputStream* m_inputStream;
         GCancellable* m_cancellable;
         char* m_buffer;
-        gsize m_bufsize, m_total;
+        gsize m_bufferSize, m_total;
         guint m_idleHandler;
         Frame* m_frame;
 #endif

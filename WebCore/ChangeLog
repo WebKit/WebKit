@@ -1,3 +1,33 @@
+2009-03-05  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24377
+        [GTK] Comply better with coding style guidelines in ResourceHandleSoup
+
+        Use C++ booleans, 0 instead of NULL, prefix boolean variables with
+        'is', do not use 'else if' if the previous if had a return, delete
+        trailing whitespace, etc.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::fillResponseFromMessage):
+        (WebCore::restartedCallback):
+        (WebCore::finishedCallback):
+        (WebCore::parseDataUrl):
+        (WebCore::ensureSessionIsInitialized):
+        (WebCore::ResourceHandle::startHttp):
+        (WebCore::reportUnknownProtocolError):
+        (WebCore::ResourceHandle::start):
+        (WebCore::cleanupGioOperation):
+        (WebCore::closeCallback):
+        (WebCore::readCallback):
+        (WebCore::openCallback):
+        (WebCore::queryInfoCallback):
+        (WebCore::ResourceHandle::startGio):
+
 2009-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
