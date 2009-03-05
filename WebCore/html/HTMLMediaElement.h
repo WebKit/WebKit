@@ -107,23 +107,11 @@ public:
     bool ended() const;
     bool autoplay() const;    
     void setAutoplay(bool b);
+    bool loop() const;    
+    void setLoop(bool b);
     void play(ExceptionCode&);
     void pause(ExceptionCode&);
     
-// looping
-    float start() const;
-    void setStart(float time);
-    float end() const;
-    void setEnd(float time);
-    float loopStart() const;
-    void setLoopStart(float time);
-    float loopEnd() const;
-    void setLoopEnd(float time);
-    unsigned playCount() const;
-    void setPlayCount(unsigned, ExceptionCode&);
-    unsigned currentLoop() const;
-    void setCurrentLoop(unsigned);
-
 // controls
     bool controls() const;
     void setControls(bool);
@@ -187,10 +175,6 @@ private:
     String selectMediaURL(ContentType& contentType);
     void updateVolume();
     void updatePlayState();
-    float effectiveStart() const;
-    float effectiveEnd() const;
-    float effectiveLoopStart() const;
-    float effectiveLoopEnd() const;
     bool activelyPlaying() const;
     bool endedPlayback() const;
 

@@ -1,9 +1,0 @@
-Test that when start DOM attribute is set, playback starts from that time.
-
-EXPECTED (video.loopStart == '1') OK
-EXPECTED (video.getAttribute('start') == '1s') OK
-RUN(video.load())
-EVENT(canplaythrough)
-EXPECTED (video.currentTime == '1') OK
-END OF TEST
-

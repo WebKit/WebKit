@@ -1,0 +1,52 @@
+<video controls autoplay ></video>
+<script src=video-test.js></script>
+<script>
+
+    testExpected("video.getAttribute('loop')", null);
+    testExpected("video.loop", false);
+
+    run("video.loop = true");
+    testExpected("video.loop", true);
+    testExpected("video.getAttribute('loop')", null, "!=");
+
+    run("video.removeAttribute('loop')");
+    testExpected("video.loop", false);
+
+    var respondToTimeUpdate = false;
+    var firstTimeCheck = true;
+
+    // make sure we are playing, seek to near the end so the test doesn't take too long
+    waitForEvent('play', function () { 
+        testExpected("video.paused", false);
+        run("video.currentTime = video.duration - 0.4");
+        
+        consoleWrite("");
+        setTimeout(timeCheck, 800);
+    } );
+
+    function timeCheck() { 
+        testExpected("video.ended", !firstTimeCheck);
+        if (!firstTimeCheck)
+        {
+            // don't use "testExpected()" so we won't log the actual duration to the
+            //  results file, as the floating point result may differ with different engines
+            reportExpected(media.currentTime == media.duration, "media.currentTime", "==", "media.duration", media.currentTime);
+            endTest();
+            return;
+        }
+
+        testExpected("media.currentTime", 0, '>');
+        run("video.loop = false");
+        run("video.currentTime = video.duration - 0.4");
+        respondToTimeUpdate = true;
+        firstTimeCheck = false;
+
+        consoleWrite("");
+        setTimeout(timeCheck, 800);
+    }
+
+    consoleWrite("");
+    run("video.loop = true");
+    run("video.src = 'content/test.mp4'");
+    consoleWrite("");
+</script>

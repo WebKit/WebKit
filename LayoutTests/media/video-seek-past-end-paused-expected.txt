@@ -1,9 +1,18 @@
 Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.
 
+RUN(video.src = 'content/test.mp4')
 RUN(video.load())
+
 EVENT(load)
-RUN(video.currentTime = 500)
-EVENT(timeupdate)
-EXPECTED (video.currentTime == '8.399999618530273') OK
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (media.currentTime > '0') OK
+
+EXPECTED (media.currentTime == 'media.duration') OK
+EXPECTED (video.ended == 'true') OK
+
 END OF TEST
 

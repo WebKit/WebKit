@@ -1,0 +1,24 @@
+EXPECTED (video.getAttribute('loop') == 'null') OK
+EXPECTED (video.loop == 'false') OK
+RUN(video.loop = true)
+EXPECTED (video.loop == 'true') OK
+EXPECTED (video.getAttribute('loop') != 'null') OK
+RUN(video.removeAttribute('loop'))
+EXPECTED (video.loop == 'false') OK
+
+RUN(video.loop = true)
+RUN(video.src = 'content/test.mp4')
+
+EVENT(play)
+EXPECTED (video.paused == 'false') OK
+RUN(video.currentTime = video.duration - 0.4)
+
+EXPECTED (video.ended == 'false') OK
+EXPECTED (media.currentTime > '0') OK
+RUN(video.loop = false)
+RUN(video.currentTime = video.duration - 0.4)
+
+EXPECTED (video.ended == 'true') OK
+EXPECTED (media.currentTime == 'media.duration') OK
+END OF TEST
+

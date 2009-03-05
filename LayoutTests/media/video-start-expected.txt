@@ -1,5 +1,0 @@
-EXPECTED (video.start == '1') OK
-EVENT(canplaythrough)
-EXPECTED (video.currentTime == '1') OK
-END OF TEST
-

@@ -1,3 +1,27 @@
+2009-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24400
+        Bug 24400: Remove "start", "end", "loopStart", "loopEnd", "currentLoop", and "playCount" 
+        media element attributes
+
+        Test: media/video-loop.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::loadInternal):
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::loop):
+        (WebCore::HTMLMediaElement::setLoop):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::endedPlayback):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
 2009-03-05  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6651112> Safari asks about re-posting a form even when page is cached

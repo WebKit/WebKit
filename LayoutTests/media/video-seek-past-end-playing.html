@@ -1,17 +1,33 @@
-<video playcount=2 controls></video>
-<p>Test that seeking video with remaining loops past it's end rewinds to the beginning and continues playback.</p>
+<video loop controls></video>
+<p>Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.</p>
 <script src=video-test.js></script>
 <script>
+
     waitForEvent('load', function () { 
-        waitForEvent('timeupdate', function () {
-            failTestIn(1000);
-            if (video.currentLoop == 1) {
-                testExpected("video.currentLoop", 1);
-                endTest();
-            }
-        });
-        video.currentTime = 500;
+        testExpected("video.paused", false);
+        setTimeout(timeCheck1, 200);
     });
-    video.src = "content/test.mp4";
+
+    function timeCheck1() 
+    {
+        // make sure time is advancing, seek past end
+        consoleWrite("");
+        testExpected("video.paused", false);
+        testExpected("media.currentTime", 0, '>');
+        video.currentTime = 500;
+        setTimeout(timeCheck2, 200);
+    }
+
+    function timeCheck2() 
+    {
+        consoleWrite("");
+        testExpected("video.paused", false);
+        testExpected("media.currentTime", 0, '>');
+        consoleWrite("");
+        endTest();
+    }
+
+    run("video.src = 'content/test.mp4'");
     run("video.play()");
+    consoleWrite("");
 </script>

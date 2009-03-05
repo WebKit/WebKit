@@ -1,3 +1,41 @@
+2009-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24400
+        Bug 24400: Remove "start", "end", "loopStart", "loopEnd", "currentLoop", and "playCount" 
+        media element attributes
+
+        * media/loopend-limits-expected.txt: Removed.
+        * media/loopend-limits.html: Removed.
+        * media/loopstart-limits-expected.txt: Removed.
+        * media/loopstart-limits.html: Removed.
+        * media/video-dom-end-expected.txt: Removed.
+        * media/video-dom-end.html: Removed.
+        * media/video-dom-loopcount-expected.txt: Removed.
+        * media/video-dom-loopcount.html: Removed.
+        * media/video-dom-loopend-expected.txt: Removed.
+        * media/video-dom-loopend.html: Removed.
+        * media/video-dom-loopstart-expected.txt: Removed.
+        * media/video-dom-loopstart.html: Removed.
+        * media/video-dom-start-expected.txt: Removed.
+        * media/video-dom-start.html: Removed.
+        * media/video-end-expected.txt: Removed.
+        * media/video-end.html: Removed.
+        * media/video-loop.html: Added, test for new "loop" attribute.
+        * media/video-loopcount-expected.txt: Removed.
+        * media/video-loopcount.html: Removed.
+        * media/video-loopend-expected.txt: Removed.
+        * media/video-loopend.html: Removed.
+        * media/video-loopstart-expected.txt: Removed.
+        * media/video-loopstart.html: Removed.
+        * media/video-seek-past-end-paused-expected.txt: Updated for loop changes, add more tests.
+        * media/video-seek-past-end-paused.html: Ditto.
+        * media/video-seek-past-end-playing-expected.txt: Ditto.
+        * media/video-seek-past-end-playing.html: Ditto.
+        * media/video-start-expected.txt: Removed.
+        * media/video-start.html: Removed.
+
 2009-03-05  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

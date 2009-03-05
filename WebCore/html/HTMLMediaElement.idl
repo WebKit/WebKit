@@ -39,12 +39,11 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     const unsigned short LOADED_FIRST_FRAME = 3;
     const unsigned short LOADED = 4;
     readonly attribute unsigned short networkState;
+
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
-    
     DOMString canPlayType(in DOMString type);
-
 
     // ready state
     const unsigned short DATA_UNAVAILABLE = 0;
@@ -67,19 +66,11 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     readonly attribute TimeRanges seekable;
     readonly attribute boolean ended;
     attribute boolean autoplay;
+    attribute boolean loop;
     void play() 
         raises (DOMException);
     void pause() 
         raises (DOMException);
-
-    // looping
-    attribute float start;
-    attribute float end;
-    attribute float loopStart;
-    attribute float loopEnd;
-    attribute unsigned long playCount
-        setter raises (DOMException);
-    attribute unsigned long currentLoop;
 
     // controls
     attribute boolean controls;

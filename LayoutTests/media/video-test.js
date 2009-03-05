@@ -52,7 +52,12 @@ function testExpected(testFuncString, expected, comparison)
         case '!=': success = observed != expected; break;
         case '==': success = observed == expected; break;
     }
+    
+    reportExpected(success, testFuncString, comparison, expected, observed)
+}
 
+function reportExpected(success, testFuncString, comparison, expected, observed)
+{
     var msg = "EXPECTED (<em>" + testFuncString + " </em>" + comparison + " '<em>" + expected + "</em>')";
     if (!success)
         msg +=  ", OBSERVED '<em>" + observed + "</em>'";

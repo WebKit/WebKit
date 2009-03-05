@@ -1,10 +1,16 @@
-Test that seeking video with remaining loops past it's end rewinds to the beginning and continues playback.
+Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.
 
+RUN(video.src = 'content/test.mp4')
 RUN(video.play())
+
 EVENT(load)
-EVENT(timeupdate)
-EVENT(timeupdate)
-EVENT(timeupdate)
-EXPECTED (video.currentLoop == '1') OK
+EXPECTED (video.paused == 'false') OK
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (media.currentTime > '0') OK
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (media.currentTime > '0') OK
+
 END OF TEST
 
