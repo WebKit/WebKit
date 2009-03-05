@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+module core {
+    interface [
+        GenerateConstructor
+    ] InspectorController {
+        [ImplementationFunction=hideHighlight] void hideDOMNodeHighlight();
+        [Custom] void highlightDOMNode(in Node node);
+        [ImplementationFunction=scriptObjectReady] void loaded();
+        [ImplementationFunction=close] void windowUnloading();
+        [ImplementationFunction=attachWindow] void attach();
+        [ImplementationFunction=detachWindow] void detach();
+
+        void enableDebugger();
+        void disableDebugger();
+        void pauseInDebugger();
+        void resumeDebugger();
+        void stepOverStatementInDebugger();
+        void stepIntoStatementInDebugger();
+        void stepOutOfFunctionInDebugger();
+
+        void closeWindow();
+        [ImplementationFunction=clearConsoleMessages] void clearMessages();
+        [ImplementationFunction=startUserInitiatedProfiling] void startProfiling();
+        [ImplementationFunction=stopUserInitiatedProfiling] void stopProfiling();
+        void enableProfiler();
+        void disableProfiler();
+        [ImplementationFunction=toggleSearchForNodeInPage] void toggleNodeSearch();
+
+        boolean debuggerEnabled();
+        boolean pauseOnExceptions();
+
+        boolean profilerEnabled();
+        [ImplementationFunction=windowVisible] boolean isWindowVisible();
+        [ImplementationFunction=searchingForNodeInPage] boolean searchingForNode();
+
+        [Custom] void addResourceSourceToFrame(in unsigned long identifier, in Node frame);
+        [Custom] void addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
+        [Custom] Node getResourceDocumentNode(in unsigned long identifier);
+        [Custom] void search(in Node node, in DOMString query);
+
+        [Custom] DOMObject databaseTableNames(in Database database);
+
+        [Custom] DOMObject setting(in DOMString key);
+        [Custom] void setSetting(in DOMString key, in DOMObject  value);
+        [Custom] DOMWindow inspectedWindow();
+        DOMString localizedStringsURL();
+        DOMString hiddenPanels();
+        DOMString platform();
+        [ImplementationFunction=moveWindowBy] void moveByUnrestricted(in float x, in float y);
+        void setAttachedWindowHeight(in unsigned long height);
+        [Custom] DOMObject wrapCallback(in DOMObject callback);
+
+        [Custom] DOMObject currentCallFrame();
+        void setPauseOnExceptions(in boolean pauseOnExceptions);
+        void addBreakpoint(in unsigned long sourceID, in unsigned long lineNumber);
+        void removeBreakpoint(in unsigned long sourceID, in unsigned long lineNumber);
+
+        [Custom] Array profiles();
+     };
+ }

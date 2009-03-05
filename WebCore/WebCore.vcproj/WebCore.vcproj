@@ -992,6 +992,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSJavaScriptCallFrame.h"
 				>
 			</File>
@@ -14146,6 +14154,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSInspectorControllerCustom.cpp"
 					>
 				</File>
 				<File

@@ -36,6 +36,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -66,14 +67,14 @@ class ResourceError;
 class ScriptCallStack;
 class SharedBuffer;
 
-struct ConsoleMessage;
-struct InspectorDatabaseResource;
-struct InspectorDOMStorageResource;
-struct InspectorResource;
+class ConsoleMessage;
+class InspectorDatabaseResource;
+class InspectorDOMStorageResource;
+class InspectorResource;
 
-class InspectorController
+class InspectorController : public RefCounted<InspectorController>
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-                          : JavaScriptDebugListener
+                          , JavaScriptDebugListener
 #endif
                                                     {
 public:
@@ -165,6 +166,7 @@ public:
     bool windowVisible();
     void setWindowVisible(bool visible = true, bool attached = false);
 
+    bool addSourceToFrame(const String& mimeType, const String& source, Node*);
     void addMessageToConsole(MessageSource, MessageLevel, ScriptCallStack*);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
     void clearConsoleMessages();
@@ -252,6 +254,8 @@ public:
 
     void startGroup(MessageSource source, ScriptCallStack* callFrame);
     void endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL);
+
+    const String& platform() const;
 
 private:
     void focusNode();

@@ -163,6 +163,7 @@ DOM_CLASSES = \
     HTMLVideoElement \
     History \
     ImageData \
+    InspectorController \
     KeyboardEvent \
     Location \
     MediaError \

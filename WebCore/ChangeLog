@@ -1,3 +1,20 @@
+2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24355
+        Add InspectorController.idl and convert InspectorController.cpp to use
+        JSC bindings.
+
+        * DerivedSources.make: Added InspectorController.idl
+        * WebCore.xcodeproj/project.pbxproj: Added idl, bindings files.
+        * bindings/js/JSInspectorControllerCustom.cpp: Added.
+        * bindings/scripts/CodeGeneratorJS.pm: Added Array to no-header types.
+        * inspector/InspectorController.cpp: Removed hand-rolled bindings.
+        * inspector/InspectorController.h: Added platform and addSourceToFrame methods.
+        * inspector/InspectorController.idl: Added.
+        * page/Page.h: Changed member to RefPtr since InspectorController is now ref-counted.
+
 2009-03-05  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

@@ -376,6 +376,7 @@ IDL_BINDINGS += \
     html/ImageData.idl \
     html/TextMetrics.idl \
     inspector/JavaScriptCallFrame.idl \
+    inspector/InspectorController.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/DOMSelection.idl \
@@ -450,6 +451,7 @@ SOURCES += \
     bindings/js/JSImageDataCustom.cpp \
     bindings/js/JSInspectedObjectWrapper.cpp \
     bindings/js/JSInspectorCallbackWrapper.cpp \
+    bindings/js/JSInspectorControllerCustom.cpp \
     bindings/js/JSLocationCustom.cpp \
     bindings/js/JSNamedNodeMapCustom.cpp \
     bindings/js/JSNamedNodesCollection.cpp  \
