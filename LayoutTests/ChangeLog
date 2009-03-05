@@ -1,3 +1,9 @@
+2009-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        - Correct bogus result checked in as part of r41432.
+
+        * media/video-can-play-type-expected.txt:
+
 2009-03-04  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Fisher.
