@@ -1,3 +1,18 @@
+2009-03-04  Oliver Hunt  <oliver@apple.com>
+
+        Added a few more tests to ubench
+
+        RS=Gavin Barraclough
+
+        Adding a couple of test to cover too few and too many arguments.  This
+        is needed to prevent regressions in all call paths from my current refactoring.
+
+        * tests/LIST-UBENCH:
+        * tests/ubench/function-correct-args.js: Added.
+        (f):
+        * tests/ubench/function-excess-args.js: Added.
+        (f):
+
 2008-10-30  Zoltan Horvath  <Horvath.Zoltan.6@stud.u-szeged.hu>
 
         Fix a bug where when V8's or UBENCH's test suite list file is missing

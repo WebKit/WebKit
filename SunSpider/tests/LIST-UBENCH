@@ -1,5 +1,7 @@
 ubench/function-closure
 ubench/function-empty
+ubench/function-correct-args
+ubench/function-excess-args
 ubench/function-missing-args
 ubench/function-sum
 ubench/loop-empty-resolve
