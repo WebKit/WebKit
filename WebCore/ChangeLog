@@ -1,3 +1,14 @@
+2009-03-05  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24392
+        Do not get the current time for unless we're doing PRELOAD_DEBUG as this
+        can be unnecessarily expensive.
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::write):
+
 2009-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

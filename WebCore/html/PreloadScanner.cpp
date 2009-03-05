@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,9 +129,13 @@ bool PreloadScanner::scanningBody() const
     
 void PreloadScanner::write(const SegmentedString& source)
 {
+#if PRELOAD_DEBUG
     double startTime = currentTime();
+#endif
     tokenize(source);
+#if PRELOAD_DEBUG
     m_timeUsed += currentTime() - startTime;
+#endif
 }
     
 static inline bool isWhitespace(UChar c)
