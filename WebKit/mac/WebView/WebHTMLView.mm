@@ -4870,6 +4870,27 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if ([[[self selectedString] _webkit_stringByTrimmingWhitespace] length] == 0)
         return;
 
+    NSAttributedString *attrString = [self selectedAttributedString];
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    NSRect rect = coreFrame->selectionBounds();
+
+#ifndef BUILDING_ON_TIGER
+    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
+    NSFont *font = [attributes objectForKey:NSFontAttributeName];
+    if (font)
+        rect.origin.y += [font ascender];
+#endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
+    return;
+#endif
+
+
     // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
     // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
     // so the two cases are handled separately.
@@ -4901,12 +4922,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         return;
     }
 
-    NSAttributedString *attrString = [self selectedAttributedString];
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-    
 #ifdef BUILDING_ON_TIGER
     // FIXME: must check for right-to-left here
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
@@ -4914,7 +4929,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
     // the bottom of the selection rather than at the selected word.
-    NSRect rect = [self convertRect:coreFrame->selectionBounds() toView:nil];
+    rect = [self convertRect:rect toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
@@ -4922,19 +4937,12 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
-    NSRect rect = coreFrame->selectionBounds();
-
-    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
-    NSFont *font = [attributes objectForKey:NSFontAttributeName];
-    if (font)
-        rect.origin.y += [font ascender];
-
     NSPoint windowPoint = [self convertPoint:rect.origin toView:nil];
     NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
 
     dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
                                 coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
-#endif    
+#endif
 }
 
 - (void)_hoverFeedbackSuspendedChanged

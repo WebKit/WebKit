@@ -1,3 +1,12 @@
+2009-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6206172> Adoption of new Cocoa API for dictionary contextual menu
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+
 2009-03-04  Adam Barth  <abath@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
