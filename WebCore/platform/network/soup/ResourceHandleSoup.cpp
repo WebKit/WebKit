@@ -551,16 +551,10 @@ bool ResourceHandle::start(Frame* frame)
 void ResourceHandle::cancel()
 {
     d->m_cancelled = true;
-    if (d->m_msg) {
+    if (d->m_msg)
         soup_session_cancel_message(defaultSession(), d->m_msg, SOUP_STATUS_CANCELLED);
-        // For re-entrancy troubles we call didFinishLoading when the message hasn't been handled yet.
-        if (client())
-            client()->didFinishLoading(this);
-    } else if (d->m_cancellable) {
+    else if (d->m_cancellable)
         g_cancellable_cancel(d->m_cancellable);
-        if (client())
-            client()->didFinishLoading(this);
-    }
 }
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
