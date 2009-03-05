@@ -1,5 +1,15 @@
 2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        Eliminate a ref-counting leak in InspectorController.
+
+        * inspector/InspectorController.h: Made constructor private, added static create method.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Change initializer to use static create method.
+
+2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         https://bugs.webkit.org/show_bug.cgi?id=24355

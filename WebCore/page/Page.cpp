@@ -108,7 +108,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_dragController(new DragController(this, dragClient))
     , m_focusController(new FocusController(this))
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
-    , m_inspectorController(new InspectorController(this, inspectorClient))
+    , m_inspectorController(InspectorController::create(this, inspectorClient))
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
     , m_backForwardList(BackForwardList::create(this))

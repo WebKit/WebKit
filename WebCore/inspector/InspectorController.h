@@ -130,7 +130,11 @@ public:
         } m_simpleContent;
     };
 
-    InspectorController(Page*, InspectorClient*);
+    static PassRefPtr<InspectorController> create(Page* page, InspectorClient* inspectorClient)
+    {
+        return adoptRef(new InspectorController(page, inspectorClient));
+    }
+
     ~InspectorController();
 
     void inspectedPageDestroyed();
@@ -258,6 +262,7 @@ public:
     const String& platform() const;
 
 private:
+    InspectorController(Page*, InspectorClient*);
     void focusNode();
 
     void addConsoleMessage(JSC::ExecState*, ConsoleMessage*);
