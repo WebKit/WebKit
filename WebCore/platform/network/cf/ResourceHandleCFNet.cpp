@@ -519,12 +519,22 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&)
+bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
 {
-    // Not having this function means that we'll ask the user about re-posting a form
-    // even when we go back to a page that's still in the cache.
-    notImplemented();
-    return false;
+    request.setCachePolicy(ReturnCacheDataDontLoad);
+    
+    CFURLResponseRef cfResponse = 0;
+    CFErrorRef cfError = 0;
+    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(request, true));
+    RetainPtr<CFDataRef> data(AdoptCF, CFURLConnectionSendSynchronousRequest(cfRequest.get(), &cfResponse, &cfError, request.timeoutInterval()));
+    bool cached = cfResponse && !cfError;
+
+    if (cfError)
+        CFRelease(cfError);
+    if (cfResponse)
+        CFRelease(cfResponse);
+
+    return cached;
 }
 
 } // namespace WebCore

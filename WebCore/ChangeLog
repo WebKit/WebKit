@@ -1,3 +1,12 @@
+2009-03-05  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/6651112> Safari asks about re-posting a form even when page is cached
+        
+        Reviewed by Ada Chan.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::willLoadFromCache): Ported from Mac version.
+
 2009-03-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel
