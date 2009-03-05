@@ -1788,6 +1788,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     // Clipping will exclude the right and bottom edges of this frame.
     if (m_hBar || m_vBar) {
         context->save();
+        context->clip(absRect);
         IntRect largerCorner = absRect;
         largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
         context->setStrokeColor(Color(makeRGB(217, 217, 217)));

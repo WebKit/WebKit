@@ -1,3 +1,20 @@
+2009-03-05  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=24248
+
+        Make sure painting of overflow controls checks that visibility:visible is set on the block before
+        painting.  Pixel tests caught this regression.
+
+        Make sure resizer painting pushes a clip of the corner rect.  It was relying on the clip layers happened
+        to do to their bounds (which had nothing to do with overflow).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizer):
+
 2009-03-05  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Simon Fraser.
