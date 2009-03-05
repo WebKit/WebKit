@@ -83,7 +83,6 @@ public:
     
     enum NetworkState { EMPTY, LOADING, LOADED_METADATA, LOADED_FIRST_FRAME, LOADED };
     NetworkState networkState() const;
-    float bufferingRate();
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
     
@@ -234,8 +233,6 @@ protected:
     unsigned m_previousProgress;
     double m_previousProgressTime;
     bool m_sentStalledEvent;
-    
-    float m_bufferingRate;
     
     unsigned m_loadNestingLevel;
     unsigned m_terminateLoadBelowNestingLevel;

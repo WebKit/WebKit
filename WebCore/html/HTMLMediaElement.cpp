@@ -85,7 +85,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_previousProgress(0)
     , m_previousProgressTime(numeric_limits<double>::max())
     , m_sentStalledEvent(false)
-    , m_bufferingRate(0)
     , m_loadNestingLevel(0)
     , m_terminateLoadBelowNestingLevel(0)
     , m_pausedInternal(false)
@@ -299,14 +298,6 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
     return m_networkState;
 }
 
-float HTMLMediaElement::bufferingRate()
-{
-    if (!m_player)
-        return 0;
-    return m_bufferingRate;
-    //return m_player->dataRate();
-}
-
 String HTMLMediaElement::canPlayType(const String& mimeType) const
 {
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType));
@@ -352,7 +343,6 @@ void HTMLMediaElement::loadInternal(ExceptionCode& ec)
     
     m_progressEventTimer.stop();
     m_sentStalledEvent = false;
-    m_bufferingRate = 0;
     
     m_loadTimer.stop();
     
@@ -471,7 +461,6 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK);
         m_begun = false;
         m_progressEventTimer.stop();
-        m_bufferingRate = 0;
         
         initAndDispatchProgressEvent(eventNames().errorEvent); 
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
@@ -535,7 +524,6 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         m_begun = false;
         m_networkState = LOADED;
         m_progressEventTimer.stop();
-        m_bufferingRate = 0;
         initAndDispatchProgressEvent(eventNames().loadEvent); 
     }
 }
@@ -596,12 +584,9 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
     unsigned progress = m_player->bytesLoaded();
     double time = WTF::currentTime();
     double timedelta = time - m_previousProgressTime;
-    if (timedelta)
-        m_bufferingRate = (float)(0.8 * m_bufferingRate + 0.2 * ((float)(progress - m_previousProgress)) / timedelta);
     
     if (progress == m_previousProgress) {
         if (timedelta > 3.0 && !m_sentStalledEvent) {
-            m_bufferingRate = 0;
             initAndDispatchProgressEvent(eventNames().stalledEvent);
             m_sentStalledEvent = true;
         }

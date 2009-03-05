@@ -39,7 +39,6 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     const unsigned short LOADED_FIRST_FRAME = 3;
     const unsigned short LOADED = 4;
     readonly attribute unsigned short networkState;
-    readonly attribute float bufferingRate;
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
