@@ -1,3 +1,11 @@
+2009-03-05  Adam Treat  <adam.treat@torchmobile.com>
+
+        Build fix for when ENABLE_NETSCAPE_PLUGIN_API = 0.  The method
+        ScriptController::jsObjectForPluginElement(HTMLPlugInElement*); is not
+        protected by an #if and uses HTMLPlugInElement so it must be included.
+
+        * bindings/js/ScriptController.cpp:
+
 2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         GTK Build fix.

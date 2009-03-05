@@ -45,9 +45,7 @@
 #include <debugger/Debugger.h>
 #include <runtime/JSLock.h>
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
 #include "HTMLPlugInElement.h"
-#endif
 
 using namespace JSC;
 
