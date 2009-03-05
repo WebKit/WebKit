@@ -293,7 +293,6 @@ QWebSettings *QWebSettings::globalSettings()
     \value JavaEnabled Enables or disables Java applets.
         Currently Java applets are not supported.
     \value PluginsEnabled Enables or disables plugins in web pages.
-        Currently Flash and other plugins are not supported.
     \value PrivateBrowsingEnabled Private browsing prevents WebKit from
         recording visited pages in the history and storing web page icons.
     \value JavascriptCanOpenWindows Specifies whether JavaScript programs

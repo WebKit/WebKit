@@ -1,3 +1,11 @@
+2009-03-05  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] NPAPI plugins are supported, adjust the API documentation.
+
+        * Api/qwebsettings.cpp:
+
 2009-03-04  Adam Barth  <abath@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
