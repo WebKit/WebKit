@@ -2,6 +2,22 @@
 
         Reviewed by Darin Fisher.
 
+        r41362 mistakenly added functions "RenderThemeWin::" into
+        RenderThemeChromiumGtk.cpp. When correcting this, I somehow changed
+        them to void return types. This patch switches them back to ints.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24360
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumLinux::buttonInternalPaddingRight):
+        (WebCore::RenderThemeChromiumLinux::buttonInternalPaddingTop):
+        (WebCore::RenderThemeChromiumLinux::buttonInternalPaddingBottom):
+
+2009-03-04  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
         Chromium Linux: change some metrics to better match Windows after
         r41416. Aesthetically this may be worse, but web-compat is king.
 
