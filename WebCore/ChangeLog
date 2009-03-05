@@ -1,3 +1,22 @@
+2009-03-04  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Chromium Linux: change some metrics to better match Windows after
+        r41416. Aesthetically this may be worse, but web-compat is king.
+
+        Also, the previous code had an off by one error when drawing
+        scrollbars which caused the scrollbar to overflow it's bounds by 1px
+        at the right and bottom edges.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24369
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::):
+        (WebCore::RenderThemeChromiumLinux::systemFont):
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromium::paintTrackPiece):
+
 2009-03-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

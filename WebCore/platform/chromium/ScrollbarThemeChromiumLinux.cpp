@@ -65,9 +65,9 @@ void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scr
 
     paint.setARGB(0xff, 0xc5, 0xba, 0xb0);
     canvas->drawLine(rect.x(), rect.y(), rect.x(), bottom, paint);
-    canvas->drawLine(right, rect.y(), right, bottom, paint);
-    canvas->drawLine(rect.x(), rect.y(), right, rect.y(), paint);
-    canvas->drawLine(rect.x(), bottom, right, bottom, paint);
+    canvas->drawLine(right - 1, rect.y(), right - 1, bottom, paint);
+    canvas->drawLine(rect.x(), rect.y(), right - 1, rect.y(), paint);
+    canvas->drawLine(rect.x(), bottom - 1, right - 1, bottom - 1, paint);
 }
 
 void ScrollbarThemeChromium::paintButton(GraphicsContext* gc, Scrollbar* scrollbar,

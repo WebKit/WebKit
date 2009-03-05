@@ -47,7 +47,12 @@ enum PaddingType {
     LeftPadding
 };
 
-static const int styledMenuListInternalPadding[4] = { 1, 16, 1, 4 };
+static const int styledMenuListInternalPadding[4] = { 1, 4, 1, 4 };
+
+// The default variable-width font size.  We use this as the default font
+// size for the "system font", and as a base size (which we then shrink) for
+// form control fonts.
+static const float DefaultFontSize = 16.0;
 
 static bool supportsFocus(ControlPart appearance)
 {
@@ -141,8 +146,23 @@ double RenderThemeChromiumLinux::caretBlinkInterval() const
 
 void RenderThemeChromiumLinux::systemFont(int propId, Document* document, FontDescription& fontDescription) const
 {
+    float fontSize = DefaultFontSize;
+
+    switch (propId) {
+    case CSSValueWebkitMiniControl:
+    case CSSValueWebkitSmallControl:
+    case CSSValueWebkitControl:
+        // Why 2 points smaller? Because that's what Gecko does. Note that we
+        // are assuming a 96dpi screen, which is the default that we use on
+        // Windows.
+        static const float pointsPerInch = 72.0f;
+        static const float pixelsPerInch = 96.0f;
+        fontSize -= (2.0f / pointsPerInch) * pixelsPerInch;
+        break;
+    }
+
     fontDescription.firstFamily().setFamily(defaultGUIFont(NULL));
-    fontDescription.setSpecifiedSize(12);
+    fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setGenericFamily(FontDescription::NoFamily);
     fontDescription.setWeight(FontWeightNormal);
