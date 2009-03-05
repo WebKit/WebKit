@@ -1,3 +1,31 @@
+2009-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+        
+        New layout tests for point mapping and hit testing through 3d transforms.
+        Not run by default yet.
+        
+        * platform/mac/transforms/3d/hit-testing/backface-hit-test-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-2-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-deep-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-origins-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt: Added.
+        * transforms/3d/cssmatrix-3d-interface-expected.txt: Added.
+        * transforms/3d/cssmatrix-3d-interface.xhtml: Added.
+        * transforms/3d/hit-testing/backface-hit-test.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-2.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-deep.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-origins.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping.html: Added.
+        * transforms/3d/point-mapping/point-mapping-helpers.js: Added.
+        (mousemoved):
+        (dispatchEvent):
+        (clicked):
+        (log):
+        (runTest):
+
 2009-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         - Correct bogus result checked in as part of r41432.
