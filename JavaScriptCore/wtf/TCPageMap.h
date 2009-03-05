@@ -54,7 +54,6 @@
 #endif
 
 #include <string.h>
-
 #include "Assertions.h"
 
 // Single-level array
@@ -164,7 +163,7 @@ class TCMalloc_PageMap2 {
 
 #ifdef WTF_CHANGES
   template<class Visitor, class MemoryReader>
-  void visit(const Visitor& visitor, const MemoryReader& reader)
+  void visitValues(Visitor& visitor, const MemoryReader& reader)
   {
     for (int i = 0; i < ROOT_LENGTH; i++) {
       if (!root_[i])
@@ -173,6 +172,14 @@ class TCMalloc_PageMap2 {
       Leaf* l = reader(reinterpret_cast<Leaf*>(root_[i]));
       for (int j = 0; j < LEAF_LENGTH; j += visitor.visit(l->values[j]))
         ;
+    }
+  }
+
+  template<class Visitor, class MemoryReader>
+  void visitAllocations(Visitor& visitor, const MemoryReader&) {
+    for (int i = 0; i < ROOT_LENGTH; i++) {
+      if (root_[i])
+        visitor.visit(root_[i], sizeof(Leaf));
     }
   }
 #endif
@@ -266,7 +273,7 @@ class TCMalloc_PageMap3 {
 
 #ifdef WTF_CHANGES
   template<class Visitor, class MemoryReader>
-  void visit(const Visitor& visitor, const MemoryReader& reader) {
+  void visitValues(Visitor& visitor, const MemoryReader& reader) {
     Node* root = reader(root_);
     for (int i = 0; i < INTERIOR_LENGTH; i++) {
       if (!root->ptrs[i])
@@ -280,6 +287,26 @@ class TCMalloc_PageMap3 {
         Leaf* l = reader(reinterpret_cast<Leaf*>(n->ptrs[j]));
         for (int k = 0; k < LEAF_LENGTH; k += visitor.visit(l->values[k]))
           ;
+      }
+    }
+  }
+
+  template<class Visitor, class MemoryReader>
+  void visitAllocations(Visitor& visitor, const MemoryReader& reader) {
+    visitor.visit(root_, sizeof(Node));
+
+    Node* root = reader(root_);
+    for (int i = 0; i < INTERIOR_LENGTH; i++) {
+      if (!root->ptrs[i])
+        continue;
+
+      visitor.visit(root->ptrs[i], sizeof(Node));
+      Node* n = reader(root->ptrs[i]);
+      for (int j = 0; j < INTERIOR_LENGTH; j++) {
+        if (!n->ptrs[j])
+          continue;
+
+        visitor.visit(n->ptrs[j], sizeof(Leaf));
       }
     }
   }

@@ -1,3 +1,54 @@
+2009-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6354858> FastMallocZone's enumeration code reports fragmented administration space
+
+        The handling of MALLOC_ADMIN_REGION_RANGE_TYPE in FastMalloc's zone was incorrect.  It was attempting
+        to record the memory containing and individual span as an administrative region, when all memory
+        allocated via MetaDataAlloc should in fact be recorded.  This was causing memory regions allocated
+        via MetaDataAlloc to appear as "VM_ALLOCATE ?" in vmmap output.  They are now correctly reported as
+        "MALLOC_OTHER" regions associated with the JavaScriptCore FastMalloc zone.
+
+        Memory is allocated via MetaDataAlloc from two locations: PageHeapAllocator, and TCMalloc_PageMap{2,3}.
+        These two cases are handled differently.
+
+        PageHeapAllocator is extended to keep a linked list of memory regions that it has allocated.  The
+        first object in an allocated region contains the link to the previously allocated region. To record
+        the administrative regions of a PageHeapAllocator we can simply walk the linked list and record
+        each allocated region we encounter.
+
+        TCMalloc_PageMaps allocate memory via MetaDataAlloc to store each level of the radix tree.  To record
+        the administrative regions of a TCMalloc_PageMap we walk the tree and record the storage used for nodes
+        at each position rather than the nodes themselves.
+
+        A small performance improvement is achieved by coalescing adjacent memory regions inside the PageMapMemoryUsageRecorder
+        so that fewer calls in to the range recorder are necessary.  We further reduce the number of calls to the
+        range recorder by aggregating the in-use ranges of a given memory region into a local buffer before recording
+        them with a single call.  A similar approach is also used by AdminRegionRecorder.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::PageHeapAllocator::Init):
+        (WTF::PageHeapAllocator::New):
+        (WTF::PageHeapAllocator::recordAdministrativeRegions):
+        (WTF::TCMallocStats::FreeObjectFinder::isFreeObject):
+        (WTF::TCMallocStats::PageMapMemoryUsageRecorder::~PageMapMemoryUsageRecorder):
+        (WTF::TCMallocStats::PageMapMemoryUsageRecorder::recordPendingRegions):
+        (WTF::TCMallocStats::PageMapMemoryUsageRecorder::visit):
+        (WTF::TCMallocStats::AdminRegionRecorder::AdminRegionRecorder):
+        (WTF::TCMallocStats::AdminRegionRecorder::recordRegion):
+        (WTF::TCMallocStats::AdminRegionRecorder::visit):
+        (WTF::TCMallocStats::AdminRegionRecorder::recordPendingRegions):
+        (WTF::TCMallocStats::AdminRegionRecorder::~AdminRegionRecorder):
+        (WTF::TCMallocStats::FastMallocZone::enumerate):
+        (WTF::TCMallocStats::FastMallocZone::FastMallocZone):
+        (WTF::TCMallocStats::FastMallocZone::init):
+        * wtf/TCPageMap.h:
+        (TCMalloc_PageMap2::visitValues):
+        (TCMalloc_PageMap2::visitAllocations):
+        (TCMalloc_PageMap3::visitValues):
+        (TCMalloc_PageMap3::visitAllocations):
+
 2009-03-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
