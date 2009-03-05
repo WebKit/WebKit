@@ -1,3 +1,9 @@
+2009-03-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        
+        * WebCore.vcproj/QTMovieWin.vcproj:
+
 2009-03-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Build fix for when ENABLE_NETSCAPE_PLUGIN_API = 0.  The method
