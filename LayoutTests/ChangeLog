@@ -1,3 +1,13 @@
+2009-03-05  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add test for potential crash in window.frames.length
+        https://bugs.webkit.org/show_bug.cgi?id=24339
+
+        * fast/dom/Window/window-collection-length-no-crash-expected.txt: Added.
+        * fast/dom/Window/window-collection-length-no-crash.html: Added.
+
 2009-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Eric Seidel.
