@@ -33,7 +33,7 @@
 
 #include "Console.h"
 
-#include <JavaScriptCore/Protect.h>
+#include <runtime/Protect.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

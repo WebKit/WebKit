@@ -1,5 +1,11 @@
 2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        GTK Build fix.
+
+        * inspector/ConsoleMessage.h: Use proper header.
+
+2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         https://bugs.webkit.org/show_bug.cgi?id=24376
