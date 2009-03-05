@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,18 +132,18 @@ String filenameFromHTTPContentDisposition(const String& value)
 
 String extractMIMETypeFromMediaType(const String& mediaType)
 {
-    String mimeType;
+    Vector<UChar, 64> mimeType;
     unsigned length = mediaType.length();
+    mimeType.reserveCapacity(length);
     for (unsigned offset = 0; offset < length; offset++) {
         UChar c = mediaType[offset];
         if (c == ';')
             break;
         else if (isSpaceOrNewline(c)) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
             continue;
-        // FIXME: This is a very slow way to build a string, given WebCore::String's implementation.
-        mimeType += String(&c, 1);
+        mimeType.append(c);
     }
-    return mimeType;
+    return String(mimeType.data(), mimeType.size());
 }
 
 String extractCharsetFromMediaType(const String& mediaType)
