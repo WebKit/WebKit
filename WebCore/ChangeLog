@@ -1,3 +1,21 @@
+2009-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24327
+        
+        When mapping points and hit testing through transforms, work
+        correctly when acclerated animations of transforms are running.
+        
+        Tested by LayoutTests/animations/animation-hit-test-transform.html,
+        which only failed when ACCELERATED_COMPOSITING was turned on.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::transformFromContainer):
+
 2009-03-05  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Fisher.

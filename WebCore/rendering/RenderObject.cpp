@@ -1688,7 +1688,7 @@ TransformationMatrix RenderObject::transformFromContainer(const RenderObject* co
     containerTransform.translate(offsetInContainer.width(), offsetInContainer.height());
     RenderLayer* layer;
     if (hasLayer() && (layer = toRenderBox(this)->layer()) && layer->transform())
-        containerTransform.multLeft(*layer->transform());
+        containerTransform.multLeft(layer->currentTransform());
     
     if (containerObject && containerObject->style()->hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.

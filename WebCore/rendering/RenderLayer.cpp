@@ -341,6 +341,23 @@ void RenderLayer::updateTransform()
         dirty3DTransformedDescendantStatus();
 }
 
+TransformationMatrix RenderLayer::currentTransform() const
+{
+    if (!m_transform)
+        return TransformationMatrix();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (renderer()->style()->isRunningAcceleratedAnimation()) {
+        TransformationMatrix currTransform;
+        RefPtr<RenderStyle> style = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
+        style->applyTransform(currTransform, renderBox()->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
+        return currTransform;
+    }
+#endif
+
+    return *m_transform;
+}
+
 void RenderLayer::setHasVisibleContent(bool b)
 { 
     if (m_hasVisibleContent == b && !m_visibleContentStatusDirty)
