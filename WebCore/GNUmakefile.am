@@ -1015,9 +1015,17 @@ webcore_sources += \
 	WebCore/icu/unicode/utf_old.h \
 	WebCore/icu/unicode/utypes.h \
 	WebCore/icu/unicode/uversion.h \
+	WebCore/inspector/ConsoleMessage.cpp \
+	WebCore/inspector/ConsoleMessage.h \
+	WebCore/inspector/InspectorDatabaseResource.cpp \
+	WebCore/inspector/InspectorDatabaseResource.h \
+	WebCore/inspector/InspectorDOMStorageResource.cpp \
+	WebCore/inspector/InspectorDOMStorageResource.h \
 	WebCore/inspector/InspectorClient.h \
 	WebCore/inspector/InspectorController.cpp \
 	WebCore/inspector/InspectorController.h \
+	WebCore/inspector/InspectorResource.cpp \
+	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/JavaScriptCallFrame.cpp \
 	WebCore/inspector/JavaScriptCallFrame.h \
 	WebCore/inspector/JavaScriptDebugListener.h \

@@ -774,7 +774,11 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
+    inspector/ConsoleMessage.cpp \
+    inspector/InspectorDatabaseResource.cpp \
+    inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorController.cpp \
+    inspector/InspectorResource.cpp \
     inspector/JavaScriptCallFrame.cpp \
     inspector/JavaScriptDebugServer.cpp \
     inspector/JavaScriptProfile.cpp \

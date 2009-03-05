@@ -1,3 +1,26 @@
+2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24376
+        Split InspectorController.cpp file into separate classes.
+
+        * GNUmakefile.am: Modified to include new files.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * inspector/ConsoleMessage.cpp: Added.
+        * inspector/ConsoleMessage.h: Added.
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorDOMStorageResource.cpp: Added.
+        * inspector/InspectorDOMStorageResource.h: Added.
+        * inspector/InspectorDatabaseResource.cpp: Added.
+        * inspector/InspectorDatabaseResource.h: Added.
+        * inspector/InspectorResource.cpp: Added.
+        * inspector/InspectorResource.h: Added.
+
 2009-03-05  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler

@@ -291,7 +291,11 @@ sources['html'] = [
     'html/TimeRanges.cpp'
 ]
 sources['inspector'] = [
+    'inspector/ConsoleMessage.cpp',
+    'inspector/InspectorDatabaseResource.cpp',
+    'inspector/InspectorDOMStorageResource.cpp',
     'inspector/InspectorController.cpp',
+    'inspector/InspectorResource.cpp',
     'inspector/JavaScriptCallFrame.cpp',
     'inspector/JavaScriptDebugServer.cpp',
     'inspector/JavaScriptProfile.cpp',

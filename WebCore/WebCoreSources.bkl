@@ -614,7 +614,11 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_INSPECTOR">
+        inspector/ConsoleMessage.cpp
+        inspector/InspectorDatabaseResource.cpp
+        inspector/InspectorDOMStorageResource.cpp
         inspector/InspectorController.cpp
+        inspector/InspectorResource.cpp
         inspector/JavaScriptCallFrame.cpp
         inspector/JavaScriptDebugServer.cpp
         inspector/JavaScriptProfile.cpp

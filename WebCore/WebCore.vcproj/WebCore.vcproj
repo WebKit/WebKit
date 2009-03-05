@@ -16162,6 +16162,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\ConsoleMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ConsoleMessage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageResource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorController.cpp"
 				>
 				<FileConfiguration
@@ -16175,6 +16199,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorResource.h"
 				>
 			</File>
 			<File
