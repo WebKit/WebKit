@@ -2209,6 +2209,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         if (!newTransformState->m_accumulatedTransform.isInvertible())
             return 0;
 
+        // Check for hit test on backface if backface-visibility is 'hidden'
+        if (renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden) {
+            TransformationMatrix invertedMatrix = newTransformState->m_accumulatedTransform.inverse();
+            // If the z-vector of the matrix is negative, the back is facing towards the viewer.
+            if (invertedMatrix.m33() < 0)
+                return 0;
+        }
+
         // Compute the point and the hit test rect in the coords of this layer by using the values
         // from the transformState, which store the point and quad in the coords of the last flattened
         // layer, and the accumulated transform which lets up map through preserve-3d layers.
@@ -2218,8 +2226,6 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
         IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
 
-        // FIXME: check for hit test on backface if backface-visibility is 'hidden'
-        
         // Now do a hit test with the root layer shifted to be us.
         return hitTestLayer(this, containerLayer, request, result, localHitTestRect, localPoint, true, newTransformState.get(), zOffset);
     }

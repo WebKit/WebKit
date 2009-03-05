@@ -1,3 +1,18 @@
+2009-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=24328
+        
+        If an element has backface-visibility: hidden, hit testing should not
+        hit the back sides of elements. Test for that by inverting the accumulated
+        transform and looking at the z vector.
+
+        Tested by transforms/3d/hit-testing/backface-hit-test.html
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-03-04  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.
