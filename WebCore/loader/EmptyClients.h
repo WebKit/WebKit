@@ -341,6 +341,9 @@ public:
     virtual void learnWord(const String&) { }
     virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    virtual void checkSpellingAndGrammarOfParagraph(const UChar*, int, bool, Vector<TextCheckingResult>&)  { }
+#endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }
     virtual void updateSpellingUIWithMisspelledWord(const String&) { }
     virtual void showSpellingUI(bool) { }

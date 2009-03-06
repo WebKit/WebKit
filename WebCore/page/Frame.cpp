@@ -1681,11 +1681,11 @@ void Frame::respondToChangedSelection(const VisibleSelection& oldSelection, bool
             VisiblePosition oldStart(oldSelection.visibleStart());
             VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
             if (oldAdjacentWords != newAdjacentWords) {
-                editor()->markMisspellings(oldAdjacentWords);
                 if (isContinuousGrammarCheckingEnabled) {
-                    VisibleSelection oldSelectedSentence = VisibleSelection(startOfSentence(oldStart), endOfSentence(oldStart));   
-                    if (oldSelectedSentence != newSelectedSentence)
-                        editor()->markBadGrammar(oldSelectedSentence);
+                    VisibleSelection oldSelectedSentence = VisibleSelection(startOfSentence(oldStart), endOfSentence(oldStart));
+                    editor()->markMisspellingsAndBadGrammar(oldAdjacentWords, oldSelectedSentence != newSelectedSentence, oldSelectedSentence);
+                } else {
+                    editor()->markMisspellingsAndBadGrammar(oldAdjacentWords, false, oldAdjacentWords);
                 }
             }
         }

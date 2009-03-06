@@ -909,32 +909,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromNodes(_private->coreFrame->document(), nodesVector).get()];
 }
 
-- (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
-{
-    if (_private->coreFrame->selection()->isNone() || !fragment)
-        return;
-    
-    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
-    _private->coreFrame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
 - (void)_replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     DOMDocumentFragment *fragment = [DOMDocumentFragment _wrapDocumentFragment:_private->coreFrame->document()->createDocumentFragment().get()];
     [fragment appendChild:node];
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
-}
-
-- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
-{
-    DOMDocumentFragment *fragment = [self _documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
-    [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
-}
-
-- (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
-{
-    [self _replaceSelectionWithFragment:kit(createFragmentFromText(_private->coreFrame->selection()->toNormalizedRange().get(), text).get())
-        selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
 - (void)_insertParagraphSeparatorInQuotedContent
@@ -1206,6 +1185,27 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return false;
 
     return controller->numberOfActiveAnimations();
+}
+
+- (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
+{
+    if (_private->coreFrame->selection()->isNone() || !fragment)
+        return;
+    
+    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
+    _private->coreFrame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+}
+
+- (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
+{   
+    DOMDocumentFragment* fragment = kit(createFragmentFromText(_private->coreFrame->selection()->toNormalizedRange().get(), text).get());
+    [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
+}
+
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
+{
+    DOMDocumentFragment *fragment = [self _documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
+    [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
 }
 
 @end

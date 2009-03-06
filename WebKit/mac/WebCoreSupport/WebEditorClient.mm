@@ -595,6 +595,50 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 #endif
 }
 
+void WebEditorClient::checkSpellingAndGrammarOfParagraph(const UChar* text, int length, bool checkGrammar, Vector<TextCheckingResult>& results)
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
+    NSTextCheckingTypes checkingTypes = checkGrammar ? (NSTextCheckingTypeOrthography | NSTextCheckingTypeSpelling | NSTextCheckingTypeGrammar) : (NSTextCheckingTypeOrthography | NSTextCheckingTypeSpelling);
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
+    [textString release];
+    for (NSTextCheckingResult *incomingResult in incomingResults) {
+        NSRange resultRange = [incomingResult range];
+        NSTextCheckingType resultType = [incomingResult resultType];
+        ASSERT(resultRange.location != NSNotFound && resultRange.length > 0);
+        if (NSTextCheckingTypeSpelling == resultType) {
+            TextCheckingResult result;
+            result.resultType = 1;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            results.append(result);
+        } else if (checkGrammar && NSTextCheckingTypeGrammar == resultType) {
+            TextCheckingResult result;
+            NSArray *details = [incomingResult grammarDetails];
+            result.resultType = 2;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            for (NSDictionary *incomingDetail in details) {
+                ASSERT(incomingDetail);
+                GrammarDetail detail;
+                NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:NSGrammarRange];
+                ASSERT(detailRangeAsNSValue);
+                NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+                ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
+                detail.location = detailNSRange.location;
+                detail.length = detailNSRange.length;
+                detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
+                NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
+                for (NSString *guess in guesses)
+                    detail.guesses.append(String(guess));
+                result.details.append(detail);
+            }
+            results.append(result);
+        }
+    }
+#endif
+}
+
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
 #ifndef BUILDING_ON_TIGER

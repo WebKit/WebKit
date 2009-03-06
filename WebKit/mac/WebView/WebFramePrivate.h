@@ -35,6 +35,7 @@
 #define ENABLE_NETSCAPE_PLUGIN_API 1
 #endif
 
+@class DOMDocumentFragment;
 @class DOMNode;
 @class WebIconFetcher;
 @class WebScriptObject;
@@ -94,5 +95,9 @@ typedef enum {
 
 // Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
 - (unsigned) _numberOfActiveAnimations;
+
+- (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
+- (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
 @end

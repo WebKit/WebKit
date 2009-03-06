@@ -61,6 +61,13 @@ struct GrammarDetail {
     String userDescription;
 };
 
+struct TextCheckingResult {
+    int resultType; // 1 for spelling, 2 for grammar
+    int location;
+    int length;
+    Vector<GrammarDetail> details;
+};
+ 
 class EditorClient {
 public:
     virtual ~EditorClient() {  }
@@ -130,6 +137,9 @@ public:
     virtual void learnWord(const String&) = 0;
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) = 0;
     virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    virtual void checkSpellingAndGrammarOfParagraph(const UChar* text, int length, bool checkGrammar, Vector<TextCheckingResult>& results) = 0;
+#endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail& detail) = 0;
     virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;
     virtual void showSpellingUI(bool show) = 0;

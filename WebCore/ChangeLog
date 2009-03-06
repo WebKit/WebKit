@@ -1,3 +1,30 @@
+2009-03-06  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Justin Garcia.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24108
+
+        Update spelling and grammar checking to use the new combined text 
+        checking (with automatic language identification) on Snow Leopard. 
+        Tested manually in Mail and Safari; automated tests to come later. 
+        
+        * editing/Editor.cpp:
+        (WebCore::findFirstMisspellingOrBadGrammarInRange):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::guessesForMisspelledOrUngrammaticalRange):
+        (WebCore::Editor::guessesForMisspelledOrUngrammaticalSelection):
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/Editor.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::checkSpellingAndGrammarOfParagraph):
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2009-03-06  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.

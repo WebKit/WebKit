@@ -195,9 +195,11 @@ public:
     bool isSelectionMisspelled();
     Vector<String> guessesForMisspelledSelection();
     Vector<String> guessesForUngrammaticalSelection();
+    Vector<String> guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical);
     void markMisspellingsAfterTypingToPosition(const VisiblePosition&);
     void markMisspellings(const VisibleSelection&);
     void markBadGrammar(const VisibleSelection&);
+    void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();

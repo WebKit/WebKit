@@ -1536,6 +1536,130 @@ static String findFirstBadGrammarInRange(EditorClient* client, Range* searchRang
     
 #endif /* not BUILDING_ON_TIGER */
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+static String findFirstMisspellingOrBadGrammarInRange(EditorClient* client, Range* searchRange, bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail)
+{
+    ASSERT_ARG(client, client);
+    ASSERT_ARG(searchRange, searchRange);
+    
+    String firstFoundItem;
+    String misspelledWord;
+    String badGrammarPhrase;
+    ExceptionCode ec = 0;
+    
+    // Initialize out parameters; these will be updated if we find something to return.
+    outIsSpelling = true;
+    outFirstFoundOffset = 0;
+    outGrammarDetail.location = -1;
+    outGrammarDetail.length = 0;
+    outGrammarDetail.guesses.clear();
+    outGrammarDetail.userDescription = "";
+    
+    // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
+    // Determine the character offset from the start of the paragraph to the start of the original search range,
+    // since we will want to ignore results in this area.
+    RefPtr<Range> paragraphRange = searchRange->cloneRange(ec);
+    setStart(paragraphRange.get(), startOfParagraph(searchRange->startPosition()));
+    int totalRangeLength = TextIterator::rangeLength(paragraphRange.get());
+    setEnd(paragraphRange.get(), endOfParagraph(searchRange->startPosition()));
+    
+    RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), searchRange->startPosition());
+    int searchRangeStartOffset = TextIterator::rangeLength(offsetAsRange.get());
+    int totalLengthProcessed = 0;
+    
+    bool firstIteration = true;
+    bool lastIteration = false;
+    while (totalLengthProcessed < totalRangeLength) {
+        // Iterate through the search range by paragraphs, checking each one for spelling and grammar.
+        int currentLength = TextIterator::rangeLength(paragraphRange.get());
+        int currentStartOffset = firstIteration ? searchRangeStartOffset : 0;
+        int currentEndOffset = currentLength;
+        if (inSameParagraph(paragraphRange->startPosition(), searchRange->endPosition())) {
+            // Determine the character offset from the end of the original search range to the end of the paragraph,
+            // since we will want to ignore results in this area.
+            RefPtr<Range> endOffsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), searchRange->endPosition());
+            currentEndOffset = TextIterator::rangeLength(endOffsetAsRange.get());
+            lastIteration = true;
+        }
+        if (currentStartOffset < currentEndOffset) {
+            String paragraphString = plainText(paragraphRange.get());
+            if (paragraphString.length() > 0) {
+                bool foundGrammar = false;
+                int spellingLocation = 0;
+                int grammarPhraseLocation = 0;
+                int grammarDetailLocation = 0;
+                unsigned grammarDetailIndex = 0;
+                
+                Vector<TextCheckingResult> results;
+                client->checkSpellingAndGrammarOfParagraph(paragraphString.characters(), paragraphString.length(), checkGrammar, results);
+                
+                for (unsigned i = 0; i < results.size(); i++) {
+                    const TextCheckingResult* result = &results[i];
+                    if (result->resultType == 1 && result->location >= currentStartOffset && result->location + result->length <= currentEndOffset) {
+                        ASSERT(result->length > 0 && result->location >= 0);
+                        spellingLocation = result->location;
+                        misspelledWord = paragraphString.substring(result->location, result->length);
+                        ASSERT(misspelledWord.length() != 0);
+                        break;
+                    } else if (checkGrammar && result->resultType == 2 && result->location < currentEndOffset && result->location + result->length > currentStartOffset) {
+                        ASSERT(result->length > 0 && result->location >= 0);
+                        // We can't stop after the first grammar result, since there might still be a spelling result after
+                        // it begins but before the first detail in it, but we can stop if we find a second grammar result.
+                        if (foundGrammar) break;
+                        for (unsigned j = 0; j < result->details.size(); j++) {
+                            const GrammarDetail* detail = &result->details[j];
+                            ASSERT(detail->length > 0 && detail->location >= 0);
+                            if (result->location + detail->location >= currentStartOffset && result->location + detail->location + detail->length <= currentEndOffset && (!foundGrammar || result->location + detail->location < grammarDetailLocation)) {
+                                grammarDetailIndex = j;
+                                grammarDetailLocation = result->location + detail->location;
+                                foundGrammar = true;
+                            }
+                        }
+                        if (foundGrammar) {
+                            grammarPhraseLocation = result->location;
+                            outGrammarDetail = result->details[grammarDetailIndex];
+                            badGrammarPhrase = paragraphString.substring(result->location, result->length);
+                            ASSERT(badGrammarPhrase.length() != 0);
+                        }
+                    }
+                }
+
+                if (!misspelledWord.isEmpty() && (!checkGrammar || badGrammarPhrase.isEmpty() || spellingLocation <= grammarDetailLocation)) {
+                    int spellingOffset = spellingLocation - currentStartOffset;
+                    if (!firstIteration) {
+                        RefPtr<Range> paragraphOffsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), searchRange->startPosition(), paragraphRange->startPosition());
+                        spellingOffset += TextIterator::rangeLength(paragraphOffsetAsRange.get());
+                    }
+                    outIsSpelling = true;
+                    outFirstFoundOffset = spellingOffset;
+                    firstFoundItem = misspelledWord;
+                    break;
+                } else if (checkGrammar && !badGrammarPhrase.isEmpty()) {
+                    int grammarPhraseOffset = grammarPhraseLocation - currentStartOffset;
+                    if (!firstIteration) {
+                        RefPtr<Range> paragraphOffsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), searchRange->startPosition(), paragraphRange->startPosition());
+                        grammarPhraseOffset += TextIterator::rangeLength(paragraphOffsetAsRange.get());
+                    }
+                    outIsSpelling = false;
+                    outFirstFoundOffset = grammarPhraseOffset;
+                    firstFoundItem = badGrammarPhrase;
+                    break;
+                }
+            }
+        }
+        if (lastIteration || totalLengthProcessed + currentLength >= totalRangeLength)
+            break;
+        setStart(paragraphRange.get(), startOfNextParagraph(paragraphRange->endPosition()));
+        setEnd(paragraphRange.get(), endOfParagraph(paragraphRange->startPosition()));
+        firstIteration = false;
+        totalLengthProcessed += currentLength;
+    }
+    return firstFoundItem;
+}
+
+#endif
+
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
     ExceptionCode ec = 0;
@@ -1603,6 +1727,23 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
     
     int misspellingOffset;
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    RefPtr<Range> grammarSearchRange = spellingSearchRange->cloneRange(ec);
+    String misspelledWord;
+    String badGrammarPhrase;
+    int grammarPhraseOffset = 0;
+    bool isSpelling = true;
+    int foundOffset = 0;
+    GrammarDetail grammarDetail;
+    String foundItem = findFirstMisspellingOrBadGrammarInRange(client(), spellingSearchRange.get(), isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
+    if (isSpelling) {
+        misspelledWord = foundItem;
+        misspellingOffset = foundOffset;
+    } else {
+        badGrammarPhrase = foundItem;
+        grammarPhraseOffset = foundOffset;
+    }
+#else
     String misspelledWord = findFirstMisspellingInRange(client(), spellingSearchRange.get(), misspellingOffset, false);
     
     String badGrammarPhrase;
@@ -1623,6 +1764,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     if (isGrammarCheckingEnabled())
         badGrammarPhrase = findFirstBadGrammarInRange(client(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
 #endif
+#endif
     
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
     // block rather than at a selection).
@@ -1631,6 +1773,17 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // going until the end of the very first chunk we tested is far enough
         spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
         
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+        grammarSearchRange = spellingSearchRange->cloneRange(ec);
+        foundItem = findFirstMisspellingOrBadGrammarInRange(client(), spellingSearchRange.get(), isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
+        if (isSpelling) {
+            misspelledWord = foundItem;
+            misspellingOffset = foundOffset;
+        } else {
+            badGrammarPhrase = foundItem;
+            grammarPhraseOffset = foundOffset;
+        }
+#else
         misspelledWord = findFirstMisspellingInRange(client(), spellingSearchRange.get(), misspellingOffset, false);
 
 #ifndef BUILDING_ON_TIGER
@@ -1643,6 +1796,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         }
         if (isGrammarCheckingEnabled())
             badGrammarPhrase = findFirstBadGrammarInRange(client(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
+#endif
 #endif
     }
     
@@ -1785,6 +1939,86 @@ Vector<String> Editor::guessesForMisspelledSelection()
     return guesses;
 }
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+static Vector<String> guessesForMisspelledOrUngrammaticalRange(EditorClient* client, Range *range, bool checkGrammar, bool& misspelled, bool& ungrammatical)
+{
+    Vector<String> guesses;
+    ExceptionCode ec;
+    misspelled = false;
+    ungrammatical = false;
+    
+    if (!client || !range || range->collapsed(ec))
+        return guesses;
+
+    // Expand the range to encompass entire paragraphs, since text checking needs that much context.
+    int rangeStartOffset;
+    String paragraphString;
+    RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(range, rangeStartOffset, paragraphString);
+    int rangeLength = TextIterator::rangeLength(range);
+    if (rangeLength == 0 || paragraphString.length() == 0)
+        return guesses;
+
+    Vector<TextCheckingResult> results;
+    client->checkSpellingAndGrammarOfParagraph(paragraphString.characters(), paragraphString.length(), checkGrammar, results);
+    
+    for (unsigned i = 0; i < results.size(); i++) {
+        const TextCheckingResult* result = &results[i];
+        if (result->resultType == 1 && result->location == rangeStartOffset && result->length == rangeLength) {
+            String misspelledWord = paragraphString.substring(rangeStartOffset, rangeLength);
+            ASSERT(misspelledWord.length() != 0);
+            client->getGuessesForWord(misspelledWord, guesses);
+            client->updateSpellingUIWithMisspelledWord(misspelledWord);
+            misspelled = true;
+            return guesses;
+        }
+    }
+    
+    if (!checkGrammar)
+        return guesses;
+        
+    for (unsigned i = 0; i < results.size(); i++) {
+        const TextCheckingResult* result = &results[i];
+        if (result->resultType == 2 && result->location <= rangeStartOffset && result->location + result->length >= rangeStartOffset + rangeLength) {
+            for (unsigned j = 0; j < result->details.size(); j++) {
+                const GrammarDetail* detail = &result->details[j];
+                ASSERT(detail->length > 0 && detail->location >= 0);
+                if (result->location + detail->location == rangeStartOffset && detail->length == rangeLength) {
+                    String badGrammarPhrase = paragraphString.substring(result->location, result->length);
+                    ASSERT(badGrammarPhrase.length() != 0);
+                    for (unsigned k = 0; k < detail->guesses.size(); k++)
+                        guesses.append(detail->guesses[k]);
+                    client->updateSpellingUIWithGrammarString(badGrammarPhrase, *detail);
+                    ungrammatical = true;
+                    return guesses;
+                }
+            }
+        }
+    }
+    return guesses;
+}
+
+#endif
+
+Vector<String> Editor::guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical)
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    return guessesForMisspelledOrUngrammaticalRange(client(), frame()->selection()->toNormalizedRange().get(), isGrammarCheckingEnabled(), misspelled, ungrammatical);
+#else
+    misspelled = isSelectionMisspelled();
+    if (misspelled) {
+        ungrammatical = false;
+        return guessesForMisspelledSelection();
+    }
+    if (isGrammarCheckingEnabled() && isSelectionUngrammatical()) {
+        ungrammatical = true;
+        return guessesForUngrammaticalSelection();
+    }
+    ungrammatical = false;
+    return Vector<String>();
+#endif
+}
+
 void Editor::showSpellingGuessPanel()
 {
     if (!client()) {
@@ -1817,6 +2051,15 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
     if (!isContinuousSpellCheckingEnabled())
         return;
     
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    VisibleSelection adjacentWords = VisibleSelection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary));
+    if (isGrammarCheckingEnabled()) {
+        VisibleSelection selectedSentence = VisibleSelection(startOfSentence(p), endOfSentence(p));
+        markMisspellingsAndBadGrammar(adjacentWords, true, selectedSentence);
+    } else {
+        markMisspellingsAndBadGrammar(adjacentWords, false, adjacentWords);
+    }
+#else
     // Check spelling of one word
     markMisspellings(VisibleSelection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
     
@@ -1825,6 +2068,7 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
     
     // Check grammar of entire sentence
     markBadGrammar(VisibleSelection(startOfSentence(p), endOfSentence(p)));
+#endif
 }
 
 static void markAllMisspellingsInRange(EditorClient* client, Range* searchRange)
@@ -1892,6 +2136,78 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
     markMisspellingsOrBadGrammar(this, selection, false);
 #else
     UNUSED_PARAM(selection);
+#endif
+}
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+static void markAllMisspellingsAndBadGrammarInRanges(EditorClient* client, Range *spellingRange, bool markGrammar, Range *grammarRange)
+{
+    // This function is called with selections already expanded to word boundaries.
+    ExceptionCode ec;
+    if (!client || !spellingRange || (markGrammar && !grammarRange))
+        return;
+    
+    // If we're not in an editable node, bail.
+    Node* editableNode = spellingRange->startContainer();
+    if (!editableNode || !editableNode->isContentEditable())
+        return;
+    
+    // Expand the range to encompass entire paragraphs, since text checking needs that much context.
+    int spellingRangeStartOffset;
+    int spellingRangeEndOffset;
+    int grammarRangeStartOffset;
+    int grammarRangeEndOffset;
+    String paragraphString;
+    
+    if (markGrammar) {
+        // The spelling range should be contained in the paragraph-aligned extension of the grammar range.
+        RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(grammarRange, grammarRangeStartOffset, paragraphString);
+        RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), spellingRange->startPosition());
+        spellingRangeStartOffset = TextIterator::rangeLength(offsetAsRange.get());
+        grammarRangeEndOffset = grammarRangeStartOffset + TextIterator::rangeLength(grammarRange);
+    } else {
+        RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(spellingRange, spellingRangeStartOffset, paragraphString);
+    }
+    spellingRangeEndOffset = spellingRangeStartOffset + TextIterator::rangeLength(spellingRange);
+    if (paragraphString.length() == 0 || (spellingRangeStartOffset >= spellingRangeEndOffset && (!markGrammar || grammarRangeStartOffset >= grammarRangeEndOffset)))
+        return;
+    
+    Vector<TextCheckingResult> results;
+    client->checkSpellingAndGrammarOfParagraph(paragraphString.characters(), paragraphString.length(), markGrammar, results);
+    
+    for (unsigned i = 0; i < results.size(); i++) {
+        const TextCheckingResult* result = &results[i];
+        if (result->resultType == 1 && result->location >= spellingRangeStartOffset && result->location + result->length <= spellingRangeEndOffset) {
+            ASSERT(result->length > 0 && result->location >= 0);
+            RefPtr<Range> misspellingRange = TextIterator::subrange(spellingRange, result->location - spellingRangeStartOffset, result->length);
+            misspellingRange->startContainer(ec)->document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+        } else if (markGrammar && result->resultType == 2 && result->location < grammarRangeEndOffset && result->location + result->length > grammarRangeStartOffset) {
+            ASSERT(result->length > 0 && result->location >= 0);
+            for (unsigned j = 0; j < result->details.size(); j++) {
+                const GrammarDetail* detail = &result->details[j];
+                ASSERT(detail->length > 0 && detail->location >= 0);
+                if (result->location + detail->location >= grammarRangeStartOffset && result->location + detail->location + detail->length <= grammarRangeEndOffset) {
+                    RefPtr<Range> badGrammarRange = TextIterator::subrange(grammarRange, result->location + detail->location - grammarRangeStartOffset, detail->length);
+                    grammarRange->startContainer(ec)->document()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
+                }
+            }
+        }
+    }
+}
+
+#endif
+
+void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection)
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    if (!isContinuousSpellCheckingEnabled())
+        return;
+    markAllMisspellingsAndBadGrammarInRanges(client(), spellingSelection.toNormalizedRange().get(), markGrammar && isGrammarCheckingEnabled(), grammarSelection.toNormalizedRange().get());
+#else
+    markMisspellings(spellingSelection);
+    if (markGrammar)
+        markBadGrammar(grammarSelection);
 #endif
 }
 

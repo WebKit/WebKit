@@ -1,3 +1,16 @@
+2009-03-06  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24108
+
+        Update spelling and grammar checking to use the new combined text 
+        checking (with automatic language identification) on Snow Leopard. 
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkSpellingAndGrammarOfParagraph):
+
 2009-03-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

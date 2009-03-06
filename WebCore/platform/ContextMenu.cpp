@@ -328,12 +328,10 @@ void ContextMenu::populate()
         if (!inPasswordField) {
             // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
             // is never considered a misspelling and bad grammar at the same time)
-            bool misspelling = frame->editor()->isSelectionMisspelled();
-            bool badGrammar = !misspelling && (frame->editor()->isGrammarCheckingEnabled() && frame->editor()->isSelectionUngrammatical());
-            
+            bool misspelling;
+            bool badGrammar;
+            Vector<String> guesses = frame->editor()->guessesForMisspelledOrUngrammaticalSelection(misspelling, badGrammar);
             if (misspelling || badGrammar) {
-                Vector<String> guesses = misspelling ? frame->editor()->guessesForMisspelledSelection()
-                    : frame->editor()->guessesForUngrammaticalSelection();
                 size_t size = guesses.size();
                 if (size == 0) {
                     // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
