@@ -60,8 +60,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             break;
     }
 
-    m_position = IntPoint((int)event->x, (int)event->y);
-    m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
+    m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
+    m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));
     m_granularity = ScrollByPixelWheelEvent;
     m_isAccepted = false;
     m_shiftKey = event->state & GDK_SHIFT_MASK;
@@ -75,8 +75,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 #endif
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
-    m_deltaX *= (float)cScrollbarPixelsPerLineStep;
-    m_deltaY *= (float)cScrollbarPixelsPerLineStep;
+    m_deltaX *= static_cast<float>(cScrollbarPixelsPerLineStep);
+    m_deltaY *= static_cast<float>(cScrollbarPixelsPerLineStep);
 }
 
 }

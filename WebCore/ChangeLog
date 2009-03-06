@@ -1,3 +1,18 @@
+2009-03-06  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Convert some C-style casts to static_cast<>()s.
+
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-03-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver Hunt.

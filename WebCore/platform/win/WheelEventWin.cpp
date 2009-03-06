@@ -79,12 +79,12 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     // scroll values without feeling jerky.  Here we use 100 px per three lines
     // (the default scroll amount on Windows is three lines per wheel tick).
     static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
-    float delta = GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+    float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
     if (isHorizontal) {
         // Windows sends a positive delta for scrolling right, while AppKit
         // sends a negative delta. EventHandler expects the AppKit values,
         // so we have to negate our horizontal delta to match.
-        m_deltaX = -delta * (float)horizontalScrollChars() * cScrollbarPixelsPerLine;
+        m_deltaX = -delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
         m_deltaY = 0;
         m_granularity = ScrollByPixelWheelEvent;
     } else {
@@ -93,7 +93,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
         int verticalMultiplier = verticalScrollLines();
         m_granularity = (verticalMultiplier == WHEEL_PAGESCROLL) ? ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
         if (m_granularity == ScrollByPixelWheelEvent)
-            m_deltaY *= (float)verticalMultiplier * cScrollbarPixelsPerLine;
+            m_deltaY *= static_cast<float>(verticalMultiplier) * cScrollbarPixelsPerLine;
     }
 }
 
