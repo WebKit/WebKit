@@ -1,3 +1,13 @@
+2009-03-05  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need to have Chromium Mac match Safari Mac's accesskey handling
+        https://bugs.webkit.org/show_bug.cgi?id=24404
+
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::accessKeyModifiers): Share access key modifiers with Mac Safari when building for the Mac.
+
 2009-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
