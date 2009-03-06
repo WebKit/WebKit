@@ -1,3 +1,14 @@
+2009-03-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/6607524> REGRESSION (Safari 3-4): I can't tab back to the URL field in an empty window (key loop is broken)
+
+        I haven't been able to make a test for this since the problem is not reproducible within an empty iframe.
+
+        * page/EventHandler.cpp: (WebCore::eventTargetNodeForDocument): We used to ensure that every html document had a body element.
+          That is no longer true, so we should return the document element for a truly empty document.
+
 2009-03-06  Jay Campan  <jcampan@google.com>
 
         Reviewed by Darin Fisher.
