@@ -1,5 +1,17 @@
 2009-03-05  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Reviewed by Olliej.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24295
+        webkit_web_back_forward_list_add_item needs a Since tag
+
+        Add missing Since tag to webkit_web_back_forward_list_add_item
+        documentation.
+
+        * webkit/webkitwebbackforwardlist.cpp:
+
+2009-03-05  Gustavo Noronha Silva  <gns@gnome.org>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=24417
