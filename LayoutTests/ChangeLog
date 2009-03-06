@@ -1,5 +1,23 @@
 2009-03-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Darin Fisher.
+
+        Bug 24422: REGRESSION: null-URL crash in FrameLoader setting location.hash on new window
+        https://bugs.webkit.org/show_bug.cgi?id=24422
+        rdar://problem/6402208
+
+        The new test manipulates all the properties of the location object on a new window which
+        has no location yet. I tested Firefox too and added comments about how its behavior differs
+        from WebKit. At some point we may want to tweak our behavior to be a bit closer to theirs,
+        or check IE's behavior or if HTML 5 or some other W3 specification has something to say
+        about this, but for now the main purpose of the test is to verify we don't crash.
+
+        * fast/dom/location-new-window-no-crash-expected.txt: Added.
+        * fast/dom/location-new-window-no-crash.html: Added.
+        * fast/dom/resources/location-new-window-no-crash.js: Added.
+
+2009-03-06  Darin Adler  <darin@apple.com>
+
         * fast/dom/Window/window-properties-expected.txt: Updated for recent addition of canPlayType.
 
 2009-03-06  Hironori Bono  <hbono@chromium.org>

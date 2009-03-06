@@ -1,3 +1,29 @@
+2009-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Darin Fisher.
+
+        Bug 24422: REGRESSION: null-URL crash in FrameLoader setting location.hash on new window
+        https://bugs.webkit.org/show_bug.cgi?id=24422
+        rdar://problem/6402208
+
+        Test: fast/dom/location-new-window-no-crash.html
+
+        The issue here is empty (or null) URLs. I picked the "schedule navigation" bottleneck
+        to add some checks for empty URLs. We could also put the empty URL checks at some
+        other bottleneck level and add more assertions over time. I tried adding a few more
+        assertions to functions like loadURL and hit them while running the regression tests,
+        so it's probably going to be a bit tricky to clean this up throughout the loader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection): Explicitly marked this struct
+        immutable by making all its members const. Added assertions about the arguments,
+        including that the URL is not empty. Initialized one uninitialized member in one of
+        the constructors.
+        (WebCore::FrameLoader::scheduleHTTPRedirection): Added an early exit to make this
+        a no-op if passed an empty URL.
+        (WebCore::FrameLoader::scheduleLocationChange): Ditto.
+        (WebCore::FrameLoader::scheduleRefresh): Ditto.
+
 2009-03-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
