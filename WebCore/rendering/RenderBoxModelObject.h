@@ -96,6 +96,9 @@ public:
     // The difference between this inline's baseline position and the line's baseline position.
     int verticalPosition(bool firstLine) const;
 
+    // Called by RenderObject::destroy() (and RenderWidget::destroy()) and is the only way layers should ever be destroyed
+    void destroyLayer();
+
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
     IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
@@ -123,7 +126,7 @@ inline const RenderBoxModelObject* toRenderBoxModelObject(const RenderObject* o)
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderBoxModelObject(const RenderBox*);
+void toRenderBoxModelObject(const RenderBoxModelObject*);
 
 } // namespace WebCore
 

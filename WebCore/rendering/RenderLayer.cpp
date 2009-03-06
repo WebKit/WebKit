@@ -610,13 +610,12 @@ FloatPoint RenderLayer::perspectiveOrigin() const
                       style->perspectiveOriginY().calcFloatValue(borderBox.height()));
 }
 
-RenderLayer *RenderLayer::stackingContext() const
+RenderLayer* RenderLayer::stackingContext() const
 {
-    RenderLayer* curr = parent();
-    for ( ; curr && !curr->renderer()->isRenderView() && !curr->renderer()->isRoot() &&
-          curr->renderer()->style()->hasAutoZIndex();
-          curr = curr->parent()) { }
-    return curr;
+    RenderLayer* layer = parent();
+    while (layer && !layer->renderer()->isRenderView() && !layer->renderer()->isRoot() && layer->renderer()->style()->hasAutoZIndex())
+        layer = layer->parent();
+    return layer;
 }
 
 RenderLayer* RenderLayer::enclosingPositionedAncestor() const
@@ -770,7 +769,7 @@ void RenderLayer::operator delete(void* ptr, size_t sz)
 }
 
 void RenderLayer::destroy(RenderArena* renderArena)
-{    
+{
     delete this;
 
     // Recover the size left there for us by operator delete and free the memory.
@@ -880,8 +879,8 @@ void RenderLayer::removeOnlyThisLayer()
         current->updateLayerPositions();
         current = next;
     }
-    
-    destroy(renderer()->renderArena());
+
+    m_renderer->destroyLayer();
 }
 
 void RenderLayer::insertOnlyThisLayer()

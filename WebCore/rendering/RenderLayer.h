@@ -414,8 +414,6 @@ public:
     bool preserves3D() const { return renderer()->style()->transformStyle3D() == TransformStyle3DPreserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
 
-    void destroy(RenderArena*);
-
      // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
     void* operator new(size_t, RenderArena*) throw();
@@ -519,6 +517,10 @@ private:
 private:
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;
+    friend class RenderBoxModelObject;
+
+    // Only safe to call from RenderBoxModelObject::destroyLayer(RenderArena*)
+    void destroy(RenderArena*);
 
 protected:
     RenderBoxModelObject* m_renderer;

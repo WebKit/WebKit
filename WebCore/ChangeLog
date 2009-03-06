@@ -2,6 +2,37 @@
 
         Reviewed by David Hyatt.
 
+        Changes to RenderLayer destruction to hopefully help catch an elusive crasher
+        https://bugs.webkit.org/show_bug.cgi?id=24409
+        
+        Added a new RenderBoxModelObject::destroyLayer() call which is
+        now the only way which RenderLayers should ever be destroyed.
+        This ensures that the pointer to the layer is cleared in the
+        RenderObject after destruction, allowing us to ASSERT in the
+        RenderBoxModelObject destructor.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        (WebCore::RenderBoxModelObject::destroyLayer):
+        (WebCore::RenderBoxModelObject::destroy):
+        (WebCore::RenderBoxModelObject::styleDidChange):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::destroy):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
+2009-03-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
         Remove old, unused IE 5.5 scrollbar-* CSS properties.
         Sort the unimplemented getComputedStyle properties so it's
         easier to see which ones actually need implementation.

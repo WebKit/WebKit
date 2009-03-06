@@ -91,19 +91,18 @@ void RenderWidget::destroy()
     if (hasOverrideSize())
         setOverrideSize(-1);
 
-    RenderArena* arena = renderArena();
-
-    if (hasLayer())
-        layer()->clearClipRects();
-
     if (style() && (style()->height().isPercent() || style()->minHeight().isPercent() || style()->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
 
+    if (hasLayer()) {
+        layer()->clearClipRects();
+        destroyLayer();
+    }
+
+    // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
+    // Clear the node before deref-ing, as this may be deleted when deref is called.
+    RenderArena* arena = renderArena();
     setNode(0);
-
-    if (hasLayer())
-        layer()->destroy(arena);
-
     deref(arena);
 }
 
