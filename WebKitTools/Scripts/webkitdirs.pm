@@ -1030,6 +1030,8 @@ sub buildQMakeProject($@)
 
     my @buildArgs = ("-r");
 
+    push @buildArgs, "DEFINES+=QT_SHARED";
+
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     my $makeargs = "";
     for my $i (0 .. $#buildParams) {

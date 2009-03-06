@@ -1,3 +1,13 @@
+2009-03-06  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        When building QtWebKit in release mode make sure that QT_SHARED is defined
+        otherwise none of the public API will be exported.  This leads to missing
+        symbols and link errors if hidden-visibility is used.
+
+        * Scripts/webkitdirs.pm:
+
 2009-03-06  Adam Roben  <aroben@apple.com>
 
         Change the isCygwin check in update-webkit to isAppleWinWebKit
