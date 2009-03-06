@@ -8,7 +8,7 @@
     <script src="../../js/resources/js-test-pre.js"></script>
     <style type="text/css" media="screen">
       body {
-        height: 1000px;
+          height: 1000px;
       }
       
       h1 {
@@ -59,7 +59,6 @@
        }
        
     </style>
-    </head>
     <script>
         function runTest(name, id, x1, y1, x2, y2)
         {
@@ -150,12 +149,17 @@
                 window.layoutTestController.notifyDone();
         }
 
-        if (window.layoutTestController)    
-            window.layoutTestController.waitUntilDone();
-        setTimeout(run, 0);
+        function pageLoaded()
+        {
+            if (window.layoutTestController)    
+                window.layoutTestController.waitUntilDone();
+            setTimeout(run, 0);
+        }
+        successfullyParsed = true;
+        
     </script>
-    <script src="../../js/resources/js-test-post.js"></script>
-    <body>
+    </head>
+    <body onload="pageLoaded()">
         <h1 id="test1">Test 1 - This is a H1 heading.</h1>
         <p id="test2">Test 2 - This is a simple paragraph.</p>
         <p id="test3">Test 3 - This is a paragraph with a <b>nested</b> element.</p>
@@ -190,4 +194,5 @@
         <div id="description"></div>
         <div id="console"></div>
     </body>
+    <script src="../../js/resources/js-test-post.js"></script>
 </html>

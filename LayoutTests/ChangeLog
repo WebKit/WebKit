@@ -1,3 +1,14 @@
+2009-03-04  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24363
+
+        Fixed test and fixed expected results to reflect the fix
+
+        * fast/dom/Window/webkitConvertPoint-expected.txt:
+        * fast/dom/Window/webkitConvertPoint.html:
+
 2009-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Darin Fisher.
