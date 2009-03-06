@@ -77,7 +77,7 @@ public:
     virtual unsigned totalBytes() const = 0;
     virtual unsigned bytesLoaded() const = 0;
 
-    virtual void setRect(const IntRect&) = 0;
+    virtual void setSize(const IntSize&) = 0;
 
     virtual void paint(GraphicsContext*, const IntRect&) = 0 ;
 

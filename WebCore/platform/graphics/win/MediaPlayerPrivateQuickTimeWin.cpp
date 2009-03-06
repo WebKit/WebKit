@@ -394,10 +394,10 @@ void MediaPlayerPrivate::didEnd()
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::setRect(const IntRect& r) 
+void MediaPlayerPrivate::setSize(const IntSize& size) 
 { 
     if (m_qtMovie)
-        m_qtMovie->setSize(r.width(), r.height());
+        m_qtMovie->setSize(size.width(), size.height());
 }
 
 void MediaPlayerPrivate::setVisible(bool b)

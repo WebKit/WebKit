@@ -77,11 +77,8 @@ public:
     FrameView* frameView() { return m_frameView; }
     bool inMediaDocument();
     
-    // FIXME: it would be better to just have a getter and setter for size.
-    // This is currently an absolute rect, which is not appropriate for
-    // content with transforms
-    IntRect rect() const { return m_rect; }
-    void setRect(const IntRect& r);
+    IntSize size() const { return m_size; }
+    void setSize(const IntSize& size);
     
     void load(const String& url, const ContentType& contentType);
     void cancelLoad();
@@ -146,7 +143,7 @@ private:
     OwnPtr<MediaPlayerPrivateInterface*> m_private;
     void* m_currentMediaEngine;
     FrameView* m_frameView;
-    IntRect m_rect;
+    IntSize m_size;
     bool m_visible;
     float m_rate;
     float m_volume;

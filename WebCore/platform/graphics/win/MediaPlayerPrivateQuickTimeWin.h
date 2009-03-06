@@ -82,7 +82,7 @@ public:
     unsigned totalBytes() const;
     
     void setVisible(bool);
-    void setRect(const IntRect&);
+    void setSize(const IntSize&);
     
     void loadStateChanged();
     void didEnd();

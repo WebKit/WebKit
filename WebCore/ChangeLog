@@ -1,3 +1,47 @@
+2009-03-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22790
+        Bug 22790: [Transforms] MediaPlayer::setRect() makes no sense with transforms
+        Replace media engine setRect with setSize since they don't use about the 
+        position anyway.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::setSize): Changed from setRect.
+        (WebCore::MediaPlayer::setSize): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::size): Changed from rect().
+
+        * platform/graphics/MediaPlayerPrivate.h: Changed setRect to setSize.
+
+        * platform/graphics/chromium/MediaPlayerPrivateChromium.h: Ditto.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp: 
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_size instead of m_rect
+        (WebCore::MediaPlayerPrivate::setSize): Changed from setRect
+        (WebCore::MediaPlayerPrivate::paint): update comment
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h: m_rect -> m_size.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:  m_rect
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_rect.
+        (WebCore::MediaPlayerPrivate::createQTMovieView): setRect-> setSize.
+        (WebCore::MediaPlayerPrivate::setSize): Changed from setRect
+        (WebCore::MediaPlayerPrivate::paint): Call view:setFrame: when in a media document so 
+        the movie is drawn in the correct location.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::setSize):  Changed from setRect
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::setSize):  Changed from setRect
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer): Call setSize instead of setRect.
+
 2009-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Darin Fisher.

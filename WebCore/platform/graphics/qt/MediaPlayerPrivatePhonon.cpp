@@ -377,19 +377,18 @@ void MediaPlayerPrivate::setVisible(bool visible)
     m_videoWidget->setVisible(m_isVisible);
 }
 
-void MediaPlayerPrivate::setRect(const IntRect& newRect)
+void MediaPlayerPrivate::setSize(const IntSize& newSize)
 {
     if (!m_videoWidget)
         return;
 
-    LOG(Media, "MediaPlayerPrivatePhonon::setRect(%d,%d %dx%d)",
-                newRect.x(), newRect.y(),
-                newRect.width(), newRect.height());
+    LOG(Media, "MediaPlayerPrivatePhonon::setSize(%d,%d)",
+                newSize.width(), newSize.height());
 
     QRect currentRect = m_videoWidget->rect();
 
-    if (newRect.width() != currentRect.width() || newRect.height() != currentRect.height())
-        m_videoWidget->resize(newRect.width(), newRect.height());
+    if (newSize.width() != currentRect.width() || newSize.height() != currentRect.height())
+        m_videoWidget->resize(newSize.width(), newSize.height());
 }
 
 IntSize MediaPlayerPrivate::naturalSize() const

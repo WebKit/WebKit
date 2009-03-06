@@ -106,7 +106,7 @@ private:
     unsigned totalBytes() const;
     
     void setVisible(bool);
-    void setRect(const IntRect& r);
+    void setSize(const IntSize&);
     
     void paint(GraphicsContext*, const IntRect&);
 
@@ -144,6 +144,7 @@ private:
     bool m_startedPlaying;
     bool m_isStreaming;
     bool m_visible;
+    IntRect m_rect;
 #if DRAW_FRAME_RATE
     int  m_frameCountWhilePlaying;
     double m_timeStartedPlaying;

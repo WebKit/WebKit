@@ -125,12 +125,9 @@ void RenderVideo::updatePlayer()
         return;
     }
     
-    // FIXME: This doesn't work correctly with transforms.
-    FloatPoint absPos = localToAbsolute();
     IntRect videoBounds = videoBox(); 
-    videoBounds.move(absPos.x(), absPos.y());
     mediaPlayer->setFrameView(document()->view());
-    mediaPlayer->setRect(videoBounds);
+    mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
     mediaPlayer->setVisible(true);
 }
 
