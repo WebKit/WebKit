@@ -68,9 +68,9 @@ module core {
         [Custom] void addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
         [Custom] Node getResourceDocumentNode(in unsigned long identifier);
         [Custom] void search(in Node node, in DOMString query);
-
+#if ENABLE_DATABASE
         [Custom] DOMObject databaseTableNames(in Database database);
-
+#endif
         [Custom] DOMObject setting(in DOMString key);
         [Custom] void setSetting(in DOMString key, in DOMObject  value);
         [Custom] DOMWindow inspectedWindow();

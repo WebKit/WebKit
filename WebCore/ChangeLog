@@ -1,3 +1,12 @@
+2009-03-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Generate valid bindings with HTML5 database support disabled. 
+
+        * inspector/InspectorController.idl: Added feature guard around 
+        databaseTableNames definition.
+
 2009-03-04  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
