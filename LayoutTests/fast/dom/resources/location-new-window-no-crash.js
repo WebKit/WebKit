@@ -1,4 +1,9 @@
-description("Tests that manipulating location properties in a just-created window object does not crash.");
+description("Tests that manipulating location properties in a just-created window object does not crash. Note: Turn off pop-up blocking to run this in-browser.");
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+}
 
 var testWindow = open("data:text/plain,a");
 
@@ -25,9 +30,9 @@ shouldBe("testWindow.location.pathname = 'f'", "'f'"); // Firefox throws an exce
 shouldBe("testWindow.location.search = 'g'", "'g'");
 shouldBe("testWindow.location.hash = 'h'", "'h'");
 
-shouldBe("testWindow.location.assign('data:text/plain,i')", "undefined"); // Firefox returns about:blank
-shouldBe("testWindow.location.replace('data:text/plain,j')", "undefined"); // Firefox returns about:blank
-shouldBe("testWindow.location.reload()", "undefined"); // Firefox returns about:blank
+shouldBe("testWindow.location.assign('data:text/plain,i')", "undefined");
+shouldBe("testWindow.location.replace('data:text/plain,j')", "undefined");
+shouldBe("testWindow.location.reload()", "undefined");
 
 shouldBe("testWindow.location.toString()", "'/'"); // Firefox returns about:blank
 shouldBe("testWindow.location.href", "'/'"); // Firefox returns about:blank
@@ -40,5 +45,17 @@ shouldBe("testWindow.location.search", "''");
 shouldBe("testWindow.location.hash", "''");
 
 testWindow.close();
+
+if (window.layoutTestController) {
+    function doneHandler()
+    {
+        if (testWindow.closed) {
+            layoutTestController.notifyDone();
+            return;
+        }
+        setTimeout(doneHandler, 0);
+    }
+    doneHandler();
+}
 
 var successfullyParsed = true;

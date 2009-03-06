@@ -1,3 +1,11 @@
+2009-03-06  Darin Adler  <darin@apple.com>
+
+        Fixed broken test I just landed for bug 24422.
+
+        * fast/dom/location-new-window-no-crash-expected.txt: Updated.
+        * fast/dom/resources/location-new-window-no-crash.js: Added code to make the window
+        opening and closing work in DumpRenderTree.
+
 2009-03-06  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
