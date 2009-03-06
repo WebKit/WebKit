@@ -830,6 +830,10 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
     // for local files otherwise, <rdar://problem/5671813>.
     LoadCallbacks callbacks = m_inPreflight ? DoNotSendLoadCallbacks : SendLoadCallbacks;
     ContentSniff contentSniff = request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
+
+    if (m_upload)
+        request.setReportUploadProgress(true);
+
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, callbacks, contentSniff);
 
     if (m_loader) {

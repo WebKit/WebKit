@@ -107,12 +107,18 @@ namespace WebCore {
         void setAllowHTTPCookies(bool allowHTTPCookies);
 
         bool isConditional() const;
-        
+
+        // Whether the associated ResourceHandleClient needs to be notified of
+        // upload progress made for that resource.
+        bool reportUploadProgress() const { return m_reportUploadProgress; }
+        void setReportUploadProgress(bool reportUploadProgress) { m_reportUploadProgress = reportUploadProgress; }
+
     protected:
         // Used when ResourceRequest is initialized from a platform representation of the request
         ResourceRequestBase()
             : m_resourceRequestUpdated(false)
             , m_platformRequestUpdated(true)
+            , m_reportUploadProgress(false)
         {
         }
 
@@ -124,6 +130,7 @@ namespace WebCore {
             , m_allowHTTPCookies(true)
             , m_resourceRequestUpdated(true)
             , m_platformRequestUpdated(false)
+            , m_reportUploadProgress(false)
         {
         }
 
@@ -142,6 +149,7 @@ namespace WebCore {
         bool m_allowHTTPCookies;
         mutable bool m_resourceRequestUpdated;
         mutable bool m_platformRequestUpdated;
+        bool m_reportUploadProgress;
 
     private:
         const ResourceRequest& asResourceRequest() const;

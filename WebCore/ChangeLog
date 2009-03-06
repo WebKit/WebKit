@@ -1,3 +1,21 @@
+2009-03-06  Jay Campan  <jcampan@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24306
+
+        Adding a flag to ResourceRequestBase to indicate whether or not upload
+        progress notifications are needed for a resource. This is useful to
+        avoid sending these notifications when there are no consumers
+        (especially in the Chromium case where IPC is involved). 
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::reportUploadProgress):
+        (WebCore::ResourceRequestBase::setReportUploadProgress):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+
 2009-03-06  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
