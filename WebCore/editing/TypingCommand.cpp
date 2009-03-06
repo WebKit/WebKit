@@ -429,10 +429,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             break;
     }
     
-    if (selectionToDelete.isNone()) {
-        ASSERT_NOT_REACHED();
+    ASSERT(!selectionToDelete.isNone());
+    if (selectionToDelete.isNone())
         return;
-    }
     
     if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
         return;
@@ -513,10 +512,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             break;
     }
     
-    if (selectionToDelete.isNone()) {
-        ASSERT_NOT_REACHED();
+    ASSERT(!selectionToDelete.isNone());
+    if (selectionToDelete.isNone())
         return;
-    }
     
     if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
         return;
