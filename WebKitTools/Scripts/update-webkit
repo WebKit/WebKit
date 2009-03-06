@@ -67,7 +67,7 @@ if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
     runSvnUpdate();
-} elsif (isCygwin()) {
+} elsif (isAppleWinWebKit()) {
     system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
 }
 

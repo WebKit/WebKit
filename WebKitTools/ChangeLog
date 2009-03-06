@@ -1,5 +1,16 @@
 2009-03-06  Adam Roben  <aroben@apple.com>
 
+        Change the isCygwin check in update-webkit to isAppleWinWebKit
+
+        This matches a similar check in build-webkit, and is more correct.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/update-webkit: Only call update-webkit-auxiliary-libs if
+        isAppleWinWebKit is true.
+
+2009-03-06  Adam Roben  <aroben@apple.com>
+
         Make update-webkit-support-libs fail if WebKitSupportLibrary.zip is
         present but out of date
 
