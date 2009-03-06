@@ -327,6 +327,7 @@ TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncod
     , m_checkedForBOM(false)
     , m_checkedForCSSCharset(false)
     , m_checkedForHeadCharset(false)
+    , m_useLenientXMLDecoding(false)
     , m_sawError(false)
 {
 }
@@ -784,14 +785,14 @@ String TextResourceDecoder::decode(const char* data, size_t len)
         memcpy(m_buffer.data() + oldSize, data, len);
     }
 
-    String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), false, m_contentType == XML, m_sawError);
+    String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), false, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     return result;
 }
 
 String TextResourceDecoder::flush()
 {
-    String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), true, m_contentType == XML, m_sawError);
+    String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), true, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     m_decoder.reset(m_decoder.encoding());
     return result;

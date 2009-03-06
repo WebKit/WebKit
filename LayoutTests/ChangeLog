@@ -1,3 +1,14 @@
+2009-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6621701> Safari 4 Beta Breaks XMLHttpRequest Response Text With Special
+        Characters (a compatibility issue with widgets).
+
+        * http/tests/xmlhttprequest/broken-xml-encoding-expected.txt: Added.
+        * http/tests/xmlhttprequest/broken-xml-encoding.html: Added.
+        * http/tests/xmlhttprequest/resources/broken-encoding.xml: Added.
+
 2009-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

@@ -1,3 +1,26 @@
+2009-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6621701> Safari 4 Beta Breaks XMLHttpRequest Response Text With Special
+        Characters (a compatibility issue with widgets).
+
+        Test: http/tests/xmlhttprequest/broken-xml-encoding.html
+
+        Revert part of an Acid 3 fix - now we are no longer strict when decoding XMLHttpRequest XML
+        responses.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::TextResourceDecoder):
+        (WebCore::TextResourceDecoder::decode):
+        (WebCore::TextResourceDecoder::flush):
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::useLenientXMLDecoding):
+        Don't stop on XML decoding errors if useLenientXMLDecoding() was called.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::didReceiveData): Don't stop on XML
+        decoding errors. This behavior is now limited to other kinds of XML content.
+
 2009-03-05  Simone Fiorentino  <simone.fiorentino@consulenti.fastweb.it>
 
         Bug 24382: request to add SH4 platform
