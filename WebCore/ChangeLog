@@ -5,6 +5,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=24358
         [GTK] Scrollbars not clipped correctly
 
+        Do not take into account the case of being a ScrollView scrollbar,
+        since those are native in our case.
+
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::frameRectsChanged):
+
+2009-03-04  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24358
+        [GTK] Scrollbars not clipped correctly
+
         Move Widget::paint to ScrollbarGtk::paint, since it's scrollbar
         specific and it's our only Widget anyway.
 
