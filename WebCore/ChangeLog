@@ -5,6 +5,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=24423
         Use new soup_message_body_set_accumulate API in soup backend
 
+        Disable accumulating chunks for request_body on file uploads,
+        using the new soup API.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startHttp):
+
+2009-03-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         Replace use of deprecated SOUP_MESSAGE_OVERWRITE_CHUNKS flag with
         the new soup_message_body_set_accumulate API in soup.
 

@@ -448,13 +448,8 @@ bool ResourceHandle::startHttp(String urlString)
              * be (big) files, which we will want to mmap instead of
              * copying into memory; TODO: support upload of non-local
              * (think sftp://) files by using GIO?
-             *
-             * TODO: we can avoid appending all the buffers to the
-             * request_body variable with the following call, but we
-             * need to depend on libsoup > 2.25.4
-             *
-             * soup_message_body_set_accumulate(msg->request_body, FALSE);
              */
+            soup_message_body_set_accumulate(msg->request_body, FALSE);
             for (size_t i = 0; i < numElements; i++) {
                 const FormDataElement& element = httpBody->elements()[i];
 
