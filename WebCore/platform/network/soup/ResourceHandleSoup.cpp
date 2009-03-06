@@ -214,6 +214,14 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
         return;
 
+    soup_message_set_flags(msg, SOUP_MESSAGE_OVERWRITE_CHUNKS);
+
+    // We still don't know anything about Content-Type, so we will try
+    // sniffing the contents of the file, and then report that we got
+    // headers
+    if (!soup_message_headers_get_content_type(msg->response_headers, NULL))
+        return;
+
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle)
         return;
@@ -226,7 +234,7 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 
     fillResponseFromMessage(msg, &d->m_response);
     client->didReceiveResponse(handle, d->m_response);
-    soup_message_set_flags(msg, SOUP_MESSAGE_OVERWRITE_CHUNKS);
+    d->m_reportedHeaders = true;
 }
 
 static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
@@ -243,6 +251,17 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
     ResourceHandleClient* client = handle->client();
     if (!client)
         return;
+
+    if (!d->m_reportedHeaders) {
+        gboolean uncertain;
+        char* contentType = g_content_type_guess(d->m_request.url().lastPathComponent().utf8().data(), reinterpret_cast<const guchar*>(chunk->data), chunk->length, &uncertain);
+        soup_message_headers_set_content_type(msg->response_headers, contentType, NULL);
+        g_free(contentType);
+
+        fillResponseFromMessage(msg, &d->m_response);
+        client->didReceiveResponse(handle, d->m_response);
+        d->m_reportedHeaders = true;
+    }
 
     client->didReceiveData(handle, chunk->data, chunk->length, false);
 }

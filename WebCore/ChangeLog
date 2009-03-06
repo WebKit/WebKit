@@ -1,3 +1,20 @@
+2009-03-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24051
+        Soup backend needs content sniffing capabilities
+
+        Perform content sniffing when using soup, so that we have a chance
+        of figuring out the Content-Type of the file if it's not sent by
+        the server.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+        (WebCore::gotChunkCallback):
+
 2009-03-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
