@@ -1,3 +1,16 @@
+2009-03-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24342
+        Bug 24342: [Chromium] cannot insert a Thai character after a Thai
+        prepend character
+
+        Add a test that verifies we can insert a character after a Thai prepend character.
+
+        * editing/inserting/insert-thai-characters-001-expected.txt: Added.
+        * editing/inserting/insert-thai-characters-001.html: Added.
+
 2009-03-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.

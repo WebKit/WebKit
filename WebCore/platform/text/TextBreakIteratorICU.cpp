@@ -22,6 +22,7 @@
 #include "config.h"
 #include "TextBreakIterator.h"
 
+#include "PlatformString.h"
 #include "TextBreakIteratorInternalICU.h"
 
 #include <unicode/ubrk.h>
@@ -112,6 +113,63 @@ int textBreakCurrent(TextBreakIterator* bi)
 bool isTextBreak(TextBreakIterator* bi, int pos)
 {
     return ubrk_isBoundary(bi, pos);
+}
+
+static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBreakIterator*& iterator,
+    const char* breakRules, const UChar* string, int length)
+{
+    if (!string)
+        return 0;
+
+    if (!createdIterator) {
+        UParseError parseStatus;
+        UErrorCode openStatus = U_ZERO_ERROR;
+        String rules(breakRules);
+        iterator = static_cast<TextBreakIterator*>(ubrk_openRules(rules.characters(), rules.length(), 0, 0, &parseStatus, &openStatus));
+        createdIterator = true;
+        ASSERT_WITH_MESSAGE(U_SUCCESS(openStatus), "ICU could not open a break iterator: %s (%d)", u_errorName(openStatus), openStatus);
+    }
+    if (!iterator)
+        return 0;
+
+    UErrorCode setTextStatus = U_ZERO_ERROR;
+    ubrk_setText(iterator, string, length, &setTextStatus);
+    if (U_FAILURE(setTextStatus))
+        return 0;
+
+    return iterator;
+}
+
+TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
+{
+    // This rule set is based on character-break iterator rules of ICU 3.8
+    // <http://source.icu-project.org/repos/icu/icu/tags/release-3-8/source/data/brkitr/char.txt>.
+    static const char* kRules =
+        "$CR      = [\\p{Grapheme_Cluster_Break = CR}];"
+        "$LF      = [\\p{Grapheme_Cluster_Break = LF}];"
+        "$Control = [\\p{Grapheme_Cluster_Break = Control}];"
+        "$VoiceMarks = [\\uff9e\\uff9f];"
+        "$Extend  = [\\p{Grapheme_Cluster_Break = Extend} $VoiceMarks];"
+        "$L       = [\\p{Grapheme_Cluster_Break = L}];"
+        "$V       = [\\p{Grapheme_Cluster_Break = V}];"
+        "$T       = [\\p{Grapheme_Cluster_Break = T}];"
+        "$LV      = [\\p{Grapheme_Cluster_Break = LV}];"
+        "$LVT     = [\\p{Grapheme_Cluster_Break = LVT}];"
+        "$HangulSyllable = $L+ | ($L* ($LV? $V+ | $LV | $LVT) $T*) | $T+;"
+        "!!forward;"
+        "$CR $LF;"
+        "([^$Control $CR $LF] | $HangulSyllable) $Extend*;"
+        "!!reverse;"
+        "$BackHangulSyllable = $L+ | ($T* ($V+$LV? | $LV | $LVT) $L*) | $T+;"
+        "$BackOneCluster = ($LF $CR) | ($Extend* ([^$Control $CR $LF] | $BackHangulSyllable));"
+        "$BackOneCluster;"
+        "!!safe_reverse;"
+        "$V+ $L;"
+        "!!safe_forward;"
+        "$V+ $T;";
+    static bool createdInputCursorIterator = false;
+    static TextBreakIterator* staticInputCursorIterator;
+    return setUpIteratorWithRules(createdInputCursorIterator, staticInputCursorIterator, kRules, string, length);
 }
 
 }

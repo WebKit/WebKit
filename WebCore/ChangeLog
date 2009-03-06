@@ -1,3 +1,29 @@
+2009-03-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24342
+        Cannot insert a Thai character after a Thai prepend character when using ICU 4.0
+
+        This change creates a new break iterator "cursorMovementIterator" for
+        moving cursors and use it when moving an input cursor.
+        In "TextBreakIteratorICU.cpp", this break iterator uses custom ruleset
+        based on the one of ICU 3.8.
+        On the other hand, in "TextBreakIteratorQt.cpp", this break iterator
+        just calls the characterBreakIterator() function.
+
+        Test: editing/inserting/insert-thai-characters-001.html
+
+        * platform/text/TextBreakIterator.h: Added a new function cursorMovementIterator().
+        * platform/text/TextBreakIteratorICU.cpp: Implemented the cursorMovementIterator() function for ICU.
+        (WebCore::setUpIteratorWithRules): Ditto.
+        (WebCore::cursorMovementIterator): Ditto.
+        * platform/text/qt/TextBreakIteratorQt.cpp: Implemented the cursorMovementIterator() function for Qt.
+        (WebCore::cursorMovementIterator): Ditto.
+        * rendering/RenderText.cpp: Call the cursorMovementIterator() function when moving an input cursor.
+        (WebCore::RenderText::previousOffset): Ditto.
+        (WebCore::RenderText::nextOffset): Ditto.
+
 2009-03-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
