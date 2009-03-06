@@ -1,3 +1,17 @@
+2009-03-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24417
+        [GTK] WebKitDownload's _cancel and _dispose methods may emit warnings
+
+        NULL-check for timer on _cancel and _dispose, to avoid bad
+        warnings.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_finalize):
+        (_WebKitDownloadPrivate::webkit_download_cancel):
+
 2009-03-02  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Mark Rowe.

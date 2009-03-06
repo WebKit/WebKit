@@ -124,7 +124,10 @@ static void webkit_download_finalize(GObject* object)
     delete priv->downloadClient;
     delete priv->networkResponse;
 
-    g_timer_destroy(priv->timer);
+    // The download object may never have _start called on it, so we
+    // need to make sure timer is non-NULL.
+    if (priv->timer)
+        g_timer_destroy(priv->timer);
 
     g_free(priv->destinationURI);
     g_free(priv->suggestedFilename);
@@ -415,7 +418,10 @@ void webkit_download_cancel(WebKitDownload* download)
 
     WebKitDownloadPrivate* priv = download->priv;
 
-    g_timer_stop(priv->timer);
+    // Cancel may be called even if start was not called, so we need
+    // to make sure timer is non-NULL.
+    if (priv->timer)
+        g_timer_stop(priv->timer);
 
     if (priv->resourceHandle)
         priv->resourceHandle->cancel();
