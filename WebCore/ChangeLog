@@ -1,3 +1,10 @@
+2009-03-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView):  Delay callback while setting up movieview.
+
 2009-03-06  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Justin Garcia.

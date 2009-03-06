@@ -296,6 +296,9 @@ void MediaPlayerPrivate::createQTMovieView()
         addedCustomMethods = true;
     }
 
+    // delay callbacks as we *will* get notifications during setup
+    [m_objcObserver.get() setDelayCallbacks:YES];
+
     m_qtMovieView.adoptNS([[QTMovieView alloc] init]);
     setSize(m_player->size());
     NSView* parentView = m_player->frameView()->documentView();
@@ -318,6 +321,8 @@ void MediaPlayerPrivate::createQTMovieView()
     // Note that we expect mainThreadSetNeedsDisplay to be invoked only when synchronous drawing is requested.
     if (!m_player->inMediaDocument())
         wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
+
+    [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
 void MediaPlayerPrivate::detachQTMovieView()
