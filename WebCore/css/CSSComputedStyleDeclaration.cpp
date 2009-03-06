@@ -1250,6 +1250,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getTimingFunctionValue(style->transitions());
         case CSSPropertyPointerEvents:
             return CSSPrimitiveValue::create(style->pointerEvents());
+
+        /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
         case CSSPropertyBorder:
         case CSSPropertyBorderBottom:
@@ -1259,27 +1261,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderStyle:
         case CSSPropertyBorderTop:
         case CSSPropertyBorderWidth:
-        case CSSPropertyContent:
-        case CSSPropertyCounterIncrement:
-        case CSSPropertyCounterReset:
         case CSSPropertyFont:
-        case CSSPropertyFontStretch:
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
-        case CSSPropertyOutline:
-        case CSSPropertyOutlineOffset:
         case CSSPropertyPadding:
-        case CSSPropertyPage:
-        case CSSPropertyQuotes:
-        case CSSPropertyScrollbar3dlightColor:
-        case CSSPropertyScrollbarArrowColor:
-        case CSSPropertyScrollbarDarkshadowColor:
-        case CSSPropertyScrollbarFaceColor:
-        case CSSPropertyScrollbarHighlightColor:
-        case CSSPropertyScrollbarShadowColor:
-        case CSSPropertyScrollbarTrackColor:
-        case CSSPropertySrc: // Only used in @font-face rules.
-        case CSSPropertySize:
+            break;
+
+        /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyTextLineThrough:
         case CSSPropertyTextLineThroughColor:
         case CSSPropertyTextLineThroughMode:
@@ -1296,7 +1284,26 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyTextUnderlineMode:
         case CSSPropertyTextUnderlineStyle:
         case CSSPropertyTextUnderlineWidth:
-        case CSSPropertyUnicodeRange: // Only used in @font-face rules.
+            break;
+
+        /* Unimplemented @font-face properties */
+        case CSSPropertyFontStretch:
+        case CSSPropertySrc:
+        case CSSPropertyUnicodeRange:
+            break;
+
+        /* Other unimplemented properties */
+        case CSSPropertyContent: // FIXME: needs implementation, bug 23668
+        case CSSPropertyCounterIncrement:
+        case CSSPropertyCounterReset:
+        case CSSPropertyOutline: // FIXME: needs implementation
+        case CSSPropertyOutlineOffset: // FIXME: needs implementation
+        case CSSPropertyPage: // for @page
+        case CSSPropertyQuotes: // FIXME: needs implementation
+        case CSSPropertySize: // for @page
+            break;
+
+        /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitAnimation:
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
@@ -1310,7 +1317,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitTextStroke:
         case CSSPropertyWebkitTransition:
         case CSSPropertyWebkitVariableDeclarationBlock:
-            // FIXME: The above are unimplemented.
             break;
 #if ENABLE(SVG)
         // FIXME: This default case ruins the point of using an enum for

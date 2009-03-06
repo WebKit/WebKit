@@ -766,16 +766,6 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitBorderVerticalSpacing:
         valid_primitive = validUnit(value, FLength|FNonNeg, m_strict);
         break;
-    case CSSPropertyScrollbarFaceColor:         // IE5.5
-    case CSSPropertyScrollbarShadowColor:       // IE5.5
-    case CSSPropertyScrollbarHighlightColor:    // IE5.5
-    case CSSPropertyScrollbar3dlightColor:      // IE5.5
-    case CSSPropertyScrollbarDarkshadowColor:   // IE5.5
-    case CSSPropertyScrollbarTrackColor:        // IE5.5
-    case CSSPropertyScrollbarArrowColor:        // IE5.5
-        if (m_strict)
-            break;
-        /* nobreak */
     case CSSPropertyOutlineColor:        // <color> | invert | inherit
         // Outline color has "invert" as additional keyword.
         // Also, we want to allow the special focus color even in strict parsing mode.

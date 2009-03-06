@@ -5151,13 +5151,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyFontStretch:
     case CSSPropertyPage:
     case CSSPropertyQuotes:
-    case CSSPropertyScrollbar3dlightColor:
-    case CSSPropertyScrollbarArrowColor:
-    case CSSPropertyScrollbarDarkshadowColor:
-    case CSSPropertyScrollbarFaceColor:
-    case CSSPropertyScrollbarHighlightColor:
-    case CSSPropertyScrollbarShadowColor:
-    case CSSPropertyScrollbarTrackColor:
     case CSSPropertySize:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextLineThroughColor:

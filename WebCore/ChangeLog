@@ -1,3 +1,19 @@
+2009-03-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Remove old, unused IE 5.5 scrollbar-* CSS properties.
+        Sort the unimplemented getComputedStyle properties so it's
+        easier to see which ones actually need implementation.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2009-03-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
