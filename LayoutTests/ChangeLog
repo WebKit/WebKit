@@ -1,3 +1,15 @@
+2009-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24412
+        
+        Testcase for hit testing an element with -webkit-transform-style: preserve-3d
+        but no transform.
+
+        * transforms/3d/hit-testing/hit-preserves-3d-expected.txt: Added.
+        * transforms/3d/hit-testing/hit-preserves-3d.html: Added.
+
 2009-03-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

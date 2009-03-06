@@ -1,3 +1,19 @@
+2009-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24412
+        
+        Fix crash when hit-testing elements with -webkit-transform-style: preserve-3d
+        but no transform. We need to make localTransformState if we see preserve-3d.
+        Also need to call update3DTransformedDescendantStatus() before we test
+        m_has3DTransformedDescendant.
+
+        Test: transforms/3d/hit-testing/hit-preserves-3d.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-03-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt.
