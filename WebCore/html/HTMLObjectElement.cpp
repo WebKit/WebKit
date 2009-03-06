@@ -123,7 +123,11 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
     if (!frame)
         return false;
     
-    return HTMLPlugInElement::rendererIsNeeded(style);
+    // Temporary Workaround for Gears plugin - see bug 24215 for details and bug 24346 to track removal.
+    // Gears expects the plugin to be instantiated even if display:none is set
+    // for the object element.
+    bool isGearsPlugin = equalIgnoringCase(getAttribute(typeAttr), "application/x-googlegears");
+    return isGearsPlugin || HTMLPlugInElement::rendererIsNeeded(style);
 }
 
 RenderObject *HTMLObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)

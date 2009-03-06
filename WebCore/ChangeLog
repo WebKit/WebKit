@@ -1,3 +1,15 @@
+2009-03-05  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24215
+
+        Gears expects an object tag with display:none to instantiate the plugin,
+        so we add a workaround to make this work and fix Gears on WebKit trunk.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+
 2009-03-05  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Fisher.
