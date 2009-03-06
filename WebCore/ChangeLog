@@ -1,5 +1,11 @@
 2009-03-06  Eric Carlson  <eric.carlson@apple.com>
 
+        Build fix, no review
+
+        * platform/graphics/chromium/MediaPlayerPrivateChromium.h: fix setSize declaration
+
+2009-03-06  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=22790

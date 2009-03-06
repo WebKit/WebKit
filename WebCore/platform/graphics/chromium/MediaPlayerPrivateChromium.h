@@ -74,7 +74,7 @@ public:
     unsigned totalBytes() const;
 
     void setVisible(bool);
-    void void setSize(const IntSize&);
+    void setSize(const IntSize&);
 
     void paint(GraphicsContext*, const IntRect&);
 
