@@ -1,3 +1,14 @@
+2009-03-05  Simone Fiorentino  <simone.fiorentino@consulenti.fastweb.it>
+
+        Bug 24382: request to add SH4 platform
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24382>
+
+        Reviewed by David Kilzer.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::equal): Aligned memory access on SH4 platform.
+
 2009-03-05  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Simon Fraser.

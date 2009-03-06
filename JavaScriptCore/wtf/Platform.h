@@ -212,6 +212,11 @@
 #define WTF_PLATFORM_X86_64 1
 #endif
 
+/* PLATFORM(SH4) */
+#if defined(__SH4__)
+#define WTF_PLATFORM_SH4 1
+#endif
+
 /* PLATFORM(SPARC64) */
 #if defined(__sparc64__)
 #define WTF_PLATFORM_SPARC64 1

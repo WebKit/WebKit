@@ -1,3 +1,13 @@
+2009-03-05  Simone Fiorentino  <simone.fiorentino@consulenti.fastweb.it>
+
+        Bug 24382: request to add SH4 platform
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24382>
+
+        Reviewed by David Kilzer.
+
+        * wtf/Platform.h: Added support for SH4 platform.
+
 2009-03-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
