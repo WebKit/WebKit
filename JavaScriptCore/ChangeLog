@@ -1,3 +1,19 @@
+2009-03-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Writes of constant values to SF registers should be made with direct memory
+        writes where possible, rather than moving the value via a hardware register.
+
+        ~3% win on SunSpider tests on x86, ~1.5% win on v8 tests on x86-64.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movq_i32m):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2009-03-05  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

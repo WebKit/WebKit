@@ -304,8 +304,17 @@ void JIT::privateCompileMainPass()
 
         switch (opcodeID) {
         case op_mov: {
-            emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-            emitPutVirtualRegister(currentInstruction[1].u.operand);
+            int src = currentInstruction[2].u.operand;
+            int dst = currentInstruction[1].u.operand;
+
+            if (m_codeBlock->isConstantRegisterIndex(src)) {
+                storePtr(ImmPtr(JSValuePtr::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
+                if (dst == m_lastResultBytecodeRegister)
+                    killLastResultRegister();
+            } else {
+                emitGetVirtualRegister(src, regT0);
+                emitPutVirtualRegister(dst);
+            }
             NEXT_OPCODE(op_mov);
         }
         case op_add: {

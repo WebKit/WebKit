@@ -927,6 +927,12 @@ public:
         m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, index, scale, offset);
     }
 
+    void movq_i32m(int imm, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
+        m_formatter.immediate32(imm);
+    }
+
     void movq_i64r(int64_t imm, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_MOV_EAXIv, dst);
