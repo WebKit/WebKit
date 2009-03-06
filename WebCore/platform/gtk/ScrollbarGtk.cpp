@@ -130,5 +130,43 @@ void ScrollbarGtk::setEnabled(bool shouldEnable)
         gtk_widget_set_sensitive(platformWidget(), shouldEnable);
 }
 
+/*
+ * Strategy to painting a Widget:
+ *  1.) do not paint if there is no GtkWidget set
+ *  2.) We assume that GTK_NO_WINDOW is set and that frameRectsChanged positioned
+ *      the widget correctly. ATM we do not honor the GraphicsContext translation.
+ */
+void ScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)
+{
+    if (!platformWidget())
+        return;
 
+    if (!context->gdkExposeEvent())
+        return;
 
+    GtkWidget* widget = platformWidget();
+    ASSERT(GTK_WIDGET_NO_WINDOW(widget));
+
+    GdkEvent* event = gdk_event_new(GDK_EXPOSE);
+    event->expose = *context->gdkExposeEvent();
+    event->expose.area = static_cast<GdkRectangle>(rect);
+
+    IntPoint loc = parent()->contentsToWindow(rect.location());
+    event->expose.area.x = loc.x();
+    event->expose.area.y = loc.y();
+
+    event->expose.region = gdk_region_rectangle(&event->expose.area);
+
+    /*
+     * This will be unref'ed by gdk_event_free.
+     */
+    g_object_ref(event->expose.window);
+
+    /*
+     * If we are going to paint do the translation and GtkAllocation manipulation.
+     */
+    if (!gdk_region_empty(event->expose.region))
+        gtk_widget_send_expose(widget, event);
+
+    gdk_event_free(event);
+}

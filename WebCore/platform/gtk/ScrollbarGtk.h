@@ -38,6 +38,7 @@ public:
     friend class Scrollbar;
 
     virtual void setFrameRect(const IntRect&);
+    virtual void paint(GraphicsContext*, const IntRect&);
     
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
     virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }
