@@ -1,3 +1,30 @@
+2009-03-06  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24407
+        Windows scroll amount was too small, and wheel scroll distance
+        conversion code was overly complex.
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Scrollbar.h:
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/WheelEventQt.cpp:
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::horizontalScrollChars):
+        (WebCore::verticalScrollLines):
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-03-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Roben.

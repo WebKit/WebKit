@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "PlatformWheelEvent.h"
+#include "Scrollbar.h"
 
 #include <gdk/gdk.h>
 
@@ -61,7 +62,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 
     m_position = IntPoint((int)event->x, (int)event->y);
     m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
-    m_granularity = ScrollByLineWheelEvent;
+    m_granularity = ScrollByPixelWheelEvent;
     m_isAccepted = false;
     m_shiftKey = event->state & GDK_SHIFT_MASK;
     m_ctrlKey = event->state & GDK_CONTROL_MASK;
@@ -74,8 +75,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 #endif
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
-    m_deltaX *= horizontalLineMultiplier();
-    m_deltaY *= verticalLineMultiplier();
+    m_deltaX *= (float)cScrollbarPixelsPerLineStep;
+    m_deltaY *= (float)cScrollbarPixelsPerLineStep;
 }
 
 }

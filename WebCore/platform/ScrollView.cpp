@@ -613,10 +613,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         e.accept();
         float deltaX = e.deltaX();
         float deltaY = e.deltaY();
-        if (e.granularity() == ScrollByLineWheelEvent) {
-            deltaX *= cMouseWheelPixelsPerLineStep;
-            deltaY *= cMouseWheelPixelsPerLineStep;
-        } else if (e.granularity() == ScrollByPageWheelEvent) {
+        if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(deltaX == 0);
             bool negative = deltaY < 0;
             deltaY = max(0, visibleHeight() - cAmountToKeepWhenPaging);

@@ -113,8 +113,6 @@ static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDir
         return;
     } 
     float pixelsToScroll = delta > 0 ? delta : -delta;
-    if (e.granularity() == ScrollByLineWheelEvent)
-        pixelsToScroll *= cMouseWheelPixelsPerLineStep;
     if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
         e.accept();
 }

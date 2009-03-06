@@ -37,11 +37,7 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
 #else
     : m_position(e->pos())
     , m_globalPosition(e->globalPos())
-#ifdef QT_MAC_USE_COCOA
     , m_granularity(ScrollByPixelWheelEvent)
-#else
-    , m_granularity(ScrollByLineWheelEvent)
-#endif
     , m_isAccepted(false)
     , m_shiftKey(e->modifiers() & Qt::ShiftModifier)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
@@ -56,14 +52,11 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
         m_deltaY = (e->delta() / 120);
     }
 
-    m_deltaX *= QApplication::wheelScrollLines();
     // use the same single scroll step as QTextEdit (in
     // QTextEditPrivate::init [h,v]bar->setSingleStep )
-    // and divide by the default WebKit scroll step to
-    // get the Qt mouse wheel scroll behavior
     static const float cDefaultQtScrollStep = 20.f;
-    m_deltaY *= QApplication::wheelScrollLines() *
-                (cDefaultQtScrollStep / cMouseWheelPixelsPerLineStep);
+    m_deltaX *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
+    m_deltaY *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
 }
 #endif // QT_NO_WHEELEVENT
 

@@ -46,22 +46,22 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
     return point;
 }
 
-int PlatformWheelEvent::horizontalLineMultiplier() const
+static int horizontalScrollChars()
 {
     static ULONG scrollChars;
     if (!scrollChars && !SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0))
-        scrollChars = cLineMultiplier;
+        scrollChars = 1;
     return scrollChars;
 }
 
-int PlatformWheelEvent::verticalLineMultiplier() const
+static int verticalScrollLines()
 {
     static ULONG scrollLines;
     if (!scrollLines && !SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0))
-        scrollLines = cLineMultiplier;
+        scrollLines = 3;
     return scrollLines;
 }
-        
+
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isHorizontal)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
@@ -71,23 +71,29 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
 {
-    static ULONG scrollLines, scrollChars;
+    // How many pixels should we scroll per line?  Gecko uses the height of the
+    // current line, which means scroll distance changes as you go through the
+    // page or go to different pages.  IE 7 is ~50 px/line, although the value
+    // seems to vary slightly by page and zoom level.  Since IE 7 has a
+    // smoothing algorithm on scrolling, it can get away with slightly larger
+    // scroll values without feeling jerky.  Here we use 100 px per three lines
+    // (the default scroll amount on Windows is three lines per wheel tick).
+    static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
     float delta = GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
     if (isHorizontal) {
         // Windows sends a positive delta for scrolling right, while AppKit
         // sends a negative delta. EventHandler expects the AppKit values,
         // so we have to negate our horizontal delta to match.
-        m_deltaX = -delta * horizontalLineMultiplier();
+        m_deltaX = -delta * (float)horizontalScrollChars() * cScrollbarPixelsPerLine;
         m_deltaY = 0;
-        m_granularity = ScrollByLineWheelEvent;
+        m_granularity = ScrollByPixelWheelEvent;
     } else {
         m_deltaX = 0;
         m_deltaY = delta;
-        int verticalMultiplier = verticalLineMultiplier();
-        // A multiplier of -1 is used to mean that vertical wheel scrolling should be done by page.
-        m_granularity = (verticalMultiplier == -1) ? ScrollByPageWheelEvent : ScrollByLineWheelEvent;
-        if (m_granularity == ScrollByLineWheelEvent)
-            m_deltaY *= verticalMultiplier;
+        int verticalMultiplier = verticalScrollLines();
+        m_granularity = (verticalMultiplier == WHEEL_PAGESCROLL) ? ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
+        if (m_granularity == ScrollByPixelWheelEvent)
+            m_deltaY *= (float)verticalMultiplier * cScrollbarPixelsPerLine;
     }
 }
 
