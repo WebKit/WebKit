@@ -101,7 +101,7 @@ void Widget::hide()
  *  2.) We assume that GTK_NO_WINDOW is set and that frameRectsChanged positioned
  *      the widget correctly. ATM we do not honor the GraphicsContext translation.
  */
-void Widget::paint(GraphicsContext* context, const IntRect&)
+void Widget::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (!platformWidget())
         return;
@@ -114,7 +114,13 @@ void Widget::paint(GraphicsContext* context, const IntRect&)
 
     GdkEvent* event = gdk_event_new(GDK_EXPOSE);
     event->expose = *context->gdkExposeEvent();
-    event->expose.region = gtk_widget_region_intersect(widget, event->expose.region);
+    event->expose.area = static_cast<GdkRectangle>(rect);
+
+    IntPoint loc = parent()->contentsToWindow(rect.location());
+    event->expose.area.x = loc.x();
+    event->expose.area.y = loc.y();
+
+    event->expose.region = gdk_region_rectangle(&event->expose.area);
 
     /*
      * This will be unref'ed by gdk_event_free.
@@ -124,10 +130,8 @@ void Widget::paint(GraphicsContext* context, const IntRect&)
     /*
      * If we are going to paint do the translation and GtkAllocation manipulation.
      */
-    if (!gdk_region_empty(event->expose.region)) {
-        gdk_region_get_clipbox(event->expose.region, &event->expose.area);
+    if (!gdk_region_empty(event->expose.region))
         gtk_widget_send_expose(widget, event);
-    }
 
     gdk_event_free(event);
 }

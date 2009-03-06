@@ -1,3 +1,21 @@
+2009-03-04  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24358
+        [GTK] Scrollbars not clipped correctly
+
+        Use correct clip rectangle and apply coordinate translation needed
+        for non-ScrollView scrollbars.
+
+        We were ignoring the clip rectangle passed as parameter, which is
+        wrong in the case of non coalesced expose events. This, in turn,
+        uncovers the fact that we were not applying coordinate translation
+        to our position.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::paint):
+
 2009-03-06  Eric Carlson  <eric.carlson@apple.com>
 
         Build fix, no review
