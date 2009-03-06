@@ -2707,6 +2707,7 @@ void Node::dispatchWheelEvent(PlatformWheelEvent& e)
     IntPoint pos = view->windowToContents(e.pos());
     
     // Convert the deltas from pixels to lines if we have a pixel scroll event.
+    const float cMouseWheelPixelsPerLineStep = 40.0f / 3.0f;
     float deltaX = e.deltaX();
     float deltaY = e.deltaY();
     

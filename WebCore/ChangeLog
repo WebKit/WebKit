@@ -1,3 +1,10 @@
+2009-03-06  Peter Kasting  <pkasting@google.com>
+
+        Build bustage fix.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchWheelEvent):
+
 2009-03-06  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.
