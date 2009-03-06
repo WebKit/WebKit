@@ -5375,18 +5375,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             Editor::Command command = [self coreCommandBySelector:selector];
             if (command.isSupported())
                 eventWasHandled = command.execute(event);
-            else if ([self _canEdit]) {
-                // If the command is unsupported and the WebHTMLView is editable, then pass the
-                // selector to super and say that the event was handled. If the WebHTMLView is
-                // not editable, then do not say that the event was handled. This is important
-                // because of selectors like scrollPageDown:, which come as input method events
-                // when editing is enabled but keyboard events when it is not. These events are
-                // handled by the next responder in the responder chain.
+            else {
                 _private->selectorForDoCommandBySelector = selector;
+                // If WebKit does not support this command, we need to pass the selector to super.
                 [super doCommandBySelector:selector];
                 _private->selectorForDoCommandBySelector = 0;
-            } else
+                // In theory, [super doCommandBySelector:] can do some action that would cause WebKit 
+                // to need to consider the event handled.  But in practice, I've found no
+                // example of that happening and causing broken behavior.
                 eventWasHandled = false;
+            }
         }
 
         if (parameters)

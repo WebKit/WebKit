@@ -1,3 +1,17 @@
+2009-03-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24079
+        <rdar://problem/6611233> REGRESSION (r39549): Page loads cannot be interrupted with Command-. or Escape
+        <rdar://problem/6636563> Ctrl-tab shortcut doesn't switch tabs when focus is in text field
+       
+        * WebView/WebHTMLView.mm: (-[WebHTMLView doCommandBySelector:]):
+        If WebKit does not support the command, we need to pass the selector to super.  In this case,
+        we'll consider the event not to be handled.  This is not perfect because in theory, [super doCommandBySelector:] 
+        can do some action that would cause WebKit to need to consider the event handled.  But in practice, I've found no
+        example of that happening and causing broken behavior.
+
 2009-03-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
