@@ -1,3 +1,53 @@
+2009-03-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        WebViewDidChangeSelectionNotification isn't always called.
+        Undo was enabled, shouldDeleteDOMRange was called, etc. for no-op backward and forward deletes.
+
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-at-start-or-end-expected.txt:
+        * platform/mac/editing/deleting/delete-br-002-expected.txt:
+        * platform/mac/editing/deleting/delete-br-004-expected.txt:
+        * platform/mac/editing/deleting/delete-br-005-expected.txt:
+        * platform/mac/editing/deleting/delete-br-006-expected.txt:
+        * platform/mac/editing/deleting/delete-br-009-expected.txt:
+        * platform/mac/editing/deleting/delete-br-010-expected.txt:
+        * platform/mac/editing/deleting/delete-hr-expected.txt:
+        * platform/mac/editing/deleting/delete-tab-004-expected.txt:
+        * platform/mac/editing/deleting/forward-delete-expected.txt:
+        * platform/mac/editing/deleting/merge-into-empty-block-1-expected.txt:
+        * platform/mac/editing/deleting/merge-into-empty-block-2-expected.txt:
+        * platform/mac/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/mac/editing/inserting/insert-3800346-fix-expected.txt:
+        * platform/mac/editing/inserting/insert-br-004-expected.txt:
+        * platform/mac/editing/inserting/insert-br-005-expected.txt:
+        * platform/mac/editing/inserting/insert-br-006-expected.txt:
+        * platform/mac/editing/inserting/insert-br-008-expected.txt:
+        * platform/mac/editing/inserting/insert-div-006-expected.txt:
+        * platform/mac/editing/inserting/insert-div-008-expected.txt:
+        * platform/mac/editing/inserting/insert-div-010-expected.txt:
+        * platform/mac/editing/inserting/insert-div-011-expected.txt:
+        * platform/mac/editing/inserting/insert-div-013-expected.txt:
+        * platform/mac/editing/inserting/insert-div-015-expected.txt:
+        * platform/mac/editing/inserting/insert-div-019-expected.txt:
+        * platform/mac/editing/inserting/insert-div-021-expected.txt:
+        * platform/mac/editing/inserting/insert-paragraph-01-expected.txt:
+        * platform/mac/editing/inserting/insert-paragraph-03-expected.txt:
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.txt:
+        * platform/mac/editing/inserting/insert-tab-004-expected.txt:
+        * platform/mac/editing/inserting/insert-text-with-newlines-expected.txt:
+        * platform/mac/editing/inserting/line-break-expected.txt:
+        * platform/mac/editing/pasteboard/3976872-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-010-expected.txt:
+        * platform/mac/editing/style/block-style-006-expected.txt:
+        * platform/mac/editing/undo/undo-combined-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-combined-delete-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-expected.txt:
+
 2009-03-05  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Adam Roben.

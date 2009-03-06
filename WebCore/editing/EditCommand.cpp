@@ -92,7 +92,9 @@ void EditCommand::apply()
     doApply();
     deleteButtonController->enable();
 
-    if (!m_parent) {
+    // Only need to call appliedEditing for top-level commands, and TypingCommands do it on their
+    // own (see TypingCommand::typingAddedToOpenCommand).
+    if (!m_parent && !isTypingCommand()) {
         updateLayout();
         frame->editor()->appliedEditing(this);
     }

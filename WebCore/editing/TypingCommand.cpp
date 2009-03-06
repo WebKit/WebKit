@@ -48,7 +48,6 @@ TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, con
       m_commandType(commandType), 
       m_textToInsert(textToInsert), 
       m_openForMoreTyping(true), 
-      m_applyEditing(false), 
       m_selectInsertedText(selectInsertedText),
       m_smartDelete(false),
       m_granularity(granularity),
@@ -300,13 +299,7 @@ void TypingCommand::markMisspellingsAfterTyping()
 void TypingCommand::typingAddedToOpenCommand()
 {
     markMisspellingsAfterTyping();
-    // Do not apply editing to the frame on the first time through.
-    // The frame will get told in the same way as all other commands.
-    // But since this command stays open and is used for additional typing, 
-    // we need to tell the frame here as other commands are added.
-    if (m_applyEditing)
-        document()->frame()->editor()->appliedEditing(this);
-    m_applyEditing = true;
+    document()->frame()->editor()->appliedEditing(this);
 }
 
 void TypingCommand::insertText(const String &text, bool selectInsertedText)
@@ -436,18 +429,24 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             break;
     }
     
-    if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(selectionToDelete)) {
-        if (killRing)
-            document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
-        // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
-        // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
-        // more text than you insert.  In that case all of the text that was around originally should be selected.
-        if (m_openedByBackwardDelete)
-            setStartingSelection(selectionAfterUndo);
-        CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
-        setSmartDelete(false);
-        typingAddedToOpenCommand();
+    if (selectionToDelete.isNone()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+    
+    if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
+        return;
+    
+    if (killRing)
+        document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+    // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
+    // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
+    // more text than you insert.  In that case all of the text that was around originally should be selected.
+    if (m_openedByBackwardDelete)
+        setStartingSelection(selectionAfterUndo);
+    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
+    setSmartDelete(false);
+    typingAddedToOpenCommand();
 }
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
@@ -514,15 +513,21 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             break;
     }
     
-    if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(selectionToDelete)) {
-        if (killRing)
-            document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
-        // make undo select what was deleted
-        setStartingSelection(selectionAfterUndo);
-        CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
-        setSmartDelete(false);
-        typingAddedToOpenCommand();
+    if (selectionToDelete.isNone()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+    
+    if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
+        return;
+        
+    if (killRing)
+        document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+    // make undo select what was deleted
+    setStartingSelection(selectionAfterUndo);
+    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
+    setSmartDelete(false);
+    typingAddedToOpenCommand();
 }
 
 void TypingCommand::deleteSelection(bool smartDelete)

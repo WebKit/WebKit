@@ -871,13 +871,8 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->endingSelection());
-    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
-    // because there is work that it must do in this situation.
-    // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
-    // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
-    if (newSelection == m_frame->selection()->selection() || m_frame->shouldChangeSelection(newSelection))
-        m_frame->selection()->setSelection(newSelection, false, false);
+    changeSelectionAfterCommand(newSelection, false, false, cmd.get());
         
     if (!cmd->preservesTypingStyle())
         m_frame->setTypingStyle(0);
@@ -900,12 +895,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->startingSelection());
-    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
-    // because there is work that it must do in this situation.
-    // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
-    // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
-    if (newSelection == m_frame->selection()->selection() || m_frame->shouldChangeSelection(newSelection))
-        m_frame->selection()->setSelection(newSelection, true);
+    changeSelectionAfterCommand(newSelection, true, true, cmd.get());
     
     m_lastEditCommand = 0;
     if (client())
@@ -918,12 +908,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->endingSelection());
-    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
-    // because there is work that it must do in this situation.
-    // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
-    // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
-    if (newSelection == m_frame->selection()->selection() || m_frame->shouldChangeSelection(newSelection))
-        m_frame->selection()->setSelection(newSelection, true);
+    changeSelectionAfterCommand(newSelection, true, true, cmd.get());
     
     m_lastEditCommand = 0;
     if (client())
@@ -2187,6 +2172,27 @@ PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& ta
         return firstVisibleRange(target, caseFlag);
 
     return lastVisibleRange(target, caseFlag);
+}
+
+void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle, EditCommand* cmd)
+{
+    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
+    // because there is work that it must do in this situation.
+    // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
+    // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
+    bool selectionDidNotChangeDOMPosition = newSelection == m_frame->selection()->selection();
+    if (selectionDidNotChangeDOMPosition || m_frame->shouldChangeSelection(newSelection))
+        m_frame->selection()->setSelection(newSelection, closeTyping, clearTypingStyle);
+        
+    // Some kinds of deletes and line break insertions change the selection's position within the document without 
+    // changing its position within the DOM.  For example when you press return in the following (the caret is marked by ^): 
+    // <div contentEditable="true"><div>^Hello</div></div>
+    // WebCore inserts <div><br></div> *before* the current block, which correctly moves the paragraph down but which doesn't
+    // change the caret's DOM position (["hello", 0]).  In these situations the above SelectionController::setSelection call
+    // does not call EditorClient::respondToChangedSelection(), which, on the Mac, sends selection change notifications and 
+    // starts a new kill ring sequence, but we want to do these things (matches AppKit).
+    if (selectionDidNotChangeDOMPosition && cmd->isTypingCommand())
+        client()->respondToChangedSelection();
 }
 
 } // namespace WebCore

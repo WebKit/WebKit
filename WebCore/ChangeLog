@@ -1,3 +1,35 @@
+2009-03-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        WebViewDidChangeSelectionNotifications weren't being sent for commands that change the selection's position
+        within the document without changing its position in the DOM.  For example, pressing return in (caret marked by ^):
+        <div contentEditable="true"><div>^Hello</div></div>
+        Undo was being enabled, shouldDeleteDOMRange called, etc. when doing no-op deletes (a delete in an empty document 
+        for example). 
+
+        Changes to layout tests demonstrate fix.
+        
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): Don't call applyEditing for a TypingCommand.  The TypingCommand knows whether or
+        not it did work that needs to be applied.
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Moved code (but did not alter) to changeSelectionAfterCommand.
+        (WebCore::Editor::unappliedEditing): Ditto.
+        (WebCore::Editor::reappliedEditing): Ditto.
+        (WebCore::Editor::changeSelectionAfterCommand): Moved code from *appliedEditing into here.  Also call out to
+        EditorClient::respondToChangedSelection() for commands that changed the selection's position in the document
+        even if they did not change it's position in the DOM.  Any TypingCommand that gets this far changed it's position
+        in the document.
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand): Removed unused m_appliedEditing.
+        (WebCore::TypingCommand::typingAddedToOpenCommand): Always apply editing.  We won't get this far if we don't need to.
+        (WebCore::TypingCommand::deleteKeyPressed): Don't do any of the things that only make sense for Range selections, like
+        adding to the killring and responding to a change in selections if the delete was a no-op.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/TypingCommand.h:
+
 2009-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Roben.
