@@ -60,6 +60,7 @@ namespace WebCore {
         KURL completeURL(const String& url) const { return virtualCompleteURL(url); }
 
         virtual String userAgent(const KURL&) const = 0;
+        virtual String encoding() const = 0;
 
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 

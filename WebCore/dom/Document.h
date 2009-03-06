@@ -241,11 +241,13 @@ public:
 
     Element* elementFromPoint(int x, int y) const;
     String readyState() const;
-    String inputEncoding() const;
-    String defaultCharset() const;
 
-    String charset() const { return inputEncoding(); }
-    String characterSet() const { return inputEncoding(); }
+    String defaultCharset() const;
+    
+    // Synonyms backing similar DOM attributes. Use Document::encoding() to avoid virtual dispatch.
+    String inputEncoding() const { return Document::encoding(); }
+    String charset() const { return Document::encoding(); }
+    String characterSet() const { return Document::encoding(); }
 
     void setCharset(const String&);
 
@@ -444,6 +446,7 @@ public:
     KURL completeURL(const String&) const;
 
     virtual String userAgent(const KURL&) const;
+    virtual String encoding() const;
 
     // from cachedObjectClient
     virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);

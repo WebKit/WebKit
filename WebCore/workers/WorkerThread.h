@@ -44,7 +44,7 @@ namespace WebCore {
 
     class WorkerThread : public RefCounted<WorkerThread> {
     public:
-        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerObjectProxy*);
+        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& encoding, const String& sourceCode, WorkerObjectProxy*);
         ~WorkerThread();
 
         bool start();
@@ -55,7 +55,7 @@ namespace WebCore {
         WorkerObjectProxy* workerObjectProxy() const { return m_workerObjectProxy; }
 
     private:
-        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerObjectProxy*);
+        WorkerThread(const KURL&, const String& userAgent, const String& encoding, const String& sourceCode, WorkerObjectProxy*);
 
         static void* workerThreadStart(void*);
         void* workerThread();

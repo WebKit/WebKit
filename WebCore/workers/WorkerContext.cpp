@@ -47,9 +47,10 @@
 
 namespace WebCore {
 
-WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
+WorkerContext::WorkerContext(const KURL& url, const String& userAgent, const String& encoding, WorkerThread* thread)
     : m_url(url)
     , m_userAgent(userAgent)
+    , m_encoding(encoding)
     , m_location(WorkerLocation::create(url))
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
@@ -85,13 +86,20 @@ KURL WorkerContext::completeURL(const String& url) const
     // FIXME: Should we change the KURL constructor to have this behavior?
     if (url.isNull())
         return KURL();
-    // FIXME: does this need to provide a charset, like Document::completeURL does?
+    // FIXME: Document::completeURL provides a charset here (to encode query portion of url when
+    // submitting charset-encoded forms data). FF3.1b2 uses original document's encoding for nested
+    // Workers and importScripts but UTF-8 for XHR. If it's not a bug, we probably should match FF.
     return KURL(m_location->url(), url);
 }
 
 String WorkerContext::userAgent(const KURL&) const
 {
     return m_userAgent;
+}
+
+String WorkerContext::encoding() const
+{
+    return m_encoding;
 }
 
 WorkerNavigator* WorkerContext::navigator() const

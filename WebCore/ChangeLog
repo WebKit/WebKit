@@ -1,3 +1,45 @@
+2009-03-06  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24150
+        Add virtual ScriptExecutionContext::encoding()
+
+        Test: http/tests/workers/text-encoding.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::encoding):
+        * dom/Document.h:
+        (WebCore::Document::inputEncoding):
+        (WebCore::Document::charset):
+        (WebCore::Document::characterSet):
+        Add new virtual method and route DOM synonym functions on Document through it.
+
+        * dom/ScriptExecutionContext.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::encoding):
+        (WebCore::WorkerContext::completeURL): Added comment on why this is different from Document::completeURL
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::create):
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::create):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        All of the above route the 'encoding' parameter of parent context to the new
+        instance of WorkerContext - from Worker::notifyFinished() via WorkerMessagingProxy
+        through WorkerThread through WorkerThreadStartupData and into constructor of WorkerContext.
+
 2009-03-06  Peter Kasting  <pkasting@google.com>
 
         Build bustage fix.

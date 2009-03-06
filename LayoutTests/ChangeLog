@@ -1,3 +1,20 @@
+2009-03-06  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24150
+        Add virtual ScriptExecutionContext::encoding()
+
+        Test to verify how the text encoding in workers is used.
+        Script decoding and url completion is checked, with and
+        w/o http 'Content-Type: ...;charset=...' header.
+
+        * http/tests/workers/resources/worker-encoded.php: Added.
+        * http/tests/workers/resources/xhr-query-utf8.php: Added.
+        * http/tests/workers/resources/xhr-response.php: Added.
+        * http/tests/workers/text-encoding-expected.txt: Added.
+        * http/tests/workers/text-encoding.html: Added.
+
 2009-03-04  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -64,11 +64,11 @@ Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode
         return;
     }
 
-    // FIXME: 'inherit' charset and actual loading support from original document to enable nested workers.
+    // FIXME: Nested workers need loading support. Consider adopting ThreadableLoader here.
     ASSERT(scriptExecutionContext()->isDocument());
     Document* document = static_cast<Document*>(scriptExecutionContext());
 
-    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, document->charset());
+    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, scriptExecutionContext()->encoding());
     if (!m_cachedScript) {
         dispatchErrorEvent();
         return;
@@ -118,7 +118,7 @@ void Worker::notifyFinished(CachedResource* unusedResource)
     if (m_cachedScript->errorOccurred())
         dispatchErrorEvent();
     else
-        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), m_cachedScript->script());
+        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), scriptExecutionContext()->encoding(), m_cachedScript->script());
 
     m_cachedScript->removeClient(this);
     m_cachedScript = 0;
