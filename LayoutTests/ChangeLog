@@ -1,3 +1,47 @@
+2009-03-05  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Move all of the fast/css/*computed* tests into fast/css/getComputedStyle
+        in preparation for adding a bunch more getComputedStyle tests.
+
+        * fast/css/getComputedStyle/computed-style-display-none-expected.txt: Renamed from LayoutTests/fast/css/computed-style-display-none-expected.txt.
+        * fast/css/getComputedStyle/computed-style-display-none.html: Renamed from LayoutTests/fast/css/computed-style-display-none.html.
+        * fast/css/getComputedStyle/computed-style-expected.txt: Renamed from LayoutTests/fast/css/computed-style-expected.txt.
+        * fast/css/getComputedStyle/computed-style-negative-top-expected.txt: Renamed from LayoutTests/fast/css/computed-style-negative-top-expected.txt.
+        * fast/css/getComputedStyle/computed-style-negative-top.html: Renamed from LayoutTests/fast/css/computed-style-negative-top.html.
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/fast/css/computed-style-without-renderer-expected.txt.
+        * fast/css/getComputedStyle/computed-style-without-renderer.html: Renamed from LayoutTests/fast/css/computed-style-without-renderer.html.
+        * fast/css/getComputedStyle/computed-style.html: Renamed from LayoutTests/fast/css/computed-style.html.
+        * fast/css/getComputedStyle/getComputedStyle-background-position-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-background-position-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-background-position.html: Renamed from LayoutTests/fast/css/getComputedStyle-background-position.html.
+        * fast/css/getComputedStyle/getComputedStyle-background-size-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-background-size-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-background-size.html: Renamed from LayoutTests/fast/css/getComputedStyle-background-size.html.
+        * fast/css/getComputedStyle/getComputedStyle-border-box-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-border-box-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-border-box.html: Renamed from LayoutTests/fast/css/getComputedStyle-border-box.html.
+        * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-border-image-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-border-image.html: Renamed from LayoutTests/fast/css/getComputedStyle-border-image.html.
+        * fast/css/getComputedStyle/getComputedStyle-border-spacing-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-border-spacing-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-border-spacing.html: Renamed from LayoutTests/fast/css/getComputedStyle-border-spacing.html.
+        * fast/css/getComputedStyle/getComputedStyle-borderRadius-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-borderRadius-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-borderRadius.html: Renamed from LayoutTests/fast/css/getComputedStyle-borderRadius.html.
+        * fast/css/getComputedStyle/getComputedStyle-relayout-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-relayout-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-relayout.html: Renamed from LayoutTests/fast/css/getComputedStyle-relayout.html.
+        * fast/css/getComputedStyle/getComputedStyle-transform-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-transform-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-transform.html: Renamed from LayoutTests/fast/css/getComputedStyle-transform.html.
+        * fast/css/getComputedStyle/getComputedStyle-zIndex-auto-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle-zIndex-auto-expected.txt.
+        * fast/css/getComputedStyle/getComputedStyle-zIndex-auto.html: Renamed from LayoutTests/fast/css/getComputedStyle-zIndex-auto.html.
+        * fast/css/marginComputedStyle.html: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt: Renamed from LayoutTests/platform/mac/fast/css/computed-style-expected.txt.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/platform/mac/fast/css/computed-style-without-renderer-expected.txt.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.checksum: Renamed from LayoutTests/platform/mac/fast/css/marginComputedStyle-expected.checksum.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.png: Renamed from LayoutTests/platform/mac/fast/css/marginComputedStyle-expected.png.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.txt: Renamed from LayoutTests/platform/mac/fast/css/marginComputedStyle-expected.txt.
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt: Renamed from LayoutTests/platform/qt/fast/css/computed-style-expected.txt.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/platform/qt/fast/css/computed-style-without-renderer-expected.txt.
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Renamed from LayoutTests/platform/win/fast/css/computed-style-expected.txt.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/platform/win/fast/css/computed-style-without-renderer-expected.txt.
+
 2009-03-05  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
