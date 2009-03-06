@@ -1,3 +1,7 @@
+2009-03-06  Darin Adler  <darin@apple.com>
+
+        * fast/dom/Window/window-properties-expected.txt: Updated for recent addition of canPlayType.
+
 2009-03-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
