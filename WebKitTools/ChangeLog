@@ -1,3 +1,17 @@
+2009-03-06  Adam Roben  <aroben@apple.com>
+
+        Make update-webkit-support-libs fail if WebKitSupportLibrary.zip is
+        present but out of date
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/update-webkit-support-libs: Changed to use
+        dieAndInstructToDownload when the zip file doesn't exist. Added an MD5
+        check to make sure the file is up-to-date. If it is out of date, print
+        an error message and quit.
+        (sub dieAndInstructToDownload): Added. Prints an error message and
+        quits with an error.
+
 2009-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

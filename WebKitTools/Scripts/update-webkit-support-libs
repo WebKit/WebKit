@@ -38,6 +38,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+my $expectedMD5 = "a1341aadbcce1ef26dad2b2895457314";
+
 my $sourceDir = sourceDir();
 my $file = "WebKitSupportLibrary";
 my $zipFile = "$file.zip"; 
@@ -46,10 +48,13 @@ my $pathToZip = File::Spec->catfile($zipDirectory, $zipFile);
 my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
 my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
 
-# Make sure the file zipfile exists before doing anything.
-die "$zipFile could not be found in your root source directory.  Please\n" .
-    "download it from http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html and place it in \n" .
-    "$sourceDir\n and then run update-webkit again.\n" unless (-f "$pathToZip");
+# Make sure the file zipfile exists and matches the expected MD5 before doing anything.
+
+-f $pathToZip or dieAndInstructToDownload("$zipFile could not be find in your root source directory.");
+
+`md5sum "$pathToZip"` =~ /^([0-9a-fA-F]{32}).*/ or die "Error running md5sum on \"$pathToZip\"";
+my $actualMD5 = $1;
+$actualMD5 eq $expectedMD5 or dieAndInstructToDownload("$zipFile is out of date.");
 
 print "Checking mod-date of $zipFile...\n";
 open MOD, ">$tmpDir/$file.modified" or die "Couldn't open $tmpDir/$file.modified for writing";
@@ -102,4 +107,27 @@ sub toUnixPath
     return unless $path;
     chomp($path = `cygpath -u '$path'`);
     return $path;
+}
+
+sub dieAndInstructToDownload
+{
+    my $message = shift;
+
+    die <<EOF;
+
+===============================================================================
+$message
+Please download $zipFile from:
+
+    http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html
+
+and place it in:
+
+    $sourceDir
+
+Then run build-webkit again.
+===============================================================================
+
+EOF
+
 }
