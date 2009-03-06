@@ -214,8 +214,6 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
         return;
 
-    soup_message_set_flags(msg, SOUP_MESSAGE_OVERWRITE_CHUNKS);
-
     // We still don't know anything about Content-Type, so we will try
     // sniffing the contents of the file, and then report that we got
     // headers
@@ -506,6 +504,10 @@ bool ResourceHandle::startHttp(String urlString)
     d->m_msg = static_cast<SoupMessage*>(g_object_ref(msg));
     // balanced by a deref() in finishedCallback, which should always run
     ref();
+
+    // We handle each chunk ourselves, and we don't need msg->response_body
+    // to contain all of the data we got, when we finish downloading.
+    soup_message_body_set_accumulate(msg->response_body, FALSE);
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;
