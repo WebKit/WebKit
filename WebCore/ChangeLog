@@ -1,3 +1,16 @@
+2009-03-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24444
+        No multiple JS property for <input type="file" multiple />
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::multiple):
+        (WebCore::HTMLInputElement::setMultiple):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+
 2009-03-07  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

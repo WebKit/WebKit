@@ -188,6 +188,9 @@ public:
     int maxLength() const;
     void setMaxLength(int);
 
+    bool multiple() const;
+    void setMultiple(bool);
+
     String useMap() const;
     void setUseMap(const String&);
 

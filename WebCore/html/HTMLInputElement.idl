@@ -36,6 +36,7 @@ module html {
                  attribute boolean         disabled;
                  attribute boolean         autofocus;
                  attribute long            maxLength;
+                 attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute boolean         readOnly;
 #if defined(LANGUAGE_OBJECTIVE_C)

@@ -1421,6 +1421,16 @@ void HTMLInputElement::setMaxLength(int _maxLength)
     setAttribute(maxlengthAttr, String::number(_maxLength));
 }
 
+bool HTMLInputElement::multiple() const
+{
+    return !getAttribute(multipleAttr).isNull();
+}
+
+void HTMLInputElement::setMultiple(bool multiple)
+{
+    setAttribute(multipleAttr, multiple ? "" : 0);
+}
+    
 void HTMLInputElement::setSize(unsigned _size)
 {
     setAttribute(sizeAttr, String::number(_size));
