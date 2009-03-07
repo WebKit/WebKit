@@ -17,9 +17,9 @@ fast/canvas/set-colors.html
 fast/cookies/local-file-can-set-cookies.html
 fast/css/background-position-serialize.html
 fast/css/css-properties-case-insensitive.html
-fast/css/computed-style-without-renderer.html
-fast/css/computed-style.html
-fast/css/getComputedStyle-border-box.html
+fast/css/getComputedStyle/computed-style-without-renderer.html
+fast/css/getComputedStyle/computed-style.html
+fast/css/getComputedStyle/getComputedStyle-border-box.html
 fast/css/hover-affects-child.html
 fast/css/invalid-percentage-property.html
 fast/css/pseudostyle-anonymous-text.html 
@@ -938,7 +938,6 @@ fast/css/live-cssrules.html
 fast/css/margin-bottom-form-element-quirk.html
 fast/css/margin-bottom-form-element-strict.html
 fast/css/margin-top-bottom-dynamic.html
-fast/css/marginComputedStyle.html
 fast/css/max-height-none.html
 fast/css/negative-nth-child.html
 fast/css/only-child-pseudo-class.html

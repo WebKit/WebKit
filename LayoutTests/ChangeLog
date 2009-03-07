@@ -1,5 +1,21 @@
 2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Updated Skipped list per r41464. Not reviewed.
+        This should remove the warnings that come up everytime we run the gtk layout tests. 
+        http://trac.webkit.org/changeset/41464
+
+        The ff. tests have been moved to fast/css/getComputedStyle in the Skipped list:
+         fast/css/computed-style-without-renderer.html
+         fast/css/computed-style.html
+         fast/css/getComputedStyle-border-box.html
+
+        The ff. test has been removed from the Skipped list:
+          fast/css/marginComputedStyle.html
+
+        * platform/gtk/Skipped:
+
+2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Rubber-stamped by Holger Freyther.
 
         Remove fast/canvas/gradient-empty-path.html from the skipped
