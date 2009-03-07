@@ -782,7 +782,6 @@ fast/canvas/fill-stroke-clip-reset-path.html
 fast/canvas/fillrect-gradient-zero-stops.html
 fast/canvas/fillrect_gradient.html
 fast/canvas/gradient-add-second-start-end-stop.html
-fast/canvas/gradient-empty-path.html
 fast/canvas/image-object-in-canvas.html
 fast/canvas/patternfill-repeat.html
 fast/canvas/quadraticCurveTo.xml

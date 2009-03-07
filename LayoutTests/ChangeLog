@@ -1,5 +1,14 @@
 2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Rubber-stamped by Holger Freyther.
+
+        Remove fast/canvas/gradient-empty-path.html from the skipped
+        list as it was removed by r39288.
+
+        * platform/gtk/Skipped:
+
+2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Holger Freyther.
 
         [Gtk] Enable http security, plugins and ssl tests
