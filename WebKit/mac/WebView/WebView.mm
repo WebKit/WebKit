@@ -1102,7 +1102,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     // Need this to make leak messages accurate.
     if (applicationIsTerminating) {
         gcController().garbageCollectNow();
-        [WebCache empty];
+        [WebCache setDisabled:YES];
     }
 #endif
 }

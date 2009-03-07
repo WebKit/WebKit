@@ -1,3 +1,14 @@
+2009-03-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix a bug where debug builds were clearing the HTML5 application cache
+          on application termination
+
+        * WebView/WebView.mm:
+        (-[WebView _close]): Call -[WebCache setDisabled:YES] instead of
+        -[WebCache empty].
+
 2009-03-06  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Justin Garcia.
