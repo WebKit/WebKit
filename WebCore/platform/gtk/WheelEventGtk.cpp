@@ -53,10 +53,10 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             m_deltaY = -delta;
             break;
         case GDK_SCROLL_LEFT:
-            m_deltaX = -delta;
+            m_deltaX = delta;
             break;
         case GDK_SCROLL_RIGHT:
-            m_deltaX = delta;
+            m_deltaX = -delta;
             break;
     }
 

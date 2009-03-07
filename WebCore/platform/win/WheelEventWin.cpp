@@ -81,10 +81,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
     float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
     if (isHorizontal) {
-        // Windows sends a positive delta for scrolling right, while AppKit
-        // sends a negative delta. EventHandler expects the AppKit values,
-        // so we have to negate our horizontal delta to match.
-        m_deltaX = -delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
+        m_deltaX = delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
         m_deltaY = 0;
         m_granularity = ScrollByPixelWheelEvent;
     } else {
