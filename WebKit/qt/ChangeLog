@@ -1,3 +1,14 @@
+2009-03-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Cameron Zwarich.
+
+        These methods are clearly returning the wrong values as the two were
+        returning swapped information.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::totalBytes):
+        (QWebPage::bytesReceived):
+
 2009-03-05  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
