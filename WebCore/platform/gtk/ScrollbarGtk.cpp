@@ -65,14 +65,24 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
            ScrollbarTheme::nativeTheme()->scrollbarThickness());
 }
 
+IntPoint ScrollbarGtk::getLocationInParentWindow(const IntRect& rect)
+{
+    IntPoint loc;
+
+    if (parent()->isScrollViewScrollbar(this))
+        loc = parent()->convertToContainingWindow(rect.location());
+    else
+        loc = parent()->contentsToWindow(rect.location());
+
+    return loc;
+}
+
 void ScrollbarGtk::frameRectsChanged()
 {
     if (!parent())
         return;
 
-    // Translate our coordinates, we are a RenderLayout scrollbar because our
-    // ScrollView scrollbars are native.
-    IntPoint loc = parent()->contentsToWindow(frameRect().location());
+    IntPoint loc = getLocationInParentWindow(frameRect());
 
     // Don't allow the allocation size to be negative
     IntSize sz = frameRect().size();
@@ -141,7 +151,8 @@ void ScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)
     event->expose = *context->gdkExposeEvent();
     event->expose.area = static_cast<GdkRectangle>(rect);
 
-    IntPoint loc = parent()->contentsToWindow(rect.location());
+    IntPoint loc = getLocationInParentWindow(rect);
+
     event->expose.area.x = loc.x();
     event->expose.area.y = loc.y();
 

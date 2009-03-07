@@ -1,3 +1,19 @@
+2009-03-07  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24358
+        [GTK] Scrollbars not clipped correctly
+
+        ScrollView scrollbars in subframes are *not* native, so take that
+        into account again.
+
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::getLocationInParentWindow):
+        (ScrollbarGtk::frameRectsChanged):
+        (ScrollbarGtk::paint):
+        * platform/gtk/ScrollbarGtk.h:
+
 2009-03-06  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.
