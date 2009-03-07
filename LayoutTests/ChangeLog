@@ -2,6 +2,18 @@
 
         Reviewed by Holger Freyther.
 
+        [Gtk] Enable http security, plugins and ssl tests
+        https://bugs.webkit.org/show_bug.cgi?id=24393
+
+        Enable http tests for security, plugins and ssl, skipping tests
+        that are failing/crashing.
+
+        * platform/gtk/Skipped:
+
+2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [Gtk] Enable http history tests
         https://bugs.webkit.org/show_bug.cgi?id=24394
 
