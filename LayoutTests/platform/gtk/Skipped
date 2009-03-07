@@ -2221,7 +2221,6 @@ transitions/transition-drt-api.html
 
 # blacklist untested/failing folders
 http/tests/appcache
-http/tests/history
 http/tests/media
 http/tests/misc
 http/tests/navigation
@@ -2230,6 +2229,25 @@ http/tests/security
 http/tests/ssl
 http/tests/webarchive
 http/tests/wml
+
+# FIXME: these require implementation of WebHistory
+http/tests/history/redirect-200-refresh-2-seconds.pl
+http/tests/history/redirect-js-document-location-0-seconds.html
+http/tests/history/redirect-js-document-location-2-seconds.html
+http/tests/history/redirect-js-document-location-before-load.html
+http/tests/history/redirect-js-form-submit-0-seconds.html
+http/tests/history/redirect-js-form-submit-2-seconds.html
+http/tests/history/redirect-js-form-submit-before-load.html
+http/tests/history/redirect-js-location-0-seconds.html
+http/tests/history/redirect-js-location-2-seconds.html
+http/tests/history/redirect-js-location-assign-0-seconds.html
+http/tests/history/redirect-js-location-assign-2-seconds.html
+http/tests/history/redirect-js-location-assign-before-load.html
+http/tests/history/redirect-js-location-before-load.html
+http/tests/history/redirect-js-location-href-0-seconds.html
+http/tests/history/redirect-js-location-href-2-seconds.html
+http/tests/history/redirect-js-location-href-before-load.html
+http/tests/history/redirect-meta-refresh-2-seconds.html
 
 # tests that failed
 http/tests/incremental/slow-utf8-text.pl

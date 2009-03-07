@@ -1,3 +1,19 @@
+2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Enable http history tests
+        https://bugs.webkit.org/show_bug.cgi?id=24394
+
+        Get the index of the current item from the list of (history) items
+        to print before adding the back history items to the list. This
+        will make the 'curr' pointer point to the correct item in the
+        actual results, therefore, passing some of the http/tests/history
+        tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpBackForwardListForWebView):
+
 2009-03-06  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.

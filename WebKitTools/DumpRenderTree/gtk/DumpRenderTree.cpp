@@ -193,6 +193,7 @@ static void dumpBackForwardListForWebView(WebKitWebView* view)
     g_object_ref(currentItem);
     itemsToPrint = g_list_append(itemsToPrint, currentItem);
 
+    gint currentItemIndex = g_list_length(itemsToPrint) - 1;
     gint backListCount = webkit_web_back_forward_list_get_back_length(bfList);
     for (int i = -1; i >= -(backListCount); i--) {
         WebKitWebHistoryItem* item = webkit_web_back_forward_list_get_nth_item(bfList, i);
@@ -202,8 +203,7 @@ static void dumpBackForwardListForWebView(WebKitWebView* view)
         itemsToPrint = g_list_append(itemsToPrint, item);
     }
 
-    gint currentItemIndex = g_list_length(itemsToPrint) - 1;
-    for (int i = currentItemIndex; i >= 0; i--) {
+    for (int i = g_list_length(itemsToPrint) - 1; i >= 0; i--) {
         WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(g_list_nth_data(itemsToPrint, i));
         dumpHistoryItem(item, historyItemIndent, i == currentItemIndex);
         g_object_unref(item);

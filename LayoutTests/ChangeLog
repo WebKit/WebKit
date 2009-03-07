@@ -1,3 +1,14 @@
+2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Enable http history tests
+        https://bugs.webkit.org/show_bug.cgi?id=24394
+
+        Enable http/tests/history, adding failing tests to the Skipped list.
+
+        * platform/gtk/Skipped:
+
 2009-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
