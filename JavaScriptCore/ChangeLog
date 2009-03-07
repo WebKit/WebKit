@@ -1,3 +1,14 @@
+2009-03-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        When preforming an op_mov, preserve any existing register mapping.
+
+        ~0.5% progression on v8 tests x86-64.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2009-03-05  Simone Fiorentino  <simone.fiorentino@consulenti.fastweb.it>
 
         Bug 24382: request to add SH4 platform
