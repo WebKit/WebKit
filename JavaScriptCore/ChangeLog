@@ -1,3 +1,18 @@
+2009-03-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 24268: RuntimeArray is not a fully implemented JSArray
+        <https://bugs.webkit.org/show_bug.cgi?id=24268>
+
+        Don't cast a type to JSArray, just because it reportsArray as a supertype
+        in the JS type system.  Doesn't appear feasible to create a testcase
+        unfortunately as setting up the failure conditions requires internal access 
+        to JSC not present in DRT.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+
 2009-03-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
