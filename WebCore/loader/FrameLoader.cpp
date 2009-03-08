@@ -3373,7 +3373,7 @@ void FrameLoader::frameLoadCompleted()
 
     // Even if already complete, we might have set a previous item on a frame that
     // didn't do any data loading on the past transaction. Make sure to clear these out.
-    setPreviousHistoryItem(0);
+    m_previousHistoryItem = 0;
 
     // After a canceled provisional load, firstLayoutDone is false.
     // Reset it to true if we're displaying a page.
@@ -4851,31 +4851,16 @@ void FrameLoader::saveDocumentAndScrollState()
     }
 }
 
-// FIXME: These 6 setter/getters are here for a dwindling number of users in WebKit, WebFrame
+// FIXME: These 3 setter/getters are here for a dwindling number of users in WebKit, WebFrame
 // being the primary one.  After they're no longer needed there, they can be removed!
 HistoryItem* FrameLoader::currentHistoryItem()
 {
     return m_currentHistoryItem.get();
 }
 
-HistoryItem* FrameLoader::previousHistoryItem()
-{
-    return m_previousHistoryItem.get();
-}
-
-HistoryItem* FrameLoader::provisionalHistoryItem()
-{
-    return m_provisionalHistoryItem.get();
-}
-
 void FrameLoader::setCurrentHistoryItem(PassRefPtr<HistoryItem> item)
 {
     m_currentHistoryItem = item;
-}
-
-void FrameLoader::setPreviousHistoryItem(PassRefPtr<HistoryItem> item)
-{
-    m_previousHistoryItem = item;
 }
 
 void FrameLoader::setProvisionalHistoryItem(PassRefPtr<HistoryItem> item)

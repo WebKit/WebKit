@@ -407,10 +407,7 @@ namespace WebCore {
         // FIXME: These accessors are here for a dwindling number of users in WebKit, WebFrame
         // being the primary one.  After they're no longer needed there, they can be removed!
         HistoryItem* currentHistoryItem();
-        HistoryItem* previousHistoryItem();
-        HistoryItem* provisionalHistoryItem();
         void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
-        void setPreviousHistoryItem(PassRefPtr<HistoryItem>);
         void setProvisionalHistoryItem(PassRefPtr<HistoryItem>);
 
         void continueLoadWithData(SharedBuffer*, const String& mimeType, const String& textEncoding, const KURL&); 

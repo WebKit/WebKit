@@ -1,3 +1,17 @@
+2009-03-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Remove the unused methods previousHistoryItem(), setPreviousHistoryItem()
+        and provisionalHistoryItem() from FrameLoader.
+
+        * WebCore.base.exp:
+        * WebCore.order:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::frameLoadCompleted):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+
 2009-03-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
