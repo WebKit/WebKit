@@ -287,9 +287,10 @@ JSValuePtr arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValuePtr thisValue
     ArgList::const_iterator end = args.end();
     while (1) {
         if (curArg.isObject(&JSArray::info)) {
-            unsigned length = curArg->get(exec, exec->propertyNames().length).toUInt32(exec);
+            unsigned length = curArg.get(exec, exec->propertyNames().length).toUInt32(exec);
+            JSObject* curObject = curArg.toObject(exec);
             for (unsigned k = 0; k < length; ++k) {
-                if (JSValuePtr v = getProperty(exec, curArg, k))
+                if (JSValuePtr v = getProperty(exec, curObject, k))
                     arr->put(exec, n, v);
                 n++;
             }
