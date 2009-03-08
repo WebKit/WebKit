@@ -1,3 +1,17 @@
+2009-03-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Implement proper logging for the GTK+ port, inspired by the one in
+        Qt. We use the WEBKIT_DEBUG environment variable which was already
+        being used to decide whether to setup a logger for soup or not.
+
+        * platform/gtk/LoggingGtk.cpp:
+        (WebCore::getChannelFromName):
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized):
+
 2009-03-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
