@@ -53,51 +53,6 @@
 
 namespace WebCore {
 
-static HMODULE findCFNetworkModule()
-{
-    if (HMODULE module = GetModuleHandleA("CFNetwork"))
-        return module;
-    return GetModuleHandleA("CFNetwork_debug");
-}
-
-static DWORD cfNetworkVersion()
-{
-    HMODULE cfNetworkModule = findCFNetworkModule();
-    WCHAR filename[MAX_PATH];
-    GetModuleFileName(cfNetworkModule, filename, MAX_PATH);
-    DWORD handle;
-    DWORD versionInfoSize = GetFileVersionInfoSize(filename, &handle);
-    Vector<BYTE> versionInfo(versionInfoSize);
-    GetFileVersionInfo(filename, handle, versionInfoSize, versionInfo.data());
-    VS_FIXEDFILEINFO* fixedFileInfo;
-    UINT fixedFileInfoLength;
-    VerQueryValue(versionInfo.data(), TEXT("\\"), reinterpret_cast<LPVOID*>(&fixedFileInfo), &fixedFileInfoLength);
-    return fixedFileInfo->dwProductVersionMS;
-}
-
-static CFIndex highestSupportedCFURLConnectionClientVersion()
-{
-    const DWORD firstCFNetworkVersionWithConnectionClientV2 = 0x000101a8; // 1.424
-    const DWORD firstCFNetworkVersionWithConnectionClientV3 = 0x000101ad; // 1.429
-
-#ifndef _CFURLConnectionClientV2Present
-    return 1;
-#else
-
-    DWORD version = cfNetworkVersion();
-    if (version < firstCFNetworkVersionWithConnectionClientV2)
-        return 1;
-#ifndef _CFURLConnectionClientV3Present
-    return 2;
-#else
-
-    if (version < firstCFNetworkVersionWithConnectionClientV3)
-        return 2;
-    return 3;
-#endif // _CFURLConnectionClientV3Present
-#endif // _CFURLConnectionClientV2Present
-}
-
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
     static HashSet<String> hosts;
@@ -154,7 +109,6 @@ void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLen
         handle->client()->didReceiveData(handle, (const char*)bytes, length, originalLength);
 }
 
-#ifdef _CFURLConnectionClientV2Present
 static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite, const void *clientInfo)
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
@@ -162,9 +116,7 @@ static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFInd
         return;
     handle->client()->didSendData(handle, totalBytesWritten, totalBytesExpectedToWrite);
 }
-#endif
 
-#ifdef _CFURLConnectionClientV3Present
 static Boolean shouldUseCredentialStorageCallback(CFURLConnectionRef conn, const void* clientInfo)
 {
     ResourceHandle* handle = const_cast<ResourceHandle*>(static_cast<const ResourceHandle*>(clientInfo));
@@ -176,7 +128,6 @@ static Boolean shouldUseCredentialStorageCallback(CFURLConnectionRef conn, const
 
     return handle->shouldUseCredentialStorage();
 }
-#endif
 
 void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo) 
 {
@@ -348,20 +299,9 @@ bool ResourceHandle::start(Frame* frame)
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(d->m_request, d->m_shouldContentSniff));
 
-    static CFIndex clientVersion = highestSupportedCFURLConnectionClientVersion();
-    CFURLConnectionClient* client;
-#if defined(_CFURLConnectionClientV3Present)
-    CFURLConnectionClient_V3 client_V3 = {clientVersion, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
-    client = reinterpret_cast<CFURLConnectionClient*>(&client_V3);
-#elif defined(_CFURLConnectionClientV2Present)
-    CFURLConnectionClient_V2 client_V2 = {clientVersion, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData};
-    client = reinterpret_cast<CFURLConnectionClient*>(&client_V2);
-#else
-    CFURLConnectionClient client_V1 = {1, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge};
-    client = &client_V1;
-#endif
+    CFURLConnectionClient_V3 client = { 3, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
 
-    d->m_connection.adoptCF(CFURLConnectionCreate(0, request.get(), client));
+    d->m_connection.adoptCF(CFURLConnectionCreate(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client)));
 
     CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
     CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);

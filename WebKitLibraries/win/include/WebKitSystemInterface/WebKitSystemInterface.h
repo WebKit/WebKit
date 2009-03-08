@@ -49,7 +49,6 @@ void wkSetFontSmoothingContrast(CGFloat);
 CGFloat wkGetFontSmoothingContrast();
 uint32_t wkSetFontSmoothingStyle(CGContextRef cg, bool fontAllowsSmoothing);
 void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
-bool wkCanUsePlatformNativeGlyphs();
 void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
@@ -72,7 +71,6 @@ void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
 CFStringRef wkCopyFoundationCacheDirectory();
 void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
 
-bool wkCanAccessCFURLRequestHTTPBodyParts();
 CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 

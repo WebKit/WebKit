@@ -298,8 +298,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
 
     if (font->platformData().useGDI()) {
-        static bool canUsePlatformNativeGlyphs = wkCanUsePlatformNativeGlyphs();
-        if (!canUsePlatformNativeGlyphs || !shouldUseFontSmoothing || (graphicsContext->textDrawingMode() & cTextStroke)) {
+        if (!shouldUseFontSmoothing || (graphicsContext->textDrawingMode() & cTextStroke)) {
             drawGDIGlyphs(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
             return;
         }

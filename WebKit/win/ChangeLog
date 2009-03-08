@@ -1,3 +1,13 @@
+2009-03-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - WebKit part of removing build-time and run-time support for legacy
+          versions of CFNetwork and Core Graphics
+
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2009-03-04  Adam Barth  <abath@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -317,8 +317,7 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
 {
     if (!formData) {
-        if (wkCanAccessCFURLRequestHTTPBodyParts())
-            wkCFURLRequestSetHTTPRequestBodyParts(request, 0);
+        wkCFURLRequestSetHTTPRequestBodyParts(request, 0);
         return;
     }
 
@@ -338,52 +337,20 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
         }
     }
 
-    if (wkCanAccessCFURLRequestHTTPBodyParts()) {
-        RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
-        for (size_t i = 0; i < count; ++i) {
-            const FormDataElement& element = formData->elements()[i];
-            if (element.m_type == FormDataElement::data) {
-                RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, reinterpret_cast<const UInt8*>(element.m_data.data()), element.m_data.size()));
-                CFArrayAppendValue(array.get(), data.get());
-            } else {
-                RetainPtr<CFStringRef> filename(AdoptCF, element.m_filename.createCFString());
-                CFArrayAppendValue(array.get(), filename.get());
-            }
-        }
-
-        wkCFURLRequestSetHTTPRequestBodyParts(request, array.get());
-        return;
-    }
-
-    // Precompute the content length so CFURLConnection doesn't use chunked mode.
-    bool haveLength = true;
-    long long length = 0;
     for (size_t i = 0; i < count; ++i) {
         const FormDataElement& element = formData->elements()[i];
-        if (element.m_type == FormDataElement::data)
-            length += element.m_data.size();
-        else {
-            long long size;
-            if (getFileSize(element.m_filename, size))
-                length += size;
-            else
-                haveLength = false;
+        if (element.m_type == FormDataElement::data) {
+            RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, reinterpret_cast<const UInt8*>(element.m_data.data()), element.m_data.size()));
+            CFArrayAppendValue(array.get(), data.get());
+        } else {
+            RetainPtr<CFStringRef> filename(AdoptCF, element.m_filename.createCFString());
+            CFArrayAppendValue(array.get(), filename.get());
         }
     }
 
-    if (haveLength) {
-        CFStringRef lengthStr = CFStringCreateWithFormat(0, 0, CFSTR("%lld"), length);
-        CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Content-Length"), lengthStr);
-        CFRelease(lengthStr);
-    }
-
-    static WCReadStreamCallBacks formDataStreamCallbacks = 
-        { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule };
-
-    CFReadStreamRef stream = CFReadStreamCreate(0, (CFReadStreamCallBacks *)&formDataStreamCallbacks, formData.releaseRef());
-    CFURLRequestSetHTTPRequestBodyStream(request, stream);
-    CFRelease(stream);
+    wkCFURLRequestSetHTTPRequestBodyParts(request, array.get());
 }
 
 PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
@@ -391,28 +358,23 @@ PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
     if (RetainPtr<CFDataRef> bodyData = CFURLRequestCopyHTTPRequestBody(request))
         return FormData::create(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
 
-    if (wkCanAccessCFURLRequestHTTPBodyParts()) {
-        if (RetainPtr<CFArrayRef> bodyParts = wkCFURLRequestCopyHTTPRequestBodyParts(request)) {
-            RefPtr<FormData> formData = FormData::create();
+    if (RetainPtr<CFArrayRef> bodyParts = wkCFURLRequestCopyHTTPRequestBodyParts(request)) {
+        RefPtr<FormData> formData = FormData::create();
 
-            CFIndex count = CFArrayGetCount(bodyParts.get());
-            for (CFIndex i = 0; i < count; i++) {
-                CFTypeRef bodyPart = CFArrayGetValueAtIndex(bodyParts.get(), i);
-                CFTypeID typeID = CFGetTypeID(bodyPart);
-                if (typeID == CFStringGetTypeID()) {
-                    String filename = (CFStringRef)bodyPart;
-                    formData->appendFile(filename);
-                } else if (typeID == CFDataGetTypeID()) {
-                    CFDataRef data = (CFDataRef)bodyPart;
-                    formData->appendData(CFDataGetBytePtr(data), CFDataGetLength(data));
-                } else
-                    ASSERT_NOT_REACHED();
-            }
-            return formData.release();
+        CFIndex count = CFArrayGetCount(bodyParts.get());
+        for (CFIndex i = 0; i < count; i++) {
+            CFTypeRef bodyPart = CFArrayGetValueAtIndex(bodyParts.get(), i);
+            CFTypeID typeID = CFGetTypeID(bodyPart);
+            if (typeID == CFStringGetTypeID()) {
+                String filename = (CFStringRef)bodyPart;
+                formData->appendFile(filename);
+            } else if (typeID == CFDataGetTypeID()) {
+                CFDataRef data = (CFDataRef)bodyPart;
+                formData->appendData(CFDataGetBytePtr(data), CFDataGetLength(data));
+            } else
+                ASSERT_NOT_REACHED();
         }
-    } else {
-        if (RetainPtr<CFReadStreamRef> bodyStream = CFURLRequestCopyHTTPRequestBodyStream(request))
-            return getStreamFormDatas().get(bodyStream.get());
+        return formData.release();
     }
 
     // FIXME: what to do about arbitrary body streams?

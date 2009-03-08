@@ -1,3 +1,26 @@
+2009-03-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - WebCore part of removing build-time and run-time support for legacy
+          versions of CFNetwork and Core Graphics
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        (WebCore::httpBodyFromRequest):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didSendBodyData):
+        (WebCore::shouldUseCredentialStorageCallback):
+        (WebCore::ResourceHandle::start):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::filterCookies):
+
 2009-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

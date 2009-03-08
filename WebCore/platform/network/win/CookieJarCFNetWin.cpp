@@ -41,28 +41,6 @@ namespace WebCore {
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
 
-typedef Boolean (*IsHTTPOnlyFunction)(CFHTTPCookieRef);
-
-static HMODULE findCFNetworkModule()
-{
-    if (HMODULE module = GetModuleHandleA("CFNetwork"))
-        return module;
-    return GetModuleHandleA("CFNetwork_debug");
-}
-
-static IsHTTPOnlyFunction findIsHTTPOnlyFunction()
-{
-    return reinterpret_cast<IsHTTPOnlyFunction>(GetProcAddress(findCFNetworkModule(), "CFHTTPCookieIsHTTPOnly"));
-}
-
-static bool isHTTPOnly(CFHTTPCookieRef cookie)
-{
-    // Once we require a newer version of CFNetwork with the CFHTTPCookieIsHTTPOnly function,
-    // we can change this to be a normal function call and eliminate findIsHTTPOnlyFunction.
-    static IsHTTPOnlyFunction function = findIsHTTPOnlyFunction();
-    return function && function(cookie);
-}
-
 static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
 {
     CFIndex count = CFArrayGetCount(unfilteredCookies);
@@ -77,7 +55,7 @@ static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
         if (!CFStringGetLength(CFHTTPCookieGetName(cookie)))
             continue;
 
-        if (isHTTPOnly(cookie))
+        if (CFHTTPCookieIsHTTPOnly(cookie))
             continue;
 
         CFArrayAppendValue(filteredCookies.get(), cookie);
