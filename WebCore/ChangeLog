@@ -1,3 +1,17 @@
+2009-03-09  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23024
+
+        Fix an incorrect criteria in the if statement that leaves references to
+        deleted floating objects in RenderBlock.
+
+        Test: fast/block/float/crash-on-absolute-positioning.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+
 2009-03-09  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Eric Seidel.

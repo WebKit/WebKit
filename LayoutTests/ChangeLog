@@ -1,3 +1,14 @@
+2009-03-09  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23024
+
+        Added regression test for a bug that causes crashes.
+
+        * fast/block/float/crash-on-absolute-positioning.html: Added.
+        * platform/mac/fast/block/float/crash-on-absolute-positioning-expected.txt: Added.
+
 2009-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

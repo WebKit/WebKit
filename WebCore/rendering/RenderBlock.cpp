@@ -3158,7 +3158,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
     // Iterate over our children and mark them as needed.
     if (!childrenInline()) {
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (child->isFloatingOrPositioned() || !child->isRenderBlock())
+            if ((!floatToRemove && child->isFloatingOrPositioned()) || !child->isRenderBlock())
                 continue;
             RenderBlock* childBlock = toRenderBlock(child);
             if ((floatToRemove ? childBlock->containsFloat(floatToRemove) : childBlock->containsFloats()) || childBlock->shrinkToAvoidFloats())
