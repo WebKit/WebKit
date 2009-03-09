@@ -28,6 +28,7 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "VisiblePosition.h"
 
 using namespace std;
 

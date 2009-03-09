@@ -34,6 +34,10 @@
 #include "RenderView.h"
 #include "VisiblePosition.h"
 
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "Frame.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {

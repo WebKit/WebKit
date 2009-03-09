@@ -1,5 +1,23 @@
 2009-03-08  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed Dan Bernstein.
+
+        Push the include of Frame.h out of RenderView.h and down to those files
+        that need it.  This cuts the size of symbols for RenderFoo object files
+        by around 15% in a debug build.
+
+        * bindings/objc/DOM.mm:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::zoomFactor):
+        * rendering/RenderView.h:
+
+2009-03-08  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Remove some unnecessary or redundant includes from files related to the JS bindings.

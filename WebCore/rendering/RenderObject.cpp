@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
 #include "FloatQuad.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

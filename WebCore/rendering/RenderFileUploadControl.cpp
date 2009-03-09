@@ -22,6 +22,7 @@
 #include "RenderFileUploadControl.h"
 
 #include "FileList.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"

@@ -615,6 +615,14 @@ int RenderView::viewWidth() const
     return width;
 }
 
+float RenderView::zoomFactor() const
+{
+    if (m_frameView->frame() && m_frameView->frame()->shouldApplyPageZoom())
+        return m_frameView->frame()->zoomFactor();
+
+    return 1.0f;
+}
+
 // The idea here is to take into account what object is moving the pagination point, and
 // thus choose the best place to chop it.
 void RenderView::setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak)

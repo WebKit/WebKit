@@ -31,6 +31,7 @@
 #import "DOMHTMLCanvasElement.h"
 #import "DOMInternal.h"
 #import "ExceptionHandlers.h"
+#import "Frame.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInElement.h"
 #import "NodeIterator.h"
