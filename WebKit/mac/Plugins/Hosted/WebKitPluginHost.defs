@@ -182,6 +182,10 @@ simpleroutine PHNPObjectRelease(pluginHostPort :mach_port_t;
                               pluginID :uint32_t;
                               objectID :uint32_t);
 
+simpleroutine PHNPObjectEnumerate(pluginHostPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  objectID :uint32_t);
+                                  
 // Replies
 
 simpleroutine PHBooleanReply(clientPort :mach_port_t;

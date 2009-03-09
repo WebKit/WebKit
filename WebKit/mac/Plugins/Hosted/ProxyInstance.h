@@ -72,6 +72,8 @@ private:
     virtual JSC::JSValuePtr defaultValue(JSC::ExecState*, JSC::PreferredPrimitiveType) const;
     virtual JSC::JSValuePtr valueOf(JSC::ExecState*) const;
     
+    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
+
     JSC::JSValuePtr stringValue(JSC::ExecState*) const;
     JSC::JSValuePtr numberValue(JSC::ExecState*) const;
     JSC::JSValuePtr booleanValue() const;

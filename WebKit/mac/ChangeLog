@@ -1,3 +1,26 @@
+2009-03-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        WebKit side of <rdar://problem/6530007>
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEnumerate):
+        Call NetscapePluginInstanceProxy::enumerate.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+        Enumerate the JS object and serialize its values.
+        
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getPropertyNames):
+        Ask the plug-in host to get the property names and deserialize them.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2009-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt and Cameron Zwarich

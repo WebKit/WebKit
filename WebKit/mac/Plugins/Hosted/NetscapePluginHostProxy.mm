@@ -799,6 +799,27 @@ kern_return_t WKPCIdentifierInfo(mach_port_t clientPort, uint64_t serverIdentifi
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCEnumerate(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    data_t resultData = 0;
+    mach_msg_type_number_t resultLength = 0;
+    
+    boolean_t returnValue = instanceProxy->enumerate(objectID, resultData, resultLength);
+    
+    _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), returnValue, resultData, resultLength);
+    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    
+    return KERN_SUCCESS;
+}
+
 kern_return_t WKPCSetMenuBarVisible(mach_port_t clientPort, boolean_t menuBarVisible)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);

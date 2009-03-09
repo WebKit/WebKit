@@ -29,6 +29,9 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "NetscapePluginInstanceProxy.h"
+#import <runtime/PropertyNameArray.h>
+#import <WebCore/IdentifierRep.h>
+#import <WebCore/JSDOMWindow.h>
 #import <WebCore/npruntime_impl.h>
 
 extern "C" {
@@ -38,6 +41,7 @@ extern "C" {
 using namespace JSC;
 using namespace JSC::Bindings;
 using namespace std;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -222,6 +226,34 @@ JSValuePtr ProxyInstance::booleanValue() const
 JSValuePtr ProxyInstance::valueOf(ExecState* exec) const
 {
     return stringValue(exec);
+}
+
+void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
+{
+    if (_WKPHNPObjectEnumerate(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), m_objectID) != KERN_SUCCESS)
+        return;
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>();
+  
+    if (!reply.get() || !reply->m_returnValue)
+        return;
+    
+    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:(NSData *)reply->m_result.get()
+                                                                 mutabilityOption:NSPropertyListImmutable
+                                                                           format:0
+                                                                 errorDescription:0];
+    
+    for (NSNumber *number in array.get()) {
+        IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>([number longLongValue]);
+        if (!IdentifierRep::isValid(identifier))
+            continue;
+
+        if (identifier->isString()) {
+            const char* str = identifier->string();
+            nameArray.add(Identifier(JSDOMWindow::commonJSGlobalData(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
+        } else
+            nameArray.add(Identifier::from(exec, identifier->number()));
+    }
 }
 
 MethodList ProxyInstance::methodsNamed(const Identifier& identifier)

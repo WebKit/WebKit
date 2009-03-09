@@ -46,10 +46,12 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #include <runtime/JSLock.h>
+#include <runtime/PropertyNameArray.h>
 #import <utility>
 
 extern "C" {
@@ -870,6 +872,42 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
     JSValuePtr func = object->get(exec, methodName);
     exec->clearException();
     return !func.isUndefined();
+}
+
+bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultData, mach_msg_type_number_t& resultLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);
+ 
+    PropertyNameArray propertyNames(exec);
+    object->getPropertyNames(exec, propertyNames);
+    
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    for (unsigned i = 0; i < propertyNames.size(); i++) {
+        uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].ustring().UTF8String().c_str()));
+
+        [array addObject:[NSNumber numberWithLongLong:methodName]];
+    }
+
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:array format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    ASSERT(data);
+    
+    resultLength = [data length];
+    mig_allocate(reinterpret_cast<vm_address_t*>(&resultData), resultLength);
+    
+    memcpy(resultData, [data bytes], resultLength);
+    
+    exec->clearException();
+
+    return true;
 }
 
 void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValuePtr value)

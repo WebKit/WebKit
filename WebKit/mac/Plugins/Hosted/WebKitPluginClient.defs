@@ -132,6 +132,10 @@ routine PCIdentifierInfo(clientPort :mach_port_t;
                        identifier :uint64_t;
                        out info :data_t, dealloc);
 
+simpleroutine PCEnumerate(clientPort :mach_port_t;
+                          pluginID :uint32_t;
+                          objectID :uint32_t);
+
 // Misc
 
 simpleroutine PCSetMenuBarVisible(clientPort :mach_port_t;
