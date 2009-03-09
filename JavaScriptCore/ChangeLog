@@ -1,3 +1,31 @@
+2009-03-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23175: String and UString should be able to share a UChar* buffer.
+        <https://bugs.webkit.org/show_bug.cgi?id=23175>
+
+        Add CrossThreadRefCounted.
+
+        * wtf/CrossThreadRefCounted.h: Added.
+        (WTF::CrossThreadRefCounted::create):
+        (WTF::CrossThreadRefCounted::isShared):
+        (WTF::CrossThreadRefCounted::dataAccessMustBeThreadSafe):
+        (WTF::CrossThreadRefCounted::mayBePassedToAnotherThread):
+        (WTF::CrossThreadRefCounted::CrossThreadRefCounted):
+        (WTF::CrossThreadRefCounted::~CrossThreadRefCounted):
+        (WTF::CrossThreadRefCounted::ref):
+        (WTF::CrossThreadRefCounted::deref):
+        (WTF::CrossThreadRefCounted::release):
+        (WTF::CrossThreadRefCounted::copy):
+        (WTF::CrossThreadRefCounted::threadSafeDeref):
+        * wtf/RefCounted.h:
+        * wtf/Threading.h:
+        (WTF::ThreadSafeSharedBase::ThreadSafeSharedBase):
+        (WTF::ThreadSafeSharedBase::derefBase):
+        (WTF::ThreadSafeShared::ThreadSafeShared):
+        (WTF::ThreadSafeShared::deref):
+
 2009-03-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by George Staikos.
