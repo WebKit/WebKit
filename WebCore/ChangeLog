@@ -1,3 +1,22 @@
+2009-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Remove some unnecessary or redundant includes from files related to the JS bindings.
+        This cuts the size of the symbols for a debug build by around 3%.
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSPluginElementFunctions.cpp:
+        * bindings/js/JSSVGPODTypeWrapper.h:
+
 2009-03-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

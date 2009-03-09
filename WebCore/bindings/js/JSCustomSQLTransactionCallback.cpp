@@ -29,10 +29,7 @@
 #include "config.h"
 #include "JSCustomSQLTransactionCallback.h"
 
-#include "CString.h"
-#include "DOMWindow.h"
 #include "Frame.h"
-#include "Logging.h"
 #include "ScriptController.h"
 #include "JSSQLTransaction.h"
 #include "Page.h"

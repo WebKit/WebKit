@@ -20,7 +20,6 @@
 #include "config.h"
 #include "JSDocument.h"
 
-#include "DOMWindow.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -28,9 +27,6 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
-#include "JSNodeList.h"
-#include "Location.h"
-#include "NodeList.h"
 #include "ScriptController.h"
 
 #if ENABLE(SVG)

@@ -26,10 +26,8 @@
 #include "config.h"
 #include "JSCustomPositionCallback.h"
 
-#include "CString.h"
 #include "Frame.h"
 #include "JSGeoposition.h"
-#include "Page.h"
 #include "ScriptController.h"
 #include <runtime/JSLock.h>
 

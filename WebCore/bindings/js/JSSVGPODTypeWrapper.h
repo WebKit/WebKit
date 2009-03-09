@@ -28,7 +28,6 @@
 #define JSSVGPODTypeWrapper_h
 
 #if ENABLE(SVG)
-#include "Frame.h"
 #include "SVGElement.h"
 #include <wtf/StdLibExtras.h>
 

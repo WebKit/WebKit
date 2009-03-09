@@ -28,14 +28,10 @@
 
 #if ENABLE(XPATH)
 
-#include "CString.h"
-#include "Console.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
-#include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include <runtime/JSLock.h>
 

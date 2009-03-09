@@ -29,8 +29,6 @@
 #include "config.h"
 #include "JSCustomSQLStatementErrorCallback.h"
 
-#include "CString.h"
-#include "DOMWindow.h"
 #include "Frame.h"
 #include "ScriptController.h"
 #include "JSSQLError.h"

@@ -20,13 +20,9 @@
 #include "config.h"
 #include "JSPluginElementFunctions.h"
 
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSHTMLElement.h"
-#include "ScriptController.h"
 #include "runtime.h"
 #include "runtime_object.h"
 

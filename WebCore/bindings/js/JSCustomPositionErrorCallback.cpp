@@ -26,10 +26,8 @@
 #include "config.h"
 #include "JSCustomPositionErrorCallback.h"
 
-#include "CString.h"
 #include "Frame.h"
 #include "JSPositionError.h"
-#include "Page.h"
 #include "ScriptController.h"
 #include <runtime/JSLock.h>
 
