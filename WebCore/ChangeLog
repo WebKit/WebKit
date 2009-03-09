@@ -1,3 +1,19 @@
+2009-03-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson and Dave Hyatt.
+
+        - fix <rdar://problem/6654344> REGRESSION (r41041): Zillow.com has
+          misaligned edit fields
+
+        Test: fast/forms/legend-display-none.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Change the display
+        property of legend elements to 'block' unless it is 'none'.
+        * css/html4.css: Do not force the display property of legend elements to
+        'block' using CSS, because that prevents style rules from setting it to
+        'none'.
+
 2009-03-09  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Dave Hyatt.

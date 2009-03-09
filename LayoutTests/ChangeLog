@@ -1,3 +1,13 @@
+2009-03-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson and Dave Hyatt.
+
+        - test for <rdar://problem/6654344> REGRESSION (r41041): Zillow.com has
+          misaligned edit fields
+
+        * fast/forms/legend-display-none-expected.txt: Added.
+        * fast/forms/legend-display-none.html: Added.
+
 2009-03-09  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Dave Hyatt.

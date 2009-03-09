@@ -1445,7 +1445,10 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         // Table headers with a text-align of auto will change the text-align to center.
         if (e && e->hasTagName(thTag) && style->textAlign() == TAAUTO)
             style->setTextAlign(CENTER);
-        
+
+        if (e && e->hasTagName(legendTag))
+            style->setDisplay(BLOCK);
+
         // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
         // position or float an inline, compact, or run-in.  Cache the original display, since it
         // may be needed for positioned elements that have to compute their static normal flow
