@@ -92,6 +92,7 @@ fast/events/autoscroll-in-textfield.html
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/capture-on-target.html
+fast/events/crash-on-mutate-during-drop.html
 fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/context-onmousedown-event.html
@@ -114,6 +115,7 @@ fast/events/keypress-focus-change.html
 fast/events/keypress-insert-tab.html
 fast/events/keypress-removed-node.html
 fast/events/mouse-click-events.html
+fast/events/mouse-drag-from-frame.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mousemove-after-drag-over-scrollbar.html
 fast/events/mouseout-dead-subframe.html
@@ -179,6 +181,7 @@ fast/forms/listbox-typeahead-scroll.html
 fast/forms/onchange-enter-submit.html
 fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
+fast/forms/option-mouseevents.html
 fast/forms/password-doubleclick-selection.html
 fast/forms/plaintext-mode-1.html
 fast/forms/radio-check-click-and-drag.html
@@ -225,12 +228,14 @@ fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
 fast/forms/mailto/post-multiple-items.html
 fast/frames/empty-frame-document.html
+fast/frames/frame-dead-region.html
 fast/frames/hover-timer-crash.html
 fast/frames/iframe-text-contents.html
 fast/frames/iframe-window-focus.html
 fast/frames/removal-before-attach-crash.html
 fast/frames/frame-deep-nested-resize.html
 fast/history/history_reload.html
+fast/history/window-open.html
 fast/html/tab-order.html
 fast/images/load-img-with-empty-src.html
 fast/js/date-DST-time-cusps.html

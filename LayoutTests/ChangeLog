@@ -1,5 +1,17 @@
 2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Rubber-stamped by Mark Rowe.
+
+        [Gtk] Skip failing tests that require the eventSender.
+
+        The Gtk+ platform is lacking an implementation of the
+        eventSender. We will enable the tests once there is an
+        implementation of that class.
+
+        * platform/gtk/Skipped:
+
+2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Mark Rowe.
 
         Enable all fast/profiler tests.
