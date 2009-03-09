@@ -1,3 +1,11 @@
+2009-03-09  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Eric Seidel.
+
+        Unify JSC/V8 implementations of DOMWindow.idl.
+
+        * page/DOMWindow.idl:
+
 2009-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

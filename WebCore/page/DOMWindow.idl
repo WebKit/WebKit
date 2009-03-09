@@ -53,7 +53,7 @@ module window {
         attribute [Replaceable] BarInfo toolbar;
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
-        attribute [DoNotCheckDomainSecurity, CustomSetter] Location location;
+        attribute [DoNotCheckDomainSecurity, CustomSetter, V8DisallowShadowing] Location location;
 
         DOMSelection getSelection();
 
@@ -117,12 +117,12 @@ module window {
 
         // Self referential attributes
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow self;
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow window;
+        readonly attribute [DoNotCheckDomainSecurity, V8DisallowShadowing] DOMWindow window;
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow frames;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow opener;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8CustomSetter] DOMWindow opener;
         attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow parent;
-        attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow top;
+        attribute [Replaceable, DoNotCheckDomainSecurity, V8DisallowShadowing, V8ReadOnly] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
@@ -204,12 +204,17 @@ module window {
         attribute [ProtectedListener] EventListener onwebkitanimationend;
         attribute [ProtectedListener] EventListener onwebkittransitionend;
 
+#if defined(V8_BINDING)
+        attribute [ProtectedListener] EventListener ondragdrop;
+        attribute [ProtectedListener] EventListener onmove;
+#endif
+
         // EventTarget interface
-        [Custom] void addEventListener(in DOMString type, 
-                                      in EventListener listener, 
+        [Custom] void addEventListener(in DOMString type,
+                                      in EventListener listener,
                                       in boolean useCapture);
-        [Custom] void removeEventListener(in DOMString type, 
-                                          in EventListener listener, 
+        [Custom] void removeEventListener(in DOMString type,
+                                          in EventListener listener,
                                           in boolean useCapture);
         // FIXME: Implement dispatchEvent
 
@@ -375,6 +380,17 @@ module window {
 
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
+#if defined(V8_BINDING)
+        // With JSC, these are added in JSDOMWindowBase.cpp.
+        attribute XMLHttpRequestConstructor XMLHttpRequest;
+        attribute XSLTProcessorConstructor XSLTProcessor;
+        attribute MessageChannelConstructor MessageChannel;
+        attribute WebKitPointConstructor WebKitPoint;
+#if ENABLE_WORKERS
+        attribute WorkerConstructor Worker;
+#endif
+        attribute WebKitCSSMatrixConstructor WebKitCSSMatrix;
+#endif  // V8_BINDING
 
         attribute PluginConstructor Plugin;
         attribute PluginArrayConstructor PluginArray;
@@ -434,6 +450,26 @@ module window {
 #endif
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
-    };
 
+#if defined(V8_BINDING)
+    // These were implemented in JSCDOMWindowBase and not moved to IDL yet.
+
+    [Custom] DOMWindow open(in DOMString url,
+                            in DOMString name,
+                            in [Optional] DOMString options);
+
+    [Custom] DOMObject showModalDialog(in DOMString url, 
+                                       in [Optional] DOMObject dialogArgs,
+                                       in [Optional] DOMString featureArgs);
+
+    // These are defined on JSDOMWindowBase, but not implemented.
+    [Custom=DOMWindowNOP] void captureEvents(in long eventFlags);
+    [Custom=DOMWindowNOP] void releaseEvents(in long eventFlags);
+
+    // window.toString requires special handling
+    [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
+#endif // defined(V8_BINDING)
+  };
 }
+
+
