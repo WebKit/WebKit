@@ -1,3 +1,12 @@
+2009-03-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24353
+        Allow to overrule default build options for Qt build.
+
+        * WebCore.pro: Allow to overrule ENABLE_VIDEO and ENABLE_NETSCAPE_PLUGIN_API
+
 2009-03-09  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
