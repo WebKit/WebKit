@@ -29,16 +29,19 @@
 module window {
 
     interface [
+#if defined(V8_BINDING)
+        CheckDomainSecurity,
+#endif
         CustomGetOwnPropertySlot,
         CustomPutFunction,
         CustomDeleteProperty,
         CustomGetPropertyNames
     ] Location {
-                 attribute [CustomSetter] DOMString href;
+                 attribute [CustomSetter, V8DisallowShadowing] DOMString href;
 
-        [Custom] void assign(in DOMString url);
-        [Custom] void replace(in DOMString url);
-        [Custom] void reload();
+        [Custom, V8OnInstance] void assign(in DOMString url);
+        [Custom, V8OnInstance] void replace(in DOMString url);
+        [Custom, V8OnInstance] void reload();
 
         // URI decomposition attributes
                  attribute [CustomSetter] DOMString protocol;
@@ -50,7 +53,10 @@ module window {
                  attribute [CustomSetter] DOMString hash;
 
 #if defined(LANGUAGE_JAVASCRIPT)
-        [DontEnum, Custom] DOMString toString();
+        [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMString toString();
+#endif
+#if defined(V8_BINDING)
+        [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
 #endif
     };
 

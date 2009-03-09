@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Unify JSC/V8 idl file.
+        https://bugs.webkit.org/show_bug.cgi?id=24424
+
+        * page/Location.idl:
+
+2009-03-09  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Eric Seidel.
+
         Unify JSC/V8 for History.idl.
 
         * page/History.idl:
