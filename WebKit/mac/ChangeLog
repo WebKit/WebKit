@@ -1,3 +1,16 @@
+2009-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt and Cameron Zwarich
+
+        https://bugs.webkit.org/show_bug.cgi?id=24440
+        
+        The sublayer added to WebHTMLView to host accelerated compositing layers needs to
+        be a subclass of NSView which allows context menu clicks through.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebLayerHostingView rightMouseDown:]):
+        (-[WebHTMLView attachRootLayer:]):
+
 2009-03-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
