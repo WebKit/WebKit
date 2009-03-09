@@ -1,3 +1,15 @@
+2009-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24433
+
+        Test hit testing with backface-visibility: hidden, and a transform on
+        the parent element.
+
+        * platform/mac/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.txt: Added.
+        * transforms/3d/hit-testing/backface-no-transform-hit-test.html: Added.
+
 2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Mark Rowe.
