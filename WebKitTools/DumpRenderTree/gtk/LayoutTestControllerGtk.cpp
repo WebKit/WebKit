@@ -242,7 +242,14 @@ void LayoutTestController::setIconDatabaseEnabled(bool flag)
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
 {
-    // FIXME: implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    g_object_set(G_OBJECT(settings), "enable-developer-extras", flag, NULL);
+
+    WebKitWebInspector* inspector = webkit_web_view_get_inspector(view);
+    g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", flag, NULL);
 }
 
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)

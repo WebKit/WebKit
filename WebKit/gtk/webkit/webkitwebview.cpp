@@ -1830,7 +1830,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.
     priv->webInspector = WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL));
-    webkit_web_inspector_set_inspector_client(priv->webInspector, inspectorClient);
+    webkit_web_inspector_set_inspector_client(priv->webInspector, priv->corePage);
 
     priv->horizontalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     priv->verticalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));

@@ -1,3 +1,11 @@
+2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        Enable all fast/profiler tests.
+
+        * platform/gtk/Skipped:
+
 2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Updated Skipped list per r41464. Not reviewed.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2008, 2009 Holger Hans Peter Freyther
  * Copyright (C) 2008 Jan Michael C. Alonzo
  * Copyright (C) 2008 Collabora Ltd.
  *
@@ -144,7 +144,7 @@ extern "C" {
     // end WebKitWebHistoryItem private
 
     void
-    webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebKit::InspectorClient*);
+    webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebCore::Page*);
 
     void
     webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKitWebView *web_view);

@@ -1,3 +1,16 @@
+2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        Implement setJavaScriptProfilingEnabled by enabling the Developer
+        Extras and the JavaScript profiling on the WebKitWebInspector. After
+        this change we pass the three enabled tests in fast/profiler.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest): Reset setJavaScriptProfilingEnabled after each test run
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+
 2009-03-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

@@ -1,3 +1,18 @@
+2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        Add javascript-profiling-enabled property and implement it. This
+        will enable/disable the profiler on the InstpectorController.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebinspector.cpp:
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_set_property):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_get_property):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_set_inspector_client):
+        * webkit/webkitwebview.cpp:
+
 2009-03-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Olliej.

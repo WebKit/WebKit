@@ -358,6 +358,7 @@ static void runTest(const string& testPathOrURL)
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");
 
+    gLayoutTestController->setJavaScriptProfilingEnabled(false);
     gLayoutTestController->deref();
     gLayoutTestController = 0;
 }
