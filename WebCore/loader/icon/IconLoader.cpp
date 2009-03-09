@@ -35,6 +35,7 @@
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/UnusedParam.h>
 

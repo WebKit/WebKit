@@ -3109,7 +3109,7 @@ HRESULT STDMETHODCALLTYPE WebView::centerSelectionInVisibleArea(
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
+    coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
     return S_OK;
 }
 

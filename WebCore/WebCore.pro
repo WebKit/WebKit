@@ -1010,15 +1010,15 @@ SOURCES += \
     rendering/RenderScrollbarPart.cpp \
     rendering/RenderScrollbarTheme.cpp \
     rendering/RenderSlider.cpp \
+    rendering/RenderTable.cpp \
     rendering/RenderTableCell.cpp \
     rendering/RenderTableCol.cpp \
-    rendering/RenderTable.cpp \
     rendering/RenderTableRow.cpp \
     rendering/RenderTableSection.cpp \
+    rendering/RenderText.cpp \
     rendering/RenderTextControl.cpp \
     rendering/RenderTextControlMultiLine.cpp \
     rendering/RenderTextControlSingleLine.cpp \
-    rendering/RenderText.cpp \
     rendering/RenderTextFragment.cpp \
     rendering/RenderTheme.cpp \
     rendering/RenderTreeAsText.cpp \
@@ -1027,6 +1027,7 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
+    rendering/ScrollBehavior.cpp \
     rendering/TextControlInnerElements.cpp \
     rendering/TransformState.cpp \
     rendering/style/BindingURI.cpp \

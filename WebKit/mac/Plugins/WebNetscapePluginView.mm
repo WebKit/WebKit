@@ -74,6 +74,8 @@
 #import <wtf/Assertions.h>
 #import <objc/objc-runtime.h>
 
+using std::max;
+
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 

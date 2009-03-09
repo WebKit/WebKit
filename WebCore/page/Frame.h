@@ -29,6 +29,7 @@
 #define Frame_h
 
 #include "AnimationController.h"
+#include "Document.h"
 #include "DragImage.h"
 #include "EditAction.h"
 #include "Editor.h"
@@ -36,7 +37,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "Range.h"
-#include "RenderLayer.h"
+#include "ScrollBehavior.h"
 #include "ScriptController.h"
 #include "SelectionController.h"
 #include "TextGranularity.h"
@@ -61,18 +62,21 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
+class CSSMutableStyleDeclaration;
 class Editor;
 class EventHandler;
 class FrameLoader;
 class FrameLoaderClient;
 class FrameTree;
+class FrameView;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
-class ScriptController;
 class RegularExpression;
 class RenderPart;
-class VisibleSelection;
+class ScriptController;
 class SelectionController;
+class Settings;
+class VisibleSelection;
 class Widget;
 
 #if FRAME_LOADS_USER_STYLESHEET
@@ -267,8 +271,8 @@ public:
 
     HTMLFormElement* currentForm() const;
 
-    void revealSelection(const RenderLayer::ScrollAlignment& = RenderLayer::gAlignCenterIfNeeded) const;
-    void revealCaret(const RenderLayer::ScrollAlignment& = RenderLayer::gAlignCenterIfNeeded) const;
+    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded) const;
+    void revealCaret(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded) const;
     void setSelectionFromNone();
 
     void setUseSecureKeyboardEntry(bool);

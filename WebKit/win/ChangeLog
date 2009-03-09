@@ -1,3 +1,14 @@
+2009-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Split ScrollAlignment and ScrollBehavior out of RenderLayer.h so that
+        Frame.h no longer needs to include it.  This cuts the size of the symbols
+        for a debug build by around 3%.
+
+        * WebView.cpp:
+        (WebView::centerSelectionInVisibleArea):
+
 2009-03-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Clipboard.h"
 
+#include "CachedImage.h"
 #include "DOMImplementation.h"
 #include "Frame.h"
 #include "FrameLoader.h"

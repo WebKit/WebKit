@@ -2467,7 +2467,7 @@ WEBCORE_COMMAND(yankAndSelect)
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
+        coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 - (NSCellStateValue)selectionHasStyle:(CSSStyleDeclaration*)style
@@ -3848,7 +3848,7 @@ noPromisedData:
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
+        coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF

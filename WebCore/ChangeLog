@@ -1,5 +1,63 @@
 2009-03-08  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Split ScrollAlignment and ScrollBehavior out of RenderLayer.h so that
+        Frame.h no longer needs to include it.  This cuts the size of the symbols
+        for a debug build by around 3%.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+        (WebCore::Frame::revealCaret):
+        * page/Frame.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::getRectToExpose):
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderLayer.h:
+        * rendering/ScrollBehavior.cpp: Added.
+        (WebCore::):
+        * rendering/ScrollBehavior.h: Added.
+        (WebCore::):
+        (WebCore::ScrollAlignment::getVisibleBehavior):
+        (WebCore::ScrollAlignment::getPartialBehavior):
+        (WebCore::ScrollAlignment::getHiddenBehavior):
+
+        Add the new files to the build systems:
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        Add includes that were previously pulled in by way of RenderLayer.h from Frame.h:
+        * dom/Clipboard.cpp:
+        * editing/EditorCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/TypingCommand.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        * loader/icon/IconLoader.cpp:
+        * page/animation/AnimationController.cpp:
+        * rendering/RenderSlider.cpp:
+        * rendering/RenderTextControl.cpp:
+
+
+2009-03-08  Mark Rowe  <mrowe@apple.com>
+
         Reviewed Dan Bernstein.
 
         Push the include of Frame.h out of RenderView.h and down to those files

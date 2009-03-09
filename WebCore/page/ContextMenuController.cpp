@@ -200,7 +200,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
                     ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""),
                                                                                    true, false, true);
                 applyCommand(command);
-                frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+                frame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
             }
             break;
         case ContextMenuItemTagIgnoreSpelling:

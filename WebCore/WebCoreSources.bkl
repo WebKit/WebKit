@@ -942,6 +942,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderWidget.cpp
         rendering/RenderWordBreak.cpp
         rendering/RootInlineBox.cpp
+        rendering/ScrollBehavior.cpp
         rendering/TextControlInnerElements.cpp
         rendering/TransformState.cpp
         rendering/style/BindingURI.cpp

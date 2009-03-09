@@ -678,7 +678,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (startNode && startNode->renderer()) {
         RenderLayer *layer = startNode->renderer()->enclosingLayer();
         if (layer)
-            layer->scrollRectToVisible(enclosingIntRect(rangeRect), false, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+            layer->scrollRectToVisible(enclosingIntRect(rangeRect), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
     }
 }
 
@@ -922,7 +922,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(_private->coreFrame->document());
-    _private->coreFrame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    _private->coreFrame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -1193,7 +1193,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     
     applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
-    _private->coreFrame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    _private->coreFrame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace

@@ -36,6 +36,7 @@
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
+#include "RenderObject.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"

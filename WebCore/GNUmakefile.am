@@ -1548,8 +1548,8 @@ webcore_sources += \
 	WebCore/rendering/RenderBlock.cpp \
 	WebCore/rendering/RenderBlock.h \
 	WebCore/rendering/RenderBox.cpp \
-        WebCore/rendering/RenderBox.h \
-        WebCore/rendering/RenderBoxModelObject.cpp \
+	WebCore/rendering/RenderBox.h \
+	WebCore/rendering/RenderBoxModelObject.cpp \
 	WebCore/rendering/RenderBoxModelObject.h \
 	WebCore/rendering/RenderButton.cpp \
 	WebCore/rendering/RenderButton.h \
@@ -1641,6 +1641,8 @@ webcore_sources += \
 	WebCore/rendering/RenderWordBreak.h \
 	WebCore/rendering/RootInlineBox.cpp \
 	WebCore/rendering/RootInlineBox.h \
+	WebCore/rendering/ScrollBehavior.cpp \
+	WebCore/rendering/ScrollBehavior.h \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \

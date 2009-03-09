@@ -30,11 +30,12 @@
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HTMLNames.h"
+#include "Range.h"
+#include "RenderObject.h"
 #include "Text.h"
 #include "VisiblePosition.h"
-#include "Range.h"
 #include "htmlediting.h"
-#include "HTMLNames.h"
 #include "visible_units.h"
 
 namespace WebCore {

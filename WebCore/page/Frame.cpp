@@ -1235,7 +1235,7 @@ HTMLFormElement *Frame::currentForm() const
     return start ? scanForForm(start) : 0;
 }
 
-void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
+void Frame::revealSelection(const ScrollAlignment& alignment) const
 {
     IntRect rect;
 
@@ -1261,7 +1261,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
     }
 }
 
-void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
+void Frame::revealCaret(const ScrollAlignment& alignment) const
 {
     if (selection()->isNone())
         return;

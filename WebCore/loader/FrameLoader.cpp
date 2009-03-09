@@ -1598,7 +1598,7 @@ bool FrameLoader::gotoAnchor(const String& name)
         rect = anchorNode->getRect();
     }
     if (renderer)
-        renderer->enclosingLayer()->scrollRectToVisible(rect, true, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
+        renderer->enclosingLayer()->scrollRectToVisible(rect, true, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
 
     return true;
 }

@@ -39,6 +39,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "IconDatabase.h"
+#include "Image.h"
 #include "KURLHash.h"
 #include "Logging.h"
 #include "markup.h"

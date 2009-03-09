@@ -28,12 +28,14 @@
 
 #include "config.h"
 #include "AnimationController.h"
-#include "AnimationControllerPrivate.h"
+
 #include "AnimationBase.h"
-#include "CompositeAnimation.h"
+#include "AnimationControllerPrivate.h"
 #include "CSSParser.h"
+#include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "RenderObject.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 

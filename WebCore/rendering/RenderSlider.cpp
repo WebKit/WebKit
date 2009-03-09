@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
+#include "RenderLayer.h"
 #include "RenderTheme.h"
 #include <wtf/MathExtras.h>
 
