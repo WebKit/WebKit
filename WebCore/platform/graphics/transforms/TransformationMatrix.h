@@ -134,6 +134,8 @@ public:
     // the local x,y position of the point where that ray intersects
     // with the destination plane.
     FloatPoint projectPoint(const FloatPoint&) const;
+    // Projects the four corners of the quad
+    FloatQuad projectQuad(const FloatQuad&) const;
 
     double m11() const { return m_matrix[0][0]; }
     void setM11(double f) { m_matrix[0][0] = f; }
@@ -208,6 +210,7 @@ public:
     TransformationMatrix& translate3d(double tx, double ty, double tz);
 
     // translation added with a post-multiply
+    TransformationMatrix& translateRight(double tx, double ty);
     TransformationMatrix& translateRight3d(double tx, double ty, double tz);
     
     TransformationMatrix& flipX();

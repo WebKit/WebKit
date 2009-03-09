@@ -2,6 +2,63 @@
 
         Reviewed by Dave Hyatt
 
+        https://bugs.webkit.org/show_bug.cgi?id=24163
+        
+        Implement mapping of FloatQuads through 3D transforms.
+        
+        Removed the redundant localToContainerQuad() methods, which can now 
+        shared code with the old mapLocalToAbsolutePoint(), which was
+        renamed to mapLocalToContainer(). This can now convert a point,
+        and optionally a FloatQuad, which are carried along in the TransformState.
+        
+        Optimized TransformState to reduce to simple FloatPoint.move()
+        if there are no transforms, and to heap-allocate a transform only if
+        necessary to accumulate transforms (when using preserve-3d).
+        
+        Tested by 3d point mapping tests, and the inspector highlight (which now shows
+        the correct quads for 3d-transformed elements).
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::projectQuad):
+        (WebCore::TransformationMatrix::translateRight):
+        (WebCore::TransformationMatrix::translateRight3d):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::mapLocalToContainer):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        * rendering/RenderView.h:
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::move):
+        (WebCore::TransformState::applyTransform):
+        (WebCore::TransformState::flatten):
+        (WebCore::TransformState::mappedPoint):
+        (WebCore::TransformState::mappedQuad):
+        (WebCore::TransformState::flattenWithTransform):
+        (WebCore::HitTestingTransformState::mappedQuad):
+        * rendering/TransformState.h:
+        (WebCore::TransformState::TransformState):
+        (WebCore::TransformState::move):
+        (WebCore::TransformState::lastPlanarPoint):
+        (WebCore::TransformState::lastPlanarQuad):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::preserves3D):
+
+2009-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         https://bugs.webkit.org/show_bug.cgi?id=24433
         
         During hit testing with transforms, if a layer has backface-visibility: hidden,

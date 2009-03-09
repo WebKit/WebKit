@@ -135,8 +135,12 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-void RenderView::mapLocalToAbsolutePoint(bool fixed, bool /*useTransforms*/, TransformState& transformState) const
+void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool /*useTransforms*/, TransformState& transformState) const
 {
+    // If a container was specified, and was not 0 or the RenderView,
+    // then we should have found it by now.
+    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
+
     if (fixed && m_frameView)
         transformState.move(m_frameView->scrollOffset());
 }
@@ -145,19 +149,6 @@ void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool /*useTransforms*/, Tra
 {
     if (fixed && m_frameView)
         transformState.move(-m_frameView->scrollOffset());
-}
-
-FloatQuad RenderView::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
-{
-    // If a container was specified, and was not 0 or the RenderView,
-    // then we should have found it by now.
-    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
-
-    FloatQuad quad = localQuad;
-    if (fixed && m_frameView)
-        quad += m_frameView->scrollOffset();
-
-    return quad;
 }
 
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)

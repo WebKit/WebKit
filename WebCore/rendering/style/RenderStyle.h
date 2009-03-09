@@ -667,6 +667,8 @@ public:
     const Animation* transitionForProperty(int property) const;
 
     ETransformStyle3D transformStyle3D() const { return rareNonInheritedData->m_transformStyle3D; }
+    bool preserves3D() const { return rareNonInheritedData->m_transformStyle3D == TransformStyle3DPreserve3D; }
+
     EBackfaceVisibility backfaceVisibility() const { return rareNonInheritedData->m_backfaceVisibility; }
     float perspective() const { return rareNonInheritedData->m_perspective; }
     bool hasPerspective() const { return rareNonInheritedData->m_perspective > 0; }

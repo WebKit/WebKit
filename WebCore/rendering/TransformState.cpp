@@ -28,40 +28,98 @@
 
 namespace WebCore {
 
-void TransformState::move(int x, int y)
+void TransformState::move(int x, int y, bool accumulateTransform)
 {
-    if (m_accumulatingTransform)
-        flatten();
-
-    m_lastPlanarPoint.move(x, y);
+    if (m_accumulatingTransform && m_accumulatedTransform) {
+        // If we're accumulating into an existing transform, apply the translation.
+        if (m_direction == ApplyTransformDirection)
+            m_accumulatedTransform->translateRight(x, y);
+        else
+            m_accumulatedTransform->translate(-x, -y);  // We're unapplying, so negate
+        
+        // Then flatten if necessary.
+        if (!accumulateTransform)
+            flatten();
+    } else {
+        // Just move the point and, optionally, the quad.
+        m_lastPlanarPoint.move(x, y);
+        if (m_mapQuad)
+            m_lastPlanarQuad.move(x, y);
+    }
+    m_accumulatingTransform = accumulateTransform;
 }
 
 void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform)
 {
-    if (m_direction == ApplyTransformDirection)
-        m_accumulatedTransform.multiply(transformFromContainer);    
-    else
-        m_accumulatedTransform.multLeft(transformFromContainer);    
-
-    if (!accumulateTransform)
-        flatten();
-
+    // If we have an accumulated transform from last time, multiply in this transform
+    if (m_accumulatedTransform) {
+        if (m_direction == ApplyTransformDirection)
+            m_accumulatedTransform->multiply(transformFromContainer);
+        else
+            m_accumulatedTransform->multLeft(transformFromContainer);
+    } else if (accumulateTransform) {
+        // Make one if we started to accumulate
+        m_accumulatedTransform.set(new TransformationMatrix(transformFromContainer));
+    }
+    
+    if (!accumulateTransform) {
+        const TransformationMatrix* finalTransform = m_accumulatedTransform ? m_accumulatedTransform.get() : &transformFromContainer;
+        flattenWithTransform(*finalTransform);
+    }
     m_accumulatingTransform = accumulateTransform;
 }
 
 void TransformState::flatten()
 {
-    m_lastPlanarPoint = mappedPoint();
-    m_accumulatedTransform.makeIdentity();
-    m_accumulatingTransform = false;
+    if (!m_accumulatedTransform) {
+        m_accumulatingTransform = false;
+        return;
+    }
+    
+    flattenWithTransform(*m_accumulatedTransform);
 }
 
 FloatPoint TransformState::mappedPoint() const
 {
-    if (m_direction == ApplyTransformDirection)
-        return m_accumulatedTransform.mapPoint(m_lastPlanarPoint);
+    if (!m_accumulatedTransform)
+        return m_lastPlanarPoint;
 
-    return m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
+    if (m_direction == ApplyTransformDirection)
+        return m_accumulatedTransform->mapPoint(m_lastPlanarPoint);
+
+    return m_accumulatedTransform->inverse().projectPoint(m_lastPlanarPoint);
+}
+
+FloatQuad TransformState::mappedQuad() const
+{
+    if (!m_accumulatedTransform)
+        return m_lastPlanarQuad;
+
+    if (m_direction == ApplyTransformDirection)
+        return m_accumulatedTransform->mapQuad(m_lastPlanarQuad);
+
+    return m_accumulatedTransform->inverse().projectQuad(m_lastPlanarQuad);
+}
+
+void TransformState::flattenWithTransform(const TransformationMatrix& t)
+{
+    if (m_direction == ApplyTransformDirection) {
+        m_lastPlanarPoint = t.mapPoint(m_lastPlanarPoint);
+        if (m_mapQuad)
+            m_lastPlanarQuad = t.mapQuad(m_lastPlanarQuad);
+    } else {
+        TransformationMatrix inverseTransform = t.inverse();
+        m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
+        if (m_mapQuad)
+            m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
+    }
+
+    // We could throw away m_accumulatedTransform if we wanted to here, but that
+    // would cause thrash when traversing hierarachies with alternating
+    // preserve-3d and flat elements.
+    if (m_accumulatedTransform)
+        m_accumulatedTransform->makeIdentity();
+    m_accumulatingTransform = false;
 }
 
 // HitTestingTransformState methods
@@ -98,7 +156,7 @@ FloatPoint HitTestingTransformState::mappedPoint() const
 
 FloatQuad HitTestingTransformState::mappedQuad() const
 {
-    return m_accumulatedTransform.inverse().mapQuad(m_lastPlanarQuad);      // or project?
+    return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarQuad);
 }
 
 } // namespace WebCore

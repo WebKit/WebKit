@@ -30,42 +30,54 @@
 #include "FloatQuad.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class TransformState {
+class TransformState : Noncopyable {
 public:
     enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
-    TransformState(const FloatPoint& p, TransformDirection mappingDirection)
+    // If quad is non-null, it will be mapped
+    TransformState(TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad* quad = 0)
         : m_lastPlanarPoint(p)
         , m_accumulatingTransform(false)
+        , m_mapQuad(quad != 0)
         , m_direction(mappingDirection)
     {
+        if (quad)
+            m_lastPlanarQuad = *quad;
     }
     
-    TransformState(const TransformState& other)
-        : m_lastPlanarPoint(other.m_lastPlanarPoint)
-        , m_accumulatedTransform(other.m_accumulatedTransform)
-        , m_accumulatingTransform(other.m_accumulatingTransform)
-        , m_direction(other.m_direction)
+    void move(const IntSize& s, bool accumulateTransform = false)
     {
-    }
-
-    void move(const IntSize& s)
-    {
-        move(s.width(), s.height());
+        move(s.width(), s.height(), accumulateTransform);
     }
     
-    void move(int x, int y);
-    void applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform);
-    FloatPoint mappedPoint() const;
+    void move(int x, int y, bool accumulateTransform = false);
+    void applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform = false);
     void flatten();
 
+    // Return the coords of the point or quad in the last flattened layer
+    FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
+    FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
+
+    // Return the point or quad mapped through the current transform
+    FloatPoint mappedPoint() const;
+    FloatQuad mappedQuad() const;
+
+private:
+    void flattenWithTransform(const TransformationMatrix&);
+    
     FloatPoint m_lastPlanarPoint;
-    TransformationMatrix m_accumulatedTransform;
+    FloatQuad m_lastPlanarQuad;
+
+    // We only allocate the transform if we need to
+    OwnPtr<TransformationMatrix> m_accumulatedTransform;
     bool m_accumulatingTransform;
+    bool m_mapQuad;
     TransformDirection m_direction;
 };
 

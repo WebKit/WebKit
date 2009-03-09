@@ -1638,39 +1638,35 @@ IntRect RenderObject::viewRect() const
 
 FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool useTransforms) const
 {
-    TransformState transformState(localPoint, TransformState::ApplyTransformDirection);
-    mapLocalToAbsolutePoint(fixed, useTransforms, transformState);
-
-    if (transformState.m_accumulatingTransform) {
-        // Do a final flatten if necessary
-        transformState.flatten();
-    }
+    TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
+    mapLocalToContainer(0, fixed, useTransforms, transformState);
+    transformState.flatten();
     
-    return transformState.m_lastPlanarPoint;
+    return transformState.lastPlanarPoint();
 }
 
 FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
 {
-    TransformState transformState(containerPoint, TransformState::UnapplyInverseTransformDirection);
+    TransformState transformState(TransformState::UnapplyInverseTransformDirection, containerPoint);
     mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
+    transformState.flatten();
     
-    if (transformState.m_accumulatingTransform) {
-        // Do a final flatten if necessary
-        transformState.flatten();
-    }
-    
-    return transformState.m_lastPlanarPoint;
+    return transformState.lastPlanarPoint();
 }
 
-void RenderObject::mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
-    RenderObject* o = parent();
-    if (o) {
-        if (o->hasOverflowClip())
-            transformState.move(-toRenderBox(o)->layer()->scrolledContentOffset());
+    if (repaintContainer == this)
+        return;
 
-        o->mapLocalToAbsolutePoint(fixed, useTransforms, transformState);
-    }
+    RenderObject* o = parent();
+    if (!o)
+        return;
+
+    if (o->hasOverflowClip())
+        transformState.move(-toRenderBox(o)->layer()->scrolledContentOffset());
+
+    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
 void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
@@ -1709,18 +1705,11 @@ TransformationMatrix RenderObject::transformFromContainer(const RenderObject* co
 
 FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
 {
-    if (repaintContainer == this)
-        return localQuad;
-
-    RenderObject* o = parent();
-    if (o) {
-        FloatQuad quad = localQuad;
-        if (o->hasOverflowClip())
-            quad -= toRenderBox(o)->layer()->scrolledContentOffset();
-        return o->localToContainerQuad(quad, repaintContainer, fixed);
-    }
-
-    return FloatQuad();
+    TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint(), &localQuad);
+    mapLocalToContainer(repaintContainer, fixed, true, transformState);
+    transformState.flatten();
+    
+    return transformState.lastPlanarQuad();
 }
 
 IntSize RenderObject::offsetFromContainer(RenderObject* o) const

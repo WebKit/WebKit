@@ -544,6 +544,16 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p) const
     return FloatPoint(static_cast<float>(outX), static_cast<float>(outY));
 }
 
+FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
+{
+    FloatQuad projectedQuad;
+    projectedQuad.setP1(projectPoint(q.p1()));
+    projectedQuad.setP2(projectPoint(q.p2()));
+    projectedQuad.setP3(projectPoint(q.p3()));
+    projectedQuad.setP4(projectPoint(q.p4()));
+    return projectedQuad;
+}
+
 FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
 {
     double x, y;
@@ -792,7 +802,7 @@ TransformationMatrix& TransformationMatrix::translate3d(double tx, double ty, do
     return *this;
 }
 
-TransformationMatrix& TransformationMatrix::translateRight3d(double tx, double ty, double tz)
+TransformationMatrix& TransformationMatrix::translateRight(double tx, double ty)
 {
     if (tx != 0) {
         m_matrix[0][0] +=  m_matrix[0][3] * tx;
@@ -808,6 +818,12 @@ TransformationMatrix& TransformationMatrix::translateRight3d(double tx, double t
         m_matrix[3][1] +=  m_matrix[3][3] * ty;
     }
 
+    return *this;
+}
+
+TransformationMatrix& TransformationMatrix::translateRight3d(double tx, double ty, double tz)
+{
+    translateRight(tx, ty);
     if (tz != 0) {
         m_matrix[0][2] +=  m_matrix[0][3] * tz;
         m_matrix[1][2] +=  m_matrix[1][3] * tz;

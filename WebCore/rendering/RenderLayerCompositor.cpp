@@ -31,6 +31,7 @@
 #include "AnimationController.h"
 #include "ChromeClient.h"
 #include "CSSPropertyNames.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
 #include "HitTestRequest.h"

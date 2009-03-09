@@ -487,7 +487,7 @@ public:
         return localToContainerQuad(quad, 0, fixed);
     }
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
+    FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
 
     // Return the offset from the container() renderer (excluding transforms)
     virtual IntSize offsetFromContainer(RenderObject*) const;
@@ -673,11 +673,11 @@ public:
 
     bool visibleToHitTesting() const { return style()->visibility() == VISIBLE && style()->pointerEvents() != PE_NONE; }
 
-    // Map points through elements, potentially via 3d transforms. You should never need to call these directly; use
-    // localToAbsolute/absoluteToLocal instead.
-    virtual void mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState&) const;
+    // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
+    // localToAbsolute/absoluteToLocal methods instead.
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
-    
+
     TransformationMatrix transformFromContainer(const RenderObject* container, const IntSize& offsetInContainer) const;
     
     virtual void addFocusRingRects(GraphicsContext*, int /*tx*/, int /*ty*/) { };

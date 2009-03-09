@@ -217,15 +217,18 @@ void RenderTableCell::computeRectForRepaint(RenderBoxModelObject* repaintContain
     RenderBlock::computeRectForRepaint(repaintContainer, r, fixed);
 }
 
-void RenderTableCell::mapLocalToAbsolutePoint(bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderTableCell::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
+    if (repaintContainer == this)
+        return;
+
     RenderView* v = view();
     if ((!v || !v->layoutStateEnabled()) && parent()) {
         // Rows are in the same coordinate space, so don't add their offset in.
         // FIXME: this is wrong with transforms
         transformState.move(-parentBox()->x(), -parentBox()->y());
     }
-    RenderBlock::mapLocalToAbsolutePoint(fixed, useTransforms, transformState);
+    RenderBlock::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
 void RenderTableCell::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
@@ -236,19 +239,6 @@ void RenderTableCell::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Tr
         // FIXME: this is wrong with transforms
         transformState.move(parentBox()->x(), parentBox()->y());
     }
-}
-
-FloatQuad RenderTableCell::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
-{
-    if (repaintContainer == this)
-        return localQuad;
-
-    FloatQuad quad = localQuad;
-    if (parent()) {
-        // Rows are in the same coordinate space, so don't add their offset in.
-        quad.move(-parentBox()->x(), -parentBox()->y());
-    }
-    return RenderBlock::localToContainerQuad(quad, repaintContainer, fixed);
 }
 
 int RenderTableCell::baselinePosition(bool firstLine, bool isRootLineBox) const
