@@ -26,6 +26,9 @@
 module window {
 
     interface [
+#if defined(V8_BINDING)
+        CheckDomainSecurity,
+#endif
         CustomGetOwnPropertySlot,
         CustomPutFunction,
         CustomDeleteProperty,
@@ -33,9 +36,9 @@ module window {
     ] History {
         readonly attribute unsigned long length;
 
-        void back();
-        void forward();
-        void go(in long distance);
+        [DoNotCheckDomainSecurity] void back();
+        [DoNotCheckDomainSecurity] void forward();
+        [DoNotCheckDomainSecurity] void go(in long distance);
     };
 
 }
