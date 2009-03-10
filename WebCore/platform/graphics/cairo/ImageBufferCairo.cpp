@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Holger Hans Peter Freyther <zecke@selfish.org>
- * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
+ * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "Base64.h"
 #include "BitmapImage.h"
+#include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
@@ -126,21 +127,15 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 
     unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
-        unsigned char *row = dataSrc + stride * (y + originy);
+        unsigned* row = reinterpret_cast<unsigned*>(dataSrc + stride * (y + originy));
         for (int x = 0; x < numColumns; x++) {
-            uint32_t *pixel = (uint32_t *) row + x + originx;
             int basex = x * 4;
-            if (unsigned int alpha = (*pixel & 0xff000000) >> 24) {
-                destRows[basex] = ((*pixel & 0x00ff0000) >> 16) * 255 / alpha;
-                destRows[basex + 1] = ((*pixel & 0x0000ff00) >> 8) * 255 / alpha;
-                destRows[basex + 2] = (*pixel & 0x000000ff) * 255 / alpha;
-                destRows[basex + 3] = alpha;
-            } else {
-                destRows[basex] = (*pixel & 0x00ff0000) >> 16;
-                destRows[basex + 1] = (*pixel & 0x0000ff00) >> 8;
-                destRows[basex + 2] = (*pixel & 0x000000ff);
-                destRows[basex + 3] = alpha;
-            }
+            unsigned* pixel = row + x + originx;
+            Color pixelColor = colorFromPremultipliedARGB(*pixel);
+            destRows[basex]     = pixelColor.red();
+            destRows[basex + 1] = pixelColor.green();
+            destRows[basex + 2] = pixelColor.blue();
+            destRows[basex + 3] = pixelColor.alpha();
         }
         destRows += destBytesPerRow;
     }
@@ -185,18 +180,15 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
 
     unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
-        unsigned char *row = dataDst + stride * (y + desty);
+        unsigned* row = reinterpret_cast<unsigned*>(dataDst + stride * (y + desty));
         for (int x = 0; x < numColumns; x++) {
-            uint32_t *pixel = (uint32_t *) row + x + destx;
             int basex = x * 4;
-            unsigned int alpha = srcRows[basex + 3];
-            if (alpha != 255) {
-                *pixel = alpha << 24 | 
-                         ((srcRows[basex] * alpha + 254) / 255) << 16 | 
-                         ((srcRows[basex + 1] * alpha + 254) / 255) << 8 | 
-                         ((srcRows[basex + 2] * alpha + 254) / 255);
-            } else
-                *pixel = alpha << 24 | srcRows[basex] << 16 | srcRows[basex + 1] << 8 | srcRows[basex + 2];
+            unsigned* pixel = row + x + destx;
+            Color pixelColor(srcRows[basex],
+                    srcRows[basex + 1],
+                    srcRows[basex + 2],
+                    srcRows[basex + 3]);
+            *pixel = premultipliedARGBFromColor(pixelColor);
         }
         srcRows += srcBytesPerRow;
     }

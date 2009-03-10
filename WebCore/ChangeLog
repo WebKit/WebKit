@@ -1,3 +1,25 @@
+2009-03-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel. Math checked by Oliver Hunt.
+
+        Implement the Cairo version of the checkForSolidColor() method. This halfes the
+        time to draw on 1x1 px background images.
+        I added two new calls to Color for the pixel manipulation on cairo_surface's.
+        They are neede to premultiply/unpremultiply the colors of the surface.
+
+        [CAIRO] Introduce single-pixel image optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=17284
+
+        * platform/graphics/Color.cpp:
+        (WebCore::colorFromPremultipliedARGB):
+        (WebCore::premultipliedARGBFromColor):
+        * platform/graphics/Color.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2009-03-06  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Sam Weinig.

@@ -145,6 +145,8 @@ inline bool operator!=(const Color& a, const Color& b)
 }
 
 Color focusRingColor();
+Color colorFromPremultipliedARGB(unsigned);
+unsigned premultipliedARGBFromColor(const Color&);
 
 #if PLATFORM(CG)
 CGColorRef createCGColor(const Color&);

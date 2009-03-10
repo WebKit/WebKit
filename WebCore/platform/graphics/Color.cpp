@@ -321,4 +321,34 @@ void Color::getRGBA(double& r, double& g, double& b, double& a) const
     a = alpha() / 255.0;
 }
 
+Color colorFromPremultipliedARGB(unsigned pixelColor)
+{
+    RGBA32 rgba;
+
+    if (unsigned alpha = (pixelColor & 0xFF000000) >> 24) {
+        rgba = makeRGBA(((pixelColor & 0x00FF0000) >> 16) * 255 / alpha,
+                        ((pixelColor & 0x0000FF00) >> 8) * 255 / alpha,
+                         (pixelColor & 0x000000FF) * 255 / alpha,
+                          alpha);
+    } else
+        rgba = pixelColor;
+
+    return Color(rgba);
+}
+
+unsigned premultipliedARGBFromColor(const Color& color)
+{
+    unsigned pixelColor;
+
+    if (unsigned alpha = color.alpha()) {
+        pixelColor = alpha << 24 |
+             ((color.red() * alpha  + 254) / 255) << 16 | 
+             ((color.green() * alpha  + 254) / 255) << 8 | 
+             ((color.blue() * alpha  + 254) / 255);
+    } else
+         pixelColor = color.rgb();
+
+    return pixelColor;
+}
+
 } // namespace WebCore
