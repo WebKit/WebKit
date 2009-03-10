@@ -1,3 +1,11 @@
+2009-03-09  Stephanie Lewis  <slewis@apple.com>
+
+        Fix build.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::markAllMisspellingsAndBadGrammarInRanges):
+
 2009-03-09  Kim Christensen  <kimworking@gmail.com>
 
         Reviewed by Darin Fisher.

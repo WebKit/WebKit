@@ -1726,7 +1726,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     Node *searchEndNodeAfterWrap = spellingSearchRange->endContainer(ec);
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
     
-    int misspellingOffset;
+    int misspellingOffset = 0;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     RefPtr<Range> grammarSearchRange = spellingSearchRange->cloneRange(ec);
     String misspelledWord;
@@ -2154,10 +2154,10 @@ static void markAllMisspellingsAndBadGrammarInRanges(EditorClient* client, Range
         return;
     
     // Expand the range to encompass entire paragraphs, since text checking needs that much context.
-    int spellingRangeStartOffset;
-    int spellingRangeEndOffset;
-    int grammarRangeStartOffset;
-    int grammarRangeEndOffset;
+    int spellingRangeStartOffset = 0;
+    int spellingRangeEndOffset = 0;
+    int grammarRangeStartOffset = 0;
+    int grammarRangeEndOffset = 0;
     String paragraphString;
     
     if (markGrammar) {
