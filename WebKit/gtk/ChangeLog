@@ -1,3 +1,12 @@
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Correct return value to false instead of NULL.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_is_target_item):
+
 2009-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

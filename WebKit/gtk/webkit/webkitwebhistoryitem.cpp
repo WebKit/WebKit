@@ -458,11 +458,11 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* w
 
 gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem* webHistoryItem)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), false);
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item != NULL, false);
 
     return item->isTargetItem();
 }
