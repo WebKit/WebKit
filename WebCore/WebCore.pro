@@ -956,7 +956,6 @@ SOURCES += \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \
     platform/text/TextCodecUTF16.cpp \
-    platform/text/TextDecoder.cpp \
     platform/text/TextEncoding.cpp \
     platform/text/TextEncodingRegistry.cpp \
     platform/text/TextStream.cpp \

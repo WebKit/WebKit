@@ -23,7 +23,7 @@
 #ifndef TextResourceDecoder_h
 #define TextResourceDecoder_h
 
-#include "TextDecoder.h"
+#include "TextEncoding.h"
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ public:
     ~TextResourceDecoder();
 
     void setEncoding(const TextEncoding&, EncodingSource);
-    const TextEncoding& encoding() const { return m_decoder.encoding(); }
+    const TextEncoding& encoding() const { return m_encoding; }
 
     String decode(const char* data, size_t length);
     String flush();
@@ -57,17 +57,18 @@ public:
 private:
     TextResourceDecoder(const String& mimeType, const TextEncoding& defaultEncoding);
 
-    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText is equivalent to directly using TextDecoder.
+    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText only checks for BOM.
     static ContentType determineContentType(const String& mimeType);
     static const TextEncoding& defaultEncoding(ContentType, const TextEncoding& defaultEncoding);
 
-    void checkForBOM(const char*, size_t);
+    size_t checkForBOM(const char*, size_t);
     bool checkForCSSCharset(const char*, size_t, bool& movedDataToBuffer);
     bool checkForHeadCharset(const char*, size_t, bool& movedDataToBuffer);
     void detectJapaneseEncoding(const char*, size_t);
 
     ContentType m_contentType;
-    TextDecoder m_decoder;
+    TextEncoding m_encoding;
+    OwnPtr<TextCodec> m_codec;
     EncodingSource m_source;
     Vector<char> m_buffer;
     bool m_checkedForBOM;

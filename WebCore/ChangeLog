@@ -2,6 +2,64 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24285
+        Text resource loading checks for BOM twice
+
+        This removes TextDecoder class, since its only purpose was to check for BOM, which is
+        already done in TextResourceDecoder. Callers that use TextEncoding::decode() won't get
+        BOM checked, but I didn't find any cases where it would significantly change behavior.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Remove TextDecoder.{h,cpp}.
+
+        * platform/text/TextDecoder.cpp: Removed.
+        * platform/text/TextDecoder.h: Removed.
+
+        * loader/TextResourceDecoder.h: Instead of a TextDecoder object, keep TextEncoding and
+        TextCodec separately.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::TextResourceDecoder): Updated for m_encoding being a member.
+        (WebCore::TextResourceDecoder::setEncoding): Ditto.
+        (WebCore::TextResourceDecoder::checkForBOM): Removed a FIXME saying that a BOM could override
+        even a user-chosen encoding - this is how it already worked due to TextDecoder checking for
+        BOM again. Made this function return the detected BOM length.
+        (WebCore::TextResourceDecoder::decode): Skip the BOM if it was found at the beginning of
+        a text resource.
+        (WebCore::TextResourceDecoder::flush): Reset m_checkedForBOM, so that re-decoding the same
+        resource again (as frequently done by CachedResource subclasses) will skip the BOM correctly.
+
+        * platform/text/TextEncoding.cpp: (WebCore::TextEncoding::decode):
+        Use TextCodec directly without a TextDecoder wrapper. This means that this method no longer
+        checks for BOM, which was a counter-intuitive feature.
+
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::setEncoding):
+        (WebCore::CachedScript::encoding):
+        (WebCore::CachedScript::script):
+        * loader/CachedScript.h:
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        Use TextResourceDecoder, as TextEncoding::decode() no longer checks for BOM.
+        A side effect of this is that these resources will now be subject to encoding auto-detection.
+
+        * loader/CachedFont.cpp: (WebCore::CachedFont::ensureSVGFontData):
+        * page/Page.cpp: (WebCore::Page::userStyleSheet):
+        Be sure to flush TextResourceDecoder, pushing any remaining bytes out, and making the decoder
+        re-usable (for repeated decoding of the same resource).
+
+        * platform/text/TextEncodingRegistry.h: Updated comments for newTextCodec().
+
+2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=24488
         An assertion failure when updating an offline application cache after emptying caches
 

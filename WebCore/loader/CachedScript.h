@@ -27,12 +27,12 @@
 #define CachedScript_h
 
 #include "CachedResource.h"
-#include "TextEncoding.h"
 #include "Timer.h"
 
 namespace WebCore {
 
     class DocLoader;
+    class TextResourceDecoder;
 
     class CachedScript : public CachedResource {
     public:
@@ -59,7 +59,7 @@ namespace WebCore {
         void decodedDataDeletionTimerFired(Timer<CachedScript>*);
 
         String m_script;
-        TextEncoding m_encoding;
+        RefPtr<TextResourceDecoder> m_decoder;
         Timer<CachedScript> m_decodedDataDeletionTimer;
     };
 }

@@ -1482,8 +1482,6 @@ webcore_sources += \
 	WebCore/platform/text/TextCodecUTF16.h \
 	WebCore/platform/text/TextCodecUserDefined.cpp \
 	WebCore/platform/text/TextCodecUserDefined.h \
-	WebCore/platform/text/TextDecoder.cpp \
-	WebCore/platform/text/TextDecoder.h \
 	WebCore/platform/text/TextDirection.h \
 	WebCore/platform/text/TextEncoding.cpp \
 	WebCore/platform/text/TextEncoding.h \

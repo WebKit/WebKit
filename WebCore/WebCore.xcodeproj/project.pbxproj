@@ -3541,8 +3541,6 @@
 		B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA100D006C1D00EF6F26 /* TextCodecUserDefined.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA410D006C1D00EF6F26 /* TextCodecUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA110D006C1D00EF6F26 /* TextCodecUTF16.cpp */; };
 		B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA120D006C1D00EF6F26 /* TextCodecUTF16.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA430D006C1D00EF6F26 /* TextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA130D006C1D00EF6F26 /* TextDecoder.cpp */; };
-		B2C3DA440D006C1D00EF6F26 /* TextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA140D006C1D00EF6F26 /* TextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA150D006C1D00EF6F26 /* TextDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA160D006C1D00EF6F26 /* TextEncoding.cpp */; };
 		B2C3DA470D006C1D00EF6F26 /* TextEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8351,8 +8349,6 @@
 		B2C3DA100D006C1D00EF6F26 /* TextCodecUserDefined.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecUserDefined.h; sourceTree = "<group>"; };
 		B2C3DA110D006C1D00EF6F26 /* TextCodecUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF16.cpp; sourceTree = "<group>"; };
 		B2C3DA120D006C1D00EF6F26 /* TextCodecUTF16.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF16.h; sourceTree = "<group>"; };
-		B2C3DA130D006C1D00EF6F26 /* TextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecoder.cpp; sourceTree = "<group>"; };
-		B2C3DA140D006C1D00EF6F26 /* TextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDecoder.h; sourceTree = "<group>"; };
 		B2C3DA150D006C1D00EF6F26 /* TextDirection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDirection.h; sourceTree = "<group>"; };
 		B2C3DA160D006C1D00EF6F26 /* TextEncoding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncoding.cpp; sourceTree = "<group>"; };
 		B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncoding.h; sourceTree = "<group>"; };
@@ -13303,8 +13299,6 @@
 				B2C3DA120D006C1D00EF6F26 /* TextCodecUTF16.h */,
 				B2C3DA0F0D006C1D00EF6F26 /* TextCodecUserDefined.cpp */,
 				B2C3DA100D006C1D00EF6F26 /* TextCodecUserDefined.h */,
-				B2C3DA130D006C1D00EF6F26 /* TextDecoder.cpp */,
-				B2C3DA140D006C1D00EF6F26 /* TextDecoder.h */,
 				B2C3DA150D006C1D00EF6F26 /* TextDirection.h */,
 				B2C3DA160D006C1D00EF6F26 /* TextEncoding.cpp */,
 				B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */,
@@ -16665,7 +16659,6 @@
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
 				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
-				B2C3DA440D006C1D00EF6F26 /* TextDecoder.h in Headers */,
 				B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */,
 				1A6938020A11100A00C127FE /* TextDocument.h in Headers */,
 				B2C3DA470D006C1D00EF6F26 /* TextEncoding.h in Headers */,
@@ -18690,7 +18683,6 @@
 				B2C3DA410D006C1D00EF6F26 /* TextCodecUTF16.cpp in Sources */,
 				B2C3DA3F0D006C1D00EF6F26 /* TextCodecUserDefined.cpp in Sources */,
 				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
-				B2C3DA430D006C1D00EF6F26 /* TextDecoder.cpp in Sources */,
 				1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
 				B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */,

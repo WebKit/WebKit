@@ -29,21 +29,20 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 CachedScript::CachedScript(const String& url, const String& charset)
     : CachedResource(url, Script)
-    , m_encoding(charset)
+    , m_decoder(TextResourceDecoder::create("application/javascript", charset))
     , m_decodedDataDeletionTimer(this, &CachedScript::decodedDataDeletionTimerFired)
 {
     // It's javascript we want.
     // But some websites think their scripts are <some wrong mimetype here>
     // and refuse to serve them if we only accept application/x-javascript.
     setAccept("*/*");
-    if (!m_encoding.isValid())
-        m_encoding = Latin1Encoding();
 }
 
 CachedScript::~CachedScript()
@@ -64,14 +63,12 @@ void CachedScript::allClientsRemoved()
 
 void CachedScript::setEncoding(const String& chs)
 {
-    TextEncoding encoding(chs);
-    if (encoding.isValid())
-        m_encoding = encoding;
+    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 String CachedScript::encoding() const
 {
-    return m_encoding.name();
+    return m_decoder->encoding().name();
 }
 
 const String& CachedScript::script()
@@ -79,7 +76,8 @@ const String& CachedScript::script()
     ASSERT(!isPurgeable());
 
     if (!m_script && m_data) {
-        m_script = m_encoding.decode(m_data->data(), encodedSize());
+        m_script = m_decoder->decode(m_data->data(), encodedSize());
+        m_script += m_decoder->flush();
         setDecodedSize(m_script.length() * sizeof(UChar));
     }
 

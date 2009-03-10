@@ -6717,14 +6717,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextDecoder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\TextDecoder.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\TextDirection.h"
 					>
 				</File>

@@ -34,11 +34,8 @@ namespace WebCore {
     class TextCodec;
     class TextEncoding;
 
-    // Only TextEncoding and TextDecoder should use this function directly.
-    // - Use TextDecoder::decode to decode, since it handles BOMs.
-    // - Use TextEncoding::decode to decode if you have all the data at once.
-    //   It's implemented by calling TextDecoder::decode so works just as well.
-    // - Use TextEncoding::encode to encode, since it takes care of normalization.
+    // Use TextResourceDecoder::decode to decode resources, since it handles BOMs.
+    // Use TextEncoding::encode to encode, since it takes care of normalization.
     std::auto_ptr<TextCodec> newTextCodec(const TextEncoding&);
 
     // Only TextEncoding should use this function directly.

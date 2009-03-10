@@ -471,7 +471,9 @@ const String& Page::userStyleSheet() const
     if (!data)
         return m_userStyleSheet;
 
-    m_userStyleSheet = TextResourceDecoder::create("text/css")->decode(data->data(), data->size());
+    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/css");
+    m_userStyleSheet = decoder->decode(data->data(), data->size());
+    m_userStyleSheet += decoder->flush();
 
     return m_userStyleSheet;
 }
