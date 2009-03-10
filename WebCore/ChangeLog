@@ -1,3 +1,17 @@
+2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff Garen.
+
+        Bug 23736: WebKit Crashes on http://g-conquest.fr/~server2
+        <https://bugs.webkit.org/show_bug.cgi?id=23736>
+        <rdar://problem/6560278>
+
+        Before replacing the document, FrameLoader::executeIfJavaScriptURL()
+        should call stopAllLoaders(), just like continueLoadAfterNavigationPolicy().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+
 2009-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

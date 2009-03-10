@@ -1,3 +1,14 @@
+2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff Garen.
+
+        Test for bug 23736: WebKit Crashes on http://g-conquest.fr/~server2
+        <https://bugs.webkit.org/show_bug.cgi?id=23736>
+        <rdar://problem/6560278>
+
+        * http/tests/misc/javascript-url-stop-loaders-expected.txt: Added.
+        * http/tests/misc/javascript-url-stop-loaders.html: Added.
+
 2009-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+var str = "<script type='text/javascript' src='http://127.0.0.1:8000/misc/resources/hang-connection.php'><" + "/script>";
+
+function loadFirst()
+{
+    document.getElementById("ad").src = "javascript: window.parent.str";
+}
+
+function finish()
+{
+    if (window.GCController)
+        GCController.collect();
+    else {
+        // Allocate a sufficient number of objects to force a GC.
+        for (var i = 0; i < 10000; ++i)
+            new Object;
+    }
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();    
+}
+
+function loadSecond()
+{
+    document.getElementById("ad").src = "javascript: '<!DOCTYPE html><script>window.parent.finish();<" + "/script>'";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+setTimeout("loadFirst();", 0);
+setTimeout("loadSecond();", 0);
+</script>
+</head>
+<body>
+<p>This test checks whether loading a JavaScript URL cancels loaders. If it fails, it will give an assertion failure in Debug builds.</p>
+<iframe id="ad"></iframe>
+</body>
+</html>
