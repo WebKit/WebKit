@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKitDLL.h"
 #include "MarshallingHelpers.h"
+#include "MathExtras.h"
 
 #pragma warning(push, 0)
 #include <WebCore/IntRect.h>
@@ -144,12 +145,12 @@ CFAbsoluteTime MarshallingHelpers::DATEToCFAbsoluteTime(DATE date)
     // the reference date. Positive values indicate dates/times after the
     // reference date.
 
-    return (date + windowsEpochAbsoluteTime()) * secondsPerDay;
+    return round((date + windowsEpochAbsoluteTime()) * secondsPerDay);
 }
 
 DATE MarshallingHelpers::CFAbsoluteTimeToDATE(CFAbsoluteTime absoluteTime)
 {
-    return (absoluteTime/secondsPerDay - windowsEpochAbsoluteTime());
+    return (round(absoluteTime)/secondsPerDay - windowsEpochAbsoluteTime());
 }
 
 // utility method to store a 1-dim string vector into a newly created SAFEARRAY
