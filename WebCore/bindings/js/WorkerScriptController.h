@@ -57,9 +57,11 @@ namespace WebCore {
         }
 
         ScriptValue evaluate(const ScriptSourceCode&);
+        ScriptValue evaluate(const ScriptSourceCode&, ScriptValue* exception);
+
+        void setException(ScriptValue);
 
         void forbidExecution();
-
     private:
         void initScriptIfNeeded()
         {

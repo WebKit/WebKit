@@ -40,6 +40,7 @@ module threads {
 
         attribute EventListener onmessage;
         void postMessage(in DOMString message);
+        [Custom] void importScripts(/* urls */);
 
         attribute [Replaceable] WorkerLocation location;
         attribute [Replaceable] WorkerNavigator navigator;

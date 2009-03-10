@@ -1718,6 +1718,21 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
         updateScriptResourceType(resource);
 }
 
+void InspectorController::scriptImported(unsigned long identifier, const JSC::UString& sourceString)
+{
+    if (!enabled())
+        return;
+    
+    InspectorResource* resource = m_resources.get(identifier).get();
+    if (!resource)
+        return;
+    
+    resource->setXMLHttpRequestProperties(sourceString);
+    
+    if (windowVisible() && resource->scriptObject)
+        updateScriptResourceType(resource);
+}
+
 
 #if ENABLE(DATABASE)
 void InspectorController::didOpenDatabase(Database* database, const String& domain, const String& name, const String& version)

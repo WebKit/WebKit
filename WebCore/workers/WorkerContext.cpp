@@ -38,11 +38,17 @@
 #include "EventException.h"
 #include "MessageEvent.h"
 #include "NotImplemented.h"
+#include "ResourceRequest.h"
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "SecurityOrigin.h"
+#include "ThreadableLoader.h"
+#include "WorkerImportScriptsClient.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
+#include "XMLHttpRequestException.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -136,6 +142,12 @@ void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const Scrip
     notImplemented();
 }
 
+void WorkerContext::scriptImported(unsigned long, const String&)
+{
+    // FIXME: The implementation is pending the fixes in https://bugs.webkit.org/show_bug.cgi?id=23175
+    notImplemented();
+}
+
 void WorkerContext::postMessage(const String& message)
 {
     m_thread->workerObjectProxy()->postMessageToWorkerObject(message);
@@ -220,6 +232,44 @@ void WorkerContext::dispatchMessage(const String& message)
     ExceptionCode ec = 0;
     dispatchEvent(evt.release(), ec);
     ASSERT(!ec);
+}
+
+void WorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)
+{
+    ec = 0;
+    Vector<String>::const_iterator urlsEnd = urls.end();
+    Vector<KURL> completedURLs;
+    for (Vector<String>::const_iterator it = urls.begin(); it != urlsEnd; ++it) {
+        const KURL& url = scriptExecutionContext()->completeURL(*it);
+        if (!url.isValid()) {
+            ec = SYNTAX_ERR;
+            return;
+        }
+        completedURLs.append(url);
+    }
+    String securityOrigin = scriptExecutionContext()->securityOrigin()->toString();
+    Vector<KURL>::const_iterator end = completedURLs.end();
+
+    for (Vector<KURL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
+        ResourceRequest request(*it);
+        request.setHTTPMethod("GET");
+        request.setHTTPOrigin(securityOrigin);
+        WorkerImportScriptsClient client(scriptExecutionContext(), *it, callerURL, callerLine);
+        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, client);
+        
+        // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
+        if (client.failed()) {
+            ec = XMLHttpRequestException::NETWORK_ERR;
+            return;
+        }
+
+        ScriptValue exception;
+        m_script->evaluate(ScriptSourceCode(client.script(), *it), &exception);
+        if (!exception.hasNoValue()) {
+            m_script->setException(exception);
+            return;
+        }
+    }
 }
 
 } // namespace WebCore

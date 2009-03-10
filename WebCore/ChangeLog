@@ -1,3 +1,55 @@
+2009-03-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/6425807> Implement WorkerUtils.importScripts()
+        <https://bugs.webkit.org/show_bug.cgi?id=22721>
+
+        Implement importScripts, currently uses a series of synchronous loads
+        to fetch the scripts, but this is simpler than a synchronous load of
+        multiple loads in parallel.  In future we'll want to switch to parallel
+        loading, but this will do for now.
+        
+        Test: http/tests/workers/worker-importScripts.html
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::importScripts):
+        * bindings/js/ScriptValue.h:
+        (WebCore::ScriptValue::hasNoValue):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::setException):
+        * bindings/js/WorkerScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::scriptImported):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::scriptImported):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::setScriptProperties):
+        * inspector/InspectorResource.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::scriptImported):
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+        * workers/WorkerImportScriptsClient.cpp: Added.
+        (WebCore::WorkerImportScriptsClient::didReceiveResponse):
+        (WebCore::WorkerImportScriptsClient::didReceiveData):
+        (WebCore::WorkerImportScriptsClient::didFinishLoading):
+        (WebCore::WorkerImportScriptsClient::didFail):
+        (WebCore::WorkerImportScriptsClient::didFailRedirectCheck):
+        (WebCore::WorkerImportScriptsClient::didReceiveAuthenticationCancellation):
+        * workers/WorkerImportScriptsClient.h: Added.
+        (WebCore::WorkerImportScriptsClient::WorkerImportScriptsClient):
+        (WebCore::WorkerImportScriptsClient::script):
+        (WebCore::WorkerImportScriptsClient::failed):
+
 2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

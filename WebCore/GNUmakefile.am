@@ -2220,7 +2220,9 @@ webcore_sources += \
 	WebCore/workers/WorkerRunLoop.cpp \
 	WebCore/workers/WorkerRunLoop.h \
 	WebCore/workers/WorkerThread.cpp \
-	WebCore/workers/WorkerThread.h
+	WebCore/workers/WorkerThread.h \
+	WebCore/workers/WorkerImportScriptsClient.cpp \
+	WebCore/workers/WorkerImportScriptsClient.h
 endif
 
 # ----

@@ -77,6 +77,7 @@ namespace WebCore {
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
         virtual void addMessage(MessageDestination, MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
         virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
+        virtual void scriptImported(unsigned long identifier, const String& sourceString);
 
         virtual WorkerContext* toWorkerContext() { return this; }
 
@@ -99,6 +100,8 @@ namespace WebCore {
         typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
         EventListenersMap& eventListeners() { return m_eventListeners; }
 
+        void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
+        
         using RefCounted<WorkerContext>::ref;
         using RefCounted<WorkerContext>::deref;
 

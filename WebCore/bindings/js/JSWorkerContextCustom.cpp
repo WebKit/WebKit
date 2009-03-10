@@ -33,6 +33,7 @@
 #include "JSEventListener.h"
 #include "ScheduledAction.h"
 #include "WorkerContext.h"
+#include <interpreter/Interpreter.h>
 
 using namespace JSC;
 
@@ -74,6 +75,29 @@ JSValuePtr JSWorkerContext::self(ExecState*) const
 void JSWorkerContext::setSelf(ExecState* exec, JSValuePtr value)
 {
     putDirect(Identifier(exec, "self"), value);
+}
+
+JSValuePtr JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
+{
+    if (!args.size())
+        return jsUndefined();
+
+    Vector<String> urls;
+    for (unsigned i = 0; i < args.size(); i++) {
+        urls.append(args.at(exec, i).toString(exec));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+    ExceptionCode ec = 0;
+    int signedLineNumber;
+    intptr_t sourceID;
+    UString sourceURL;
+    JSValuePtr function;
+    exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
+
+    impl()->importScripts(urls, sourceURL, signedLineNumber >= 0 ? signedLineNumber : 0, ec);
+    setDOMException(exec, ec);
+    return jsUndefined();
 }
 
 JSValuePtr JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)

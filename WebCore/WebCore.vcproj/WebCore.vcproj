@@ -12057,6 +12057,14 @@
 				RelativePath="..\workers\WorkerThread.h"
 				>
 			</File>
+			<File
+				RelativePath="..\workers\WorkerImportScriptsClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerImportScriptsClient.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="editing"

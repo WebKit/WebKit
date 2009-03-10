@@ -2155,6 +2155,8 @@
 		A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */; };
 		A7D27FC40E0A599F0079AD2B /* SVGFETile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */; };
 		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D6B3490F61104500B79FD1 /* WorkerImportScriptsClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerImportScriptsClient.h */; };
+		A7D6B34A0F61104500B79FD1 /* WorkerImportScriptsClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerImportScriptsClient.cpp */; };
 		A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */; };
 		A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */; };
 		A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */; };
@@ -7072,6 +7074,8 @@
 		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
 		A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETile.cpp; sourceTree = "<group>"; };
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
+		A7D6B3470F61104500B79FD1 /* WorkerImportScriptsClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerImportScriptsClient.h; path = workers/WorkerImportScriptsClient.h; sourceTree = "<group>"; };
+		A7D6B3480F61104500B79FD1 /* WorkerImportScriptsClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerImportScriptsClient.cpp; path = workers/WorkerImportScriptsClient.cpp; sourceTree = "<group>"; };
 		A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGGradientStop.h; sourceTree = "<group>"; };
 		A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGGradientStop.cpp; sourceTree = "<group>"; };
 		A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGHiddenContainer.h; sourceTree = "<group>"; };
@@ -9796,6 +9800,8 @@
 				2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */,
 				2E4346420F546A8200B0F1BA /* WorkerThread.cpp */,
 				2E4346430F546A8200B0F1BA /* WorkerThread.h */,
+				A7D6B3470F61104500B79FD1 /* WorkerImportScriptsClient.h */,
+				A7D6B3480F61104500B79FD1 /* WorkerImportScriptsClient.cpp */,
 			);
 			name = workers;
 			sourceTree = "<group>";
@@ -16866,6 +16872,7 @@
 				5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */,
 				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
 				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
+				A7D6B3490F61104500B79FD1 /* WorkerImportScriptsClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18863,6 +18870,7 @@
 				5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */,
 				E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */,
 				E1C416170F6563180092D2FB /* CrossOriginAccessControl.cpp in Sources */,
+				A7D6B34A0F61104500B79FD1 /* WorkerImportScriptsClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

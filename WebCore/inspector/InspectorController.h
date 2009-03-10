@@ -215,6 +215,7 @@ public:
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
     void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const JSC::UString& sourceString);
+    void scriptImported(unsigned long identifier, const JSC::UString& sourceString);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);

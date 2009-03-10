@@ -67,7 +67,8 @@ namespace WebCore {
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
         virtual void addMessage(MessageDestination, MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;
         virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString) = 0;
-
+        virtual void scriptImported(unsigned long, const String&) = 0;
+        
         // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
         bool canSuspendActiveDOMObjects();
         // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -

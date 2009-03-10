@@ -45,6 +45,7 @@ public:
     bool getString(String& result) const;
     bool isNull() const;
     bool isUndefined() const;
+    bool hasNoValue() const { return m_value == JSC::noValue(); }
 
 private:
     JSC::ProtectedJSValuePtr m_value;

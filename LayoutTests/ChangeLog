@@ -1,3 +1,22 @@
+2009-03-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/6425807> Implement WorkerUtils.importScripts()
+        <https://bugs.webkit.org/show_bug.cgi?id=22721>
+
+        Tests to cover various usages of importScripts, eg. network load
+        failures, security exceptions, execution ordering, etc
+
+        * http/tests/workers/resources/worker-importScripts-differentOrigin.js: Added.
+        * http/tests/workers/resources/worker-importScripts-source1.js: Added.
+        * http/tests/workers/resources/worker-importScripts-source2.js: Added.
+        * http/tests/workers/resources/worker-importScripts-syntaxError.js: Added.
+        * http/tests/workers/resources/worker-importScripts.js: Added.
+        (try.resetLoadFlags):
+        * http/tests/workers/worker-importScripts-expected.txt: Added.
+        * http/tests/workers/worker-importScripts.html: Added.
+
 2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

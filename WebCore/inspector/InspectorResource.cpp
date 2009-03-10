@@ -133,6 +133,11 @@ void InspectorResource::setXMLHttpRequestProperties(const JSC::UString& data)
     xmlHttpRequestResource.set(new XMLHttpRequestResource(data));
 }
 
+void InspectorResource::setScriptProperties(const JSC::UString& data)
+{
+    xmlHttpRequestResource.set(new XMLHttpRequestResource(data));
+}
+
 String InspectorResource::sourceString() const
 {
     if (xmlHttpRequestResource)
