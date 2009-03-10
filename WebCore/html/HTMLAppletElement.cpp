@@ -115,9 +115,13 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
         HashMap<String, String> args;
 
         args.set("code", getAttribute(codeAttr));
+
         const AtomicString& codeBase = getAttribute(codebaseAttr);
-        if(!codeBase.isNull())
+        if (!codeBase.isNull())
             args.set("codeBase", codeBase);
+        else
+            args.set("codeBase", document()->baseURL().string());
+
         const AtomicString& name = getAttribute(document()->isHTMLDocument() ? nameAttr : idAttr);
         if (!name.isNull())
             args.set("name", name);

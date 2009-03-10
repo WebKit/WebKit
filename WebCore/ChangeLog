@@ -1,3 +1,17 @@
+2009-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6166844>
+        https://bugs.webkit.org/show_bug.cgi?id=24495
+
+        Use same rule for loading java applets as we do for images.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem):
+
 2009-03-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by David Kilzer.
