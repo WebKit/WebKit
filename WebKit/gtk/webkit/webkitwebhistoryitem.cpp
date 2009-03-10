@@ -17,7 +17,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
 #include "config.h"
 
 #include "webkitwebhistoryitem.h"
@@ -99,7 +98,7 @@ static void webkit_history_item_remove(WebCore::HistoryItem* historyItem)
     GHashTable* table = webkit_history_items();
     WebKitWebHistoryItem* webHistoryItem = (WebKitWebHistoryItem*) g_hash_table_lookup(table, historyItem);
 
-    g_return_if_fail(webHistoryItem != NULL);
+    g_return_if_fail(webHistoryItem);
 
     g_hash_table_remove(table, historyItem);
     g_object_unref(webHistoryItem);
@@ -331,7 +330,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* we
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
     priv->title = item->title().utf8();
@@ -353,7 +352,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_alternate_title(WebKitWebHisto
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
     priv->alternateTitle = item->alternateTitle().utf8();
@@ -393,7 +392,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webH
 
     WebCore::HistoryItem* item = core(WEBKIT_WEB_HISTORY_ITEM(webHistoryItem));
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
     priv->uri = item->urlString().utf8();
@@ -415,7 +414,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryI
 
     WebCore::HistoryItem* item = core(WEBKIT_WEB_HISTORY_ITEM(webHistoryItem));
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
     priv->originalUri = item->originalURLString().utf8();
@@ -437,7 +436,7 @@ gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webH
 
     WebCore::HistoryItem* item = core(WEBKIT_WEB_HISTORY_ITEM(webHistoryItem));
 
-    g_return_val_if_fail(item != NULL, 0);
+    g_return_val_if_fail(item, 0);
 
     return item->lastVisitedTime();
 }
@@ -450,7 +449,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* w
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     WebCore::CString t = item->target().utf8();
     return g_strdup(t.data());
@@ -462,7 +461,7 @@ gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem* webHistory
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, false);
+    g_return_val_if_fail(item, false);
 
     return item->isTargetItem();
 }
@@ -473,7 +472,7 @@ GList* webkit_web_history_item_get_children(WebKitWebHistoryItem* webHistoryItem
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    g_return_val_if_fail(item != NULL, NULL);
+    g_return_val_if_fail(item, NULL);
 
     const WebCore::HistoryItemVector& children = item->children();
     if (!children.size())
@@ -500,7 +499,7 @@ WebCore::HistoryItem* WebKit::core(WebKitWebHistoryItem* webHistoryItem)
 
 WebKitWebHistoryItem* WebKit::kit(PassRefPtr<WebCore::HistoryItem> historyItem)
 {
-    g_return_val_if_fail(historyItem != NULL, NULL);
+    g_return_val_if_fail(historyItem, NULL);
 
     RefPtr<WebCore::HistoryItem> item = historyItem;
 

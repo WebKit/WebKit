@@ -2,6 +2,27 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24493
+        [GTK] Misc patches for WebKitWebHistoryItem
+
+        Use 'if (foo)' instead of 'if (foo != NULL)', per coding style
+        guidelines.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_history_item_remove):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_uri):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_original_uri):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_last_visited_time):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_target):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_is_target_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_children):
+
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         Correct return value to false instead of NULL.
 
         * webkit/webkitwebhistoryitem.cpp:
