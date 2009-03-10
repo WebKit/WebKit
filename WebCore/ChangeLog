@@ -1,3 +1,14 @@
+2009-03-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=23975
+          <rdar://problem/6593610> REGRESSION: Scrollbar arrow not repainted
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::invalidateScrollbarRect): Corrected the vertical
+        scrollbar rect calculation.
+
 2009-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein, Oliver Hunt
