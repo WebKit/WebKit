@@ -80,7 +80,7 @@ static void webkit_web_history_item_get_property(GObject* object, guint prop_id,
 
 static GHashTable* webkit_history_items()
 {
-    static GHashTable* historyItems = g_hash_table_new(g_direct_hash, g_direct_equal);
+    static GHashTable* historyItems = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_object_unref);
     return historyItems;
 }
 
@@ -93,25 +93,15 @@ static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCor
     g_hash_table_insert(table, historyItem, g_object_ref(webHistoryItem));
 }
 
-static void webkit_history_item_remove(WebCore::HistoryItem* historyItem)
-{
-    GHashTable* table = webkit_history_items();
-    WebKitWebHistoryItem* webHistoryItem = (WebKitWebHistoryItem*) g_hash_table_lookup(table, historyItem);
-
-    g_return_if_fail(webHistoryItem);
-
-    g_hash_table_remove(table, historyItem);
-    g_object_unref(webHistoryItem);
-}
-
 static void webkit_web_history_item_dispose(GObject* object)
 {
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
 
-    webkit_history_item_remove(core(webHistoryItem));
+    GHashTable* table = webkit_history_items();
+
+    g_hash_table_remove(table, core(webHistoryItem));
 
     /* destroy table if empty */
-    GHashTable* table = webkit_history_items();
     if (!g_hash_table_size(table))
         g_hash_table_destroy(table);
 

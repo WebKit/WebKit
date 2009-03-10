@@ -5,6 +5,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=24493
         [GTK] Misc patches for WebKitWebHistoryItem
 
+        Use g_hash_table_new_full so we can save the manual unref on the
+        values when removing them from the table.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_dispose):
+
+2009-03-10  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24493
+        [GTK] Misc patches for WebKitWebHistoryItem
+
         Use 'if (foo)' instead of 'if (foo != NULL)', per coding style
         guidelines.
 
