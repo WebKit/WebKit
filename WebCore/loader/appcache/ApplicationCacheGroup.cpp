@@ -707,7 +707,11 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     case NoUpdate:
         ASSERT(isUpgradeAttempt);
         ASSERT(!m_cacheBeingUpdated);
-        ASSERT(m_storageID);
+
+        // The storage could have been manually emptied by the user.
+        if (!m_storageID)
+            cacheStorage().storeNewestCache(this);
+
         postListenerTask(&DOMApplicationCache::callNoUpdateListener, m_associatedDocumentLoaders);
         break;
     case Failure:
