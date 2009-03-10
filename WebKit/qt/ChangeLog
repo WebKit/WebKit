@@ -1,3 +1,10 @@
+2009-03-10  Adam Treat  <adam.treat@torchmobile.com>
+
+        Build fix for Qt after r41555.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::acceptNavigationRequest):
+
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
         Build fix, no review.
