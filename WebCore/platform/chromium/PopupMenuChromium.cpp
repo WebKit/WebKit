@@ -337,7 +337,7 @@ void PopupContainer::showPopup(FrameView* view)
     if (chromeClient) {
         // If the popup would extend past the bottom of the screen, open upwards
         // instead.
-        FloatRect screen = screenRect(view);
+        FloatRect screen = screenAvailableRect(view);
         IntRect widgetRect = chromeClient->windowToScreen(frameRect());
         if (widgetRect.bottom() > static_cast<int>(screen.bottom()))
             widgetRect.move(0, -(widgetRect.height() + selectHeight));

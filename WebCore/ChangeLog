@@ -1,3 +1,13 @@
+2009-03-09  Kim Christensen  <kimworking@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24276
+        Dropdown / select boxes do not consider the windows task bar in Chromium.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::showPopup):
+
 2009-03-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson and Dave Hyatt.
