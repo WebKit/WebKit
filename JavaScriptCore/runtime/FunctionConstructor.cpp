@@ -97,12 +97,12 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     if (args.isEmpty())
         program = "(function(){})";
     else if (args.size() == 1)
-        program = "(function(){" + args.at(exec, 0).toString(exec) + "})";
+        program = "(function(){" + args.at(exec, 0).toString(exec) + "\n})";
     else {
         program = "(function(" + args.at(exec, 0).toString(exec);
         for (size_t i = 1; i < args.size() - 1; i++)
             program += "," + args.at(exec, i).toString(exec);
-        program += "){" + args.at(exec, args.size() - 1).toString(exec) + "})";
+        program += "){" + args.at(exec, args.size() - 1).toString(exec) + "\n})";
     }
 
     int errLine;

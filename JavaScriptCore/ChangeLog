@@ -1,3 +1,18 @@
+2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff Garen.
+
+        Bug 24291: REGRESSION (r38635): Single line JavaScript comment prevents HTML button click handler execution
+        <https://bugs.webkit.org/show_bug.cgi?id=24291>
+        <rdar://problem/6663472>
+
+        Add an extra newline to the end of the body of the program text constructed
+        by the Function constructor for parsing. This allows single line comments to
+        be handled correctly by the parser.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+
 2009-03-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

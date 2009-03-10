@@ -2,6 +2,20 @@
 
         Reviewed by Geoff Garen.
 
+        Tests for bug 24291: REGRESSION (r38635): Single line JavaScript comment prevents HTML button click handler execution
+        <https://bugs.webkit.org/show_bug.cgi?id=24291>
+        <rdar://problem/6663472>
+
+        * fast/events/onload-single-line-comment-expected.txt: Added.
+        * fast/events/onload-single-line-comment.html: Added.
+        * fast/js/function-constructor-single-line-comment-expected.txt: Added.
+        * fast/js/function-constructor-single-line-comment.html: Added.
+        * fast/js/resources/function-constructor-single-line-comment.js: Added.
+
+2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff Garen.
+
         Test for bug 23736: WebKit Crashes on http://g-conquest.fr/~server2
         <https://bugs.webkit.org/show_bug.cgi?id=23736>
         <rdar://problem/6560278>
