@@ -203,7 +203,7 @@ static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& vi
     bzero(&textMarkerData, sizeof(TextMarkerData));
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = domNode;
-    textMarkerData.offset = deepPos.offset();
+    textMarkerData.offset = deepPos.m_offset;
     textMarkerData.affinity = visiblePos.affinity();
     return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)];
 }
@@ -228,7 +228,7 @@ static VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker* textMarke
     if (!cache->isIDinUse(textMarkerData.axID))
         return VisiblePosition();
 
-    if (deepPos.node() != textMarkerData.node || deepPos.offset() != textMarkerData.offset)
+    if (deepPos.node() != textMarkerData.node || deepPos.m_offset != textMarkerData.offset)
         return VisiblePosition();
     
     return visiblePos;

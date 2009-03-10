@@ -1,5 +1,13 @@
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
+        Build fix, no review
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        (visiblePositionForTextMarker):
+
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=24491
