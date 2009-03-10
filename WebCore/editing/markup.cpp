@@ -1035,6 +1035,8 @@ String createMarkup(const Node* node, EChildrenOnly includeChildren, Vector<Node
         deleteButton->disable();
     }
 
+    document->updateLayoutIgnorePendingStylesheets();
+
     appendMarkup(result, const_cast<Node*>(node), includeChildren, nodes);
 
     if (deleteButton)

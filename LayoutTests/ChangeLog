@@ -1,3 +1,14 @@
+2009-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23564: REGRESSION (r39230-39286): crash loading page that changes <input> display type and then calls innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=23564
+        rdar://problem/6537238
+
+        * fast/dom/HTMLElement/innerHTML-selection-crash-expected.txt: Added.
+        * fast/dom/HTMLElement/innerHTML-selection-crash.html: Added.
+
 2009-03-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
