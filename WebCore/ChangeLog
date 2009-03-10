@@ -2,6 +2,54 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24462
+        Move cross-origin access control code out of XMLHttpRequest
+
+        Step 1: move preflight result cache and access control helper functions.
+
+        No change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * loader/CrossOriginAccessControl.cpp: Added.
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist):
+        (WebCore::isSimpleCrossOriginAccessRequest):
+        (WebCore::createAllowedCrossOriginResponseHeadersSet):
+        (WebCore::isOnAccessControlResponseHeaderWhitelist):
+        (WebCore::passesAccessControlCheck):
+        * loader/CrossOriginAccessControl.h: Added.
+        * loader/CrossOriginPreflightResultCache.cpp: Added.
+        (WebCore::parseAccessControlMaxAge):
+        (WebCore::addToAccessControlAllowList):
+        (WebCore::parseAccessControlAllowList):
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest):
+        (WebCore::CrossOriginPreflightResultCache::shared):
+        (WebCore::CrossOriginPreflightResultCache::appendEntry):
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight):
+        * loader/CrossOriginPreflightResultCache.h: Added.
+        (WebCore::CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem):
+        (WebCore::CrossOriginPreflightResultCache::CrossOriginPreflightResultCache):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequestStaticData::XMLHttpRequestStaticData):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::makeCrossOriginAccessRequest):
+        (WebCore::XMLHttpRequest::makeSimpleCrossOriginAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossOriginAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        * xml/XMLHttpRequest.h:
+
+2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=19797
         Bring the list of forbidden headers in sync with XMLHttpRequest spec draft
 

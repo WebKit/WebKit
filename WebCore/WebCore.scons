@@ -333,6 +333,8 @@ sources['loader'] = [
     'loader/CachedScript.cpp',
     'loader/CachedXBLDocument.cpp',
     'loader/CachedXSLStyleSheet.cpp',
+    'loader/CrossOriginAccessControl.cpp',
+    'loader/CrossOriginPreflightResultCache.cpp',
     'loader/DocLoader.cpp',
     'loader/DocumentLoader.cpp',
     'loader/DocumentThreadableLoader.cpp',

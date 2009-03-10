@@ -1058,6 +1058,10 @@ webcore_sources += \
 	WebCore/loader/CachedXBLDocument.h \
 	WebCore/loader/CachedXSLStyleSheet.cpp \
 	WebCore/loader/CachedXSLStyleSheet.h \
+	WebCore/loader/CrossOriginAccessControl.cpp \
+	WebCore/loader/CrossOriginAccessControl.h \
+	WebCore/loader/CrossOriginPreflightResultCache.cpp \
+	WebCore/loader/CrossOriginPreflightResultCache.h \
 	WebCore/loader/DocLoader.cpp \
 	WebCore/loader/DocLoader.h \
 	WebCore/loader/DocumentLoader.cpp \

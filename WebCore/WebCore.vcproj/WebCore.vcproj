@@ -2784,6 +2784,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\CrossOriginAccessControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CrossOriginAccessControl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CrossOriginPreflightResultCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CrossOriginPreflightResultCache.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\DocLoader.cpp"
 				>
 			</File>

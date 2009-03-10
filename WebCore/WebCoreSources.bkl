@@ -645,6 +645,8 @@ This file contains the list of files needed to build WebCore.
         loader/CachedResourceClientWalker.cpp
         loader/CachedScript.cpp
         loader/CachedXSLStyleSheet.cpp
+        loader/CrossOriginAccessControl.cpp
+        loader/CrossOriginPreflightResultCache.cpp
         loader/DocLoader.cpp
         loader/DocumentLoader.cpp
         loader/DocumentThreadableLoader.cpp

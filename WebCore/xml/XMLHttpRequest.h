@@ -158,20 +158,14 @@ private:
     void createRequest(ExceptionCode&);
 
     void makeSameOriginRequest(ExceptionCode&);
-    void makeCrossSiteAccessRequest(ExceptionCode&);
+    void makeCrossOriginAccessRequest(ExceptionCode&);
 
-    void makeSimpleCrossSiteAccessRequest(ExceptionCode&);
-    void makeCrossSiteAccessRequestWithPreflight(ExceptionCode&);
+    void makeSimpleCrossOriginAccessRequest(ExceptionCode&);
+    void makeCrossOriginAccessRequestWithPreflight(ExceptionCode&);
     void handleAsynchronousPreflightResult();
 
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
-
-    bool isOnAccessControlResponseHeaderWhitelist(const String&) const;
-
-    bool isSimpleCrossSiteAccessRequest() const;
-    String accessControlOrigin() const;
-    bool accessControlCheck(const ResourceResponse&);
 
     void genericError();
     void networkError();

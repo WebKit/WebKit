@@ -4370,6 +4370,10 @@
 		E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */; };
 		E1C36D340EB0A094007410BC /* JSWorkerContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */; };
 		E1C36D350EB0A094007410BC /* JSWorkerContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36D330EB0A094007410BC /* JSWorkerContextBase.h */; };
+		E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */; };
+		E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */; };
+		E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */; };
+		E1C416170F6563180092D2FB /* CrossOriginAccessControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */; };
 		E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */; };
 		E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */; };
 		E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */; };
@@ -9204,6 +9208,10 @@
 		E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObject.cpp; sourceTree = "<group>"; };
 		E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextBase.cpp; sourceTree = "<group>"; };
 		E1C36D330EB0A094007410BC /* JSWorkerContextBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextBase.h; sourceTree = "<group>"; };
+		E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossOriginPreflightResultCache.h; sourceTree = "<group>"; };
+		E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossOriginPreflightResultCache.cpp; sourceTree = "<group>"; };
+		E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossOriginAccessControl.h; sourceTree = "<group>"; };
+		E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossOriginAccessControl.cpp; sourceTree = "<group>"; };
 		E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMObject.h; sourceTree = "<group>"; };
 		E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMObject.cpp; sourceTree = "<group>"; };
 		E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorker.cpp; sourceTree = "<group>"; };
@@ -13711,6 +13719,10 @@
 				BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */,
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
+				E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */,
+				E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */,
+				E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */,
+				E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */,
 				BCB16C100979C3BD00467741 /* DocLoader.cpp */,
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
 				93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */,
@@ -16852,6 +16864,8 @@
 				41F062010F5F0B6600A07EAC /* InspectorResource.h in Headers */,
 				41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */,
 				5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */,
+				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
+				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18847,6 +18861,8 @@
 				41F062020F5F0B6600A07EAC /* InspectorResource.cpp in Sources */,
 				41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */,
 				5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */,
+				E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */,
+				E1C416170F6563180092D2FB /* CrossOriginAccessControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
