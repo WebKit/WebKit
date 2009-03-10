@@ -282,6 +282,9 @@ void JIT::emitTimeoutCheck()
         NEXT_OPCODE(name); \
     }
 
+#define RECORD_JUMP_TARGET(targetOffset) \
+   do { m_labels[m_bytecodeIndex + (targetOffset)].used(); } while (false)
+
 void JIT::privateCompileMainPass()
 {
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
@@ -299,6 +302,9 @@ void JIT::privateCompileMainPass()
             sampleInstruction(currentInstruction);
 #endif
 
+        if (m_labels[m_bytecodeIndex].isUsed())
+            killLastResultRegister();
+        
         m_labels[m_bytecodeIndex] = label();
         OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
 
@@ -339,6 +345,7 @@ void JIT::privateCompileMainPass()
         case op_jmp: {
             unsigned target = currentInstruction[1].u.operand;
             addJump(jump(), target + 1);
+            RECORD_JUMP_TARGET(target + 1);
             NEXT_OPCODE(op_jmp);
         }
         case op_pre_inc: {
@@ -745,6 +752,7 @@ void JIT::privateCompileMainPass()
                 emitJumpSlowCaseIfNotImmediateInteger(regT1);
                 addJump(branch32(GreaterThanOrEqual, regT0, regT1), target + 3);
             }
+            RECORD_JUMP_TARGET(target + 3);
             NEXT_OPCODE(op_jnless);
         }
         case op_not: {
@@ -766,6 +774,7 @@ void JIT::privateCompileMainPass()
             addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(jsBoolean(true)))));
 
             isNonZero.link(this);
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jfalse);
         };
         case op_jeq_null: {
@@ -786,6 +795,7 @@ void JIT::privateCompileMainPass()
             addJump(branchPtr(Equal, regT0, ImmPtr(JSValuePtr::encode(jsNull()))), target + 2);            
 
             wasNotImmediate.link(this);
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jeq_null);
         };
         case op_jneq_null: {
@@ -806,6 +816,7 @@ void JIT::privateCompileMainPass()
             addJump(branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(jsNull()))), target + 2);            
 
             wasNotImmediate.link(this);
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jneq_null);
         }
         case op_post_inc: {
@@ -824,10 +835,13 @@ void JIT::privateCompileMainPass()
             DataLabelPtr storeLocation = storePtrWithPatch(Address(callFrameRegister, sizeof(Register) * retAddrDst));
             addJump(jump(), target + 2);
             m_jsrSites.append(JSRInfo(storeLocation, label()));
+            killLastResultRegister();
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jsr);
         }
         case op_sret: {
             jump(Address(callFrameRegister, sizeof(Register) * currentInstruction[1].u.operand));
+            killLastResultRegister();
             NEXT_OPCODE(op_sret);
         }
         case op_eq: {
@@ -892,6 +906,7 @@ void JIT::privateCompileMainPass()
             addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(jsBoolean(false)))));
 
             isZero.link(this);
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jtrue);
         }
         CTI_COMPILE_BINARY_OP(op_less)
@@ -1031,6 +1046,7 @@ void JIT::privateCompileMainPass()
             emitCTICall(JITStubs::cti_op_jmp_scopes);
             unsigned target = currentInstruction[2].u.operand;
             addJump(jump(), target + 2);
+            RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jmp_scopes);
         }
         case op_put_by_index: {

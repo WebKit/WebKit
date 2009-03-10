@@ -1,3 +1,32 @@
+2009-03-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 24447: REGRESSION (r41508): Google Maps does not complete initialization
+        <rdar://problem/6657774>
+
+        r41508 actually exposed a pre-existing bug where we were not invalidating the result
+        register cache at jump targets.  This causes problems when condition loads occur in an
+        expression -- namely through the ?: and || operators.  This patch corrects these issues
+        by marking the target of all forward jumps as being a jump target, and then clears the
+        result register cache when ever it starts generating code for a targeted instruction.
+
+        I do not believe it is possible to cause this class of failure outside of a single
+        expression, and expressions only provide forward branches, so this should resolve this
+        entire class of bug.  That said i've included a test case that gets as close as possible
+        to hitting this bug with a back branch, to hopefully prevent anyone from introducing the
+        problem in future.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Label::isUsed):
+        (JSC::AbstractMacroAssembler::Label::used):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpDst::JmpDst):
+        (JSC::X86Assembler::JmpDst::isUsed):
+        (JSC::X86Assembler::JmpDst::used):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2009-03-09  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

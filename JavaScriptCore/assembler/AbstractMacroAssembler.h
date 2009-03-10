@@ -206,6 +206,8 @@ public:
         {
         }
         
+        bool isUsed() const { return m_label.isUsed(); }
+        void used() { m_label.used(); }
     private:
         JmpDst m_label;
     };

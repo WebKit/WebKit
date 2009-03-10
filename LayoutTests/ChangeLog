@@ -1,3 +1,18 @@
+2009-03-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 24447: REGRESSION (r41508): Google Maps does not complete initialization
+        <rdar://problem/6657774>
+
+        Tests to cover correct dirtying of the register cache at branch targets.  I've included
+        the closest case i was able to make that could generate incorrect code from a back edge
+        but was unable to create a case which would actually fail.
+
+        * fast/js/registerCachingAcrossBranchTargets-expected.txt: Added.
+        * fast/js/registerCachingAcrossBranchTargets.html: Added.
+        * fast/js/resources/registerCachingAcrossBranchTargets.js: Added.
+
 2009-03-09  Sam Weinig  <sam@webkit.org>
 
         Roll out r41393.  It has been causing failures on the bots for about a week.

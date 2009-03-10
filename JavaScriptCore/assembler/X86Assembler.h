@@ -241,16 +241,22 @@ public:
     public:
         JmpDst()
             : m_offset(-1)
+            , m_used(false)
         {
         }
 
+        bool isUsed() const { return m_used; }
+        void used() { m_used = true; }
     private:
         JmpDst(int offset)
             : m_offset(offset)
+            , m_used(false)
         {
+            ASSERT(m_offset == offset);
         }
 
-        int m_offset;
+        int m_offset : 31;
+        bool m_used : 1;
     };
 
     X86Assembler()
