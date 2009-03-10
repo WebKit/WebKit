@@ -1,3 +1,17 @@
+2009-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Oliver Hunt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24475
+        
+        When repainting replaced elements, need to union the selection
+        and overflow rects because either may extend outside the other.
+        
+        Test: fast/repaint/transform-replaced-shadows.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+
 2009-03-09  Stephanie Lewis  <slewis@apple.com>
 
         Fix build.

@@ -1,3 +1,16 @@
+2009-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Oliver Hunt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24475
+        
+        Test for repainting a replaced element with transform and box-shadow.
+
+        * fast/repaint/transform-replaced-shadows.html: Added.
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.checksum: Added.
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.txt: Added.
+
 2009-03-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

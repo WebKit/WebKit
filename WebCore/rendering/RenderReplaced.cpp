@@ -390,9 +390,9 @@ IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
 
-    // The selectionRect can project outside of the overflowRect, so use
-    // that for repainting to avoid selection painting glitches
-    IntRect r = localSelectionRect(false);
+    // The selectionRect can project outside of the overflowRect, so take their union
+    // for repainting to avoid selection painting glitches.
+    IntRect r = unionRect(localSelectionRect(false), overflowRect(false));
 
     RenderView* v = view();
     if (v) {
