@@ -1,3 +1,31 @@
+2009-03-06  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24437
+
+        Add support for registering noAccess URL schemes:
+        1-  Add FrameLoader::registerURLSchemeAsNoAccess, and have SecurityOrigin check
+        that list upon construction (similar to how isLocal is implemented).
+        2-  Make InspectorController call grantUniversalAccess on its Document's
+        SecurityOrigin at the time when windowScriptObjectAvailable is called.
+
+        This enables content such as the inspector to be loaded from a custom (non-file)
+        URL, which is how Chromium loads the inspector.  It also allows other URL schemes
+        to be treated like data: URLs, which Chromium utilizes for its various HTML-based
+        UI panels.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * loader/FrameLoader.cpp:
+        (WebCore::localSchemes):
+        (WebCore::noAccessSchemes):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isLocal):
+
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
         Build fix, no review

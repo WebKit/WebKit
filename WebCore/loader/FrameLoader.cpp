@@ -113,7 +113,34 @@ using namespace SVGNames;
 #endif
 using namespace HTMLNames;
 
-typedef HashSet<String, CaseFoldingHash> LocalSchemesMap;
+typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
+
+static URLSchemesMap& localSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
+
+    if (localSchemes.isEmpty()) {
+        localSchemes.add("file");
+#if PLATFORM(MAC)
+        localSchemes.add("applewebdata");
+#endif
+#if PLATFORM(QT)
+        localSchemes.add("qrc");
+#endif
+    }
+
+    return localSchemes;
+}
+
+static URLSchemesMap& noAccessSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, noAccessSchemes, ());
+
+    if (noAccessSchemes.isEmpty())
+        noAccessSchemes.add("data");
+
+    return noAccessSchemes;
+}
 
 struct FormSubmission {
     FormSubmission(const char* action, const String& url, PassRefPtr<FormData> formData,
@@ -1114,23 +1141,6 @@ bool FrameLoader::restrictAccessToLocal()
 bool FrameLoader::allowSubstituteDataAccessToLocal()
 {
     return localLoadPolicy != FrameLoader::AllowLocalLoadsForLocalOnly;
-}
-
-static LocalSchemesMap& localSchemes()
-{
-    DEFINE_STATIC_LOCAL(LocalSchemesMap, localSchemes, ());
-
-    if (localSchemes.isEmpty()) {
-        localSchemes.add("file");
-#if PLATFORM(MAC)
-        localSchemes.add("applewebdata");
-#endif
-#if PLATFORM(QT)
-        localSchemes.add("qrc");
-#endif
-    }
-
-    return localSchemes;
 }
 
 void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
@@ -5137,7 +5147,7 @@ bool FrameLoader::shouldTreatURLAsLocal(const String& url)
     return localSchemes().contains(scheme);
 }
 
-bool FrameLoader::shouldTreatSchemeAsLocal(const String& scheme)
+bool FrameLoader::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     // This avoids an allocation of another String and the HashSet contains()
     // call for the file: and http: schemes.
@@ -5153,6 +5163,16 @@ bool FrameLoader::shouldTreatSchemeAsLocal(const String& scheme)
         return false;
 
     return localSchemes().contains(scheme);
+}
+
+void FrameLoader::registerURLSchemeAsNoAccess(const String& scheme)
+{
+    noAccessSchemes().add(scheme);
+}
+
+bool FrameLoader::shouldTreatURLSchemeAsNoAccess(const String& scheme)
+{
+    return noAccessSchemes().contains(scheme);
 }
 
 void FrameLoader::dispatchDidCommitLoad()

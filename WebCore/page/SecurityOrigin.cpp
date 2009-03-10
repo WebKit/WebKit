@@ -65,8 +65,8 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = "";
 
-    // data: URLs are not allowed access to anything other than themselves.
-    if (m_protocol == "data")
+    // Some URLs are not allowed access to anything other than themselves.
+    if (FrameLoader::shouldTreatURLSchemeAsNoAccess(m_protocol))
         m_noAccess = true;
 
     // document.domain starts as m_host, but can be set by the DOM.
@@ -193,7 +193,7 @@ void SecurityOrigin::grantUniversalAccess()
 
 bool SecurityOrigin::isLocal() const
 {
-    return FrameLoader::shouldTreatSchemeAsLocal(m_protocol);
+    return FrameLoader::shouldTreatURLSchemeAsLocal(m_protocol);
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const

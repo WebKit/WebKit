@@ -664,6 +664,9 @@ void InspectorController::windowScriptObjectAvailable()
     if (!m_page || !enabled())
         return;
 
+    // Grant the inspector the ability to script the inspected page.
+    m_page->mainFrame()->document()->securityOrigin()->grantUniversalAccess();
+
     // FIXME: This should be cleaned up. API Mix-up.
     JSGlobalObject* globalObject = m_page->mainFrame()->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
