@@ -199,7 +199,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
         else if (pos.node() == startBlock && nestNewBlock) {
-            refNode = startBlock->childNode(pos.offset());
+            refNode = startBlock->childNode(pos.m_offset);
             ASSERT(refNode); // must be true or we'd be in the end of block case
         } else
             refNode = pos.node();
@@ -248,15 +248,15 @@ void InsertParagraphSeparatorCommand::doApply()
     if (leadingWhitespace.isNotNull()) {
         Text* textNode = static_cast<Text*>(leadingWhitespace.node());
         ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
-        replaceTextInNode(textNode, leadingWhitespace.offset(), 1, nonBreakingSpaceString());
+        replaceTextInNode(textNode, leadingWhitespace.m_offset, 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
         Text *textNode = static_cast<Text *>(startNode);
-        bool atEnd = (unsigned)pos.offset() >= textNode->length();
-        if (pos.offset() > 0 && !atEnd) {
-            splitTextNode(textNode, pos.offset());
+        bool atEnd = (unsigned)pos.m_offset >= textNode->length();
+        if (pos.m_offset > 0 && !atEnd) {
+            splitTextNode(textNode, pos.m_offset);
             pos = Position(startNode, 0);
             visiblePos = VisiblePosition(pos);
             splitText = true;
@@ -288,7 +288,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         Node *n = startNode;
-        if (pos.offset() >= caretMaxOffset(startNode))
+        if (pos.m_offset >= caretMaxOffset(startNode))
             n = startNode->nextSibling();
 
         while (n && n != blockToInsert) {

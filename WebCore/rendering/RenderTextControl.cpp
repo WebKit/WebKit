@@ -293,7 +293,7 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
     RefPtr<Range> range = Range::create(document());
     range->setStart(m_innerText.get(), 0, ec);
     ASSERT(!ec);
-    range->setEnd(indexPosition.node(), indexPosition.offset(), ec);
+    range->setEnd(indexPosition.node(), indexPosition.m_offset, ec);
     ASSERT(!ec);
     return TextIterator::rangeLength(range.get());
 }

@@ -103,7 +103,7 @@ Position Position::previous(PositionMoveType moveType) const
     if (!n)
         return *this;
     
-    int o = offset();
+    int o = m_offset;
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     ASSERT(o >= 0);
 
@@ -142,7 +142,7 @@ Position Position::next(PositionMoveType moveType) const
     if (!n)
         return *this;
     
-    int o = offset();
+    int o = m_offset;
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     ASSERT(o >= 0);
 
@@ -187,7 +187,7 @@ bool Position::atStart() const
     if (!n)
         return true;
     
-    return offset() <= 0 && n->parent() == 0;
+    return m_offset <= 0 && n->parent() == 0;
 }
 
 bool Position::atEnd() const
@@ -196,26 +196,26 @@ bool Position::atEnd() const
     if (!n)
         return true;
     
-    return n->parent() == 0 && offset() >= maxDeepOffset(n);
+    return n->parent() == 0 && m_offset >= maxDeepOffset(n);
 }
 
 int Position::renderedOffset() const
 {
     if (!node()->isTextNode())
-        return offset();
+        return m_offset;
    
     if (!node()->renderer())
-        return offset();
+        return m_offset;
                     
     int result = 0;
     RenderText *textRenderer = toRenderText(node()->renderer());
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         int start = box->start();
         int end = box->start() + box->len();
-        if (offset() < start)
+        if (m_offset < start)
             return result;
-        if (offset() <= end) {
-            result += offset() - start;
+        if (m_offset <= end) {
+            result += m_offset - start;
             return result;
         }
         result += box->len();
@@ -574,17 +574,17 @@ bool Position::isCandidate() const
         return false;
 
     if (renderer->isBR())
-        return offset() == 0 && !nodeIsUserSelectNone(node()->parent());
+        return m_offset == 0 && !nodeIsUserSelectNone(node()->parent());
 
     if (renderer->isText())
         return inRenderedText() && !nodeIsUserSelectNone(node());
 
     if (isTableElement(node()) || editingIgnoresContent(node()))
-        return (offset() == 0 || offset() == maxDeepOffset(node())) && !nodeIsUserSelectNone(node()->parent());
+        return (m_offset == 0 || m_offset == maxDeepOffset(node())) && !nodeIsUserSelectNone(node()->parent());
 
     if (!node()->hasTagName(htmlTag) && renderer->isBlockFlow() && !hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
        (toRenderBox(renderer)->height() || node()->hasTagName(bodyTag)))
-        return offset() == 0 && !nodeIsUserSelectNone(node());
+        return m_offset == 0 && !nodeIsUserSelectNone(node());
     
     return false;
 }
@@ -600,15 +600,15 @@ bool Position::inRenderedText() const
     
     RenderText *textRenderer = toRenderText(renderer);
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
+        if (m_offset < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
             return false;
         }
-        if (box->containsCaretOffset(offset()))
+        if (box->containsCaretOffset(m_offset))
             // Return false for offsets inside composed characters.
-            return offset() == 0 || offset() == textRenderer->nextOffset(textRenderer->previousOffset(offset()));
+            return m_offset == 0 || m_offset == textRenderer->nextOffset(textRenderer->previousOffset(m_offset));
     }
     
     return false;
@@ -636,13 +636,13 @@ bool Position::isRenderedCharacter() const
     
     RenderText* textRenderer = toRenderText(renderer);
     for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
+        if (m_offset < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
             return false;
         }
-        if (offset() >= static_cast<int>(box->start()) && offset() < static_cast<int>(box->start() + box->len()))
+        if (m_offset >= static_cast<int>(box->start()) && m_offset < static_cast<int>(box->start() + box->len()))
             return true;
     }
     
@@ -670,11 +670,11 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         if (node()->hasTagName(brTag))
             return false;
 
-        if (offset() == pos.offset())
+        if (m_offset == pos.m_offset)
             return false;
             
         if (!node()->isTextNode() && !pos.node()->isTextNode()) {
-            if (offset() != pos.offset())
+            if (m_offset != pos.m_offset)
                 return true;
         }
     }
@@ -748,7 +748,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
-        UChar c = string[prev.offset()];
+        UChar c = string[prev.m_offset];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             if (isEditablePosition(prev))
                 return prev;
@@ -823,7 +823,7 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
 
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
 {
-    caretOffset = offset();
+    caretOffset = m_offset;
     RenderObject* renderer = node()->renderer();
     if (!renderer->isText()) {
         inlineBox = renderer->isBox() ? toRenderBox(renderer)->inlineBoxWrapper() : 0;
@@ -957,7 +957,7 @@ void Position::debugPosition(const char* msg) const
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().utf8().data(), node(), offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().utf8().data(), node(), m_offset);
 }
 
 #ifndef NDEBUG
@@ -971,7 +971,7 @@ void Position::formatForDebugger(char* buffer, unsigned length) const
     else {
         char s[1024];
         result += "offset ";
-        result += String::number(offset());
+        result += String::number(m_offset);
         result += " of ";
         node()->formatForDebugger(s, sizeof(s));
         result += s;

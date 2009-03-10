@@ -404,7 +404,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
         if (!p.node())
             break;
         renderer = p.node()->renderer();
-        if (!renderer || renderer->isRenderBlock() && !p.offset())
+        if (!renderer || renderer->isRenderBlock() && !p.m_offset)
             break;
         InlineBox* box;
         int ignoredCaretOffset;

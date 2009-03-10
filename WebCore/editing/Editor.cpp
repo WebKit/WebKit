@@ -1290,9 +1290,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         TypingCommand::insertText(m_frame->document(), text, true, true);
 
         Node* baseNode = m_frame->selection()->base().node();
-        unsigned baseOffset = m_frame->selection()->base().offset();
+        unsigned baseOffset = m_frame->selection()->base().m_offset;
         Node* extentNode = m_frame->selection()->extent().node();
-        unsigned extentOffset = m_frame->selection()->extent().offset();
+        unsigned extentOffset = m_frame->selection()->extent().m_offset;
 
         if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
             m_compositionNode = static_cast<Text*>(baseNode);
@@ -1696,7 +1696,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             return;
         
         Position rangeCompliantPosition = rangeCompliantEquivalent(position);
-        spellingSearchRange->setStart(rangeCompliantPosition.node(), rangeCompliantPosition.offset(), ec);
+        spellingSearchRange->setStart(rangeCompliantPosition.node(), rangeCompliantPosition.m_offset, ec);
         startedWithSelection = false;   // won't need to wrap
     }
     
@@ -2268,13 +2268,13 @@ bool Editor::getCompositionSelection(unsigned& selectionStart, unsigned& selecti
     if (end.node() != m_compositionNode)
         return false;
 
-    if (static_cast<unsigned>(start.offset()) < m_compositionStart)
+    if (static_cast<unsigned>(start.m_offset) < m_compositionStart)
         return false;
-    if (static_cast<unsigned>(end.offset()) > m_compositionEnd)
+    if (static_cast<unsigned>(end.m_offset) > m_compositionEnd)
         return false;
 
-    selectionStart = start.offset() - m_compositionStart;
-    selectionEnd = start.offset() - m_compositionEnd;
+    selectionStart = start.m_offset - m_compositionStart;
+    selectionEnd = start.m_offset - m_compositionEnd;
     return true;
 }
 

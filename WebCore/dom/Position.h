@@ -53,15 +53,14 @@ enum PositionMoveType {
 class Position {
 public:
     RefPtr<Node> container;
-    int posOffset; // to be renamed to offset when we get rid of offset()
+    int m_offset;
 
-    Position() : posOffset(0) { }
-    Position(PassRefPtr<Node> c, int o) : container(c), posOffset(o) { }
+    Position() : m_offset(0) { }
+    Position(PassRefPtr<Node> c, int o) : container(c), m_offset(o) { }
 
-    void clear() { container.clear(); posOffset = 0; }
+    void clear() { container.clear(); m_offset = 0; }
 
     Node* node() const { return container.get(); }
-    int offset() const { return posOffset; }
     Element* documentElement() const;
 
     bool isNull() const { return !container; }
@@ -118,7 +117,7 @@ private:
 
 inline bool operator==(const Position& a, const Position& b)
 {
-    return a.container == b.container && a.posOffset == b.posOffset;
+    return a.container == b.container && a.m_offset == b.m_offset;
 }
 
 inline bool operator!=(const Position& a, const Position& b)

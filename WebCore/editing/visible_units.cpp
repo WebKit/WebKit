@@ -63,8 +63,8 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     RefPtr<Range> searchRange = Range::create(d);
     
     int exception = 0;
-    searchRange->setStart(start.node(), start.offset(), exception);
-    searchRange->setEnd(end.node(), end.offset(), exception);
+    searchRange->setStart(start.node(), start.m_offset, exception);
+    searchRange->setEnd(end.node(), end.m_offset, exception);
     
     ASSERT(!exception);
     if (exception)
@@ -134,7 +134,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     Position start(rangeCompliantEquivalent(pos));
     ExceptionCode ec = 0;
     searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.node(), start.offset(), ec);
+    searchRange->setStart(start.node(), start.m_offset, ec);
     TextIterator it(searchRange.get(), true);
     Vector<UChar, 1024> string;
     unsigned next = 0;
@@ -286,7 +286,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
-        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.offset() == 0)
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.m_offset == 0)
             return positionAvoidingFirstPositionInTable(c);
         
         return VisiblePosition();
@@ -333,7 +333,7 @@ VisiblePosition startOfLine(const VisiblePosition& c)
         // greater than the input position.  This fix is to account for the discrepancy between lines with webkit-line-break:after-white-space 
         // style versus lines without that style, which would break before a space by default. 
         Position p = visPos.deepEquivalent();
-        if (p.offset() > c.deepEquivalent().offset() && p.node()->isSameNode(c.deepEquivalent().node())) {
+        if (p.m_offset > c.deepEquivalent().m_offset && p.node()->isSameNode(c.deepEquivalent().node())) {
             visPos = c.previous();
             if (visPos.isNull())
                 return VisiblePosition();
@@ -354,7 +354,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
-        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.offset() == 0)
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.m_offset == 0)
             return c;
         return VisiblePosition();
     }
@@ -571,7 +571,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
         Node* startBlock = enclosingBlock(node);
-        Node* n = nextLeafWithSameEditability(node, p.offset());
+        Node* n = nextLeafWithSameEditability(node, p.m_offset);
         while (n && startBlock == enclosingBlock(n))
             n = nextLeafWithSameEditability(n);
         while (n) {
@@ -679,13 +679,13 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
     if (startNode->renderer()
         && ((startNode->renderer()->isTable() && !startNode->renderer()->isInline())
             || startNode->renderer()->isHR())
-        && p.offset() == maxDeepOffset(startNode))
+        && p.m_offset == maxDeepOffset(startNode))
         return VisiblePosition(Position(startNode, 0));
 
     Node* startBlock = enclosingBlock(startNode);
 
     Node *node = startNode;
-    int offset = p.offset();
+    int offset = p.m_offset;
 
     Node *n = startNode;
     while (n) {
@@ -742,14 +742,14 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
     if (startNode->renderer()
         && ((startNode->renderer()->isTable() && !startNode->renderer()->isInline())
             || startNode->renderer()->isHR())
-        && p.offset() == 0)
+        && p.m_offset == 0)
         return VisiblePosition(Position(startNode, maxDeepOffset(startNode)));
     
     Node* startBlock = enclosingBlock(startNode);
     Node *stayInsideBlock = startBlock;
     
     Node *node = startNode;
-    int offset = p.offset();
+    int offset = p.m_offset;
 
     Node *n = startNode;
     while (n) {

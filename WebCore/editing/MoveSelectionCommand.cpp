@@ -48,14 +48,14 @@ void MoveSelectionCommand::doApply()
         
     // Update the position otherwise it may become invalid after the selection is deleted.
     Node *positionNode = m_position.node();
-    int positionOffset = m_position.offset();
+    int positionOffset = m_position.m_offset;
     Position selectionEnd = selection.end();
-    int selectionEndOffset = selectionEnd.offset();    
+    int selectionEndOffset = selectionEnd.m_offset;    
     if (selectionEnd.node() == positionNode && selectionEndOffset < positionOffset) {
         positionOffset -= selectionEndOffset;
         Position selectionStart = selection.start();
         if (selectionStart.node() == positionNode) {
-            positionOffset += selectionStart.offset();
+            positionOffset += selectionStart.m_offset;
         }
         pos = Position(positionNode, positionOffset);
     }

@@ -518,13 +518,13 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
 
     VisibleSelection selection = frame->selection()->selection();
     if (selection.isCaret()) {
-        ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node());
+        ts << "caret: position " << selection.start().m_offset << " of " << nodePosition(selection.start().node());
         if (selection.affinity() == UPSTREAM)
             ts << " (upstream affinity)";
         ts << "\n";
     } else if (selection.isRange())
-        ts << "selection start: position " << selection.start().offset() << " of " << nodePosition(selection.start().node()) << "\n"
-           << "selection end:   position " << selection.end().offset() << " of " << nodePosition(selection.end().node()) << "\n";
+        ts << "selection start: position " << selection.start().m_offset << " of " << nodePosition(selection.start().node()) << "\n"
+           << "selection end:   position " << selection.end().m_offset << " of " << nodePosition(selection.end().node()) << "\n";
 }
 
 String externalRepresentation(RenderObject* o)

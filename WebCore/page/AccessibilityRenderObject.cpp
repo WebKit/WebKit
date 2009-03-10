@@ -1687,7 +1687,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
     range->setStart(node, 0, ec);
-    range->setEnd(indexPosition.node(), indexPosition.offset(), ec);
+    range->setEnd(indexPosition.node(), indexPosition.m_offset, ec);
     return TextIterator::rangeLength(range.get());
 }
 

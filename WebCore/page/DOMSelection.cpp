@@ -82,14 +82,14 @@ int DOMSelection::anchorOffset() const
     const VisibleSelection& selection = m_frame->selection()->selection();
     Position anchor = selection.isBaseFirst() ? selection.start() : selection.end();
     anchor = rangeCompliantEquivalent(anchor);
-    return anchor.offset();
+    return anchor.m_offset;
 }
 
 int DOMSelection::baseOffset() const
 {
     if (!m_frame)
         return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().base()).offset();
+    return rangeCompliantEquivalent(m_frame->selection()->selection().base()).m_offset;
 }
 
 Node* DOMSelection::focusNode() const
@@ -118,14 +118,14 @@ int DOMSelection::focusOffset() const
     const VisibleSelection& selection = m_frame->selection()->selection();
     Position focus = selection.isBaseFirst() ? selection.end() : selection.start();
     focus = rangeCompliantEquivalent(focus);
-    return focus.offset();
+    return focus.m_offset;
 }
 
 int DOMSelection::extentOffset() const
 {
     if (!m_frame)
         return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().extent()).offset();
+    return rangeCompliantEquivalent(m_frame->selection()->selection().extent()).m_offset;
 }
 
 bool DOMSelection::isCollapsed() const

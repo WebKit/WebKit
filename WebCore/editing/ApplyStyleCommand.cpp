@@ -520,7 +520,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
     
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
     Node *startNode = start.node();
-    if (startNode->isTextNode() && start.offset() >= caretMaxOffset(startNode)) // Move out of text node if range does not include its characters.
+    if (startNode->isTextNode() && start.m_offset >= caretMaxOffset(startNode)) // Move out of text node if range does not include its characters.
         startNode = startNode->traverseNextNode();
 
     // Store away font size before making any changes to the document.
@@ -868,7 +868,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
 
     bool rangeIsEmpty = false;
 
-    if (start.offset() >= caretMaxOffset(start.node())) {
+    if (start.m_offset >= caretMaxOffset(start.node())) {
         node = node->traverseNextNode();
         Position newStart = Position(node, 0);
         if (Range::compareBoundaryPoints(end, newStart) < 0)
@@ -878,7 +878,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
     if (!rangeIsEmpty) {
         // pastEndNode is the node after the last fully selected node.
         Node* pastEndNode = end.node();
-        if (end.offset() >= caretMaxOffset(end.node()))
+        if (end.m_offset >= caretMaxOffset(end.node()))
             pastEndNode = end.node()->traverseNextSibling();
         // FIXME: Callers should perform this operation on a Range that includes the br
         // if they want style applied to the empty line.
@@ -1239,14 +1239,14 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
                 if (s.node() == elem) {
                     // Since elem must have been fully selected, and it is at the start
                     // of the selection, it is clear we can set the new s offset to 0.
-                    ASSERT(s.offset() <= caretMinOffset(s.node()));
+                    ASSERT(s.m_offset <= caretMinOffset(s.node()));
                     s = Position(next, 0);
                 }
                 if (e.node() == elem) {
                     // Since elem must have been fully selected, and it is at the end
                     // of the selection, it is clear we can set the new e offset to
                     // the max range offset of prev.
-                    ASSERT(e.offset() >= maxRangeOffset(e.node()));
+                    ASSERT(e.m_offset >= maxRangeOffset(e.node()));
                     e = Position(prev, maxRangeOffset(prev));
                 }
             }
@@ -1267,7 +1267,7 @@ bool ApplyStyleCommand::nodeFullySelected(Node *node, const Position &start, con
     ASSERT(node->isElementNode());
 
     Position pos = Position(node, node->childNodeCount()).upstream();
-    return Range::compareBoundaryPoints(node, 0, start.node(), start.offset()) >= 0 &&
+    return Range::compareBoundaryPoints(node, 0, start.node(), start.m_offset) >= 0 &&
         Range::compareBoundaryPoints(pos, end) <= 0;
 }
 
@@ -1278,7 +1278,7 @@ bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, c
 
     Position pos = Position(node, node->childNodeCount()).upstream();
     bool isFullyBeforeStart = Range::compareBoundaryPoints(pos, start) < 0;
-    bool isFullyAfterEnd = Range::compareBoundaryPoints(node, 0, end.node(), end.offset()) > 0;
+    bool isFullyAfterEnd = Range::compareBoundaryPoints(node, 0, end.node(), end.m_offset) > 0;
 
     return isFullyBeforeStart || isFullyAfterEnd;
 }
@@ -1286,11 +1286,11 @@ bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, c
 
 bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Position &end)
 {
-    if (start.node()->isTextNode() && start.offset() > caretMinOffset(start.node()) && start.offset() < caretMaxOffset(start.node())) {
-        int endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+    if (start.node()->isTextNode() && start.m_offset > caretMinOffset(start.node()) && start.m_offset < caretMaxOffset(start.node())) {
+        int endOffsetAdjustment = start.node() == end.node() ? start.m_offset : 0;
         Text *text = static_cast<Text *>(start.node());
-        splitTextNode(text, start.offset());
-        updateStartEnd(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment));
+        splitTextNode(text, start.m_offset);
+        updateStartEnd(Position(start.node(), 0), Position(end.node(), end.m_offset - endOffsetAdjustment));
         return true;
     }
     return false;
@@ -1298,15 +1298,15 @@ bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Po
 
 bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Position &end)
 {
-    if (end.node()->isTextNode() && end.offset() > caretMinOffset(end.node()) && end.offset() < caretMaxOffset(end.node())) {
+    if (end.node()->isTextNode() && end.m_offset > caretMinOffset(end.node()) && end.m_offset < caretMaxOffset(end.node())) {
         Text *text = static_cast<Text *>(end.node());
-        splitTextNode(text, end.offset());
+        splitTextNode(text, end.m_offset);
         
         Node *prevNode = text->previousSibling();
         ASSERT(prevNode);
         Node *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        updateStartEnd(Position(startNode, start.offset()), Position(prevNode, caretMaxOffset(prevNode)));
+        updateStartEnd(Position(startNode, start.m_offset), Position(prevNode, caretMaxOffset(prevNode)));
         return true;
     }
     return false;
@@ -1314,12 +1314,12 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
 
 bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, const Position &end)
 {
-    if (start.node()->isTextNode() && start.offset() > caretMinOffset(start.node()) && start.offset() < caretMaxOffset(start.node())) {
-        int endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+    if (start.node()->isTextNode() && start.m_offset > caretMinOffset(start.node()) && start.m_offset < caretMaxOffset(start.node())) {
+        int endOffsetAdjustment = start.node() == end.node() ? start.m_offset : 0;
         Text *text = static_cast<Text *>(start.node());
-        splitTextNodeContainingElement(text, start.offset());
+        splitTextNodeContainingElement(text, start.m_offset);
 
-        updateStartEnd(Position(start.node()->parentNode(), start.node()->nodeIndex()), Position(end.node(), end.offset() - endOffsetAdjustment));
+        updateStartEnd(Position(start.node()->parentNode(), start.node()->nodeIndex()), Position(end.node(), end.m_offset - endOffsetAdjustment));
         return true;
     }
     return false;
@@ -1327,15 +1327,15 @@ bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, c
 
 bool ApplyStyleCommand::splitTextElementAtEndIfNeeded(const Position &start, const Position &end)
 {
-    if (end.node()->isTextNode() && end.offset() > caretMinOffset(end.node()) && end.offset() < caretMaxOffset(end.node())) {
+    if (end.node()->isTextNode() && end.m_offset > caretMinOffset(end.node()) && end.m_offset < caretMaxOffset(end.node())) {
         Text *text = static_cast<Text *>(end.node());
-        splitTextNodeContainingElement(text, end.offset());
+        splitTextNodeContainingElement(text, end.m_offset);
 
         Node *prevNode = text->parent()->previousSibling()->lastChild();
         ASSERT(prevNode);
         Node *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        updateStartEnd(Position(startNode, start.offset()), Position(prevNode->parent(), prevNode->nodeIndex() + 1));
+        updateStartEnd(Position(startNode, start.m_offset), Position(prevNode->parent(), prevNode->nodeIndex() + 1));
         return true;
     }
     return false;
@@ -1379,10 +1379,10 @@ static bool areIdenticalElements(Node *first, Node *second)
 bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start, const Position &end)
 {
     Node *startNode = start.node();
-    int startOffset = start.offset();
+    int startOffset = start.m_offset;
 
     if (isAtomicNode(start.node())) {
-        if (start.offset() != 0)
+        if (start.m_offset != 0)
             return false;
 
         // note: prior siblings could be unrendered elements. it's silly to miss the
@@ -1411,7 +1411,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
 
         int startOffsetAdjustment = startChild->nodeIndex();
         int endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
-        updateStartEnd(Position(startNode, startOffsetAdjustment), Position(end.node(), end.offset() + endOffsetAdjustment)); 
+        updateStartEnd(Position(startNode, startOffsetAdjustment), Position(end.node(), end.m_offset + endOffsetAdjustment)); 
         return true;
     }
 
@@ -1421,7 +1421,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
 bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const Position &end)
 {
     Node *endNode = end.node();
-    int endOffset = end.offset();
+    int endOffset = end.m_offset;
 
     if (isAtomicNode(endNode)) {
         if (endOffset < caretMaxOffset(endNode))
@@ -1451,7 +1451,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
         ASSERT(startNode);
 
         int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodes()->length();
-        updateStartEnd(Position(startNode, start.offset()), Position(nextElement, endOffset));
+        updateStartEnd(Position(startNode, start.m_offset), Position(nextElement, endOffset));
         return true;
     }
 
@@ -1607,9 +1607,9 @@ void ApplyStyleCommand::joinChildTextNodes(Node *node, const Position &start, co
             Text *childText = static_cast<Text *>(child);
             Text *nextText = static_cast<Text *>(next);
             if (next == start.node())
-                newStart = Position(childText, childText->length() + start.offset());
+                newStart = Position(childText, childText->length() + start.m_offset);
             if (next == end.node())
-                newEnd = Position(childText, childText->length() + end.offset());
+                newEnd = Position(childText, childText->length() + end.m_offset);
             String textToMove = nextText->data();
             insertTextIntoNode(childText, childText->length(), textToMove);
             removeNode(next);

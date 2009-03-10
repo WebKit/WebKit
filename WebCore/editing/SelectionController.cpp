@@ -932,9 +932,9 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         if (selected) {
             int offset = 0;
             if (r->node() == m_sel.start().node())
-                offset = m_sel.start().offset();
+                offset = m_sel.start().m_offset;
             else if (r->node() == m_sel.end().node())
-                offset = m_sel.end().offset();
+                offset = m_sel.end().m_offset;
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);

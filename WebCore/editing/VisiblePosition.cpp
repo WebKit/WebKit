@@ -518,7 +518,7 @@ UChar VisiblePosition::characterAfter() const
     if (!node || !node->isTextNode())
         return 0;
     Text* textNode = static_cast<Text*>(pos.node());
-    int offset = pos.offset();
+    int offset = pos.m_offset;
     if ((unsigned)offset >= textNode->length())
         return 0;
     return textNode->data()[offset];
@@ -574,7 +574,7 @@ void VisiblePosition::debugPosition(const char* msg) const
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, m_deepPosition.node()->nodeName().utf8().data(), m_deepPosition.node(), m_deepPosition.offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, m_deepPosition.node()->nodeName().utf8().data(), m_deepPosition.node(), m_deepPosition.m_offset);
 }
 
 #ifndef NDEBUG
@@ -598,7 +598,7 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     
     Position s = rangeCompliantEquivalent(start);
     Position e = rangeCompliantEquivalent(end);
-    return Range::create(s.node()->document(), s.node(), s.offset(), e.node(), e.offset());
+    return Range::create(s.node()->document(), s.node(), s.m_offset, e.node(), e.m_offset);
 }
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)
@@ -619,7 +619,7 @@ bool setStart(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = rangeCompliantEquivalent(visiblePosition);
     int code = 0;
-    r->setStart(p.node(), p.offset(), code);
+    r->setStart(p.node(), p.m_offset, code);
     return code == 0;
 }
 
@@ -629,7 +629,7 @@ bool setEnd(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = rangeCompliantEquivalent(visiblePosition);
     int code = 0;
-    r->setEnd(p.node(), p.offset(), code);
+    r->setEnd(p.node(), p.m_offset, code);
     return code == 0;
 }
 

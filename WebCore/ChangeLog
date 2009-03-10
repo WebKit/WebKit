@@ -1,3 +1,138 @@
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24491
+        Rename posOffset to m_offset, get rid of accessor
+
+        As suggested in dom/Position.h, this patch gets rid of the
+        'offset()' accessor and renames posOffset to m_offset. I've used
+        m_offset instead of offset to follow the style guide lines, since
+        Position is still a class and not a structure. If the long term
+        plan is still to make it a structure it would be pretty easy to
+        just s/m_offset/offset/ globally when that is achieved.
+
+        * dom/Position.cpp:
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::atStart):
+        (WebCore::Position::atEnd):
+        (WebCore::Position::renderedOffset):
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::inRenderedText):
+        (WebCore::Position::isRenderedCharacter):
+        (WebCore::Position::rendersInDifferentPosition):
+        (WebCore::Position::leadingWhitespacePosition):
+        (WebCore::Position::debugPosition):
+        (WebCore::Position::formatForDebugger):
+        * dom/Position.h:
+        (WebCore::Position::Position):
+        * dom/PositionIterator.h:
+        (WebCore::PositionIterator::PositionIterator):
+        * dom/Range.cpp:
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::position):
+        (WebCore::RangeBoundaryPoint::set):
+        (WebCore::RangeBoundaryPoint::setOffset):
+        (WebCore::RangeBoundaryPoint::setToChild):
+        (WebCore::RangeBoundaryPoint::setToStart):
+        (WebCore::RangeBoundaryPoint::setToEnd):
+        (WebCore::RangeBoundaryPoint::childBeforeWillBeRemoved):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToRange):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::nodeFullySelected):
+        (WebCore::ApplyStyleCommand::nodeFullyUnselected):
+        (WebCore::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextAtEndIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEndIfNeeded):
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::updatePositionForNodeRemoval):
+        (WebCore::updatePositionForTextRemoval):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::getCompositionSelection):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performTrivialReplace):
+        (WebCore::InsertTextCommand::input):
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter):
+        (WebCore::VisiblePosition::debugPosition):
+        (WebCore::makeRange):
+        (WebCore::setStart):
+        (WebCore::setEnd):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange):
+        (WebCore::makeSearchRange):
+        (WebCore::VisibleSelection::debugPosition):
+        (WebCore::VisibleSelection::showTreeForThis):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions):
+        (WebCore::rangeCompliantEquivalent):
+        (WebCore::isFirstPositionAfterTable):
+        (WebCore::isLastPositionBeforeTable):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::startPositionForLine):
+        (WebCore::startOfLine):
+        (WebCore::endPositionForLine):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * page/AccessibilityObject.cpp:
+        (WebCore::updateAXLineStartForVisiblePosition):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::anchorOffset):
+        (WebCore::DOMSelection::baseOffset):
+        (WebCore::DOMSelection::focusOffset):
+        (WebCore::DOMSelection::extentOffset):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::indexForVisiblePosition):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSelection):
+
 2009-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

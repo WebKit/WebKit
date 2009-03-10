@@ -85,12 +85,12 @@ void BreakBlockquoteCommand::doApply()
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
         Text* textNode = static_cast<Text*>(startNode);
-        if ((unsigned)pos.offset() >= textNode->length()) {
+        if ((unsigned)pos.m_offset >= textNode->length()) {
             startNode = startNode->traverseNextNode();
             ASSERT(startNode);
-        } else if (pos.offset() > 0)
-            splitTextNode(textNode, pos.offset());
-    } else if (pos.offset() > 0) {
+        } else if (pos.m_offset > 0)
+            splitTextNode(textNode, pos.m_offset);
+    } else if (pos.m_offset > 0) {
         startNode = startNode->traverseNextNode();
         ASSERT(startNode);
     }
