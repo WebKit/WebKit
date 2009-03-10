@@ -1,3 +1,10 @@
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Build fix, no review.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+
 2009-03-07  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Cameron Zwarich.
