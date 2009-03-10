@@ -1,3 +1,16 @@
+2009-03-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Get rid of revealCaret and use revealSelection instead.
+
+        * WebCore.base.exp:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+        * page/Frame.h:
+
 2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Geoff Garen.

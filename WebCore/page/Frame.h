@@ -271,8 +271,7 @@ public:
 
     HTMLFormElement* currentForm() const;
 
-    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded) const;
-    void revealCaret(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded) const;
+    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, bool revealExtent);
     void setSelectionFromNone();
 
     void setUseSecureKeyboardEntry(bool);

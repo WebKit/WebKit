@@ -151,7 +151,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
     if (userTriggered)
-        m_frame->revealCaret(ScrollAlignment::alignToEdgeIfNeeded);
+        m_frame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded, true);
 
     notifyAccessibilityForSelectionChange();
 }
