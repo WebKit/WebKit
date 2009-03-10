@@ -871,7 +871,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
     if (start.m_offset >= caretMaxOffset(start.node())) {
         node = node->traverseNextNode();
         Position newStart = Position(node, 0);
-        if (Range::compareBoundaryPoints(end, newStart) < 0)
+        if (!node || Range::compareBoundaryPoints(end, newStart) < 0)
             rangeIsEmpty = true;
     }
 

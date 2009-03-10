@@ -1,3 +1,22 @@
+2009-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24494: crash when deleting at end of document and merging paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=24494
+        rdar://problem/6571537
+
+        Test: editing/deleting/merge-at-end-of-document.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::compareBoundaryPoints): Split out assertion. It's better not to
+        use && in assertions since we'd like to know which condition is failing.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToRange): Added a null check before
+        calling compareBoundaryPoints, since a 0 for the node is ambiguous and so the
+        function doesn't know which value to return.
+
 2009-03-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel. Math checked by Oliver Hunt.
