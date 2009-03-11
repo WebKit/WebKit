@@ -1,3 +1,14 @@
+2009-03-11  Marc-André Decoste  <mad@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixed the positions of the list boxes so that the size of their
+        rendering doesn't affect the test coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=24006
+
+        * fast/forms/option-mouseevents-expected.txt:
+        * fast/forms/option-mouseevents.html:
+
 2009-03-11  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

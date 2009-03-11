@@ -56,7 +56,7 @@ function test() {
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 174);
+        eventSender.mouseMoveTo(22, 184);
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
@@ -68,7 +68,7 @@ function test() {
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 334);
+        eventSender.mouseMoveTo(22, 344);
         eventSender.mouseDown();
         eventSender.mouseUp();
         eventSender.mouseDown();
@@ -76,7 +76,7 @@ function test() {
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 428);
+        eventSender.mouseMoveTo(22, 448);
         eventSender.mouseDown();
         eventSender.mouseUp();
         eventSender.mouseDown();
@@ -93,32 +93,32 @@ function test() {
 Bug 3248: Mouse events on OPTION element seem to be ignored<br>
 <a href="https://bugs.webkit.org/show_bug.cgi?id=3248">https://bugs.webkit.org/show_bug.cgi?id=3248</a></p>
 <form action="" method="post">
-<select size="2" onmousedown="mouseeventverify(event, 22, 104, document.getElementById('o1'), 'mousedown')">
+<select style="position:absolute; top: 84;" size="2" onmousedown="mouseeventverify(event, 22, 104, document.getElementById('o1'), 'mousedown')">
 <option>One
 <option id="o1" onmousedown="mouseeventverify(event, 22, 104, this, 'mousedown')">Two
 </select>
 </form>
 <form action="" method="post">
-<select size="2" onmouseup="mouseeventverify(event, 22, 174, document.getElementById('o2'), 'mouseup')">
+<select style="position:absolute; top: 164;" size="2" onmouseup="mouseeventverify(event, 22, 184, document.getElementById('o2'), 'mouseup')">
 <option>One
-<option id="o2" onmouseup="mouseeventverify(event, 22, 174, this, 'mouseup')">Two
+<option id="o2" onmouseup="mouseeventverify(event, 22, 184, this, 'mouseup')">Two
 </select>
 </form>
 <form action="" method="post">
-<select size="2" onclick="mouseeventverify(event, 22, 262, document.getElementById('o3'), 'click')">
+<select style="position:absolute; top: 242;" size="2" onclick="mouseeventverify(event, 22, 262, document.getElementById('o3'), 'click')">
 <option>One
 <option id="o3" onclick="mouseeventverify(event, 22, 262, this, 'click')">Two
 </select>
 </form>
 <form action="" method="post">
-<select size="2" ondblclick="mouseeventverify(event, 22, 334, document.getElementById('o4'), 'dblclick')">
+<select style="position:absolute; top: 324;" size="2" ondblclick="mouseeventverify(event, 22, 344, document.getElementById('o4'), 'dblclick')">
 <option>One
-<option id="o4" ondblclick="mouseeventverify(event, 22, 334, this, 'dblclick')">Two
+<option id="o4" ondblclick="mouseeventverify(event, 22, 344, this, 'dblclick')">Two
 </select>
 </form>
-<select size="3" onmousedown="mouseeventverify2(event, 22, 428, 12, 40, this, 'mousedown')">
+<select style="position:absolute; top: 408;" size="3" onmousedown="mouseeventverify2(event, 22, 448, 12, 38, this, 'mousedown')">
 <option>One
-<option id="o5" onmousedown="mouseeventverify2(event, 22, 428, 12, 40, this, 'mousedown')">Two
+<option id="o5" onmousedown="mouseeventverify2(event, 22, 448, 12, 38, this, 'mousedown')">Two
 </select>
 </form>
 <div style="position:absolute; top: 550;" id='console'></div>
