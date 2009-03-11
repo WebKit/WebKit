@@ -1,3 +1,13 @@
+2009-03-11  Adam Roben  <aroben@apple.com>
+
+        Export functions needed by ThreadSpecific from WebKit
+
+        Reviewed by John Sullivan.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        Export WTF::tlsKeyCount and WTF::tlsKeys.
+
 2009-03-10  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6662167> When clicking in Top Sites search field, WebHistory::findIndex fails causing crash in BookmarksSearcher::collectHistorySearchResults
