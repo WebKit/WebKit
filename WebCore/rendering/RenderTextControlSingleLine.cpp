@@ -270,12 +270,14 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     if (!RenderTextControl::nodeAtPoint(request, result, xPos, yPos, tx, ty, hitTestAction))
         return false;
 
-    if (result.innerNode() != node() && result.innerNode() != innerTextElement())
-        return false;
+    // If we hit a node inside the inner text element, say that we hit that element,
+    // and if we hit our node (e.g. we're over the border or padding), also say that we hit the
+    // inner text element so that it gains focus.
+    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
+        hitInnerTextElement(result, xPos, yPos, tx, ty);
 
-    hitInnerTextBlock(result, xPos, yPos, tx, ty);
-
-    if (!m_innerBlock)
+    // If we're not a search field, or we already found the results or cancel buttons, we're done.
+    if (!m_innerBlock || result.innerNode() == m_resultsButton || result.innerNode() == m_cancelButton)
         return true;
 
     Node* innerNode = 0;

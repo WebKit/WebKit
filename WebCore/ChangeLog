@@ -1,3 +1,32 @@
+2009-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24503
+        
+        Fix hit testing of absolutely positioned single line text controls by
+        ensuring that we set result.innerNode() correctly. If the hit node is
+        a descendant of the inner text element or if it is the <input> itself,
+        then we say we hit the innerTextElement.
+        
+        Rename hitInnerTextBlock() to hitInnerTextElement() to match the
+        'innerTextElement' terminology used elsewhere.
+        
+        Assert that if renderer()->hitTest() returns false, no-one set
+        result.innerNode().
+
+        Test: fast/forms/search-abs-pos-cancel-button.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestContents):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+
 2009-03-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.

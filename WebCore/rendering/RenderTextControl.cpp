@@ -451,7 +451,7 @@ void RenderTextControl::calcHeight()
     RenderBlock::calcHeight();
 }
 
-void RenderTextControl::hitInnerTextBlock(HitTestResult& result, int xPos, int yPos, int tx, int ty)
+void RenderTextControl::hitInnerTextElement(HitTestResult& result, int xPos, int yPos, int tx, int ty)
 {
     result.setInnerNode(m_innerText.get());
     result.setLocalPoint(IntPoint(xPos - tx - x() - m_innerText->renderBox()->x(),

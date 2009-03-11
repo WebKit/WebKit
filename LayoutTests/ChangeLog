@@ -1,3 +1,15 @@
+2009-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24503
+        
+        Test for hitting the cancel button of an absolutely-positioned form
+        control.
+
+        * fast/forms/search-abs-pos-cancel-button-expected.txt: Added.
+        * fast/forms/search-abs-pos-cancel-button.html: Added.
+
 2009-03-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
