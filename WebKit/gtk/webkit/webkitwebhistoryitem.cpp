@@ -96,10 +96,12 @@ static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCor
 static void webkit_web_history_item_dispose(GObject* object)
 {
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
+    WebCore::HistoryItem* item = core(webHistoryItem);
 
     GHashTable* table = webkit_history_items();
 
-    g_hash_table_remove(table, core(webHistoryItem));
+    g_hash_table_remove(table, item);
+    item->deref();
 
     /* destroy table if empty */
     if (!g_hash_table_size(table))
