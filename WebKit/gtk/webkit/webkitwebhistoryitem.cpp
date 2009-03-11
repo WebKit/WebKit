@@ -58,6 +58,8 @@ struct _WebKitWebHistoryItemPrivate {
     WebCore::CString alternateTitle;
     WebCore::CString uri;
     WebCore::CString originalUri;
+
+    gboolean disposed;
 };
 
 #define WEBKIT_WEB_HISTORY_ITEM_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_HISTORY_ITEM, WebKitWebHistoryItemPrivate))
@@ -96,16 +98,21 @@ static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCor
 static void webkit_web_history_item_dispose(GObject* object)
 {
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
+    WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    GHashTable* table = webkit_history_items();
+    if (!priv->disposed) {
+        GHashTable* table = webkit_history_items();
 
-    g_hash_table_remove(table, item);
-    item->deref();
+        g_hash_table_remove(table, item);
+        item->deref();
 
-    /* destroy table if empty */
-    if (!g_hash_table_size(table))
-        g_hash_table_destroy(table);
+        /* destroy table if empty */
+        if (!g_hash_table_size(table))
+            g_hash_table_destroy(table);
+
+        priv->disposed = true;
+    }
 
     G_OBJECT_CLASS(webkit_web_history_item_parent_class)->dispose(object);
 }

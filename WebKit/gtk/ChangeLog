@@ -5,6 +5,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=24493
         [GTK] Misc patches for WebKitWebHistoryItem
 
+        Only run code in dispose once per instance.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_dispose):
+
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24493
+        [GTK] Misc patches for WebKitWebHistoryItem
+
         Call deref() on our internal HistoryItem on dispose, as we always
         acquire it with a releaseRef() call to a PassRefPtr, which passes
         ownership.
