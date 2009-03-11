@@ -1,5 +1,19 @@
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Reviewed by Holger Freyther.
+
+        [Gtk] Fix make clean targets
+        https://bugs.webkit.org/show_bug.cgi?id=24450
+
+        Fix 'make' clean targets. We shouldn't be removing DerivedSources
+        if it's only clean. Only remove it if it's distclean or
+        maintainer-clean. Also remove build-related auxillary files on
+        dist/maintainer clean.
+
+        * GNUmakefile.am:
+
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Holger Freyther
 
         [GTK]DumpRenderTree doesn't compile for non-X11 GTK ports anymore

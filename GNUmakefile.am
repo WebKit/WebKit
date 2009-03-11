@@ -454,7 +454,7 @@ EXTRA_DIST = \
 	$(srcdir)/WebKit/gtk/webkitmarshal.list
 
 # Files that will be cleaned
-MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES)
+MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
 DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
 CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
 
@@ -502,11 +502,16 @@ CLEANFILES += \
 
 MAINTAINERCLEANFILES += \
 	$(srcdir)/aconfig.h.in \
-	configure \
-	config.* \
-	GNUmakefile.in \
-	INSTALL \
-	README
+	$(srcdir)/autotools/config.* \
+	$(srcdir)/autotools/compile \
+	$(srcdir)/autotools/depcomp \
+	$(srcdir)/autotools/install-sh \
+	$(srcdir)/autotools/missing \
+	$(srcdir)/configure \
+	$(srcdir)/GNUmakefile.in \
+	$(srcdir)/INSTALL \
+	$(srcdir)/README \
+	$(top_builddir)/config.*
 
 # Older automake versions (1.7) place Plo files in a different place so we need
 # to create the output directory manually.
@@ -515,4 +520,7 @@ all-local:
 
 # remove built sources and program directories
 clean-local:
+	-rm -rf $(GENPROGRAMS)
+
+maintainer-clean-local distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
