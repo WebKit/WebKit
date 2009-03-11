@@ -1,3 +1,18 @@
+2009-03-11  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15790
+        Ligatures aren't accounted for when manipulating VisiblePositions
+
+        Changed cursorMovementIterator rules to prevent a cursor from moving in the middle of an
+        Indic ligature which uses a virama sign.
+        
+        Test: editing/deleting/skip-virama-001.html
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::cursorMovementIterator):
+
 2009-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by George Staikos.

@@ -1,8 +1,23 @@
+2009-03-11  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15790
+        Ligatures aren't accounted for when manipulating VisiblePositions
+
+        Verify that we can prevent a cursor from moving in the middle of an Indic ligature.
+
+        * editing/deleting/skip-virama-001-expected.txt: Added.
+        * editing/deleting/skip-virama-001.html: Added.
+
+        * platform/mac-tiger/Skipped: This fix requires a customized cursorMovementIterator,
+        which is not enabled on Tiger (see bug 24513).
+
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
 
-        Gtk] Implement LayoutTestControllerGtk::setPrivateBrowsingEnabled
+        [Gtk] Implement LayoutTestControllerGtk::setPrivateBrowsingEnabled
         https://bugs.webkit.org/show_bug.cgi?id=24487
 
         Enable http/tests/security/cross-frame-access-private-browsing.html test.
