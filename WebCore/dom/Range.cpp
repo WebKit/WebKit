@@ -1590,7 +1590,10 @@ void Range::addLineBoxRects(Vector<IntRect>& rects, bool useSelectionHeight)
     if (!start || !end)
         return;
 
-    RenderObject* stop = end->nextInPreOrderAfterChildren();
+    RenderObject* stop = end->childAt(m_end.offset());
+    if (!stop)
+        stop = end->nextInPreOrderAfterChildren();
+    
     for (RenderObject* r = start; r && r != stop; r = r->nextInPreOrder()) {
         // only ask leaf render objects for their line box rects
         if (!r->firstChild()) {

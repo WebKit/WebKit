@@ -1,3 +1,11 @@
+2009-03-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+        * dom/Range.cpp:
+        (WebCore::Range::addLineBoxRects): If the range ended at [div, 0], addLineBoxRects
+        would include rects for the divs contents.  Set the correct RenderObject to stop at.
+
 2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
