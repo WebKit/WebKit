@@ -1,3 +1,11 @@
+2009-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/6620064>.
+        
+        * Plugins/WebPluginContainerPrivate.h:
+
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
         Build fix, no review.
