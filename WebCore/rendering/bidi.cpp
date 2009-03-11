@@ -972,26 +972,18 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                             TextDirection direction = style()->direction();
                             bool shouldReorder = trailingSpaceRun != (direction == LTR ? resolver.lastRun() : resolver.firstRun());
                             if (firstSpace != trailingSpaceRun->start()) {
-                                ETextAlign textAlign = style()->textAlign();
-                                // If the trailing white space is at the right hand side of a left-aligned line, then computeHorizontalPositionsForLine()
-                                // does not care if trailingSpaceRun includes non-spaces at the beginning. In all other cases, trailingSpaceRun has to
-                                // contain only the spaces, either because we re-order them or because computeHorizontalPositionsForLine() needs to know
-                                // their width.
-                                bool shouldSeparateSpaces = textAlign != LEFT && textAlign != WEBKIT_LEFT && textAlign != TAAUTO || trailingSpaceRun->m_level % 2 || direction == RTL || shouldReorder;
-                                if (shouldSeparateSpaces) {
-                                    BidiContext* baseContext = resolver.context();
-                                    while (BidiContext* parent = baseContext->parent())
-                                        baseContext = parent;
+                                BidiContext* baseContext = resolver.context();
+                                while (BidiContext* parent = baseContext->parent())
+                                    baseContext = parent;
 
-                                    BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
-                                    trailingSpaceRun->m_stop = firstSpace;
-                                    if (direction == LTR)
-                                        resolver.addRun(newTrailingRun);
-                                    else
-                                        resolver.prependRun(newTrailingRun);
-                                    trailingSpaceRun = newTrailingRun;
-                                    shouldReorder = false;
-                                }
+                                BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
+                                trailingSpaceRun->m_stop = firstSpace;
+                                if (direction == LTR)
+                                    resolver.addRun(newTrailingRun);
+                                else
+                                    resolver.prependRun(newTrailingRun);
+                                trailingSpaceRun = newTrailingRun;
+                                shouldReorder = false;
                             }
                             if (shouldReorder) {
                                 if (direction == LTR) {

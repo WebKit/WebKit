@@ -59,14 +59,18 @@ layer at (0,0) size 785x1191
 layer at (9,61) size 400x200
   RenderBlock {DIV} at (1,1) size 400x200
     RenderText {#text} at (3,18) size 387x68
-      text run at (3,18) width 387: "Demo text here that wraps a bit and should demonstrate "
+      text run at (3,18) width 382: "Demo text here that wraps a bit and should demonstrate"
+      text run at (385,18) width 5: " "
       text run at (3,70) width 182: "the goodness of line-height"
 layer at (11,828) size 161x26 clip at (11,828) size 146x26 scrollHeight 52
   RenderBlock {DIV} at (1,1) size 161x26
     RenderText {#text} at (3,0) size 130x52
-      text run at (3,0) width 112: "Demo text here that "
-      text run at (3,13) width 126: "wraps a bit and should "
-      text run at (3,26) width 92: "demonstrate the "
+      text run at (3,0) width 109: "Demo text here that"
+      text run at (112,0) width 3: " "
+      text run at (3,13) width 123: "wraps a bit and should"
+      text run at (126,13) width 3: " "
+      text run at (3,26) width 89: "demonstrate the"
+      text run at (92,26) width 3: " "
       text run at (3,39) width 130: "goodness of line-height"
 layer at (11,900) size 161x26
   RenderBlock {DIV} at (1,1) size 161x26

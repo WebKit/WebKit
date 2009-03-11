@@ -6,8 +6,10 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 418x29
         text run at (0,0) width 418: "All the text here should be the same size. "
       RenderText {#text} at (418,0) size 784x58
-        text run at (418,0) width 366: "All the text here should be the same "
-        text run at (0,29) width 51: "size. "
+        text run at (418,0) width 361: "All the text here should be the same"
+        text run at (779,0) width 5: " "
+        text run at (0,29) width 45: "size."
+        text run at (45,29) width 6: " "
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 caret: position 43 of child 1 {#text} of child 1 {BODY} of child 0 {HTML} of document

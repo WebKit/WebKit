@@ -33,6 +33,8 @@ layer at (0,0) size 800x210
       RenderBlock {DIV} at (0,150) size 100x36
         RenderInline {SPAN} at (0,0) size 88x36
           RenderText {#text} at (0,0) size 88x36
-            text run at (0,0) width 88: "Lorem ipsum "
-            text run at (0,18) width 37: "dolor "
+            text run at (0,0) width 84: "Lorem ipsum"
+            text run at (84,0) width 4: " "
+            text run at (0,18) width 33: "dolor"
+            text run at (33,18) width 4: " "
 caret: position 18 of child 0 {#text} of child 1 {SPAN} of child 7 {DIV} of child 1 {BODY} of child 1 {HTML} of document

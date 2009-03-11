@@ -1,3 +1,20 @@
+2009-03-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6624769> REGRESSION (Safari 4 PB): No 
+        scroll bar appears for long line of text with NOWRAP set
+
+        This is a regression from http://trac.webkit.org/changeset/32226
+        I talked with Dan about the original change, and we decided that 
+        the best fix was to remove his small potential-optimization that 
+        only created a separate line box for whitespace under certain 
+        circumstances. This new code will always create a separate line 
+        box.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

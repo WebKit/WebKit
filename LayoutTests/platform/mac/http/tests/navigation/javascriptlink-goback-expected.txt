@@ -101,8 +101,10 @@ layer at (347,400) size 142x13
 layer at (11,592) size 230x130
   RenderBlock {DIV} at (1,1) size 230x130
     RenderText {#text} at (3,0) size 205x39
-      text run at (3,0) width 202: "More new form text from user, which "
-      text run at (3,13) width 205: "should be restored when we return to "
+      text run at (3,0) width 199: "More new form text from user, which"
+      text run at (202,0) width 3: " "
+      text run at (3,13) width 202: "should be restored when we return to"
+      text run at (205,13) width 3: " "
       text run at (3,26) width 53: "this page."
 scrolled to 0,50
 

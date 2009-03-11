@@ -5,7 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (8,8) size 200x46 [bgcolor=#FFFFE0]
         RenderText {#text} at (0,0) size 191x46
-          text run at (0,0) width 191: "Lorem ipsum dolor "
+          text run at (0,0) width 185: "Lorem ipsum dolor"
+          text run at (185,0) width 6: " "
           text run at (0,23) width 79: "sit amet"
       RenderBlock (floating) {DIV} at (224,8) size 200x46 [bgcolor=#FFFFE0]
         RenderText {#text} at (7,0) size 191x46

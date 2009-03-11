@@ -1,3 +1,136 @@
+2009-03-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test changes for <rdar://problem/6624769> REGRESSION (Safari 4 PB): 
+        No scroll bar appears for long line of text with NOWRAP set
+
+        New test:
+        * fast/inline/long-wrapped-line.html: Added.
+        * platform/mac/fast/inline/long-wrapped-line-expected.checksum: Added.
+        * platform/mac/fast/inline/long-wrapped-line-expected.png: Added.
+        * platform/mac/fast/inline/long-wrapped-line-expected.txt: Added.
+
+        
+        These tests all have changed results from the patch. Now trailing 
+        whitespace always has its own linebox instead of sometimes sharing 
+        a linebox with text.
+        * platform/mac/editing/deleting/5206311-1-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * platform/mac/editing/deleting/delete-block-table-expected.txt:
+        * platform/mac/editing/deleting/delete-leading-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-line-end-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-line-end-ws-002-expected.txt:
+        * platform/mac/editing/deleting/delete-to-select-table-expected.txt:
+        * platform/mac/editing/deleting/delete-ws-fixup-001-expected.txt:
+        * platform/mac/editing/deleting/delete-ws-fixup-002-expected.txt:
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt:
+        * platform/mac/editing/deleting/forward-delete-expected.txt:
+        * platform/mac/editing/execCommand/5482023-expected.txt:
+        * platform/mac/editing/execCommand/boldSelection-expected.txt:
+        * platform/mac/editing/execCommand/italicizeByCharacter-expected.txt:
+        * platform/mac/editing/execCommand/modifyForeColorByCharacter-expected.txt:
+        * platform/mac/editing/execCommand/print-expected.txt:
+        * platform/mac/editing/execCommand/selectAll-expected.txt:
+        * platform/mac/editing/execCommand/strikethroughSelection-expected.txt:
+        * platform/mac/editing/input/emacs-ctrl-o-expected.txt:
+        * platform/mac/editing/inserting/12882-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/inserting/insert-div-019-expected.txt:
+        * platform/mac/editing/inserting/insert-div-020-expected.txt:
+        * platform/mac/editing/inserting/insert-div-021-expected.txt:
+        * platform/mac/editing/inserting/insert-div-022-expected.txt:
+        * platform/mac/editing/inserting/insert-div-023-expected.txt:
+        * platform/mac/editing/inserting/insert-div-024-expected.txt:
+        * platform/mac/editing/inserting/insert-div-025-expected.txt:
+        * platform/mac/editing/inserting/insert-div-027-expected.txt:
+        * platform/mac/editing/inserting/typing-003-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/pasteboard/5028447-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-3-expected.txt:
+        * platform/mac/editing/pasteboard/paste-table-003-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-012-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-013-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-014-expected.txt:
+        * platform/mac/editing/selection/4947387-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.txt:
+        * platform/mac/editing/selection/5081257-1-expected.txt:
+        * platform/mac/editing/selection/5081257-2-expected.txt:
+        * platform/mac/editing/selection/5136696-expected.txt:
+        * platform/mac/editing/selection/5234383-1-expected.txt:
+        * platform/mac/editing/selection/5234383-2-expected.txt:
+        * platform/mac/editing/selection/7152-1-expected.txt:
+        * platform/mac/editing/selection/7152-2-expected.txt:
+        * platform/mac/editing/selection/after-line-wrap-expected.txt:
+        * platform/mac/editing/selection/click-start-of-line-expected.txt:
+        * platform/mac/editing/selection/drag-in-iframe-expected.txt:
+        * platform/mac/editing/selection/editable-html-element-expected.txt:
+        * platform/mac/editing/selection/editable-non-editable-crash-expected.txt:
+        * platform/mac/editing/selection/end-of-document-expected.txt:
+        * platform/mac/editing/selection/extend-by-character-003-expected.txt:
+        * platform/mac/editing/selection/extend-by-character-005-expected.txt:
+        * platform/mac/editing/selection/extend-by-word-002-expected.txt:
+        * platform/mac/editing/selection/mixed-editability-1-expected.txt:
+        * platform/mac/editing/selection/move-by-character-003-expected.txt:
+        * platform/mac/editing/selection/move-by-character-005-expected.txt:
+        * platform/mac/editing/selection/select-all-001-expected.txt:
+        * platform/mac/editing/selection/select-all-002-expected.txt:
+        * platform/mac/editing/selection/select-all-003-expected.txt:
+        * platform/mac/editing/selection/wrapped-line-caret-1-expected.txt:
+        * platform/mac/editing/selection/wrapped-line-caret-2-expected.txt:
+        * platform/mac/editing/style/apple-style-editable-mix-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-001-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-002-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-003-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-004-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-005-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-006-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-007-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-008-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-009-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-010-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-011-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-012-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-013-expected.txt:
+        * platform/mac/editing/style/relative-font-size-change-001-expected.txt:
+        * platform/mac/editing/style/relative-font-size-change-002-expected.txt:
+        * platform/mac/editing/style/relative-font-size-change-003-expected.txt:
+        * platform/mac/editing/style/relative-font-size-change-004-expected.txt:
+        * platform/mac/editing/undo/undo-combined-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-combined-delete-expected.txt:
+        * platform/mac/editing/undo/undo-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-delete-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-expected.txt:
+        * platform/mac/fast/block/float/editable-text-overlapping-float-expected.txt:
+        * platform/mac/fast/clip/outline-overflowClip-expected.txt:
+        * platform/mac/fast/forms/negativeLineHeight-expected.txt:
+        * platform/mac/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/mac/fast/forms/textarea-rows-cols-expected.txt:
+        * platform/mac/fast/lists/drag-into-marker-expected.txt:
+        * platform/mac/fast/parser/comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/repaint/inline-outline-repaint-expected.txt:
+        * platform/mac/fast/repaint/selection-after-delete-expected.txt:
+        * platform/mac/fast/repaint/selection-after-remove-expected.txt:
+        * platform/mac/fast/text/embed-at-end-of-pre-wrap-line-expected.txt:
+        * platform/mac/fast/text/trailing-white-space-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-line-test-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        * platform/mac/fast/text/whitespace/tab-character-basics-expected.txt:
+        * platform/mac/http/tests/navigation/anchor-goback-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-goback-expected.txt:
+        * platform/mac/http/tests/navigation/metaredirect-goback-expected.txt:
+        * platform/mac/http/tests/navigation/post-goback2-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-goback2-expected.txt:
+        * platform/mac/http/tests/navigation/redirect302-goback-expected.txt:
+        * platform/mac/http/tests/navigation/success200-goback-expected.txt:
+        * platform/mac/http/tests/navigation/timerredirect-goback-expected.txt:
+
 2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Geoff Garen.

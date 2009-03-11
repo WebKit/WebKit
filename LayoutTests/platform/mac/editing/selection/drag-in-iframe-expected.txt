@@ -6,7 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 753x36
           text run at (0,0) width 538: "This is an automatic pixel test. To test interactively, drag selected text onto the iframe "
-          text run at (538,0) width 215: "below and verify that a drag caret "
+          text run at (538,0) width 211: "below and verify that a drag caret"
+          text run at (749,0) width 4: " "
           text run at (0,18) width 156: "appears inside the frame."
       RenderBlock (anonymous) at (0,52) size 784x152
         RenderPartObject {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]

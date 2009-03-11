@@ -36,7 +36,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,180) size 784x56
         RenderBlock {DIV} at (0,0) size 784x28
           RenderText {#text} at (0,0) size 85x28
-            text run at (0,0) width 85: "one five "
+            text run at (0,0) width 79: "one five"
+            text run at (79,0) width 6: " "
         RenderBlock {DIV} at (0,28) size 784x28
           RenderText {#text} at (0,0) size 137x28
             text run at (0,0) width 137: "two three four"

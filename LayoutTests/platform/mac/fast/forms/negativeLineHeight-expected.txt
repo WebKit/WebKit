@@ -19,5 +19,6 @@ layer at (0,0) size 800x600
 layer at (9,61) size 398x198
   RenderBlock {DIV} at (1,1) size 398x198
     RenderText {#text} at (3,0) size 387x32
-      text run at (3,0) width 387: "Demo text here that wraps a bit and should demonstrate "
+      text run at (3,0) width 382: "Demo text here that wraps a bit and should demonstrate"
+      text run at (385,0) width 5: " "
       text run at (3,16) width 182: "the goodness of line-height"
