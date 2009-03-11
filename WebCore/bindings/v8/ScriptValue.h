@@ -104,6 +104,11 @@ public:
     {
         return m_value->IsUndefined();
     }
+    
+    bool hasNoValue() const
+    {
+        return m_value.IsEmpty();
+    }
 
     void clear()
     {
