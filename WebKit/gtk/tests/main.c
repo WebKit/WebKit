@@ -36,6 +36,88 @@ static void test_webkit_web_frame_create_destroy(void)
     g_object_unref(webView);
 }
 
+static void test_webkit_web_history_item_lifetime(void)
+{
+    WebKitWebView* webView;
+    WebKitWebBackForwardList* backForwardList;
+    WebKitWebHistoryItem* currentItem;
+    WebKitWebHistoryItem* forwardItem;
+    WebKitWebHistoryItem* backItem;
+    WebKitWebHistoryItem* nthItem;
+    WebKitWebHistoryItem* item1;
+    WebKitWebHistoryItem* item2;
+    WebKitWebHistoryItem* item3;
+    WebKitWebHistoryItem* item4;
+    GList* backList = NULL;
+    GList* forwardList = NULL;
+    g_test_bug("19898");
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    backForwardList = webkit_web_view_get_back_forward_list(webView);
+    g_assert_cmpint(G_OBJECT(backForwardList)->ref_count, ==, 1);
+
+    /* add test items */
+    item1 = webkit_web_history_item_new_with_data("http://example.com/1/", "Site 1");
+    webkit_web_back_forward_list_add_item(backForwardList, item1);
+
+    item2 = webkit_web_history_item_new_with_data("http://example.com/2/", "Site 2");
+    webkit_web_back_forward_list_add_item(backForwardList, item2);
+
+    item3 = webkit_web_history_item_new_with_data("http://example.com/3/", "Site 3");
+    webkit_web_back_forward_list_add_item(backForwardList, item3);
+
+    item4 = webkit_web_history_item_new_with_data("http://example.com/4/", "Site 4");
+    webkit_web_back_forward_list_add_item(backForwardList, item4);
+
+    /* make sure these functions don't add unnecessary ref to the history item */
+    backItem = webkit_web_back_forward_list_get_back_item(backForwardList);
+    g_object_ref(backItem);
+    g_assert_cmpint(G_OBJECT(backItem)->ref_count, ==, 2);
+    g_object_unref(backItem);
+    g_assert_cmpint(G_OBJECT(backItem)->ref_count, ==, 1);
+
+    currentItem = webkit_web_back_forward_list_get_current_item(backForwardList);
+    g_object_ref(currentItem);
+    g_assert_cmpint(G_OBJECT(currentItem)->ref_count, ==, 2);
+    g_object_unref(currentItem);
+    g_assert_cmpint(G_OBJECT(currentItem)->ref_count, ==, 1);
+
+    webkit_web_back_forward_list_go_to_item(backForwardList, item2);
+    forwardItem = webkit_web_back_forward_list_get_forward_item(backForwardList);
+    g_object_ref(forwardItem);
+    g_assert_cmpint(G_OBJECT(forwardItem)->ref_count, ==, 2);
+    g_object_unref(forwardItem);
+    g_assert_cmpint(G_OBJECT(forwardItem)->ref_count, ==, 1);
+
+    nthItem = webkit_web_back_forward_list_get_nth_item(backForwardList, 1);
+    g_object_ref(nthItem);
+    g_assert_cmpint(G_OBJECT(nthItem)->ref_count, ==, 2);
+    g_object_unref(nthItem);
+    g_assert_cmpint(G_OBJECT(nthItem)->ref_count, ==, 1);
+
+    backList = webkit_web_back_forward_list_get_back_list_with_limit(backForwardList, 5);
+    for (; backList; backList = backList->next)
+        g_assert_cmpint(G_OBJECT(backList->data)->ref_count, ==, 1);
+
+    forwardList = webkit_web_back_forward_list_get_forward_list_with_limit(backForwardList, 5);
+    for (; forwardList; forwardList = forwardList->next)
+        g_assert_cmpint(G_OBJECT(forwardList->data)->ref_count, ==, 1);
+
+    g_list_free(forwardList);
+    g_list_free(backList);
+    g_object_unref(item1);
+    g_object_unref(item2);
+    g_object_unref(item3);
+    g_object_unref(item4);
+
+    g_object_ref(backForwardList);
+    g_object_unref(webView);
+
+    g_assert_cmpint(G_OBJECT(backForwardList)->ref_count, ==, 1);
+    g_object_unref(backForwardList);
+}
+
 static void test_webkit_web_frame_lifetime(void)
 {
     WebKitWebView* webView;
@@ -62,8 +144,7 @@ static void test_webkit_web_frame_lifetime(void)
     g_object_unref(webFrame);
 }
 
-static void
-test_webkit_web_back_forward_list_order(void)
+static void test_webkit_web_back_forward_list_order(void)
 {
     WebKitWebView* webView;
     WebKitWebBackForwardList* webBackForwardList;
@@ -145,7 +226,6 @@ test_webkit_web_back_forward_list_order(void)
     g_assert_cmpstr(webkit_web_history_item_get_uri(currentItem), ==, "http://example.com/2/");
     g_assert_cmpstr(webkit_web_history_item_get_title(currentItem), ==, "Site 2");
 
-    g_object_unref(currentItem);
     g_object_unref(item1);
     g_object_unref(item2);
     g_object_unref(item3);
@@ -154,8 +234,7 @@ test_webkit_web_back_forward_list_order(void)
     g_object_unref(webView);
 }
 
-static void
-test_webkit_web_back_forward_list_add_item(void)
+static void test_webkit_web_back_forward_list_add_item(void)
 {
     WebKitWebView* webView;
     WebKitWebBackForwardList* webBackForwardList;
@@ -236,6 +315,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webframe/lifetime", test_webkit_web_frame_lifetime);
     g_test_add_func("/webkit/webbackforwardlist/add_item", test_webkit_web_back_forward_list_add_item);
     g_test_add_func("/webkit/webbackforwardlist/list_order", test_webkit_web_back_forward_list_order);
+    g_test_add_func("/webkit/webhistoryitem/lifetime", test_webkit_web_history_item_lifetime);
     return g_test_run ();
 }
 

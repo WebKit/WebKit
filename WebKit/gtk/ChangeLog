@@ -1,3 +1,22 @@
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] BackForward history leak?
+        https://bugs.webkit.org/show_bug.cgi?id=19528
+
+        Don't ref the history items when returning the back/forward list
+        Added test_webkit_web_history_item_lifetime test case for this.
+
+        * tests/main.c:
+        (test_webkit_web_history_item_lifetime):
+        (test_webkit_web_back_forward_list_order): Style fix.
+        (test_webkit_web_back_forward_list_add_item): Style fix.
+        (main):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_list_with_limit):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_back_list_with_limit):
+
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.
