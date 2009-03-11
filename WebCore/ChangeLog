@@ -1,3 +1,24 @@
+2009-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+       
+        https://bugs.webkit.org/show_bug.cgi?id=23093
+        
+        When the cancel button in the search field is shown or hidden,
+        we need to explicitly setStyle() on the cancel button's renderer,
+        to ensure that repaint happens. Changing the style without telling
+        the renderer won't work.
+
+        Test: fast/repaint/search-field-cancel.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::createCancelButtonStyle):
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility):
+        (WebCore::RenderTextControlSingleLine::visibilityForCancelButton):
+        * rendering/RenderTextControlSingleLine.h:
+
 2009-03-11  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

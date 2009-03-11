@@ -1,3 +1,16 @@
+2009-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+       
+        https://bugs.webkit.org/show_bug.cgi?id=23093
+        
+        Test for repainting of the search field cancel button.
+
+        * fast/repaint/search-field-cancel.html: Added.
+        * platform/mac/fast/repaint/search-field-cancel-expected.checksum: Added.
+        * platform/mac/fast/repaint/search-field-cancel-expected.png: Added.
+        * platform/mac/fast/repaint/search-field-cancel-expected.txt: Added.
+
 2009-03-11  Marc-André Decoste  <mad@chromium.org>
 
         Reviewed by Eric Seidel.

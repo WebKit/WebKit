@@ -174,8 +174,8 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     InputElement* input = inputElement();
     input->setValueFromRenderer(input->constrainValue(text()));
 
-    if (RenderObject* cancelButtonRenderer = m_cancelButton ? m_cancelButton->renderer() : 0)
-        updateCancelButtonVisibility(cancelButtonRenderer->style());
+    if (m_cancelButton)
+        updateCancelButtonVisibility();
 
     // If the incremental attribute is set, then dispatch the search event
     if (input->searchEventsShouldBeDispatched())
@@ -473,8 +473,8 @@ void RenderTextControlSingleLine::updateFromElement()
     bool placeholderVisibilityShouldChange = m_placeholderVisible != placeholderShouldBeVisible();
     m_placeholderVisible = placeholderShouldBeVisible();
 
-    if (RenderObject* cancelButtonRenderer = m_cancelButton ? m_cancelButton->renderer() : 0)
-        updateCancelButtonVisibility(cancelButtonRenderer->style());
+    if (m_cancelButton)
+        updateCancelButtonVisibility();
 
     if (m_placeholderVisible) {
         ExceptionCode ec = 0;
@@ -582,15 +582,30 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createCancelButtonStyle(con
     if (startStyle)
         cancelBlockStyle->inheritFrom(startStyle);
 
-    updateCancelButtonVisibility(cancelBlockStyle.get());
+    cancelBlockStyle->setVisibility(visibilityForCancelButton());
     return cancelBlockStyle.release();
 }
 
-void RenderTextControlSingleLine::updateCancelButtonVisibility(RenderStyle* style) const
+void RenderTextControlSingleLine::updateCancelButtonVisibility() const
+{
+    if (!m_cancelButton->renderer())
+        return;
+
+    const RenderStyle* curStyle = m_cancelButton->renderer()->style();
+    EVisibility buttonVisibility = visibilityForCancelButton();
+    if (curStyle->visibility() == buttonVisibility)
+        return;
+
+    RefPtr<RenderStyle> cancelButtonStyle = RenderStyle::clone(curStyle);
+    cancelButtonStyle->setVisibility(buttonVisibility);
+    m_cancelButton->renderer()->setStyle(cancelButtonStyle);
+}
+
+EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 {
     ASSERT(node()->isHTMLElement());
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    style->setVisibility(input->value().isEmpty() ? HIDDEN : VISIBLE);
+    return input->value().isEmpty() ? HIDDEN : VISIBLE;
 }
 
 const AtomicString& RenderTextControlSingleLine::autosaveName() const
