@@ -1235,7 +1235,7 @@ HTMLFormElement *Frame::currentForm() const
     return start ? scanForForm(start) : 0;
 }
 
-void Frame::revealSelection(const ScrollAlignment& alignment, bool revealExtent);
+void Frame::revealSelection(const ScrollAlignment& alignment, bool revealExtent)
 {
     IntRect rect;
 
