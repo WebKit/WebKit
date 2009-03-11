@@ -1,3 +1,16 @@
+2009-03-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=14749 percentage 
+        top value on position:relative child not calculated correctly if 
+        parent has percentage height
+        - and corresponding -
+        <rdar://problem/6172925>
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetY):
+
 2009-03-11  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

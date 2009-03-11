@@ -1,3 +1,18 @@
+2009-03-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=14749 percentage 
+        top value on position:relative child not calculated correctly if 
+        parent has percentage height
+        - and corresponding -
+        <rdar://problem/6172925>
+
+        * fast/css/percent-top-value-with-relative-position.html: Added.
+        * platform/mac/fast/css/percent-top-value-with-relative-position-expected.checksum: Added.
+        * platform/mac/fast/css/percent-top-value-with-relative-position-expected.png: Added.
+        * platform/mac/fast/css/percent-top-value-with-relative-position-expected.txt: Added.
+
 2009-03-11  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

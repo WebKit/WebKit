@@ -148,13 +148,11 @@ int RenderBoxModelObject::relativePositionOffsetX() const
 
 int RenderBoxModelObject::relativePositionOffsetY() const
 {
-    if (!style()->top().isAuto()) {
-        if (!style()->top().isPercent() || containingBlock()->style()->height().isFixed())
-            return style()->top().calcValue(containingBlock()->availableHeight());
-    } else if (!style()->bottom().isAuto()) {
-        if (!style()->bottom().isPercent() || containingBlock()->style()->height().isFixed())
-            return -style()->bottom().calcValue(containingBlock()->availableHeight());
-    }
+    if (!style()->top().isAuto())
+        return style()->top().calcValue(containingBlock()->availableHeight());
+    else if (!style()->bottom().isAuto())
+        return -style()->bottom().calcValue(containingBlock()->availableHeight());
+
     return 0;
 }
 
