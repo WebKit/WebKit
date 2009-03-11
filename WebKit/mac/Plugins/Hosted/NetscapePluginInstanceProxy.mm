@@ -94,13 +94,14 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
     , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
-    , m_currentRequestID(0)
+    , m_currentURLRequestID(0)
     , m_renderContextID(0)
     , m_useSoftwareRenderer(false)
     , m_waitingForReply(false)
     , m_objectIDCounter(0)
     , m_pluginFunctionCallDepth(0)
     , m_shouldStopSoon(false)
+    , m_currentRequestID(0)
 {
     ASSERT(m_pluginView);
     
@@ -117,6 +118,7 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
     ASSERT(!m_pluginHostProxy);
     
     m_pluginID = 0;
+    deleteAllValues(m_replies);
 }
 
 void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
@@ -258,9 +260,10 @@ void NetscapePluginInstanceProxy::insertText(NSString *text)
 
 void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, unsigned height)
 {
-    _WKPHPluginInstancePrint(m_pluginHostProxy->port(), m_pluginID, width, height);
+    uint32_t requestID = nextRequestID();
+    _WKPHPluginInstancePrint(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
     
-    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>();
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     if (!reply.get() || !reply->m_returnValue)
         return;
 
@@ -489,7 +492,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
     }
     
     // FIXME: Handle wraparound
-    requestID = ++m_currentRequestID;
+    requestID = ++m_currentURLRequestID;
         
     if (cTarget || JSString) {
         // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
@@ -513,14 +516,17 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
     return NPERR_NO_ERROR;
 }
 
-void NetscapePluginInstanceProxy::processRequestsAndWaitForReply()
+NetscapePluginInstanceProxy::Reply* NetscapePluginInstanceProxy::processRequestsAndWaitForReply(uint32_t requestID)
 {
-    while (!m_currentReply.get()) {
-        if (!m_pluginHostProxy->processRequests()) {
-            m_currentReply.reset();
-            break;
-        }
+    Reply* reply = 0;
+    
+    while (!(reply = m_replies.take(requestID))) {
+        if (!m_pluginHostProxy->processRequests())
+            return 0;
     }
+    
+    ASSERT(reply);
+    return reply;
 }
     
 uint32_t NetscapePluginInstanceProxy::idForObject(JSObject* object)
@@ -1056,10 +1062,12 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 
 PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRefPtr<RootObject> rootObject)
 {
-    if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID) != KERN_SUCCESS)
+    uint32_t requestID = nextRequestID();
+    
+    if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID, requestID) != KERN_SUCCESS)
         return 0;
     
-    auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>();
+    auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>(requestID);
     if (!reply.get())
         return 0;
 
@@ -1110,6 +1118,18 @@ bool NetscapePluginInstanceProxy::shouldStop()
     
     return true;
 }
+
+uint32_t NetscapePluginInstanceProxy::nextRequestID()
+{
+    uint32_t requestID = ++m_currentRequestID;
+    
+    // We don't want to return the HashMap empty/deleted "special keys"
+    if (requestID == 0 || requestID == static_cast<uint32_t>(-1))
+        return nextRequestID();
+    
+    return requestID;
+}
+
 
 } // namespace WebKit
 

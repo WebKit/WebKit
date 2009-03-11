@@ -137,6 +137,8 @@ public:
     void didCallPluginFunction();
     bool shouldStop();
     
+    uint32_t nextRequestID();
+    
     // Reply structs
     struct Reply {
         enum Type {
@@ -146,7 +148,11 @@ public:
             Boolean
         };
         
-        Reply(Type type) : m_type(type) { }
+        Reply(Type type) 
+            : m_type(type)
+        {
+        }
+        
         virtual ~Reply() { }
     
         Type m_type;
@@ -206,24 +212,23 @@ public:
         RetainPtr<CFDataRef> m_result;
     };
     
-    void setCurrentReply(Reply* reply)
+    void setCurrentReply(uint32_t requestID, Reply* reply)
     {
-        ASSERT(!m_currentReply.get());
-        m_currentReply = std::auto_ptr<Reply>(reply);
+        ASSERT(!m_replies.contains(requestID));
+        m_replies.set(requestID, reply);
     }
     
     template <typename T>
-    std::auto_ptr<T> waitForReply()
+    std::auto_ptr<T> waitForReply(uint32_t requestID)
     {
         m_waitingForReply = true;
-        
-        processRequestsAndWaitForReply();
-        
-        if (m_currentReply.get()) 
-            ASSERT(m_currentReply->m_type == T::ReplyType);
+
+        Reply* reply = processRequestsAndWaitForReply(requestID);
+        if (reply)
+            ASSERT(reply->m_type == T::ReplyType);
         
         m_waitingForReply = false;
-        return std::auto_ptr<T>(static_cast<T*>(m_currentReply.release()));
+        return std::auto_ptr<T>(static_cast<T*>(reply));
     }
     
 private:
@@ -236,7 +241,7 @@ private:
     void evaluateJavaScript(PluginRequest*);
     
     void stopAllStreams();
-    void processRequestsAndWaitForReply();
+    Reply* processRequestsAndWaitForReply(uint32_t requestID);
     
     void cleanup();
     
@@ -249,14 +254,14 @@ private:
     
     HashMap<uint32_t, RefPtr<HostedNetscapePluginStream> > m_streams;
 
-    uint32_t m_currentRequestID;
+    uint32_t m_currentURLRequestID;
     
     uint32_t m_pluginID;
     uint32_t m_renderContextID;
     boolean_t m_useSoftwareRenderer;
     
     bool m_waitingForReply;
-    std::auto_ptr<Reply> m_currentReply;
+    HashMap<uint32_t, Reply*> m_replies;
     
     // NPRuntime
     uint32_t idForObject(JSC::JSObject*);
@@ -275,6 +280,7 @@ private:
     
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;
+    uint32_t m_currentRequestID;
 };
     
 } // namespace WebKit

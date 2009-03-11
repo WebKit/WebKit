@@ -1,5 +1,54 @@
 2009-03-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        WebKit side of <rdar://problem/6656147>.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        Pass the requestID to _WKPHInstantiatePlugin.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        Pass the requestID to setCurrentReply.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::setCurrentReply):
+        Store the reply in a map with the requestID as the key.
+        
+        (WebKit::NetscapePluginInstanceProxy::waitForReply):
+        Wait for a reply that matches the given requestID.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Initialize member variables.
+        
+        (WebKit::NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy):
+        Delete all requests.
+        
+        (WebKit::NetscapePluginInstanceProxy::print):
+        Pass the requestID to _WKPHPluginInstancePrint.
+        
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        Rename m_currentRequestID to m_currentURLRequestID.
+        
+        (WebKit::NetscapePluginInstanceProxy::processRequestsAndWaitForReply):
+        Process requests until we find a reply with the right requestID.
+        
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance):
+        Pass a requestID to the _WKPH function.
+        
+        (WebKit::NetscapePluginInstanceProxy::nextRequestID):
+        Ditto.
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        Pass a requestID to the _WKPH functions.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add requestID parameters.
+
+2009-03-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix <rdar://problem/6620064>.

@@ -79,17 +79,20 @@ routine PCReleaseObject(clientPort :mach_port_t;
                       
 simpleroutine PCEvaluate(clientPort :mach_port_t;
                        pluginID :uint32_t;
+                       requestID :uint32_t;
                        objectID :uint32_t;
                        script :data_t);
 
 simpleroutine PCInvoke(clientPort :mach_port_t;
                      pluginID :uint32_t;
+                     requestID :uint32_t;
                      objectID :uint32_t;
                      methodNameIdentifier :uint64_t;
                      arguments :data_t);
 
 simpleroutine PCInvokeDefault(clientPort :mach_port_t;
                pluginID :uint32_t;
+               requestID :uint32_t;
                objectID :uint32_t;
                arguments :data_t);
 
@@ -102,6 +105,7 @@ routine PCConstruct(clientPort :mach_port_t;
 
 simpleroutine PCGetProperty(clientPort :mach_port_t;
                             pluginID :uint32_t;
+                            requestID :uint32_t;
                             objectID :uint32_t;
                             propertyNameIdentifier :uint64_t);
 
@@ -120,11 +124,13 @@ routine PCRemoveProperty(clientPort :mach_port_t;
 
 simpleroutine PCHasProperty(clientPort :mach_port_t;
                             pluginID :uint32_t;
+                            requestID :uint32_t;
                             objectID :uint32_t;
                             propertyNameIdentifier :uint64_t);
 
 simpleroutine PCHasMethod(clientPort :mach_port_t;
                            pluginID :uint32_t;
+                           requestID :uint32_t;
                            objectID :uint32_t;
                            methodNameIdentifier :uint64_t);
 
@@ -134,6 +140,7 @@ routine PCIdentifierInfo(clientPort :mach_port_t;
 
 simpleroutine PCEnumerate(clientPort :mach_port_t;
                           pluginID :uint32_t;
+                          requestID :uint32_t;
                           objectID :uint32_t);
 
 // Misc
@@ -147,21 +154,23 @@ simpleroutine PCSetModal(clientPort :mach_port_t;
 // Replies
 simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
+                                     requestID :uint32_t;
                                      result :kern_return_t;
                                      renderContextID :uint32_t;
                                      useSoftwareRenderer :boolean_t);
 
 simpleroutine PCGetScriptableNPObjectReply(clientPort :mach_port_t;
                                          pluginID :uint32_t;
+                                         requestID :uint32_t;
                                          objectID :uint32_t);
 
 simpleroutine PCBooleanReply(clientPort :mach_port_t;
                              pluginID :uint32_t;
+                             requestID :uint32_t;
                              result :boolean_t);
                            
 simpleroutine PCBooleanAndDataReply(clientPort :mach_port_t;
                                     pluginID :uint32_t;
+                                    requestID :uint32_t;
                                     returnValue :boolean_t;
                                     result :data_t);  
-
-

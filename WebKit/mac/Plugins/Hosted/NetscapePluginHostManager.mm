@@ -214,7 +214,8 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     ASSERT(data);
     
     RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
-    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], instance->pluginID());
+    uint32_t requestID = instance->nextRequestID();
+    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     if (kr == MACH_SEND_INVALID_DEST) {
         // The plug-in host must have died, but we haven't received the death notification yet.
         pluginHostDied(hostProxy);
@@ -224,10 +225,11 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         
         // Create a new instance.
         instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
-        kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], instance->pluginID());
+        requestID = instance->nextRequestID();
+        kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     }
 
-    auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>();
+    auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
     if (!reply.get() || reply->m_resultCode != KERN_SUCCESS) {
         instance->invalidate();
         return 0;

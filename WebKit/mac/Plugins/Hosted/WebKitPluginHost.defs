@@ -40,6 +40,7 @@ routine PHCheckInWithPluginHost(pluginHostPort :mach_port_t;
                               out pluginHostPSNLow :uint32_t);
 
 simpleroutine PHInstantiatePlugin(pluginHostPort :mach_port_t;
+                                requestID :uint32_t;
                                 options :plist_bytes_t;
                                 pluginID :uint32_t);
                                 
@@ -101,6 +102,7 @@ simpleroutine PHPluginInstanceStopTimers(pluginHostPort :mach_port_t;
 
 simpleroutine PHPluginInstancePrint(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t;
+                                    requestID :uint32_t;
                                     width :uint32_t;
                                     height :uint32_t);
 
@@ -140,20 +142,24 @@ simpleroutine PHLoadURLNotify(pluginHostPort :mach_port_t;
 // NPRuntime
 
 simpleroutine PHGetScriptableNPObject(pluginHostPort :mach_port_t;
-                                    pluginID :uint32_t);
+                                      pluginID :uint32_t;
+                                      requestID :uint32_t);
 
 simpleroutine PHNPObjectHasProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
+                                  requestID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t);
 
 simpleroutine PHNPObjectHasMethod(pluginHostPort :mach_port_t;
                                 pluginID :uint32_t;
+                                requestID :uint32_t;
                                 objectID :uint32_t;
                                 methodName :uint64_t);
 
 simpleroutine PHNPObjectInvoke(pluginHostPort :mach_port_t;
                              pluginID :uint32_t;
+                             requestID :uint32_t;
                              objectID :uint32_t;
                              invokeType :uint32_t;
                              methodName :uint64_t;
@@ -161,19 +167,23 @@ simpleroutine PHNPObjectInvoke(pluginHostPort :mach_port_t;
 
 simpleroutine PHNPObjectHasInvokeDefaultMethod(pluginHostPort :mach_port_t;
                                              pluginID :uint32_t;
+                                             requestID :uint32_t;
                                              objectID :uint32_t);
 
 simpleroutine PHNPObjectHasConstructMethod(pluginHostPort :mach_port_t;
                                          pluginID :uint32_t;
+                                         requestID :uint32_t;
                                          objectID :uint32_t);
                                        
 simpleroutine PHNPObjectGetProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
+                                  requestID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t);
 
 simpleroutine PHNPObjectSetProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
+                                  requestID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t;
                                   value :data_t);
@@ -184,15 +194,18 @@ simpleroutine PHNPObjectRelease(pluginHostPort :mach_port_t;
 
 simpleroutine PHNPObjectEnumerate(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
+                                  requestID :uint32_t;
                                   objectID :uint32_t);
                                   
 // Replies
 
 simpleroutine PHBooleanReply(clientPort :mach_port_t;
                              pluginID :uint32_t;
+                             requestID :uint32_t;
                              result :boolean_t);
                            
 simpleroutine PHBooleanAndDataReply(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t;
+                                    requestID :uint32_t;
                                     returnValue :boolean_t;
                                     result :data_t);
