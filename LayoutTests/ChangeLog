@@ -1,5 +1,20 @@
 2009-03-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24266
+        
+        Land new expected results for transform-absolute-in-positioned-container.html,
+        and new pixel results for reflection-masks.html. Both are progressions.
+
+        * platform/mac/fast/reflections/reflection-masks-expected.checksum:
+        * platform/mac/fast/reflections/reflection-masks-expected.png:
+        * platform/mac/fast/repaint/transform-absolute-in-positioned-container-expected.checksum:
+        * platform/mac/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/mac/fast/repaint/transform-absolute-in-positioned-container-expected.txt:
+
+2009-03-11  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
        
         https://bugs.webkit.org/show_bug.cgi?id=23093
