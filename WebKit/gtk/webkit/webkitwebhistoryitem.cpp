@@ -482,9 +482,7 @@ WebCore::HistoryItem* WebKit::core(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
-    WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
-
-    return priv->historyItem ? priv->historyItem : 0;
+    return webHistoryItem->priv->historyItem;
 }
 
 WebKitWebHistoryItem* WebKit::kit(PassRefPtr<WebCore::HistoryItem> historyItem)

@@ -1,3 +1,15 @@
+2009-03-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24493
+        [GTK] Misc patches for WebKitWebHistoryItem
+
+        return foo? foo : NULL == return foo
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (WebKit::core):
+
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
