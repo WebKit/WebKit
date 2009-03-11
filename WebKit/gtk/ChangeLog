@@ -2,6 +2,23 @@
 
         Reviewed by Holger Freyther.
 
+        Gtk] Implement LayoutTestControllerGtk::setPrivateBrowsingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=24487
+
+        Add private browsing option "enable-private-browsing" to WebKitWebSettings.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_set_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [GTK] BackForward history leak?
         https://bugs.webkit.org/show_bug.cgi?id=19528
 

@@ -1,3 +1,14 @@
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Gtk] Implement LayoutTestControllerGtk::setPrivateBrowsingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=24487
+
+        Enable http/tests/security/cross-frame-access-private-browsing.html test.
+
+        * platform/gtk/Skipped:
+
 2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

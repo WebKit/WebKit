@@ -2264,7 +2264,6 @@ http/tests/uri/css-href.php
 
 # FIXME: Security tests that are failing
 http/tests/security/cross-frame-access-get.html
-http/tests/security/cross-frame-access-private-browsing.html
 http/tests/security/cross-frame-access-put.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/feed-urls-from-remote.html

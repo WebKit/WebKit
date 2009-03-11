@@ -220,6 +220,18 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
     }
 }
 
+static void resetWebViewToConsistentStateBeforeTesting()
+{
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    g_object_set(G_OBJECT(settings),
+                 "enable-private-browsing", FALSE,
+                 "enable-developer-extras", FALSE,
+                 NULL);
+
+    WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
+    g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
+}
+
 void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
@@ -322,6 +334,8 @@ static void runTest(const string& testPathOrURL)
     gchar* url = autocorrectURL(pathOrURL.c_str());
     const string testURL(url);
 
+    resetWebViewToConsistentStateBeforeTesting();
+
     gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
     topLoadingFrame = 0;
     done = false;
@@ -359,7 +373,6 @@ static void runTest(const string& testPathOrURL)
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");
 
-    gLayoutTestController->setJavaScriptProfilingEnabled(false);
     gLayoutTestController->deref();
     gLayoutTestController = 0;
 }
