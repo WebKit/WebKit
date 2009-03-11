@@ -1,3 +1,13 @@
+2009-03-11  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24521
+        Add some missing includes for the non-JSC build.
+
+        * platform/text/PlatformString.h: added OwnPtr.h
+        * xml/XMLHttpRequest.cpp: added SecurityOrigin.h
+
 2009-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Scons build. Patch from Alexander Guy.

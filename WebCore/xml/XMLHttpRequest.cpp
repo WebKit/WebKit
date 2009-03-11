@@ -35,6 +35,7 @@
 #include "HTTPParsers.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
