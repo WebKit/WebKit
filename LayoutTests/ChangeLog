@@ -1,3 +1,15 @@
+2009-03-11  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add test for potential crash in window.frames.length
+        These files were accidentally left out of r41459.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24339
+
+        * fast/dom/Window/window-collection-length-no-crash-expected.txt: Added.
+        * fast/dom/Window/window-collection-length-no-crash.html: Added.
+
 2009-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
