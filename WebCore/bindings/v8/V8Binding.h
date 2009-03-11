@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-    // FIXME: Remove once migration is complete
+    // FIXME: Remove once migration is complete.
     inline int toInt32(v8::Handle<v8::Value> value)
     {
         return ToInt32(value);
@@ -48,13 +48,19 @@ namespace WebCore {
         return static_cast<float>(value->NumberValue());
     }
 
-    // FIXME: Remove once migration is complete
+    // FIXME: Remove once migration is complete.
     inline String toWebCoreString(v8::Handle<v8::Value> obj)
     {
         return ToWebCoreString(obj);
     }
 
-    // FIXME: Rename valueToStringWithNullCheck once migration is complete
+    // FIXME: Remove once migration is complete.
+    inline const uint16_t* fromWebCoreString(const String& str)
+    {
+        return FromWebCoreString(str);
+    }
+
+    // FIXME: Rename valueToStringWithNullCheck once migration is complete.
     inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
     {
         return valueToStringWithNullCheck(value);

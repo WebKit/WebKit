@@ -28,41 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomEventListener_h
-#define V8CustomEventListener_h
+#ifndef V8WorkerContextEventListener_h
+#define V8WorkerContextEventListener_h
 
-#include "V8AbstractEventListener.h"
+#if ENABLE(WORKERS)
+
+#include "V8ObjectEventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
     class Event;
-    class Frame;
+    class WorkerContextExecutionProxy;
 
-    // V8EventListener is a wrapper of a JS object implements EventListener interface (has handleEvent(event) method), or a JS function
-    // that can handle the event.
-    class V8EventListener : public V8AbstractEventListener {
+    class V8WorkerContextEventListener : public V8ObjectEventListener {
     public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
+        static PassRefPtr<V8WorkerContextEventListener> create(WorkerContextExecutionProxy* proxy, v8::Local<v8::Object> listener, bool isInline)
         {
-            return adoptRef(new V8EventListener(frame, listener, isInline));
+            return adoptRef(new V8WorkerContextEventListener(proxy, listener, isInline));
         }
+        V8WorkerContextEventListener(WorkerContextExecutionProxy*, v8::Local<v8::Object> listener, bool isInline);
 
-        virtual bool isInline() const { return m_isInline; }
+        virtual ~V8WorkerContextEventListener();
+        virtual void handleEvent(Event*, bool isWindowEvent);
+        virtual bool disconnected() const { return !m_proxy; }
 
-        // Detach the listener from its owner frame.
-        void disconnectFrame() { m_frame = 0; }
-
-    protected:
-        V8EventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
-        virtual ~V8EventListener();
-        v8::Local<v8::Function> getListenerFunction();
+        void disconnect() { m_proxy = 0; }
 
     private:
         virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*, bool isWindowEvent);
+        v8::Local<v8::Object> getReceiverObject(Event*, bool isWindowEvent);
+        WorkerContextExecutionProxy* m_proxy;
     };
 
 } // namespace WebCore
 
-#endif // V8CustomEventListener_h
+#endif // WORKERS
+
+#endif // V8WorkerContextEventListener_h

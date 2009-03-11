@@ -28,41 +28,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomEventListener_h
-#define V8CustomEventListener_h
+#include "config.h"
+#include "V8ObjectEventListener.h"
 
-#include "V8AbstractEventListener.h"
-#include <v8.h>
-#include <wtf/PassRefPtr.h>
+#include "Frame.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
-    class Event;
-    class Frame;
+static void weakObjectEventListenerCallback(v8::Persistent<v8::Value>, void* parameter)
+{
+    V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(parameter);
 
-    // V8EventListener is a wrapper of a JS object implements EventListener interface (has handleEvent(event) method), or a JS function
-    // that can handle the event.
-    class V8EventListener : public V8AbstractEventListener {
-    public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
-        {
-            return adoptRef(new V8EventListener(frame, listener, isInline));
-        }
+    // Remove the wrapper
+    Frame* frame = listener->frame();
+    if (frame) {
+        V8Proxy* proxy = V8Proxy::retrieve(frame);
+        if (proxy)
+            proxy->RemoveObjectEventListener(listener);
 
-        virtual bool isInline() const { return m_isInline; }
+        // Because the listener is no longer in the list, it must be disconnected from the frame to avoid dangling frame pointer
+        // in the destructor.
+        listener->disconnectFrame();
+    }
+    listener->disposeListenerObject();
+}
 
-        // Detach the listener from its owner frame.
-        void disconnectFrame() { m_frame = 0; }
+V8ObjectEventListener::V8ObjectEventListener(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
+    : V8EventListener(frame, listener, isInline)
+{
+    m_listener.MakeWeak(this, weakObjectEventListenerCallback);
+}
 
-    protected:
-        V8EventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
-        virtual ~V8EventListener();
-        v8::Local<v8::Function> getListenerFunction();
+V8ObjectEventListener::~V8ObjectEventListener()
+{
+    if (m_frame) {
+        ASSERT(!m_listener.IsEmpty());
+        V8Proxy* proxy = V8Proxy::retrieve(m_frame);
+        if (proxy)
+            proxy->RemoveObjectEventListener(this);
+    }
 
-    private:
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*, bool isWindowEvent);
-    };
+    disposeListenerObject();
+}
 
 } // namespace WebCore
-
-#endif // V8CustomEventListener_h

@@ -28,9 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomEventListener_h
-#define V8CustomEventListener_h
+#ifndef V8LazyEventListener_h
+#define V8LazyEventListener_h
 
+#include "PlatformString.h"
 #include "V8AbstractEventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
@@ -40,29 +41,40 @@ namespace WebCore {
     class Event;
     class Frame;
 
-    // V8EventListener is a wrapper of a JS object implements EventListener interface (has handleEvent(event) method), or a JS function
-    // that can handle the event.
-    class V8EventListener : public V8AbstractEventListener {
+    // V8LazyEventListener is a wrapper for a JavaScript code string that is compiled and evaluated when an event is fired.
+    // A V8LazyEventListener is always a HTML event handler.
+    class V8LazyEventListener : public V8AbstractEventListener {
     public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
+        static PassRefPtr<V8LazyEventListener> create(Frame* frame, const String& code, const String& functionName)
         {
-            return adoptRef(new V8EventListener(frame, listener, isInline));
+            return adoptRef(new V8LazyEventListener(frame, code, functionName));
         }
 
-        virtual bool isInline() const { return m_isInline; }
+        virtual bool isInline() const { return true; }
 
-        // Detach the listener from its owner frame.
-        void disconnectFrame() { m_frame = 0; }
-
-    protected:
-        V8EventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
-        virtual ~V8EventListener();
-        v8::Local<v8::Function> getListenerFunction();
+        // For lazy event listener, the listener object is the same as its listener
+        // function without additional scope chains.
+        virtual v8::Local<v8::Object> getListenerObject() { return getWrappedListenerFunction(); }
 
     private:
+        V8LazyEventListener(Frame*, const String& code, const String& functionName);
+        virtual ~V8LazyEventListener();
+
+        String m_code;
+        String m_functionName;
+        bool m_compiled;
+
+        // If the event listener is on a non-document dom node, we compile the function with some implicit scope chains before it.
+        bool m_wrappedFunctionCompiled;
+        v8::Persistent<v8::Function> m_wrappedFunction;
+
+        v8::Local<v8::Function> getWrappedListenerFunction();
+
         virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*, bool isWindowEvent);
+
+        v8::Local<v8::Function> getListenerFunction();
     };
 
 } // namespace WebCore
 
-#endif // V8CustomEventListener_h
+#endif // V8LazyEventListener_h

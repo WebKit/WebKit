@@ -28,41 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomEventListener_h
-#define V8CustomEventListener_h
+#ifndef V8ObjectEventListener_h
+#define V8ObjectEventListener_h
 
-#include "V8AbstractEventListener.h"
+#include "V8CustomEventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-    class Event;
     class Frame;
 
-    // V8EventListener is a wrapper of a JS object implements EventListener interface (has handleEvent(event) method), or a JS function
-    // that can handle the event.
-    class V8EventListener : public V8AbstractEventListener {
+    // V8ObjectEventListener is a special listener wrapper for objects not in the DOM.  It keeps the JS listener as a weak pointer.
+    class V8ObjectEventListener : public V8EventListener {
     public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
+        static PassRefPtr<V8ObjectEventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
         {
-            return adoptRef(new V8EventListener(frame, listener, isInline));
+            return adoptRef(new V8ObjectEventListener(frame, listener, isInline));
         }
 
-        virtual bool isInline() const { return m_isInline; }
-
-        // Detach the listener from its owner frame.
-        void disconnectFrame() { m_frame = 0; }
-
-    protected:
-        V8EventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
-        virtual ~V8EventListener();
-        v8::Local<v8::Function> getListenerFunction();
-
     private:
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*, bool isWindowEvent);
+        V8ObjectEventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
+        virtual ~V8ObjectEventListener();
     };
 
 } // namespace WebCore
 
-#endif // V8CustomEventListener_h
+#endif // V8ObjectEventListener_h
