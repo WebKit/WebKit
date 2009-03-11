@@ -2,6 +2,18 @@
 
         Reviewed by Dave Hyatt
         
+        https://bugs.webkit.org/show_bug.cgi?id=24366
+        
+        Make this test more reliable by only calling runAnimationTest() once
+        the animation starts, not before some setTimeout().
+
+        * animations/change-keyframes-name-expected.txt:
+        * animations/change-keyframes-name.html:
+
+2009-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
         https://bugs.webkit.org/show_bug.cgi?id=24266
         
         Land new expected results for transform-absolute-in-positioned-container.html,

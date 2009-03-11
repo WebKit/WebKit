@@ -29,7 +29,7 @@
     
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      [null, 0.2 + 0.25, "box", "left", 200, 10],
+      [null, 0.25, "box", "left", 200, 10],
     ];
 
     function findKeyframesRule(rule)
@@ -51,23 +51,27 @@
         var keyframes = findKeyframesRule("foo");
         keyframes.name = "anim";
         document.getElementById('box').style.webkitAnimationName = "anim";
+
+        runAnimationTest(expectedValues);
     }
     
     function setup()
     {
-        if (layoutTestController.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
-            document.getElementById("pre-result").innerHTML = "FAIL: animation is running";
-        else
-            document.getElementById("pre-result").innerHTML = "PASS: animation is not running";
+        if (window.layoutTestController) {
+          layoutTestController.dumpAsText();
+          layoutTestController.waitUntilDone();
+          if (layoutTestController.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
+              document.getElementById("pre-result").innerHTML = "FAIL: animation is running";
+          else
+              document.getElementById("pre-result").innerHTML = "PASS: animation is not running";
+        }
         
-        setTimeout("change()", 200);
+        setTimeout(change, 200);
     }
-    
-    runAnimationTest(expectedValues, setup, "load");
     
   </script>
 </head>
-<body>
+<body onload="setup()">
 This test starts by making sure the animation is not running, because the animation-name and the
 name of they @keyframes rule do not match. Then it changes the name of the @keyframes rule so they 
 match and makes sure the animation is now running.

@@ -1,4 +1,4 @@
 This test starts by making sure the animation is not running, because the animation-name and the name of they @keyframes rule do not match. Then it changes the name of the @keyframes rule so they match and makes sure the animation is now running.
 PASS: animation is not running
-PASS - "left" property for "box" element at 0.45s saw something close to: 200
+PASS - "left" property for "box" element at 0.25s saw something close to: 200
 
