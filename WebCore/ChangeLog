@@ -1,3 +1,14 @@
+2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6123770> Restrict access to document.cookie when making a cross-site XHR
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::responseXML): Removed an incorrect
+        comment about cookie support. Firefox doesn't expose cookies on responseXML at all, and
+        there are security concerns with exposing them for cross-origin requests, so it's not clear
+        if we want to change anything here.
+
 2009-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

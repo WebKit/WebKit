@@ -197,7 +197,7 @@ Document* XMLHttpRequest::responseXML() const
             m_responseXML = document()->implementation()->createDocument(0);
             m_responseXML->open();
             m_responseXML->setURL(m_url);
-            // FIXME: set Last-Modified and cookies (currently, those are only available for HTMLDocuments).
+            // FIXME: Set Last-Modified.
             m_responseXML->write(String(m_responseText));
             m_responseXML->finishParsing();
             m_responseXML->close();

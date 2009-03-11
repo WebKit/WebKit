@@ -1,3 +1,16 @@
+2009-03-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6123770> Restrict access to document.cookie when making a cross-site XHR
+
+        * http/tests/security/cookies/xmlhttprequest.html: We don't expose cookies for documents
+        retrieved via XMLHttpRequest. Added a check to make sure that we don't forget about cross-
+        origin restrictions if we ever decide to change that.
+
+        * http/tests/xmlhttprequest/resources/get-set-cookie.cgi: While at it, fixed a broken check
+        for Set-Cookie2.
+
 2009-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
