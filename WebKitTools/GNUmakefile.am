@@ -2,9 +2,6 @@ noinst_PROGRAMS += \
 	Programs/GtkLauncher \
 	Programs/DumpRenderTree
 
-noinst_LTLIBRARIES += \
-	TestNetscapePlugin/libtestnetscapeplugin.la
-
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/WebKit/gtk \
@@ -28,14 +25,15 @@ Programs_GtkLauncher_LDADD = \
 	$(GTK_LIBS)
 
 # DumpRenderTree
-Programs_DumpRenderTree_CPPFLAGS = \
+dumprendertree_cppflags := \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(top_builddir)/WebKit/gtk \
-	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
+
+Programs_DumpRenderTree_CPPFLAGS = $(dumprendertree_cppflags)
 
 Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/AccessibilityController.h \
@@ -77,7 +75,22 @@ Programs_DumpRenderTree_LDADD = \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS)
 
-# TestNetscapePlugin
+# clean target
+CLEANFILES += \
+	Programs/GtkLauncher \
+	Programs/DumpRenderTree
+
+
+if TARGET_X11
+
+# Build TestNetscapePlugin only for X11
+# since we don't support plugins for non-X11 builds at the moment.
+noinst_LTLIBRARIES += \
+	TestNetscapePlugin/libtestnetscapeplugin.la
+
+dumprendertree_cppflags += \
+	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\"
+
 TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders \
@@ -104,8 +117,5 @@ TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 	-avoid-version \
 	-module
 
-# clean target
-CLEANFILES += \
-	Programs/GtkLauncher \
-	Programs/DumpRenderTree \
-	TestNetscapePlugin/libtestnetscapeplugin.la
+CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
+endif

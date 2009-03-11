@@ -300,8 +300,9 @@ static void setDefaultsToConsistentStateValuesForTesting()
                  "default-monospace-font-size", 13,
                  "minimum-font-size", 1,
                  NULL);
-
+#if PLATFORM(X11)
     webkit_web_settings_add_extra_plugin_directory(webView, TEST_PLUGIN_DIR);
+#endif
 }
 
 static void runTest(const string& testPathOrURL)

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include <stdio.h>
+
 #include "CString.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"

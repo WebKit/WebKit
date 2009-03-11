@@ -1,3 +1,14 @@
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK]DumpRenderTree doesn't compile for non-X11 GTK ports anymore
+        https://bugs.webkit.org/show_bug.cgi?id=2260
+
+        Add missing stdio.h include to get the build going
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+
 2009-03-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Ken Kocienda.

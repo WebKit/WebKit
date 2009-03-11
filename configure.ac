@@ -203,7 +203,9 @@ PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= $LIBXML_REQUIRED_VERSION)
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
-PKG_CHECK_MODULES(PANGO, pango >= $PANGO_REQUIRED_VERSION)
+PKG_CHECK_MODULES(PANGO, 
+                  [pango >= $PANGO_REQUIRED_VERSION
+                   pangoft2])
 AC_SUBST(PANGO_CFLAGS)
 AC_SUBST(PANGO_LIBS)
 
@@ -541,7 +543,6 @@ if test "$with_font_backend" = "freetype"; then
    else
    PKG_CHECK_MODULES([FREETYPE],
                      [cairo-ft
-                     pangoft2
                      fontconfig >= $FONTCONFIG_REQUIRED_VERSION
                      freetype2 >= $FREETYPE2_REQUIRED_VERSION])
    fi

@@ -1,3 +1,14 @@
+2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther
+
+        [GTK]DumpRenderTree doesn't compile for non-X11 GTK ports anymore
+        https://bugs.webkit.org/show_bug.cgi?id=2260
+
+        pangoft2 is also used in directfb builds so use it for all targets
+
+        * configure.ac:
+
 2009-03-02  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Mark Rowe.
