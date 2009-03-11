@@ -119,8 +119,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
         [nsRequest setValue:it->second forHTTPHeaderField:it->first];
 
-    // The below check can be removed once we require a version of Foundation with -[NSMutableURLRequest setContentDispositionEncodingFallbackArray] method.
-    static bool supportsContentDispositionEncodingFallbackArray = [NSMutableURLRequest instancesRespondToSelector:@selector(setContentDispositionEncodingFallbackArray)];
+    // The below check can be removed once we require a version of Foundation with -[NSMutableURLRequest setContentDispositionEncodingFallbackArray:] method.
+    static bool supportsContentDispositionEncodingFallbackArray = [NSMutableURLRequest instancesRespondToSelector:@selector(setContentDispositionEncodingFallbackArray:)];
     if (supportsContentDispositionEncodingFallbackArray) {
         NSMutableArray *encodingFallbacks = [NSMutableArray array];
         unsigned count = m_responseContentDispositionEncodingFallbackArray.size();

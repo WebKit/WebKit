@@ -1,3 +1,13 @@
+2009-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/4072827> Downloaded non-ASCII file name becomes garbled
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Correct selector name
+        in instancesRespondToSelector.
+
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
