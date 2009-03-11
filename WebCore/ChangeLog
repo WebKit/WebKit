@@ -1,5 +1,17 @@
 2009-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24513
+        REGRESSION: Cursor movement doesn't work on Tiger (ICU 3.2)
+
+        Fixes existing tests on Tiger.
+
+        * platform/text/TextBreakIteratorICU.cpp: (WebCore::cursorMovementIterator):
+        Use characterBreakIterator on Tiger (like we used to do).
+
+2009-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         <rdar://problem/4072827> Downloaded non-ASCII file name becomes garbled
