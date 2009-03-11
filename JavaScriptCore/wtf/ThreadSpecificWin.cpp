@@ -29,14 +29,23 @@
 
 namespace WTF {
 
-long g_tls_key_count = 0;
-DWORD g_tls_keys[kMaxTlsKeySize];
+long& tlsKeyCount()
+{
+    static long count;
+    return count;
+}
+
+DWORD* tlsKeys()
+{
+    static DWORD keys[kMaxTlsKeySize];
+    return keys;
+}
 
 void ThreadSpecificThreadExit()
 {
-    for (long i = 0; i < g_tls_key_count; i++) {
+    for (long i = 0; i < tlsKeyCount(); i++) {
         // The layout of ThreadSpecific<T>::Data does not depend on T. So we are safe to do the static cast to ThreadSpecific<int> in order to access its data member.
-        ThreadSpecific<int>::Data* data = static_cast<ThreadSpecific<int>::Data*>(TlsGetValue(g_tls_keys[i]));
+        ThreadSpecific<int>::Data* data = static_cast<ThreadSpecific<int>::Data*>(TlsGetValue(tlsKeys()[i]));
         if (data)
             data->destructor(data);
     }

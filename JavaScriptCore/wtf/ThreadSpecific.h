@@ -129,8 +129,8 @@ inline void ThreadSpecific<T>::set(T* ptr)
 // 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.
 const int kMaxTlsKeySize = 256;
 
-extern long g_tls_key_count;
-extern DWORD g_tls_keys[kMaxTlsKeySize];
+long& tlsKeyCount();
+DWORD* tlsKeys();
 
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
@@ -140,23 +140,23 @@ inline ThreadSpecific<T>::ThreadSpecific()
     if (tls_key == TLS_OUT_OF_INDEXES)
         CRASH();
 
-    m_index = InterlockedIncrement(&g_tls_key_count) - 1;
+    m_index = InterlockedIncrement(&tlsKeyCount()) - 1;
     if (m_index >= kMaxTlsKeySize)
         CRASH();
-    g_tls_keys[m_index] = tls_key;
+    tlsKeys()[m_index] = tls_key;
 }
 
 template<typename T>
 inline ThreadSpecific<T>::~ThreadSpecific()
 {
     // Does not invoke destructor functions. They will be called from ThreadSpecificThreadExit when the thread is detached.
-    TlsFree(g_tls_keys[m_index]);
+    TlsFree(tlsKeys()[m_index]);
 }
 
 template<typename T>
 inline T* ThreadSpecific<T>::get()
 {
-    Data* data = static_cast<Data*>(TlsGetValue(g_tls_keys[m_index]));
+    Data* data = static_cast<Data*>(TlsGetValue(tlsKeys()[m_index]));
     return data ? data->value : 0;
 }
 
@@ -166,7 +166,7 @@ inline void ThreadSpecific<T>::set(T* ptr)
     ASSERT(!get());
     Data* data = new Data(ptr, this);
     data->destructor = &ThreadSpecific<T>::destroy;
-    TlsSetValue(g_tls_keys[m_index], data);
+    TlsSetValue(tlsKeys()[m_index], data);
 }
 
 #else
@@ -190,7 +190,7 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 #if USE(PTHREADS)
     pthread_setspecific(data->owner->m_key, 0);
 #elif PLATFORM(WIN_OS)
-    TlsSetValue(g_tls_keys[data->owner->m_index], 0);
+    TlsSetValue(tlsKeys()[data->owner->m_index], 0);
 #else
 #error ThreadSpecific is not implemented for this platform.
 #endif

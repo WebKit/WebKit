@@ -1,3 +1,34 @@
+2009-03-11  Adam Roben  <aroben@apple.com>
+
+        Change the Windows implementation of ThreadSpecific to use functions
+        instead of extern globals
+
+        This will make it easier to export ThreadSpecific from WebKit.
+
+        Reviewed by John Sullivan.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): 
+        Touched this file to force ThreadSpecific.h to be copied into
+        $WebKitOutputDir.
+
+        * wtf/ThreadSpecific.h: Replaced g_tls_key_count with tlsKeyCount()
+        and g_tls_keys with tlsKeys().
+
+        (WTF::::ThreadSpecific):
+        (WTF::::~ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::destroy):
+        Updated to use the new functions.
+
+        * wtf/ThreadSpecificWin.cpp:
+        (WTF::tlsKeyCount):
+        (WTF::tlsKeys):
+        Added.
+
+        (WTF::ThreadSpecificThreadExit): Changed to use the new functions.
+
 2009-03-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Geoff Garen.
