@@ -1,3 +1,14 @@
+2009-03-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6668238> WebCore is registering text encodings needlessly from KURL constructor.
+        
+        Another case where we would trigger extended encoding loading needlessly.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::isNonByteBasedEncoding):
+
 2009-03-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

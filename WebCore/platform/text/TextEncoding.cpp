@@ -164,6 +164,10 @@ UChar TextEncoding::backslashAsCurrencySymbol() const
 
 bool TextEncoding::isNonByteBasedEncoding() const
 {
+    if (noExtendedTextEncodingNameUsed()) {
+        return *this == UTF16LittleEndianEncoding()
+               || *this == UTF16BigEndianEncoding();
+    }
     return *this == UTF16LittleEndianEncoding()
            || *this == UTF16BigEndianEncoding()
            || *this == UTF32BigEndianEncoding()
