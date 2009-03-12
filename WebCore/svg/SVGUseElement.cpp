@@ -564,10 +564,10 @@ void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targ
     if (isDisallowedElement(target))
         return;
 
-    RefPtr<Node> newChild = targetInstance->correspondingElement()->cloneNode(true);
+    RefPtr<Element> newChild = targetInstance->correspondingElement()->cloneElementWithChildren();
 
     // We don't walk the target tree element-by-element, and clone each element,
-    // but instead use cloneNode(deep=true). This is an optimization for the common
+    // but instead use cloneElementWithChildren(). This is an optimization for the common
     // case where <use> doesn't contain disallowed elements (ie. <foreignObject>).
     // Though if there are disallowed elements in the subtree, we have to remove them.
     // For instance: <use> on <g> containing <foreignObject> (indirect case).
@@ -643,10 +643,10 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
                 return;
             }
 
-            RefPtr<Node> newChild = target->cloneNode(true);
+            RefPtr<Element> newChild = target->cloneElementWithChildren();
 
             // We don't walk the target tree element-by-element, and clone each element,
-            // but instead use cloneNode(deep=true). This is an optimization for the common
+            // but instead use cloneElementWithChildren(). This is an optimization for the common
             // case where <use> doesn't contain disallowed elements (ie. <foreignObject>).
             // Though if there are disallowed elements in the subtree, we have to remove them.
             // For instance: <use> on <g> containing <foreignObject> (indirect case).

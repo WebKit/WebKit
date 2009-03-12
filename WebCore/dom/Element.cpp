@@ -88,6 +88,18 @@ NodeRareData* Element::createRareData()
     
 PassRefPtr<Node> Element::cloneNode(bool deep)
 {
+    return deep ? cloneElementWithChildren() : cloneElementWithoutChildren();
+}
+
+PassRefPtr<Element> Element::cloneElementWithChildren()
+{
+    RefPtr<Element> clone = cloneElementWithoutChildren();
+    cloneChildNodes(clone.get());
+    return clone.release();
+}
+
+PassRefPtr<Element> Element::cloneElementWithoutChildren()
+{
     RefPtr<Element> clone = document()->createElement(tagQName(), false);
     // This will catch HTML elements in the wrong namespace that are not correctly copied.
     // This is a sanity check as HTML overloads some of the DOM methods.
@@ -99,15 +111,7 @@ PassRefPtr<Node> Element::cloneNode(bool deep)
 
     clone->copyNonAttributeProperties(this);
     
-    if (deep)
-        cloneChildNodes(clone.get());
-
     return clone.release();
-}
-
-PassRefPtr<Element> Element::cloneElement()
-{
-    return static_pointer_cast<Element>(cloneNode(false));
 }
 
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)

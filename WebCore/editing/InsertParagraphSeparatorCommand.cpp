@@ -167,7 +167,7 @@ void InsertParagraphSeparatorCommand::doApply()
     } else if (shouldUseDefaultParagraphElement(startBlock)) 
         blockToInsert = createDefaultParagraphElement(document());
     else
-        blockToInsert = startBlock->cloneElement();
+        blockToInsert = startBlock->cloneElementWithoutChildren();
     
     //---------------------------------------------------------------------
     // Handle case when position is in the last visible position in its block,
@@ -274,7 +274,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<Element> parent = blockToInsert;
     for (size_t i = ancestors.size(); i != 0; --i) {
-        RefPtr<Element> child = ancestors[i - 1]->cloneElement(); // shallow clone
+        RefPtr<Element> child = ancestors[i - 1]->cloneElementWithoutChildren();
         appendNode(child, parent);
         parent = child.release();
     }

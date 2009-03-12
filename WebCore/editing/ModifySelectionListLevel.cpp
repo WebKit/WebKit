@@ -187,7 +187,7 @@ void IncreaseSelectionListLevelCommand::doApply()
             case InheritedListType:
                 newParent = startListChild->parentElement();
                 if (newParent)
-                    newParent = newParent->cloneElement();
+                    newParent = newParent->cloneElementWithoutChildren();
                 break;
             case OrderedList:
                 newParent = createOrderedListElement(document());

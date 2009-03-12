@@ -43,7 +43,7 @@ SplitElementCommand::SplitElementCommand(PassRefPtr<Element> element, PassRefPtr
 
 void SplitElementCommand::doApply()
 {
-    RefPtr<Element> prefixElement = m_element2->cloneElement();
+    RefPtr<Element> prefixElement = m_element2->cloneElementWithoutChildren();
 
     if (m_atChild->parentNode() != m_element2)
         return;

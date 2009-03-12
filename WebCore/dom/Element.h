@@ -115,13 +115,13 @@ public:
 
     // DOM methods overridden from parent classes
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual String nodeName() const;
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    PassRefPtr<Element> cloneElement();
+    PassRefPtr<Element> cloneElementWithChildren();
+    PassRefPtr<Element> cloneElementWithoutChildren();
 
     void normalizeAttributes();
 
@@ -219,6 +219,10 @@ private:
     virtual const AtomicString& virtualLocalName() const { return localName(); }
     virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
     
+    // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
+    // are used instead.
+    virtual PassRefPtr<Node> cloneNode(bool deep);
+
     QualifiedName m_tagName;
     virtual NodeRareData* createRareData();
 

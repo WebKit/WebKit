@@ -1155,7 +1155,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
             element->setAttribute(classAttr, AppleInterchangeNewline);            
         } else {
             if (useClonesOfEnclosingBlock)
-                element = block->cloneElement();
+                element = block->cloneElementWithoutChildren();
             else
                 element = createDefaultParagraphElement(document);
             fillContainerFromString(element.get(), s);

@@ -1,3 +1,45 @@
+2009-03-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 24110: cloneNode should call cloneElement and not the reverse
+
+        - Splitted the code from cloneNode into cloneElementWithChildren and cloneElementWithChildren.
+          Now cloneNode calls one of the 2 previous methods.
+
+        - Renamed cloneElement to cloneElementWithoutChildren as it was the previous behaviour.
+
+        - Moved cloneNode to the Element private section so that WebCore callers cannot use it.
+
+        - Removed Element::cloneNode usage through WebCore.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNode): Moved to Element's private section and it
+        now calls the two next methods.
+        (WebCore::Element::cloneElementWithChildren): Added.
+        (WebCore::Element::cloneElementWithoutChildren): Renamed from cloneElement
+        to avoid ambiguity.
+        * dom/Element.h:
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Changed call to cloneElement
+        to call to cloneElementWithoutChildren.
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Ditto.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion): Ditto.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply): Ditto.
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doApply): Ditto.
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildShadowTree): Ditto.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Ditto.
+
 2009-03-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
