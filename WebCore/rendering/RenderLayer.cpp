@@ -2319,14 +2319,16 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
             if (!currLayer->isSelfPaintingLayer())
                 continue;
             RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (depthSortDescendants) {
-                // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
-                candidateLayer = hitLayer;
-            } else {
-                // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
-                if (zOffset && !zOffsetForDescendantsPtr)
-                    *zOffset = computeZOffset(*unflattenedTransformState);
-                return hitLayer;
+            if (hitLayer) {
+                if (depthSortDescendants) {
+                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
+                    candidateLayer = hitLayer;
+                } else {
+                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
+                    if (zOffset && !zOffsetForDescendantsPtr)
+                        *zOffset = computeZOffset(*unflattenedTransformState);
+                    return hitLayer;
+                }
             }
         }
     }

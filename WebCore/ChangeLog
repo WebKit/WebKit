@@ -1,3 +1,18 @@
+2009-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24552
+        
+        Hit testing involving normal flow, self-painting layers (e.g. reflections)
+        was broken because it was not null-testing the result of hitTestLayer(),
+        so bailing early with a nil hit layer.
+
+        Test: fast/layers/normal-flow-hit-test.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Cameron Zwarich.
