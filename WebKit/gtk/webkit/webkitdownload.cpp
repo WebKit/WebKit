@@ -27,6 +27,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "webkitdownload.h"
+#include "webkitenumtypes.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 
@@ -59,7 +60,7 @@ struct _WebKitDownloadPrivate {
     gchar* suggestedFilename;
     guint currentSize;
     GTimer* timer;
-    WebKitDownloadState state;
+    WebKitDownloadStatus status;
     GFileOutputStream* outputStream;
     DownloadClient* downloadClient;
     WebKitNetworkRequest* networkRequest;
@@ -82,11 +83,15 @@ enum {
     PROP_DESTINATION_URI,
     PROP_SUGGESTED_FILENAME,
     PROP_PROGRESS,
+    PROP_STATUS,
     PROP_CURRENT_SIZE,
     PROP_TOTAL_SIZE
 };
 
 G_DEFINE_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT);
+
+
+static void webkit_download_set_status(WebKitDownload* download, WebKitDownloadStatus status);
 
 static void webkit_download_dispose(GObject* object)
 {
@@ -114,7 +119,7 @@ static void webkit_download_finalize(GObject* object)
     // We don't call webkit_download_cancel() because we don't want to emit
     // signals when finalizing an object.
     if (priv->resourceHandle) {
-        if (priv->state == WEBKIT_DOWNLOAD_STATE_STARTED) {
+        if (priv->status == WEBKIT_DOWNLOAD_STATUS_STARTED) {
             priv->resourceHandle->setClient(0);
             priv->resourceHandle->cancel();
         }
@@ -152,6 +157,9 @@ static void webkit_download_get_property(GObject* object, guint prop_id, GValue*
     case PROP_PROGRESS:
         g_value_set_double(value, webkit_download_get_progress(download));
         break;
+    case PROP_STATUS:
+        g_value_set_enum(value, webkit_download_get_status(download));
+        break;
     case PROP_CURRENT_SIZE:
         g_value_set_uint64(value, webkit_download_get_current_size(download));
         break;
@@ -177,6 +185,9 @@ static void webkit_download_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_DESTINATION_URI:
         webkit_download_set_destination_uri(download, g_value_get_string(value));
+        break;
+    case PROP_STATUS:
+        webkit_download_set_status(download, static_cast<WebKitDownloadStatus>(g_value_get_enum(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -275,6 +286,21 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         WEBKIT_PARAM_READABLE));
 
     /**
+     * WebKitDownload:status:
+     *
+     * Determines the current status of the download.
+     *
+     * Since: 1.1.2
+     */
+    g_object_class_install_property(objectClass, PROP_STATUS,
+                                    g_param_spec_enum("status",
+                                                      "Status",
+                                                      "Determines the current status of the download",
+                                                      WEBKIT_TYPE_DOWNLOAD_STATUS,
+                                                      WEBKIT_DOWNLOAD_STATUS_CREATED,
+                                                      WEBKIT_PARAM_READABLE));
+
+    /**
      * WebKitDownload:current-size
      *
      * The length of the data already downloaded
@@ -314,7 +340,7 @@ static void webkit_download_init(WebKitDownload* download)
 
     priv->downloadClient = new DownloadClient(download);
     priv->currentSize = 0;
-    priv->state = WEBKIT_DOWNLOAD_STATE_CREATED;
+    priv->status = WEBKIT_DOWNLOAD_STATUS_CREATED;
 }
 
 /**
@@ -384,7 +410,7 @@ void webkit_download_start(WebKitDownload* download)
 
     WebKitDownloadPrivate* priv = download->priv;
     g_return_if_fail(priv->destinationURI);
-    g_return_if_fail(priv->state == WEBKIT_DOWNLOAD_STATE_CREATED);
+    g_return_if_fail(priv->status == WEBKIT_DOWNLOAD_STATUS_CREATED);
     g_return_if_fail(priv->timer == NULL);
 
     if (priv->resourceHandle)
@@ -426,7 +452,7 @@ void webkit_download_cancel(WebKitDownload* download)
     if (priv->resourceHandle)
         priv->resourceHandle->cancel();
 
-    priv->state = WEBKIT_DOWNLOAD_STATE_CANCELLED;
+    webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_CANCELLED);
 
     gboolean handled;
     g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER, "User cancelled the download", &handled);
@@ -534,7 +560,7 @@ void webkit_download_set_destination_uri(WebKitDownload* download, const gchar* 
     if (priv->destinationURI && !strcmp(priv->destinationURI, destination_uri))
         return;
 
-    if (priv->state != WEBKIT_DOWNLOAD_STATE_CREATED && priv->state != WEBKIT_DOWNLOAD_STATE_CANCELLED) {
+    if (priv->status != WEBKIT_DOWNLOAD_STATUS_CREATED && priv->status != WEBKIT_DOWNLOAD_STATUS_CANCELLED) {
         ASSERT(priv->destinationURI);
 
         gboolean downloading = priv->outputStream != NULL;
@@ -576,22 +602,32 @@ void webkit_download_set_destination_uri(WebKitDownload* download, const gchar* 
 }
 
 /**
- * webkit_download_get_state:
+ * webkit_download_get_status:
  * @download: the #WebKitDownload
  *
- * Obtains the current state of the download, as a
- * #WebKitDownloadState.
+ * Obtains the current status of the download, as a
+ * #WebKitDownloadStatus.
  *
- * Returns: the current #WebKitDownloadState
+ * Returns: the current #WebKitDownloadStatus
  *
  * Since: 1.1.2
  */
-WebKitDownloadState webkit_download_get_state(WebKitDownload* download)
+WebKitDownloadStatus webkit_download_get_status(WebKitDownload* download)
 {
-    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), WEBKIT_DOWNLOAD_STATE_ERROR);
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), WEBKIT_DOWNLOAD_STATUS_ERROR);
 
     WebKitDownloadPrivate* priv = download->priv;
-    return priv->state;
+    return priv->status;
+}
+
+static void webkit_download_set_status(WebKitDownload* download, WebKitDownloadStatus status)
+{
+    g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
+
+    WebKitDownloadPrivate* priv = download->priv;
+    priv->status = status;
+
+    g_object_notify(G_OBJECT(download), "status");
 }
 
 /**
@@ -685,7 +721,7 @@ static void webkit_download_received_data(WebKitDownload* download, const gchar*
     WebKitDownloadPrivate* priv = download->priv;
 
     if (priv->currentSize == 0)
-        priv->state = WEBKIT_DOWNLOAD_STATE_STARTED;
+        webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_STARTED);
 
     ASSERT(priv->outputStream);
 
@@ -722,9 +758,9 @@ static void webkit_download_finished_loading(WebKitDownload* download)
     WebKitDownloadPrivate* priv = download->priv;
 
     g_timer_stop(priv->timer);
-    priv->state = WEBKIT_DOWNLOAD_STATE_FINISHED;
 
     g_object_notify(G_OBJECT(download), "progress");
+    webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_FINISHED);
 }
 
 static void webkit_download_error(WebKitDownload* download, const ResourceError& error)
@@ -734,7 +770,7 @@ static void webkit_download_error(WebKitDownload* download, const ResourceError&
     WebKitDownloadPrivate* priv = download->priv;
 
     g_timer_stop(priv->timer);
-    priv->state = WEBKIT_DOWNLOAD_STATE_ERROR;
+    webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_ERROR);
 
     gboolean handled;
     g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_NETWORK, error.localizedDescription().utf8().data(), &handled);

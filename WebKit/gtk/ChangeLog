@@ -5,6 +5,34 @@
         https://bugs.webkit.org/show_bug.cgi?id=24553
         [GTK] Improvements to WebKitDownload
 
+        Rename 'state' to 'status' to match the naming in the frame
+        loader rework that we plan to land soonish, and make it a
+        property, for the same reason.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::):
+        (_WebKitDownloadPrivate::webkit_download_finalize):
+        (_WebKitDownloadPrivate::webkit_download_get_property):
+        (_WebKitDownloadPrivate::webkit_download_set_property):
+        (_WebKitDownloadPrivate::webkit_download_class_init):
+        (_WebKitDownloadPrivate::webkit_download_init):
+        (_WebKitDownloadPrivate::webkit_download_start):
+        (_WebKitDownloadPrivate::webkit_download_cancel):
+        (_WebKitDownloadPrivate::webkit_download_set_destination_uri):
+        (_WebKitDownloadPrivate::webkit_download_get_status):
+        (_WebKitDownloadPrivate::webkit_download_set_status):
+        (_WebKitDownloadPrivate::webkit_download_received_data):
+        (_WebKitDownloadPrivate::webkit_download_finished_loading):
+        (_WebKitDownloadPrivate::webkit_download_error):
+        * webkit/webkitdownload.h:
+
+2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alexey  Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24553
+        [GTK] Improvements to WebKitDownload
+
         Improved documentation for the download-requested signal, to make
         its usage clear.
 
