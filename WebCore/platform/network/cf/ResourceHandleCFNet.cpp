@@ -248,7 +248,7 @@ void* runLoaderThread(void *unused)
 CFRunLoopRef ResourceHandle::loaderRunLoop()
 {
     if (!loaderRL) {
-        createThread(runLoaderThread, 0, "CFNetwork::Loader");
+        createThread(runLoaderThread, 0, "WebCore: CFNetwork Loader");
         while (loaderRL == 0) {
             // FIXME: sleep 10? that can't be right...
             Sleep(10);

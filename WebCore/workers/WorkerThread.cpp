@@ -88,7 +88,7 @@ bool WorkerThread::start()
     if (m_threadID)
         return true;
 
-    m_threadID = createThread(WorkerThread::workerThreadStart, this, "WebCore::Worker");
+    m_threadID = createThread(WorkerThread::workerThreadStart, this, "WebCore: Worker");
 
     return m_threadID;
 }

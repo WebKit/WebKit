@@ -1,3 +1,21 @@
+2009-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Don't use "::" in thread names because it is ugly!
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): Use "WebCore: " instead of "WebCore::".
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::loaderRunLoop): Call this "WebCore: CFNetwork Loader" to make
+        it clear this is a WebCore-created thread.
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::start): Use "WebCore: " instead of "WebCore::".
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::start): Use "WebCore: " instead of "WebCore::".
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::start): Use "WebCore: " instead of "WebCore::".
+
 2009-03-11  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin Adler.
