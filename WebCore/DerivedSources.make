@@ -73,6 +73,7 @@ DOM_CLASSES = \
     Clipboard \
     Comment \
     Console \
+    Coordinates \
     Counter \
     DOMApplicationCache \
     DOMCoreException \

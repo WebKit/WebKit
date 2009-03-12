@@ -60,7 +60,14 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     if (exec->hadException())
         return 0;
 
-    return PositionOptions::create(enableHighAccuracy, timeout);
+    JSValuePtr maximumAgeValue = object->get(exec, Identifier(exec, "maximumAge"));
+    if (exec->hadException())
+        return 0;
+    unsigned maximumAge = maximumAgeValue.toUInt32(exec);
+    if (exec->hadException())
+        return 0;
+
+    return PositionOptions::create(enableHighAccuracy, timeout, maximumAge);
 }
 
 JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)

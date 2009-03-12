@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Geoposition_h
-#define Geoposition_h
+#ifndef Coordinates_h
+#define Coordinates_h
 
-#include "Coordinates.h"
 #include "Event.h"
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
@@ -35,26 +34,41 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class Geoposition : public RefCounted<Geoposition> {
+class Coordinates : public RefCounted<Coordinates> {
 public:
-    static PassRefPtr<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp) { return adoptRef(new Geoposition(coordinates, timestamp)); }
+    static PassRefPtr<Coordinates> create(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double speed) { return adoptRef(new Coordinates(latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed)); }
     
-    DOMTimeStamp timestamp() const { return m_timestamp; }
-    Coordinates* coords() const { return m_coordinates.get(); }
-    
+    double latitude() const { return m_latitude; }
+    double longitude() const { return m_longitude; }
+    double altitude() const { return m_altitude; }
+    double accuracy() const { return m_accuracy; }
+    double altitudeAccuracy() const { return m_altitudeAccuracy; }
+    double heading() const { return m_heading; }
+    double speed() const { return m_speed; }
+
     String toString() const;
 
 private:
-    Geoposition(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
-        : m_coordinates(coordinates)
-        , m_timestamp(timestamp)
+    Coordinates(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double speed)
+        : m_latitude(latitude)
+        , m_longitude(longitude)
+        , m_altitude(altitude)
+        , m_accuracy(accuracy)
+        , m_altitudeAccuracy(altitudeAccuracy)
+        , m_heading(heading)
+        , m_speed(speed)
     {
     }
 
-    RefPtr<Coordinates> m_coordinates;
-    DOMTimeStamp m_timestamp;
+    double m_latitude;
+    double m_longitude;
+    double m_altitude;
+    double m_accuracy;
+    double m_altitudeAccuracy;
+    double m_heading;
+    double m_speed;
 };
     
 } // namespace WebCore
 
-#endif // Geoposition_h
+#endif // Coordinates_h

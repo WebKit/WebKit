@@ -383,6 +383,7 @@ IDL_BINDINGS += \
     inspector/InspectorController.idl \
     page/BarInfo.idl \
     page/Console.idl \
+    page/Coordinates.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/Geolocation.idl \
@@ -849,6 +850,7 @@ SOURCES += \
     page/Chrome.cpp \
     page/Console.cpp \
     page/ContextMenuController.cpp \
+    page/Coordinates.cpp \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \

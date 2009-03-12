@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PositionOptions_h
-#define PositionOptions_h
+module core {
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+    interface Coordinates {
+        readonly attribute double latitude;
+        readonly attribute double longitude;
+        readonly attribute double altitude;
+        readonly attribute double accuracy;
+        readonly attribute double altitudeAccuracy;
+        readonly attribute double heading;
+        readonly attribute double speed;
 
-namespace WebCore {
-    
-class PositionOptions : public RefCounted<PositionOptions> {
-public:
-    static PassRefPtr<PositionOptions> create(bool highAccuracy, unsigned timeout, unsigned maximumAge) { return adoptRef(new PositionOptions(highAccuracy, timeout, maximumAge)); }
-
-    bool enableHighAccuracy() const { return m_highAccuracy; }
-    void setEnableHighAccuracy(bool enable) { m_highAccuracy = enable; }
-    unsigned timeout() const { return m_timeout; }
-    void setTimeout(unsigned t) { m_timeout = t; }
-    unsigned maximumAge() const { return m_maximumAge; }
-    void setMaximumAge(unsigned a) { m_maximumAge = a; }
-    
-private:
-    PositionOptions(bool highAccuracy, unsigned timeout, unsigned maximumAge)
-        : m_highAccuracy(highAccuracy)
-        , m_timeout(timeout)
-        , m_maximumAge(maximumAge)
-    {
-    }
-    
-    bool m_highAccuracy;
-    unsigned m_timeout;
-    unsigned m_maximumAge;
-};
-    
-} // namespace WebCore
-
-#endif // PositionOptions_h
+#if defined(LANGUAGE_JAVASCRIPT)
+        [DontEnum] DOMString toString();
+#endif
+    };
+}

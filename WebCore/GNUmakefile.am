@@ -215,6 +215,7 @@ IDL_BINDINGS += \
 	WebCore/inspector/InspectorController.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
+	WebCore/page/Coordinates.idl \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/Geolocation.idl \
@@ -1160,6 +1161,8 @@ webcore_sources += \
 	WebCore/page/ContextMenuClient.h \
 	WebCore/page/ContextMenuController.cpp \
 	WebCore/page/ContextMenuController.h \
+	WebCore/page/Coordinates.h \
+	WebCore/page/Coordinates.cpp \
 	WebCore/page/DOMSelection.cpp \
 	WebCore/page/DOMSelection.h \
 	WebCore/page/DOMTimer.cpp \

@@ -377,6 +377,7 @@ sources['page'] = [
     'page/Chrome.cpp',
     'page/Console.cpp',
     'page/ContextMenuController.cpp',
+    'page/Coordinates.cpp',
     'page/DOMSelection.cpp',
     'page/DOMTimer.cpp',
     'page/DOMWindow.cpp',

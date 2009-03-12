@@ -580,6 +580,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCoordinates.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCounter.h"
 				>
 			</File>
@@ -2157,6 +2161,22 @@
 			</File>
 			<File
 				RelativePath="..\page\ContextMenuController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Coordinates.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\Coordinates.h"
 				>
 			</File>
 			<File

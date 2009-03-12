@@ -1,3 +1,49 @@
+2009-03-12  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24506
+        Geolocation in Safari differs from the spec, no Coordinates attribute on Position
+        
+        Get up to date.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionOptions):
+        * page/Coordinates.cpp: Added.
+        (WebCore::Coordinates::toString):
+        * page/Coordinates.h: Added.
+        (WebCore::Coordinates::create):
+        (WebCore::Coordinates::latitude):
+        (WebCore::Coordinates::longitude):
+        (WebCore::Coordinates::altitude):
+        (WebCore::Coordinates::accuracy):
+        (WebCore::Coordinates::altitudeAccuracy):
+        (WebCore::Coordinates::heading):
+        (WebCore::Coordinates::speed):
+        (WebCore::Coordinates::Coordinates):
+        * page/Coordinates.idl: Added.
+        * page/Geoposition.cpp:
+        (WebCore::Geoposition::toString):
+        * page/Geoposition.h:
+        (WebCore::Geoposition::create):
+        (WebCore::Geoposition::coords):
+        (WebCore::Geoposition::Geoposition):
+        * page/Geoposition.idl:
+        * page/PositionOptions.h:
+        (WebCore::PositionOptions::create):
+        (WebCore::PositionOptions::maximumAge):
+        (WebCore::PositionOptions::setMaximumAge):
+        (WebCore::PositionOptions::PositionOptions):
+        * platform/mac/GeolocationServiceMac.mm:
+        (-[WebCoreCoreLocationObserver locationManager:didUpdateToLocation:fromLocation:]):
+
 2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

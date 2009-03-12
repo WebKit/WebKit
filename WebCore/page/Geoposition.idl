@@ -26,13 +26,7 @@
 module core {
 
     interface Geoposition {
-        readonly attribute double latitude;
-        readonly attribute double longitude;
-        readonly attribute double altitude;
-        readonly attribute double accuracy;
-        readonly attribute double altitudeAccuracy;
-        readonly attribute double heading;
-        readonly attribute double speed;
+        readonly attribute Coordinates coords;
         readonly attribute DOMTimeStamp timestamp;
 
 #if defined(LANGUAGE_JAVASCRIPT)
