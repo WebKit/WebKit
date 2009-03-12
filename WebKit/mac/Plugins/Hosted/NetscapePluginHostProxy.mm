@@ -106,6 +106,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
 #else
     m_clientPortSource.adoptCF(WKCreateMIGServerSource((mig_subsystem_t)&WKWebKitPluginClient_subsystem, m_clientPort));
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), kCFRunLoopDefaultMode);
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSEventTrackingRunLoopMode);
 #endif
 }
 

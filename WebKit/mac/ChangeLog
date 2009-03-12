@@ -1,5 +1,16 @@
 2009-03-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mike Thole.
+
+        Fix <rdar://problem/6624105>.
+        
+        Make sure to process incoming messages for the NSEventTrackingRunLoopMode as well.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+
+2009-03-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         WebKit side of <rdar://problem/6607801>
