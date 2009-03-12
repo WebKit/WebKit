@@ -456,6 +456,12 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
         else
             view->scrollBy(IntSize(0, view->visibleHeight()));
         return TRUE;
+    case GDK_Page_Up:
+        view->scrollBy(IntSize(0, -view->visibleHeight()));
+        return TRUE;
+    case GDK_Page_Down:
+        view->scrollBy(IntSize(0, view->visibleHeight()));
+        return TRUE;
     case GDK_Home:
         view->scrollBy(IntSize(0, -view->contentsHeight()));
         return TRUE;

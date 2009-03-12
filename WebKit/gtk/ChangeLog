@@ -5,6 +5,20 @@
         https://bugs.webkit.org/show_bug.cgi?id=24541
         Scrolling with home and end keys not always works
 
+        Also make page up and page down keys be handled by the webview key
+        event code, so that they also work in cases where the GTK+
+        scrollbars don't handle them directly, like in the bugzill's patch
+        review page.
+
+        * webkit/webkitwebview.cpp:
+
+2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24541
+        Scrolling with home and end keys not always works
+
         Make home and end keys behave more consistently for scrolling the
         view.
 
