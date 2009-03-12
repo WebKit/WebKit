@@ -131,6 +131,7 @@ static bool supportsFocus(ControlPart appearance)
     case PushButtonPart:
     case ButtonPart:
     case DefaultButtonPart:
+    case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:
         return true;
@@ -254,7 +255,7 @@ RenderTheme* theme()
 
 String RenderThemeChromiumWin::extraDefaultStyleSheet()
 {
-    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
+    return String(themeChromiumWinUserAgentStyleSheet, sizeof(themeChromiumWinUserAgentStyleSheet));
 }
 
 String RenderThemeChromiumWin::extraQuirksStyleSheet()
@@ -556,7 +557,7 @@ unsigned RenderThemeChromiumWin::determineState(RenderObject* o)
     ControlPart appearance = o->style()->appearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance))
+    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance || SearchFieldPart == appearance))
         result = ETS_READONLY; // Readonly is supported on textfields.
     else if (isPressed(o)) // Active overrides hover and focused.
         result = TS_PRESSED;
@@ -602,6 +603,7 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
         break;
     case ListboxPart:
     case MenulistPart:
+    case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:
         result.m_part = ETS_NORMAL;

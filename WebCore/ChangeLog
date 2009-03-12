@@ -1,3 +1,22 @@
+2009-03-12  David Levin  <levin@chromium.org>
+
+        Reviewed by  Darin Fisher.
+
+        Bug 24530: width100percent-searchfield.html should be fixed for chromium.
+        <https://bugs.webkit.org/show_bug.cgi?id=24530>
+
+        Compensate for r39924 in chromium, which broke LayoutTests/fast/replaced/width100percent-searchfield.html
+
+        * css/themeChromiumWin.css: Added.
+        Overrides the changes to start supporting input[type="search"] on Windows (since
+        Chromium doesn't do anything special for this).
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::supportsFocus):
+        (WebCore::RenderThemeChromiumWin::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumWin::determineState):
+        (WebCore::RenderThemeChromiumWin::getThemeData):
+
 2009-03-12  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Antti Koivisto.
