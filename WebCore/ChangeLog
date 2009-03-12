@@ -1,3 +1,11 @@
+2009-03-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        build fix.
+
+        * html/CanvasRenderingContext2D.h:
+
 2009-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.
