@@ -1,3 +1,18 @@
+2009-03-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24519
+        [GTK] Use two argument KURL ctor in ResourceHandleSoup
+
+        Use two argument KURL ctor, the single argument ctor expects its
+        input to be the output of a previous KURL::parse call, which is
+        not the case here.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+        (WebCore::queryInfoCallback):
+
 2009-03-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix for <rdar://6418681>
