@@ -1,3 +1,16 @@
+2009-03-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24515
+        [GTK] soup backend should use GMappedFile instead of mmap directly
+
+        Rewrite mmap code used to upload files to use GMappedFile, so that
+        it is platform-independent.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startHttp):
+
 2009-03-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
