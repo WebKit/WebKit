@@ -1,3 +1,12 @@
+2009-02-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Add more logging to this test to make it
+        easier to debug when it breaks.
+
+        * editing/selection/click-before-and-after-table.html:
+
 2009-03-12  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dave Hyatt.

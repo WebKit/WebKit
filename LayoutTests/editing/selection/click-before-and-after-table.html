@@ -19,9 +19,10 @@ function log(message) {
     console.appendChild(li);
     li.appendChild(text);
 }
-if (!window.layoutTestController)
+if (!window.layoutTestController) {
     log("This test uses the eventSender to do mouse clicks.  To run it manually, click after the table, the caret should appear there (and not inside the table).  Then click inside the table.  The caret should appear inside it.");
-else {
+    document.body.addEventListener("click", function() { var s = window.getSelection(); log("click @ " + event.clientX + ", " + event.clientY + " caret at: " + s.anchorNode + ", " + s.anchorOffset); }, true);
+} else {
     window.layoutTestController.dumpAsText();
     var s, x, y, e, top, bottom, left, right;
     table = document.getElementById("table");
@@ -38,7 +39,7 @@ else {
     eventSender.mouseUp();
     s = window.getSelection();
     if (!(s.anchorNode == document.body && s.anchorOffset == 1))
-        log("Failure: Clicking after the table didn't put the caret after it.");
+        log("Failure: Clicking @ " + x + ", " + y + " after the table didn't put the caret after it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
     
     x = right - 5;
     y = (top + bottom) / 2;
@@ -48,7 +49,7 @@ else {
     eventSender.mouseUp();
     s = window.getSelection();
     if (s.anchorNode == document.body)
-        log("Failure: Clicking inside the table put the caret before or after it.");
+        log("Failure: Clicking @ " + x + ", " + y + " inside the table put the caret before or after it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
         
     x = left - 5;
     y = (top + bottom) / 2;
@@ -59,7 +60,7 @@ else {
     s = window.getSelection();
     if (s.anchorNode != table || s.anchorOffset != 0)
     if (!(s.anchorNode == document.body && s.anchorOffset == 0))
-        log("Failure: Clicking before the table should be the caret before it.");
+        log("Failure: Clicking @ " + x + ", " + y + " before the table should be the caret before it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
         
     x = left + 5;
     y = (top + bottom) / 2;
@@ -69,7 +70,7 @@ else {
     eventSender.mouseUp();
     s = window.getSelection();
     if (s.anchorNode == document.body)
-        log("Failure: Clicking inside the table put the caret before or after it.");
+        log("Failure: Clicking @ " + x + ", " + y + " inside the table put the caret before or after it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
 }
 </script>
 </body>

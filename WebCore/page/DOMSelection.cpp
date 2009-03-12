@@ -56,76 +56,89 @@ void DOMSelection::disconnectFrame()
     m_frame = 0;
 }
 
+const VisibleSelection& DOMSelection::visibleSelection() const
+{
+    ASSERT(m_frame);
+    return m_frame->selection()->selection();
+}
+
+static Position anchorPosition(const VisibleSelection& selection)
+{
+    Position anchor = selection.isBaseFirst() ? selection.start() : selection.end();
+    return rangeCompliantEquivalent(anchor);
+}
+
+static Position focusPosition(const VisibleSelection& selection)
+{
+    Position focus = selection.isBaseFirst() ? selection.end() : selection.start();
+    return rangeCompliantEquivalent(focus);
+}
+
+static Position basePosition(const VisibleSelection& selection)
+{
+    return rangeCompliantEquivalent(selection.base());
+}
+
+static Position extentPosition(const VisibleSelection& selection)
+{
+    return rangeCompliantEquivalent(selection.extent());
+}
+
 Node* DOMSelection::anchorNode() const
 {
     if (!m_frame)
         return 0;
-
-    const VisibleSelection& selection = m_frame->selection()->selection();
-    Position anchor = selection.isBaseFirst() ? selection.start() : selection.end();
-    anchor = rangeCompliantEquivalent(anchor);
-    return anchor.node();
-}
-
-Node* DOMSelection::baseNode() const
-{
-    if (!m_frame)
-        return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().base()).node();
+    return anchorPosition(visibleSelection()).node();
 }
 
 int DOMSelection::anchorOffset() const
 {
     if (!m_frame)
         return 0;
-
-    const VisibleSelection& selection = m_frame->selection()->selection();
-    Position anchor = selection.isBaseFirst() ? selection.start() : selection.end();
-    anchor = rangeCompliantEquivalent(anchor);
-    return anchor.m_offset;
-}
-
-int DOMSelection::baseOffset() const
-{
-    if (!m_frame)
-        return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().base()).m_offset;
+    return anchorPosition(visibleSelection()).m_offset;
 }
 
 Node* DOMSelection::focusNode() const
 {
     if (!m_frame)
         return 0;
-
-    const VisibleSelection& selection = m_frame->selection()->selection();
-    Position focus = selection.isBaseFirst() ? selection.end() : selection.start();
-    focus = rangeCompliantEquivalent(focus);
-    return focus.node();
-}
-
-Node* DOMSelection::extentNode() const
-{
-    if (!m_frame)
-        return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().extent()).node();
+    return focusPosition(visibleSelection()).node();
 }
 
 int DOMSelection::focusOffset() const
 {
     if (!m_frame)
         return 0;
+    return focusPosition(visibleSelection()).m_offset;
+}
 
-    const VisibleSelection& selection = m_frame->selection()->selection();
-    Position focus = selection.isBaseFirst() ? selection.end() : selection.start();
-    focus = rangeCompliantEquivalent(focus);
-    return focus.m_offset;
+Node* DOMSelection::baseNode() const
+{
+    if (!m_frame)
+        return 0;
+    return basePosition(visibleSelection()).node();
+}
+
+int DOMSelection::baseOffset() const
+{
+    if (!m_frame)
+        return 0;
+    return basePosition(visibleSelection()).m_offset;
+}
+
+
+Node* DOMSelection::extentNode() const
+{
+    if (!m_frame)
+        return 0;
+    return extentPosition(visibleSelection()).node();
 }
 
 int DOMSelection::extentOffset() const
 {
     if (!m_frame)
         return 0;
-    return rangeCompliantEquivalent(m_frame->selection()->selection().extent()).m_offset;
+    return extentPosition(visibleSelection()).m_offset;
 }
 
 bool DOMSelection::isCollapsed() const
