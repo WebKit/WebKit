@@ -1,3 +1,12 @@
+2009-03-12  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24563
+        Change ResourceRequest to be a struct rather then a class to match other declarations.
+
+        * platform/network/chromium/ResourceRequest.h:
+
 2009-03-12  David Levin  <levin@chromium.org>
 
         Reviewed by  Darin Fisher.

@@ -35,7 +35,7 @@ namespace WebCore {
 
     class Frame;
 
-    class ResourceRequest : public ResourceRequestBase {
+    struct ResourceRequest : public ResourceRequestBase {
     public:
         enum TargetType {
             TargetIsMainFrame,
