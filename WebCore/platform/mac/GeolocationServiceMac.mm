@@ -184,10 +184,13 @@ void GeolocationServiceMac::errorOccurred(PassRefPtr<PositionError> error)
     switch ([error code]) {
         case kCLErrorDenied:
             code = PositionError::PERMISSION_DENIED;
+            break;
         case kCLErrorLocationUnknown:
             code = PositionError::POSITION_UNAVAILABLE;
+            break;
         default:
             code = PositionError::POSITION_UNAVAILABLE;
+            break;
     }
 
     m_callback->errorOccurred(PositionError::create(code, [error localizedDescription]));
