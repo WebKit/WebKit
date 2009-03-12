@@ -107,7 +107,8 @@ simpleroutine PHPluginInstancePrint(pluginHostPort :mach_port_t;
                                     height :uint32_t);
 
 simpleroutine PHDestroyPluginInstance(pluginHostPort :mach_port_t;
-                                    pluginID :uint32_t);
+                                    pluginID :uint32_t;
+                                    requestID :uint32_t);
 
 
 // Streams

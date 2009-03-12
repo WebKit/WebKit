@@ -166,7 +166,12 @@ void NetscapePluginInstanceProxy::invalidate()
 
 void NetscapePluginInstanceProxy::destroy()
 {
-    _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
+    uint32_t requestID = nextRequestID();
+    
+    _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID);
+    
+    // We don't care about the reply here - we just want to block until the plug-in instance has been torn down.
+    waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
 
     cleanup();
     invalidate();
