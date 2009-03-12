@@ -180,10 +180,18 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::QueryInterface(REFIID riid, void** pp
 // DOMHTMLDocument ------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::title( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    if (!m_document || !m_document->isHTMLDocument())
+        return E_FAIL;
+
+    *result = BString(m_document->title()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::setTitle( 

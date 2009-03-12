@@ -1,3 +1,13 @@
+2009-03-12  Adam Roben  <aroben@apple.com>
+
+        Implement DOMHTMLDocument::title
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::title): Call through to WebCore::Document (with
+        obligatory COM error checking/type conversions).
+
 2009-03-11  Adam Roben  <aroben@apple.com>
 
         Export functions needed by ThreadSpecific from WebKit
