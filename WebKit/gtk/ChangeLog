@@ -1,5 +1,17 @@
 2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Reviewed by Alexey  Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24553
+        [GTK] Improvements to WebKitDownload
+
+        Improved documentation for the download-requested signal, to make
+        its usage clear.
+
+        * webkit/webkitwebview.cpp:
+
+2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
+
         Reviewed by Alp Toker.
 
         https://bugs.webkit.org/show_bug.cgi?id=24541

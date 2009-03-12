@@ -1133,11 +1133,18 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::download-requested:
      * @web_view: the object on which the signal is emitted
-     * @download: the message text
-     * @return: TRUE if the download was handled.
+     * @download: a #WebKitDownload object that lets you control the
+     * download process
+     * @return: %TRUE if the download should be performed, %FALSE to cancel it.
      *
      * A new Download is being requested. By default, if the signal is
-     * not handled, the download is cancelled.
+     * not handled, the download is cancelled. Notice that while
+     * handling this signal you must set the target URI using
+     * webkit_download_set_target_uri().
+     *
+     * If you intend to handle downloads yourself rather than using
+     * the #WebKitDownload helper object you must handle this signal,
+     * and return %FALSE.
      *
      * Since: 1.1.2
      */
