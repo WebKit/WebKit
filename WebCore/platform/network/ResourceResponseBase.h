@@ -49,7 +49,7 @@ public:
     bool isHTTP() const;
 
     const KURL& url() const;
-    void setUrl(const KURL& url);
+    void setURL(const KURL& url);
 
     const String& mimeType() const;
     void setMimeType(const String& mimeType);

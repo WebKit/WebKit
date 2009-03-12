@@ -2,6 +2,25 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24544
+        Rename setUrl to setURL
+
+        Use proper case for setUrl method, rename it to setURL.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::headerCallback):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+        (WebCore::queryInfoCallback):
+
+2009-03-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         https://bugs.webkit.org/show_bug.cgi?id=24519
         [GTK] Use two argument KURL ctor in ResourceHandleSoup
 

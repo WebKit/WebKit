@@ -39,7 +39,7 @@ static void parseCacheControlDirectiveValues(const String& directives, Vector<St
 auto_ptr<ResourceResponse> ResourceResponseBase::adopt(auto_ptr<CrossThreadResourceResponseData> data)
 {
     auto_ptr<ResourceResponse> response(new ResourceResponse());
-    response->setUrl(data->m_url);
+    response->setURL(data->m_url);
     response->setMimeType(data->m_mimeType);
     response->setExpectedContentLength(data->m_expectedContentLength);
     response->setTextEncodingName(data->m_textEncodingName);
@@ -94,7 +94,7 @@ const KURL& ResourceResponseBase::url() const
     return m_url; 
 }
 
-void ResourceResponseBase::setUrl(const KURL& url)
+void ResourceResponseBase::setURL(const KURL& url)
 {
     lazyInit();
     m_isNull = false;

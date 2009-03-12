@@ -161,7 +161,7 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
 
     String contentType = soup_message_headers_get(msg->response_headers, "Content-Type");
     char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
-    response->setUrl(KURL(KURL(), uri));
+    response->setURL(KURL(KURL(), uri));
     g_free(uri);
     response->setMimeType(extractMIMETypeFromMediaType(contentType));
     response->setTextEncodingName(extractCharsetFromMediaType(contentType));
@@ -734,7 +734,7 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
     ResourceResponse response;
 
     char* uri = g_file_get_uri(d->m_gfile);
-    response.setUrl(KURL(KURL(), uri));
+    response.setURL(KURL(KURL(), uri));
     g_free(uri);
 
     GError *error = 0;

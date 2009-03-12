@@ -126,7 +126,7 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (!d->m_response.responseFired()) {
         const char* hdr;
         err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
-        d->m_response.setUrl(KURL(hdr));
+        d->m_response.setURL(KURL(hdr));
         if (d->client())
             d->client()->didReceiveResponse(job, d->m_response);
         d->m_response.setResponseFired(true);
@@ -180,7 +180,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
         const char* hdr;
         err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
-        d->m_response.setUrl(KURL(hdr));
+        d->m_response.setURL(KURL(hdr));
 
         long httpCode = 0;
         err = curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
