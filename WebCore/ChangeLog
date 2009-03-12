@@ -45,6 +45,21 @@
 
 2009-03-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adele Peterson.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24508
+        
+        Fix updating of text field with placeholder text when value is set
+        by ensuring that updatePlaceholderVisibility() is called after
+        the value has been updated, not before.
+
+        Test: fast/forms/placeholder-set-value.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+
+2009-03-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
         
         https://bugs.webkit.org/show_bug.cgi?id=24552

@@ -1,5 +1,18 @@
 2009-03-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adele Peterson.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24508
+        
+        Test for setting the value on a text input with placeholder text.
+        
+        * fast/forms/placeholder-set-value.html: Added.
+        * platform/mac/fast/forms/placeholder-set-value-expected.checksum: Added.
+        * platform/mac/fast/forms/placeholder-set-value-expected.png: Added.
+        * platform/mac/fast/forms/placeholder-set-value-expected.txt: Added.
+
+2009-03-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dimitri Glazkov.
 
         https://bugs.webkit.org/show_bug.cgi?id=24496

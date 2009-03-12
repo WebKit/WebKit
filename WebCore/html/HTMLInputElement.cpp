@@ -933,17 +933,17 @@ void HTMLInputElement::setValue(const String& value)
     if (inputType() == FILE && !value.isEmpty())
         return;
 
-    if (isTextField())
-        InputElement::updatePlaceholderVisibility(m_data, document());
-
     setValueMatchesRenderer(false);
     if (storesValueSeparateFromAttribute()) {
         if (inputType() == FILE)
             m_fileList->clear();
         else {
             m_data.setValue(constrainValue(value));
-            if (isTextField() && inDocument())
-                document()->updateRendering();
+            if (isTextField()) {
+                InputElement::updatePlaceholderVisibility(m_data, document());
+                if (inDocument())
+                    document()->updateRendering();
+            }
         }
         if (renderer())
             renderer()->updateFromElement();
