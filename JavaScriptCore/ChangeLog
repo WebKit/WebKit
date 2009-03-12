@@ -1,3 +1,14 @@
+2009-03-12  David Kilzer  <ddkilzer@apple.com>
+
+        Add NO_RETURN attribute to runInteractive() when not using readline
+
+        Reviewed by Darin Adler.
+
+        * jsc.cpp:
+        (runInteractive): If the readline library is not used, this method
+        will never return, thus the NO_RETURN attribute is needed to prevent
+        a gcc warning.
+
 2009-03-12  Adam Roben  <aroben@apple.com>
 
         Adopt setThreadNameInternal on Windows
