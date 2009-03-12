@@ -1,3 +1,14 @@
+2009-03-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix for <rdar://6418681>
+        https://bugs.webkit.org/show_bug.cgi?id=22644
+
+        Reviewed by Steve Falkenburg.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted): Add the Citrix ICA
+        Client plug-in to the blacklist; it requires a Mozilla-based browser.
+
 2009-03-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).

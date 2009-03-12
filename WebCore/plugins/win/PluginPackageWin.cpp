@@ -68,6 +68,11 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersio
 
 bool PluginPackage::isPluginBlacklisted()
 {
+    if (name() == "Citrix ICA Client") {
+        // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
+        return true;
+    }
+
     if (name() == "Silverlight Plug-In") {
         // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
         // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
