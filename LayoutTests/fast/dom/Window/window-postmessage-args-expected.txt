@@ -1,0 +1,12 @@
+Test that the second argument of window.postMessage is ignored if it is not a message port. You should see messages '1' through '6', followed by 'done', received below.
+
+Note that the HTML5 spec implies that an exception should be raised instead, so this test will need updating once that new behavior is implemented.
+
+Received message '1'
+Received message '2'
+Received message '3'
+Received message '4'
+Received message '5'
+Received message '6'
+Received message 'done'
+

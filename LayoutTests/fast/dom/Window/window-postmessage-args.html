@@ -1,0 +1,45 @@
+<html>
+<head></head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var console = document.getElementById("console");
+
+function onmessage(evt) {
+    console.innerHTML += "Received message '" + evt.data + "'<br>";
+
+    if (evt.data == 'done' && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+window.addEventListener('message', onmessage, false);
+
+function tryPostMessage(first, second, third) {
+    try {
+        if (!third)
+            window.postMessage(first, second);
+        else
+            window.postMessage(first, second, third);
+    } catch (e) {
+         console.innerHTML += "FAIL: Posting message (" + first + ", " + second + "): threw exception " + e + "<br>";
+    }
+}
+
+document.getElementById("description").innerHTML = "Test that the second argument of window.postMessage is ignored if it is not a message port. You should see messages '1' through '6', followed by 'done', received below.<br><br>Note that the HTML5 spec implies that an exception should be raised instead, so this test will need updating once that new behavior is implemented.<br><br>";
+
+tryPostMessage('1', 1, '*');
+tryPostMessage('2', "", '*');
+tryPostMessage('3', window, '*');
+tryPostMessage('4', { x: 1 }, '*');
+tryPostMessage('5', null, '*');
+tryPostMessage('6', void 0, '*');
+tryPostMessage('done', '*');
+</script>
+</body>
+</html>

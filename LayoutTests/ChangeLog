@@ -1,3 +1,17 @@
+2009-03-12  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test to check that an invalid second argument of
+        window.postMessage is ignored. Note that this is probably not the
+        correct behavior according to the HTML5 spec, so this test will
+        need to be changed once we support that.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24523
+
+        * fast/dom/Window/window-postmessage-args-expected.txt: Added.
+        * fast/dom/Window/window-postmessage-args.html: Added.
+
 2009-03-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Fisher and Justin Garcia.
