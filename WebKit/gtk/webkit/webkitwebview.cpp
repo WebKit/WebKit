@@ -457,10 +457,10 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
             view->scrollBy(IntSize(0, view->visibleHeight()));
         return TRUE;
     case GDK_Home:
-        frame->selection()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
+        view->scrollBy(IntSize(0, -view->contentsHeight()));
         return TRUE;
     case GDK_End:
-        frame->selection()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
+        view->scrollBy(IntSize(0, view->contentsHeight()));
         return TRUE;
     }
 
