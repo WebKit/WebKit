@@ -1,3 +1,18 @@
+2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24496
+        Fix console logging of non-string values by coercing the argument to
+        a string, for V8 bindings.
+
+        Test: fast/js/console-non-string-values.html
+
+        * bindings/v8/ScriptValue.cpp: Added toString method.
+        (WebCore::ScriptValue::toString):
+        * bindings/v8/ScriptValue.h: Added PlatformString, ScriptState includes
+            and toString declaration.
+
 2009-03-12  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

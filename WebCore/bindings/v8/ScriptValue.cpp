@@ -47,4 +47,9 @@ bool ScriptValue::getString(String& result) const
     return true;
 }
 
+String ScriptValue::toString(ScriptState*) const
+{
+    return toWebCoreStringWithNullCheck(m_value);
+}
+
 } // namespace WebCore

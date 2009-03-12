@@ -31,6 +31,9 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
+#include "PlatformString.h"
+#include "ScriptState.h"
+
 #include <v8.h>
 
 #ifndef NDEBUG
@@ -38,8 +41,6 @@
 #endif
 
 namespace WebCore {
-
-class String;
 
 class ScriptValue {
 public:
@@ -129,6 +130,7 @@ public:
 
     v8::Handle<v8::Value> v8Value() const { return m_value; }
     bool getString(String& result) const;
+    String toString(ScriptState*) const;
 
 private:
     mutable v8::Persistent<v8::Value> m_value;
