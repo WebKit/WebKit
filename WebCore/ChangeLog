@@ -1,3 +1,12 @@
+2009-03-11  David Kilzer  <ddkilzer@apple.com>
+
+        Clarify comments regarding order of FEATURE_DEFINES
+
+        Rubber-stamped by Mark Rowe.
+
+        * Configurations/WebCore.xcconfig: Added warning about the
+        consequences when FEATURE_DEFINES are not kept in sync.
+
 2009-03-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.

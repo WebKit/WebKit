@@ -12,7 +12,8 @@ INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks;
 PRODUCT_NAME = JavaScriptCore;
 
-// This needs to be kept sorted, and in sync with FEATURE_DEFINES in WebCore.xcconfig, WebKit.xcconfig and the default settings of build-webkit.
+// This needs to be kept sorted, and in sync with FEATURE_DEFINES in WebCore.xcconfig, WebKit.xcconfig and
+// the default settings of build-webkit to prevent needless rebuilding when using both Xcode and build-webkit.
 FEATURE_DEFINES = $(FEATURE_DEFINES_$(MAC_OS_X_VERSION_MAJOR));
 FEATURE_DEFINES_BASE = ENABLE_DATABASE ENABLE_DOM_STORAGE ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_AS_IMAGE ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_USE ENABLE_VIDEO ENABLE_WORKERS ENABLE_XPATH ENABLE_XSLT;
 FEATURE_DEFINES_ = $(FEATURE_DEFINES_1040);

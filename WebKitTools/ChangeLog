@@ -1,3 +1,12 @@
+2009-03-11  David Kilzer  <ddkilzer@apple.com>
+
+        Clarify comments regarding order of FEATURE_DEFINES
+
+        Rubber-stamped by Mark Rowe.
+
+        * Scripts/build-webkit: Added warning about keeping
+        FEATURE_DEFINES in order and the consequences when they are not.
+
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

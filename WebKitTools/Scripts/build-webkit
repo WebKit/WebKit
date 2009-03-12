@@ -150,6 +150,9 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
+# This needs to be kept sorted, and in sync with FEATURE_DEFINES in JavaScriptCore.xcconfig, WebCore.xcconfig
+# and WebKit.xcconfig to prevent needless rebuilding when using both Xcode and build-webkit.
+
 push @overrideFeatureDefinesOption, "ENABLE_3D_TRANSFORMS" if $threeDTransformsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
