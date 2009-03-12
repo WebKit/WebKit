@@ -1,3 +1,18 @@
+2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24525
+        REGRESSION: Inspector window doesn't close when inspected page is
+        destroyed. This is a revert of r41158, which became unnecessary when
+        InspectorController became ref-counted in r41462.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed): Reset m_inspectedPage
+            after calling close().
+        (WebCore::InspectorController::stopUserInitiatedProfiling): Remove
+            m_inspectedPage check guard around profile logic.
+
 2009-03-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.
