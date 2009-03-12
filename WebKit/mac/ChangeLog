@@ -1,5 +1,14 @@
 2009-03-11  David Kilzer  <ddkilzer@apple.com>
 
+        Remove duplicate header include
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebView/WebView.mm: Remove duplicate #include <runtime/InitializeThreading.h>.
+        Also realphabetized lowercase #include statements.
+
+2009-03-11  David Kilzer  <ddkilzer@apple.com>
+
         Clarify comments regarding order of FEATURE_DEFINES
 
         Rubber-stamped by Mark Rowe.
