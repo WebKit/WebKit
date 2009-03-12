@@ -1073,6 +1073,15 @@ void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
     setGlobalCompositeOperation(operation);
 }
 
+void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const
+{
+#if ENABLE(DASHBOARD_SUPPORT)
+    if (Settings* settings = m_canvas->document()->settings())
+        if (settings->usesDashboardBackwardCompatibilityMode())
+            gradient->setDashboardCompatibilityMode();
+#endif
+}
+
 PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode& ec)
 {
     if (!isfinite(x0) || !isfinite(y0) || !isfinite(x1) || !isfinite(y1)) {
@@ -1080,7 +1089,9 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float 
         return 0;
     }
 
-    return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
+    PassRefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
+    prepareGradientForDashboard(gradient.get());
+    return gradient;
 }
 
 PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
@@ -1090,7 +1101,9 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float 
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
+    PassRefPtr<CanvasGradient> gradient =  CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
+    prepareGradientForDashboard(gradient.get());
+    return gradient;
 }
 
 PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image,

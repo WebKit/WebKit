@@ -1,3 +1,27 @@
+2009-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6673852> Widget "Simple World Clock" does not display with Safari 4
+
+        A number of dashboard widgets rely on canvas failing silently when given invalid
+        colors for gradient stops, but both the spec and firefox throw exceptions here.
+        So we work around this by creating a dashboard quirk that will only suppress the
+        exception in dashboard compatibility mode.
+
+        Test: fast/canvas/canvas-gradient-addStop-error.html
+
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::CanvasGradient::addColorStop):
+        * html/CanvasGradient.h:
+        (WebCore::CanvasGradient::setDashboardCompatibilityMode):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::prepareGradientForDashboard):
+        (WebCore::CanvasRenderingContext2D::createLinearGradient):
+        (WebCore::CanvasRenderingContext2D::createRadialGradient):
+        * html/CanvasRenderingContext2D.h:
+
 2009-03-11  David Kilzer  <ddkilzer@apple.com>
 
         Clarify comments regarding order of FEATURE_DEFINES

@@ -1,3 +1,16 @@
+2009-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6673852> Widget "Simple World Clock" does not display with Safari 4
+
+        Add testcases to ensure correct behaviour of addStop when given an invalid color
+        string.
+
+        * fast/canvas/canvas-gradient-addStop-error-expected.txt: Added.
+        * fast/canvas/canvas-gradient-addStop-error.html: Added.
+        * fast/canvas/resources/canvas-gradient-addStop-error.js: Added.
+
 2009-03-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

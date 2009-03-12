@@ -54,11 +54,16 @@ namespace WebCore {
 
         void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient->getColor(value, r, g, b, a); }
 
+#if ENABLE(DASHBOARD_SUPPORT)
+        void setDashboardCompatibilityMode() { m_dashbardCompatibilityMode = true; }
+#endif
+
     private:
         CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
         CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
         
         RefPtr<Gradient> m_gradient;
+        bool m_dashbardCompatibilityMode;
     };
 
 } //namespace
