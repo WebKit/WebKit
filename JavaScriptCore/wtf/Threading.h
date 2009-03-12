@@ -108,9 +108,16 @@ namespace WTF {
 typedef uint32_t ThreadIdentifier;
 typedef void* (*ThreadFunction)(void* argument);
 
-// Returns 0 if thread creation failed
+// Returns 0 if thread creation failed.
+// The thread name must be a literal since on some platforms it's passed in to the thread.
 ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+
+// Internal platform-specific createThread implementation.
 ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
+
+// Called in the thread during initialization.
+// Helpful for platforms where the thread name must be set from within the thread.
+void setThreadNameInternal(const char* threadName);
 
 ThreadIdentifier currentThread();
 bool isMainThread();

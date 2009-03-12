@@ -229,6 +229,10 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     return threadID;
 }
 
+void setThreadNameInternal(const char*)
+{
+}
+
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
     ASSERT(threadID);

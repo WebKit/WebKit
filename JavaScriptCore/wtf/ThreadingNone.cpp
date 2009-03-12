@@ -34,6 +34,7 @@ namespace WTF {
 
 void initializeThreading() { }
 ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char*) { return 0; }
+void setThreadNameInternal(const char*) { }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
 ThreadIdentifier currentThread() { return 0; }

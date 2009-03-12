@@ -1,3 +1,27 @@
+2009-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Give threads names on platforms with pthread_setname_np.
+
+        * wtf/Threading.cpp:
+        (WTF::NewThreadContext::NewThreadContext): Initialize thread name.
+        (WTF::threadEntryPoint): Call setThreadNameInternal.
+        (WTF::createThread): Pass thread name.
+
+        * wtf/Threading.h: Added new comments, setThreadNameInternal.
+
+        * wtf/ThreadingGtk.cpp:
+        (WTF::setThreadNameInternal): Added. Empty.
+        * wtf/ThreadingNone.cpp:
+        (WTF::setThreadNameInternal): Added. Empty.
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::setThreadNameInternal): Call pthread_setname_np when available.
+        * wtf/ThreadingQt.cpp:
+        (WTF::setThreadNameInternal): Added. Empty.
+        * wtf/ThreadingWin.cpp:
+        (WTF::setThreadNameInternal): Added. Empty.
+
 2009-03-11  Adam Roben  <aroben@apple.com>
 
         Change the Windows implementation of ThreadSpecific to use functions
