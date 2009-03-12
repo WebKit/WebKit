@@ -1,3 +1,24 @@
+2009-03-12  Adam Roben  <aroben@apple.com>
+
+        Adopt setThreadNameInternal on Windows
+
+        Also changed a Windows-only assertion about thread name length to an
+        all-platform log message.
+
+        Reviewed by Adam Treat.
+
+        * wtf/Threading.cpp:
+        (WTF::createThread): Warn if the thread name is longer than 31
+        characters, as Visual Studio will truncate names longer than that
+        length.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::setThreadNameInternal): Renamed from setThreadName and changed
+        to always operate on the current thread.
+        (WTF::initializeThreading): Changed to use setThreadNameInternal.
+        (WTF::createThreadInternal): Removed call to setThreadName. This is
+        now handled by threadEntryPoint and setThreadNameInternal.
+
 2009-03-11  David Kilzer  <ddkilzer@apple.com>
 
         Clarify comments regarding order of FEATURE_DEFINES
