@@ -743,7 +743,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
 #ifdef SUPPORT_CFM
     if (isBundle)
 #endif
-        CFBundleUnloadExecutable(cfBundle);
+        
 #ifdef SUPPORT_CFM
     else
         WebCloseConnection(&connID);

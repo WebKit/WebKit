@@ -1,3 +1,15 @@
+2009-03-12  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed: <rdar://problem/5815862> Opening a subclassed NSWindow from a Safari plugin causes Safari to crash on Quit
+        
+        This fix addresses crashes in both Silverlight and ChemDraw.  This type of crash would occur because AppKit still
+        had a reference to open windows that the plugin created (which no longer exist). 
+        
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]): Do not unload the plug-in bundle on browser shutdown. 
+        
 2009-03-11  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate header include
