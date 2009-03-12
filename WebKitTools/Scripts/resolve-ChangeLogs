@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ use VCSUtils;
 
 sub conflictFiles($);
 sub findChangeLog($);
+sub findUnmergedChangeLogs();
 sub fixChangeLogPatch($);
 sub fixMergedChangeLogs($;@);
 sub fixOneMergedChangeLog($);
@@ -52,6 +53,9 @@ sub resolveChangeLog($);
 sub resolveConflict($);
 sub showStatus($;$);
 sub usageAndExit();
+
+my $isGit = isGit();
+my $isSVN = isSVN();
 
 my $SVN = "svn";
 my $GIT = "git";
@@ -68,13 +72,17 @@ my $getOptionsResult = GetOptions(
 
 my @changeLogFiles = removeChangeLogArguments();
 
+if (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
+    @changeLogFiles = findUnmergedChangeLogs();
+}
+
 if (scalar(@ARGV) > 0) {
     print STDERR "ERROR: Files listed on command-line that are not ChangeLogs.\n";
     undef $getOptionsResult;
 } elsif (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
-    print STDERR "ERROR: No ChangeLog files listed on command-line.\n";
+    print STDERR "ERROR: No ChangeLog files listed on command-line or found unmerged.\n";
     undef $getOptionsResult;
-} elsif (defined $fixMerged && !isGit()) {
+} elsif (defined $fixMerged && !$isGit) {
     print STDERR "ERROR: --fix-merged may only be used with a git repository\n";
     undef $getOptionsResult;
 }
@@ -82,7 +90,7 @@ if (scalar(@ARGV) > 0) {
 sub usageAndExit()
 {
     print STDERR <<__END__;
-Usage: @{[ basename($0) ]} [options] path/to/ChangeLog [path/to/another/ChangeLog ...]
+Usage: @{[ basename($0) ]} [options] [path/to/ChangeLog] [path/to/another/ChangeLog ...]
   -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
                                    is specified, run git filter-branch on the range
   -h|--help                        show this help message
@@ -125,7 +133,7 @@ sub conflictFiles($)
         return ("$file.rej", "$file.orig", $file);
     }
 
-    if (isSVN()) {
+    if ($isSVN) {
         open STAT, "-|", $SVN, "status", $file || die;
         my $status = <STAT>;
         close STAT;
@@ -150,7 +158,7 @@ sub conflictFiles($)
         } else {
             $fileOlder = shift @matchingFiles;
         }
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         my $gitPrefix = `$GIT rev-parse --show-prefix`;
         chomp $gitPrefix;
         open GIT, "-|", $GIT, "ls-files", "--unmerged", $file || die;
@@ -185,13 +193,48 @@ sub conflictFiles($)
     return ($fileMine, $fileOlder, $fileNewer);
 }
 
-sub findChangeLog($) {
+sub findChangeLog($)
+{
     return $_[0] if basename($_[0]) eq "ChangeLog";
 
     my $file = File::Spec->catfile($_[0], "ChangeLog");
     return $file if -d $_[0] and -e $file;
 
     return undef;
+}
+
+sub findUnmergedChangeLogs()
+{
+    my $statCommand = "";
+
+    if ($isSVN) {
+        $statCommand = "$SVN stat | grep '^C'";
+    } elsif ($isGit) {
+        $statCommand = "$GIT diff -r --name-status --diff-filter=U -C -C -M";
+    } else {
+        return ();
+    }
+
+    my @results = ();
+    open STAT, "-|", $statCommand or die "The status failed: $!.\n";
+    while (<STAT>) {
+        if ($isSVN) {
+            if (/^([C]).{5} (.+)$/) {
+                push @results, findChangeLog($2);
+            } else {
+                print;  # error output from svn stat
+            }
+        } elsif ($isGit) {
+            if (/^([U])\t(.+)$/) {
+                push @results, findChangeLog($2);
+            } else {
+                print;  # error output from git diff
+            }
+        }
+    }
+    close STAT;
+
+    return @results;
 }
 
 sub fixChangeLogPatch($)
@@ -435,7 +478,7 @@ sub resolveChangeLog($)
     } else {
         showStatus($file);
         print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
-        unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+        unlink($fileMine, $fileOlder, $fileNewer) if $isGit;
     }
 }
 
@@ -443,9 +486,9 @@ sub resolveConflict($)
 {
     my ($file) = @_;
 
-    if (isSVN()) {
+    if ($isSVN) {
         system($SVN, "resolved", $file);
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         system($GIT, "add", $file);
     } else {
         die "Unknown version control system";
@@ -456,9 +499,9 @@ sub showStatus($;$)
 {
     my ($file, $isConflictResolved) = @_;
 
-    if (isSVN()) {
+    if ($isSVN) {
         system($SVN, "status", $file);
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         my @args = qw(--name-status);
         unshift @args, qw(--cached) if $isConflictResolved;
         system($GIT, "diff", @args, $file);

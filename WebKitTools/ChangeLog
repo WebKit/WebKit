@@ -1,5 +1,20 @@
 2009-03-11  David Kilzer  <ddkilzer@apple.com>
 
+        Bug 24378: resolve-ChangeLogs should use git status or svn status to find and fix unmerged ChangeLogs
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24378>
+
+        Reviewed by Adam Roben.
+
+        * Scripts/resolve-ChangeLogs: If -f|--fix-merged is not passed
+        and no file or directory names are specified on the command-line
+        then try to find unmerged ChangeLog files based on 'svn stat' or
+        'git diff'.  Added global $isGit and $isSVN variables so that
+        isGit() and isSVN() only have to be called once.
+        (findUnmergedChangeLogs): Added.
+
+2009-03-11  David Kilzer  <ddkilzer@apple.com>
+
         Clarify comments regarding order of FEATURE_DEFINES
 
         Rubber-stamped by Mark Rowe.
