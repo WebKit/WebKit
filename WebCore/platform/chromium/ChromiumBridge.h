@@ -92,6 +92,7 @@ namespace WebCore {
 
         // JavaScript ---------------------------------------------------------
         static void notifyJSOutOfMemory(Frame*);
+        static bool allowScriptDespiteSettings(const KURL& documentURL);
 
         // Language -----------------------------------------------------------
         static String computedDefaultLanguage();
@@ -113,7 +114,7 @@ namespace WebCore {
         static bool popupsAllowed(NPP);
 
         // Protocol -----------------------------------------------------------
-        static String uiResourceProtocol();
+        static String uiResourceProtocol();  // deprecated
 
         // Resources ----------------------------------------------------------
         static PassRefPtr<Image> loadPlatformImageResource(const char* name);
