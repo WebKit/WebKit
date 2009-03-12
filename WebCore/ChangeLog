@@ -1,3 +1,22 @@
+2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24496
+        Fix console logging of non-string values by coercing the argument to
+        a string.
+
+        Test: fast/js/console-non-string-values.html
+
+        * bindings/js/ScriptValue.cpp: Removed PlatformString include.
+        * bindings/js/ScriptValue.h: Added toString method.
+        (WebCore::ScriptValue::toString):
+        * page/Console.cpp:
+        (WebCore::getFirstArgumentAsString): Changed firstArgumentAsString method to use
+            ScriptValue::toString.
+        (WebCore::Console::addMessage): added extra ScriptState argument to callsite.
+        (WebCore::Console::count): Ditto.
+
 2009-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

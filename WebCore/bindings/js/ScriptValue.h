@@ -31,6 +31,8 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
+#include "PlatformString.h"
+#include "ScriptState.h"
 #include <runtime/Protect.h>
 
 namespace WebCore {
@@ -43,6 +45,7 @@ public:
 
     JSC::JSValuePtr jsValue() const { return m_value.get(); }
     bool getString(String& result) const;
+    String toString(ScriptState* scriptState) const { return m_value.get().toString(scriptState); }
     bool isNull() const;
     bool isUndefined() const;
     bool hasNoValue() const { return m_value == JSC::noValue(); }

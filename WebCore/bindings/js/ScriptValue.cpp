@@ -29,7 +29,6 @@
 #include "config.h"
 #include "ScriptValue.h"
 
-#include "PlatformString.h"
 #include <runtime/JSLock.h>
 #include <runtime/Protect.h>
 #include <runtime/UString.h>
