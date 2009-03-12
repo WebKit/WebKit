@@ -2,6 +2,13 @@
 
         Reviewed by Anders Carlsson.
 
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]): Simply a small SUPPORT_CFM code block.
+
+2009-03-12  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Fixed: <rdar://problem/5815862> Opening a subclassed NSWindow from a Safari plugin causes Safari to crash on Quit
         
         This fix addresses crashes in both Silverlight and ChemDraw.  This type of crash would occur because AppKit still

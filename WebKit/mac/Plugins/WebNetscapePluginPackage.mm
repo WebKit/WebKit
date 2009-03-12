@@ -741,11 +741,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
         [self closeResourceFile:resourceRef];
 
 #ifdef SUPPORT_CFM
-    if (isBundle)
-#endif
-        
-#ifdef SUPPORT_CFM
-    else
+    if (!isBundle)
         WebCloseConnection(&connID);
 #endif
 
