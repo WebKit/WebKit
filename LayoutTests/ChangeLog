@@ -1,3 +1,14 @@
+2009-03-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Fisher and Justin Garcia.
+
+        Safari crashes during drag and drop in Google presentations
+        due to mutation event handlers removing DOM content during insertNode
+        https://bugs.webkit.org/show_bug.cgi?id=22634
+
+        * editing/selection/crash-on-drag-with-mutation-events-expected.txt: Added.
+        * editing/selection/crash-on-drag-with-mutation-events.html: Added.
+
 2009-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.

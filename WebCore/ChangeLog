@@ -1,3 +1,22 @@
+2009-03-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Fisher and Justin Garcia.
+
+        Safari crashes during drag and drop in Google presentations
+        due to mutation event handlers removing DOM content during insertNode
+        https://bugs.webkit.org/show_bug.cgi?id=22634
+
+        Added a bunch of "null" checks to make sure nodes are still
+        in the document before we operate on them.  This is an
+        inelegant solution, but it's the best we have for now.
+        
+        Test: editing/selection/crash-on-drag-with-mutation-events.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Treat.

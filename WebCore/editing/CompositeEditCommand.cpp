@@ -171,6 +171,10 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         insertNodeBefore(insertChild, refChild);
     else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
         splitTextNode(static_cast<Text *>(refChild), offset);
+
+        // Mutation events (bug 22634) from the text node insertion may have removed the refChild
+        if (!refChild->inDocument())
+            return;
         insertNodeBefore(insertChild, refChild);
     } else
         insertNodeAfter(insertChild, refChild);
