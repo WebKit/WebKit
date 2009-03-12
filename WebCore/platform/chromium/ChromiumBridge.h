@@ -133,7 +133,6 @@ namespace WebCore {
         // StatsCounters ------------------------------------------------------
         static void decrementStatsCounter(const char* name);
         static void incrementStatsCounter(const char* name);
-        static void initV8CounterFunction();
 
         // SystemTime ---------------------------------------------------------
         static double currentTime();
@@ -157,9 +156,6 @@ namespace WebCore {
         // Trace Event --------------------------------------------------------
         static void traceEventBegin(const char* name, void* id, const char* extra);
         static void traceEventEnd(const char* name, void* id, const char* extra);
-
-        // URL ----------------------------------------------------------------
-        static KURL inspectorURL();
 
         // Visited links ------------------------------------------------------
         static LinkHash visitedLinkHash(const UChar* url, unsigned length);

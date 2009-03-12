@@ -1,3 +1,12 @@
+2009-03-12  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24554
+        Remove some unused functions from ChromiumBridge.
+
+        * platform/chromium/ChromiumBridge.h:
+
 2009-03-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Fisher and Justin Garcia.
