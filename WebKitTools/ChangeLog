@@ -1,4 +1,4 @@
-2009-03-11  David Kilzer  <ddkilzer@apple.com>
+2009-03-12  David Kilzer  <ddkilzer@apple.com>
 
         Bug 24378: resolve-ChangeLogs should use git status or svn status to find and fix unmerged ChangeLogs
 
