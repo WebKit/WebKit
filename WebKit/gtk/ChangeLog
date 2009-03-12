@@ -1,3 +1,15 @@
+2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24254
+        [GTK] spacebar doesn't scroll down
+
+        Make spacebar and shift+spacebar scroll like page up and down
+        respectively would.
+
+        * webkit/webkitwebview.cpp:
+
 2009-03-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

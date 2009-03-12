@@ -450,6 +450,12 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
     case GDK_Left:
         view->scrollBy(IntSize(-cScrollbarPixelsPerLineStep, 0));
         return TRUE;
+    case GDK_space:
+        if ((event->state & GDK_SHIFT_MASK) == GDK_SHIFT_MASK)
+            view->scrollBy(IntSize(0, -view->visibleHeight()));
+        else
+            view->scrollBy(IntSize(0, view->visibleHeight()));
+        return TRUE;
     case GDK_Home:
         frame->selection()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
         return TRUE;
