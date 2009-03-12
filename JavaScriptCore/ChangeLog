@@ -1,3 +1,11 @@
+2009-03-12  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Include string.h for strlen usage.
+
+        * wtf/Threading.cpp:
+
 2009-03-12  David Kilzer  <ddkilzer@apple.com>
 
         Add NO_RETURN attribute to runInteractive() when not using readline

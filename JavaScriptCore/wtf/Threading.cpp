@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Threading.h"
 
+#include <string.h>
+
 namespace WTF {
 
 struct NewThreadContext {
