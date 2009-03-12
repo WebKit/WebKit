@@ -1,3 +1,13 @@
+2009-03-12  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 16348: @font-face does not affect the default style
+        <https://bugs.webkit.org/show_bug.cgi?id=16348>
+
+        * fast/css/font-face-default-font.html:
+        Handle the default font being either 'Times' or 'Times New Roman'.
+
 2009-03-12  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
