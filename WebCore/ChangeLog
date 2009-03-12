@@ -1,3 +1,14 @@
+2009-03-12  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Do not ignore alpha color in optimization.  Hard to believe, but there
+        are websites that fill the entire page with a tiled image consisting of
+        nothing but a 100% transparent 1x1 image. <cough>orbitz.com</cough>
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2009-03-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

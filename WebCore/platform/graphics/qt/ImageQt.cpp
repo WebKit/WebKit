@@ -174,7 +174,7 @@ void BitmapImage::checkForSolidColor()
         return;
 
     m_isSolidColor = true;
-    m_solidColor = QColor(framePixmap->toImage().pixel(0, 0));
+    m_solidColor = QColor::fromRgba(framePixmap->toImage().pixel(0, 0));
 }
 
 }
