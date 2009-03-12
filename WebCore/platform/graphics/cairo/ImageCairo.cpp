@@ -189,11 +189,11 @@ void BitmapImage::checkForSolidColor()
     if (frameCount() > 1)
         return;
 
-    ASSERT(cairo_surface_get_type(frameAtIndex(0)) == CAIRO_SURFACE_TYPE_IMAGE);
-
     cairo_surface_t* frameSurface = frameAtIndex(0);
     if (!frameSurface)
         return;
+
+    ASSERT(cairo_surface_get_type(frameSurface) == CAIRO_SURFACE_TYPE_IMAGE);
 
     int width = cairo_image_surface_get_width(frameSurface);
     int height = cairo_image_surface_get_height(frameSurface);

@@ -1,3 +1,14 @@
+2009-03-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed a crash on the 1x1 pixel check for background image in gtk.
+        We need to load the image first and need to be sure that the image
+        is not null before checking the type. 
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2009-03-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.
