@@ -1,3 +1,13 @@
+2009-03-12  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a test to make sure GC doesn't drop XHR wrappers too soon.
+        https://bugs.webkit.org/show_bug.cgi?id=24528
+
+        * fast/dom/xmlhttprequest-gc-expected.txt: Added.
+        * fast/dom/xmlhttprequest-gc.html: Added.
+
 2009-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.
