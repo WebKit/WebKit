@@ -45,11 +45,7 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    NSString *colorSpace = NSColorSpaceFromDepth([[NSScreen deepestScreen] depth]);
-    return colorSpace == NSCalibratedWhiteColorSpace
-        || colorSpace == NSCalibratedBlackColorSpace
-        || colorSpace == NSDeviceWhiteColorSpace
-        || colorSpace == NSDeviceBlackColorSpace;
+    return false;
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations 

@@ -1,3 +1,12 @@
+2009-03-11  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        <rdar://problem/6653286> WebCore's implementation of screenIsMonochrome is needlessly complex
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenIsMonochrome): Return false.
+
 2009-03-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
