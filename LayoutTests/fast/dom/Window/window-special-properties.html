@@ -137,6 +137,10 @@ if (window.layoutTestController)
 <img name="custom" with="0" height="0">
 <iframe name="location" with="0" height="0"></iframe>
 
+<input id="navigator" value="an input" type="text"/>
+<input id="location" value="an input" type="text"/>
+<input id="real_input" value="an input" type="text"/>
+
 </div>
 
 <pre id="results">
@@ -154,13 +158,13 @@ function printElement(e)
     if (e.tagName) {
         print(" " + e.tagName);
 
-	if (e.name && e.id) {
-	    print("(id,name)");
-	} else if (e.name) {
-	    print("(name)");
+        if (e.name && e.id) {
+            print("(id,name)");
+        } else if (e.name) {
+            print("(name)");
         } else if (e.id) {
-	    print("(id)");
-	}
+            print("(id)");
+        }
     } else if (e.navigator) {
         print(" WINDOW");
     } else {
@@ -177,12 +181,12 @@ function testProperty(description, propName) {
         print(" undefined");
     } else if (propVal.length) {
         print(" collection(" + propVal.length + ")");
-	for (var i = 0; i < propVal.length; i++) {
-	    printElement(propVal[i]);
-	}
+        for (var i = 0; i < propVal.length; i++) {
+            printElement(propVal[i]);
+        }
     } else {
         print(" single");
-	printElement(propVal);
+        printElement(propVal);
     }
     
     print("<br>");
@@ -255,9 +259,14 @@ testProperty("Numeric 12", 12);
 testProperty("Numeric 13", 13);
 print("<br>");
 
-testProperty("Conflicting image", "navigator");
-testProperty("Conflicting image (custom property)", "custom");
+testProperty("Conflicting image name", "navigator");
+testProperty("Conflicting image name (custom property)", "custom");
 testProperty("Conflicting iframe", "location");
+print("<br>");
+
+testProperty("Input by id (unique)", "real_input");
+testProperty("Conflicting input id (navigator)", "navigator");
+testProperty("Conflicting input id (location)", "location");
 
 </script>
 </body>

@@ -62,7 +62,11 @@ Numeric 0: single WINDOW
 Numeric 12: single WINDOW
 Numeric 13: undefined
 
-Conflicting image: single OTHER
-Conflicting image (custom property): single OTHER
+Conflicting image name: single OTHER
+Conflicting image name (custom property): single OTHER
 Conflicting iframe: single OTHER
+
+Input by id (unique): single INPUT(id)
+Conflicting input id (navigator): single OTHER
+Conflicting input id (location): single OTHER
 

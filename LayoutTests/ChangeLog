@@ -1,5 +1,17 @@
 2009-03-12  Pamela Greene  <pam@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Add test cases to make sure window.location and window.navigator
+        have higher lookup precedence than a DOM element with that ID.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24522
+
+        * fast/dom/Window/window-special-properties-expected.txt:
+        * fast/dom/Window/window-special-properties.html:
+
+2009-03-12  Pamela Greene  <pam@chromium.org>
+
         Reviewed by Darin Adler.
 
         Add a test to make sure GC doesn't drop XHR wrappers too soon.
