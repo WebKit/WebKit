@@ -1,3 +1,13 @@
+2009-03-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/3919124> Thai text selection in Safari is
+          incorrect
+
+        * platform/mac/editing/selection/word-thai-expected.txt: Added.
+        * platform/mac/editing/selection/word-thai.html: Added.
+
 2009-03-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

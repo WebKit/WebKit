@@ -352,6 +352,12 @@ inline bool isLower(UChar32 c)
     return QChar::category(c) == QChar::Letter_Lowercase;
 }
 
+inline bool hasLineBreakingPropertyComplexContext(UChar32)
+{
+    // FIXME: Implement this to return whether the character has line breaking property SA (Complex Context).
+    return false;
+}
+
 inline UChar32 mirroredChar(UChar32 c)
 {
     return QChar::mirroredChar(c);

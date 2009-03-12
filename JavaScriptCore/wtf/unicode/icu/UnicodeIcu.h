@@ -179,6 +179,11 @@ inline bool isPunct(UChar32 c)
     return !!u_ispunct(c);
 }
 
+inline bool hasLineBreakingPropertyComplexContext(UChar32 c)
+{
+    return u_getIntPropertyValue(c, UCHAR_LINE_BREAK) == U_LB_COMPLEX_CONTEXT;
+}
+
 inline UChar32 mirroredChar(UChar32 c)
 {
     return u_charMirror(c);

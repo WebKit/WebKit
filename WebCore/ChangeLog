@@ -1,3 +1,63 @@
+2009-03-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebCore part of fixing <rdar://problem/3919124> Thai text selection
+          in Safari is incorrect
+
+        Test: platform/mac/editing/selection/word-thai.html
+
+        Tested on Mac, but should work on all ICU platforms (or more precisely
+        on all platforms that implement
+        WTF::Unicode::hasLineBreakingPropertyComplexContext() correctly).
+
+        * editing/TextIterator.cpp:
+        (WebCore::BackwardsCharacterIterator::BackwardsCharacterIterator):
+        Added.
+        (WebCore::BackwardsCharacterIterator::range): Added.
+        (WebCore::BackwardsCharacterIterator::advance): Added.
+
+        * editing/TextIterator.h: Added BackwardsCharacterIterator with the
+        minimal functionality required for this patch.
+        (WebCore::BackwardsCharacterIterator::atEnd): Added.
+
+        * editing/visible_units.cpp:
+        (WebCore::firstNonComplexContextLineBreak): Added this helper function
+        that returns the index of the first character in the string whose
+        Unicode line breaking property value is not SA ("Complex Context"), or
+        the length of the string if there is no such character.
+        (WebCore::lastNonComplexContextLineBreak): Added this helper function
+        that returns the index of the last character in the string whose
+        Unicode line breaking property value is not SA ("Complex Context"), or
+        -1 if there is no such character.
+        (WebCore::previousBoundary): Changed the signature of the search
+        function to include an offset parameter. Renamed the 'exception' local
+        variable to 'ec' and changed its type to ExceptionCode. Extend the
+        string forwards until the first character with Unicode line breaking
+        property value other than SA. This gives the boundary search function
+        enough context in the forward direction. Changed to use a
+        BackwardsCharacterIterator for translating the backwards offset into
+        a position.
+        (WebCore::nextBoundary): Changed the signature of the search
+        function to include an offset parameter. Extend the string backwards
+        until the first character with Unicode line breaking property value
+        other than SA. This gives the boundary search function enough context in
+        the backwards direction. Restricted the workaround for <rdar://5192593>
+        only to the line break case, because it was causing an extra character
+        to be selected following a word that ended with a combining mark.
+        (WebCore::startWordBoundary): Added an offset parameter. Check that
+        going backwards from the given offset, there is a character with Unicode
+        line breaking property value other than SA, and otherwise return 0 to
+        request more context.
+        (WebCore::endWordBoundary): Similar, but in reverse.
+        (WebCore::previousWordPositionBoundary): Similar.
+        (WebCore::nextWordPositionBoundary): Similar.
+        (WebCore::startSentenceBoundary): Updated for the new search function
+        signature.
+        (WebCore::endSentenceBoundary): Ditto.
+        (WebCore::previousSentencePositionBoundary): Ditto.
+        (WebCore::nextSentencePositionBoundary): Ditto.
+
 2009-03-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

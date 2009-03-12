@@ -36,12 +36,32 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace WTF::Unicode;
 
-static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const UChar *, unsigned))
+static int firstNonComplexContextLineBreak(const UChar* characters, int length)
+{
+    for (int i = 0; i < length; ++i) {
+        if (!hasLineBreakingPropertyComplexContext(characters[i]))
+            return i;
+    }
+    return length;
+}
+
+static int lastNonComplexContextLineBreak(const UChar* characters, int length)
+{
+    for (int i = length - 1; i >= 0; --i) {
+        if (!hasLineBreakingPropertyComplexContext(characters[i]))
+            return i;
+    }
+    return -1;
+}
+
+static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const UChar *, unsigned, unsigned))
 {
     Position pos = c.deepEquivalent();
     Node *n = pos.node();
@@ -62,16 +82,35 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     Position end = rangeCompliantEquivalent(pos);
     RefPtr<Range> searchRange = Range::create(d);
     
-    int exception = 0;
-    searchRange->setStart(start.node(), start.m_offset, exception);
-    searchRange->setEnd(end.node(), end.m_offset, exception);
-    
-    ASSERT(!exception);
-    if (exception)
-        return VisiblePosition();
-        
-    SimplifiedBackwardsTextIterator it(searchRange.get());
     Vector<UChar, 1024> string;
+    unsigned suffixLength = 0;
+
+    ExceptionCode ec = 0;
+    if (hasLineBreakingPropertyComplexContext(c.characterBefore())) {
+        RefPtr<Range> forwardsScanRange(d->createRange());
+        forwardsScanRange->setEndAfter(boundary, ec);
+        forwardsScanRange->setStart(end.node(), end.m_offset, ec);
+        TextIterator forwardsIterator(forwardsScanRange.get());
+        while (!forwardsIterator.atEnd()) {
+            const UChar* characters = forwardsIterator.characters();
+            int length = forwardsIterator.length();
+            int i = firstNonComplexContextLineBreak(characters, length);
+            string.append(characters, i);
+            suffixLength += i;
+            if (i < length)
+                break;
+            forwardsIterator.advance();
+        }
+    }
+
+    searchRange->setStart(start.node(), start.m_offset, ec);
+    searchRange->setEnd(end.node(), end.m_offset, ec);
+    
+    ASSERT(!ec);
+    if (ec)
+        return VisiblePosition();
+
+    SimplifiedBackwardsTextIterator it(searchRange.get());
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd()) {
@@ -85,7 +124,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
             string.prepend(iteratorString.characters(), iteratorString.length());
         }
         
-        next = searchFunction(string.data(), string.size());
+        next = searchFunction(string.data(), string.size(), string.size() - suffixLength);
         if (next != 0)
             break;
         it.advance();
@@ -94,26 +133,22 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     if (it.atEnd() && next == 0) {
         pos = it.range()->startPosition();
     } else if (next != 0) {
-        Node *node = it.range()->startContainer(exception);
-        if (node->isTextNode() || (node->renderer() && node->renderer()->isBR()))
+        Node *node = it.range()->startContainer(ec);
+        if ((node->isTextNode() && static_cast<int>(next) <= node->maxCharacterOffset()) || (node->renderer() && node->renderer()->isBR() && !next))
             // The next variable contains a usable index into a text node
             pos = Position(node, next);
         else {
-            // Use the end of the found range, the start is not guaranteed to
-            // be correct.
-            Position end = it.range()->endPosition();
-            VisiblePosition boundary(end);
-            unsigned i = it.length() - next;
-            while (i--)
-                boundary = boundary.previous();
-            return boundary;
+            // Use the character iterator to translate the next value into a DOM position.
+            BackwardsCharacterIterator charIt(searchRange.get());
+            charIt.advance(string.size() - suffixLength - next);
+            pos = charIt.range()->endPosition();
         }
     }
 
     return VisiblePosition(pos, DOWNSTREAM);
 }
 
-static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const UChar *, unsigned))
+static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const UChar *, unsigned, unsigned))
 {
     Position pos = c.deepEquivalent();
     Node *n = pos.node();
@@ -132,11 +167,30 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
 
     RefPtr<Range> searchRange(d->createRange());
     Position start(rangeCompliantEquivalent(pos));
+
+    Vector<UChar, 1024> string;
+    unsigned prefixLength = 0;
+
     ExceptionCode ec = 0;
+    if (hasLineBreakingPropertyComplexContext(c.characterAfter())) {
+        RefPtr<Range> backwardsScanRange(d->createRange());
+        backwardsScanRange->setEnd(start.node(), start.m_offset, ec);
+        SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange.get());
+        while (!backwardsIterator.atEnd()) {
+            const UChar* characters = backwardsIterator.characters();
+            int length = backwardsIterator.length();
+            int i = lastNonComplexContextLineBreak(characters, length);
+            string.prepend(characters + i + 1, length - i - 1);
+            prefixLength += length - i - 1;
+            if (i > -1)
+                break;
+            backwardsIterator.advance();
+        }
+    }
+
     searchRange->selectNodeContents(boundary, ec);
     searchRange->setStart(start.node(), start.m_offset, ec);
     TextIterator it(searchRange.get(), true);
-    Vector<UChar, 1024> string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd()) {
@@ -151,7 +205,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
             string.append(iteratorString.characters(), iteratorString.length());
         }
 
-        next = searchFunction(string.data(), string.size());
+        next = searchFunction(string.data(), string.size(), prefixLength);
         if (next != string.size())
             break;
         it.advance();
@@ -159,16 +213,18 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     
     if (it.atEnd() && next == string.size()) {
         pos = it.range()->startPosition();
-    } else if (next != 0) {
+    } else if (next != prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(searchRange.get(), true);
-        charIt.advance(next - 1);
+        charIt.advance(next - prefixLength - 1);
         pos = charIt.range()->endPosition();
         
-        // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
-        VisiblePosition visPos = VisiblePosition(pos);
-        if (visPos == VisiblePosition(charIt.range()->startPosition()))
-            pos = visPos.next(true).deepEquivalent();
+        if (*charIt.characters() == '\n') {
+            // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
+            VisiblePosition visPos = VisiblePosition(pos);
+            if (visPos == VisiblePosition(charIt.range()->startPosition()))
+                pos = visPos.next(true).deepEquivalent();
+        }
     }
 
     // generate VisiblePosition, use UPSTREAM affinity if possible
@@ -177,10 +233,13 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
 
 // ---------
 
-static unsigned startWordBoundary(const UChar* characters, unsigned length)
+static unsigned startWordBoundary(const UChar* characters, unsigned length, unsigned offset)
 {
+    ASSERT(offset);
+    if (lastNonComplexContextLineBreak(characters, offset) == -1)
+        return 0;
     int start, end;
-    findWordBoundary(characters, length, length, &start, &end);
+    findWordBoundary(characters, length, offset - 1, &start, &end);
     return start;
 }
 
@@ -201,10 +260,13 @@ VisiblePosition startOfWord(const VisiblePosition &c, EWordSide side)
     return previousBoundary(p, startWordBoundary);
 }
 
-static unsigned endWordBoundary(const UChar* characters, unsigned length)
+static unsigned endWordBoundary(const UChar* characters, unsigned length, unsigned offset)
 {
+    ASSERT(offset <= length);
+    if (firstNonComplexContextLineBreak(characters + offset, length - offset) == static_cast<int>(length - offset))
+        return length;
     int start, end;
-    findWordBoundary(characters, length, 0, &start, &end);
+    findWordBoundary(characters, length, offset, &start, &end);
     return end;
 }
 
@@ -224,9 +286,11 @@ VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
     return nextBoundary(p, endWordBoundary);
 }
 
-static unsigned previousWordPositionBoundary(const UChar* characters, unsigned length)
+static unsigned previousWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset)
 {
-    return findNextWordFromIndex(characters, length, length, false);
+    if (lastNonComplexContextLineBreak(characters, offset) == -1)
+        return 0;
+    return findNextWordFromIndex(characters, length, offset, false);
 }
 
 VisiblePosition previousWordPosition(const VisiblePosition &c)
@@ -235,9 +299,11 @@ VisiblePosition previousWordPosition(const VisiblePosition &c)
     return c.honorEditableBoundaryAtOrAfter(prev);
 }
 
-static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length)
+static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset)
 {
-    return findNextWordFromIndex(characters, length, 0, true);
+    if (firstNonComplexContextLineBreak(characters + offset, length - offset) == static_cast<int>(length - offset))
+        return length;
+    return findNextWordFromIndex(characters, length, offset, true);
 }
 
 VisiblePosition nextWordPosition(const VisiblePosition &c)
@@ -615,7 +681,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
 
 // ---------
 
-static unsigned startSentenceBoundary(const UChar* characters, unsigned length)
+static unsigned startSentenceBoundary(const UChar* characters, unsigned length, unsigned)
 {
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
     // FIXME: The following function can return -1; we don't handle that.
@@ -627,7 +693,7 @@ VisiblePosition startOfSentence(const VisiblePosition &c)
     return previousBoundary(c, startSentenceBoundary);
 }
 
-static unsigned endSentenceBoundary(const UChar* characters, unsigned length)
+static unsigned endSentenceBoundary(const UChar* characters, unsigned length, unsigned)
 {
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
     return textBreakNext(iterator);
@@ -639,7 +705,7 @@ VisiblePosition endOfSentence(const VisiblePosition &c)
     return nextBoundary(c, endSentenceBoundary);
 }
 
-static unsigned previousSentencePositionBoundary(const UChar* characters, unsigned length)
+static unsigned previousSentencePositionBoundary(const UChar* characters, unsigned length, unsigned)
 {
     // FIXME: This is identical to startSentenceBoundary. I'm pretty sure that's not right.
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
@@ -653,7 +719,7 @@ VisiblePosition previousSentencePosition(const VisiblePosition &c)
     return c.honorEditableBoundaryAtOrAfter(prev);
 }
 
-static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length)
+static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length, unsigned)
 {
     // FIXME: This is identical to endSentenceBoundary.  This isn't right, it needs to 
     // move to the equivlant position in the following sentence.

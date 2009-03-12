@@ -1083,6 +1083,81 @@ static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, in
         end->endContainer(), end->endOffset());
 }
 
+BackwardsCharacterIterator::BackwardsCharacterIterator()
+    : m_offset(0)
+    , m_runOffset(0)
+    , m_atBreak(true)
+{
+}
+
+BackwardsCharacterIterator::BackwardsCharacterIterator(const Range* range)
+    : m_offset(0)
+    , m_runOffset(0)
+    , m_atBreak(true)
+    , m_textIterator(range)
+{
+    while (!atEnd() && !m_textIterator.length())
+        m_textIterator.advance();
+}
+
+PassRefPtr<Range> BackwardsCharacterIterator::range() const
+{
+    RefPtr<Range> r = m_textIterator.range();
+    if (!m_textIterator.atEnd()) {
+        if (m_textIterator.length() <= 1)
+            ASSERT(m_runOffset == 0);
+        else {
+            Node* n = r->startContainer();
+            ASSERT(n == r->endContainer());
+            int offset = r->endOffset() - m_runOffset;
+            ExceptionCode ec = 0;
+            r->setStart(n, offset - 1, ec);
+            r->setEnd(n, offset, ec);
+            ASSERT(!ec);
+        }
+    }
+    return r.release();
+}
+
+void BackwardsCharacterIterator::advance(int count)
+{
+    if (count <= 0) {
+        ASSERT(!count);
+        return;
+    }
+
+    m_atBreak = false;
+
+    int remaining = m_textIterator.length() - m_runOffset;
+    if (count < remaining) {
+        m_runOffset += count;
+        m_offset += count;
+        return;
+    }
+
+    count -= remaining;
+    m_offset += remaining;
+
+    for (m_textIterator.advance(); !atEnd(); m_textIterator.advance()) {
+        int runLength = m_textIterator.length();
+        if (runLength == 0)
+            m_atBreak = true;
+        else {
+            if (count < runLength) {
+                m_runOffset = count;
+                m_offset += count;
+                return;
+            }
+            
+            count -= runLength;
+            m_offset += runLength;
+        }
+    }
+
+    m_atBreak = true;
+    m_runOffset = 0;
+}
+
 // --------
 
 WordAwareIterator::WordAwareIterator()
