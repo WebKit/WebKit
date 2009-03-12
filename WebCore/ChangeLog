@@ -1,3 +1,14 @@
+2009-03-12  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24502
+        Make horizontal scrolling on Windows always go the correct direction.
+
+        * platform/PlatformWheelEvent.h:
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-03-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Simon Fraser.

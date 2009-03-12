@@ -62,7 +62,7 @@ static int verticalScrollLines()
     return scrollLines;
 }
 
-PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isHorizontal)
+PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_isAccepted(false)
@@ -80,7 +80,9 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     // (the default scroll amount on Windows is three lines per wheel tick).
     static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
     float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
-    if (isHorizontal) {
+    if (isMouseHWheel)
+        delta = -delta;  // Windows is <-- -/+ -->, WebKit wants <-- +/- -->
+    if (isMouseHWheel || m_shiftKey) {
         m_deltaX = delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
         m_deltaY = 0;
         m_granularity = ScrollByPixelWheelEvent;

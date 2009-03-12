@@ -1,3 +1,15 @@
+2009-03-12  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24502
+        Make horizontal scrolling on Windows always go the correct direction.
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+        (WebViewWndProc):
+        * WebView.h:
+
 2009-03-12  Adam Roben  <aroben@apple.com>
 
         Implement DOMHTMLDocument::title

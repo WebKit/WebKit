@@ -1311,7 +1311,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     return handled;
 }
 
-bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isHorizontal)
+bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
 {
     // Ctrl+Mouse wheel doesn't ever go into WebCore.  It is used to
     // zoom instead (Mac zooms the whole Desktop, but Windows browsers trigger their
@@ -1325,7 +1325,7 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isHorizontal)
         return true;
     }
 
-    PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam, isHorizontal);
+    PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam, isMouseHWheel);
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
         return false;
@@ -1714,7 +1714,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_VISTA_MOUSEHWHEEL:
             if (Frame* coreFrame = core(mainFrameImpl))
                 if (coreFrame->view()->didFirstLayout())
-                    handled = webView->mouseWheel(wParam, lParam, (wParam & MK_SHIFT) || message == WM_VISTA_MOUSEHWHEEL);
+                    handled = webView->mouseWheel(wParam, lParam, message == WM_VISTA_MOUSEHWHEEL);
             break;
         case WM_SYSKEYDOWN:
             handled = webView->keyDown(wParam, lParam, true);
