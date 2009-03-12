@@ -283,7 +283,11 @@ PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(
     // Make sure animationUpdateTime is updated, so that it is current even if no
     // styleChange has happened (e.g. accelerated animations).
     setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
-    return rendererAnimations->getAnimatedStyle();
+    RefPtr<RenderStyle> animatingStyle = rendererAnimations->getAnimatedStyle();
+    if (!animatingStyle)
+        animatingStyle = renderer->style();
+    
+    return animatingStyle.release();
 }
 
 unsigned AnimationControllerPrivate::numberOfActiveAnimations() const
