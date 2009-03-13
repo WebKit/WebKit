@@ -1,3 +1,17 @@
+2009-03-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add tests for various types of textareas. Tests in both
+        quirks and standards modes. Although only the standards
+        modes tests fit in the pixel results.
+        https://bugs.webkit.org/show_bug.cgi?id=24370
+
+        * fast/forms/basic-textareas.html: Added.
+        * platform/mac/fast/forms/basic-textareas-expected.checksum: Added.
+        * platform/mac/fast/forms/basic-textareas-expected.png: Added.
+        * platform/mac/fast/forms/basic-textareas-expected.txt: Added.
+
 2009-03-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
