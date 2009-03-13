@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,33 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptValue_h
-#define ScriptValue_h
+#include "config.h"
+#include "ScriptObject.h"
 
-#include "PlatformString.h"
-#include "ScriptState.h"
-#include <runtime/Protect.h>
+using namespace JSC;
 
 namespace WebCore {
 
-class String;
-
-class ScriptValue {
-public:
-    ScriptValue(JSC::JSValuePtr value = JSC::noValue()) : m_value(value) {}
-    virtual ~ScriptValue() {}
-
-    JSC::JSValuePtr jsValue() const { return m_value.get(); }
-    bool getString(String& result) const;
-    String toString(ScriptState* scriptState) const { return m_value.get().toString(scriptState); }
-    bool isNull() const;
-    bool isUndefined() const;
-    bool hasNoValue() const { return m_value == JSC::noValue(); }
-
-private:
-    JSC::ProtectedJSValuePtr m_value;
-};
+ScriptObject::ScriptObject(JSObject* object)
+    : ScriptValue(object)
+{
+}
 
 } // namespace WebCore
-
-#endif // ScriptValue_h

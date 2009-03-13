@@ -34,8 +34,9 @@
 #if ENABLE(DATABASE)
 
 #include "Database.h"
+#include "ScriptObject.h"
+#include "ScriptState.h"
 
-#include <JavaScriptCore/JSContextRef.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -49,17 +50,17 @@ namespace WebCore {
             return adoptRef(new InspectorDatabaseResource(database, domain, name, version));
         }
 
-        void setScriptObject(JSContextRef, JSObjectRef);
-
-        RefPtr<Database> database;
-        String domain;
-        String name;
-        String version;
-        JSContextRef scriptContext;
-        JSObjectRef scriptObject;
+        void bind(ScriptState*, const ScriptObject& webInspector);
+        void unbind();
 
     private:
         InspectorDatabaseResource(Database*, const String& domain, const String& name, const String& version);
+        ScriptObject m_scriptObject;
+
+        RefPtr<Database> m_database;
+        String m_domain;
+        String m_name;
+        String m_version;
     };
 
 } // namespace WebCore

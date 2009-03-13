@@ -286,10 +286,6 @@ private:
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
 
-#if ENABLE(DATABASE)
-    JSObjectRef addDatabaseScriptResource(InspectorDatabaseResource*);
-    void removeDatabaseScriptResource(InspectorDatabaseResource*);
-#endif
 #if ENABLE(DOM_STORAGE)
     JSObjectRef addDOMStorageScriptResource(InspectorDOMStorageResource*);
     void removeDOMStorageScriptResource(InspectorDOMStorageResource*);

@@ -1185,7 +1185,7 @@ void InspectorController::populateScriptObjects()
 #if ENABLE(DATABASE)
     DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        addDatabaseScriptResource((*it).get());
+        (*it)->bind(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 #endif
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
@@ -1195,83 +1195,6 @@ void InspectorController::populateScriptObjects()
 
     callSimpleFunction(m_scriptContext, m_scriptObject, "populateInterface");
 }
-
-#if ENABLE(DATABASE)
-JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseResource* resource)
-{
-    ASSERT_ARG(resource, resource);
-
-    if (resource->scriptObject)
-        return resource->scriptObject;
-
-    ASSERT(m_scriptContext);
-    ASSERT(m_scriptObject);
-    if (!m_scriptContext || !m_scriptObject)
-        return 0;
-
-    Frame* frame = resource->database->document()->frame();
-    if (!frame)
-        return 0;
-
-    JSValueRef exception = 0;
-
-    JSValueRef databaseProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("Database").get(), &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return 0;
-
-    JSObjectRef databaseConstructor = JSValueToObject(m_scriptContext, databaseProperty, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return 0;
-
-    ExecState* exec = toJSDOMWindow(frame)->globalExec();
-
-    JSValueRef database;
-
-    {
-        JSC::JSLock lock(false);
-        database = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, resource->database.get())));
-    }
-
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->domain).get());
-    JSValueRef nameValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->name).get());
-    JSValueRef versionValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->version).get());
-
-    JSValueRef arguments[] = { database, domainValue, nameValue, versionValue };
-    JSObjectRef result = JSObjectCallAsConstructor(m_scriptContext, databaseConstructor, 4, arguments, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return 0;
-
-    ASSERT(result);
-
-    callFunction(m_scriptContext, m_scriptObject, "addDatabase", 1, &result, exception);
-
-    if (exception)
-        return 0;
-
-    resource->setScriptObject(m_scriptContext, result);
-
-    return result;
-}
-
-void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource* resource)
-{
-    ASSERT(m_scriptContext);
-    ASSERT(m_scriptObject);
-    if (!m_scriptContext || !m_scriptObject)
-        return;
-
-    ASSERT(resource);
-    ASSERT(resource->scriptObject);
-    if (!resource || !resource->scriptObject)
-        return;
-
-    JSObjectRef scriptObject = resource->scriptObject;
-    resource->setScriptObject(0, 0);
-
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "removeDatabase", 1, &scriptObject, exception);
-}
-#endif
 
 #if ENABLE(DOM_STORAGE)
 JSObjectRef InspectorController::addDOMStorageScriptResource(InspectorDOMStorageResource* resource)
@@ -1419,10 +1342,8 @@ void InspectorController::resetScriptObjects()
 
 #if ENABLE(DATABASE)
     DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
-    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it) {
-        InspectorDatabaseResource* resource = (*it).get();
-        resource->setScriptObject(0, 0);
-    }
+    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
+        (*it)->unbind();
 #endif
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
@@ -1746,7 +1667,7 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     m_databaseResources.add(resource);
 
     if (windowVisible())
-        addDatabaseScriptResource(resource.get());
+        resource->bind(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 }
 #endif
 

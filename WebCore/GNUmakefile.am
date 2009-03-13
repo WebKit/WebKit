@@ -369,7 +369,13 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptCallStack.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
+	WebCore/bindings/js/ScriptFunctionCall.cpp \
+	WebCore/bindings/js/ScriptFunctionCall.h \
 	WebCore/bindings/js/ScriptInstance.h \
+	WebCore/bindings/js/ScriptObject.cpp \
+	WebCore/bindings/js/ScriptObject.h \
+	WebCore/bindings/js/ScriptObjectQuarantine.cpp \
+	WebCore/bindings/js/ScriptObjectQuarantine.h \
 	WebCore/bindings/js/ScriptSourceCode.h \
 	WebCore/bindings/js/ScriptState.h \
 	WebCore/bindings/js/ScriptString.h \

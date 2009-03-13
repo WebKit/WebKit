@@ -30,35 +30,59 @@
 
 #include "config.h"
 #if ENABLE(DATABASE)
-
 #include "InspectorDatabaseResource.h"
 
 #include "Database.h"
+#include "Document.h"
+#include "Frame.h"
+#include "ScriptFunctionCall.h"
+#include "ScriptObjectQuarantine.h"
+#include "ScriptValue.h"
 
 namespace WebCore {
 
-    InspectorDatabaseResource::InspectorDatabaseResource(Database* database, const String& domain, const String& name, const String& version)
-        : database(database)
-        , domain(domain)
-        , name(name)
-        , version(version)
-        , scriptContext(0)
-        , scriptObject(0)
-    {
-    }
+InspectorDatabaseResource::InspectorDatabaseResource(Database* database, const String& domain, const String& name, const String& version)
+    : m_database(database)
+    , m_domain(domain)
+    , m_name(name)
+    , m_version(version)
+{
+}
 
-    void InspectorDatabaseResource::setScriptObject(JSContextRef context, JSObjectRef newScriptObject)
-    {
-        if (scriptContext && scriptObject)
-            JSValueUnprotect(scriptContext, scriptObject);
+void InspectorDatabaseResource::bind(ScriptState* scriptState, const ScriptObject& webInspector)
+{
+    if (!m_scriptObject.hasNoValue())
+        return;
 
-        scriptObject = newScriptObject;
-        scriptContext = context;
+    ASSERT(scriptState);
+    ASSERT(!webInspector.hasNoValue());
+    if (!scriptState || webInspector.hasNoValue())
+        return;
 
-        ASSERT((context && newScriptObject) || (!context && !newScriptObject));
-        if (context && newScriptObject)
-            JSValueProtect(context, newScriptObject);
-    }
+    ScriptFunctionCall resourceConstructor(scriptState, webInspector, "Database");
+    ScriptObject database;
+    if (!getQuarantinedScriptObject(m_database.get(), database))
+        return;
+
+    resourceConstructor.appendArgument(database);
+    resourceConstructor.appendArgument(m_domain);
+    resourceConstructor.appendArgument(m_name);
+    resourceConstructor.appendArgument(m_version);
+
+    bool hadException = false;
+    m_scriptObject = resourceConstructor.construct(hadException);
+    if (hadException)
+        return;
+
+    ScriptFunctionCall addDatabase(scriptState, webInspector, "addDatabase");
+    addDatabase.appendArgument(m_scriptObject);
+    addDatabase.call(hadException);
+}
+
+void InspectorDatabaseResource::unbind()
+{
+    m_scriptObject = ScriptObject();
+}
 
 } // namespace WebCore
 

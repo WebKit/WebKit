@@ -629,11 +629,15 @@
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
+		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
+		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
+		412A68470F6B03DD000EA66E /* ScriptObjectQuarantine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */; };
 		416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */; };
 		416E75BF0EDF8FD700360E1D /* ScriptCallStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */; };
 		416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75C90EDF90C700360E1D /* ScriptCallFrame.h */; };
 		416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */; };
 		416F45F00ED7B311008215B6 /* ScriptString.h in Headers */ = {isa = PBXBuildFile; fileRef = 416F45EF0ED7B311008215B6 /* ScriptString.h */; };
+		419536510F68222400D0C679 /* ScriptObjectQuarantine.h in Headers */ = {isa = PBXBuildFile; fileRef = 419536500F68222400D0C679 /* ScriptObjectQuarantine.h */; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; };
 		41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D015C90F4B5C71004A662F /* ContentType.cpp */; };
@@ -648,6 +652,8 @@
 		41F062020F5F0B6600A07EAC /* InspectorResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F062000F5F0B6600A07EAC /* InspectorResource.cpp */; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
 		41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */; };
+		41F066E40F64BCF600A07EAC /* ScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F066E20F64BCF600A07EAC /* ScriptObject.h */; };
+		41F066E50F64BCF600A07EAC /* ScriptObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F066E30F64BCF600A07EAC /* ScriptObject.cpp */; };
 		41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F1D2200EF35C2A00DA8753 /* ScriptCachedFrameData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */; };
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; };
@@ -5583,11 +5589,15 @@
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
+		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
+		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
+		412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptObjectQuarantine.cpp; sourceTree = "<group>"; };
 		416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStack.h; sourceTree = "<group>"; };
 		416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStack.cpp; sourceTree = "<group>"; };
 		416E75C90EDF90C700360E1D /* ScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallFrame.h; sourceTree = "<group>"; };
 		416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
 		416F45EF0ED7B311008215B6 /* ScriptString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptString.h; sourceTree = "<group>"; };
+		419536500F68222400D0C679 /* ScriptObjectQuarantine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObjectQuarantine.h; sourceTree = "<group>"; };
 		41C760B00EDE03D300C1655F /* ScriptState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptState.h; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
 		41D015C90F4B5C71004A662F /* ContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentType.cpp; sourceTree = "<group>"; };
@@ -5603,6 +5613,8 @@
 		41F062000F5F0B6600A07EAC /* InspectorResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorResource.cpp; sourceTree = "<group>"; };
 		41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseResource.h; sourceTree = "<group>"; };
 		41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseResource.cpp; sourceTree = "<group>"; };
+		41F066E20F64BCF600A07EAC /* ScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObject.h; sourceTree = "<group>"; };
+		41F066E30F64BCF600A07EAC /* ScriptObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptObject.cpp; sourceTree = "<group>"; };
 		41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCachedFrameData.h; sourceTree = "<group>"; };
 		41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCachedFrameData.cpp; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
@@ -13439,7 +13451,13 @@
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
+				41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */,
+				41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */,
 				934CC1160EDCAC7300A658F2 /* ScriptInstance.h */,
+				41F066E20F64BCF600A07EAC /* ScriptObject.h */,
+				41F066E30F64BCF600A07EAC /* ScriptObject.cpp */,
+				412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */,
+				419536500F68222400D0C679 /* ScriptObjectQuarantine.h */,
 				934CC1090EDB223900A658F2 /* ScriptSourceCode.h */,
 				41C760B00EDE03D300C1655F /* ScriptState.h */,
 				416F45EF0ED7B311008215B6 /* ScriptString.h */,
@@ -16581,7 +16599,10 @@
 				93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
+				41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */,
 				934CC1170EDCAC7300A658F2 /* ScriptInstance.h in Headers */,
+				41F066E40F64BCF600A07EAC /* ScriptObject.h in Headers */,
+				419536510F68222400D0C679 /* ScriptObjectQuarantine.h in Headers */,
 				934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */,
 				41C760B10EDE03D300C1655F /* ScriptState.h in Headers */,
 				416F45F00ED7B311008215B6 /* ScriptString.h in Headers */,
@@ -18619,6 +18640,9 @@
 				A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */,
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
 				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
+				41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */,
+				41F066E50F64BCF600A07EAC /* ScriptObject.cpp in Sources */,
+				412A68470F6B03DD000EA66E /* ScriptObjectQuarantine.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
 				BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,

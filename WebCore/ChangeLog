@@ -1,3 +1,33 @@
+2009-03-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24524
+        Introduce ScriptObject and ScriptFunctionCall abstractions.
+
+        * GNUmakefile.am: Added ScriptObject and ScriptFunctionCall to project.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * bindings/js/ScriptFunctionCall.cpp: Added.
+        * bindings/js/ScriptFunctionCall.h: Added.
+        * bindings/js/ScriptObject.cpp: Added.
+        * bindings/js/ScriptObject.h: Added.
+        * bindings/js/ScriptObjectQuarantine.cpp: Added.
+        * bindings/js/ScriptObjectQuarantine.h: Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects): Changed to use InspectorDatabaseResource::bind.
+        (WebCore::InspectorController::resetScriptObjects): Changed to use InspectorDatabaseResource::unbind.
+        (WebCore::InspectorController::didOpenDatabase): Changed to use InspectorDatabaseResource::unbind.
+        * inspector/InspectorController.h: Removed addScriptDatabaseResource and
+        removeScriptDatabaseResource declarations.
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind): Added.
+        (WebCore::InspectorDatabaseResource::unbind): Added.
+        * inspector/InspectorDatabaseResource.h: Added bind and unbind declarations.
+
 2009-03-13  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

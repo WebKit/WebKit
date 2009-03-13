@@ -14497,7 +14497,31 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptFunctionCall.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptFunctionCall.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptInstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptObjectQuarantine.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptObjectQuarantine.h"
 					>
 				</File>
 				<File

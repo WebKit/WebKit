@@ -493,6 +493,9 @@ SOURCES += \
     bindings/js/ScriptCallFrame.cpp \
     bindings/js/ScriptCallStack.cpp \
     bindings/js/ScriptController.cpp \
+    bindings/js/ScriptFunctionCall.cpp \
+    bindings/js/ScriptObject.cpp \
+    bindings/js/ScriptObjectQuarantine.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
     bridge/IdentifierRep.cpp \
