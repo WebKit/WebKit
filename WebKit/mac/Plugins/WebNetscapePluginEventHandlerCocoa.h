@@ -67,6 +67,9 @@ private:
     OSStatus handleTSMEvent(EventRef);
 
     EventHandlerRef m_keyEventHandler;
+#else
+    inline void installKeyEventHandler() { }
+    void removeKeyEventHandler() { }
 #endif
 };
 

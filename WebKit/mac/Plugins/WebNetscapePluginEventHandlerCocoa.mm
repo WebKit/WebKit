@@ -29,6 +29,7 @@
 
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginView.h"
+#import <wtf/UnusedParam.h>
 #import <wtf/Vector.h>
 
 WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa(WebNetscapePluginView* pluginView)
