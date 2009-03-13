@@ -1,3 +1,22 @@
+2009-03-13  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24579
+        Many V8*Event* files are misplaced.
+
+        This code is infrastructure for supporting the bindings and thus should
+        be in the bindings/v8 directory.
+
+        * bindings/v8/V8AbstractEventListener.cpp: Renamed from WebCore/bindings/v8/custom/V8AbstractEventListener.cpp.
+        * bindings/v8/V8AbstractEventListener.h: Renamed from WebCore/bindings/v8/custom/V8AbstractEventListener.h.
+        * bindings/v8/V8LazyEventListener.cpp: Renamed from WebCore/bindings/v8/custom/V8LazyEventListener.cpp.
+        * bindings/v8/V8LazyEventListener.h: Renamed from WebCore/bindings/v8/custom/V8LazyEventListener.h.
+        * bindings/v8/V8ObjectEventListener.cpp: Renamed from WebCore/bindings/v8/custom/V8ObjectEventListener.cpp.
+        * bindings/v8/V8ObjectEventListener.h: Renamed from WebCore/bindings/v8/custom/V8ObjectEventListener.h.
+        * bindings/v8/V8WorkerContextEventListener.cpp: Renamed from WebCore/bindings/v8/custom/V8WorkerContextEventListener.cpp.
+        * bindings/v8/V8WorkerContextEventListener.h: Renamed from WebCore/bindings/v8/custom/V8WorkerContextEventListener.h.
+
 2009-03-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin Garcia.
