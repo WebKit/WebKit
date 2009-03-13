@@ -247,7 +247,7 @@ if [ $do_clean != 1 ]; then
         fi
     
         cd $WK_ROOT/WebCore
-        ./make-generated-sources.sh platform/wx/wx-encodings.txt
+        ./make-generated-sources.sh FEATURE_DEFINES="ENABLE_DATABASE"
         if [ $? != 0 ]; then
             exit $? 
         fi

@@ -1,3 +1,9 @@
+2009-03-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Let DerivedSources.make know we want database APIs.
+
+        * wx/build-wxwebkit:
+
 2009-03-12  David Kilzer  <ddkilzer@apple.com>
 
         Bug 24378: resolve-ChangeLogs should use git status or svn status to find and fix unmerged ChangeLogs

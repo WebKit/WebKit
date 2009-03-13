@@ -1,3 +1,9 @@
+2009-03-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Allow make-generated-sources.sh to pass args down to DerivedSources.make
+
+        * make-generated-sources.sh:
+
 2009-03-12  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Oliver Hunt.
