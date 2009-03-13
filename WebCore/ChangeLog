@@ -1,3 +1,16 @@
+2009-03-12  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24498
+        Fix the Qt port to use the same algorithm for drawing dashed and dotted
+        borders as the other ports.  This makes the Qt port pixel-for-pixel perfect
+        compared to border drawing with Apple's canonical mac port and much closer
+        to konqueror and firefox behavior.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLine):
+
 2009-02-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.
