@@ -83,4 +83,17 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     return V8Proxy::ToV8Object(V8ClassIndex::XPATHRESULT, result.get());
 }
 
+CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
+{
+    INC_STATS("DOM.Document.getCSSCanvasContext");
+    v8::Handle<v8::Value> holder = args.Holder();
+    Document* imp = V8Proxy::DOMWrapperToNode<Document>(holder);
+    String contextId = toWebCoreString(args[0]);
+    String name = toWebCoreString(args[1]);
+    int width = toInt32(args[2]);
+    int height = toInt32(args[3]);
+    CanvasRenderingContext2D* result = imp->getCSSCanvasContext(contextId, name, width, height);
+    return V8Proxy::ToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
+}
+
 } // namespace WebCore
