@@ -1,3 +1,22 @@
+2009-03-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        Tests for <rdar://problem/5089327> Color of quoted content is wrong when pasted inside other quoted content
+
+        * editing/pasteboard/5089327.html: Added.
+        * platform/mac/editing/pasteboard/5089327-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5089327-expected.png: Added.
+        * platform/mac/editing/pasteboard/5089327-expected.txt: Added.
+
+        Updated colors for pasted content.
+
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.png:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-expected.png:
+
 2009-03-13  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Fisher.

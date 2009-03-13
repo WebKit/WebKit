@@ -1,3 +1,17 @@
+2009-03-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        Fix for <rdar://problem/5089327> Color of quoted content is wrong when pasted inside other quoted content
+
+        Test: editing/pasteboard/5089327.html
+
+        Handle spans being pasted within a quoted region in the same way we handle "paste as quotation" content.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+
 2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.
