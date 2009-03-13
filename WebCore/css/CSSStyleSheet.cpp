@@ -182,6 +182,10 @@ void CSSStyleSheet::checkLoaded()
         return;
     if (parent())
         parent()->checkLoaded();
+
+    // Avoid |this| being deleted by scripts that run via HTMLTokenizer::executeScriptsWaitingForStylesheets().
+    // See <rdar://problem/6622300>.
+    RefPtr<CSSStyleSheet> protector(this);
     m_loadCompleted = ownerNode() ? ownerNode()->sheetLoaded() : true;
 }
 

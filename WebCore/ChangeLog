@@ -1,3 +1,18 @@
+2009-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe
+
+        <rdar://problem/6622300>: Reproducible crash on
+        <http://www.editgrid.com/explore/tnc/dave/FusionChart%3A_Candlestick>
+        
+        Prevent CSSStyleSheet::checkLoaded() writing to freed memory when it gets
+        deleted from under itself. The sheetLoaded() notification can allow scripts
+        to run via HTMLTokenizer::executeScriptsWaitingForStylesheets(),
+        which can cause the last ref to the CSSStyleSheet to be released.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+
 2009-03-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Allow make-generated-sources.sh to pass args down to DerivedSources.make
