@@ -1,3 +1,13 @@
+2009-03-13  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Resolved name conflict with globally defined tzname in Symbian.
+        Replaced with different name instead of using namespace qualifier
+        (appeared to be less clumsy).
+
+        * runtime/DateMath.cpp:
+
 2009-03-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

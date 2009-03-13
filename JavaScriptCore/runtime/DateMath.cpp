@@ -919,14 +919,14 @@ UString formatTime(const GregorianDateTime &t, bool utc)
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
     } else {
         int offset = abs(gmtoffset(t));
-        char tzname[70];
+        char timeZoneName[70];
         struct tm gtm = t;
-        strftime(tzname, sizeof(tzname), "%Z", &gtm);
+        strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
 
-        if (tzname[0]) {
+        if (timeZoneName[0]) {
             snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
                 t.hour, t.minute, t.second,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, tzname);
+                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
         } else {
             snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
                 t.hour, t.minute, t.second,
