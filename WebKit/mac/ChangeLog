@@ -1,5 +1,12 @@
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the build.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa):
+
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the SL build.
 
         * Plugins/WebNetscapePluginEventHandlerCocoa.h:

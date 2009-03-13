@@ -33,7 +33,9 @@
 
 WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa(WebNetscapePluginView* pluginView)
     : WebNetscapePluginEventHandler(pluginView)
+#ifndef __LP64__
     , m_keyEventHandler(0)
+#endif
 {
 }
 
