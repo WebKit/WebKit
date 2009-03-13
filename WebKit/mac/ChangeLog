@@ -1,5 +1,18 @@
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker and Geoffrey Garen.
+
+        <rdar://problem/6590384>
+        REGRESSION (Safari 3-4): Tiger-only Crash occurs at WebView hostWindow () after reloading a set of tabs then quitting
+        
+        When we're doing fast teardown, plug-in views can be destroyed from -[WebView dealloc]'s [super dealloc] call, 
+        and thus calling -[WebView hostWindow] will crash since _private is nil.
+        
+        * WebView/WebView.mm:
+        (-[WebView hostWindow]):
+
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
         And yet another attempt...
         
         * Plugins/WebNetscapePluginEventHandlerCocoa.h:

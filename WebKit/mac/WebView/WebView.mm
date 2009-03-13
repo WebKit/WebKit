@@ -3100,6 +3100,11 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (NSWindow *)hostWindow
 {
+    // -[WebView hostWindow] can sometimes be called from the WebView's [super dealloc] method
+    // so we check here to make sure it's not null.
+    if (!_private)
+        return nil;
+    
     return _private->hostWindow;
 }
 
