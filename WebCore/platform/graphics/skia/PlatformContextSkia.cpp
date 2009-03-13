@@ -272,12 +272,17 @@ void PlatformContextSkia::drawRect(SkRect rect)
 
     if (m_state->m_strokeStyle != WebCore::NoStroke &&
         (m_state->m_strokeColor & 0xFF000000)) {
-        if (fillcolorNotTransparent) {
-            // This call is expensive so don't call it unnecessarily.
-            paint.reset();
-        }
-        setupPaintForStroking(&paint, &rect, 0);
-        canvas()->drawRect(rect, paint);
+        // We do a fill of four rects to simulate the stroke of a border.
+        SkColor oldFillColor = m_state->m_fillColor;
+        if (oldFillColor != m_state->m_strokeColor)
+            setFillColor(m_state->m_strokeColor);
+        setupPaintForFilling(&paint);
+        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fTop, rect.width(), 1), paint);
+        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fBottom - 1, rect.width(), 1), paint);
+        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fTop + 1, 1, rect.height() - 2), paint);
+        canvas()->drawRect(WebCore::FloatRect(rect.fRight - 1, rect.fTop + 1, 1, rect.height() - 2), paint);
+        if (oldFillColor != m_state->m_strokeColor)
+            setFillColor(oldFillColor);
     }
 }
 
@@ -311,19 +316,12 @@ float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, i
     setupPaintCommon(paint);
     float width = m_state->m_strokeThickness;
 
-    // This allows dashing and dotting to work properly for hairline strokes.
-    if (width == 0)
-        width = 1;
-
     paint->setColor(m_state->applyAlpha(m_state->m_strokeColor));
     paint->setStyle(SkPaint::kStroke_Style);
     paint->setStrokeWidth(SkFloatToScalar(width));
     paint->setStrokeCap(m_state->m_lineCap);
     paint->setStrokeJoin(m_state->m_lineJoin);
     paint->setStrokeMiter(SkFloatToScalar(m_state->m_miterLimit));
-
-    if (rect != 0 && (static_cast<int>(roundf(width)) & 1))
-        rect->inset(-SK_ScalarHalf, -SK_ScalarHalf);
 
     if (m_state->m_dash)
         paint->setPathEffect(m_state->m_dash);
@@ -339,7 +337,8 @@ float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, i
             SkScalar dashLength;
             if (length) {
                 // Determine about how many dashes or dots we should have.
-                int numDashes = length / roundf(width);
+                float roundedWidth = roundf(width);
+                int numDashes = roundedWidth ? (length / roundedWidth) : length;
                 if (!(numDashes & 1))
                     numDashes++;    // Make it odd so we end on a dash/dot.
                 // Use the number of dashes to determine the length of a

@@ -170,6 +170,9 @@ namespace WebCore {
         void restore();
 
         // These draw methods will do both stroking and filling.
+        // FIXME: ...except drawRect(), which fills properly but always strokes
+        // using a 1-pixel stroke inset from the rect borders (of the correct
+        // stroke color).
         void drawRect(const IntRect&);
         void drawLine(const IntPoint&, const IntPoint&);
         void drawEllipse(const IntRect&);
