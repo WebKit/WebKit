@@ -94,7 +94,7 @@
 #define FORCE_SYSTEM_MALLOC 1
 #endif
 
-#define TCMALLOC_TRACK_DECOMMITED_SPANS (HAVE(VIRTUALALLOC))
+#define TCMALLOC_TRACK_DECOMMITED_SPANS (HAVE(VIRTUALALLOC) || HAVE(MADV_FREE_REUSE))
 
 #ifndef NDEBUG
 namespace WTF {
@@ -1403,8 +1403,14 @@ static ALWAYS_INLINE void mergeDecommittedStates(Span*, Span*) { }
 #else
 static ALWAYS_INLINE void mergeDecommittedStates(Span* destination, Span* other)
 {
-    if (other->decommitted)
+    if (destination->decommitted && !other->decommitted) {
+        TCMalloc_SystemRelease(reinterpret_cast<void*>(other->start << kPageShift),
+                               static_cast<size_t>(other->length << kPageShift));
+    } else if (other->decommitted && !destination->decommitted) {
+        TCMalloc_SystemRelease(reinterpret_cast<void*>(destination->start << kPageShift),
+                               static_cast<size_t>(destination->length << kPageShift));
         destination->decommitted = true;
+    }
 }
 #endif
 
