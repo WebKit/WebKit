@@ -106,6 +106,43 @@ function shouldBeEqualToString(a, b)
   shouldBe(a, unevaledString);
 }
 
+function shouldEvaluateTo(actual, expected) {
+  // A general-purpose comparator.  'actual' should be a string to be
+  // evaluated, as for shouldBe(). 'expected' may be any type and will be
+  // used without being eval'ed.
+  if (expected == null) {
+    // Do this before the object test, since null is of type 'object'.
+    shouldBeNull(actual);
+  } else if (typeof expected == "undefined") {
+    shouldBeUndefined(actual);
+  } else if (typeof expected == "function") {
+    // All this fuss is to avoid the string-arg warning from shouldBe().
+    try {
+      actualValue = eval(actual);
+    } catch (e) {
+      testFailed("Evaluating " + actual + ": Threw exception " + e);
+      return;
+    }
+    shouldBe("'" + actualValue.toString().replace(/\n/g, "") + "'",
+             "'" + expected.toString().replace(/\n/g, "") + "'");
+  } else if (typeof expected == "object") {
+    shouldBeTrue(actual + " == '" + expected + "'");
+  } else if (typeof expected == "string") {
+    shouldBe(actual, expected);
+  } else if (typeof expected == "boolean") {
+    shouldBe("typeof " + actual, "'boolean'");
+    if (expected)
+      shouldBeTrue(actual);
+    else
+      shouldBeFalse(actual);
+  } else if (typeof expected == "number") {
+    shouldBe(actual, stringify(expected));
+  } else {
+    debug(expected + " is unknown type " + typeof expected);
+    shouldBeTrue(actual, "'"  +expected.toString() + "'");
+  }
+}
+
 function shouldBeUndefined(_a)
 {
   var exception;

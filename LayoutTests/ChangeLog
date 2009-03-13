@@ -1,5 +1,21 @@
 2009-03-13  Pamela Greene  <pam@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        Add tests for window property lookup precedence in the presence of
+        conflicting names in a child frame and in a named document element.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24170
+
+        * fast/dom/Window/resources/window-properties.js: Added.
+        * fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * fast/dom/Window/window-lookup-precedence.html: Added.
+        * fast/js/resources/js-test-pre.js:
+        (shouldEvaluateTo): Added. Compares expected values of various types.
+        
+
+2009-03-13  Pamela Greene  <pam@chromium.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Add test cases to ensure that DOM constructors have higher lookup
