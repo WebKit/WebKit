@@ -1,3 +1,13 @@
+2009-03-13  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24561
+        Add custom V8 bindings for HTMLElementCanvas, Location.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp: Added.
+        * bindings/v8/custom/V8LocationCustom.cpp: Added.
+
 2009-03-13  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.
