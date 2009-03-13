@@ -1,3 +1,13 @@
+2009-03-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 24474: AX: in multi-body tables, asking for a cell at a specific coordinate can return nil
+        https://bugs.webkit.org/show_bug.cgi?id=24474
+
+        * platform/mac-snowleopard/accessibility/table-multi-bodies-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-multi-bodies.html: Added.
+
 2009-03-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin Garcia.

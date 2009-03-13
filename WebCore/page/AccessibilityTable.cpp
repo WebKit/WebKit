@@ -386,11 +386,13 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     unsigned rowOffset = 0;
     while (tableSection) {
         
-        rowCount += tableSection->numRows();
+        unsigned numRows = tableSection->numRows();
         unsigned numCols = tableSection->numColumns();
         
-        if (row < rowCount && column < numCols) {
-            int sectionSpecificRow = row - rowOffset;
+        rowCount += numRows;
+        
+        unsigned sectionSpecificRow = row - rowOffset;            
+        if (row < rowCount && column < numCols && sectionSpecificRow < numRows) {
             cell = tableSection->cellAt(sectionSpecificRow, column).cell;
             
             // we didn't find the cell, which means there's spanning happening
@@ -422,9 +424,9 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         if (cell)
             break;
         
-        rowOffset += rowCount;
+        rowOffset += numRows;
         // we didn't find anything between the rows we should have
-        if (row < rowOffset)
+        if (row < rowCount)
             break;
         tableSection = table->sectionBelow(tableSection, true);        
     }
