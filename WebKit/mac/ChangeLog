@@ -1,3 +1,11 @@
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the SL build.
+
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::keyDown):
+
 2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.

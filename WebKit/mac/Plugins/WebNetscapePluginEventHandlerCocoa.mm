@@ -120,9 +120,13 @@ void WebNetscapePluginEventHandlerCocoa::keyDown(NSEvent *event)
 {
     bool retval = sendKeyEvent(event, NPCocoaEventKeyDown);
     
+#ifndef __LP64__
     // If the plug-in did not handle the event, pass it on to the Input Manager.
     if (retval)
         WKSendKeyEventToTSM(event);
+#else
+    UNUSED_PARAM(retval);
+#endif
 }
 
 void WebNetscapePluginEventHandlerCocoa::keyUp(NSEvent *event)
@@ -210,6 +214,8 @@ bool WebNetscapePluginEventHandlerCocoa::sendEvent(NPCocoaEvent* event)
     return result;
 }
 
+#ifndef __LP64__
+
 void WebNetscapePluginEventHandlerCocoa::installKeyEventHandler()
 {
     static const EventTypeSpec TSMEvents[] =
@@ -268,5 +274,7 @@ OSStatus WebNetscapePluginEventHandlerCocoa::handleTSMEvent(EventRef eventRef)
 
     return noErr;
 }
+
+#endif // __LP64__
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
