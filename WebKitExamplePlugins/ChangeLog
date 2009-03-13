@@ -1,3 +1,25 @@
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Update to match new API.
+        
+        * NetscapeInputMethodPlugin/main.m:
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (handleDraw):
+        (invalidatePlugin):
+        (handleFocusChanged):
+        (handleMouseMoved):
+        (handleMouseDown):
+        (handleTextFieldKeyDown):
+        (handleTextInput):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+
 2008-12-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -34,7 +34,6 @@
 #import <WebKit/npapi.h>
 #import <WebKit/npfunctions.h>
 #import <WebKit/npruntime.h>
-#import <WebKit/nptextinput.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -53,7 +52,6 @@ typedef struct PluginObject
     bool textFieldHasFocus;
     NSRect textFieldRect;
     
-    NSRange markedRange;
     NSRange selectedRange;
     NSTextStorage *textStorage;
     NSLayoutManager *layoutManager;
@@ -72,13 +70,13 @@ void NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname);
 void NPP_Print(NPP instance, NPPrint* platformPrint);
 int16 NPP_HandleEvent(NPP instance, void* event);
 void NPP_URLNotify(NPP instance, const char* URL, NPReason reason, void* notifyData);
-NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value);
-NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value);
+NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value);
+NPError NPP_SetValue(NPP instance, NPNVariable variable, void* value);
 
 #pragma export on
 // Mach-o entry points
-NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
-NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
+NPError NP_Initialize(NPNetscapeFuncs* browserFuncs);
+NPError NP_GetEntryPoints(NPPluginFuncs* pluginFuncs);
 void NP_Shutdown(void);
 #pragma export off
 
@@ -116,7 +114,7 @@ void NP_Shutdown(void)
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved)
 {
     // Create per-instance storage
-    PluginObject *obj = (PluginObject *)malloc(sizeof(PluginObject));
+    PluginObject* obj = (PluginObject*)malloc(sizeof(PluginObject));
     bzero(obj, sizeof(PluginObject));
     
     obj->npp = instance;
@@ -131,7 +129,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     
     // If the browser supports the CoreGraphics drawing model, enable it.
-    browser->setvalue(instance, NPPVpluginDrawingModel, (void *)NPDrawingModelCoreGraphics);
+    browser->setvalue(instance, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics);
 
     // If the browser supports the Cocoa event model, enable it.
     NPBool supportsCocoa;
@@ -141,7 +139,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
     if (!supportsCocoa)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     
-    browser->setvalue(instance, NPPVpluginEventModel, (void *)NPEventModelCocoa);
+    browser->setvalue(instance, NPPVpluginEventModel, (void*)NPEventModelCocoa);
 
     obj->textFieldRect = NSMakeRect(10, 10, 200, 100);
 
@@ -154,15 +152,13 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
 
     obj->selectedRange.location = [obj->textStorage length];
     
-    obj->markedRange = NSMakeRange(NSNotFound, 0);
-
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
     // Free per-instance storage
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = instance->pdata;
     
     [obj->textStorage release];
     [obj->layoutManager release];
@@ -174,7 +170,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
 
 NPError NPP_SetWindow(NPP instance, NPWindow* window)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = instance->pdata;
     obj->window = *window;
 
     return NPERR_NO_ERROR;
@@ -211,11 +207,11 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 
 }
 
-static void handleDraw(PluginObject *obj)
+static void handleDraw(PluginObject* obj)
 {
     NSGraphicsContext *oldContext = [[NSGraphicsContext currentContext] retain];
     
-    NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithGraphicsPort:((NP_CGContext *)obj->window.window)->context
+    NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithGraphicsPort:((NP_CGContext*)obj->window.window)->context
                                                                             flipped:YES];
 
 
@@ -271,7 +267,7 @@ static void handleDraw(PluginObject *obj)
     [NSGraphicsContext setCurrentContext:oldContext];
 }
 
-static void invalidatePlugin(PluginObject *obj)
+static void invalidatePlugin(PluginObject* obj)
 {
     NPRect rect;
     rect.left = 0;
@@ -282,16 +278,16 @@ static void invalidatePlugin(PluginObject *obj)
     browser->invalidaterect(obj->npp, &rect);    
 }
 
-static void handleFocusChanged(NPCocoaEvent *cocoaEvent, PluginObject *obj)
+static void handleFocusChanged(NPCocoaEvent* cocoaEvent, PluginObject* obj)
 {
-    obj->pluginHasFocus = cocoaEvent->event.focus.hasFocus;
+    obj->pluginHasFocus = cocoaEvent->data.focus.hasFocus;
     
     invalidatePlugin(obj);
 }
 
-static void handleMouseMoved(NPCocoaEvent *cocoaEvent, PluginObject *obj)
+static void handleMouseMoved(NPCocoaEvent* cocoaEvent, PluginObject* obj)
 {
-    NSPoint point = NSMakePoint(cocoaEvent->event.mouse.pluginX, cocoaEvent->event.mouse.pluginY);
+    NSPoint point = NSMakePoint(cocoaEvent->data.mouse.pluginX, cocoaEvent->data.mouse.pluginY);
     
     if (NSPointInRect(point, obj->textFieldRect))
         [[NSCursor IBeamCursor] set];
@@ -299,20 +295,64 @@ static void handleMouseMoved(NPCocoaEvent *cocoaEvent, PluginObject *obj)
         [[NSCursor arrowCursor] set];
 }
 
-static void handleMouseDown(NPCocoaEvent *cocoaEvent, PluginObject *obj) 
+static void handleMouseDown(NPCocoaEvent* cocoaEvent, PluginObject* obj) 
 {
-    NSPoint point = NSMakePoint(cocoaEvent->event.mouse.pluginX, cocoaEvent->event.mouse.pluginY);
+    NSPoint point = NSMakePoint(cocoaEvent->data.mouse.pluginX, cocoaEvent->data.mouse.pluginY);
     
     obj->textFieldHasFocus = NSPointInRect(point, obj->textFieldRect);
     
     invalidatePlugin(obj);
 }
 
+static int16_t handleTextFieldKeyDown(NPCocoaEvent* event, PluginObject* obj)
+{
+    NSString *string = (NSString *)event->data.key.charactersIgnoringModifiers;
+    
+    unichar c = [string length] > 0 ? [string characterAtIndex:0] : 0;
+    
+    switch (c) {
+        case NSLeftArrowFunctionKey:
+            if (obj->selectedRange.location > 0) {
+                obj->selectedRange.location--;
+                invalidatePlugin(obj);
+            }
+            return 1;
+            
+        case NSRightArrowFunctionKey:
+            if (obj->selectedRange.location < [obj->textStorage length]) {
+                obj->selectedRange.location++;  
+                invalidatePlugin(obj);
+            }
+                
+            return 1;
+            
+        default:
+            // Return 0 and let the text input system handle it.
+            return 0;
+    }
+}
+
+
+static int16_t handleTextInput(NPCocoaEvent* event, PluginObject* obj)
+{
+    NSString *string = (NSString *)event->data.text.text;
+    NSRange range = obj->selectedRange;
+        
+    [obj->textStorage replaceCharactersInRange:range withString:string];
+        
+    obj->selectedRange.location = range.location + [string length];
+    obj->selectedRange.length = 0;
+
+    invalidatePlugin(obj);
+    
+    return 1;
+}
+
 int16 NPP_HandleEvent(NPP instance, void* event)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = instance->pdata;
 
-    NPCocoaEvent *cocoaEvent = event;
+    NPCocoaEvent* cocoaEvent = event;
     
     switch (cocoaEvent->type) {
         case NPCocoaEventDrawRect:
@@ -331,9 +371,12 @@ int16 NPP_HandleEvent(NPP instance, void* event)
             // If the text field has focus we ignore the event, causing it
             // to be sent to the input manager.
             if (obj->textFieldHasFocus)
-                return 0;
+                return handleTextFieldKeyDown(cocoaEvent, obj);
             else
                 return 1;
+        case NPCocoaEventTextInput:
+            return handleTextInput(cocoaEvent, obj);
+            return 1;
                 
     }
     
@@ -342,173 +385,14 @@ int16 NPP_HandleEvent(NPP instance, void* event)
 
 void NPP_URLNotify(NPP instance, const char* url, NPReason reason, void* notifyData)
 {
-
 }
 
-static NSRange selectionRange(PluginObject *obj)
+NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
 {
-    if (obj->markedRange.location != NSNotFound)
-        return obj->markedRange;
-    else
-        return obj->selectedRange;
-}
-
-/* Text Input */
-
-void NPP_InsertText(NPP npp, id aString)
-{
-    PluginObject *obj = npp->pdata;
-    
-    NSRange range = selectionRange(obj);
-    
-    // Get rid of the marked text
-    if (NPP_HasMarkedText(npp)) {
-        [obj->textStorage deleteCharactersInRange:obj->markedRange];
-        range.length = 0;
-    }
-    
-    [obj->textStorage replaceCharactersInRange:range withString:aString];
-    
-    obj->selectedRange.location = range.location + [aString length];
-    obj->selectedRange.length = 0;
-    
-    obj->markedRange = NSMakeRange(NSNotFound, 0);
-
-    invalidatePlugin(obj);
-}
-
-void NPP_DoCommandBySelector(NPP npp, SEL aSelector)
-{
-    PluginObject *obj = npp->pdata;
-
-    if (aSelector == @selector(moveRight:)) {
-        if (obj->selectedRange.location == [obj->textStorage length])
-            return;
-        
-        obj->selectedRange.location++;  
-        invalidatePlugin(obj);
-    } else if (aSelector == @selector(moveLeft:)) {
-        if (obj->selectedRange.location == 0)
-            return;
-        
-        obj->selectedRange.location--;
-        invalidatePlugin(obj);
-    }
-}
-
-static NSDictionary *markedTextAttributes()
-{
-    static NSDictionary *markedTextAttributes = nil;
-    if (!markedTextAttributes) {
-        NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-        markedTextAttributes = [[tv markedTextAttributes] retain];
-        [tv release];
-    }
-    
-    return markedTextAttributes;
-}
-
-void NPP_SetMarkedText(NPP npp, id aString, NSRange selRange)
-{
-    PluginObject *obj = npp->pdata;
-
-    BOOL isAttributedString = [aString isKindOfClass:[NSAttributedString class]];
-    
-    NSRange range = selectionRange(obj);
-    
-    if (!isAttributedString)        
-        aString = [[[NSAttributedString alloc] initWithString:aString attributes:markedTextAttributes()] autorelease];
-    
-    [obj->textStorage replaceCharactersInRange:range withAttributedString:aString];
-    
-    obj->selectedRange.location = range.location + selRange.location;
-    obj->selectedRange.length = selRange.length;
-    
-    obj->markedRange = NSMakeRange(range.location, [aString length]);
-    
-    invalidatePlugin(obj);
-}
-
-void NPP_UnmarkText(NPP npp)
-{
-}
-
-BOOL NPP_HasMarkedText(NPP npp)
-{
-    PluginObject *obj = npp->pdata;
-
-    return obj->markedRange.location != NSNotFound;
-}
-
-NSAttributedString *NPP_AttributedSubstringFromRange(NPP npp, NSRange theRange)
-{
-    return nil;
-}
-
-NSRange NPP_MarkedRange(NPP npp)
-{
-    PluginObject *obj = npp->pdata;
-
-    return obj->markedRange;
-}
-
-NSRange NPP_SelectedRange(NPP npp)
-{
-    PluginObject *obj = npp->pdata;
-    
-    return obj->selectedRange;
-}
-
-NSRect NPP_FirstRectForCharacterRange(NPP npp, NSRange theRange)
-{
-    PluginObject *obj = npp->pdata;
-
-    NSUInteger rectCount;
-    NSRect *rectArray = [obj->layoutManager rectArrayForCharacterRange:theRange
-                                     withinSelectedCharacterRange:theRange
-                                                  inTextContainer:obj->textContainer
-                                                        rectCount:&rectCount];
-    
-    return rectArray[0];
-}
-
-static NPPluginTextInputFuncs* pluginTextInputFuncs()
-{
-    static NPPluginTextInputFuncs textInputFuncs;
-    static bool initialized = false;
-    
-    if (!initialized) {
-        textInputFuncs.version = 0;
-        textInputFuncs.size = sizeof(textInputFuncs);
-
-        textInputFuncs.insertText = NPP_InsertText;
-        textInputFuncs.doCommandBySelector = NPP_DoCommandBySelector;
-        textInputFuncs.setMarkedText = NPP_SetMarkedText;
-        textInputFuncs.unmarkText = NPP_UnmarkText;
-        textInputFuncs.hasMarkedText = NPP_HasMarkedText;
-        textInputFuncs.attributedSubstringFromRange = NPP_AttributedSubstringFromRange;
-        textInputFuncs.markedRange = NPP_MarkedRange;
-        textInputFuncs.selectedRange = NPP_SelectedRange;
-        textInputFuncs.firstRectForCharacterRange = NPP_FirstRectForCharacterRange;
-
-        initialized = true;
-    }
-    
-    return &textInputFuncs;
-}
-
-NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
-{
-    switch (variable) {
-        case NPPVpluginTextInputFuncs:
-            *(NPPluginTextInputFuncs**)value = pluginTextInputFuncs();            
-            return NPERR_NO_ERROR;
-    }
-    
     return NPERR_GENERIC_ERROR;
 }
 
-NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
+NPError NPP_SetValue(NPP instance, NPNVariable variable, void* value)
 {
     return NPERR_GENERIC_ERROR;
 }
