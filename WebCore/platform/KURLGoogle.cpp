@@ -519,15 +519,8 @@ bool KURL::hasRef() const
 
 String KURL::query() const
 {
-    if (m_url.m_parsed.query.len >= 0) {
-        // KURL's query() includes the question mark, even though the reference
-        // doesn't. Move the query component backwards one to account for it
-        // (our library doesn't count the question mark).
-        url_parse::Component queryComp = m_url.m_parsed.query;
-        queryComp.begin--;
-        queryComp.len++;
-        return m_url.componentString(queryComp);
-    }
+    if (m_url.m_parsed.query.len >= 0)
+        return m_url.componentString(query);
 
     // Bug: https://bugs.webkit.org/show_bug.cgi?id=21015 this function returns
     // an empty string when the query is empty rather than a null (not sure

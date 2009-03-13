@@ -1,3 +1,13 @@
+2009-03-13  Mike Belshe  <mike@belse.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24580
+        Fix query() to match KURL behavior.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::query): remove extra logic around question mark.
+
 2009-03-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
