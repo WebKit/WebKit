@@ -4,5 +4,5 @@ PASS: No exception.
 readyState: 4 (number)
 responseText:  (string)
 responseXML: null (object)
-statusText: OK (string)
+statusText:  (string)
 
