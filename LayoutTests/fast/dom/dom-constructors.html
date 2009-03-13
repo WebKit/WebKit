@@ -6,9 +6,11 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-
+<div id="element" name="element_name"></div>
 <script>
-description('This test checks that all but a handful of dom constructors throw exceptions, and the rest return reasonable objects.');
+description('This test checks that all but a handful of dom constructors throw exceptions, and the rest return reasonable objects. It also tests that those constructors have higher precedence than a document element with the same ID or name.');
+
+var element = document.getElementById("element");
 
 // These objects should throw an exception when their constructor is called
 // with no arguments. (Some of them may have working constructors that require
@@ -106,11 +108,25 @@ for (var i = 0; i < objects_no_constructor.length; i++) {
 for (var i = 0; i < objects_constructor.length; i++) {
     var obj = objects_constructor[i];
     shouldBe("TryAllocate('" + obj + "')", "'[object " + obj + "]'");
+    element.id = obj;
+    shouldBe("TryAllocate('" + obj + "')", "'[object " + obj + "]'");
+    element.id = "element";
+    element.name = obj;
+    shouldBe("TryAllocate('" + obj + "')", "'[object " + obj + "]'");
+    element.name = "element_name";
 }
 
 for (var obj in objects_different_constructor) {
     shouldBe("TryAllocate('" + obj + "')",
              "'[object " + objects_different_constructor[obj] + "]'");
+    element.id = obj;
+    shouldBe("TryAllocate('" + obj + "')",
+             "'[object " + objects_different_constructor[obj] + "]'");
+    element.id = "element";
+    element.name = obj;
+    shouldBe("TryAllocate('" + obj + "')",
+             "'[object " + objects_different_constructor[obj] + "]'");
+    element.name = "element_name";
 }
 
 var successfullyParsed = true;

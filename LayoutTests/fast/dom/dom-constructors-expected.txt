@@ -1,4 +1,4 @@
-This test checks that all but a handful of dom constructors throw exceptions, and the rest return reasonable objects.
+This test checks that all but a handful of dom constructors throw exceptions, and the rest return reasonable objects. It also tests that those constructors have higher precedence than a document element with the same ID or name.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -138,13 +138,31 @@ PASS TryAllocate('EventListener') is 'no constructor'
 PASS TryAllocate('NPObject') is 'no constructor'
 PASS TryAllocate('HTMLAllCollection') is 'no constructor'
 PASS TryAllocate('DOMParser') is '[object DOMParser]'
+PASS TryAllocate('DOMParser') is '[object DOMParser]'
+PASS TryAllocate('DOMParser') is '[object DOMParser]'
+PASS TryAllocate('XMLHttpRequest') is '[object XMLHttpRequest]'
+PASS TryAllocate('XMLHttpRequest') is '[object XMLHttpRequest]'
 PASS TryAllocate('XMLHttpRequest') is '[object XMLHttpRequest]'
 PASS TryAllocate('XMLSerializer') is '[object XMLSerializer]'
+PASS TryAllocate('XMLSerializer') is '[object XMLSerializer]'
+PASS TryAllocate('XMLSerializer') is '[object XMLSerializer]'
+PASS TryAllocate('XPathEvaluator') is '[object XPathEvaluator]'
+PASS TryAllocate('XPathEvaluator') is '[object XPathEvaluator]'
 PASS TryAllocate('XPathEvaluator') is '[object XPathEvaluator]'
 PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
+PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
+PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
+FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
+FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
 FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
 PASS TryAllocate('Audio') is '[object HTMLAudioElement]'
+PASS TryAllocate('Audio') is '[object HTMLAudioElement]'
+PASS TryAllocate('Audio') is '[object HTMLAudioElement]'
 PASS TryAllocate('Option') is '[object HTMLOptionElement]'
+PASS TryAllocate('Option') is '[object HTMLOptionElement]'
+PASS TryAllocate('Option') is '[object HTMLOptionElement]'
+PASS TryAllocate('Image') is '[object HTMLImageElement]'
+PASS TryAllocate('Image') is '[object HTMLImageElement]'
 PASS TryAllocate('Image') is '[object HTMLImageElement]'
 PASS successfullyParsed is true
 
