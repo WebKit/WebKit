@@ -28,4 +28,4 @@ editing/deleting/skip-virama-001.html
 
 # Prior to Unicode 5 some Thai combining marks had line breaking property
 # CM instead of SA
-editing/selection/word-thai.html
+platform/mac/editing/selection/word-thai.html

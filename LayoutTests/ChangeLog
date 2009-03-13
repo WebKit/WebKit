@@ -1,5 +1,11 @@
 2009-03-12  Dan Bernstein  <mitz@apple.com>
 
+        - Skipped file fix
+
+        * platform/mac-tiger/Skipped:
+
+2009-03-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - skip editing/selection/word-thai.html on Tiger because it has an older
