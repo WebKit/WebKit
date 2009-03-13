@@ -1,3 +1,16 @@
+2009-03-13  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/6630340> REGRESSION (39114-39115): Unity Web Player no longer works if Flip4Mac is also installed
+        
+        The code assumed if we have a plug-in that supports "application/x-oleobject" we should always prefer the object tag
+        over of an embed tag. That assumption can cause the Mac platform to load the wrong plug-in, as Flip4Mac claims supports
+        for x-oleobject.
+        
+        * rendering/RenderPartObject.cpp:
+        (WebCore::shouldUseEmbedDescendant): Made the Mac platform always return true here. 
+
 2009-03-13  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -132,10 +132,17 @@ static String serviceTypeForClassId(const String& classId, const PluginData* plu
 
 static inline bool shouldUseEmbedDescendant(HTMLObjectElement* objectElement, const PluginData* pluginData)
 {
+#if PLATFORM(MAC)
+    UNUSED_PARAM(objectElement);
+    UNUSED_PARAM(pluginData);
+    // On Mac, we always want to use the embed descendant.
+    return true;
+#else
     // If we have both an <object> and <embed>, we always want to use the <embed> except when we have
     // an ActiveX plug-in and plan to use it.
     return !(havePlugin(pluginData, activeXType())
         && serviceTypeForClassId(objectElement->classId(), pluginData) == activeXType());
+#endif
 }
 
 void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
