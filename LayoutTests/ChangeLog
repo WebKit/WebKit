@@ -1,3 +1,17 @@
+2009-03-13  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test to check that the JS wrapper for the document in an
+        inner frame is created in the correct context when it's accessed
+        from the outer frame first.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24564
+
+        * fast/dom/resources/wrapper-context-inner.html: Added.
+        * fast/dom/wrapper-context-expected.txt: Added.
+        * fast/dom/wrapper-context.html: Added.
+
 2009-03-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
