@@ -911,12 +911,11 @@ int XMLHttpRequest::status(ExceptionCode& ec) const
 
 String XMLHttpRequest::statusText(ExceptionCode& ec) const
 {
-    // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=3547> XMLHttpRequest.statusText returns always "OK".
-    if (m_response.httpStatusCode())
-        return "OK";
+    if (!m_response.httpStatusText().isNull())
+        return m_response.httpStatusText();
 
     if (m_state == OPENED) {
-        // See comments in getStatus() above.
+        // See comments in status() above.
         ec = INVALID_STATE_ERR;
     }
 

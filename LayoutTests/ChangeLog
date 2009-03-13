@@ -1,3 +1,20 @@
+2009-03-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=3547
+        XMLHttpRequest.statusText returns always "OK"
+
+        Changed default expected results to PASS. Moved previous expected
+        results to platform/mac.
+        
+        * http/tests/xmlhttprequest/web-apps/012-expected.txt:
+        * http/tests/xmlhttprequest/web-apps/013-expected.txt:
+        * platform/mac/http/tests/xmlhttprequest: Added.
+        * platform/mac/http/tests/xmlhttprequest/web-apps: Added.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/012-expected.txt: Added.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt: Added.
+
 2009-03-12  Dan Bernstein  <mitz@apple.com>
 
         - Skipped file fix

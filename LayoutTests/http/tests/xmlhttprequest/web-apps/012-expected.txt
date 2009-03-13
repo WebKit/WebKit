@@ -1,1 +1,1 @@
-FAIL: "OK"
+PASS

@@ -2,6 +2,20 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=3547
+        XMLHttpRequest.statusText returns always "OK"
+
+        Covered by existing tests (which now pass on all platforms but Mac).
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::statusText): Return ResourceResponse status text. It is now up
+        to each platform to correctly set the status text or set it to "OK" to retain current
+        behavior.
+
+2009-03-13  Adam Bergkvist <adam.bergkvist@ericsson.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         https://bugs.webkit.org/show_bug.cgi?id=24349
         [QT] HTTP status text is never set
 
