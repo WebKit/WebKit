@@ -269,8 +269,10 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     const bool isLocalFileReply = (m_reply->url().scheme() == QLatin1String("file"));
     int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (!isLocalFileReply)
+    if (!isLocalFileReply) {
         response.setHTTPStatusCode(statusCode);
+        response.setHTTPStatusText(m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toByteArray().constData());
+    }
     else if (m_reply->error() == QNetworkReply::ContentNotFoundError)
         response.setHTTPStatusCode(404);
 

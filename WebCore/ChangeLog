@@ -1,3 +1,15 @@
+2009-03-13  Adam Bergkvist <adam.bergkvist@ericsson.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24349
+        [QT] HTTP status text is never set
+
+        Set HTTP status text to the reason phrase attribute of QNetworkReply.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
 2009-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe
