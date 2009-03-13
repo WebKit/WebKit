@@ -1,3 +1,35 @@
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6610666> Revise the Cocoa event model text API
+
+        Replace the text input API with a simpler API that uses a separate text input window.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa):
+        Initialize m_keyEventHandler to 0.
+        
+        (WebNetscapePluginEventHandlerCocoa::keyDown):
+        If the plug-in returns 0 from NPP_HandleEvent, pass the event to the TSM machinery.
+        
+        (WebNetscapePluginEventHandlerCocoa::focusChanged):
+        Install/remove the key event handler as needed.
+        
+        (WebNetscapePluginEventHandlerCocoa::handleTSMEvent):
+        Get the text and send a TextInput event.
+        
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        Remove the old text input API.
+        
+        (-[WebNetscapePluginView inputContext]):
+        Always return nil here.
+        
+        * Plugins/npapi.mm:
+        * Plugins/nptextinput.h: Removed.
+
 2009-03-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mike Thole and Mark Rowe.

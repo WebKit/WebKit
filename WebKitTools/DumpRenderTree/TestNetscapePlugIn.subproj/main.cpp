@@ -330,6 +330,7 @@ static int16_t handleEventCocoa(PluginObject* obj, NPCocoaEvent* event)
         case NPCocoaEventMouseExited:
         case NPCocoaEventMouseDragged:
         case NPCocoaEventScrollWheel:
+        case NPCocoaEventTextInput:
             return 1;
     }
     

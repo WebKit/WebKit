@@ -52,14 +52,12 @@ typedef union PluginPort {
     NP_CGContext cgPort;
 } PluginPort;
 
-typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
-
 // Because the Adobe 7.x Acrobat plug-in has a hard coded check for a view named 
 // "WebNetscapePluginDocumentView", this class must retain the old name in order 
 // for the plug-in to function correctly. (rdar://problem/4699455)
 #define WebNetscapePluginView WebNetscapePluginDocumentView
 
-@interface WebNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader, NSTextInput>
+@interface WebNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader>
 {
     RefPtr<WebNetscapePluginStream> _manualStream;
 #ifndef BUILDING_ON_TIGER
@@ -102,8 +100,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     RetainPtr<NSMutableDictionary> _pendingFrameLoads;
     
     BOOL _isSilverlight;
-    
-    NPPluginTextInputFuncs *textInputFuncs;
 }
 
 + (WebNetscapePluginView *)currentPluginView;

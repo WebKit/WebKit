@@ -351,8 +351,6 @@ typedef enum {
     NPPVpluginDrawingModel = 1000,
     /* Used for negotiating event models */
     NPPVpluginEventModel = 1001,
-    /* The plug-in text input vtable */
-    NPPVpluginTextInputFuncs = 1002,
     /* In the NPDrawingModelCoreAnimation drawing model, the browser asks the plug-in for a Core Animation layer. */
     NPPVpluginCoreAnimationLayer = 1003
 #endif
@@ -401,7 +399,6 @@ typedef enum {
 #endif
     , NPNVsupportsCocoaBool = 3001 /* TRUE if the browser supports the Cocoa event model */
     
-    , NPNVbrowserTextInputFuncs = 1002 /* The browser text input vtable */
 #endif /* XP_MACOSX */
 } NPNVariable;
 
@@ -459,6 +456,7 @@ typedef enum {
     NPCocoaEventFocusChanged,
     NPCocoaEventWindowFocusChanged,
     NPCocoaEventScrollWheel,
+    NPCocoaEventTextInput
 } NPCocoaEventType;
 
 typedef struct _NPNSString NPNSString;
@@ -495,7 +493,10 @@ typedef struct _NPCocoaEvent {
         } draw;
         struct {
             NPBool hasFocus;
-        } focus;        
+        } focus;
+        struct {
+            NPNSString *text;
+        } text;
     } data;
 } NPCocoaEvent;
 

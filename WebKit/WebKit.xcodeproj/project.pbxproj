@@ -27,7 +27,6 @@
 		1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */; };
 		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
 		1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */; };
-		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */; };
 		1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */; };
 		1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -338,7 +337,6 @@
 		1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = WebTextInputWindowController.m; sourceTree = "<group>"; };
 		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
 		1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginRequest.m; sourceTree = "<group>"; };
-		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
 		1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostedNetscapePluginStream.h; sourceTree = "<group>"; };
 		1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HostedNetscapePluginStream.mm; sourceTree = "<group>"; };
 		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgent.defs; sourceTree = "<group>"; };
@@ -966,7 +964,6 @@
 				1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */,
 				1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */,
 				F5F717230288493C018635CA /* npapi.mm */,
-				1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */,
 			);
 			name = "Netscape Plug-ins";
 			sourceTree = "<group>";
@@ -1386,7 +1383,6 @@
 				939810460824BF01008DF038 /* WebViewFactory.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
-				1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
 				1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */,
 			);

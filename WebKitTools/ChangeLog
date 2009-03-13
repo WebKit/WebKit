@@ -1,3 +1,14 @@
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6610666> Revise the Cocoa event model text API
+
+        Add a case statement for NPCocoaEventTextInput.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (handleEventCocoa):
+
 2009-03-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Let DerivedSources.make know we want database APIs.

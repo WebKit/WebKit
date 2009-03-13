@@ -53,10 +53,19 @@ public:
     virtual void focusChanged(bool hasFocus);
 
     virtual void* platformWindow(NSWindow*);
+    
 private:
     bool sendMouseEvent(NSEvent*, NPCocoaEventType);
     bool sendKeyEvent(NSEvent*, NPCocoaEventType);
     bool sendEvent(NPCocoaEvent*);
+    
+    void installKeyEventHandler();
+    void removeKeyEventHandler();
+    
+    static OSStatus TSMEventHandler(EventHandlerCallRef, EventRef, void *eventHandler);
+    OSStatus handleTSMEvent(EventRef);
+
+    EventHandlerRef m_keyEventHandler;
 };
 
 #endif //WebNetscapePluginEventHandlerCocoa_h

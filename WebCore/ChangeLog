@@ -1,3 +1,14 @@
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6610666> Revise the Cocoa event model text API
+        
+        Add a NPCocoaEventTextInput event type. Remove the text input variables.
+        
+        * bridge/npapi.h:
+        (_NPCocoaEvent::):
+
 2009-03-13  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders.

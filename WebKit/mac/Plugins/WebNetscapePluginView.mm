@@ -67,7 +67,6 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKit/nptextinput.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <runtime/InitializeThreading.h>
@@ -1054,19 +1053,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     // Create the event handler
     _eventHandler.set(WebNetscapePluginEventHandler::create(self));
-    
-    // Get the text input vtable
-    if (eventModel == NPEventModelCocoa) {
-        [self willCallPlugInFunction];
-        {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
-            NPPluginTextInputFuncs *value = 0;
-            if (![_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
-                textInputFuncs = value;
-        }
-        [self didCallPlugInFunction];
-    }
-    
+        
     return YES;
 }
 
@@ -1139,8 +1126,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [_pluginPackage.get() close];
     
     _eventHandler.clear();
-    
-    textInputFuncs = 0;
 }
 
 - (NPEventModel)eventModel
@@ -1408,159 +1393,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         _manualStream->didFinishLoading(0);
 }
 
-#pragma mark NSTextInput implementation
-
 - (NSTextInputContext *)inputContext
 {
-#ifndef NP_NO_CARBON
-    if (!_isStarted || eventModel == NPEventModelCarbon)
-        return nil;
-#endif
-
-    return [super inputContext];
-}
-
-- (BOOL)hasMarkedText
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-    
-    if (textInputFuncs && textInputFuncs->hasMarkedText)
-        return textInputFuncs->hasMarkedText(plugin);
-    
-    return NO;
-}
-
-- (void)insertText:(id)aString
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-    
-    if (textInputFuncs && textInputFuncs->insertText)
-        textInputFuncs->insertText(plugin, aString);
-}
-
-- (NSRange)markedRange
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->markedRange)
-        return textInputFuncs->markedRange(plugin);
-    
-    return NSMakeRange(NSNotFound, 0);
-}
-
-- (NSRange)selectedRange
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->selectedRange)
-        return textInputFuncs->selectedRange(plugin);
-
-    return NSMakeRange(NSNotFound, 0);
-}    
-
-- (void)setMarkedText:(id)aString selectedRange:(NSRange)selRange
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->setMarkedText)
-        textInputFuncs->setMarkedText(plugin, aString, selRange);
-}
-
-- (void)unmarkText
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-    
-    if (textInputFuncs && textInputFuncs->unmarkText)
-        textInputFuncs->unmarkText(plugin);
-}
-
-- (NSArray *)validAttributesForMarkedText
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-        
-    if (textInputFuncs && textInputFuncs->validAttributesForMarkedText)
-        return textInputFuncs->validAttributesForMarkedText(plugin);
-    
-    return [NSArray array];
-}
-
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-    
-    if (textInputFuncs && textInputFuncs->attributedSubstringFromRange)
-        return textInputFuncs->attributedSubstringFromRange(plugin, theRange);
-
     return nil;
 }
-
-- (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->characterIndexForPoint) {
-        // Convert the point to window coordinates
-        NSPoint point = [[self window] convertScreenToBase:thePoint];
-        
-        // And view coordinates
-        point = [self convertPoint:point fromView:nil];
-        
-        return textInputFuncs->characterIndexForPoint(plugin, point);
-    }        
-
-    return NSNotFound;
-}
-
-- (void)doCommandBySelector:(SEL)aSelector
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->doCommandBySelector)
-        textInputFuncs->doCommandBySelector(plugin, aSelector);
-}
-
-- (NSRect)firstRectForCharacterRange:(NSRange)theRange
-{
-    ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT(_isStarted);
-
-    if (textInputFuncs && textInputFuncs->firstRectForCharacterRange) {
-        NSRect rect = textInputFuncs->firstRectForCharacterRange(plugin, theRange);
-        
-        // Convert the rect to window coordinates
-        rect = [self convertRect:rect toView:nil];
-        
-        // Convert the rect location to screen coordinates
-        rect.origin = [[self window] convertBaseToScreen:rect.origin];
-        
-        return rect;
-    }
-
-    return NSZeroRect;
-}
-
-// test for 10.4 because of <rdar://problem/4243463>
-#ifdef BUILDING_ON_TIGER
-- (long)conversationIdentifier
-{
-    return (long)self;
-}
-#else
-- (NSInteger)conversationIdentifier
-{
-    return (NSInteger)self;
-}
-#endif
 
 @end
 
@@ -1997,18 +1833,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [[self window] displayIfNeeded];
 }
 
-static NPBrowserTextInputFuncs *browserTextInputFuncs()
-{
-    static NPBrowserTextInputFuncs inputFuncs = {
-        0,
-        sizeof(NPBrowserTextInputFuncs),
-        NPN_MarkedTextAbandoned,
-        NPN_MarkedTextSelectionChanged
-    };
-    
-    return &inputFuncs;
-}
-
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value
 {
     switch (variable) {
@@ -2093,14 +1917,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
             *(NPBool *)value = TRUE;
             return NPERR_NO_ERROR;
         }
-            
-        case NPNVbrowserTextInputFuncs:
-        {
-            if (eventModel == NPEventModelCocoa) {
-                *(NPBrowserTextInputFuncs **)value = browserTextInputFuncs();
-                return NPERR_NO_ERROR;
-            }
-        }
+
         default:
             break;
     }

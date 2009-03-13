@@ -28,7 +28,6 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import <WebKit/npapi.h>
-#import <WebKit/nptextinput.h>
 
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
@@ -190,20 +189,6 @@ void NPN_UnscheduleTimer(NPP instance, uint32 timerID)
 NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
 {
     return [pluginViewForInstance(instance) popUpContextMenu:menu];
-}
-
-void NPN_MarkedTextAbandoned(NPP instance)
-{
-    WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
-    
-    [[NSInputManager currentInputManager] markedTextAbandoned:pluginView];
-}
-
-void NPN_MarkedTextSelectionChanged(NPP instance, NSRange newSel)
-{
-    WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
-    
-    [[NSInputManager currentInputManager] markedTextSelectionChanged:newSel client:pluginView];
 }
 
 #endif
