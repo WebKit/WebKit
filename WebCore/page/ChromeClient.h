@@ -42,6 +42,7 @@ namespace WebCore {
     class FileChooser;
     class FloatRect;
     class Frame;
+    class Geolocation;
     class HitTestResult;
     class IntRect;
     class Node;
@@ -152,8 +153,10 @@ namespace WebCore {
                                           float value, float proportion, ScrollbarControlPartMask);
         virtual bool paintCustomScrollCorner(GraphicsContext*, const FloatRect&);
 
-        virtual bool shouldAllowGeolocationForFrame(Frame*) { return false; }
-
+        // This is an asynchronous call. The ChromeClient can display UI asking the user for permission
+        // to use Geolococation. The ChromeClient must call Geolocation::setShouldClearCache() appropriately.
+        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) { }
+            
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
 
         // Notification that the given form element has changed. This function

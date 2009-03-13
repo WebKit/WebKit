@@ -74,6 +74,7 @@ enum {
     WebMenuItemTagTextDirectionRightToLeft,
     WebMenuItemTagBaseApplication = 10000
 };
+@class WebGeolocation;
 @class WebSecurityOrigin;
 
 @interface NSObject (WebUIDelegatePrivate)
@@ -110,6 +111,6 @@ enum {
 - (BOOL)webView:(WebView *)sender shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename;
 - (NSString *)webView:(WebView *)sender generateReplacementFile:(NSString *)path;
 
-- (BOOL)webView:(WebView *)sender shouldAllowLocationServicesForFrame:(WebFrame *)frame securityOrigin:(WebSecurityOrigin *)origin;
+- (BOOL)webView:(WebView *)sender frame:(WebFrame *)frame requestGeolocationPermission:(WebGeolocation *)geolocation securityOrigin:(WebSecurityOrigin *)origin;
 
 @end

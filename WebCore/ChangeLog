@@ -1,3 +1,37 @@
+2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Update Geolocation perimission dialogs to be asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=24505
+
+        Geolocation now requests permission from the Chrome asynchronously.
+        The Chrome is passed the Geolocation object, and the Chrome sets the permission
+        on the Geolocation. Geolocation also tracks if the Chrome should clear its cache
+        of SecurityOrigins with geolocation permission. This is so that the GeolocationService
+        can inform the Chrome of its request, and the Chrome is also free to implement its
+        own policy.
+        
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::requestGeolocationPermissionForFrame):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::requestGeolocationPermissionForFrame):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        (WebCore::Geolocation::setIsAllowed):
+        (WebCore::Geolocation::displayChallengeIfNecessary):
+        (WebCore::Geolocation::geolocationServicePositionChanged):
+        * page/Geolocation.h:
+        (WebCore::Geolocation::isAllowed):
+        (WebCore::Geolocation::setShouldClearCache):
+        (WebCore::Geolocation::shouldClearCache):
+        (WebCore::Geolocation::):
+
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

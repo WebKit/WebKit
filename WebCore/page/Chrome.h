@@ -38,6 +38,7 @@ namespace WebCore {
     class ContextMenu;
     class FloatRect;
     class Frame;
+    class Geolocation;
     class HitTestResult;
     class IntRect;
     class Page;
@@ -119,7 +120,7 @@ namespace WebCore {
         void enableSuddenTermination();
         void disableSuddenTermination();
 
-        bool shouldAllowGeolocationForFrame(Frame*);
+        void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 

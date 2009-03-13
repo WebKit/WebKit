@@ -314,6 +314,9 @@
 		EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
+		FEF52DFA0F6748F200FF70EE /* WebGeolocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEF52DF70F6748F200FF70EE /* WebGeolocation.mm */; };
+		FEF52DFB0F6748F200FF70EE /* WebGeolocationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF52DF80F6748F200FF70EE /* WebGeolocationInternal.h */; };
+		FEF52DFC0F6748F200FF70EE /* WebGeolocationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF52DF90F6748F200FF70EE /* WebGeolocationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -630,6 +633,9 @@
 		F834AAD60E64B1C700E2737C /* WebTextIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextIterator.mm; sourceTree = "<group>"; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAuthenticationPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		FEF52DF70F6748F200FF70EE /* WebGeolocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGeolocation.mm; sourceTree = "<group>"; };
+		FEF52DF80F6748F200FF70EE /* WebGeolocationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationInternal.h; sourceTree = "<group>"; };
+		FEF52DF90F6748F200FF70EE /* WebGeolocationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1099,6 +1105,9 @@
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
 				931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */,
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
+				FEF52DF70F6748F200FF70EE /* WebGeolocation.mm */,
+				FEF52DF80F6748F200FF70EE /* WebGeolocationInternal.h */,
+				FEF52DF90F6748F200FF70EE /* WebGeolocationPrivate.h */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
 				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
@@ -1385,6 +1394,8 @@
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
 				1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */,
+				FEF52DFB0F6748F200FF70EE /* WebGeolocationInternal.h in Headers */,
+				FEF52DFC0F6748F200FF70EE /* WebGeolocationPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1692,6 +1703,7 @@
 				939810DD0824BF01008DF038 /* npapi.mm in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
+				FEF52DFA0F6748F200FF70EE /* WebGeolocation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

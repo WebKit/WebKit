@@ -34,6 +34,7 @@
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
+#import "WebGeolocationInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
@@ -49,6 +50,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/Geolocation.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Page.h>
@@ -664,19 +666,17 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 }
 #endif
 
-bool WebChromeClient::shouldAllowGeolocationForFrame(Frame* frame)
+void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    BOOL result = NO;
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-    result = CallUIDelegateReturningBoolean(NO, m_webView, @selector(webView:shouldAllowLocationServicesForFrame:securityOrigin:), kit(frame), webOrigin);
+    WebGeolocation *webGeolocation = [[WebGeolocation alloc] _initWithWebCoreGeolocation:geolocation];
+    CallUIDelegate(m_webView, @selector(webView:frame:requestGeolocationPermission:securityOrigin:), kit(frame), webGeolocation, webOrigin);
     [webOrigin release];
+    [webGeolocation release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
-
-    return result;
 }
 
 @implementation WebOpenPanelResultListener

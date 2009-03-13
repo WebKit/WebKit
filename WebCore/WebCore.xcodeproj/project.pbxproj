@@ -4465,13 +4465,13 @@
 		FE80D7AA0E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */; };
 		FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */; };
 		FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */; };
-		FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7B80E9C1F25000D6F75 /* Geolocation.h */; settings = {ATTRIBUTES = (); }; };
+		FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7B80E9C1F25000D6F75 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80D7C80E9C1F25000D6F75 /* Geoposition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */; };
 		FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */; };
-		FE80D7CB0E9C1F25000D6F75 /* PositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */; };
+		FE80D7CB0E9C1F25000D6F75 /* PositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80D7CD0E9C1F25000D6F75 /* PositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BF0E9C1F25000D6F75 /* PositionError.h */; };
-		FE80D7CF0E9C1F25000D6F75 /* PositionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */; };
-		FE80D7D10E9C1F25000D6F75 /* PositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */; };
+		FE80D7CF0E9C1F25000D6F75 /* PositionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE80D7D10E9C1F25000D6F75 /* PositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */; };
 		FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA600E9C4703000D6F75 /* JSGeolocation.h */; };
 		FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */; };
@@ -4479,7 +4479,7 @@
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
 		FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */; };
-		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; settings = {ATTRIBUTES = (); }; };
+		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */

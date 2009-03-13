@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "Geolocation.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -387,14 +388,14 @@ void Chrome::enableSuddenTermination()
     m_client->enableSuddenTermination();
 }
 
-bool Chrome::shouldAllowGeolocationForFrame(Frame* frame)
+void Chrome::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     // Defer loads in case the client method runs a new event loop that would 
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
-    return m_client->shouldAllowGeolocationForFrame(frame);
+    m_client->requestGeolocationPermissionForFrame(frame, geolocation);
 }
 
 void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)

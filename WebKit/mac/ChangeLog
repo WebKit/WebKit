@@ -1,3 +1,28 @@
+2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Update Geolocation perimission dialogs to be asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=24505
+
+        WebGeolocation is a wrapper around WebCore::Geolocation. It mimics the
+        coding style set by WebSecurityOrigin.
+        
+        WebChromeClient now calls the private UI delegate method 
+        -webView:frame:requestGeolocationPermission:securityOrigin:
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestGeolocationPermissionForFrame):
+        * WebCoreSupport/WebGeolocation.mm: Added.
+        (WebCore::if):
+        (-[WebGeolocation shouldClearCache]):
+        (-[WebGeolocation setIsAllowed:]):
+        (-[WebGeolocation dealloc]):
+        * WebCoreSupport/WebGeolocationInternal.h: Added.
+        * WebCoreSupport/WebGeolocationPrivate.h: Added.
+        * WebView/WebUIDelegatePrivate.h:
+
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
