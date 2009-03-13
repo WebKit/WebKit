@@ -1,3 +1,12 @@
+2009-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - skip editing/selection/word-thai.html on Tiger because it has an older
+          version of Unicode.
+
+        * platform/mac-tiger/Skipped:
+
 2009-02-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.
