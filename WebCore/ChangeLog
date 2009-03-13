@@ -1,3 +1,27 @@
+2009-03-13  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24584
+
+        Fix transparent text rendering on Chromium.  FontChromiumWin
+        was calling beginTransparencyLayer()/endTransparencyLayer(), with
+        a TransparencyWin inside to do GDI ClearType rendering over an
+        opaque background.  TransparencyWin does its special sauce
+        in the destructor, but it was being called too late to be used
+        correctly in the layer.  Put the special sauce into a new function,
+        composite(), and call that explicitly instead.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::~TransparencyWin):
+        (WebCore::TransparencyWin::composite):
+        (WebCore::TransparencyWin::init):
+        * platform/graphics/chromium/TransparencyWin.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+
 2009-03-13  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Dimitri Glazkov.

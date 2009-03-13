@@ -134,6 +134,9 @@ public:
               TransformMode transformMode,
               const IntRect& region);
 
+    // Combines the source and destination bitmaps using the given mode.
+    void composite();
+
     // Returns the context for drawing into, which may be the destination
     // context, or a temporary one.
     GraphicsContext* context() const { return m_drawContext; }

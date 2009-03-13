@@ -157,10 +157,18 @@ TransparencyWin::TransparencyWin()
 
 TransparencyWin::~TransparencyWin()
 {
+    // This should be false, since calling composite() is mandatory.
+    ASSERT(!m_savedOnDrawContext);
+}
+
+void TransparencyWin::composite()
+{
     // Matches the save() in initializeNewTextContext (or the constructor for
     // SCALE) to put the context back into the same state we found it.
-    if (m_savedOnDrawContext)
+    if (m_savedOnDrawContext) {
         m_drawContext->restore();
+        m_savedOnDrawContext = false;
+    }
 
     switch (m_layerMode) {
     case NoLayer:
@@ -178,7 +186,8 @@ TransparencyWin::~TransparencyWin()
 void TransparencyWin::init(GraphicsContext* dest,
                            LayerMode layerMode,
                            TransformMode transformMode,
-                           const IntRect& region) {
+                           const IntRect& region)
+{
     m_destContext = dest;
     m_orgTransform = dest->getCTM();
     m_layerMode = layerMode;
