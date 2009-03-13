@@ -1,5 +1,19 @@
 2009-03-13  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24575
+        XHR response is incorrect after a network error.
+
+        * http/tests/xmlhttprequest/cross-site-denied-response-expected.txt: Added.
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-2-expected.txt: Added.
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-2.html: Added.
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync.html: Added.
+        * http/tests/xmlhttprequest/cross-site-denied-response.html: Added.
+
+2009-03-13  Alexey Proskuryakov  <ap@webkit.org>
+
         Updating results after the fix for bug 3547.
 
         * fast/loader/xmlhttprequest-missing-file-exception-expected.txt: The status text for

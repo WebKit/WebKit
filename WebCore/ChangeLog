@@ -1,3 +1,23 @@
+2009-03-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24575
+        XHR response is incorrect after a network error.
+
+        Tests: http/tests/xmlhttprequest/cross-site-denied-response-sync-2.html
+               http/tests/xmlhttprequest/cross-site-denied-response-sync.html
+               http/tests/xmlhttprequest/cross-site-denied-response.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::networkError): Call internalAbort() to fully reset the request.
+        (WebCore::XMLHttpRequest::didFailRedirectCheck): No need to call internalAbort() here. Note
+        that since internalAbort() can drop GC protection, it is not safe to use the object after
+        this call.
+        (WebCore::XMLHttpRequest::didReceiveData): Check that the request wasn't aborted, and
+        return early if it was. This can happen during sync requests, as the loader does not know
+        that it was aborted, and just synthesizes all callbacks.
+
 2009-03-13  Adam Bergkvist <adam.bergkvist@ericsson.com>
 
         Reviewed by Alexey Proskuryakov.
