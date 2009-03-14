@@ -12,18 +12,6 @@ release r deployment dep deploy: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 
-universal u: force
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386' | grep -v setenv && exit $${PIPESTATUS[0]} )
-
-x86_64: force
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=x86_64' | grep -v setenv && exit $${PIPESTATUS[0]} )
-
-64: force
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=i386 x86_64' | grep -v setenv && exit $${PIPESTATUS[0]} )
-
-64u: force
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc ppc64 i386 x86_64' | grep -v setenv && exit $${PIPESTATUS[0]} )
-
 clean:
 	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 

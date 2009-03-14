@@ -1,3 +1,15 @@
+2009-03-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove rarely used Makefile targets from the Makefile.
+
+        There are many situations in which the targets don't work as expected,
+        and their primary use is addressed by having the build system default
+        to building the appropriate architecture.
+
+        * Makefile.shared:
+
 2009-03-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
