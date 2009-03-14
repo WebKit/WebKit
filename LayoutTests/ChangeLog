@@ -1,3 +1,48 @@
+2009-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Shuffle layout tests and expected results around to fit the new search policy.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/accessibility/lists-expected.txt: Renamed from LayoutTests/accessibility/lists-expected.txt.
+        * platform/mac-leopard/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/accessibility/table-attributes-expected.txt.
+        * platform/mac-leopard/accessibility/table-cell-spans-expected.txt: Renamed from LayoutTests/accessibility/table-cell-spans-expected.txt.
+        * platform/mac-leopard/accessibility/table-cells-expected.txt: Renamed from LayoutTests/accessibility/table-cells-expected.txt.
+        * platform/mac-leopard/accessibility/table-detection-expected.txt: Renamed from LayoutTests/accessibility/table-detection-expected.txt.
+        * platform/mac-leopard/accessibility/table-sections-expected.txt: Renamed from LayoutTests/accessibility/table-sections-expected.txt.
+        * platform/mac-leopard/accessibility/table-with-aria-role-expected.txt: Renamed from LayoutTests/accessibility/table-with-aria-role-expected.txt.
+        * platform/mac-leopard/accessibility/table-with-rules-expected.txt: Renamed from LayoutTests/accessibility/table-with-rules-expected.txt.
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.checksum: Copied from LayoutTests/platform/mac/fast/text/atsui-multiple-renderers-expected.checksum.
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.png: Copied from LayoutTests/platform/mac/fast/text/atsui-multiple-renderers-expected.png.
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.txt: Copied from LayoutTests/platform/mac/fast/text/atsui-multiple-renderers-expected.txt.
+        * platform/mac-tiger/Skipped:
+        * platform/mac/accessibility/lists-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/lists-expected.txt.
+        * platform/mac/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-attributes-expected.txt.
+        * platform/mac/accessibility/table-cell-spans-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-cell-spans-expected.txt.
+        * platform/mac/accessibility/table-cells-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-cells-expected.txt.
+        * platform/mac/accessibility/table-detection-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-detection-expected.txt.
+        * platform/mac/accessibility/table-multi-bodies-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-multi-bodies-expected.txt.
+        * platform/mac/accessibility/table-multi-bodies.html: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-multi-bodies.html.
+        * platform/mac/accessibility/table-sections-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-sections-expected.txt.
+        * platform/mac/accessibility/table-updating-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-updating-expected.txt.
+        * platform/mac/accessibility/table-updating.html: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-updating.html.
+        * platform/mac/accessibility/table-with-aria-role-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-with-aria-role-expected.txt.
+        * platform/mac/accessibility/table-with-rules-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/table-with-rules-expected.txt.
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.checksum: Renamed from platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.checksum.
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.png: Renamed from platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.png.
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.txt: Renamed from platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.txt.
+        * platform/mac/fast/text/myanmar-shaping-expected.checksum: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/myanmar-shaping-expected.checksum.
+        * platform/mac/fast/text/myanmar-shaping-expected.png: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/myanmar-shaping-expected.png.
+        * platform/mac/fast/text/myanmar-shaping-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/myanmar-shaping-expected.txt.
+        * platform/mac/fast/text/myanmar-shaping.html: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/myanmar-shaping.html.
+        * platform/mac/fast/text/resources/Garuda.ttf: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/resources/Garuda.ttf.
+        * platform/mac/fast/text/resources/mm3.ttf: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/resources/mm3.ttf.
+        * platform/mac/fast/text/thai-combining-mark-positioning-expected.checksum: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.checksum.
+        * platform/mac/fast/text/thai-combining-mark-positioning-expected.png: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.png.
+        * platform/mac/fast/text/thai-combining-mark-positioning-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.txt.
+        * platform/mac/fast/text/thai-combining-mark-positioning.html: Renamed from LayoutTests/platform/mac-snowleopard/fast/text/thai-combining-mark-positioning.html.
+
 2009-03-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

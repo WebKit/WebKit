@@ -142,6 +142,8 @@ my $actualTag = "actual";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
+my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
+
 if (isTiger()) {
     $platform = "mac-tiger";
     $tolerance = 1.0;
@@ -1705,10 +1707,22 @@ sub buildPlatformHierarchy()
 {
     mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
 
-    my @platforms = split('-', $platform);
+    my @platforms;
+    if ($platform =~ /^mac-/) {
+        my $i;
+        for ($i = 0; $i < @macPlatforms; $i++) {
+            last if $macPlatforms[$i] eq $platform;
+        }
+        for (; $i < @macPlatforms; $i++) {
+            push @platforms, $macPlatforms[$i];
+        }
+    } else {
+        @platforms = $platform;
+    }
+
     my @hierarchy;
-    for (my $i=0; $i < @platforms; $i++) {
-        my $scoped = catdir($platformBaseDirectory, join('-', @platforms[0..($#platforms - $i)]));
+    for (my $i = 0; $i < @platforms; $i++) {
+        my $scoped = catdir($platformBaseDirectory, $platforms[$i]);
         push(@hierarchy, $scoped) if (-d $scoped);
     }
 

@@ -1,3 +1,18 @@
+2009-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Change the layout test result search policy for Mac OS X to fit better with the idea of
+        newer OS versions improving on previous OS versions.
+
+        The results for the latest version of Mac OS X are placed in the "mac" directory.  The
+        results for older versions of Mac OS X are structured as a series of overlays.  When
+        running on Leopard, the results in "mac-leopard" are searched before those in "mac".
+        When running on Tiger, the results in "mac-tiger" are searched before those in
+        "mac-leopard" and "mac".
+
+        * Scripts/run-webkit-tests:
+
 2009-03-13  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
