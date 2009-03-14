@@ -37,26 +37,22 @@ use webkitdirs;
 use POSIX;
 
 # determine configuration
-my $configuration;
 setConfiguration();
-$configuration = configuration();
+my $configuration = configuration();
 
 my $jsDriverArgs = "";
 my $root; # intentionally left undefined
-my $run64Bit = 0;
 my $showHelp = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
-  --64-bit                      Use the 64bit jsc binary
   --jsDriver-args=              A string of arguments to pass to jsDriver.pl
   --root=                       Path to pre-built root containing jsc
 EOF
 
 GetOptions(
-    '64-bit' => \$run64Bit,
     'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
     'help' => \$showHelp
@@ -75,22 +71,10 @@ if ($showHelp) {
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 
-if (isAppleMacWebKit() && !isTiger()) {
-    my $preferredArch = preferredArchitecture("JavaScriptCore");
-    setRun64Bit($run64Bit);
-    my $arch = preferredArchitecture("JavaScriptCore");
-    if ($arch ne $preferredArch) {
-        push(@jsArgs, "-a", $arch);
-    }
-}
-
 if (!defined($root)){
     chdirWebKit();
 
     push(@buildArgs, argumentsForConfiguration());
-
-    my $arch = preferredArchitecture("JavaScriptCore");
-    push(@buildArgs, "ARCHS=$arch") if (isAppleMacWebKit());
     
     print "Running: build-jsc " . join(" ", @buildArgs) . "\n";
     my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @buildArgs;

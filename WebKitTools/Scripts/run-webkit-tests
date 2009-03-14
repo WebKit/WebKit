@@ -103,7 +103,6 @@ sub writeToFile($$);
 # Argument handling
 my $addPlatformExceptions = 0;
 my $complexText = 0;
-my $configuration = configuration();
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
@@ -134,7 +133,6 @@ my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
 my @leaksFilenames;
-my $run64Bit;
 
 # Default to --no-http for Qt, Gtk and wx for now.
 $testHTTP = 0 if (isQt() || isGtk() || isWx());
@@ -209,15 +207,12 @@ Usage: $programName [options] [testdir|testpath ...]
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
-  --64-bit                        run in 64bit mode
 EOF
 
-# Process @ARGV for configuration switches before calling GetOptions()
-$configuration = passedConfiguration() || configuration();
+setConfiguration();
 
 my $getOptionsResult = GetOptions(
     'complex-text' => \$complexText,
-    'c|configuration=s' => \$configuration,
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
     'http!' => \$testHTTP,
@@ -247,7 +242,6 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
     'merge-leak-depth|m:5' => \$mergeDepth,
-    '64-bit!' => \$run64Bit
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -260,7 +254,7 @@ my $skippedOnly = $treatSkipped eq "only";
 
 !$skippedOnly || @ARGV == 0 or die "--skipped=only cannot be used when tests are specified on the command line.";
 
-setConfiguration($configuration);
+my $configuration = configuration();
 
 $testsPerDumpTool = 1000 if !$testsPerDumpTool;
 
@@ -277,18 +271,12 @@ setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if isQt();
 $productDir .= "/Programs" if isGtk();
-setRun64Bit($run64Bit);
 
 chdirWebKit();
 
 if (!defined($root)) {
     # Push the parameters to build-dumprendertree as an array
     my @args = argumentsForConfiguration();
-
-    if (isAppleMacWebKit()) {
-        my $arch = preferredArchitecture();
-        push(@args, "ARCHS=$arch");
-    }
 
     my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
     if ($buildResult) {
@@ -1246,13 +1234,8 @@ sub openDumpTool()
         setPathForRunningWebKitApp(\%ENV) if isCygwin();
     }
 
-    exportArchPreference();
+    my @args = ($dumpTool, @toolArgs);
 
-    my @args = @toolArgs;
-    unshift @args, $dumpTool;
-    if (isAppleMacWebKit and !isTiger()) {
-        unshift @args, "arch";
-    }
     if ($useValgrind) {
         unshift @args, "valgrind";
     } 

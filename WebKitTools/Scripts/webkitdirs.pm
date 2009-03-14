@@ -45,6 +45,7 @@ BEGIN {
 
 our @EXPORT_OK;
 
+my $architecture;
 my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
@@ -58,7 +59,6 @@ my $isGtk;
 my $isWx;
 my @wxArgs;
 my $isChromium;
-my $forceRun64Bit;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -167,13 +167,39 @@ sub determineConfiguration
     }
 }
 
+sub determineArchitecture
+{
+    return if defined $architecture;
+    return unless isAppleMacWebKit();
+
+    determineBaseProductDir();
+    if (open ARCHITECTURE, "$baseProductDir/Architecture") {
+        $architecture = <ARCHITECTURE>;
+        close ARCHITECTURE;
+    }
+    if ($architecture) {
+        chomp $architecture;
+    } else {
+        if (isTiger() or isLeopard()) {
+            $architecture = `arch`;
+        } else {
+            my $supports64Bit = `sysctl -n hw.optional.x86_64`;
+            chomp $supports64Bit;
+            $architecture = $supports64Bit ? 'x86_64' : `arch`;
+        }
+        chomp $architecture;
+    }
+}
+
 sub argumentsForConfiguration()
 {
     determineConfiguration();
+    determineArchitecture();
 
     my @args = ();
     push(@args, '--debug') if $configuration eq "Debug";
     push(@args, '--release') if $configuration eq "Release";
+    push(@args, '--32-bit') if $architecture ne "x86_64";
     push(@args, '--qt') if isQt();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wx') if isWx();
@@ -264,7 +290,8 @@ sub XcodeOptions
 {
     determineBaseProductDir();
     determineConfiguration();
-    return (@baseProductDirOption, "-configuration", $configuration);
+    determineArchitecture();
+    return (@baseProductDirOption, "-configuration", $configuration, "ARCHS=$architecture");
 }
 
 sub XcodeOptionString
@@ -329,6 +356,8 @@ sub passedConfiguration
 
 sub setConfiguration
 {
+    setArchitecture();
+
     if (my $config = shift @_) {
         $configuration = $config;
         return;
@@ -337,6 +366,52 @@ sub setConfiguration
     determinePassedConfiguration();
     $configuration = $passedConfiguration if $passedConfiguration;
 }
+
+
+my $passedArchitecture;
+my $searchedForPassedArchitecture;
+sub determinePassedArchitecture
+{
+    return if $searchedForPassedArchitecture;
+    $searchedForPassedArchitecture = 1;
+
+    return unless isAppleMacWebKit();
+
+    for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--32-bit$/i) {
+            splice(@ARGV, $i, 1);
+            $passedArchitecture = `arch`;
+            chomp $passedArchitecture;
+            return;
+        }
+    }
+    $passedArchitecture = undef;
+}
+
+sub passedArchitecture
+{
+    determinePassedArchitecture();
+    return $passedArchitecture;
+}
+
+sub architecture()
+{
+    determineArchitecture();
+    return $architecture;
+}
+
+sub setArchitecture
+{
+    if (my $arch = shift @_) {
+        $architecture = $arch;
+        return;
+    }
+
+    determinePassedArchitecture();
+    $architecture = $passedArchitecture if $passedArchitecture;
+}
+
 
 sub safariPathFromSafariBundle
 {
@@ -1145,9 +1220,8 @@ sub runSafari
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        exportArchPreference();
-        if (!isTiger()) {
-            return system "arch", safariPath(), @ARGV;
+        if (architecture()) {
+            return system "arch", "-" . architecture(), safariPath(), @ARGV;
         } else {
             return system safariPath(), @ARGV;
         }
@@ -1168,40 +1242,6 @@ sub runSafari
     }
 
     return 1;
-}
-
-sub setRun64Bit($)
-{
-    ($forceRun64Bit) = @_;
-}
-
-sub preferredArchitecture
-{
-    return unless isAppleMacWebKit();
-    
-    my $framework = shift;
-    $framework = "WebKit" if !defined($framework);
-
-    my $currentArchitecture = `arch`;
-    chomp($currentArchitecture);
-
-    my $run64Bit = 0;
-    if (!defined($forceRun64Bit)) {
-        my $frameworkPath = builtDylibPathForName($framework);
-        die "Couldn't find path for $framework" if !defined($frameworkPath);
-        # The binary is 64-bit if one of the architectures it contains has "64" in the name
-        $run64Bit = `lipo -info "$frameworkPath"` =~ /(are|architecture):.*64/;
-    }
-
-    if ($forceRun64Bit or $run64Bit) {
-        return ($currentArchitecture eq "i386") ? "x86_64" : "ppc64";
-    }
-    return $currentArchitecture;
-}
-
-sub exportArchPreference
-{
-    $ENV{ARCHPREFERENCE} = preferredArchitecture() if isAppleMacWebKit();
 }
 
 1;

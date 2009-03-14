@@ -30,31 +30,9 @@
 
 use strict;
 use FindBin;
-use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $programName = basename($0);
-my $showHelp = 0;
-my $run64Bit;
-
-my $usage = <<EOF;
-Usage: $programName [options]
-  --help                          Show this help message
-  --64-bit                        Run in 64-bit mode
-EOF
-
-my $getOptionsResult = GetOptions(
-    'help' => \$showHelp,
-    '64-bit!' => \$run64Bit
-);
-
-if (!$getOptionsResult || $showHelp) {
-    print STDERR $usage;
-    exit 1;
-}
-
-setRun64Bit($run64Bit);
 setConfiguration();
 
 # Check to see that all the frameworks are built.

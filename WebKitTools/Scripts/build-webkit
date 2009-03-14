@@ -61,8 +61,6 @@ my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple
 my $geolocationSupport = (isAppleMacWebKit() && !isTiger() && !isLeopard());
 my $showHelp = 0;
 my $clean = 0;
-my $buildUniversal = 0;
-my $buildSixtyFourBit = 0;
 my $threeDTransformsSupport = 0;
 
 my $programName = basename($0);
@@ -73,8 +71,6 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                    Build the Chromium port on Mac/Win/Linux
   --clean                       Cleanup the build directory
   --gtk                         Build the GTK+ port
-  --universal                   Build 2-way universal (PPC and Intel 32-bit)
-  --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
   --[no-]3d-transforms          Toggle 3D Transforms support (default: $threeDTransformsSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
@@ -121,8 +117,6 @@ GetOptions(
            'geolocation!' => \$geolocationSupport,
            'coverage!' => \$coverageSupport,
            'help' => \$showHelp,
-           'universal' => \$buildUniversal,
-           '64-bit' => \$buildSixtyFourBit,
            'clean' => \$clean);
 
 if ($showHelp) {
@@ -189,21 +183,6 @@ for my $dir (@projects, @otherDirs) {
 }
 
 my @options = ();
-
-if ($buildSixtyFourBit && isAppleMacWebKit()) {
-    my $cpuVendor = `sysctl -n machdep.cpu.vendor`;
-    chomp $cpuVendor;
-
-    if ($buildUniversal) {
-        push(@options, "ARCHS=ppc ppc64 i386 x86_64");
-    } elsif ($cpuVendor eq "GenuineIntel") {
-        push(@options, "ARCHS=i386 x86_64");
-    } else {
-        push(@options, "ARCHS=ppc ppc64");
-    }
-} elsif ($buildUniversal && isAppleMacWebKit()) {
-    push(@options, "ARCHS=ppc i386");
-}
 
 # enable autotool options accordingly
 if (isGtk()) {

@@ -31,11 +31,49 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --32-bit                Set the default architecture to 32-bit
+  --64-bit                Set the default architecture to 64-bit
+  --debug                 Set the default configuration to debug
+  --release               Set the default configuration to release
+EOF
+
 my $configuration = passedConfiguration();
-die "Please specify either --debug or --release.\n" if !$configuration;
+my $architecture = passedArchitecture();
+
+if (!$architecture) {
+    # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
+    for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--64-bit$/i) {
+            splice(@ARGV, $i, 1);
+            $architecture = 'x86_64';
+        }
+    }
+}
+
+if (!$configuration && !$architecture) {
+    print STDERR $usage;
+    exit 1;
+}
 
 my $baseProductDir = baseProductDir();
 system "mkdir", "-p", "$baseProductDir";
-open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
-print CONFIGURATION $configuration;
-close CONFIGURATION;
+
+if ($configuration) {
+    open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
+    print CONFIGURATION $configuration;
+    close CONFIGURATION;
+}
+
+if ($architecture) {
+    if ($architecture ne "x86_64") {
+        open ARCHITECTURE, ">", "$baseProductDir/Architecture" or die;
+        print ARCHITECTURE $architecture;
+        close ARCHITECTURE;
+    } else {
+        unlink "$baseProductDir/Architecture";
+    }
+}

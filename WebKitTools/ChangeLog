@@ -1,3 +1,24 @@
+2009-03-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the --64-bit argument from scripts in favor of them detecting when 64-bit should be preferred.
+
+        The scripts will automatically target 64-bit if the system and hardware support it.  This can be
+        overridden by passing --32-bit to individual scripts, or using set-webkit-configuration --32-bit
+        to make the override persistent.
+
+        * Scripts/build-webkit: Remove architecture-related code.
+        * Scripts/gdb-safari: Remove architecture-related code, and clean up how the environment variables are passed to gdb.
+        * Scripts/run-javascriptcore-tests: Remove architecture-related code.
+        * Scripts/run-safari: Ditto.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/set-webkit-configuration: Handle the --32-bit and --64-bit arguments.  The --32-bit argument will set the
+        architecture preference to the 32-bit architecture of the machine.  The --64-bit argument will remove any architecture
+        override that is in effect so that 64-bit support will be automatically detected.
+        * Scripts/webkitdirs.pm: Add auto-detection of the best architecture for the machine, and the ability to override the
+        auto-detection.
+
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
