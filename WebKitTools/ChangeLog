@@ -1,5 +1,14 @@
 2009-03-13  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Take advantage of the ability of recent versions of Xcode to easily switch the active
+        architecture.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+
+2009-03-13  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         Remove the --64-bit argument from scripts in favor of them detecting when 64-bit should be preferred.

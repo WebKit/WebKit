@@ -1,5 +1,14 @@
 2009-03-13  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Take advantage of the ability of recent versions of Xcode to easily switch the active
+        architecture.
+
+        * Configurations/DebugRelease.xcconfig:
+
+2009-03-13  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by David Kilzer.
 
         Prevent AllInOneFile.cpp and ProfileGenerator.cpp from rebuilding unnecessarily when
