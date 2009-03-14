@@ -522,5 +522,7 @@ all-local:
 clean-local:
 	-rm -rf $(GENPROGRAMS)
 
-maintainer-clean-local distclean-local:
+maintainer-clean-local: distclean-local
+
+distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
