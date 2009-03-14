@@ -36,17 +36,29 @@ namespace WebCore {
 
 bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name)
 {
-    return equalIgnoringCase(name, "accept") || equalIgnoringCase(name, "accept-language") || equalIgnoringCase(name, "content-type");
+    return equalIgnoringCase(name, "accept")
+            || equalIgnoringCase(name, "accept-language")
+            || equalIgnoringCase(name, "content-language")
+            || equalIgnoringCase(name, "content-type");
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
 {
-    if (method != "GET" && method != "POST")
+    if (method != "GET" && method != "HEAD" && method != "POST")
         return false;
 
     HTTPHeaderMap::const_iterator end = headerMap.end();
     for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it) {
         if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->first))
+            return false;
+    }
+
+    HTTPHeaderMap::const_iterator contentTypeIter = headerMap.find("Content-Type");
+    if (contentTypeIter != headerMap.end()) {
+        const String& contentType = contentTypeIter->second;
+        if (!equalIgnoringCase(contentType, "application/x-www-form-urlencoded")
+             && !equalIgnoringCase(contentType, "multipart/form-data")
+             && !equalIgnoringCase(contentType, "text/plain"))
             return false;
     }
 

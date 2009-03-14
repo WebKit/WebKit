@@ -1,0 +1,28 @@
+<html>
+<body>
+<pre id='console'></pre>
+<script type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+    }
+
+    try {
+        var xhr = new XMLHttpRequest;
+        xhr.open("POST", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-whitelist-request-headers.cgi", false);
+        xhr.setRequestHeader("Accept", "*");
+        xhr.setRequestHeader("Accept-Language", "ru");
+        xhr.setRequestHeader("Content-Language", "ru");
+        xhr.setRequestHeader("Content-Type", "text/plain");
+        xhr.send("");
+    
+        log(xhr.responseText);
+    } catch (ex) {
+        log("Unexpected exception: " + ex);
+    }
+</script>
+</body>
+</html>
