@@ -47,16 +47,16 @@ namespace WebCore {
 
         ResourceRequest(const String& url) 
             : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
-            , m_frame(0)
-            , m_originPid(0)
+            , m_requestorID(0)
+            , m_requestorProcessID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
 
         ResourceRequest(const KURL& url, const CString& securityInfo) 
             : ResourceRequestBase(url, UseProtocolCachePolicy)
-            , m_frame(0)
-            , m_originPid(0)
+            , m_requestorID(0)
+            , m_requestorProcessID(0)
             , m_targetType(TargetIsSubResource)
             , m_securityInfo(securityInfo)
         {
@@ -64,16 +64,16 @@ namespace WebCore {
 
         ResourceRequest(const KURL& url) 
             : ResourceRequestBase(url, UseProtocolCachePolicy)
-            , m_frame(0)
-            , m_originPid(0)
+            , m_requestorID(0)
+            , m_requestorProcessID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
 
         ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
             : ResourceRequestBase(url, policy)
-            , m_frame(0)
-            , m_originPid(0)
+            , m_requestorID(0)
+            , m_requestorProcessID(0)
             , m_targetType(TargetIsSubResource)
         {
             setHTTPReferrer(referrer);
@@ -81,26 +81,30 @@ namespace WebCore {
         
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
-            , m_frame(0)
-            , m_originPid(0)
+            , m_requestorID(0)
+            , m_requestorProcessID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
 
-        // Provides context for the resource request.
-        Frame* frame() const { return m_frame; }
-        void setFrame(Frame* frame) { m_frame = frame; }
+        // Allows the request to be matched up with its requestor.
+        int requestorID() const { return m_requestorID; }
+        void setRequestorID(int requestorID) { m_requestorID = requestorID; }
 
         // What this request is for.
-        void setTargetType(TargetType type) { m_targetType = type; }
         TargetType targetType() const { return m_targetType; }
-        
-        // The origin pid is the process id of the process from which this
-        // request originated. In the case of out-of-process plugins, this
-        // allows to link back the request to the plugin process (as it is
-        // processed through a render view process).
-        int originPid() const { return m_originPid; }
-        void setOriginPid(int originPid) { m_originPid = originPid; }
+        void setTargetType(TargetType type) { m_targetType = type; }
+
+        // The document's policy base url.
+        KURL policyURL() const { return m_policyURL; }
+        void setPolicyURL(const KURL& policyURL) { m_policyURL = policyURL; }
+
+        // The process id of the process from which this request originated. In
+        // the case of out-of-process plugins, this allows to link back the
+        // request to the plugin process (as it is processed through a render
+        // view process).
+        int requestorProcessID() const { return m_requestorProcessID; }
+        void setRequestorProcessID(int requestorProcessID) { m_requestorProcessID = requestorProcessID; }
 
         // Opaque buffer that describes the security state (including SSL
         // connection state) for the resource that should be reported when the
@@ -117,10 +121,11 @@ namespace WebCore {
         void doUpdatePlatformRequest() {}
         void doUpdateResourceRequest() {}
 
-        Frame* m_frame;
-        int m_originPid;
+        int m_requestorID;
+        int m_requestorProcessID;
         TargetType m_targetType;
         CString m_securityInfo;
+        KURL m_policyURL;
     };
 
 } // namespace WebCore

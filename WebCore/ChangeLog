@@ -1,3 +1,20 @@
+2009-03-13  John Abd-El-Malek  <jam@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24593
+        Added requestorID so we can track the request to its WebView without using frame (which was removed).
+
+        * platform/network/chromium/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::requestorID):
+        (WebCore::ResourceRequest::setRequestorID):
+        (WebCore::ResourceRequest::setTargetType):
+        (WebCore::ResourceRequest::policyURL):
+        (WebCore::ResourceRequest::setPolicyURL):
+        (WebCore::ResourceRequest::requestorPid):
+        (WebCore::ResourceRequest::setRequestorPid):
+
 2009-03-13  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Dimitri Glazkov.
