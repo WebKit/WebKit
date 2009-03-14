@@ -7,9 +7,9 @@ layer at (0,0) size 800x184
         RenderText {#text} at (0,0) size 324x22
           text run at (0,0) width 324: "This page contains the following errors:"
       RenderBlock {div} at (18,60) size 732x14
-        RenderText {#text} at (0,0) size 560x14
-          text run at (0,0) width 560: "error on line 7 at column 29: Opening and ending tag mismatch: p line 0 and body"
-          text run at (560,0) width 0: " "
+        RenderText {#text} at (0,0) size 553x14
+          text run at (0,0) width 553: "error on line 7 at column 8: Opening and ending tag mismatch: p line 0 and body"
+          text run at (553,0) width 0: " "
       RenderBlock {h3} at (18,92) size 732x22
         RenderText {#text} at (0,0) size 429x22
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."

@@ -1,5 +1,52 @@
 2009-03-14  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Update layout test results to accommodate slight changes in error messages in the latest version of libxml2.
+
+        * fast/dom/getElementsByClassName/011-expected.txt:
+        * fast/parser/external-entities-expected.txt:
+        * platform/mac-leopard/fast/dom/getElementsByClassName/011-expected.txt: Copied from LayoutTests/fast/dom/getElementsByClassName/011-expected.txt.
+        * platform/mac-leopard/fast/invalid/missing-end-tag-expected.checksum: Copied from LayoutTests/platform/mac/fast/invalid/missing-end-tag-expected.checksum.
+        * platform/mac-leopard/fast/invalid/missing-end-tag-expected.png: Copied from LayoutTests/platform/mac/fast/invalid/missing-end-tag-expected.png.
+        * platform/mac-leopard/fast/invalid/missing-end-tag-expected.txt: Copied from LayoutTests/platform/mac/fast/invalid/missing-end-tag-expected.txt.
+        * platform/mac-leopard/fast/parser/external-entities-expected.txt: Copied from LayoutTests/fast/parser/external-entities-expected.txt.
+        * platform/mac-leopard/fast/parser/xhtml-alternate-entities-expected.checksum: Copied from LayoutTests/platform/mac/fast/parser/xhtml-alternate-entities-expected.checksum.
+        * platform/mac-leopard/fast/parser/xhtml-alternate-entities-expected.png: Copied from LayoutTests/platform/mac/fast/parser/xhtml-alternate-entities-expected.png.
+        * platform/mac-leopard/fast/parser/xhtml-alternate-entities-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/xhtml-alternate-entities-expected.txt.
+        * platform/mac-leopard/fast/xsl/xslt-extra-content-at-end-expected.checksum: Copied from LayoutTests/platform/mac/fast/xsl/xslt-extra-content-at-end-expected.checksum.
+        * platform/mac-leopard/fast/xsl/xslt-extra-content-at-end-expected.png: Copied from LayoutTests/platform/mac/fast/xsl/xslt-extra-content-at-end-expected.png.
+        * platform/mac-leopard/fast/xsl/xslt-extra-content-at-end-expected.txt: Copied from LayoutTests/platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt.
+        * platform/mac-leopard/svg/custom/junk-data-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/junk-data-expected.checksum.
+        * platform/mac-leopard/svg/custom/junk-data-expected.png: Copied from LayoutTests/platform/mac/svg/custom/junk-data-expected.png.
+        * platform/mac-leopard/svg/custom/junk-data-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/junk-data-expected.txt.
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/missing-xlink-expected.checksum.
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.png: Copied from LayoutTests/platform/mac/svg/custom/missing-xlink-expected.png.
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/missing-xlink-expected.txt.
+        * platform/mac-leopard/svg/hixie/error/012-expected.checksum: Copied from LayoutTests/platform/mac/svg/hixie/error/012-expected.checksum.
+        * platform/mac-leopard/svg/hixie/error/012-expected.png: Copied from LayoutTests/platform/mac/svg/hixie/error/012-expected.png.
+        * platform/mac-leopard/svg/hixie/error/012-expected.txt: Copied from LayoutTests/platform/mac/svg/hixie/error/012-expected.txt.
+        * platform/mac/fast/invalid/missing-end-tag-expected.checksum:
+        * platform/mac/fast/invalid/missing-end-tag-expected.png:
+        * platform/mac/fast/invalid/missing-end-tag-expected.txt:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.checksum:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.png:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.checksum:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.png:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/mac/svg/custom/junk-data-expected.checksum:
+        * platform/mac/svg/custom/junk-data-expected.png:
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.checksum:
+        * platform/mac/svg/custom/missing-xlink-expected.png:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/hixie/error/012-expected.checksum:
+        * platform/mac/svg/hixie/error/012-expected.png:
+        * platform/mac/svg/hixie/error/012-expected.txt:
+
+2009-03-14  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Shuffle layout tests and expected results around to fit the new search policy.
