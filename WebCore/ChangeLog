@@ -1,3 +1,19 @@
+2009-03-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        [Gtk] Build fix - pass a Coordinate to Geoposition::create
+        https://bugs.webkit.org/show_bug.cgi?id=24603
+
+        Gtk build fix per r41650
+        https://bugs.webkit.org/show_bug.cgi?id=24506
+        Geolocation in Safari differs from the spec, no Coordinates attribute on Position
+
+        Pass a Coordinate to Geoposition::create.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::updatePosition):
+
 2009-03-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

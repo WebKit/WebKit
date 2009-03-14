@@ -179,9 +179,11 @@ void GeolocationServiceGtk::updateLocationInformation()
 void GeolocationServiceGtk::updatePosition()
 {
     m_lastError = 0;
-    m_lastPosition = Geoposition::create(m_latitude, m_longitude, m_altitude,
-                                         m_accuracy, m_altitudeAccuracy, 0.0,
-                                         0.0, m_timestamp*1000.0);
+
+    RefPtr<Coordinates> coordinates = Coordinates::create(m_latitude, m_longitude,
+                                                          m_altitude, m_accuracy,
+                                                          m_altitudeAccuracy, 0.0, 0.0);
+    m_lastPosition = Geoposition::create(coordinates.release(), m_timestamp * 1000.0);
     positionChanged();
 }
 
