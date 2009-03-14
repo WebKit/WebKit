@@ -1,3 +1,16 @@
+2009-03-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] use of confirm dialog (yes/no) causes segfault
+        https://bugs.webkit.org/show_bug.cgi?id=20940
+
+        Change the script-confirm marshaller from OBJECT,STRING,BOOLEAN to
+        OBJECT,STRING,POINTER
+
+        * webkit/webkitwebview.cpp:
+        * webkitmarshal.list:
+
 2009-03-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alexey  Proskuryakov.
