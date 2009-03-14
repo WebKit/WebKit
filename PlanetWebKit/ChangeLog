@@ -1,3 +1,14 @@
+2009-03-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24591
+        Add my blog to Planet WebKit
+
+        Add my blog to the planet.
+
+        * config.ini:
+
 2009-02-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         Fix Bug 23851: Add my blog's webkit category to Planet
