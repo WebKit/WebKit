@@ -1,3 +1,18 @@
+2009-03-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Prevent AllInOneFile.cpp and ProfileGenerator.cpp from rebuilding unnecessarily when
+        switching between building in Xcode and via build-webkit.
+
+        build-webkit passes FEATURE_DEFINES to xcodebuild, resulting in it being present in the
+        Derived Sources build settings.  When building in Xcode, this setting isn't present so
+        Xcode reruns the script build phases.  This results in a new version of TracingDtrace.h
+        being generated, and the files that include it being rebuilt.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:  Don't regenerate TracingDtrace.h if it is
+        already newer than the input file.
+
 2009-03-13  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
