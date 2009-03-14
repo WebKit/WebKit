@@ -1,3 +1,11 @@
+2009-03-14  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove two now working tests from GTK's Skipped list.
+
+        * platform/gtk/Skipped:
+
 2009-03-14  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.

@@ -70,7 +70,6 @@ fast/dom/Window/window-xy-properties.html
 fast/dom/Window/Plug-ins.html
 fast/dom/Window/window-screen-properties.html
 fast/dom/Window/timeout-released-on-close.html
-fast/dom/getElementsByClassName/011.xml
 fast/dom/tabindex-clamp.html
 fast/dom/dom-constructors.html
 fast/dynamic/hovered-detach.html
@@ -262,7 +261,6 @@ fast/parser/assertion-empty-attribute.html
 fast/parser/comment-in-iframe.html
 fast/parser/entity-comment-in-iframe.html
 fast/parser/entities-in-xhtml.xhtml
-fast/parser/external-entities.xml
 fast/parser/tabindex-parsing.html
 fast/regex/test1.html
 fast/regex/test4.html
