@@ -187,6 +187,15 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     g_free(uri);
     KURL newURL = KURL(handle->request().url(), location);
 
+    // FIXME: This is needed because some servers use broken URIs in
+    // their Location header, when redirecting, such as URIs with
+    // white spaces instead of %20; this should be fixed in soup, in
+    // the future, and this work-around removed.
+    // See http://bugzilla.gnome.org/show_bug.cgi?id=575378.
+    SoupURI* soup_uri = soup_uri_new(newURL.string().utf8().data());
+    soup_message_set_uri(msg, soup_uri);
+    soup_uri_free(soup_uri);
+
     ResourceRequest request = handle->request();
     ResourceResponse response;
     request.setURL(newURL);

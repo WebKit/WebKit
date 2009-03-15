@@ -1,3 +1,18 @@
+2009-03-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24602
+        [Gtk] Searching in thepiratebay.org doesn't work with more than 1 word
+
+        Reintroduce the URI into the soup message after having set it in
+        the KURL, on redirects, to make sure it is properly encoded. This
+        fixes bad request problems when servers give bad URIs on their
+        response's Location header.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+
 2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
