@@ -1,3 +1,11 @@
+2009-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Skip two tests that are failing.
+
+        * platform/mac-snowleopard/Skipped: Added.
+
 2009-03-14  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.

@@ -1,0 +1,3 @@
+# <rdar://problem/6661401> Custom fonts do not work in the complex text code path
+platform/mac/fast/text/myanmar-shaping.html
+platform/mac/fast/text/thai-combining-mark-positioning.html
