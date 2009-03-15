@@ -1,3 +1,14 @@
+2009-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6668238> WebCore is registering text encodings needlessly from KURL constructor.
+
+        Reviewed by Darin Adler.
+
+        Yet another case where we would trigger extended encoding loading needlessly.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encodingForFormSubmission):
+
 2009-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: no review.

@@ -188,6 +188,8 @@ const TextEncoding& TextEncoding::closestByteBasedEquivalent() const
 // but it's fraught with problems and we'd rather steer clear of it.
 const TextEncoding& TextEncoding::encodingForFormSubmission() const
 {
+    if (noExtendedTextEncodingNameUsed())
+        return *this;
     if (isNonByteBasedEncoding() || *this == UTF7Encoding())
         return UTF8Encoding();
     return *this;
