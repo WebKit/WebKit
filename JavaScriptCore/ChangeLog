@@ -1,3 +1,13 @@
+2009-03-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Non-Apple Mac ports build fix. Move defines for the BUILDING_ON_ macros into
+        Platform.h so that they're defined for all ports building on Mac, and tweak
+        the definitions of those macros based on Mark Rowe's suggestions to accomodate
+        cases where the values may not be <= to the .0 release for that version.
+
+        * JavaScriptCorePrefix.h:
+        * wtf/Platform.h:
+
 2009-03-13  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
