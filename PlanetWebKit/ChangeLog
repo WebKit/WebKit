@@ -1,3 +1,9 @@
+2009-03-15  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * config.ini: fix my blog's feed address.
+
 2009-03-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.
