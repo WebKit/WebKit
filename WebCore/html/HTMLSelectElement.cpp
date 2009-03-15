@@ -220,8 +220,6 @@ void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, Exception
 
     ec = 0;
     insertBefore(element, before, ec);
-    if (!ec)
-        setRecalcListItems();
 }
 
 void HTMLSelectElement::remove(int index)
@@ -236,8 +234,6 @@ void HTMLSelectElement::remove(int index)
     Element *item = items[listIndex];
     ASSERT(item->parentNode());
     item->parentNode()->removeChild(item, ec);
-    if (!ec)
-        setRecalcListItems();
 }
 
 String HTMLSelectElement::value()
@@ -299,40 +295,30 @@ void HTMLSelectElement::restoreState(const String& state)
 bool HTMLSelectElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
     bool result = HTMLFormControlElementWithState::insertBefore(newChild, refChild, ec, shouldLazyAttach);
-    if (result)
-        setRecalcListItems();
     return result;
 }
 
 bool HTMLSelectElement::replaceChild(PassRefPtr<Node> newChild, Node *oldChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
     bool result = HTMLFormControlElementWithState::replaceChild(newChild, oldChild, ec, shouldLazyAttach);
-    if (result)
-        setRecalcListItems();
     return result;
 }
 
 bool HTMLSelectElement::removeChild(Node* oldChild, ExceptionCode& ec)
 {
     bool result = HTMLFormControlElementWithState::removeChild(oldChild, ec);
-    if (result)
-        setRecalcListItems();
     return result;
 }
 
 bool HTMLSelectElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
     bool result = HTMLFormControlElementWithState::appendChild(newChild, ec, shouldLazyAttach);
-    if (result)
-        setRecalcListItems();
     return result;
 }
 
 bool HTMLSelectElement::removeChildren()
 {
     bool result = HTMLFormControlElementWithState::removeChildren();
-    if (result)
-        setRecalcListItems();
     return result;
 }
 

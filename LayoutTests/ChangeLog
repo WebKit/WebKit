@@ -1,3 +1,13 @@
+2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23949
+        HTMLSelectElement is in inconsistent state when handling mutation events
+
+        * fast/forms/mutation-event-recalc-expected.txt: Added.
+        * fast/forms/mutation-event-recalc.html: Added.
+
 2009-03-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Add svn:executable property to recently added cgi scripts.
