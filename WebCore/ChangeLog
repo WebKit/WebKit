@@ -1,3 +1,12 @@
+2009-03-14  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Geoposition::toString was missing the Coordinates after the update.
+
+        * page/Geoposition.cpp:
+        (WebCore::Geoposition::toString):
+
 2009-03-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.
