@@ -276,9 +276,6 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
-    if (event.event().button() != LeftButton)
-        return false;
-    
     Node* innerNode = event.targetNode();
     if (!(innerNode && innerNode->renderer() && m_mouseDownMayStartSelect))
         return false;
@@ -368,18 +365,16 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     m_dragStartPos = event.event().pos();
 
     bool swallowEvent = false;
-    if (event.event().button() == LeftButton || event.event().button() == MiddleButton) {
-        m_frame->selection()->setCaretBlinkingSuspended(true);
-        m_mousePressed = true;
-        m_beganSelectingText = false;
+    m_frame->selection()->setCaretBlinkingSuspended(true);
+    m_mousePressed = true;
+    m_beganSelectingText = false;
 
-        if (event.event().clickCount() == 2)
-            swallowEvent = handleMousePressEventDoubleClick(event);
-        else if (event.event().clickCount() >= 3)
-            swallowEvent = handleMousePressEventTripleClick(event);
-        else
-            swallowEvent = handleMousePressEventSingleClick(event);
-    }
+    if (event.event().clickCount() == 2)
+        swallowEvent = handleMousePressEventDoubleClick(event);
+    else if (event.event().clickCount() >= 3)
+        swallowEvent = handleMousePressEventTripleClick(event);
+    else
+        swallowEvent = handleMousePressEventSingleClick(event);
     
     m_mouseDownMayStartAutoscroll = m_mouseDownMayStartSelect || 
         (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled(true));
