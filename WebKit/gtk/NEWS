@@ -1,4 +1,28 @@
 ================
+WebKitGTK+ 1.1.2
+================
+
+What's new in WebKitGTK+ 1.1.2?
+
+  - Added support for downloads: a new signal, 'download-requested',
+    will be emitted by WebKit when a dowload is requested. On top of
+    that, the download process has been encapsulated in a new object,
+    WebKitDownload, which allows the user to control it or to start
+    new downloads from the client side.
+  - Added webkit_web_view_get_encoding to get the automatic encoding
+    of the current page.
+  - Added GObject properties for 'encoding' and 'custom-encoding'.
+  - Added 'javascript-profiling-enabled' property to the WebInspector,
+    which allows to enable and disable the profiling functionality.
+  - Added API to create and add history items to WebKit's history.
+  - Improved debugging support with WEBKIT_DEBUG environment
+    variable. Most of the settings will only give useful output for
+    debug builds, but WEBKIT_DEBUG=Network will log all HTTP traffic
+    form libsoup to console. See WebCore/platform/gtk/LoggingGtk.cpp
+    for all the options available.
+  - Lots of bugfixes.
+
+================
 WebKitGTK+ 1.1.1
 ================
 

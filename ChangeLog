@@ -1,3 +1,9 @@
+2009-03-15  Xan Lopez  <xlopez@igalia.com>
+
+        Bump version and libtool version for release.
+
+        * configure.ac:
+
 2009-03-14  Xan Lopez  <xlopez@igalia.com>
 
         No review, build fix.
