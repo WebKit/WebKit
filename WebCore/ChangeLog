@@ -1,3 +1,62 @@
+2009-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 24542: Improve ContentData encapsulation
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24542>
+
+        Reviewed by Simon Fraser.
+
+        No tests since there is no change in behavior.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): Used getter methods
+        instead of data members on ContentData class.  Used isImage()
+        convenience method.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent): Ditto.
+
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::clear): Extracted code into
+        deleteContent() method.
+        (WebCore::ContentData::dataEquivalent): Added.  Extracted code
+        from StyleRareNonInheritedData::contentDataEquivalent().
+        (WebCore::ContentData::deleteContent): Added.  Used by setter
+        methods.
+        * rendering/style/ContentData.h: Made m_type, m_content and
+        m_next private.
+        (WebCore::ContentData::isCounter): Added.
+        (WebCore::ContentData::isImage): Added.
+        (WebCore::ContentData::isNone): Added.
+        (WebCore::ContentData::isText): Added.
+        (WebCore::ContentData::type): Added.
+        (WebCore::ContentData::dataEquivalent): Added.
+        (WebCore::ContentData::image): Added.
+        (WebCore::ContentData::setImage): Added.
+        (WebCore::ContentData::text): Added.
+        (WebCore::ContentData::setText): Added.
+        (WebCore::ContentData::counter): Added.
+        (WebCore::ContentData::setCounter): Added.
+        (WebCore::ContentData::next): Added.
+        (WebCore::ContentData::setNext): Added.
+
+        * rendering/style/CounterContent.h:
+        (WebCore::operator!=): Removed.
+        (WebCore::operator==): Renamed operator!=() and reversed its
+        logic after extracting code from
+        StyleRareNonInheritedData::contentDataEquivalent() to create
+        ContentData::dataEquivalent().
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent): Used new getters and setters
+        on ContentData class.  Changed first argument from a StringImpl*
+        to a PassRefPtr<StrimgImpl>.  Used isText() convenience method.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setContent): Updated declaration.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent):
+        Extracted most logic in while() loop into
+        ContentData::dataEquivalent().
+
 2009-03-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Anders Carlsson.

@@ -93,10 +93,10 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style->contentData();
-    if (contentData && !contentData->m_next && contentData->m_type == CONTENT_OBJECT && doc != node) {
+    if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
         RenderImageGeneratedContent* image = new (arena) RenderImageGeneratedContent(node);
         image->setStyle(style);
-        if (StyleImage* styleImage = contentData->m_content.m_image)
+        if (StyleImage* styleImage = contentData->image())
             image->setStyleImage(styleImage);
         return image;
     }

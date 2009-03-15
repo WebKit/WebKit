@@ -30,22 +30,9 @@ namespace WebCore {
 
 void ContentData::clear()
 {
-    switch (m_type) {
-        case CONTENT_NONE:
-            break;
-        case CONTENT_OBJECT:
-            m_content.m_image->deref();
-            break;
-        case CONTENT_TEXT:
-            m_content.m_text->deref();
-            break;
-        case CONTENT_COUNTER:
-            delete m_content.m_counter;
-            break;
-    }
+    deleteContent();
 
     ContentData* n = m_next;
-    m_type = CONTENT_NONE;
     m_next = 0;
 
     // Reverse the list so we can delete without recursing.
@@ -61,6 +48,49 @@ void ContentData::clear()
         c->m_next = 0;
         delete c;
     }
+}
+
+bool ContentData::dataEquivalent(const ContentData& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    switch (type()) {
+        case CONTENT_NONE:
+            return true;
+            break;
+        case CONTENT_TEXT:
+            return equal(text(), other.text());
+            break;
+        case CONTENT_OBJECT:
+            return StyleImage::imagesEquivalent(image(), other.image());
+            break;
+        case CONTENT_COUNTER:
+            return *counter() == *other.counter();
+            break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void ContentData::deleteContent()
+{
+    switch (m_type) {
+        case CONTENT_NONE:
+            break;
+        case CONTENT_OBJECT:
+            m_content.m_image->deref();
+            break;
+        case CONTENT_TEXT:
+            m_content.m_text->deref();
+            break;
+        case CONTENT_COUNTER:
+            delete m_content.m_counter;
+            break;
+    }
+
+    m_type = CONTENT_NONE;
 }
 
 } // namespace WebCore

@@ -159,28 +159,10 @@ bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInherite
     ContentData* c2 = o.m_content.get();
 
     while (c1 && c2) {
-        if (c1->m_type != c2->m_type)
+        if (!c1->dataEquivalent(*c2))
             return false;
-
-        switch (c1->m_type) {
-            case CONTENT_NONE:
-                break;
-            case CONTENT_TEXT:
-                if (!equal(c1->m_content.m_text, c2->m_content.m_text))
-                    return false;
-                break;
-            case CONTENT_OBJECT:
-                if (!StyleImage::imagesEquivalent(c1->m_content.m_image, c2->m_content.m_image))
-                    return false;
-                break;
-            case CONTENT_COUNTER:
-                if (*c1->m_content.m_counter != *c2->m_content.m_counter)
-                    return false;
-                break;
-        }
-
-        c1 = c1->m_next;
-        c2 = c2->m_next;
+        c1 = c1->next();
+        c2 = c2->next();
     }
 
     return !c1 && !c2;
