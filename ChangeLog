@@ -1,5 +1,13 @@
 2009-03-15  Xan Lopez  <xlopez@igalia.com>
 
+        Bump version to 1.1.3 for release and fix soversion
+        calculation (oops). Thanks to Frederik Himpe for pointing this
+        out.
+
+        * configure.ac:
+
+2009-03-15  Xan Lopez  <xlopez@igalia.com>
+
         Bump version and libtool version for release.
 
         * configure.ac:
