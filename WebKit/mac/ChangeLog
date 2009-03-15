@@ -1,3 +1,25 @@
+2009-03-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix <rdar://problem/6607773> WebKit should support the "Default"
+          paragraph writing direction -- or at least validate the menu item
+          appropriately
+
+        Made WebHTMLView validate user interface items with the selector
+        -makeBaseWritingDirectionNatural: by returning NO and, if the item is
+        a menu item, setting its state to "off".
+
+        Strictly speaking, since -makeBaseWritingDirectionNatural: is never
+        valid for WebViews, WebHTMLView should not need to respond to it and
+        validate it, however because other responders respond to all three
+        -makeBaseWritingDirection*: messages and set the menu item state, having
+        WebHTMLView do the same makes application developers' lives easier.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView makeBaseWritingDirectionNatural:]):
+
 2009-03-13  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

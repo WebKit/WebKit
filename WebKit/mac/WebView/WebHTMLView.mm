@@ -2554,7 +2554,14 @@ WEBCORE_COMMAND(yankAndSelect)
         }
         return [self _canEdit];
     }
-    
+
+    if (action == @selector(makeBaseWritingDirectionNatural:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:NSOffState];
+        return NO;
+    }
+
     if (action == @selector(toggleBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -4575,6 +4582,11 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [self makeBaseWritingDirectionRightToLeft:sender];
 }
 #endif
+
+- (void)makeBaseWritingDirectionNatural:(id)sender
+{
+    LOG_ERROR("Sent from %@.", sender);
+}
 
 #if 0
 
