@@ -1,5 +1,19 @@
 2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
 
+        Suggested by Mark Rowe.
+
+        Move results for security/block-test.html to their correct locations. Results for other
+        platforms will need to be generated.
+
+        * platform/mac-leopard/security/block-test-expected.txt: Removed.
+        * platform/mac-tiger/security: Added.
+        * platform/mac-tiger/security/block-test-expected.txt: Copied from LayoutTests/security/block-test-expected.txt.
+        * platform/mac/security: Added.
+        * platform/mac/security/block-test-expected.txt: Copied from LayoutTests/platform/mac-leopard/security/block-test-expected.txt.
+        * security/block-test-expected.txt: Removed.
+
+2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Adele Peterson.
 
         https://bugs.webkit.org/show_bug.cgi?id=23949
