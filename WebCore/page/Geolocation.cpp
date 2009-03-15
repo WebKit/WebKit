@@ -59,6 +59,8 @@ Geolocation::Geolocation(Frame* frame)
     , m_allowGeolocation(Unknown)
     , m_shouldClearCache(false)
 {
+    if (!m_frame)
+        return;
     ASSERT(m_frame->document());
     m_frame->document()->setUsingGeolocation(true);
 }

@@ -1,5 +1,13 @@
 2009-03-14  Greg Bolsinga  <bolsinga@apple.com>
 
+        <rdar://problem/6683465>
+
+        Geolocation has to be able to handle NULL Frames.
+
+        Reviewed by Mark Rowe
+    
+2009-03-14  Greg Bolsinga  <bolsinga@apple.com>
+
         Reviewed by David Kilzer.
 
         Geoposition::toString was missing the Coordinates after the update.
