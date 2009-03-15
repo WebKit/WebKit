@@ -1,3 +1,9 @@
+2009-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: no review.
+
+        * rendering/style/ContentData.h:
+
 2009-03-15  David Kilzer  <ddkilzer@apple.com>
 
         Bug 24542: Improve ContentData encapsulation
