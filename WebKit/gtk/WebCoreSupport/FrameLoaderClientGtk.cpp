@@ -300,7 +300,7 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     if (canShowMIMEType(mimeType))
         webkit_web_policy_decision_use (policyDecision);
     else
-        webkit_web_policy_decision_download (policyDecision);
+        webkit_web_policy_decision_ignore (policyDecision);
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& s)

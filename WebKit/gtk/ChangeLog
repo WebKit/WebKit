@@ -1,3 +1,17 @@
+2009-03-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix default policy decision to be ignore, on MIME checks, if
+        WebKit doesn't know how to handle the MIME type. The documentation
+        is already correct, and this was an oversight when the policy
+        decision code was first committed. Since 1.1.2 will be the first
+        release to support download, there is no practical change in
+        behavior.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType):
+
 2009-03-15  Xan Lopez  <xlopez@igalia.com>
 
         * NEWS: update for 1.1.2.
