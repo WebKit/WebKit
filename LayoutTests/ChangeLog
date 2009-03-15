@@ -1,3 +1,10 @@
+2009-03-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Add svn:executable property to recently added cgi scripts.
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-options-not-supported.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-request-headers.cgi:
+
 2009-03-14  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
