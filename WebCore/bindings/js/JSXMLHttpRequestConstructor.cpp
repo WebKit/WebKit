@@ -34,10 +34,14 @@ const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstruct
 
 JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, ScriptExecutionContext* scriptExecutionContext)
     : DOMObject(JSXMLHttpRequestConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_scriptExecutionContext(scriptExecutionContext)
-    , m_contextWrapper(toJSDOMGlobalObject(scriptExecutionContext))
+    , m_globalObject(toJSDOMGlobalObject(scriptExecutionContext))
 {
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
+}
+
+ScriptExecutionContext* JSXMLHttpRequestConstructor::scriptExecutionContext() const
+{
+    return m_globalObject->scriptExecutionContext();
 }
 
 static JSObject* constructXMLHttpRequest(ExecState* exec, JSObject* constructor, const ArgList&)
@@ -55,8 +59,8 @@ ConstructType JSXMLHttpRequestConstructor::getConstructData(ConstructData& const
 void JSXMLHttpRequestConstructor::mark()
 {
     DOMObject::mark();
-    if (!m_contextWrapper.marked())
-        m_contextWrapper.mark();
+    if (!m_globalObject->marked())
+        m_globalObject->mark();
 }
 
 } // namespace WebCore

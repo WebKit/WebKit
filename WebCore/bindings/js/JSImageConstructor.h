@@ -28,7 +28,7 @@ namespace WebCore {
     class JSImageConstructor : public DOMObject {
     public:
         JSImageConstructor(JSC::ExecState*, ScriptExecutionContext*);
-        Document* document() const { return m_document->impl(); }
+        Document* document() const;
 
         static const JSC::ClassInfo s_info;
         
@@ -37,7 +37,7 @@ namespace WebCore {
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
-        JSDocument* m_document;
+        JSDOMGlobalObject* m_globalObject;
     };
 
 } // namespace WebCore

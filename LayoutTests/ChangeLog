@@ -1,3 +1,14 @@
+2009-03-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21752
+        REGRESSION: referencing XHR constructor for a not yet loaded frame permanently breaks it
+
+        * fast/dom/Window/resources/window-early-properties-xhr-frame.html: Added.
+        * fast/dom/Window/window-early-properties-xhr-expected.txt: Added.
+        * fast/dom/Window/window-early-properties-xhr.html: Added.
+
 2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

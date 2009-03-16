@@ -36,12 +36,17 @@ const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 
 JSOptionConstructor::JSOptionConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSOptionConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    , m_globalObject(toJSDOMGlobalObject(context))
 {
     ASSERT(context->isDocument());
-    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
 
     putDirect(exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
+}
+
+Document* JSOptionConstructor::document() const
+{
+    return static_cast<Document*>(m_globalObject->scriptExecutionContext());
 }
 
 static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* constructor, const ArgList& args)
@@ -80,8 +85,8 @@ ConstructType JSOptionConstructor::getConstructData(ConstructData& constructData
 void JSOptionConstructor::mark()
 {
     DOMObject::mark();
-    if (!m_document->marked())
-        m_document->mark();
+    if (!m_globalObject->marked())
+        m_globalObject->mark();
 }
 
 } // namespace WebCore

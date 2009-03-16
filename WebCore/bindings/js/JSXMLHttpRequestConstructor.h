@@ -27,7 +27,7 @@ namespace WebCore {
 class JSXMLHttpRequestConstructor : public DOMObject {
 public:
     JSXMLHttpRequestConstructor(JSC::ExecState*, ScriptExecutionContext*);
-    ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const;
     static const JSC::ClassInfo s_info;
 
     virtual void mark();
@@ -35,8 +35,7 @@ private:
     virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
     virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
-    ScriptExecutionContext* m_scriptExecutionContext;
-    JSC::JSValuePtr m_contextWrapper;
+    JSDOMGlobalObject* m_globalObject;
 };
 
 } // namespace WebCore

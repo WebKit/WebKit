@@ -1,3 +1,43 @@
+2009-03-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21752
+        REGRESSION: referencing XHR constructor for a not yet loaded frame permanently breaks it
+
+        Test: fast/dom/Window/window-early-properties-xhr.html
+
+        For some transitions, the Window object is not replaced, but Document is. When this happened,
+        window.document property was updated, but references to Document kept in cached constructors
+        were not.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        (WebCore::JSAudioConstructor::document):
+        (WebCore::JSAudioConstructor::mark):
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        (WebCore::JSImageConstructor::document):
+        (WebCore::JSImageConstructor::mark):
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        (WebCore::JSMessageChannelConstructor::scriptExecutionContext):
+        (WebCore::JSMessageChannelConstructor::mark):
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        (WebCore::JSOptionConstructor::document):
+        (WebCore::JSOptionConstructor::mark):
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        (WebCore::JSXMLHttpRequestConstructor::scriptExecutionContext):
+        (WebCore::JSXMLHttpRequestConstructor::mark):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        Changed cached constructors to keep a reference to Window, not Document.
+
 2009-03-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

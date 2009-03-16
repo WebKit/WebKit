@@ -36,10 +36,16 @@ const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSImageConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    , m_globalObject(toJSDOMGlobalObject(context))
 {
     ASSERT(context->isDocument());
-    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
+
     putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec), None);
+}
+
+Document* JSImageConstructor::document() const
+{
+    return static_cast<Document*>(m_globalObject->scriptExecutionContext());
 }
 
 static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)
@@ -81,8 +87,8 @@ ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)
 void JSImageConstructor::mark()
 {
     DOMObject::mark();
-    if (!m_document->marked())
-        m_document->mark();
+    if (!m_globalObject->marked())
+        m_globalObject->mark();
 }
 
 } // namespace WebCore
