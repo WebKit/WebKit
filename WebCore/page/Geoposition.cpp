@@ -30,7 +30,7 @@ namespace WebCore {
 
 String Geoposition::toString() const
 {
-    return "position(" + m_coordinates->toString() + String::format(" , %.lld", m_timestamp) + ")";
+    return "position(" + m_coordinates->toString() + String::format(", %.lld)", m_timestamp);
 }
 
 } // namespace WebCore
