@@ -1,3 +1,16 @@
+2009-03-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and John Sullivan.
+
+        When a plug-in instance is torn down, all plug-in objects will first be invalidated and then deallocated.
+        Since objects can be deallocated in any order, it is not safe to call NPN_ReleaseObject on member variables.
+        
+        Instead, just zero out the member variable in invalidate.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvalidate):
+        (pluginDeallocate):
+
 2009-03-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.
