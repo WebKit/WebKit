@@ -984,6 +984,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView setPolicyDelegate:nil];
     [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     [webView _clearMainFrameName];
+    [[webView undoManager] removeAllActions];
 
     WebPreferences *preferences = [webView preferences];
     [preferences setPrivateBrowsingEnabled:NO];
