@@ -202,13 +202,17 @@ extern "C" {
     
     ASSERT([self window]);
     
-    NSWindow *theWindow = [self window];
+    NSWindow *window = [self window];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(windowFrameDidChange:) 
-                               name:NSWindowDidMoveNotification object:theWindow];
+                               name:NSWindowDidMoveNotification object:window];
     [notificationCenter addObserver:self selector:@selector(windowFrameDidChange:)
-                               name:NSWindowDidResizeNotification object:theWindow];    
+                               name:NSWindowDidResizeNotification object:window];    
+
+    if (_proxy)
+        _proxy->windowFrameChanged([window frame]);
+    [self updateAndSetWindow];
 }
 
 - (void)removeWindowObservers

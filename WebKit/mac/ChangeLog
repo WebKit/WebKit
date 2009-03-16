@@ -1,3 +1,14 @@
+2009-03-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <rdar://problem/6622601>
+        
+        Make sure to update both the window frame and the plug-in frame.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView addWindowObservers]):
+
 2009-03-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
