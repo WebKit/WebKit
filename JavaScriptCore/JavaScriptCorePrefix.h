@@ -25,6 +25,15 @@
 
 #endif
 
+#if defined(__APPLE__)
+#import <AvailabilityMacros.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define BUILDING_ON_TIGER 1
+#elif MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5
+#define BUILDING_ON_LEOPARD 1
+#endif
+#endif
+
 #ifdef __cplusplus
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
