@@ -1,3 +1,30 @@
+2009-03-16  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24368
+        DOM scroll events should be based off the actual number of wheel
+        ticks, not off the number of lines scrolled.  This matches IE.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchWheelEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::create):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::wheelTicksX):
+        (WebCore::PlatformWheelEvent::wheelTicksY):
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/WheelEventQt.cpp:
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel

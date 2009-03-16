@@ -35,11 +35,11 @@ namespace WebCore {
         {
             return adoptRef(new WheelEvent);
         }
-        static PassRefPtr<WheelEvent> create(float wheelDeltaX, float wheelDeltaY, PassRefPtr<AbstractView> view,
+        static PassRefPtr<WheelEvent> create(float wheelTicksX, float wheelTicksY, PassRefPtr<AbstractView> view,
             int screenX, int screenY, int pageX, int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
         {
-            return adoptRef(new WheelEvent(wheelDeltaX, wheelDeltaY, view, screenX, screenY, pageX, pageY,
+            return adoptRef(new WheelEvent(wheelTicksX, wheelTicksY, view, screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey));
         }
 
@@ -56,7 +56,7 @@ namespace WebCore {
 
     private:
         WheelEvent();
-        WheelEvent(float wheelDeltaX, float wheelDeltaY, PassRefPtr<AbstractView>,
+        WheelEvent(float wheelTicksX, float wheelTicksY, PassRefPtr<AbstractView>,
                    int screenX, int screenY, int pageX, int pageY,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 

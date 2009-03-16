@@ -74,6 +74,9 @@ namespace WebCore {
         float deltaX() const { return m_deltaX; }
         float deltaY() const { return m_deltaY; }
 
+        float wheelTicksX() const { return m_wheelTicksX; }
+        float wheelTicksY() const { return m_wheelTicksY; }
+
         PlatformWheelEventGranularity granularity() const { return m_granularity; }
 
         bool isAccepted() const { return m_isAccepted; }
@@ -111,6 +114,8 @@ namespace WebCore {
         IntPoint m_globalPosition;
         float m_deltaX;
         float m_deltaY;
+        float m_wheelTicksX;
+        float m_wheelTicksY;
         PlatformWheelEventGranularity m_granularity;
         bool m_isAccepted;
         bool m_shiftKey;

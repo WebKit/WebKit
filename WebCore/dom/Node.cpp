@@ -2706,19 +2706,7 @@ void Node::dispatchWheelEvent(PlatformWheelEvent& e)
     
     IntPoint pos = view->windowToContents(e.pos());
     
-    // Convert the deltas from pixels to lines if we have a pixel scroll event.
-    const float cMouseWheelPixelsPerLineStep = 40.0f / 3.0f;
-    float deltaX = e.deltaX();
-    float deltaY = e.deltaY();
-    
-    // FIXME: Should we do anything with a ScrollByPageWheelEvent here?
-    // It will be treated like a line scroll of 1 right now.
-    if (e.granularity() == ScrollByPixelWheelEvent) {
-        deltaX /= cMouseWheelPixelsPerLineStep;
-        deltaY /= cMouseWheelPixelsPerLineStep;
-    }
-
-    RefPtr<WheelEvent> we = WheelEvent::create(e.deltaX(), e.deltaY(),
+    RefPtr<WheelEvent> we = WheelEvent::create(e.wheelTicksX(), e.wheelTicksY(),
         document()->defaultView(), e.globalX(), e.globalY(), pos.x(), pos.y(),
         e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
     ExceptionCode ec = 0;

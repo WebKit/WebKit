@@ -80,8 +80,20 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     // (the default scroll amount on Windows is three lines per wheel tick).
     static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
     float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
-    if (isMouseHWheel)
-        delta = -delta;  // Windows is <-- -/+ -->, WebKit wants <-- +/- -->
+    if (isMouseHWheel) {
+        // Windows is <-- -/+ -->, WebKit wants <-- +/- -->, so we negate
+        // |delta| after saving the original value on the wheel tick member.
+        m_wheelTicksX = delta;
+        m_wheelTicksY = 0;
+        delta = -delta;
+    } else {
+        // Even though we use shift + vertical wheel to scroll horizontally in
+        // WebKit, we still note it as a vertical scroll on the wheel tick
+        // member, so that the DOM event we later construct will match the real
+        // hardware event better.
+        m_wheelTicksX = 0;
+        m_wheelTicksY = delta;
+    }
     if (isMouseHWheel || m_shiftKey) {
         m_deltaX = delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
         m_deltaY = 0;

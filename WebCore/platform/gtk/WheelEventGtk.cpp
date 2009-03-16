@@ -59,6 +59,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             m_deltaX = -delta;
             break;
     }
+    m_wheelTicksX = m_deltaX;
+    m_wheelTicksY = m_deltaY;
 
     m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
     m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));

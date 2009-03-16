@@ -51,6 +51,8 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
         m_deltaX = 0;
         m_deltaY = (e->delta() / 120);
     }
+    m_wheelTicksX = m_deltaX;
+    m_wheelTicksY = m_deltaY;
 
     // use the same single scroll step as QTextEdit (in
     // QTextEditPrivate::init [h,v]bar->setSingleStep )
