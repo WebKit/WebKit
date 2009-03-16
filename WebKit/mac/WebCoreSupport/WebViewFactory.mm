@@ -341,12 +341,16 @@
 
 - (NSString *)contextMenuItemTagWritingDirectionMenu
 {
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    return UI_STRING("Paragraph Direction", "Paragraph direction context sub-menu item");
+#else
     return UI_STRING("Writing Direction", "Writing direction context sub-menu item");
+#endif
 }
 
 - (NSString *)contextMenuItemTagTextDirectionMenu
 {
-    return UI_STRING("Text Direction", "Text direction context sub-menu item");
+    return UI_STRING("Selection Direction", "Selection direction context sub-menu item");
 }
 
 - (NSString *)contextMenuItemTagDefaultDirection

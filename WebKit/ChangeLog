@@ -1,3 +1,10 @@
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/Localizable.strings: Updated.
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.

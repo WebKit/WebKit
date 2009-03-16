@@ -1,3 +1,14 @@
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6577174> Rename the text directionality submenus to “Paragraph Direction” and “Selection Direction”
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory contextMenuItemTagParagraphDirectionMenu]): Changed string here, but only
+        post-Leopard, since we want this to match the Mac OS X menu on Tiger and Leopard.
+        (-[WebViewFactory contextMenuItemTagSelectionDirectionMenu]): Changed string here.
+
 2009-03-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
