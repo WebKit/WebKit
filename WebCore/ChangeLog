@@ -1,3 +1,28 @@
+2009-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24590
+        Refactor InspectorDOMStorageResource to use ScriptFunctionCall.
+
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument): Added method for bool argument.
+        * bindings/js/ScriptFunctionCall.h: Ditto, also cleaned up.
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject): Added Storage helper.
+        * bindings/js/ScriptObjectQuarantine.h: Ditto.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects): Changed to use bind method.
+        (WebCore::InspectorController::resetScriptObjects): Changed to use unbind method.
+        (WebCore::InspectorController::didUseDOMStorage): Changed to use isSameHostAndType and bind methods.
+        * inspector/InspectorController.h: Removed add/remove methods for DOM storage.
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        (WebCore::InspectorDOMStorageResource::isSameHostAndType): Added.
+        (WebCore::InspectorDOMStorageResource::bind): Added.
+        (WebCore::InspectorDOMStorageResource::unbind): Added.
+        * inspector/InspectorDOMStorageResource.h:
+
 2009-03-16   Mike Belshe  <mike@belse.com>
 
         Reviewed by Dimitri Glazkov.

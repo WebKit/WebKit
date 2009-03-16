@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "JSDatabase.h"
+#include "JSStorage.h"
 #include "JSDOMBinding.h"
 #include "JSInspectedObjectWrapper.h"
 #include "ScriptObject.h"
@@ -48,16 +49,29 @@ namespace WebCore {
 bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObject)
 {
     ASSERT(database);
-    
+
     Frame* frame = database->document()->frame();
     if (!frame)
         return false;
-    
+
     ExecState* exec = toJSDOMWindow(frame)->globalExec();
-    
+
     JSLock lock(false);
     quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, database))));
-    
+
+    return true;
+}
+
+bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& quarantinedObject)
+{
+    ASSERT(frame);
+    ASSERT(storage);
+
+    ExecState* exec = toJSDOMWindow(frame)->globalExec();
+
+    JSLock lock(false);
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, storage))));
+
     return true;
 }
 

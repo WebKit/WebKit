@@ -45,9 +45,10 @@ namespace WebCore {
         ScriptFunctionCall(ScriptState* exec, const ScriptObject& thisObject, const char* name);
         virtual ~ScriptFunctionCall() {};
 
-        void appendArgument(const ScriptObject& parameter);
-        void appendArgument(const ScriptValue& parameter);
-        void appendArgument(const String& parameter);
+        void appendArgument(const ScriptObject&);
+        void appendArgument(const ScriptValue&);
+        void appendArgument(const String&);
+        void appendArgument(bool);
         ScriptValue call(bool& hadException);
         ScriptObject construct(bool& hadException);
 

@@ -286,11 +286,6 @@ private:
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
 
-#if ENABLE(DOM_STORAGE)
-    JSObjectRef addDOMStorageScriptResource(InspectorDOMStorageResource*);
-    void removeDOMStorageScriptResource(InspectorDOMStorageResource*);
-#endif
-
     JSValueRef callSimpleFunction(JSContextRef, JSObjectRef thisObject, const char* functionName) const;
     JSValueRef callFunction(JSContextRef, JSObjectRef thisObject, const char* functionName, size_t argumentCount, const JSValueRef arguments[], JSValueRef& exception) const;
 

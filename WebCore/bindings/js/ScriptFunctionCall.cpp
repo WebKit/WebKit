@@ -62,6 +62,11 @@ void ScriptFunctionCall::appendArgument(const String& argument)
     m_arguments.append(jsString(m_exec, argument));
 }
 
+void ScriptFunctionCall::appendArgument(bool argument)
+{
+    m_arguments.append(jsBoolean(argument));
+}
+
 ScriptValue ScriptFunctionCall::call(bool& hadException)
 {
     JSObject* thisObject = m_thisObject.jsObject();

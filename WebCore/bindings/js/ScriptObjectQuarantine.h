@@ -34,9 +34,12 @@
 namespace WebCore {
 
     class Database;
+    class Frame;
     class ScriptObject;
+    class Storage;
 
     bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObject);
+    bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& quarantinedObject);
 
 }
 

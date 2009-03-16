@@ -33,11 +33,12 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "ScriptObject.h"
+#include "ScriptState.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-#include <JavaScriptCore/JSContextRef.h>
 
 namespace WebCore {
 
@@ -51,16 +52,21 @@ namespace WebCore {
             return adoptRef(new InspectorDOMStorageResource(domStorage, isLocalStorage, frame));
         }
 
-        void setScriptObject(JSContextRef, JSObjectRef);
+        void bind(ScriptState*, const ScriptObject& webInspector);
+        void unbind();
 
-        RefPtr<Storage> domStorage;
-        bool isLocalStorage;
-        RefPtr<Frame> frame;
-        JSContextRef scriptContext;
-        JSObjectRef scriptObject;
+        bool isSameHostAndType(Frame*, bool isLocalStorage) const;
 
     private:
+
         InspectorDOMStorageResource(Storage*, bool isLocalStorage, Frame*);
+
+        ScriptObject m_scriptObject;
+        RefPtr<Storage> m_domStorage;
+        bool m_isLocalStorage;
+        RefPtr<Frame> m_frame;
+
+    private:
     };
 
 } // namespace WebCore
