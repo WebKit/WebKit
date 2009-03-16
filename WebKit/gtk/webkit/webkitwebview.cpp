@@ -142,6 +142,8 @@ enum {
 enum {
     PROP_0,
 
+    PROP_TITLE,
+    PROP_URI,
     PROP_COPY_TARGET_LIST,
     PROP_PASTE_TARGET_LIST,
     PROP_EDITABLE,
@@ -281,6 +283,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
 
     switch(prop_id) {
+    case PROP_TITLE:
+        g_value_set_string(value, webkit_web_view_get_title(webView));
+        break;
+    case PROP_URI:
+        g_value_set_string(value, webkit_web_view_get_uri(webView));
+        break;
 #if GTK_CHECK_VERSION(2,10,0)
     case PROP_COPY_TARGET_LIST:
         g_value_set_boxed(value, webkit_web_view_get_copy_target_list(webView));
@@ -1225,6 +1233,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @title: the new title
      *
      * When a #WebKitWebFrame changes the document title this signal is emitted.
+     *
+     * Deprecated: 1.1.4: Use "notify::title" instead.
      */
     webkit_web_view_signals[TITLE_CHANGED] = g_signal_new("title-changed",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1535,6 +1545,34 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /*
      * properties
      */
+
+    /**
+    * WebKitWebView:title:
+    *
+    * Returns the @web_view's document title.
+    *
+    * Since: 1.1.4
+    */
+    g_object_class_install_property(objectClass, PROP_TITLE,
+                                    g_param_spec_string("title",
+                                                        "Title",
+                                                        "Returns the @web_view's document title",
+                                                        NULL,
+                                                        WEBKIT_PARAM_READABLE));
+
+    /**
+    * WebKitWebView:uri:
+    *
+    * Returns the current URI of the contents displayed by the @web_view.
+    *
+    * Since: 1.1.4
+    */
+    g_object_class_install_property(objectClass, PROP_URI,
+                                    g_param_spec_string("uri",
+                                                        "URI",
+                                                        "Returns the current URI of the contents displayed by the @web_view",
+                                                        NULL,
+                                                        WEBKIT_PARAM_READABLE));
 
 #if GTK_CHECK_VERSION(2,10,0)
     /**
@@ -1989,6 +2027,42 @@ WebKitWebWindowFeatures* webkit_web_view_get_window_features(WebKitWebView* webV
 
     WebKitWebViewPrivate* priv = webView->priv;
     return priv->webWindowFeatures;
+}
+
+/**
+ * webkit_web_view_get_title:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the @web_view's document title
+ *
+ * Since: 1.1.4
+ *
+ * Return value: the title of @web_view
+ */
+G_CONST_RETURN gchar* webkit_web_view_get_title(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->mainFrame->priv->title;
+}
+
+/**
+ * webkit_web_view_get_uri:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the current URI of the contents displayed by the @web_view
+ *
+ * Since: 1.1.4
+ *
+ * Return value: the URI of @web_view
+ */
+G_CONST_RETURN gchar* webkit_web_view_get_uri(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->mainFrame->priv->uri;
 }
 
 /**

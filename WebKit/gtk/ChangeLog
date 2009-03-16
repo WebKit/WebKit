@@ -1,3 +1,19 @@
+2009-03-16  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Adam Roben.
+
+        [gtk] API implementation: url and title
+        http://bugs.webkit.org/show_bug.cgi?id=14807
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h: Implement "title" and "uri" properties as well
+        as according functions. "uri" always reflects the current location
+        including navigation inside the same page. title-changed is deprecated.
+
 2009-03-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Anders Carlsson.

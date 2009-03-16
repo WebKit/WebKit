@@ -127,6 +127,12 @@ webkit_web_view_get_type (void);
 WEBKIT_API GtkWidget *
 webkit_web_view_new (void);
 
+WEBKIT_API G_CONST_RETURN gchar *
+webkit_web_view_get_title                       (WebKitWebView        *web_view);
+
+WEBKIT_API G_CONST_RETURN gchar *
+webkit_web_view_get_uri                         (WebKitWebView        *web_view);
+
 WEBKIT_API void
 webkit_web_view_set_maintains_back_forward_list (WebKitWebView        *web_view,
                                                  gboolean              flag);
