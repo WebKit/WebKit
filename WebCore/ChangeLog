@@ -1,3 +1,20 @@
+2009-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+        
+        Clean up a few issues in the Animation code:
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        Whitespace
+        
+        (WebCore::AnimationBase::willNeedService):
+        Don't round to float, use std::max
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        Fix erroneously copied line to null out m_lastResponseWaiter.
+
 2009-03-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel

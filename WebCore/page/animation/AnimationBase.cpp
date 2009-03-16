@@ -728,7 +728,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     }
 
     // Execute state machine
-    switch(m_animState) {
+    switch (m_animState) {
         case AnimationStateNew:
             ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning || input == AnimationStateInputPlayStatePaused);
             if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning) {
@@ -964,10 +964,10 @@ double AnimationBase::willNeedService()
     // service is required now, and > 0 means service is required that many seconds in the future.
     if (paused() || isNew())
         return -1;
-        
+    
     if (m_animState == AnimationStateStartWaitTimer) {
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);
-        return (float) ((timeFromNow > 0) ? timeFromNow : 0);
+        return max(timeFromNow, 0.0);
     }
     
     fireAnimationEventsIfNeeded();
