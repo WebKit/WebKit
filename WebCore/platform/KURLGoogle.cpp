@@ -520,7 +520,7 @@ bool KURL::hasRef() const
 String KURL::query() const
 {
     if (m_url.m_parsed.query.len >= 0)
-        return m_url.componentString(query);
+        return m_url.componentString(m_url.m_parsed.query);
 
     // Bug: https://bugs.webkit.org/show_bug.cgi?id=21015 this function returns
     // an empty string when the query is empty rather than a null (not sure

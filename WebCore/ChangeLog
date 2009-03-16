@@ -1,3 +1,14 @@
+2009-03-16   Mike Belshe  <mike@belse.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24580
+        Fix query() to match KURL behavior, this time with the code that
+        compiles.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::query): Fix copy/paste mistake.
+
 2009-03-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
