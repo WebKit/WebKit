@@ -2,6 +2,19 @@
 
         Reviewed by Oliver Hunt.
 
+        Don't mig_deallocate random data in case an instance proxy method returns false.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        (WKPCInvokeDefault):
+        (WKPCGetProperty):
+        (WKPCEnumerate):
+
+2009-03-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         <rdar://problem/6633944> 
         REGRESSION (Safari 4 PB): Many crashes in Flip4Mac involving loading the plugin
         

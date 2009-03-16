@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    NetscapePluginInstanceProxy* m_proxy;
+    RefPtr<NetscapePluginInstanceProxy> m_proxy;
 };
 
 typedef HashMap<mach_port_t, NetscapePluginHostProxy*> PluginProxyMap;
@@ -517,13 +517,13 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t r
     
     String script = String::fromUTF8WithLatin1Fallback(scriptData, scriptLength);
     
-    data_t resultData;
-    mach_msg_type_number_t resultLength;
-    
+    data_t resultData = 0;
+    mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->evaluate(objectID, script, resultData, resultLength);
     
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
-    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    if (resultData)
+        mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
         
     return KERN_SUCCESS;
 }
@@ -578,13 +578,13 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t req
 
     Identifier methodNameIdentifier = identifierFromIdentifierRep(identifier);
 
-    data_t resultData;
-    mach_msg_type_number_t resultLength;
-    
+    data_t resultData = 0;
+    mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, argumentsData, argumentsLength, resultData, resultLength);
     
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
-    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    if (resultData)
+        mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }
@@ -604,13 +604,13 @@ kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint3
 
     PluginDestroyDeferrer deferrer(instanceProxy);
 
-    data_t resultData;
-    mach_msg_type_number_t resultLength;
-    
+    data_t resultData = 0;
+    mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->invokeDefault(objectID, argumentsData, argumentsLength, resultData, resultLength);
     
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
-    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    if (resultData)
+        mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }
@@ -652,8 +652,8 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     
     PluginDestroyDeferrer deferrer(instanceProxy);
 
-    data_t resultData;
-    mach_msg_type_number_t resultLength;
+    data_t resultData = 0;
+    mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue;
     
     if (identifier->isString()) {
@@ -663,7 +663,8 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
         returnValue = instanceProxy->setProperty(objectID, identifier->number(), resultData, resultLength);
     
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
-    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    if (resultData)
+        mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }
@@ -812,11 +813,12 @@ kern_return_t WKPCEnumerate(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;
-    
     boolean_t returnValue = instanceProxy->enumerate(objectID, resultData, resultLength);
     
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
-    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+    
+    if (resultData)
+        mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }
