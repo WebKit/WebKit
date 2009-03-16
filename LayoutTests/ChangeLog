@@ -2,6 +2,19 @@
 
         Rubber-stamped by Beth Dakin.
 
+        Update test results for six accessibility tests.
+
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+
+2009-03-16  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
         Move platform-specific acessibility tests and results into platform/mac.
 
         * platform/mac/accessibility/accesskey-expected.txt: Renamed from LayoutTests/accessibility/accesskey-expected.txt.

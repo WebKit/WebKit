@@ -260,7 +260,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 0
 AXHeader: <AXColumn>
@@ -287,7 +287,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 1
 AXHeader: <AXColumn>
@@ -314,7 +314,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 2
 AXHeader: <AXColumn>
@@ -341,7 +341,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 3
 AXHeader: <AXColumn>
@@ -368,7 +368,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 4
 AXHeader: <AXColumn>
@@ -853,7 +853,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------

@@ -178,10 +178,10 @@ AXColumnIndexRange: NSRange: {0, 1}
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {20, 90}
+AXSize: NSSize: {20, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -194,21 +194,21 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 0
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {27, 90}
+AXSize: NSSize: {27, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -221,21 +221,21 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 1
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {28, 90}
+AXSize: NSSize: {28, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -248,12 +248,12 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 2
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 
@@ -683,7 +683,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------
@@ -856,10 +856,10 @@ AXColumnIndexRange: NSRange: {0, 1}
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {20, 90}
+AXSize: NSSize: {20, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -872,21 +872,21 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 0
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {27, 90}
+AXSize: NSSize: {27, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -899,21 +899,21 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 1
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
-AXChildren: <array of size 3>
+AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXColumn>
-AXSize: NSSize: {28, 90}
+AXSize: NSSize: {28, 120}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -926,12 +926,12 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXColumn>
 AXIndex: 2
 AXHeader: <AXColumn>
-AXRows: <array of size 3>
-AXVisibleRows: <array of size 3>
+AXRows: <array of size 4>
+AXVisibleRows: <array of size 4>
 
 ------------
 
@@ -1361,7 +1361,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------

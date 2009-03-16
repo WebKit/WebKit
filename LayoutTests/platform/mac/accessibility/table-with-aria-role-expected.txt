@@ -36,6 +36,7 @@ AXTopLevelUIElement: <AXButton: 'test	test	test
 test	test	test
 '>
 AXTitleUIElement: (null)
+AXAccessKey: (null)
 
 ------------
 AXRole: AXTable

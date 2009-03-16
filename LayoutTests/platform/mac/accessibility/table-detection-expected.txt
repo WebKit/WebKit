@@ -53,6 +53,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -107,6 +108,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -161,6 +163,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -184,6 +187,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -207,6 +211,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -230,6 +235,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -284,6 +290,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -338,6 +345,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -392,6 +400,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -446,6 +455,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -469,6 +479,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -492,6 +503,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -515,6 +527,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -538,6 +551,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -561,6 +575,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -584,6 +599,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXTable
@@ -638,6 +654,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -661,6 +678,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -684,6 +702,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -707,6 +726,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -730,6 +750,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -753,6 +774,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -776,6 +798,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -799,6 +822,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -822,6 +846,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -845,6 +870,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -868,6 +894,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 

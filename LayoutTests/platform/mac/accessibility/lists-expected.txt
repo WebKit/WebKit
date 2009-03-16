@@ -13,7 +13,7 @@ meaning 2
 
 AXRole: AXList
 AXSubrole: AXContentList
-AXRoleDescription: AXList:AXContentList
+AXRoleDescription: content list
 AXChildren: <array of size 2>
 AXHelp: 
 AXParent: <AXList>
@@ -36,11 +36,12 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXAccessKey: (null)
 
 ------------
 AXRole: AXList
 AXSubrole: AXContentList
-AXRoleDescription: AXList:AXContentList
+AXRoleDescription: content list
 AXChildren: <array of size 2>
 AXHelp: 
 AXParent: <AXList>
@@ -63,11 +64,12 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXAccessKey: (null)
 
 ------------
 AXRole: AXList
 AXSubrole: AXDefinitionList
-AXRoleDescription: AXList:AXDefinitionList
+AXRoleDescription: definition list
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXList>
@@ -90,6 +92,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXAccessKey: (null)
 
 ------------
 AXRole: AXGroup
@@ -113,6 +116,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -136,6 +140,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 
@@ -161,6 +166,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -184,6 +190,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 
@@ -209,6 +216,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 AXRole: AXGroup
@@ -232,6 +240,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 
