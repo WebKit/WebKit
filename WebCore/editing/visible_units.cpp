@@ -886,25 +886,25 @@ bool isEndOfParagraph(const VisiblePosition &pos)
     return pos.isNotNull() && pos == endOfParagraph(pos);
 }
 
-VisiblePosition previousParagraphPosition(const VisiblePosition &p, int x)
+VisiblePosition previousParagraphPosition(const VisiblePosition& p, int x)
 {
     VisiblePosition pos = p;
     do {
         VisiblePosition n = previousLinePosition(pos, x);
         if (n.isNull() || n == pos)
-            return p;
+            break;
         pos = n;
     } while (inSameParagraph(p, pos));
     return pos;
 }
 
-VisiblePosition nextParagraphPosition(const VisiblePosition &p, int x)
+VisiblePosition nextParagraphPosition(const VisiblePosition& p, int x)
 {
     VisiblePosition pos = p;
     do {
         VisiblePosition n = nextLinePosition(pos, x);
         if (n.isNull() || n == pos)
-            return p;
+            break;
         pos = n;
     } while (inSameParagraph(p, pos));
     return pos;

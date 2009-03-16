@@ -2,6 +2,24 @@
 
         Reviewed by Adele Peterson.
 
+        Bug 24629: moving forward or backward a paragraph fails at edge of document
+        https://bugs.webkit.org/show_bug.cgi?id=24629
+        rdar://problem/6544413
+
+        Test: editing/selection/move-paragraph-document-edges.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousParagraphPosition): Use the last result from
+        previousLinePosition rather than going all the way back to what was originally
+        passed in when we hit exception cases like null or not moving. This correctly
+        inherits the behavior of previousLinePosition when we are in a paragraph at the
+        edge of a document.
+        (WebCore::nextParagraphPosition): Ditto.
+
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
         Bug 24619: RenderObject::selectionStartEnd does not need to be a virtual function
         https://bugs.webkit.org/show_bug.cgi?id=24619
 

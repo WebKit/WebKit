@@ -1,3 +1,14 @@
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 24629: moving forward or backward a paragraph fails at edge of document
+        https://bugs.webkit.org/show_bug.cgi?id=24629
+        rdar://problem/6544413
+
+        * editing/selection/move-paragraph-document-edges-expected.txt: Added.
+        * editing/selection/move-paragraph-document-edges.html: Added.
+
 2009-03-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel
