@@ -1,3 +1,48 @@
+2009-03-16  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Move platform-specific acessibility tests and results into platform/mac.
+
+        * platform/mac/accessibility/accesskey-expected.txt: Renamed from LayoutTests/accessibility/accesskey-expected.txt.
+        * platform/mac/accessibility/accesskey.html: Renamed from LayoutTests/accessibility/accesskey.html.
+        * platform/mac/accessibility/aria-describedby-on-input-expected.txt: Renamed from LayoutTests/accessibility/aria-describedby-on-input-expected.txt.
+        * platform/mac/accessibility/aria-labelledby-on-input-expected.txt: Renamed from LayoutTests/accessibility/aria-labelledby-on-input-expected.txt.
+        * platform/mac/accessibility/aria-range-expected.txt: Renamed from LayoutTests/accessibility/aria-range-expected.txt.
+        * platform/mac/accessibility/aria-range-value-expected.txt: Renamed from LayoutTests/accessibility/aria-range-value-expected.txt.
+        * platform/mac/accessibility/aria-range-value.html: Renamed from LayoutTests/accessibility/aria-range-value.html.
+        * platform/mac/accessibility/aria-range.html: Renamed from LayoutTests/accessibility/aria-range.html.
+        * platform/mac/accessibility/aria-roles-expected.txt: Renamed from LayoutTests/accessibility/aria-roles-expected.txt.
+        * platform/mac/accessibility/aria-slider-expected.txt: Renamed from LayoutTests/accessibility/aria-slider-expected.txt.
+        * platform/mac/accessibility/aria-slider.html: Renamed from LayoutTests/accessibility/aria-slider.html.
+        * platform/mac/accessibility/aria-spinbutton-expected.txt: Renamed from LayoutTests/accessibility/aria-spinbutton-expected.txt.
+        * platform/mac/accessibility/aria-spinbutton.html: Renamed from LayoutTests/accessibility/aria-spinbutton.html.
+        * platform/mac/accessibility/bounds-for-range-expected.txt: Renamed from LayoutTests/accessibility/bounds-for-range-expected.txt.
+        * platform/mac/accessibility/bounds-for-range.html: Renamed from LayoutTests/accessibility/bounds-for-range.html.
+        * platform/mac/accessibility/content-editable-expected.txt: Renamed from LayoutTests/accessibility/content-editable-expected.txt.
+        * platform/mac/accessibility/content-editable.html: Renamed from LayoutTests/accessibility/content-editable.html.
+        * platform/mac/accessibility/document-attributes-expected.txt: Renamed from LayoutTests/accessibility/document-attributes-expected.txt.
+        * platform/mac/accessibility/document-attributes.html: Renamed from LayoutTests/accessibility/document-attributes.html.
+        * platform/mac/accessibility/document-links-expected.txt: Renamed from LayoutTests/accessibility/document-links-expected.txt.
+        * platform/mac/accessibility/document-links.html: Renamed from LayoutTests/accessibility/document-links.html.
+        * platform/mac/accessibility/double-title-expected.txt: Renamed from LayoutTests/accessibility/double-title-expected.txt.
+        * platform/mac/accessibility/double-title.html: Renamed from LayoutTests/accessibility/double-title.html.
+        * platform/mac/accessibility/frame-with-title-expected.txt: Renamed from LayoutTests/accessibility/frame-with-title-expected.txt.
+        * platform/mac/accessibility/frame-with-title.html: Renamed from LayoutTests/accessibility/frame-with-title.html.
+        * platform/mac/accessibility/image-map1-expected.txt: Renamed from LayoutTests/accessibility/image-map1-expected.txt.
+        * platform/mac/accessibility/image-map2-expected.txt: Renamed from LayoutTests/accessibility/image-map2-expected.txt.
+        * platform/mac/accessibility/input-image-url-expected.txt: Renamed from LayoutTests/accessibility/input-image-url-expected.txt.
+        * platform/mac/accessibility/input-image-url.html: Renamed from LayoutTests/accessibility/input-image-url.html.
+        * platform/mac/accessibility/internal-link-anchors-expected.txt: Renamed from LayoutTests/accessibility/internal-link-anchors-expected.txt.
+        * platform/mac/accessibility/internal-link-anchors.html: Renamed from LayoutTests/accessibility/internal-link-anchors.html.
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt: Renamed from LayoutTests/accessibility/internal-link-anchors2-expected.txt.
+        * platform/mac/accessibility/legend-expected.txt: Renamed from LayoutTests/accessibility/legend-expected.txt.
+        * platform/mac/accessibility/plugin-expected.txt: Renamed from LayoutTests/accessibility/plugin-expected.txt.
+        * platform/mac/accessibility/radio-button-group-members-expected.txt: Renamed from LayoutTests/accessibility/radio-button-group-members-expected.txt.
+        * platform/mac/accessibility/resources/cake.png: Copied from LayoutTests/accessibility/resources/cake.png.
+        * platform/mac/accessibility/resources/test.swf: Renamed from LayoutTests/accessibility/resources/test.swf.
+        * platform/mac/accessibility/table-one-cell-expected.txt: Renamed from LayoutTests/accessibility/table-one-cell-expected.txt.
+
 2009-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

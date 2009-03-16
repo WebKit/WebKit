@@ -22,6 +22,6 @@ AXTopLevelUIElement: <AXWebArea>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
 AXLayoutCount: 2
-AXURL: LayoutTests/accessibility/document-attributes.html
+AXURL: LayoutTests/platform/mac/accessibility/document-attributes.html
 
 

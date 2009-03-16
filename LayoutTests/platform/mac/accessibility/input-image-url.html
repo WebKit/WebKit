@@ -18,7 +18,7 @@
             var image1 = document.getElementById("image1");
             image1.focus();
             var img = accessibilityController.focusedElement;
-            var pattern = "AXURL: LayoutTests/accessibility/resources/cake.png";
+            var pattern = "AXURL: LayoutTests/platform/mac/accessibility/resources/cake.png";
             if (img.allAttributes().indexOf(pattern) != -1) {
                 result.innerText += "Test passed\n";
             }
