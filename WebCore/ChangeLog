@@ -1,3 +1,13 @@
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 24619: RenderObject::selectionStartEnd does not need to be a virtual function
+        https://bugs.webkit.org/show_bug.cgi?id=24619
+
+        * rendering/RenderObject.h: Remove virtual keyword from selectionStartEnd declaration.
+        * rendering/RenderView.h: Ditto.
+
 2009-03-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.

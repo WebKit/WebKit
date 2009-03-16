@@ -99,7 +99,7 @@ public:
 
     virtual IntRect viewRect() const;
 
-    virtual void selectionStartEnd(int& startPos, int& endPos) const;
+    void selectionStartEnd(int& startPos, int& endPos) const;
 
     IntRect printRect() const { return m_printRect; }
     void setPrintRect(const IntRect& r) { m_printRect = r; }
