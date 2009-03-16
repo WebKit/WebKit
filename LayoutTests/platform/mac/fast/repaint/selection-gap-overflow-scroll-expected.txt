@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             text run at (0,18) width 84: "editing pages"
         RenderText {#text} at (84,18) size 4x18
           text run at (84,18) width 4: "."
-layer at (13,60) size 126x126 clip at (16,63) size 105x120 scrollY 26 scrollHeight 146
+layer at (13,60) size 126x126 clip at (16,63) size 105x120 scrollY 36 scrollHeight 156
   RenderBlock {DIV} at (5,52) size 126x126 [border: (3px solid #000000)]
     RenderBlock {DIV} at (13,13) size 85x100
     RenderBlock (anonymous) at (13,113) size 85x36

@@ -1,3 +1,73 @@
+2009-03-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=13632
+
+        Overflow scrolling needs to account for the bottom/right padding on the object itself as well
+        as for bottom/right margins on children.
+
+        * platform/mac/fast/body-propagation/overflow/002-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/002-expected.png:
+        * platform/mac/fast/body-propagation/overflow/002-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/002-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/002-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/002-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/003-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-declarative-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/003-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/003-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/004-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-declarative-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/004-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/004-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/007-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-declarative-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/007-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/007-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-xhtml-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.checksum:
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.checksum:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.png:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.txt:
+        * platform/mac/fast/overflow/003-expected.checksum:
+        * platform/mac/fast/overflow/003-expected.png:
+        * platform/mac/fast/overflow/003-expected.txt:
+        * platform/mac/fast/overflow/004-expected.checksum:
+        * platform/mac/fast/overflow/004-expected.png:
+        * platform/mac/fast/overflow/007-expected.checksum:
+        * platform/mac/fast/overflow/007-expected.png:
+        * platform/mac/fast/overflow/007-expected.txt:
+        * platform/mac/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-expected.checksum:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-expected.png:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-expected.txt:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.checksum:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.png:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac/scrollbars/overflow-scrollbar-combinations-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug83786-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+
 2009-03-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

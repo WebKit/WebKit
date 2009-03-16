@@ -37,13 +37,13 @@ layer at (11,31) size 161x26
   RenderBlock {DIV} at (1,1) size 161x26
     RenderText {#text} at (3,0) size 20x13
       text run at (3,0) width 20: "one"
-layer at (177,31) size 6x26 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 39
+layer at (177,31) size 6x26 clip at (0,0) size 0x0 scrollWidth 15 scrollHeight 39
   RenderBlock {DIV} at (1,1) size 6x26
     RenderText {#text} at (3,0) size 9x39
       text run at (3,0) width 5: "t"
       text run at (3,13) width 9: "w"
       text run at (3,26) width 7: "o"
-layer at (182,31) size 6x26 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 65
+layer at (182,31) size 6x26 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 65
   RenderBlock {DIV} at (1,1) size 6x26
     RenderText {#text} at (3,0) size 7x65
       text run at (3,0) width 5: "t"
@@ -55,13 +55,13 @@ layer at (11,103) size 230x26
   RenderBlock {DIV} at (1,1) size 230x26
     RenderText {#text} at (3,0) size 74x13
       text run at (3,0) width 74: "one two three"
-layer at (246,103) size 6x26 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 39
+layer at (246,103) size 6x26 clip at (0,0) size 0x0 scrollWidth 15 scrollHeight 39
   RenderBlock {DIV} at (1,1) size 6x26
     RenderText {#text} at (3,0) size 9x39
       text run at (3,0) width 5: "t"
       text run at (3,13) width 9: "w"
       text run at (3,26) width 7: "o"
-layer at (251,103) size 6x26 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 65
+layer at (251,103) size 6x26 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 65
   RenderBlock {DIV} at (1,1) size 6x26
     RenderText {#text} at (3,0) size 7x65
       text run at (3,0) width 5: "t"

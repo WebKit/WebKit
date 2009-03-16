@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x162
   RenderBlock {HTML} at (0,0) size 800x162
-layer at (0,0) size 162x162 clip at (1,1) size 145x145 scrollHeight 206
+layer at (0,0) size 162x162 clip at (1,1) size 145x145 scrollHeight 222
   RenderBlock {body} at (0,0) size 162x162 [color=#000080] [border: (1px solid #000080)]
     RenderBlock {P} at (1,17) size 145x54
       RenderText {#text} at (0,0) size 145x54

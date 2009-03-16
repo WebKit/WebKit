@@ -2717,9 +2717,23 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         }
     }
 
-    if (!includeSelf && lastLineBox()) {
-        int lp = lastLineBox()->y() + lastLineBox()->height();
-        bottom = max(bottom, lp);
+    if (!includeSelf) {
+        bottom = max(bottom, borderTop() + paddingTop() + paddingBottom());
+        if (childrenInline()) {
+            if (lastLineBox()) {
+                int childBottomEdge = lastLineBox()->y() + lastLineBox()->height();
+                bottom = max(bottom, childBottomEdge + paddingBottom());
+            }
+        } else {
+            // Find the last normal flow child.
+            RenderBox* currBox = lastChildBox();
+            while (currBox && currBox->isFloatingOrPositioned())
+                currBox = currBox->previousSiblingBox();
+            if (currBox) {
+                int childBottomEdge = currBox->y() + currBox->height() + currBox->collapsedMarginBottom();
+                bottom = max(bottom, childBottomEdge + paddingBottom());
+            }
+        }
     }
     
     return bottom;
@@ -2793,14 +2807,26 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         }
     }
 
-    if (!includeSelf && firstLineBox()) {
-        for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
-            int rp = currBox->x() + currBox->width();
-            // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
-            // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
-            if (node() && node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
-                rp += 1;
-            right = max(right, rp);
+    if (!includeSelf) {
+        right = max(right, borderLeft() + paddingLeft() + paddingRight());
+        if (childrenInline()) {
+            for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
+                int childRightEdge = currBox->x() + currBox->width();
+                
+                // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
+                // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
+                if (node() && node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR && !paddingRight())
+                    childRightEdge += 1;
+                right = max(right, childRightEdge + paddingRight());
+            }
+        } else {
+            // Walk all normal flow children.
+            for (RenderBox* currBox = firstChildBox(); currBox; currBox = currBox->nextSiblingBox()) {
+                if (currBox->isFloatingOrPositioned())
+                    continue;
+                int childRightEdge = currBox->x() + currBox->width() + currBox->marginRight();
+                right = max(right, childRightEdge + paddingRight());
+            }
         }
     }
     

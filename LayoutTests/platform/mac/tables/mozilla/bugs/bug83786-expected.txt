@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x136
   RenderBlock {HTML} at (0,0) size 800x136
     RenderBody {BODY} at (0,0) size 800x136
-layer at (0,0) size 266x136 clip at (3,3) size 260x130 scrollHeight 144
+layer at (0,0) size 266x136 clip at (3,3) size 260x130 scrollWidth 324 scrollHeight 144
   RenderBlock {DIV} at (0,0) size 266x136 [border: (3px solid #008000)]
     RenderTable {TABLE} at (16,3) size 64x143
       RenderTableSection {TBODY} at (0,0) size 64x143

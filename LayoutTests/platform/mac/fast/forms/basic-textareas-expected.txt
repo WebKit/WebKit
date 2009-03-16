@@ -531,7 +531,7 @@ layer at (0,0) size 785x1094
               text run at (3,130) width 34: "fghijkl"
               text run at (3,143) width 31: "mnop"
               text run at (3,156) width 34: "qrstuv"
-        layer at (86,521) size 161x41 clip at (86,521) size 161x26 scrollWidth 425
+        layer at (86,521) size 161x41 clip at (86,521) size 161x26 scrollWidth 427
           RenderBlock {DIV} at (1,1) size 161x41
             RenderText {#text} at (3,0) size 421x13
               text run at (3,0) width 421: "Lorem ipsum dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv"
@@ -810,7 +810,7 @@ layer at (0,0) size 785x1094
               text run at (3,130) width 30: "ghijkl"
               text run at (3,143) width 31: "mnop"
               text run at (3,156) width 34: "qrstuv"
-        layer at (454,176) size 18x26 clip at (454,176) size 3x11 scrollWidth 15 scrollHeight 819
+        layer at (454,176) size 18x26 clip at (454,176) size 3x11 scrollWidth 17 scrollHeight 819
           RenderBlock {DIV} at (21,21) size 18x26
             RenderText {#text} at (3,0) size 11x819
               text run at (3,0) width 6: "L"
@@ -1135,7 +1135,7 @@ layer at (0,0) size 785x1094
               text run at (3,130) width 34: "fghijkl"
               text run at (3,143) width 31: "mnop"
               text run at (3,156) width 34: "qrstuv"
-        layer at (4,480) size 161x41 clip at (4,480) size 161x26 scrollWidth 425
+        layer at (4,480) size 161x41 clip at (4,480) size 161x26 scrollWidth 427
           RenderBlock {DIV} at (1,1) size 161x41
             RenderText {#text} at (3,0) size 421x13
               text run at (3,0) width 421: "Lorem ipsum dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv"
