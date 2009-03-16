@@ -1,5 +1,17 @@
 2009-03-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6633944> 
+        REGRESSION (Safari 4 PB): Many crashes in Flip4Mac involving loading the plugin
+        
+        Defer loading while calling webPlugInInitialize since it can end up spinning the run loop.
+        
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController addPlugin:]):
+
+2009-03-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix <rdar://problem/6622601>

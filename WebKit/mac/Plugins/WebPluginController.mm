@@ -190,6 +190,10 @@ static NSMutableSet *pluginViews = nil;
         [_views addObject:view];
         [[_documentView _webView] addPluginInstanceView:view];
 
+        BOOL oldDefersCallbacks = [[self webView] defersCallbacks];
+        if (!oldDefersCallbacks)
+            [[self webView] setDefersCallbacks:YES];
+        
         LOG(Plugins, "initializing plug-in %@", view);
         if ([view respondsToSelector:@selector(webPlugInInitialize)]) {
             JSC::JSLock::DropAllLocks dropAllLocks(false);
@@ -199,6 +203,9 @@ static NSMutableSet *pluginViews = nil;
             [view pluginInitialize];
         }
 
+        if (!oldDefersCallbacks)
+            [[self webView] setDefersCallbacks:NO];
+        
         if (_started) {
             LOG(Plugins, "starting plug-in %@", view);
             if ([view respondsToSelector:@selector(webPlugInStart)]) {
