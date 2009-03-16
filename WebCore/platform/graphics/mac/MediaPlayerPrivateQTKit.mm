@@ -285,7 +285,7 @@ void MediaPlayerPrivate::createQTMovieView()
     detachQTMovieView();
 
     static bool addedCustomMethods = false;
-    if (!addedCustomMethods) {
+    if (!m_player->inMediaDocument() && !addedCustomMethods) {
         Class QTMovieContentViewClass = NSClassFromString(@"QTMovieContentView");
         ASSERT(QTMovieContentViewClass);
 

@@ -1,3 +1,14 @@
+2009-03-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6686721> Media document crash in 64-bit WebKit
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView): QTMovieContentViewClass is only used when
+        rendering inline with old versions of QuickTime, so don't look for it when we are in a 
+        media document.
+
 2009-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
