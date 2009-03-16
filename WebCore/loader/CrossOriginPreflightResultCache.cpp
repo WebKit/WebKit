@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,10 @@
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
+
+// These values are at the discretion of the user agent.
+static const unsigned defaultPreflightCacheTimeoutSeconds = 5;
+static const unsigned maxPreflightCacheTimeoutSeconds = 600; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
 
 static bool parseAccessControlMaxAge(const String& string, unsigned& expiryDelta)
 {
@@ -93,8 +97,11 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
         return false;
 
     unsigned expiryDelta;
-    if (!parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta))
-        expiryDelta = 5;
+    if (parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta)) {
+        if (expiryDelta > maxPreflightCacheTimeoutSeconds)
+            expiryDelta = maxPreflightCacheTimeoutSeconds;
+    } else
+        expiryDelta = defaultPreflightCacheTimeoutSeconds;
 
     m_absoluteExpiryTime = currentTime() + expiryDelta;
     return true;
