@@ -159,6 +159,12 @@ void GeolocationServiceMac::errorOccurred(PassRefPtr<PositionError> error)
         altitudeAccuracy = 0.0;
         altitude = 0.0;
     }
+    double speed = newLocation.speed;
+    if (speed < 0.0)
+        speed = 0.0;
+    double heading = newLocation.course;
+    if (heading < 0.0)
+        heading = 0.0;
     
     WTF::RefPtr<WebCore::Coordinates> newCoordinates = WebCore::Coordinates::create(
                             newLocation.coordinate.latitude,
@@ -166,8 +172,8 @@ void GeolocationServiceMac::errorOccurred(PassRefPtr<PositionError> error)
                             altitude,
                             newLocation.horizontalAccuracy,
                             altitudeAccuracy,
-                            newLocation.course,
-                            newLocation.speed);
+                            heading,
+                            speed);
     WTF::RefPtr<WebCore::Geoposition> newPosition = WebCore::Geoposition::create(
                              newCoordinates.release(),
                              [newLocation.timestamp timeIntervalSinceReferenceDate] * 1000.0); // seconds -> milliseconds

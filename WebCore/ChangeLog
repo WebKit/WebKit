@@ -2,6 +2,15 @@
 
         Reviewed by David Kilzer.
 
+        <rdar://problem/6668875> Normalize Geolocation results
+
+        * platform/mac/GeolocationServiceMac.mm:
+        (-[WebCoreCoreLocationObserver locationManager:didUpdateToLocation:fromLocation:]):
+
+2009-03-15  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by David Kilzer.
+
         Update ::toString format as suggested by Darin Adler.
 
         * page/Geoposition.cpp:
