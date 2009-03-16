@@ -1,3 +1,6 @@
 # <rdar://problem/6661401> Custom fonts do not work in the complex text code path
 platform/mac/fast/text/myanmar-shaping.html
 platform/mac/fast/text/thai-combining-mark-positioning.html
+
+# <rdar://problem/6687808> Crash when running accessibility/table-modification-crash.html
+accessibility/table-modification-crash.html
