@@ -1,3 +1,16 @@
+2009-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/6320555>
+        Add an upper limit for setting HTMLSelectElement.length.
+
+        Test: fast/forms/select-max-length.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::setLength):
+
 2009-03-16  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,13 @@
+2009-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Test for <rdar://problem/6320555>
+        Add an upper limit for setting HTMLSelectElement.length.
+
+        * fast/forms/select-max-length-expected.txt: Added.
+        * fast/forms/select-max-length.html: Added.
+
 2009-03-16  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Dimitri Glazkov.

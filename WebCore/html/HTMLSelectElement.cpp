@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -66,6 +66,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
+
+// Upper limit agreed upon with representatives of Opera and Mozilla.
+static const unsigned maxSelectItems = 10000;
 
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElementWithState(tagName, doc, f)
@@ -1063,8 +1066,8 @@ Node* HTMLSelectElement::item(unsigned index)
 void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, ExceptionCode& ec)
 {
     ec = 0;
-    if (index > INT_MAX)
-        index = INT_MAX;
+    if (index > maxSelectItems - 1)
+        index = maxSelectItems - 1;
     int diff = index  - length();
     HTMLElement* before = 0;
     // out of array bounds ? first insert empty dummies
@@ -1086,8 +1089,8 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
 void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
 {
     ec = 0;
-    if (newLen > INT_MAX)
-        newLen = INT_MAX;
+    if (newLen > maxSelectItems)
+        newLen = maxSelectItems;
     int diff = length() - newLen;
 
     if (diff < 0) { // add dummy elements
