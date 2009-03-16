@@ -1116,6 +1116,22 @@ HRESULT WebFrame::numberOfActiveAnimations(UINT* number)
     return S_OK;
 }
 
+HRESULT WebFrame::isDisplayingStandaloneImage(BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = FALSE;
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    Document* document = frame->document();
+    *result = document && document->isImageDocument();
+    return S_OK;
+}
+
 HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls)
 {
     if (!form)

@@ -87,4 +87,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT pauseAnimation([in] BSTR animationName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* animationWasRunning);
     HRESULT pauseTransition([in] BSTR propertyName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* transitionWasRunning);
     HRESULT numberOfActiveAnimations([out, retval] UINT* number);
+
+    HRESULT isDisplayingStandaloneImage([out, retval] BOOL* result);
 }

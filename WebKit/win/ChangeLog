@@ -1,3 +1,20 @@
+2009-03-16  Adam Roben  <aroben@apple.com>
+
+        Add IWebFramePrivate::isDisplayingStandaloneImage
+
+        This uses the same logic that -[WebFrame _isDisplayingStandaloneImage]
+        uses.
+
+        Reviewed by Darin Adler.
+
+        * Interfaces/IWebFramePrivate.idl: Added isDisplayingStandaloneImage.
+
+        * WebFrame.cpp:
+        (WebFrame::isDisplayingStandaloneImage): Added. Returns true if our
+        Document is an image document.
+
+        * WebFrame.h: Added isDisplayingStandaloneImage.
+
 2009-03-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.
