@@ -360,8 +360,8 @@ PASS win['clientInformation'] == '[object Navigator]' is true
 PASS win['clientInformation'] == '[object Navigator]' is true
 PASS win['document'] == '[object HTMLDocument]' is true
 PASS win['document'] == '[object HTMLDocument]' is true
-PASS win[location] matched original
-PASS win[location] matched original
+PASS win['location'] matched original
+PASS win['location'] matched original
 PASS win['onabort'] is null
 PASS win['onabort'] is null
 PASS win['onbeforeunload'] is null
@@ -420,34 +420,34 @@ FAIL win['name'] should be undefined (of type undefined). Was  (of type string).
 FAIL win['name'] should be undefined (of type undefined). Was  (of type string).
 FAIL win['status'] should be undefined (of type undefined). Was  (of type string).
 FAIL win['status'] should be undefined (of type undefined). Was  (of type string).
-PASS win['devicePixelRatio'] is 1
-PASS win['devicePixelRatio'] is 1
-PASS win['innerHeight'] is 600
-PASS win['innerHeight'] is 600
-PASS win['innerWidth'] is 800
-PASS win['innerWidth'] is 800
-PASS win['length'] is 1
-PASS win['length'] is 1
-PASS win['outerHeight'] is 0
-PASS win['outerHeight'] is 0
-PASS win['outerWidth'] is 0
-PASS win['outerWidth'] is 0
-PASS win['pageXOffset'] is 0
-PASS win['pageXOffset'] is 0
-PASS win['pageYOffset'] is 0
-PASS win['pageYOffset'] is 0
-PASS win['screenLeft'] is 0
-PASS win['screenLeft'] is 0
-PASS win['screenTop'] is 1200
-PASS win['screenTop'] is 1200
-PASS win['screenX'] is 0
-PASS win['screenX'] is 0
-PASS win['screenY'] is 1200
-PASS win['screenY'] is 1200
-PASS win['scrollX'] is 0
-PASS win['scrollX'] is 0
-PASS win['scrollY'] is 0
-PASS win['scrollY'] is 0
+PASS win['devicePixelRatio'] matched original
+PASS win['devicePixelRatio'] matched original
+PASS win['innerHeight'] matched original
+PASS win['innerHeight'] matched original
+PASS win['innerWidth'] matched original
+PASS win['innerWidth'] matched original
+PASS win['length'] matched original
+PASS win['length'] matched original
+PASS win['outerHeight'] matched original
+PASS win['outerHeight'] matched original
+PASS win['outerWidth'] matched original
+PASS win['outerWidth'] matched original
+PASS win['pageXOffset'] matched original
+PASS win['pageXOffset'] matched original
+PASS win['pageYOffset'] matched original
+PASS win['pageYOffset'] matched original
+PASS win['screenLeft'] matched original
+PASS win['screenLeft'] matched original
+PASS win['screenTop'] matched original
+PASS win['screenTop'] matched original
+PASS win['screenX'] matched original
+PASS win['screenX'] matched original
+PASS win['screenY'] matched original
+PASS win['screenY'] matched original
+PASS win['scrollX'] matched original
+PASS win['scrollX'] matched original
+PASS win['scrollY'] matched original
+PASS win['scrollY'] matched original
 PASS typeof win['closed'] is 'boolean'
 PASS win['closed'] is false
 PASS typeof win['closed'] is 'boolean'

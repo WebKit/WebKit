@@ -25,10 +25,12 @@ var myInput = document.getElementById("MYINPUT");
 var subframe = win.frames[0];
 
 function checkValue(name, original) {
-    // Handle a correct Location separately to avoid depending on the test
+    // Handle a correct Location, as well as any numerical values (screenX and
+    // so on), separately to avoid depending on the test file or window
     // location.
-    if (name.toLowerCase() == "location" && win['location'] == original)
-        testPassed('win[location] matched original');
+    if ((name.toLowerCase() == "location" || (typeof original).toLowerCase() == "number")
+        && win[name] == original)
+        testPassed("win['" + name + "'] matched original");
     else
         shouldEvaluateTo("win['" + name + "']", original);
 }

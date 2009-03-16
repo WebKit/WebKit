@@ -1,3 +1,15 @@
+2009-03-16  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove test dependency on precise window location and size. It's not
+        clear to me why these vary, but they're not what the test is checking,
+        so it need not depend on them in any case.
+        https://bugs.webkit.org/show_bug.cgi?id=24170
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/Window/window-lookup-precedence.html:
+
 2009-03-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
