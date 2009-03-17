@@ -1,3 +1,37 @@
+2009-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Bug 24517: REGRESSION (r41552): innerHTML does an updateLayout -- unneeded and can be slow
+        https://bugs.webkit.org/show_bug.cgi?id=24517
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::enable): Added a call to updateRendering, since
+        determining whether to display the delete button involves style and updateRendering
+        also updates style (should probably be named updateStyle, in fact). Not needed to fix
+        this bug, but would have prevented the crash that led to this bug in the first place.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): Get rid of unneeded null check. All frames have
+        delete button controllers.
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeForPoint): Ditto.
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Changed a "&" to a "&&" so that generating markup
+        doesn't depend on renderers at all when the convertBlocksToInlines boolean is false.
+        This allows us to omit the call to updateLayoutIgnorePendingStylesheets in the
+        createMarkup function that's called by innerHTML.
+        (WebCore::MarkupAccumulator::appendMarkup): Turned this into a class with a member
+        function. Added a feature where the accumulator will skip a node. Moved arguments
+        that don't change during recursion into an object. This function still is a bit
+        inefficient, since it creates a new HashMap at every level as it recurses, but for now
+        I did not tackle that. Also replaced the onlyIncludeChildren boolean with EChildrenOnly
+        for consistency and clarity.
+        (WebCore::createMarkup): Removed the call to updateLayoutIgnorePendingStylesheets.
+        Instead of calling disable/enable on the delete button controller's container element,
+        pass it in to the markup accumulator as a node to skip.
+
 2009-03-17  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -284,8 +284,13 @@ void DeleteButtonController::enable()
     ASSERT(m_disableStack > 0);
     if (m_disableStack > 0)
         m_disableStack--;
-    if (enabled())
+    if (enabled()) {
+        // Determining if the element is deletable currently depends on style
+        // because whether something is editable depends on style, so we need
+        // to recalculate style before calling enclosingDeletableElement.
+        m_frame->document()->updateRendering();
         show(enclosingDeletableElement(m_frame->selection()->selection()));
+    }
 }
 
 void DeleteButtonController::disable()

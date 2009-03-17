@@ -2224,7 +2224,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
         return 0;
     IntPoint framePoint = frameView->windowToContents(windowPoint);
     VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
-    return avoidIntersectionWithNode(selection.toNormalizedRange().get(), deleteButtonController() ? deleteButtonController()->containerElement() : 0);
+    return avoidIntersectionWithNode(selection.toNormalizedRange().get(), m_deleteButtonController->containerElement());
 }
 
 void Editor::revealSelectionAfterEditingOperation()
