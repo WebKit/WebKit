@@ -43,6 +43,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/WebCoreURLResponse.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/HashMap.h>
 #import <wtf/StdLibExtras.h>
@@ -324,7 +325,7 @@ void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, co
         // startStreamResponseURL:... will null-terminate.
     }
     
-    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);    
+    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r _webcore_MIMEType], theHeaders);
 }
 
 void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)

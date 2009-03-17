@@ -1,3 +1,34 @@
+2009-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        Use -[NSURLResponse(WebCoreURLResponse) _webcore_MIMEType] consistently
+
+        Reviewed by Darin Adler.
+
+        WebKit r30323 added -_webcore_MIMEType to fix issues with
+        incorrect MIME types in NS[HTTP]URLResponse objects.  However,
+        uses of -[NSURLResponse MIMEType] still persist in WebKit that
+        should be switched to use -_webcore_MIMEType.  Note that
+        -[WebDataSource _responseMIMEType] calls back into WebCore to
+        get the MIME type from the ResourceResponse object, which has
+        already retrieved it via -_webcore_MIMEType.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didReceiveResponse): Use
+        -_webcore_MIMEType.
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::didReceiveResponse): Ditto.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView pluginView:receivedData:]): Ditto.
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController pluginView:receivedResponse:]): Ditto.
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation _isDisplayingWebArchive]): Use
+        -[WebDataSource _responseMIMEType] instead.
+        * WebView/WebPDFRepresentation.m:
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]): Ditto.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]): Ditto.
+
 2009-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

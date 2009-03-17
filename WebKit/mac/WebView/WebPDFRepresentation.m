@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -111,7 +111,7 @@
     NSData *data = [dataSource data];
 
     NSArray *postScriptMIMETypes = [[self class] postScriptMIMETypes];
-    NSString *mimeType = [[dataSource response] MIMEType];
+    NSString *mimeType = [dataSource _responseMIMEType];
     if ([postScriptMIMETypes containsObject:mimeType]) {
         data = [self convertPostScriptDataSourceToPDF:data];
         if ([data length] == 0)

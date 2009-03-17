@@ -41,6 +41,7 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/WebCoreURLResponse.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
@@ -418,7 +419,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                         contentURL:[response URL]
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
-                                                          MIMEType:[response MIMEType]];
+                                                          MIMEType:[response _webcore_MIMEType]];
         [_dataSource _documentLoader]->cancelMainResourceLoad(error);
         [error release];
     }        

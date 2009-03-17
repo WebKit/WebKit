@@ -341,7 +341,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSString *appName = nil;
     NSImage *appIcon = nil;
     
-    _applicationInfoForMIMEType([[dataSource response] MIMEType], &appName, &appIcon);
+    _applicationInfoForMIMEType([dataSource _responseMIMEType], &appName, &appIcon);
     if (!appName)
         appName = UI_STRING("Finder", "Default application name for Open With context menu");
     

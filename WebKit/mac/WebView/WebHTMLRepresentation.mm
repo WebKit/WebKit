@@ -150,7 +150,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (BOOL)_isDisplayingWebArchive
 {
-    return [[[_private->dataSource response] MIMEType] _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
+    return [[_private->dataSource _responseMIMEType] _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
