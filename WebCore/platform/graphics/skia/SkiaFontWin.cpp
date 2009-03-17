@@ -334,10 +334,15 @@ bool paintSkiaText(GraphicsContext* context,
     bool didFill = false;
 
     if ((textMode & cTextFill) && SkColorGetA(paint.getColor())) {
+        Gradient* fillGradient = 0;
+        Pattern* fillPattern = 0;
+        if (context->fillColorSpace() == GradientColorSpace)
+            fillGradient = context->fillGradient();
+        else if (context->fillColorSpace() == PatternColorSpace)
+            fillPattern = context->fillPattern();
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
-                          context->getCTM(), context->fillGradient(),
-                          context->fillPattern(), &glyphs[0], &advances[0],
-                          &offsets[0], numGlyphs))
+                          context->getCTM(), fillGradient, fillPattern,
+                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
             return false;
         didFill = true;
     }
@@ -363,10 +368,15 @@ bool paintSkiaText(GraphicsContext* context,
             paint.setLooper(0)->safeUnref();
         }
 
+        Gradient* strokeGradient = 0;
+        Pattern* strokePattern = 0;
+        if (context->strokeColorSpace() == GradientColorSpace)
+            strokeGradient = context->strokeGradient();
+        else if (context->strokeColorSpace() == PatternColorSpace)
+            strokePattern = context->strokePattern();
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
-                          context->getCTM(), context->strokeGradient(),
-                          context->strokePattern(), &glyphs[0], &advances[0],
-                          &offsets[0], numGlyphs))
+                          context->getCTM(), strokeGradient, strokePattern,
+                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
             return false;
     }
 

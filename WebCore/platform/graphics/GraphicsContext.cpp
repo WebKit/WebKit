@@ -128,6 +128,11 @@ void GraphicsContext::setStrokeColor(const Color& color)
     setPlatformStrokeColor(color);
 }
 
+ColorSpace GraphicsContext::strokeColorSpace() const
+{
+    return m_common->state.strokeColorSpace;
+}
+
 void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& color)
 {
     m_common->state.shadowSize = size;
@@ -248,6 +253,11 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
 Gradient* GraphicsContext::fillGradient() const
 {
     return m_common->state.fillGradient.get();
+}
+
+ColorSpace GraphicsContext::fillColorSpace() const
+{
+    return m_common->state.fillColorSpace;
 }
 
 Gradient* GraphicsContext::strokeGradient() const

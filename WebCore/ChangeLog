@@ -1,3 +1,23 @@
+2009-03-17  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24651
+        Skia does not always render text fill/stroke pattern/gradient/color correctly
+
+        Changes Skia's font rendering to only render gradient/pattern if current
+        color space indicates the gradient/pattern should be used.
+        This is covered by LayoutTests/fast/canvas/canvas-text-alignment.html .
+    
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::strokeColorSpace):
+        (WebCore::GraphicsContext::fillColorSpace):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::):
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2009-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
