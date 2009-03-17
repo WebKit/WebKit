@@ -61,24 +61,6 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformDestroy()
 {
-    if (!isCustomFont()) {
-
-        if (m_font.m_font && m_font.m_font != reinterpret_cast<PangoFont*>(-1)) {
-            g_object_unref(m_font.m_font);
-            m_font.m_font = 0;
-        }
-
-        if (m_font.m_context) {
-            g_object_unref (m_font.m_context);
-            m_font.m_context = 0;
-        }
-
-        if (m_font.m_scaledFont) {
-            cairo_scaled_font_destroy(m_font.m_scaledFont);
-            m_font.m_scaledFont = 0;
-        }
-    }
-
     delete m_smallCapsFontData;
     m_smallCapsFontData = 0;
 }

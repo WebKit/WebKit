@@ -1,3 +1,23 @@
+2009-03-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24592
+        [GTK] Crash in FcPatternHash
+
+        Sanitize memory management in pango fonts.
+
+        Release memory allocated by FontPlatformDataPango in its own
+        destructor instead of doing it from other classes, and add copy
+        constructor and '=' operator to be able to track referenced
+        objects properly.
+
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+
 2009-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -4,6 +4,7 @@
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
+ * Copyright (C) 2009 Igalia S.L.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -193,7 +194,20 @@ bool FontPlatformData::init()
 
 FontPlatformData::~FontPlatformData()
 {
-    // Destroy takes place in FontData::platformDestroy().
+    if (m_font && m_font != reinterpret_cast<PangoFont*>(-1)) {
+        g_object_unref(m_font);
+        m_font = 0;
+    }
+
+    if (m_context) {
+        g_object_unref(m_context);
+        m_context = 0;
+    }
+
+    if (m_scaledFont) {
+        cairo_scaled_font_destroy(m_scaledFont);
+        m_scaledFont = 0;
+    }
 }
 
 bool FontPlatformData::isFixedPitch()
@@ -209,6 +223,45 @@ void FontPlatformData::setFont(cairo_t* cr) const
     ASSERT(m_scaledFont);
 
     cairo_set_scaled_font(cr, m_scaledFont);
+}
+
+FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
+{
+    // Check for self-assignment.
+    if (this == &other)
+        return *this;
+
+    m_size = other.m_size;
+    m_syntheticBold = other.m_syntheticBold;
+    m_syntheticOblique = other.m_syntheticOblique;
+
+    if (other.m_scaledFont)
+        cairo_scaled_font_reference(other.m_scaledFont);
+    if (m_scaledFont)
+        cairo_scaled_font_destroy(m_scaledFont);
+    m_scaledFont = other.m_scaledFont;
+
+    if (other.m_font)
+        g_object_ref(other.m_font);
+    if (m_font)
+        g_object_unref(m_font);
+    m_font = other.m_font;
+
+    if (other.m_context)
+        g_object_ref(other.m_context);
+    if (m_context)
+        g_object_unref(m_context);
+    m_context = other.m_context;
+
+    return *this;
+}
+
+FontPlatformData::FontPlatformData(const FontPlatformData& other)
+    : m_context(0)
+    , m_font(0)
+    , m_scaledFont(0)
+{
+    *this = other;
 }
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
