@@ -4,3 +4,47 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 
 # <rdar://problem/6687808> Crash when running accessibility/table-modification-crash.html
 accessibility/table-modification-crash.html
+
+# <rdar://problem/6497461> Many media tests fail due to logging, etc.
+media/progress-event-total.html
+media/progress-event.html
+media/remove-from-document.html
+media/video-append-source.html
+media/video-aspect-ratio.html
+media/video-autoplay.html
+media/video-buffered.html
+media/video-click-dblckick-standalone.html
+media/video-controls-rendering.html
+media/video-controls-transformed.html
+media/video-controls.html
+media/video-currentTime-set.html
+media/video-currentTime-set2.html
+media/video-currentTime.html
+media/video-display-toggle.html
+media/video-dom-autoplay.html
+media/video-dom-src.html
+media/video-error-abort.html
+media/video-layer-crash.html
+media/video-load-networkState.html
+media/video-load-readyState.html
+media/video-loop.html
+media/video-muted.html
+media/video-no-autoplay.html
+media/video-play-pause-events.html
+media/video-play-pause-exception.html
+media/video-seek-past-end-paused.html
+media/video-seek-past-end-playing.html
+media/video-seekable.html
+media/video-seeking.html
+media/video-source-type-params.html
+media/video-source-type.html
+media/video-source.html
+media/video-src-change.html
+media/video-src-remove.html
+media/video-src-set.html
+media/video-src-source.html
+media/video-src.html
+media/video-transformed.html
+media/video-volume.html
+media/video-width-height.html
+media/video-zoom.html

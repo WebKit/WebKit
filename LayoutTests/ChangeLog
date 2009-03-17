@@ -1,5 +1,13 @@
 2009-03-16  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Adele Peterson.
+
+        Skip media tests that are currently failing.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-03-16  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Beth Dakin.
 
         Skip a test that is currently crashing.
