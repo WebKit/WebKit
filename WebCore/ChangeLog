@@ -1,3 +1,12 @@
+2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLSelectElement::add() doesn't look at exception code returned from insertBefore(), so 
+        it doesn't need to zero it out before calling.
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::add): Removed "ec = 0" line.
+
 2009-03-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

@@ -221,7 +221,6 @@ void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, Exception
     if (!element || !(element->hasLocalName(optionTag) || element->hasLocalName(hrTag)))
         return;
 
-    ec = 0;
     insertBefore(element, before, ec);
 }
 
