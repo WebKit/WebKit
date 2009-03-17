@@ -2112,7 +2112,6 @@ css2.1
 css3
 editing
 geolocation
-media
 platform
 printing
 scrollbars
@@ -2148,6 +2147,24 @@ dom/xhtml/level3/core/nodelookupprefix19.xhtml
 
 # Needs scheduleAsynchronousClick method for EventSender
 fast/events/popup-blocking-click-in-iframe.html
+
+# Tests in media/ directory.
+# These fail because many of the interfaces are not fully implemented
+# in MediaPlayerPrivateGStreamer. See https://bugs.webkit.org/show_bug.cgi?id=16356.
+media/audio-mpeg-supported.html
+media/broken-video.html
+media/progress-event-total.html
+media/unsupported-rtsp.html
+media/video-buffered.html
+media/video-can-play-type.html
+media/video-click-dblckick-standalone.html
+media/video-controls-transformed.html
+media/video-error-does-not-exist.html
+media/video-loop.html
+media/video-seek-past-end-playing.html
+media/video-size.html
+media/video-source-type-params.html
+media/video-source-type.html
 
 # Tests in plugins/ directory
 # Tests that need ObjC plugin
