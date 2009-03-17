@@ -170,6 +170,8 @@ sub determineConfiguration
 sub determineArchitecture
 {
     return if defined $architecture;
+    # make sure $architecture is defined for non-apple-mac builds
+    $architecture = "";
     return unless isAppleMacWebKit();
 
     determineBaseProductDir();
