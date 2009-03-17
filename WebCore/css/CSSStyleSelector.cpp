@@ -1501,6 +1501,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
        )) {
         if (style->width().isAuto())
             style->setWidth(Length(Intrinsic));
+
+        // Textarea considers overflow visible as auto.
+        if (e && e->hasTagName(textareaTag)) {
+            style->setOverflowX(style->overflowX() == OVISIBLE ? OAUTO : style->overflowX());
+            style->setOverflowY(style->overflowY() == OVISIBLE ? OAUTO : style->overflowY());
+        }
     }
 
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through

@@ -35,7 +35,6 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 37: "world"
           RenderTableRow {TR} at (0,74) size 175x40
             RenderTableCell {TD} at (2,75) size 171x38 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderTextControl {TEXTAREA} at (4,2) size 163x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,271) size 106x78
         RenderTableSection {TBODY} at (0,0) size 106x78
@@ -77,5 +76,6 @@ layer at (0,0) size 800x600
                   text run at (243,0) width 120: "Definitely. Should."
 layer at (68,16) size 718x13
   RenderBlock {DIV} at (3,3) size 718x13
-layer at (17,239) size 161x32
-  RenderBlock {DIV} at (1,1) size 161x32
+layer at (16,238) size 163x34 clip at (17,239) size 161x32
+  RenderTextControl {TEXTAREA} at (4,2) size 163x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 161x13

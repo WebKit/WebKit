@@ -33,7 +33,6 @@ public:
     virtual bool isTextArea() const { return true; }
 
     virtual void subtreeHasChanged();
-    virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     void forwardEvent(Event*);

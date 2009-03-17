@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTextControl {TEXTAREA} at (2,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (167,18) size 249x18
         text run at (167,18) width 249: " --> This should be outside the textarea."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (11,11) size 161x26
-  RenderBlock {DIV} at (1,1) size 161x26
-    RenderText {#text} at (3,0) size 30x13
-      text run at (3,0) width 27: "<!--"
-      text run at (30,0) width 3: " "
+layer at (10,10) size 163x28 clip at (11,11) size 161x26
+  RenderTextControl {TEXTAREA} at (2,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 161x13
+      RenderText {#text} at (3,0) size 30x13
+        text run at (3,0) width 27: "<!--"
+        text run at (30,0) width 3: " "

@@ -55,7 +55,6 @@ layer at (0,0) size 785x1550
             RenderText at (8,2) size 63x13
               text run at (8,2) width 63: "Initial Value"
         RenderBR {BR} at (260,281) size 0x0
-        RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,749) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,783) size 769x37
@@ -98,12 +97,13 @@ layer at (389,363) size 142x13 scrollWidth 153
       text run at (1,0) width 151: "Initial text before user input"
 layer at (347,400) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
-layer at (11,592) size 230x130
-  RenderBlock {DIV} at (1,1) size 230x130
-    RenderText {#text} at (3,0) size 185x13
-      text run at (3,0) width 185: "More initial text before user input."
-      text run at (188,0) width 0: " "
-    RenderBR {BR} at (3,13) size 0x13
+layer at (10,591) size 232x132 clip at (11,592) size 230x130
+  RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 230x26
+      RenderText {#text} at (3,0) size 185x13
+        text run at (3,0) width 185: "More initial text before user input."
+        text run at (188,0) width 0: " "
+      RenderBR {BR} at (3,13) size 0x13
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/metaredirect-basic.html  **nav target**

@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 87x18
           text run at (0,0) width 87: "TEXTAREA"
         RenderBR {BR} at (87,14) size 0x0
-        RenderTextControl {TEXTAREA} at (0,18) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
         RenderText {#text} at (400,204) size 4x18
           text run at (400,204) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,222) size 0x18
-layer at (9,61) size 398x198
-  RenderBlock {DIV} at (1,1) size 398x198
-    RenderText {#text} at (3,0) size 387x32
-      text run at (3,0) width 382: "Demo text here that wraps a bit and should demonstrate"
-      text run at (385,0) width 5: " "
-      text run at (3,16) width 182: "the goodness of line-height"
+layer at (8,60) size 400x200 clip at (9,61) size 398x198
+  RenderTextControl {TEXTAREA} at (0,18) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+    RenderBlock {DIV} at (1,1) size 398x32
+      RenderText {#text} at (3,0) size 387x32
+        text run at (3,0) width 382: "Demo text here that wraps a bit and should demonstrate"
+        text run at (385,0) width 5: " "
+        text run at (3,16) width 182: "the goodness of line-height"

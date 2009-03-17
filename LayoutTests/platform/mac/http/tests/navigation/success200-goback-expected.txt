@@ -55,7 +55,6 @@ layer at (0,0) size 785x1550
             RenderText at (8,2) size 225x13
               text run at (8,2) width 225: "Value set by User that should be Restored"
         RenderBR {BR} at (260,281) size 0x0
-        RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,749) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,783) size 769x37
@@ -98,14 +97,15 @@ layer at (389,363) size 142x13
       text run at (1,0) width 133: "New form text from user"
 layer at (347,400) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
-layer at (11,592) size 230x130
-  RenderBlock {DIV} at (1,1) size 230x130
-    RenderText {#text} at (3,0) size 205x39
-      text run at (3,0) width 199: "More new form text from user, which"
-      text run at (202,0) width 3: " "
-      text run at (3,13) width 202: "should be restored when we return to"
-      text run at (205,13) width 3: " "
-      text run at (3,26) width 53: "this page."
+layer at (10,591) size 232x132 clip at (11,592) size 230x130
+  RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 230x39
+      RenderText {#text} at (3,0) size 205x39
+        text run at (3,0) width 199: "More new form text from user, which"
+        text run at (202,0) width 3: " "
+        text run at (3,13) width 202: "should be restored when we return to"
+        text run at (205,13) width 3: " "
+        text run at (3,26) width 53: "this page."
 scrolled to 0,50
 
 ============== Back Forward List ==============

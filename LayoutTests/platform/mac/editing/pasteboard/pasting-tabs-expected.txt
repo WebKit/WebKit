@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
           text run at (647,0) width 119: "The tabs should be"
           text run at (0,18) width 65: "preserved."
       RenderBlock (anonymous) at (0,52) size 784x32
-        RenderTextControl {TEXTAREA} at (2,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,84) size 784x18
         RenderText {#text} at (0,0) size 39x18
@@ -29,8 +28,9 @@ layer at (0,0) size 800x600
             text run at (39,0) width 25: "\x{9}"
         RenderText {#text} at (64,0) size 39x18
           text run at (64,0) width 39: "<-Tab"
-layer at (11,63) size 161x26
-  RenderBlock {DIV} at (1,1) size 161x26
-    RenderText {#text} at (3,0) size 84x13
-      text run at (3,0) width 84: "Tab->\x{9}<-Tab"
+layer at (10,62) size 163x28 clip at (11,63) size 161x26
+  RenderTextControl {TEXTAREA} at (2,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 161x13
+      RenderText {#text} at (3,0) size 84x13
+        text run at (3,0) width 84: "Tab->\x{9}<-Tab"
 caret: position 5 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

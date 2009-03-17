@@ -1,3 +1,46 @@
+2009-03-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Put the padding inside scrollbars on textareas.
+        https://bugs.webkit.org/show_bug.cgi?id=24370
+        
+        Put the padding inside the scrollbars on textareas. This is done by moving the
+        overflow from the shadowNode to the RenderTextControlMultiline. As a result,
+        all of the scroll handing methods that RenderTextControl overrides can be moved
+        down into RenderTextControlSingleLine since RenderTextControlMultiline can now
+        just use RenderBlock's versions. This also allows RenderTextControlMultiLine to
+        no longer need a custom layout method since the shadowNode can now just size
+        like a regular DIV.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::selection):
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::autoscroll):
+        (WebCore::RenderTextControlSingleLine::scrollWidth):
+        (WebCore::RenderTextControlSingleLine::scrollHeight):
+        (WebCore::RenderTextControlSingleLine::scrollLeft):
+        (WebCore::RenderTextControlSingleLine::scrollTop):
+        (WebCore::RenderTextControlSingleLine::setScrollLeft):
+        (WebCore::RenderTextControlSingleLine::setScrollTop):
+        (WebCore::RenderTextControlSingleLine::scroll):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        (WebCore::TextControlInnerTextElement::createRenderer):
+
 2009-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by David Hyatt.

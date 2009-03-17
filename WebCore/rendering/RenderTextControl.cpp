@@ -99,7 +99,6 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         }
     }
 
-    setHasOverflowClip(false);
     setReplaced(isInline());
 }
 
@@ -264,7 +263,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
 VisibleSelection RenderTextControl::selection(int start, int end) const
 {
     return VisibleSelection(VisiblePosition(m_innerText.get(), start, VP_DEFAULT_AFFINITY),
-                     VisiblePosition(m_innerText.get(), end, VP_DEFAULT_AFFINITY));
+                            VisiblePosition(m_innerText.get(), end, VP_DEFAULT_AFFINITY));
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
@@ -445,7 +444,7 @@ void RenderTextControl::calcHeight()
     setHeight(height() + paddingTop() + paddingBottom() + borderTop() + borderBottom());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-    if (m_innerText->renderer()->style()->overflowX() == OSCROLL ||  (m_innerText->renderer()->style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
+    if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
         setHeight(height() + scrollbarThickness());
 
     RenderBlock::calcHeight();
@@ -454,6 +453,7 @@ void RenderTextControl::calcHeight()
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, int xPos, int yPos, int tx, int ty)
 {
     result.setInnerNode(m_innerText.get());
+    result.setInnerNonSharedNode(m_innerText.get());
     result.setLocalPoint(IntPoint(xPos - tx - x() - m_innerText->renderBox()->x(),
                                   yPos - ty - y() - m_innerText->renderBox()->y()));
 }
@@ -523,61 +523,6 @@ void RenderTextControl::selectionChanged(bool userTriggered)
 void RenderTextControl::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
     graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
-}
-
-void RenderTextControl::autoscroll()
-{
-    RenderLayer* layer = m_innerText->renderBox()->layer();
-    if (layer)
-        layer->autoscroll();
-}
-
-int RenderTextControl::scrollWidth() const
-{
-    if (m_innerText)
-        return m_innerText->scrollWidth();
-    return RenderBlock::scrollWidth();
-}
-
-int RenderTextControl::scrollHeight() const
-{
-    if (m_innerText)
-        return m_innerText->scrollHeight();
-    return RenderBlock::scrollHeight();
-}
-
-int RenderTextControl::scrollLeft() const
-{
-    if (m_innerText)
-        return m_innerText->scrollLeft();
-    return RenderBlock::scrollLeft();
-}
-
-int RenderTextControl::scrollTop() const
-{
-    if (m_innerText)
-        return m_innerText->scrollTop();
-    return RenderBlock::scrollTop();
-}
-
-void RenderTextControl::setScrollLeft(int newLeft)
-{
-    if (m_innerText)
-        m_innerText->setScrollLeft(newLeft);
-}
-
-void RenderTextControl::setScrollTop(int newTop)
-{
-    if (m_innerText)
-        m_innerText->setScrollTop(newTop);
-}
-
-bool RenderTextControl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
-{
-    RenderLayer* layer = m_innerText->renderBox()->layer();
-    if (layer && layer->scroll(direction, granularity, multiplier))
-        return true;
-    return RenderBlock::scroll(direction, granularity, multiplier);
 }
 
 HTMLElement* RenderTextControl::innerTextElement() const

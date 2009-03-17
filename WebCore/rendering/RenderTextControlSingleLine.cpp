@@ -351,6 +351,8 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
 
     if (RenderObject* cancelRenderer = m_cancelButton ? m_cancelButton->renderer() : 0)
         cancelRenderer->setStyle(createCancelButtonStyle(style()));
+
+    setHasOverflowClip(false);
 }
 
 void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
@@ -772,6 +774,61 @@ FontSelector* RenderTextControlSingleLine::fontSelector() const
 HostWindow* RenderTextControlSingleLine::hostWindow() const
 {
     return document()->view()->hostWindow();
+}
+
+void RenderTextControlSingleLine::autoscroll()
+{
+    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    if (layer)
+        layer->autoscroll();
+}
+
+int RenderTextControlSingleLine::scrollWidth() const
+{
+    if (innerTextElement())
+        return innerTextElement()->scrollWidth();
+    return RenderBlock::scrollWidth();
+}
+
+int RenderTextControlSingleLine::scrollHeight() const
+{
+    if (innerTextElement())
+        return innerTextElement()->scrollHeight();
+    return RenderBlock::scrollHeight();
+}
+
+int RenderTextControlSingleLine::scrollLeft() const
+{
+    if (innerTextElement())
+        return innerTextElement()->scrollLeft();
+    return RenderBlock::scrollLeft();
+}
+
+int RenderTextControlSingleLine::scrollTop() const
+{
+    if (innerTextElement())
+        return innerTextElement()->scrollTop();
+    return RenderBlock::scrollTop();
+}
+
+void RenderTextControlSingleLine::setScrollLeft(int newLeft)
+{
+    if (innerTextElement())
+        innerTextElement()->setScrollLeft(newLeft);
+}
+
+void RenderTextControlSingleLine::setScrollTop(int newTop)
+{
+    if (innerTextElement())
+        innerTextElement()->setScrollTop(newTop);
+}
+
+bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+{
+    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    if (layer && layer->scroll(direction, granularity, multiplier))
+        return true;
+    return RenderBlock::scroll(direction, granularity, multiplier);
 }
 
 PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)

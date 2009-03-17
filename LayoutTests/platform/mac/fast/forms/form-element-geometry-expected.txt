@@ -107,7 +107,6 @@ layer at (0,0) size 785x626
                         text run at (0,0) width 62: "Choose File"
             RenderTableCell {TD} at (375,2) size 173x38 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 171x36 [border: (2px solid #0000FF)]
-                RenderTextControl {TEXTAREA} at (4,4) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBlock {H2} at (0,312) size 769x28
         RenderText {#text} at (0,0) size 200x28
           text run at (0,0) width 200: "Baseline Alignment"
@@ -186,7 +185,6 @@ layer at (0,0) size 785x626
                 text run at (0,0) width 62: "Choose File"
         RenderText {#text} at (354,18) size 4x18
           text run at (354,18) width 4: " "
-        RenderTextControl {TEXTAREA} at (360,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {H2} at (0,490) size 769x28
         RenderText {#text} at (0,0) size 197x28
@@ -250,15 +248,17 @@ layer at (16,242) size 72x13
   RenderBlock {DIV} at (3,3) size 72x13
     RenderText {#text} at (1,0) size 49x13
       text run at (1,0) width 49: "text field"
-layer at (389,242) size 161x26
-  RenderBlock {DIV} at (1,1) size 161x26
-    RenderText {#text} at (3,0) size 44x13
-      text run at (3,0) width 44: "textarea"
+layer at (388,241) size 163x28 clip at (389,242) size 161x26
+  RenderTextControl {TEXTAREA} at (4,4) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 161x13
+      RenderText {#text} at (3,0) size 44x13
+        text run at (3,0) width 44: "textarea"
 layer at (40,461) size 72x13
   RenderBlock {DIV} at (3,3) size 72x13
     RenderText {#text} at (1,0) size 49x13
       text run at (1,0) width 49: "text field"
-layer at (369,443) size 161x26
-  RenderBlock {DIV} at (1,1) size 161x26
-    RenderText {#text} at (3,0) size 44x13
-      text run at (3,0) width 44: "textarea"
+layer at (368,442) size 163x28 clip at (369,443) size 161x26
+  RenderTextControl {TEXTAREA} at (360,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 161x13
+      RenderText {#text} at (3,0) size 44x13
+        text run at (3,0) width 44: "textarea"

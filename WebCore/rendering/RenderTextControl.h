@@ -68,16 +68,6 @@ public:
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
-    virtual void autoscroll();
-
-    // Subclassed to forward to our inner div.
-    virtual int scrollLeft() const;
-    virtual int scrollTop() const;
-    virtual int scrollWidth() const;
-    virtual int scrollHeight() const;
-    virtual void setScrollLeft(int);
-    virtual void setScrollTop(int);
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
 
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);

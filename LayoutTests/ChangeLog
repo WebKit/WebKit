@@ -1,3 +1,86 @@
+2009-03-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Put the padding inside scrollbars on textareas.
+        https://bugs.webkit.org/show_bug.cgi?id=24370
+        
+        Almost all of the test rebaselines are just the textarea moving into the layer
+        now that the overflow is on the textarea instead of it's shadowNode. There area
+        a couple pixel test rebaselines where the scrollbars move and text wraps
+        differently now that the padding is inside the scrollbars.
+
+        * platform/mac/editing/inserting/4960120-1-expected.txt:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * platform/mac/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/resize-corner-tracking-expected.txt:
+        * platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac/fast/dynamic/008-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.checksum: Added.
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt: Added.
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.checksum:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.png:
+        * platform/mac/fast/forms/linebox-overflow-in-textarea-padding-expected.txt:
+        * platform/mac/fast/forms/negativeLineHeight-expected.txt:
+        * platform/mac/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/mac/fast/forms/textarea-align-expected.txt:
+        * platform/mac/fast/forms/textarea-rows-cols-expected.txt:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/mac/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/mac/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/mac/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/mac/fast/forms/textarea-width-expected.txt:
+        * platform/mac/fast/overflow/overflow-x-y-expected.txt:
+        * platform/mac/fast/parser/comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac/fast/table/003-expected.txt:
+        * platform/mac/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/mac/http/tests/navigation/anchor-basic-expected.txt:
+        * platform/mac/http/tests/navigation/anchor-frames-expected.txt:
+        * platform/mac/http/tests/navigation/anchor-goback-expected.txt:
+        * platform/mac/http/tests/navigation/anchor-subframeload-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-basic-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-goback-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-subframeload-expected.txt:
+        * platform/mac/http/tests/navigation/metaredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/metaredirect-frames-expected.txt:
+        * platform/mac/http/tests/navigation/metaredirect-goback-expected.txt:
+        * platform/mac/http/tests/navigation/metaredirect-subframeload-expected.txt:
+        * platform/mac/http/tests/navigation/post-goback2-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-goback2-expected.txt:
+        * platform/mac/http/tests/navigation/redirect302-basic-expected.txt:
+        * platform/mac/http/tests/navigation/redirect302-frames-expected.txt:
+        * platform/mac/http/tests/navigation/redirect302-goback-expected.txt:
+        * platform/mac/http/tests/navigation/redirect302-subframeload-expected.txt:
+        * platform/mac/http/tests/navigation/relativeanchor-basic-expected.txt:
+        * platform/mac/http/tests/navigation/relativeanchor-frames-expected.txt:
+        * platform/mac/http/tests/navigation/relativeanchor-goback-expected.txt:
+        * platform/mac/http/tests/navigation/slowmetaredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/slowtimerredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/success200-basic-expected.txt:
+        * platform/mac/http/tests/navigation/success200-frames-expected.txt:
+        * platform/mac/http/tests/navigation/success200-frames-loadsame-expected.txt:
+        * platform/mac/http/tests/navigation/success200-goback-expected.txt:
+        * platform/mac/http/tests/navigation/success200-loadsame-expected.txt:
+        * platform/mac/http/tests/navigation/success200-reload-expected.txt:
+        * platform/mac/http/tests/navigation/success200-subframeload-expected.txt:
+        * platform/mac/http/tests/navigation/timerredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/timerredirect-frames-expected.txt:
+        * platform/mac/http/tests/navigation/timerredirect-goback-expected.txt:
+        * platform/mac/http/tests/navigation/timerredirect-subframeload-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug194024-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+
 2009-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
