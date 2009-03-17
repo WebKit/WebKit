@@ -32,84 +32,104 @@
 #include "ConsoleMessage.h"
 
 #include "JSInspectedObjectWrapper.h"
-#include "ScriptString.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallFrame.h"
-
-#include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSValueRef.h>
-#include <runtime/JSLock.h>
-
-using namespace JSC;
+#include "ScriptFunctionCall.h"
+#include "ScriptObjectQuarantine.h"
+#include "ScriptString.h"
 
 namespace WebCore {
 
 ConsoleMessage::ConsoleMessage(MessageSource s, MessageLevel l, const String& m, unsigned li, const String& u, unsigned g)
-    : source(s)
-    , level(l)
-    , message(m)
-    , line(li)
-    , url(u)
-    , groupLevel(g)
-    , repeatCount(1)
+    : m_source(s)
+    , m_level(l)
+    , m_message(m)
+    , m_line(li)
+    , m_url(u)
+    , m_groupLevel(g)
+    , m_repeatCount(1)
 {
 }
 
 ConsoleMessage::ConsoleMessage(MessageSource s, MessageLevel l, ScriptCallStack* callStack, unsigned g, bool storeTrace)
-    : source(s)
-    , level(l)
-    , wrappedArguments(callStack->at(0).argumentCount())
-    , frames(storeTrace ? callStack->size() : 0)
-    , groupLevel(g)
-    , repeatCount(1)
+    : m_source(s)
+    , m_level(l)
+    , m_wrappedArguments(callStack->at(0).argumentCount())
+    , m_frames(storeTrace ? callStack->size() : 0)
+    , m_groupLevel(g)
+    , m_repeatCount(1)
 {
     const ScriptCallFrame& lastCaller = callStack->at(0);
-    line = lastCaller.lineNumber();
-    url = lastCaller.sourceURL().string();
+    m_line = lastCaller.lineNumber();
+    m_url = lastCaller.sourceURL().string();
 
     // FIXME: For now, just store function names as strings.
     // As ScriptCallStack start storing line number and source URL for all
     // frames, refactor to use that, as well.
     if (storeTrace) {
-        unsigned stackSize = callStack->size();
-        for (unsigned i = 0; i < stackSize; ++i)
-            frames[i] = callStack->at(i).functionName();
+        for (unsigned i = 0; i < callStack->size(); ++i)
+            m_frames[i] = callStack->at(i).functionName();
     }
-
-    JSLock lock(false);
 
     for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
-        wrappedArguments[i] = JSInspectedObjectWrapper::wrap(callStack->state(), lastCaller.argumentAt(i).jsValue());
+        m_wrappedArguments[i] = quarantineValue(callStack->state(), lastCaller.argumentAt(i));
 }
 
-bool ConsoleMessage::isEqual(ExecState* exec, ConsoleMessage* msg) const
+void ConsoleMessage::addToConsole(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    if (msg->wrappedArguments.size() != this->wrappedArguments.size() ||
-        (!exec && msg->wrappedArguments.size()))
+    ScriptFunctionCall messageConstructor(scriptState, webInspector, "ConsoleMessage");
+    messageConstructor.appendArgument(static_cast<unsigned int>(m_source));
+    messageConstructor.appendArgument(static_cast<unsigned int>(m_level));
+    messageConstructor.appendArgument(m_line);
+    messageConstructor.appendArgument(m_url);
+    messageConstructor.appendArgument(m_groupLevel);
+    messageConstructor.appendArgument(m_repeatCount);
+
+    if (!m_frames.isEmpty()) {
+        for (unsigned i = 0; i < m_frames.size(); ++i)
+            messageConstructor.appendArgument(m_frames[i]);
+    } else if (!m_wrappedArguments.isEmpty()) {
+        for (unsigned i = 0; i < m_wrappedArguments.size(); ++i)
+            messageConstructor.appendArgument(m_wrappedArguments[i]);
+    } else
+        messageConstructor.appendArgument(m_message);
+
+    bool hadException = false;
+    ScriptObject message = messageConstructor.construct(hadException);
+    if (hadException)
+        return;
+
+    ScriptFunctionCall addMessageToConsole(scriptState, webInspector, "addMessageToConsole");
+    addMessageToConsole.appendArgument(message);
+    addMessageToConsole.call(hadException);
+}
+
+bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
+{
+    if (msg->m_wrappedArguments.size() != m_wrappedArguments.size() ||
+        (!state && msg->m_wrappedArguments.size()))
         return false;
 
-    for (size_t i = 0; i < msg->wrappedArguments.size(); ++i) {
-        ASSERT_ARG(exec, exec);
-        if (!JSValueIsEqual(toRef(exec), toRef(msg->wrappedArguments[i].get()), toRef(this->wrappedArguments[i].get()), 0))
-            return false;
-    }
+    ASSERT_ARG(state, state);
 
-    size_t frameCount = msg->frames.size();
-    if (frameCount != this->frames.size())
+    for (size_t i = 0; i < msg->m_wrappedArguments.size(); ++i)
+        if (!m_wrappedArguments[i].isEqual(state, msg->m_wrappedArguments[i]))
+            return false;
+
+    size_t frameCount = msg->m_frames.size();
+    if (frameCount != m_frames.size())
         return false;
 
-    for (size_t i = 0; i < frameCount; ++i) {
-        const ScriptString& myFrameFunctionName = this->frames[i];
-        if (myFrameFunctionName != msg->frames[i])
+    for (size_t i = 0; i < frameCount; ++i)
+        if (m_frames[i] != msg->m_frames[i])
             return false;
-    }
 
-    return msg->source == this->source
-    && msg->level == this->level
-    && msg->message == this->message
-    && msg->line == this->line
-    && msg->url == this->url
-    && msg->groupLevel == this->groupLevel;
+    return msg->m_source == m_source
+    && msg->m_level == m_level
+    && msg->m_message == m_message
+    && msg->m_line == m_line
+    && msg->m_url == m_url
+    && msg->m_groupLevel == m_groupLevel;
 }
 
 } // namespace WebCore

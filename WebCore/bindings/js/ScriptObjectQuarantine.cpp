@@ -39,12 +39,19 @@
 #include "JSDOMBinding.h"
 #include "JSInspectedObjectWrapper.h"
 #include "ScriptObject.h"
+#include "ScriptValue.h"
 
 #include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+ScriptValue quarantineValue(ScriptState* scriptState, const ScriptValue& value)
+{
+    JSLock lock(false);
+    return ScriptValue(JSInspectedObjectWrapper::wrap(scriptState, value.jsValue()));
+}
 
 bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObject)
 {

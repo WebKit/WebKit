@@ -267,7 +267,6 @@ private:
     void focusNode();
 
     void addConsoleMessage(JSC::ExecState*, ConsoleMessage*);
-    void addScriptConsoleMessage(const ConsoleMessage*);
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);

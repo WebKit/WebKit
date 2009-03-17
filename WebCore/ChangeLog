@@ -1,3 +1,31 @@
+2009-03-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24623
+        Refactor ConsoleMessage to use ScriptFuncitonCall and eliminate JSC
+        dependencies.
+
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument): Added uint and ScriptString-taking methods.
+        * bindings/js/ScriptFunctionCall.h:
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::quarantineValue): Added generic ScriptValue quarantine helper.
+        * bindings/js/ScriptObjectQuarantine.h:
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::isEqual): Added.
+        * bindings/js/ScriptValue.h:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToConsole): Added.
+        (WebCore::ConsoleMessage::isEqual): Changed to use ScriptValue::isEqual.
+        * inspector/ConsoleMessage.h:
+        (WebCore::ConsoleMessage::incrementCount): Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addConsoleMessage): Changed to use ConsoleMessage::addToConsole.
+        (WebCore::InspectorController::populateScriptObjects): Ditto.
+        * inspector/InspectorController.h:
+
 2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Mark Rowe.

@@ -32,13 +32,11 @@
 #define ConsoleMessage_h
 
 #include "Console.h"
+#include "ScriptObject.h"
+#include "ScriptState.h"
 
 #include <runtime/Protect.h>
 #include <wtf/Vector.h>
-
-namespace JSC {
-    class ExecState;
-}
 
 namespace WebCore {
 
@@ -50,17 +48,20 @@ namespace WebCore {
         ConsoleMessage(MessageSource, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);        
         ConsoleMessage(MessageSource, MessageLevel, ScriptCallStack*, unsigned g, bool storeTrace = false);
 
-        bool isEqual(JSC::ExecState* exec, ConsoleMessage* msg) const;
+        void addToConsole(ScriptState*, const ScriptObject& webInspector);
+        void incrementCount() { ++m_repeatCount; };
+        bool isEqual(ScriptState*, ConsoleMessage* msg) const;
 
-        MessageSource source;
-        MessageLevel level;
-        String message;
-        Vector<JSC::ProtectedJSValuePtr> wrappedArguments;
-        Vector<ScriptString> frames;
-        unsigned line;
-        String url;
-        unsigned groupLevel;
-        unsigned repeatCount;
+    private:
+        MessageSource m_source;
+        MessageLevel m_level;
+        String m_message;
+        Vector<ScriptValue> m_wrappedArguments;
+        Vector<ScriptString> m_frames;
+        unsigned m_line;
+        String m_url;
+        unsigned m_groupLevel;
+        unsigned m_repeatCount;
     };
 
 } // namespace WebCore

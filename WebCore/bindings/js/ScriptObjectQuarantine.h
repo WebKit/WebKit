@@ -31,12 +31,17 @@
 #ifndef ScriptObjectQuarantine_h
 #define ScriptObjectQuarantine_h
 
+#include "ScriptState.h"
+
 namespace WebCore {
 
     class Database;
     class Frame;
     class ScriptObject;
+    class ScriptValue;
     class Storage;
+
+    ScriptValue quarantineValue(ScriptState*, const ScriptValue&);
 
     bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObject);
     bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& quarantinedObject);
