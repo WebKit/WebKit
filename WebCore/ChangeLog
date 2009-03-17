@@ -1,5 +1,15 @@
 2009-03-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/6642742> Top Sites malfunction when switching text zoom mode
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setNeedsReapplyStyles): Don’t do anything if the frame is
+        currently showing a non-HTML view.
+
+2009-03-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele Peterson.
 
         Bug 24629: moving forward or backward a paragraph fails at edge of document

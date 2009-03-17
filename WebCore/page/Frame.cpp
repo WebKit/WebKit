@@ -5,7 +5,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -44,6 +44,7 @@
 #include "FocusController.h"
 #include "FloatQuad.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
@@ -784,6 +785,12 @@ String Frame::jsDefaultStatusBarText() const
 
 void Frame::setNeedsReapplyStyles()
 {
+    // When the frame is not showing web content, it doesn't make sense to apply styles.
+    // If we tried, we'd end up doing things with the document, but the document, if one
+    // exists, is not currently shown and should be in the page cache.
+    if (!m_loader.client()->hasHTMLView())
+        return;
+
     if (m_needsReapplyStyles)
         return;
 
@@ -804,9 +811,8 @@ void Frame::reapplyStyles()
 {
     m_needsReapplyStyles = false;
 
-    // FIXME: This call doesn't really make sense in a method called
-    // "reapplyStyles". We should probably eventually move it into its own
-    // method.
+    // FIXME: This call doesn't really make sense in a function called reapplyStyles.
+    // We should probably eventually move it into its own function.
     m_doc->docLoader()->setAutoLoadImages(m_page && m_page->settings()->loadsImagesAutomatically());
         
 #if FRAME_LOADS_USER_STYLESHEET
