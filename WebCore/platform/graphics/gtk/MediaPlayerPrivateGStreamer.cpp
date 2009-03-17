@@ -101,6 +101,11 @@ gboolean mediaPlayerPrivateBufferingCallback(GstBus* bus, GstMessage* message, g
     return true;
 }
 
+static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, MediaPlayerPrivate* playerPrivate)
+{
+    playerPrivate->repaint();
+}
+
 MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
 { 
     return new MediaPlayerPrivate(player);
@@ -634,6 +639,8 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 
     g_object_set(m_playBin, "audio-sink", audioSink, NULL);
     g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+
+    g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 
     setVolume(m_volume);
 }

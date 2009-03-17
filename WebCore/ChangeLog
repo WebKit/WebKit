@@ -1,5 +1,24 @@
 2009-03-16  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24638
+        [GTK] HTML5 media tags do not work
+
+        Add a repaint-requested signal to the video sink, and use it to
+        call MediaPlayerPrivate::repaint, so that the video actually
+        plays.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateRepaintCallback):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_idle_func):
+        (webkit_video_sink_render):
+        (webkit_video_sink_class_init):
+
+2009-03-16  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+
         Reviewed by Holger Freyther.
 
         https://bugs.webkit.org/show_bug.cgi?id=24638

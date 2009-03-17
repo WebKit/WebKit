@@ -46,9 +46,16 @@ static GstElementDetails webkit_video_sink_details =
                       (gchar*) "Alp Toker <alp@atoker.com>");
 
 enum {
+    REPAINT_REQUESTED,
+    LAST_SIGNAL
+};
+
+enum {
     PROP_0,
     PROP_SURFACE
 };
+
+static guint webkit_video_sink_signals[LAST_SIGNAL] = { 0, };
 
 struct _WebKitVideoSinkPrivate {
     cairo_surface_t* surface;
@@ -95,10 +102,9 @@ webkit_video_sink_init(WebKitVideoSink* sink, WebKitVideoSinkClass* klass)
 static gboolean
 webkit_video_sink_idle_func(gpointer data)
 {
-    WebKitVideoSinkPrivate* priv;
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(data);
+    WebKitVideoSinkPrivate* priv = sink->priv;
     GstBuffer* buffer;
-
-    priv = (WebKitVideoSinkPrivate*)data;
 
     if (!priv->async_queue)
         return FALSE;
@@ -121,6 +127,8 @@ webkit_video_sink_idle_func(gpointer data)
 
     gst_buffer_unref(buffer);
 
+    g_signal_emit(sink, webkit_video_sink_signals[REPAINT_REQUESTED], 0);
+
     return FALSE;
 }
 
@@ -131,7 +139,7 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     WebKitVideoSinkPrivate* priv = sink->priv;
 
     g_async_queue_push(priv->async_queue, gst_buffer_ref(buffer));
-    g_idle_add_full(G_PRIORITY_HIGH_IDLE, webkit_video_sink_idle_func, priv, NULL);
+    g_idle_add_full(G_PRIORITY_HIGH_IDLE, webkit_video_sink_idle_func, sink, NULL);
 
     return GST_FLOW_OK;
 }
@@ -278,6 +286,15 @@ webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     gstbase_sink_class->preroll = webkit_video_sink_render;
     gstbase_sink_class->stop = webkit_video_sink_stop;
     gstbase_sink_class->set_caps = webkit_video_sink_set_caps;
+
+    webkit_video_sink_signals[REPAINT_REQUESTED] = g_signal_new("repaint-requested",
+            G_TYPE_FROM_CLASS(klass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL,
+            NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 
     g_object_class_install_property(
         gobject_class, PROP_SURFACE,
