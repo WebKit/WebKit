@@ -1,3 +1,19 @@
+2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13287
+        Cannot change SELECT to a dynamically created option
+
+        * fast/forms/add-and-remove-option-expected.txt: Added.
+        * fast/forms/add-and-remove-option.html: Added.
+        * fast/forms/add-remove-option-modification-event-expected.txt: Added.
+        * fast/forms/add-remove-option-modification-event.html: Added.
+        * fast/forms/add-selected-option-expected.txt: Added.
+        * fast/forms/add-selected-option.html: Added.
+        * fast/forms/select-cache-desynchronization-expected.txt: Added.
+        * fast/forms/select-cache-desynchronization.html: Added.
+
 2009-03-16  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/6648411> REGRESSION: Layout of page is wrong at http://www.popcap.com/

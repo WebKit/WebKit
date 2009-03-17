@@ -81,11 +81,6 @@ public:
     virtual bool saveState(String& value) const;
     virtual void restoreState(const String&);
 
-    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
-    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
-    virtual bool removeChild(Node* child, ExceptionCode&);
-    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
-    virtual bool removeChildren();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual void parseMappedAttribute(MappedAttribute*);

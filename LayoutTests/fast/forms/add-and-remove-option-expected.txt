@@ -1,0 +1,9 @@
+Test for bug 13287: Cannot change SELECT to a dynamically created option.
+
+Test that DOM is updated before DOMNodeInserted is dispatched.
+
+  
+
+Passed
+Passed
+Passed

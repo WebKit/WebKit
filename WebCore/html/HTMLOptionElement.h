@@ -77,7 +77,7 @@ public:
 
     virtual bool disabled() const;
     
-    virtual void insertedIntoDocument();
+    virtual void insertedIntoTree(bool);
     virtual void accessKeyAction(bool);
     
 private:

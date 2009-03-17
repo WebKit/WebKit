@@ -1,0 +1,108 @@
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=13287">bug 13287</a>:
+Cannot change SELECT to a dynamically created option.</p>
+<form>
+<select onchange="onChange()"><option selected>FAILURE</option></select>
+<select onchange="onChange()"><option selected>FAILURE</option></select>
+<select onchange="onChange()"><option selected>SUCCESS</option></select>
+<select onchange="onChange()" size=2><option selected>FAILURE</option></select>
+<select onchange="onChange()" size=2><option selected>FAILURE</option></select>
+<select onchange="onChange()" size=2><option selected>SUCCESS</option></select>
+<select onchange="onChange()" size=2 multiple><option selected>SELECTED</option></select>
+<select onchange="onChange()" size=2 multiple><option selected>SELECTED</option></select>
+<select onchange="onChange()" size=2><option>FAILURE</option><option selected>FAILURE</option></select>
+<select onchange="onChange()" size=2><option>FAILURE</option></select>
+</form>
+<script>
+    function onChange() {
+        document.write("<p>FAILURE: onChange fired</p>");
+    }
+
+    function testResults(expectedArr, sl)
+    {
+        var resultsArr = new Array(sl.options.length);
+        
+        var i;
+        for (i=0; i < sl.options.length; i++) {
+            resultsArr[i] = sl.options[i].selected;
+        }
+        var successString = "Failed";
+        var success = false;
+        if (expectedArr.join() == resultsArr.join()) {
+            success = true;
+            successString = "Passed";
+        }
+        
+        log(successString);
+        if (!success) {
+            log("<pre>     Expected: " + expectedArr.join() + "<br>" + "     Actual: " + resultsArr.join() + "</pre>");
+        }
+    }
+    
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var results = document.createElement('div');
+    results.id = "res";
+    results.appendChild(document.createTextNode("Results:"));
+    document.body.appendChild(results);
+
+    function log(msg)
+    {
+        var r = document.getElementById('res');
+        r.innerHTML = r.innerHTML + "<br>" + msg;
+    }
+
+    try {
+        var theSelect = document.forms[0].elements[0];
+        theSelect.options.add(new Option("SUCCESS", "SUCCESS", false, true), 0);
+        testResults([true, false], theSelect);
+
+        theSelect = document.forms[0].elements[1];
+        theSelect.insertBefore(new Option("SUCCESS", "SUCCESS", false, true), theSelect.firstChild);
+        testResults([true, false], theSelect);
+
+        // defaultSelected doesn't make the element selected when inserted.
+        theSelect = document.forms[0].elements[2];
+        theSelect.options.add(new Option("FAILURE", "FAILURE", true, false), 0);
+        testResults([false, true], theSelect);
+
+
+        theSelect = document.forms[0].elements[3];
+        theSelect.options[0].selected = 1;
+        theSelect.options.add(new Option("SUCCESS", "SUCCESS", false, true), 0);
+        testResults([true, false], theSelect);
+
+        theSelect = document.forms[0].elements[4];
+        theSelect.options[0].selected = 1;
+        theSelect.insertBefore(new Option("SUCCESS", "SUCCESS", false, true), theSelect.firstChild);
+        testResults([true, false], theSelect);
+
+        // defaultSelected doesn't make the element selected when inserted.
+        theSelect = document.forms[0].elements[5];
+        theSelect.options[0].selected = 1;
+        theSelect.options.add(new Option("FAILURE", "FAILURE", true, false), 0);
+        testResults([false, true], theSelect);
+
+
+        theSelect = document.forms[0].elements[6];
+        theSelect.options.add(new Option("SELECTED", "SELECTED", false, true), 0);
+        testResults([true, true], theSelect);
+
+        theSelect = document.forms[0].elements[7];
+        theSelect.insertBefore(new Option("SELECTED", "SELECTED", false, true), theSelect.firstChild);
+        testResults([true, true], theSelect);
+
+
+        theSelect = document.forms[0].elements[8];
+        theSelect.replaceChild(new Option("SUCCESS", "SUCCESS", false, true), theSelect.firstChild);
+        testResults([true, false], theSelect);
+
+
+        theSelect = document.forms[0].elements[9];
+        theSelect.appendChild(new Option("SUCCESS", "SUCCESS", false, true));
+        testResults([false, true], theSelect);
+
+    } catch (ex) {
+        alert(ex);
+    }
+</script>

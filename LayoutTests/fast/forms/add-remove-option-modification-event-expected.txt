@@ -1,0 +1,10 @@
+Test that SELECT is in correct state when handling a DOM modification event for option removing.
+
+  
+
+Failed
+     Expected: true
+     Actual: false
+
+Passed
+Passed

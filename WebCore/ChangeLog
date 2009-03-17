@@ -1,3 +1,37 @@
+2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13287
+        Cannot change SELECT to a dynamically created option
+
+        Tests: fast/forms/add-and-remove-option.html
+               fast/forms/add-remove-option-modification-event.html
+               fast/forms/add-selected-option.html
+               fast/forms/select-cache-desynchronization.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents): Increment DOM tree version. This will happen when
+        dispatching DOMSubtreeModified again, but the version should be incremented for event
+        listeners to have an up to date view of the DOM.
+        (WebCore::dispatchChildRemovalEvents): Ditto.
+
+        * html/HTMLOptionElement.cpp: (WebCore::HTMLOptionElement::insertedIntoTree):
+        Make sure that the select element knows about its new selected option.
+
+        * html/HTMLOptionElement.h: Use insertedIntoTree() instead of insertedIntoDocument(),
+        because DOM also needs to be updated for forms that are not in document yet. Similar
+        problems exist for node removing, but removedFromTree() is called at a wrong time, so
+        those problems cannot be fixed without deeper refactoring.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setRecalcListItems): Reset m_activeSelectionAnchorIndex - it
+        doesn't make sense to keep the anchor after programmatically changing the selection, and
+        keeping it was causing a failure in fast/forms/listbox-selection.html.
+
+        * html/HTMLSelectElement.h: Removed overrides for ContainerNode methods that only called
+        base class versions.
+
 2009-03-17  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6690324> Accessing FTP sites reads unallocated memory, can result in garbled entries or crashes
