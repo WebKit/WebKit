@@ -1,3 +1,12 @@
+2009-03-17  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/6690324> Accessing FTP sites reads unallocated memory, can result in garbled entries or crashes
+        
+        Reviewed by Darin Adler.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::parseAndAppendOneLine): Assign CString to a local while we hold pointers into it.
+
 2009-03-16  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/6648411> REGRESSION: Layout of page is wrong at http://www.popcap.com/

@@ -303,8 +303,9 @@ static String processFileDateString(const FTPTime& fileTime)
 void FTPDirectoryTokenizer::parseAndAppendOneLine(const String& inputLine)
 {
     ListResult result;
+    CString latin1Input = inputLine.latin1();
 
-    FTPEntryType typeResult = parseOneFTPLine(inputLine.latin1().data(), m_listState, result);
+    FTPEntryType typeResult = parseOneFTPLine(latin1Input.data(), m_listState, result);
     
     // FTPMiscEntry is a comment or usage statistic which we don't care about, and junk is invalid data - bail in these 2 cases
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)
