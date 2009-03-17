@@ -422,6 +422,7 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
 
     TransformationMatrix transform;
     style->applyTransform(transform, box.size(), RenderStyle::ExcludeTransformOrigin);
+    // Note that this does not flatten to an affine transform if ENABLE(3D_RENDERING) is off, by design.
 
     RefPtr<WebKitCSSTransformValue> transformVal;
 

@@ -946,12 +946,7 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
         if (functionIndex >= static_cast<int>(functionList.size()) && !isMatrixAnimation)
             break;
             
-        TransformOperation::OperationType opType = 
-#if ENABLE(3D_TRANSFORMS)
-            isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[functionIndex];
-#else
-            isMatrixAnimation ? TransformOperation::MATRIX : functionList[functionIndex];
-#endif        
+        TransformOperation::OperationType opType = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[functionIndex];
 
         if (isKeyframe) {
             NSMutableArray* timesArray = [[NSMutableArray alloc] init];

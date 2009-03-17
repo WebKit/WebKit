@@ -100,6 +100,7 @@
 #endif
 
 #if PLATFORM(MAC)
+// ATSUI vs. CoreText
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 #define WTF_USE_ATSUI 0
 #define WTF_USE_CORE_TEXT 1
@@ -107,8 +108,15 @@
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 0
 #endif
+
+// New theme
 #define WTF_USE_NEW_THEME 1
+
+// Accelerated compositing
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#define WTF_USE_ACCELERATED_COMPOSITING 0
 #endif
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(SYMBIAN)
 #undef WIN32

@@ -61,7 +61,7 @@ my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple
 my $geolocationSupport = (isAppleMacWebKit() && !isTiger() && !isLeopard());
 my $showHelp = 0;
 my $clean = 0;
-my $threeDTransformsSupport = 0;
+my $threeDRenderingSupport = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -71,7 +71,7 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                    Build the Chromium port on Mac/Win/Linux
   --clean                       Cleanup the build directory
   --gtk                         Build the GTK+ port
-  --[no-]3d-transforms          Toggle 3D Transforms support (default: $threeDTransformsSupport)
+  --[no-]3d-rendering           Toggle 3D rendering support (default: $threeDRenderingSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
@@ -95,7 +95,7 @@ Usage: $programName [options] [options to pass to build system]
 EOF
 
 GetOptions(
-           '3d-transforms!' => \$threeDTransformsSupport,
+           '3d-rendering!' => \$threeDRenderingSupport,
            'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
@@ -147,7 +147,7 @@ my @overrideFeatureDefinesOption = ();
 # This needs to be kept sorted, and in sync with FEATURE_DEFINES in JavaScriptCore.xcconfig, WebCore.xcconfig
 # and WebKit.xcconfig to prevent needless rebuilding when using both Xcode and build-webkit.
 
-push @overrideFeatureDefinesOption, "ENABLE_3D_TRANSFORMS" if $threeDTransformsSupport;
+push @overrideFeatureDefinesOption, "ENABLE_3D_RENDERING" if $threeDRenderingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;
@@ -191,7 +191,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($gnomeKeyringSupport, "gnomekeyring");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
-    push @options, autotoolsFlag($threeDTransformsSupport, "3D-transforms");
+    push @options, autotoolsFlag($threeDRenderingSupport, "3D-rendering");
     push @options, autotoolsFlag($channelMessagingSupport, "channel-messaging");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");

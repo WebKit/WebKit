@@ -248,6 +248,9 @@ public:
                 m31() == 0 && m32() == 0 && m33() == 1 && m34() == 0 && m43() == 0 && m44() == 1);
     }
 
+    // Throw away the non-affine parts of the matrix (lossy!)
+    void makeAffine();
+
     bool operator==(const TransformationMatrix& m2) const
     {
         return (m_matrix[0][0] == m2.m_matrix[0][0] &&

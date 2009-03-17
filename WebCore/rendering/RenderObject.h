@@ -911,6 +911,13 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         last->scheduleRelayout();
 }
 
+inline void makeMatrixRenderable(TransformationMatrix& matrix)
+{
+#if !ENABLE(3D_RENDERING)
+    matrix.makeAffine();
+#endif
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

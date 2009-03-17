@@ -49,9 +49,9 @@
 #include "RenderTreeAsText.h"
 #endif
 
-#if ENABLE(3D_TRANSFORMS)
-// This symbol is used to determine from a script whether 3D transforms are enabled (via 'nm').
-bool WebCoreHas3DTransforms = true;
+#if ENABLE(3D_RENDERING)
+// This symbol is used to determine from a script whether 3D rendering is enabled (via 'nm').
+bool WebCoreHas3DRendering = true;
 #endif
 
 namespace WebCore {

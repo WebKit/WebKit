@@ -569,33 +569,33 @@ sub checkWebCoreAcceleratedCompositingSupport
     return $hasAcceleratedCompositing;
 }
 
-sub has3DTransformsSupport
+sub has3DRenderingSupport
 {
     return 0 if isCygwin() || isQt();
 
     my $path = shift;
 
-    my $has3DTransformsSupport = 0;
+    my $has3DRenderingSupport = 0;
     if (-e $path) {
         open NM, "-|", "nm", $path or die;
         while (<NM>) {
-            $has3DTransformsSupport = 1 if /WebCoreHas3DTransforms/;
+            $has3DRenderingSupport = 1 if /WebCoreHas3DRendering/;
         }
         close NM;
     }
-    return $has3DTransformsSupport;
+    return $has3DRenderingSupport;
 }
 
-sub checkWebCore3DTransformsSupport
+sub checkWebCore3DRenderingSupport
 {
     my $required = shift;
     my $framework = "WebCore";
     my $path = builtDylibPathForName($framework);
-    my $has3DTransforms = has3DTransformsSupport($path);
-    if ($required && !$has3DTransforms) {
-        die "$framework at \"$path\" does not include 3D Transforms Support, please run build-webkit --3d-transforms\n";
+    my $has3DRendering = has3DRenderingSupport($path);
+    if ($required && !$has3DRendering) {
+        die "$framework at \"$path\" does not include 3D rendering Support, please run build-webkit --3d-rendering\n";
     }
-    return $has3DTransforms;
+    return $has3DRendering;
 }
 
 sub hasWMLSupport

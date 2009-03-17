@@ -1,3 +1,53 @@
+2009-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24396
+
+        * config.h:
+        Add WTF_USE_ACCELERATED_COMPOSITING, defined to 0 for now, and add some
+        comments to make the #ifdefs more readable.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+        Add a comment to mention that we don't flatten the matrix.
+        
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::transform_3dMediaFeatureEval):
+        Have the 'transform-3d' media query evaluate to 'true' if 3d-rendering
+        is supported.
+        
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::animateTransform):
+        No need for the #ifdef here. If we don't support 3d, we will have already flattened
+        the matrix.
+        
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::makeAffine):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        New method to convert the matrix to an affine matrix by throwing a way the non-affine
+        parts.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateLayerTransform):
+        If 3d rendering is not supported, convert the matrix to an affine matrix
+        which can be rendered, and used for hit testing.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        Change the name of the exported symbol that webkitdirs.pm uses to know if
+        3d rendering is supported. There is no other 3d-rendering-specific symbol we can sniff.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::transformFromContainer):
+        Only take perspective into account if 3d rendering is supported.
+
+        * rendering/RenderObject.h:
+        (WebCore::makeMatrixRenderable):
+        Utility method that flattens a matrix if 3d rendering is not supported.
+
 2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Fix typo after mouse wheel changes.

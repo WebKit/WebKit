@@ -365,7 +365,7 @@ if (!checkWebCoreAcceleratedCompositingSupport(0)) {
     $ignoredDirectories{'compositing'} = 1;
 }
 
-if (!checkWebCore3DTransformsSupport(0)) {
+if (!checkWebCore3DRenderingSupport(0)) {
     $ignoredDirectories{'animations/3d'} = 1;
     $ignoredDirectories{'transforms/3d'} = 1;
 }
