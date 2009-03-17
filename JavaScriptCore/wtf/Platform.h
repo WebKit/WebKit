@@ -40,6 +40,12 @@
 /* be used regardless of operating environment */
 #ifdef __APPLE__
 #define WTF_PLATFORM_DARWIN 1
+#include <AvailabilityMacros.h>
+#if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+#define BUILDING_ON_TIGER 1
+#elif !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#define BUILDING_ON_LEOPARD 1
+#endif
 #endif
 
 /* PLATFORM(WIN_OS) */

@@ -1,3 +1,13 @@
+2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Mark Rowe.
+
+        Get BUILDING_ON_* defines from Platform.h.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24630
+
+        * WebCorePrefix.h:
+
 2009-03-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

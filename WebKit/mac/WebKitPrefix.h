@@ -68,20 +68,15 @@ typedef float CGFloat;
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define BUILDING_ON_TIGER 1
-#elif MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5
-#define BUILDING_ON_LEOPARD 1
 #endif
-#endif
+
+#include <wtf/Platform.h>
 
 #include "EmptyProtocolDefinitions.h"
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && defined(__x86_64__)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
 #endif
-
-#include <wtf/Platform.h>
 
 /* WebKit has no way to pull settings from WebCore/config.h for now */
 /* so we assume WebKit is always being compiled on top of JavaScriptCore */

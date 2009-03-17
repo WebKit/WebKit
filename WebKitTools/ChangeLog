@@ -1,3 +1,14 @@
+2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Mark Rowe.
+        
+        Tweak the BUILDING_ON_* defines so that they work with the default values set by
+        AvailabilityMacros.h.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24630
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+
 2009-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.

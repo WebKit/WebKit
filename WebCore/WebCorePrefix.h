@@ -100,16 +100,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 
-#include <AvailabilityMacros.h>
-
-#if defined(__APPLE__)
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define BUILDING_ON_TIGER 1
-#elif MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5
-#define BUILDING_ON_LEOPARD 1
-#endif
-#endif
-
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
 #endif

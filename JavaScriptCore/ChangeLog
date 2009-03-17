@@ -1,3 +1,16 @@
+2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Mark Rowe.
+        
+        Move BUILDING_ON_* defines into Platform.h to make them available to other ports.
+        Also tweak the defines so that they work with the default values set by 
+        AvailabilityMacros.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24630
+
+        * JavaScriptCorePrefix.h:
+        * wtf/Platform.h:
+
 2009-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r41718 because it broke DumpRenderTree on Tiger.
