@@ -106,30 +106,33 @@ void ConsoleMessage::addToConsole(ScriptState* scriptState, const ScriptObject& 
 
 bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
 {
-    if (msg->m_wrappedArguments.size() != m_wrappedArguments.size() ||
-        (!state && msg->m_wrappedArguments.size()))
+    if (msg->m_wrappedArguments.size() != m_wrappedArguments.size())
+        return false;
+    if (!state && msg->m_wrappedArguments.size()))
         return false;
 
-    ASSERT_ARG(state, state);
+    ASSERT_ARG(state, state || msg->m_wrappedArguments.isEmpty());
 
-    for (size_t i = 0; i < msg->m_wrappedArguments.size(); ++i)
+    for (size_t i = 0; i < msg->m_wrappedArguments.size(); ++i) {
         if (!m_wrappedArguments[i].isEqual(state, msg->m_wrappedArguments[i]))
             return false;
+    }
 
     size_t frameCount = msg->m_frames.size();
     if (frameCount != m_frames.size())
         return false;
 
-    for (size_t i = 0; i < frameCount; ++i)
+    for (size_t i = 0; i < frameCount; ++i) {
         if (m_frames[i] != msg->m_frames[i])
             return false;
+    }
 
     return msg->m_source == m_source
-    && msg->m_level == m_level
-    && msg->m_message == m_message
-    && msg->m_line == m_line
-    && msg->m_url == m_url
-    && msg->m_groupLevel == m_groupLevel;
+        && msg->m_level == m_level
+        && msg->m_message == m_message
+        && msg->m_line == m_line
+        && msg->m_url == m_url
+        && msg->m_groupLevel == m_groupLevel;
 }
 
 } // namespace WebCore
