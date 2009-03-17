@@ -53,9 +53,6 @@ os.environ["TTFPATH"] = ":".join(["/usr/share/fonts/truetype/" + d
                                   for d in "ttf-bitstream-vera",
                                            "freefont",
                                            "msttcorefonts"])
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pylab as m
 
 level_LOW    = 10
 level_MEDIUM = 70
@@ -193,7 +190,7 @@ def generate_table_header_end(file):
     file.write("""</table>
     </center>""")
 
-def write_title_page(dest_dir,plot_files, last_time, last_tot_lines, last_tot_covered, dir_series):
+def write_title_page(dest_dir, last_time, last_tot_lines, last_tot_covered, dir_series):
     """
     Write the index.html with a overview of each directory
     """
@@ -211,7 +208,7 @@ def write_title_page(dest_dir,plot_files, last_time, last_tot_lines, last_tot_co
     index.write("""</BODY></HTML>""")
     index.close()
 
-def write_directory_site(dest_dir, plot_files, dir_name, last_time, dir_series, file_series):
+def write_directory_site(dest_dir, dir_name, last_time, dir_series, file_series):
     escaped_dir = dir_name.replace(os.path.sep,'__')
     site = create_page(dest_dir, "%s.html" % escaped_dir)
     (_,tot_lines,tot_covered,files) = dir_series[dir_name][-1]
@@ -228,7 +225,7 @@ def write_directory_site(dest_dir, plot_files, dir_name, last_time, dir_series, 
     site.write("""</BODY></HTML>""")
     site.close()
 
-def write_file_site(dest_dir, plot_files, file_name, last_time, data_dir, last_id, file_series):
+def write_file_site(dest_dir, file_name, last_time, data_dir, last_id, file_series):
     escaped_name = file_name.replace(os.path.sep,'__')
     site = create_page(dest_dir, "%s.html" % escaped_name)
     (tot_lines,tot_covered) = file_series[file_name][-1]
@@ -302,7 +299,7 @@ def main(progname, args):
     # Calculate time series for each file.
     times = [sample[0] for sample in data]
     times = [datetime.datetime.utcfromtimestamp(t) for t in times]
-    times = m.date2num(times)
+
     all_files = {}
     all_dirs  = {}
     for sample in data:
@@ -332,29 +329,22 @@ def main(progname, args):
     if not os.path.exists(imgdir):
         os.makedirs(imgdir)
 
-    # Now plot the actual graphs
-    plot_files = {}
-    #plot_files["Total"] = plot_coverage(times, total_series, imgdir, "Total")
-    #for dir, series in dir_serieses.items():
-    #    plot_files[dir] = plot_coverage(times, map(lambda (a,b,c,d):(b,c), series), imgdir, dir)
-    #for f, series in file_serieses.items():
-    #    plot_files[f] = plot_coverage(times, series, imgdir, f)
 
     # And look up the latest revision id, and coverage information
     last_time, last_id, last_tot_lines, last_tot_covered = data[-1][:4]
 
     # Now start generating our html file
     copy_files(outdir)
-    write_title_page(outdir, plot_files, last_time, last_tot_lines, last_tot_covered, dir_serieses)
+    write_title_page(outdir, last_time, last_tot_lines, last_tot_covered, dir_serieses)
 
     dir_keys = dir_serieses.keys()
     dir_keys.sort()
     for dir_name in dir_keys:
-        write_directory_site(outdir, plot_files, dir_name, last_time, dir_serieses, file_serieses)
+        write_directory_site(outdir, dir_name, last_time, dir_serieses, file_serieses)
 
     file_keys = file_serieses.keys()
     for file_name in file_keys:
-        write_file_site(outdir, plot_files, file_name, last_time, datadir, last_id, file_serieses)
+        write_file_site(outdir, file_name, last_time, datadir, last_id, file_serieses)
 
 def read_csv(path):
     r = csv.reader(open(path, "r"))
@@ -386,22 +376,6 @@ def read_csv(path):
         files.append(path)
         per_dir[dirname] = (dir_files,dir_total_lines,dir_covered_lines,files)
     return [time, id, grand_total_lines, grand_covered_lines, per_file, per_dir]
-
-
-def plot_coverage(times, series, imgdir, name):
-    percentages = [cov * 100.0 / (tot or 1) for tot, cov in series]
-    m.plot_date(times, percentages, "b-")
-    m.plot_date(times, percentages, "bo")
-    m.title(name)
-    m.ylim(0, 100)
-    m.xlabel("Date")
-    m.ylabel("Statement Coverage (%)")
-    outfile_base = name.replace("/", "__") + ".png"
-    outfile = os.path.join(imgdir, outfile_base)
-    m.savefig(outfile, dpi=75)
-    m.close()
-    return outfile_base
-
 
 if __name__ == "__main__":
     import sys

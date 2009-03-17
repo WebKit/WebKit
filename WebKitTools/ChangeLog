@@ -1,3 +1,14 @@
+2009-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make coverage testing more reliable by ensuring --coverage does not
+        clobber configuration settings, and by removing the unnecessary 
+        dependency on matplotlib.
+
+        * CodeCoverage/regenerate-coverage-display:
+        * Scripts/webkitdirs.pm:
+
 2009-03-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and John Sullivan.
