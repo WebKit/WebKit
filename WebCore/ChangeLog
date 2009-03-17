@@ -1,5 +1,10 @@
 2009-03-17  Darin Adler  <darin@apple.com>
 
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::isEqual): Fix build, remove stray parenthesis.
+
+2009-03-17  Darin Adler  <darin@apple.com>
+
         Fix crash seen right away when running run-webkit-tests.
 
         * inspector/ConsoleMessage.cpp:

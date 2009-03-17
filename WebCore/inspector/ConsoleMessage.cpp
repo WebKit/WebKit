@@ -108,7 +108,7 @@ bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
 {
     if (msg->m_wrappedArguments.size() != m_wrappedArguments.size())
         return false;
-    if (!state && msg->m_wrappedArguments.size()))
+    if (!state && msg->m_wrappedArguments.size())
         return false;
 
     ASSERT_ARG(state, state || msg->m_wrappedArguments.isEmpty());
