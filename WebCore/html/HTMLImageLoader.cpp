@@ -42,10 +42,7 @@ HTMLImageLoader::~HTMLImageLoader()
 
 void HTMLImageLoader::dispatchLoadEvent()
 {
-    if (!haveFiredLoadEvent() && image()) {
-        setHaveFiredLoadEvent(true);
-        element()->dispatchEventForType(image()->errorOccurred() ? eventNames().errorEvent : eventNames().loadEvent, false, false);
-    }
+    element()->dispatchEventForType(image()->errorOccurred() ? eventNames().errorEvent : eventNames().loadEvent, false, false);
 }
 
 String HTMLImageLoader::sourceURI(const AtomicString& attr) const

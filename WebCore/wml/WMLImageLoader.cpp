@@ -45,10 +45,6 @@ WMLImageLoader::~WMLImageLoader()
 void WMLImageLoader::dispatchLoadEvent()
 {
     // WML doesn't fire any events.
-    if (haveFiredLoadEvent())
-        return;
-
-    setHaveFiredLoadEvent(true);
 }
 
 String WMLImageLoader::sourceURI(const AtomicString& attr) const

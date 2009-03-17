@@ -83,7 +83,6 @@ namespace WebCore {
     class HTMLHeadElement;
     class HTMLInputElement;
     class HTMLMapElement;
-    class ImageLoader;
     class IntPoint;
     class JSNode;
     class MouseEventWithHitTestResults;
@@ -639,10 +638,6 @@ public:
      */
     void processHttpEquiv(const String& equiv, const String& content);
     
-    void dispatchImageLoadEventSoon(ImageLoader*);
-    void dispatchImageLoadEventsNow();
-    void removeImage(ImageLoader*);
-    
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
     Element* ownerElement() const;
@@ -921,10 +916,6 @@ private:
 
     mutable AXObjectCache* m_axObjectCache;
     
-    Vector<ImageLoader*> m_imageLoadEventDispatchSoonList;
-    Vector<ImageLoader*> m_imageLoadEventDispatchingList;
-    Timer<Document> m_imageLoadEventTimer;
-
     Timer<Document> m_updateFocusAppearanceTimer;
 
     Element* m_cssTarget;
@@ -1036,7 +1027,6 @@ protected:
 private:
     void updateTitle();
     void removeAllDisconnectedNodeEventListeners();
-    void imageLoadEventTimerFired(Timer<Document>*);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 

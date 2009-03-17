@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,21 +30,20 @@
 namespace WebCore {
 
 class Element;
+class ImageLoadEventSender;
 
 class ImageLoader : public CachedResourceClient {
 public:
     ImageLoader(Element*);
     virtual ~ImageLoader();
 
+    // This function should be called when the element is attached to a document; starts
+    // loading if a load hasn't already been started.
     void updateFromElement();
 
-    // This method should be called after the 'src' attribute
-    // is set (even when it is not modified) to force the update
-    // and match Firefox and Opera.
+    // This function should be called whenever the 'src' attribute is set, even if its value
+    // doesn't change; starts new load unconditionally (matches Firefox and Opera behavior).
     void updateFromElementIgnoringPreviousError();
-
-    virtual void dispatchLoadEvent() = 0;
-    virtual String sourceURI(const AtomicString&) const = 0;
 
     Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }
@@ -54,16 +53,22 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-    // CachedResourceClient API
+    bool haveFiredLoadEvent() const { return m_firedLoad; }
+
+    static void dispatchPendingLoadEvents();
+
+protected:
     virtual void notifyFinished(CachedResource*);
 
-    bool haveFiredLoadEvent() const { return m_firedLoad; }
-protected:
-    void setLoadingImage(CachedImage*);
-    
-    void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
-
 private:
+    virtual void dispatchLoadEvent() = 0;
+    virtual String sourceURI(const AtomicString&) const = 0;
+
+    friend class ImageLoadEventSender;
+    void dispatchPendingLoadEvent();
+
+    void setLoadingImage(CachedImage*);
+
     Element* m_element;
     CachedResourceHandle<CachedImage> m_image;
     AtomicString m_failedLoadURL;

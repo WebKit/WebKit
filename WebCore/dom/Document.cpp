@@ -284,7 +284,6 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_title("")
     , m_titleSetExplicitly(false)
-    , m_imageLoadEventTimer(this, &Document::imageLoadEventTimerFired)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
 #if ENABLE(XSLT)
     , m_transformSource(0)
@@ -1296,13 +1295,7 @@ void Document::detach()
     
     // indicate destruction mode,  i.e. attached() but renderer == 0
     setRenderer(0);
-    
-    // Empty out these lists as a performance optimization, since detaching
-    // all the individual render objects will cause all the RenderImage
-    // objects to remove themselves from the lists.
-    m_imageLoadEventDispatchSoonList.clear();
-    m_imageLoadEventDispatchingList.clear();
-    
+
     m_hoverNode = 0;
     m_focusedNode = 0;
     m_activeNode = 0;
@@ -1582,8 +1575,8 @@ void Document::implicitClose()
     if (f)
         f->animation()->resumeAnimations(this);
 
-    dispatchImageLoadEventsNow();
-    this->dispatchWindowEvent(eventNames().loadEvent, false, false);
+    ImageLoader::dispatchPendingLoadEvents();
+    dispatchWindowEvent(eventNames().loadEvent, false, false);
     if (f)
         f->loader()->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -2874,56 +2867,6 @@ PassRefPtr<EventListener> Document::createEventListener(const String& functionNa
 void Document::setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
 {
     setWindowInlineEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
-}
-
-void Document::dispatchImageLoadEventSoon(ImageLoader* image)
-{
-    m_imageLoadEventDispatchSoonList.append(image);
-    if (!m_imageLoadEventTimer.isActive())
-        m_imageLoadEventTimer.startOneShot(0);
-}
-
-void Document::removeImage(ImageLoader* image)
-{
-    // Remove instances of this image from both lists.
-    // Use loops because we allow multiple instances to get into the lists.
-    size_t size = m_imageLoadEventDispatchSoonList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_imageLoadEventDispatchSoonList[i] == image)
-            m_imageLoadEventDispatchSoonList[i] = 0;
-    }
-    size = m_imageLoadEventDispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_imageLoadEventDispatchingList[i] == image)
-            m_imageLoadEventDispatchingList[i] = 0;
-    }
-    if (m_imageLoadEventDispatchSoonList.isEmpty())
-        m_imageLoadEventTimer.stop();
-}
-
-void Document::dispatchImageLoadEventsNow()
-{
-    // Need to avoid re-entering this function; if new dispatches are
-    // scheduled before the parent finishes processing the list, they
-    // will set a timer and eventually be processed.
-    if (!m_imageLoadEventDispatchingList.isEmpty())
-        return;
-
-    m_imageLoadEventTimer.stop();
-
-    m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
-    m_imageLoadEventDispatchSoonList.clear();
-    size_t size = m_imageLoadEventDispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (ImageLoader* image = m_imageLoadEventDispatchingList[i])
-            image->dispatchLoadEvent();
-    }
-    m_imageLoadEventDispatchingList.clear();
-}
-
-void Document::imageLoadEventTimerFired(Timer<Document>*)
-{
-    dispatchImageLoadEventsNow();
 }
 
 Element* Document::ownerElement() const

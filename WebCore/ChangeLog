@@ -1,3 +1,69 @@
+2009-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 24624: Crash in imageLoadEventTimerFired after adoptNode used on <img>,
+        seen with inspector, which uses adoptNode
+        https://bugs.webkit.org/show_bug.cgi?id=24624
+        rdar://problem/6422850
+
+        Test: fast/dom/HTMLImageElement/image-load-cross-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Removed m_imageLoadEventTimer.
+        (WebCore::Document::detach): Removed m_imageLoadEventDispatchSoonList and
+        m_imageLoadEventDispatchingList.
+        (WebCore::Document::implicitClose): Called ImageLoader::dispatchPendingLoadEvents
+        instead of dispatchImageLoadEventsNow.
+
+        * dom/Document.h: Removed ImageLoader, dispatchImageLoadEventSoon,
+        dispatchImageLoadEventsNow, removeImage, m_imageLoadEventDispatchSoonList,
+        m_imageLoadEventDispatchingList, m_imageLoadEventTimer, and imageLoadEventTimerFired.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::loadEventSender): Added. Returns the single global ImageLoadEventSender
+        object used privately as the target of the load event timer.
+        (WebCore::ImageLoader::~ImageLoader): Call ImageLoadEventSender::cancelLoadEvent
+        rather than Document::removeImage.
+        (WebCore::ImageLoader::setImage): Use m_element directly, not element().
+        (WebCore::ImageLoader::updateFromElement): Ditto. Also name the local variable
+        document instead of doc.
+        (WebCore::ImageLoader::notifyFinished): Call ImageLoadEventSender::dispatchLoadEventSoon
+        rather than Document::dispatchImageLoadEventSoon.
+        (WebCore::ImageLoader::dispatchPendingLoadEvent): Added. Handles the common logic
+        about when load events can be dispatched so that dispatchLoadEvent only has to
+        have the specific part for each derived class. This includes a check that the
+        document is attached, which used to be handled by having documents empty out the
+        image load event vectors in the detach function.
+        (WebCore::ImageLoader::dispatchPendingLoadEvents): Added. Calls the appropriate
+        function on the ImageLoadEventSender, which avoids the need to have that class be
+        public in the ImageLoader header.
+        (WebCore::ImageLoadEventSender::ImageLoadEventSender): Added. Has the code that
+        was previously in the Document constructor.
+        (WebCore::ImageLoadEventSender::dispatchLoadEventSoon): Added. Has the code that
+        was previously in Document::dispatchImageLoadEventSoon.
+        (WebCore::ImageLoadEventSender::cancelLoadEvent): Added. Has the code that was
+        previously in Document::removeImage.
+        (WebCore::ImageLoadEventSender::dispatchPendingLoadEvents): Added. Has the code
+        that was previously in Document::dispatchImageLoadEventsNow.
+        (WebCore::ImageLoadEventSender::timerFired): Added. Calls dispatchPendingLoadEvents.
+
+        * loader/ImageLoader.h: Improved comments. Made the virtual functions private
+        or protected rather than public. Added static dispatchPendingLoadEvents function
+        for use by Document and private dispatchPendingLoadEvent function for use by
+        ImageLoadEventSender. Made setLoadingImage private and eliminated
+        setHaveFiredLoadEvent since that can all be done inside the class without any
+        member functions.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent): Removed logic to check whether a
+        load event already fired and whether image() is 0. These are now both base class
+        responsibilities.
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent): Ditto.
+        * wml/WMLImageLoader.cpp:
+        (WebCore::WMLImageLoader::dispatchLoadEvent): Ditto.
+
 2009-03-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
