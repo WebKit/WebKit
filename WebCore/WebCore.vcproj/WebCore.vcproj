@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -2844,6 +2844,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\EmptyClients.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FormState.cpp"
 				>
 			</File>
@@ -2969,6 +2973,10 @@
 			</File>
 			<File
 				RelativePath="..\loader\ResourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\cf\ResourceLoaderCFNet.cpp"
 				>
 			</File>
 			<File
@@ -4172,14 +4180,6 @@
 					Name="win"
 					>
 					<File
-						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\ColorSafari.cpp"
 						>
 						<FileConfiguration
@@ -4654,6 +4654,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\opentype\OpenTypeUtilities.h"
+						>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\SimpleFontDataCairoWin.cpp"
@@ -9872,6 +9880,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\ScrollBehavior.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\ScrollBehavior.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGCharacterLayoutInfo.cpp"
 				>
 				<FileConfiguration
@@ -9973,22 +9997,6 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGRootInlineBox.h"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\ScrollBehavior.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\rendering\ScrollBehavior.h"
 				>
 			</File>
 			<File
@@ -12034,6 +12042,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\WorkerImportScriptsClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerImportScriptsClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\WorkerLocation.cpp"
 				>
 			</File>
@@ -12067,14 +12083,6 @@
 			</File>
 			<File
 				RelativePath="..\workers\WorkerThread.h"
-				>
-			</File>
-			<File
-				RelativePath="..\workers\WorkerImportScriptsClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\workers\WorkerImportScriptsClient.h"
 				>
 			</File>
 		</Filter>
@@ -16246,10 +16254,6 @@
 			Name="inspector"
 			>
 			<File
-				RelativePath="..\inspector\InspectorClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\ConsoleMessage.cpp"
 				>
 			</File>
@@ -16258,19 +16262,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorDatabaseResource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorDOMStorageResource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorDOMStorageResource.h"
+				RelativePath="..\inspector\InspectorClient.h"
 				>
 			</File>
 			<File
@@ -16287,6 +16279,22 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageResource.h"
 				>
 			</File>
 			<File

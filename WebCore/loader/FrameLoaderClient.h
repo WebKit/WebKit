@@ -218,6 +218,9 @@ namespace WebCore {
 #endif
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;
 #endif
+#if USE(CFNETWORK)
+        virtual bool shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length) = 0;
+#endif
 
         virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const { return false; }
     };

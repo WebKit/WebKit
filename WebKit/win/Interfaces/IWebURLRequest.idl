@@ -110,4 +110,6 @@ interface IWebURLRequest : IUnknown
     HRESULT isEmpty([out, retval] BOOL* result);
 
     HRESULT mutableCopy([out, retval] IWebMutableURLRequest** result);
+
+    HRESULT isEqual([in] IWebURLRequest* other, [out, retval] BOOL* result);
 }

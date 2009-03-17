@@ -266,6 +266,9 @@ public:
 #if PLATFORM(MAC)
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const { return response; }
 #endif
+#if USE(CFNETWORK)
+    virtual bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) { return true; }
+#endif
 
 };
 

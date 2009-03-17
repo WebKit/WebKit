@@ -1,3 +1,36 @@
+2009-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - WebCore part of adding a mechanism for controlling the caching of
+          responses through WebFrameLoaderClient
+
+        Mac already has such a mechanism, and this adds one for CFNetwork ports.
+
+        * WebCore.vcproj/WebCore.vcproj: Added EmptyClients.h
+        and ResourceLoaderCFNet.cpp.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::shouldCacheResponse): Added an
+        implementation that always returns true.
+
+        * loader/FrameLoaderClient.h: Declared shouldCacheResponse().
+
+        * loader/ResourceLoader.h: Ditto.
+
+        * loader/cf/ResourceLoaderCFNet.cpp: Added.
+        (WebCore::ResourceLoader::shouldCacheResponse): Added. Calls through to
+        FrameLoaderClient::shouldCacheResponse().
+
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::shouldCacheResponse): Added an
+        implementation that always returns true.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willCacheResponse): Added a call to
+        ResourceHandleClient::shouldCacheResponse(). If the client returns
+        false, return 0, which will prevent CFNetwork from caching the response.
+
 2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

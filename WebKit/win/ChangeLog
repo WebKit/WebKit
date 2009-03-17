@@ -1,3 +1,30 @@
+2009-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - WebKit part of adding a mechanism for controlling the caching of
+          responses through WebFrameLoaderClient
+
+        * Interfaces/IWebResourceLoadDelegatePrivate.idl: Added the
+        IWebResourceLoadDelegatePrivate3 interface, containing the new
+        delegate method shouldCacheResponse().
+
+        * Interfaces/IWebURLRequest.idl: Added the isEqual() method.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldCacheResponse): Implemented this new
+        FrameLoaderDelegate method by calling through to the resource load
+        delegate, if it implements shouldCacheResponse(), and returning true
+        otherwise.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::isEqual): Added.
+        (WebMutableURLRequest::setValue): Implemented.
+
+        * WebMutableURLRequest.h: Declared isEqual().
+
 2009-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

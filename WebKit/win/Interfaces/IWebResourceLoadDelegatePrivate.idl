@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@ interface IWebDataSource;
 interface IWebURLResponse;
 interface IWebURLRequest;
 
-
 /*!
     @category  WebResourceLoadDelegatePrivate
 */
@@ -69,4 +68,15 @@ interface IWebResourceLoadDelegatePrivate : IUnknown
 interface IWebResourceLoadDelegatePrivate2 : IWebResourceLoadDelegatePrivate
 {
     HRESULT shouldUseCredentialStorage([in] IWebView* webView, [in] unsigned long identifier, [in] IWebDataSource* dataSource, [out, retval] BOOL* shouldUse);
+}
+
+[
+    object,
+    oleautomation,
+    uuid(099DC3C1-34B5-4169-ABBF-0C63CBC25605),
+    pointer_default(unique)
+]
+interface IWebResourceLoadDelegatePrivate3 : IWebResourceLoadDelegatePrivate2
+{
+    HRESULT shouldCacheResponse([in] IWebView* webView, [in] unsigned long identifier, [in] IWebURLResponse* response, [in] const char* data, [in] unsigned long long length, [in] IWebDataSource* dataSource, [out, retval] BOOL* shouldCache);
 }

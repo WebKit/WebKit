@@ -32,6 +32,7 @@
 
 #if USE(CFNETWORK)
 #include <ConditionalMacros.h>
+#include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
 #endif
 
@@ -85,6 +86,9 @@ namespace WebCore {
 #if PLATFORM(MAC)        
         virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse* response) { return response; }
         virtual void willStopBufferingData(ResourceHandle*, const char*, int) { } 
+#endif
+#if USE(CFNETWORK)
+        virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return true; }
 #endif
     };
 

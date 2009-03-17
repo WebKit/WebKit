@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,6 +152,9 @@ void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo)
 CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef conn, CFCachedURLResponseRef cachedResponse, const void* clientInfo) 
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
+
+    if (handle->client() && !handle->client()->shouldCacheResponse(handle, cachedResponse))
+        return 0;
 
     CacheStoragePolicy policy = static_cast<CacheStoragePolicy>(CFCachedURLResponseGetStoragePolicy(cachedResponse));
 

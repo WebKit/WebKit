@@ -226,6 +226,25 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
     resourceLoadDelegate->didFailLoadingWithError(webView, identifier, webError.get(), getWebDataSource(loader));
 }
 
+bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, const unsigned char* data, const unsigned long long length)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return true;
+
+    COMPtr<IWebResourceLoadDelegatePrivate3> resourceLoadDelegatePrivate(Query, resourceLoadDelegate);
+    if (!resourceLoadDelegatePrivate)
+        return true;
+
+    COMPtr<IWebURLResponse> urlResponse(WebURLResponse::createInstance(response));
+    BOOL shouldCache;
+    if (SUCCEEDED(resourceLoadDelegatePrivate->shouldCacheResponse(webView, identifier, urlResponse.get(), data, length, getWebDataSource(loader), &shouldCache)))
+        return shouldCache;
+
+    return true;
+}
+
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
     WebView* webView = m_webFrame->webView();

@@ -113,6 +113,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mutableCopy(
         /* [out, retval] */ IWebMutableURLRequest** result);
 
+    virtual HRESULT STDMETHODCALLTYPE isEqual(
+        /* [in] */ IWebURLRequest* other,
+        /* [out, retval] */ BOOL* result);
+
     // IWebMutableURLRequest
     virtual HRESULT STDMETHODCALLTYPE addValue( 
         /* [in] */ BSTR value,
