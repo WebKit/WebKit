@@ -20,6 +20,8 @@ if (window.layoutTestController)
         return;
     }
 
+    xhr.setRequestHeader("Content-Type", "text/plain; charset=UTF-8");
+
     try {
         xhr.send("PASS: PUT data received");
     } catch(e) {

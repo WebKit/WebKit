@@ -1,0 +1,2 @@
+PASS: Exception thrown. Cross-domain access is not allowed in 'send'. [NETWORK_ERR: XMLHttpRequest Exception 101].
+

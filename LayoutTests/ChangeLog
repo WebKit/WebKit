@@ -1,3 +1,21 @@
+2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24614
+        Access control checks are different in cached and uncached cases
+
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html:
+        The default Content-Type set by XMLHttpRequest is no longer implicitly permitted for
+        cross origin requests, changed the test to send text/plain.
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi:
+        Modified to prevent errors on unexpected request methods (not directly related to this patch).
+
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html: Added.
+
 2009-03-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Mark Rowe.

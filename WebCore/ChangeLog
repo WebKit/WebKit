@@ -1,3 +1,28 @@
+2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24614
+        Access control checks are different in cached and uncached cases
+
+        Test: http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestMethodWhitelist): Factored out simple method
+        check for use in both cached and uncached cases. In cached case, an old definition that
+        omitted HEAD was still used.
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist): Check that content type has an
+        allowed value. This is needed in all call sites. Also changed to compare MIME type, not
+        content type.
+        (WebCore::isSimpleCrossOriginAccessRequest): Use the above methods.
+
+        * loader/CrossOriginAccessControl.h: Expose isOnAccessControlSimpleRequestMethodWhitelist.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders):
+        Use the new checks for simple method and header.
+
 2009-03-16  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 
         Reviewed by Mark Rowe.

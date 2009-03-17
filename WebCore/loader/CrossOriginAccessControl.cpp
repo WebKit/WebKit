@@ -28,37 +28,42 @@
 #include "CrossOriginAccessControl.h"
 
 #include "AtomicString.h"
+#include "HTTPParsers.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
-bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name)
+bool isOnAccessControlSimpleRequestMethodWhitelist(const String& method)
 {
-    return equalIgnoringCase(name, "accept")
-            || equalIgnoringCase(name, "accept-language")
-            || equalIgnoringCase(name, "content-language")
-            || equalIgnoringCase(name, "content-type");
+    return method == "GET" || method == "HEAD" || method == "POST";
+}
+
+bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value)
+{
+    if (equalIgnoringCase(name, "accept") || equalIgnoringCase(name, "accept-language") || equalIgnoringCase(name, "content-language"))
+        return true;
+
+    // Preflight is required for MIME types that can not be sent via form submission.
+    if (equalIgnoringCase(name, "content-type")) {
+        String mimeType = extractMIMETypeFromMediaType(value);
+        return equalIgnoringCase(mimeType, "application/x-www-form-urlencoded")
+            || equalIgnoringCase(mimeType, "multipart/form-data")
+            || equalIgnoringCase(mimeType, "text/plain");
+    }
+
+    return false;
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
 {
-    if (method != "GET" && method != "HEAD" && method != "POST")
+    if (!isOnAccessControlSimpleRequestMethodWhitelist(method))
         return false;
 
     HTTPHeaderMap::const_iterator end = headerMap.end();
     for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it) {
-        if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->first))
-            return false;
-    }
-
-    HTTPHeaderMap::const_iterator contentTypeIter = headerMap.find("Content-Type");
-    if (contentTypeIter != headerMap.end()) {
-        const String& contentType = contentTypeIter->second;
-        if (!equalIgnoringCase(contentType, "application/x-www-form-urlencoded")
-             && !equalIgnoringCase(contentType, "multipart/form-data")
-             && !equalIgnoringCase(contentType, "text/plain"))
+        if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second))
             return false;
     }
 

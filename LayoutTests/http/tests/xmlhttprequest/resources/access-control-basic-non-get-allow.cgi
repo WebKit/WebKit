@@ -17,5 +17,6 @@ if ($ENV{'REQUEST_METHOD'} eq "OPTIONS") {
     read(STDIN, $request, $ENV{'CONTENT_LENGTH'}) || die "Could not read in content.\n";
     print $request;
 } else {
+    print "Content-Type: text/plain\n\n";
     print "Wrong method: " . $ENV{'REQUEST_METHOD'} . "\n";
 }

@@ -109,14 +109,14 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method) const
 {
-    return m_methods.contains(method) || method == "GET" || method == "POST";
+    return m_methods.contains(method) || isOnAccessControlSimpleRequestMethodWhitelist(method);
 }
 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders) const
 {
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
-        if (!m_headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first))
+        if (!m_headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second))
             return false;
     }
     return true;

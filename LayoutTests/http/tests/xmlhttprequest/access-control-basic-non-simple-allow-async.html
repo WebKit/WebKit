@@ -31,6 +31,7 @@ xhr.onreadystatechange = processStateChange;
 xhr.onerror = errorHandler;
 
 xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi", true);
+xhr.setRequestHeader("Content-Type", "text/plain; charset=UTF-8");
 xhr.send("PASS: PUT data received");
 
 </script>
