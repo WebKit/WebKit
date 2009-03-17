@@ -52,7 +52,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_graphicsLayer(0)
     , m_contentsLayer(0)
     , m_clippingLayer(0)
-    , m_forceCompositingLayer(false)
     , m_isSimpleContainerCompositingLayer(false)
     , m_simpleCompositingLayerStatusDirty(true)
     , m_compositingContentOffsetDirty(true)
@@ -582,11 +581,6 @@ void RenderLayerBacking::detectDrawingOptimizations()
 void RenderLayerBacking::invalidateDrawingOptimizations()
 {
     m_simpleCompositingLayerStatusDirty = true;
-}
-
-void RenderLayerBacking::forceCompositingLayer(bool force)
-{
-    m_forceCompositingLayer = force;
 }
 
 FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const

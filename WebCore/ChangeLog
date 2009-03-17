@@ -19,6 +19,50 @@
 
 2009-03-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24632
+
+        Fix repaint issues when composited layers come and go (only applies
+        when ACCELERATED_COMPOSITING is turned on).
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::mustOverlayCompositedLayers):
+        (WebCore::RenderLayer::setMustOverlayCompositedLayers):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        * rendering/RenderLayerBacking.h:
+
+        Move what used to be the 'forceCompositingLayer' flag from RenderLayerBacking
+        to RenderLayer, because we don't want the side-effects of creating RenderLayerBacking
+        when setting this flag.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        When a RenderLayer flips into or out of compositing mode, compute a repaint
+        rect relative to the containerForRepaint, and repaint it.
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Call layer->setMustOverlayCompositedLayers() rather than setForcedCompositingLayer().
+        
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForTransform):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        * rendering/RenderLayerCompositor.h:
+        
+        Rename requiresCompositingLayerForTransform() to requiresCompositingForTransform()
+        and make it a class static method to match requiresCompositingForAnimation(). Both
+        now take RenderObjects, rathern than RenderLayers.
+        
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasTransformRelatedProperty):
+        Minor tidyup using convenience methods added in an earlier commit.
+
+2009-03-17  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=24396

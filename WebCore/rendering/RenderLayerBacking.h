@@ -100,9 +100,6 @@ public:
     FloatPoint graphicsLayerToContentsCoordinates(const GraphicsLayer*, const FloatPoint&);
     FloatPoint contentsToGraphicsLayerCoordinates(const GraphicsLayer*, const FloatPoint&);
 
-    void forceCompositingLayer(bool force = true);
-    bool forcedCompositingLayer() const { return m_forceCompositingLayer; }
-
     void detectDrawingOptimizations();
     void invalidateDrawingOptimizations();
 
@@ -161,7 +158,6 @@ private:
 
     IntSize m_compositingContentOffset;
 
-    bool m_forceCompositingLayer : 1;   // set if we need a compositing layer because of some external requirement
     bool m_isSimpleContainerCompositingLayer : 1;  // is this compositing layer able to be simplified
     bool m_simpleCompositingLayerStatusDirty : 1; // set if the test for simple layers needs to be redone
 

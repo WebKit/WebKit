@@ -641,10 +641,7 @@ public:
     
     // Return true if any transform related property (currently transform, transformStyle3D or perspective) 
     // indicates that we are transforming
-    bool hasTransformRelatedProperty() const
-    {
-        return hasTransform() || rareNonInheritedData->m_transformStyle3D == TransformStyle3DPreserve3D || rareNonInheritedData->m_perspective > 0;
-    }
+    bool hasTransformRelatedProperty() const { return hasTransform() || preserves3D() || hasPerspective(); }
 
     enum ApplyTransformOrigin { IncludeTransformOrigin, ExcludeTransformOrigin };
     void applyTransform(TransformationMatrix&, const IntSize& borderBoxSize, ApplyTransformOrigin = IncludeTransformOrigin) const;

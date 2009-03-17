@@ -100,14 +100,8 @@ private:
     // Whether we need a graphics layer to clip z-order children of the given layer.
     bool clipsCompositingDescendants(const RenderLayer*) const;
 
-    // Whether a running transition or animation enforces the need for a compositing layer.
-    bool requiresCompositingForAnimation(const RenderLayer*) const;
     // Whether the given layer needs an extra 'contents' layer.
     bool needsContentsCompositingLayer(const RenderLayer*) const;
-
-    // Set a bit on this layer to force it to be composisted, because it has to render on top of
-    // other compositing layers.
-    void setForcedCompositingLayer(RenderLayer*, bool force);
 
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
     void recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect);
@@ -124,6 +118,10 @@ private:
     bool layerHas3DContent(const RenderLayer*) const;
 
     void ensureRootPlatformLayer();
+
+    // Whether a running transition or animation enforces the need for a compositing layer.
+    static bool requiresCompositingForAnimation(RenderObject*);
+    static bool requiresCompositingForTransform(RenderObject*);
 
 private:
     RenderView* m_renderView;
