@@ -1,3 +1,25 @@
+2009-03-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24592
+        [GTK] Crash in FcPatternHash
+
+        Sanitize memory management in gtk fonts.
+
+        Release memory allocated by FontPlatformDataGtk in its own
+        destructor instead of doing it from other classes, and add copy
+        constructor and '=' operator to be able to track referenced
+        objects properly.
+
+        * platform/graphics/gtk/FontPlatformData.h:
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformDestroy):
+
 2009-03-17  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Build fix for Qt < 4.5.
