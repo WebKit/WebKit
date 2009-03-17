@@ -1,3 +1,20 @@
+2009-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=24655
+        <rdar://problem/6633727> Hitting return at the end of a line with an anchor jumps me to the bottom of the message
+
+        * editing/inserting/6633727.html: Added.
+        * platform/mac/editing/inserting/6633727-expected.checksum: Added.
+        * platform/mac/editing/inserting/6633727-expected.png: Added.
+        * platform/mac/editing/inserting/6633727-expected.txt: Added.
+
+        Updated results.  The behavior for these tests doesn't change, but the render tree is slightly different.
+
+        * platform/mac/editing/inserting/insert-div-021-expected.txt:
+        * platform/mac/editing/style/block-styles-007-expected.txt:
+
 2009-03-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

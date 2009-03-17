@@ -1,3 +1,21 @@
+2009-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24655
+        <rdar://problem/6633727> Hitting return at the end of a line with an anchor jumps me to the bottom of the message
+
+        Test: editing/inserting/6633727.html
+
+        This changes does a few things:
+        1) Renames pos to insertionPosition.
+        2) Eliminates "startNode".  It doesn't work well to consider the node separately from the insertionPosition.  
+           The insertionPosition gets updated at various times, and it seems likely that startNode can get out of sync.
+        3) Before building up a list of ancestors to move around when we insert the new block, make sure to use the deepest
+           representation of the insertionPosition, so all ancestor nodes are correctly included.
+
+        * editing/InsertParagraphSeparatorCommand.cpp: (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2009-03-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kevin Ollivier.
