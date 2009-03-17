@@ -47,8 +47,8 @@
 
 namespace WebCore {
 
-  PangoFontMap* FontPlatformData::m_fontMap = 0;
-  GHashTable* FontPlatformData::m_hashTable = 0;
+PangoFontMap* FontPlatformData::m_fontMap = 0;
+GHashTable* FontPlatformData::m_hashTable = 0;
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
     : m_context(0)

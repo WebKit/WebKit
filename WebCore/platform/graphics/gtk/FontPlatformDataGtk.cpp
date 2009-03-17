@@ -173,7 +173,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_syntheticOblique = other.m_syntheticOblique;
 
     if (other.m_scaledFont)
-        cairo_scaled_font_reference (other.m_scaledFont);
+        cairo_scaled_font_reference(other.m_scaledFont);
     if (m_scaledFont)
         cairo_scaled_font_destroy(m_scaledFont);
     m_scaledFont = other.m_scaledFont;

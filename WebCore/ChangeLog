@@ -5,6 +5,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=24592
         [GTK] Crash in FcPatternHash
 
+        Style fixes.
+
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::operator=):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+
+2009-03-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24592
+        [GTK] Crash in FcPatternHash
+
         Sanitize memory management in pango fonts.
 
         Release memory allocated by FontPlatformDataPango in its own
