@@ -1082,6 +1082,9 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
+    // FIXME: It would be better to refactor this for the different types of input element.
+    // Having them all in one giant function makes this hard to read, and almost all the handling is type-specific.
+
     bool clickDefaultFormButton = false;
 
     if (isTextField() && evt->type() == eventNames().textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
@@ -1103,20 +1106,29 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
     }
 
-    if (isTextField() && evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent() && focused() && document()->frame()
-        && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
+    if (isTextField()
+            && evt->type() == eventNames().keydownEvent
+            && evt->isKeyboardEvent()
+            && focused()
+            && document()->frame()
+            && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
         evt->setDefaultHandled();
         return;
     }
 
-    if (inputType() == RADIO && evt->isMouseEvent()
-        && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (inputType() == RADIO
+            && evt->isMouseEvent()
+            && evt->type() == eventNames().clickEvent
+            && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         evt->setDefaultHandled();
         return;
     }
     
-    // Let the key handling done in Node take precedence over the event handling here for editable text fields
-    if (!clickDefaultFormButton) {
+    // Call the base event handler before any of our own event handling for almost all events in text fields.
+    // Makes editing keyboard handling take precedence over the keydown and keypress handling in this function.
+    bool callBaseClassEarly = isTextField() && !clickDefaultFormButton
+        && (evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent);
+    if (callBaseClassEarly) {
         HTMLFormControlElementWithState::defaultEventHandler(evt);
         if (evt->defaultHandled())
             return;
@@ -1215,7 +1227,8 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                 case SUBMIT:
                 case RADIO:
                     setActive(true, true);
-                    // No setDefaultHandled() - IE dispatches a keypress in this case.
+                    // No setDefaultHandled(), because IE dispatches a keypress in this case
+                    // and the caller will only dispatch a keypress if we don't call setDefaultHandled.
                     return;
                 default:
                     break;
@@ -1331,7 +1344,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
             if (!slider->mouseEventIsInThumb(mEvt)) {
                 IntPoint eventOffset(mEvt->offsetX(), mEvt->offsetY());
-                if (mEvt->target() != this) // Does this ever happen now? Was added for <video> controls
+                if (mEvt->target() != this) // Does this ever happen now? Was originally added for <video> controls.
                     eventOffset = roundedIntPoint(renderer()->absoluteToLocal(FloatPoint(mEvt->pageX(), mEvt->pageY()), false, true));
                 slider->setValueForPosition(slider->positionForOffset(eventOffset));
             }
@@ -1339,6 +1352,9 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())
             slider->forwardEvent(evt);
     }
+
+    if (!callBaseClassEarly && !evt->defaultHandled())
+        HTMLFormControlElementWithState::defaultEventHandler(evt);
 }
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const

@@ -1,3 +1,22 @@
+2009-03-17  Darin Adler  <darin@apple.com>
+
+        Earlier version reviewed by Adele Peterson.
+
+        Bug 24304: REGRESSION (r39864): Hitting the space bar to select an <input type=radio>
+        or push an <input type=button> or <button> causes the page to scroll down.
+
+        Would be best to add a regression test for Windows eventually; tested that this has
+        no effect on the Mac OS X platform.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Added FIXMEs and tweaked formatting.
+        Use the code that calls the base class's defaultEventHandler early only in the cases
+        where it's needed: keydown and keypress events in text fields. In other cases, do the
+        more typical thing and call the default handler only at the end of the function.
+        This function already had code to make sure the keypress event for space never gets
+        through, but it was running too late since the scrolling code was moved into the
+        base class default event handler.
+
 2009-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
