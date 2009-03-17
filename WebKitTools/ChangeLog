@@ -1,3 +1,12 @@
+2009-03-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        Enable HTML5 media elements support by default also for the GTK+
+        port.
+
+        * Scripts/build-webkit:
+
 2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Mark Rowe.

@@ -322,8 +322,8 @@ AC_MSG_RESULT([$enable_icon_database])
 AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
               AC_HELP_STRING([--enable-video],
-                             [enable HTML5 video support [default=no]]),
-              [],[enable_video="no"])
+                             [enable HTML5 video support [default=yes]]),
+              [],[enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
 # check whether to enable XPath support
