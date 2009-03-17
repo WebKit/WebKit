@@ -1,3 +1,18 @@
+2009-03-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kevin Ollivier.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24115
+        Introduce platform independent stubs for plugins.
+
+        * plugins/PluginDataNone.cpp: Copied from WebCore/plugins/wx/PluginDataWx.cpp.
+        * plugins/PluginPackageNone.cpp: Copied from WebCore/plugins/wx/PluginPackageWx.cpp.
+        * plugins/PluginViewNone.cpp: Copied from WebCore/plugins/wx/PluginViewWx.cpp.
+        * plugins/wx/PluginDataWx.cpp: Removed.
+        * plugins/wx/PluginPackageWx.cpp: Removed.
+        * plugins/wx/PluginViewWx.cpp: Removed.
+        * webcore-wx.bkl:
+
 2009-03-17  Darin Adler  <darin@apple.com>
 
         Earlier version reviewed by Adele Peterson.

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-void PluginPackage::determineQuirks(const String& mimeType)
+void PluginPackage::determineQuirks(const String&)
 {
     notImplemented();
 }
@@ -59,13 +59,13 @@ unsigned PluginPackage::hash() const
     return 0;
 }
 
-bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
+bool PluginPackage::equal(const PluginPackage&, const PluginPackage&)
 {
     notImplemented();
     return false;
 }
 
-int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
+int PluginPackage::compareFileVersion(const PlatformModuleVersion&) const
 {
     notImplemented();
     return 0;
