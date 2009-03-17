@@ -1,3 +1,9 @@
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+
 2009-03-17  David Kilzer  <ddkilzer@apple.com>
 
         Use -[NSURLResponse(WebCoreURLResponse) _webcore_MIMEType] consistently
