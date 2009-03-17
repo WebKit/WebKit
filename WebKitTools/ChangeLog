@@ -1,3 +1,15 @@
+2009-03-17  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 24645: bisect-builds script doesn't work with Safari 4 Public Beta (version string)
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24645>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/bisect-builds:
+        (makeNightlyList): Added checks for Safari 4 Public Beta on
+        Tiger and Leopard.
+
 2009-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

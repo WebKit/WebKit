@@ -321,7 +321,9 @@ sub makeNightlyList($$$$)
     }
 
     if (eval "v$macOSXVersion" ge v10.5) {
-        if (eval "v$safariVersion" ge v3.2) {
+        if ($safariVersion eq "4 Public Beta") {
+            @files = grep { $_->{rev} >= 39682 } @files;
+        } elsif (eval "v$safariVersion" ge v3.2) {
             @files = grep { $_->{rev} >= 37348 } @files;
         } elsif (eval "v$safariVersion" ge v3.1) {
             @files = grep { $_->{rev} >= 29711 } @files;
@@ -333,7 +335,9 @@ sub makeNightlyList($$$$)
             die "Requires Safari 2.0 or newer";
         }
     } elsif (eval "v$macOSXVersion" ge v10.4) {
-        if (eval "v$safariVersion" ge v3.2) {
+        if ($safariVersion eq "4 Public Beta") {
+            @files = grep { $_->{rev} >= 39682 } @files;
+        } elsif (eval "v$safariVersion" ge v3.2) {
             @files = grep { $_->{rev} >= 37348 } @files;
         } elsif (eval "v$safariVersion" ge v3.1) {
             @files = grep { $_->{rev} >= 29711 } @files;
