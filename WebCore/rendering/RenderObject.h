@@ -165,11 +165,11 @@ public:
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
-    // The following five functions are used when the render tree hierarchy changes to make sure layers get
+    // The following six functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed.  Since containership can be implemented by any subclass, and since a hierarchy
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.
     RenderLayer* enclosingLayer() const;
-    
+    RenderLayer* enclosingSelfPaintingLayer() const;
     void addLayers(RenderLayer* parentLayer, RenderObject* newObject);
     void removeLayers(RenderLayer* parentLayer);
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);

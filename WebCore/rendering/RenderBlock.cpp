@@ -3076,8 +3076,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
                 // behaves properly).  We always want to propagate the desire to paint the float as
                 // far out as we can, to the outermost block that overlaps the float, stopping only
-                // if we hit a layer boundary.
-                if (r->m_renderer->enclosingLayer() == enclosingLayer())
+                // if we hit a self-painting layer boundary.
+                if (r->m_renderer->enclosingSelfPaintingLayer() == enclosingSelfPaintingLayer())
                     r->m_shouldPaint = false;
                 else
                     floatingObj->m_shouldPaint = false;

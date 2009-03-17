@@ -519,6 +519,18 @@ RenderLayer* RenderObject::enclosingLayer() const
     return 0;
 }
 
+RenderLayer* RenderObject::enclosingSelfPaintingLayer() const
+{
+    const RenderObject* curr = this;
+    while (curr) {
+        RenderLayer* layer = curr->hasLayer() ? toRenderBoxModelObject(curr)->layer() : 0;
+        if (layer && layer->isSelfPaintingLayer())
+            return layer;
+        curr = curr->parent();
+    }
+    return 0;
+}
+
 RenderBox* RenderObject::enclosingBox() const
 {
     RenderObject* curr = const_cast<RenderObject*>(this);
