@@ -3,7 +3,7 @@
         <rdar://problem/6648411> REGRESSION: Layout of page is wrong at http://www.popcap.com/
 
         Make sure that the initial shouldPaint check that looks at enclosingLayers properly skips over
-        layers that don't paint themselves.  This is done by adding a new boolean parameter to enclosingLayer
+        layers that don't paint themselves.  This is done by adding a new enclosingSelfPaintingLayer method
         so that RenderObjects can walk up the enclosing layer chain and skip any layers that don't paint
         themselves.
 
