@@ -1,3 +1,16 @@
+2009-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6687005> Need support for new move-left/right selectors.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeMoveToLeftEndOfLine): Added.
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection): Added.
+        (WebCore::executeMoveToRightEndOfLine): Added.
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection): Added.
+        Added command entries for the functions above.
+
 2009-03-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adele Peterson.

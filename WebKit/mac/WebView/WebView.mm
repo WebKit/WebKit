@@ -232,6 +232,10 @@ macro(moveToEndOfParagraph) \
 macro(moveToEndOfParagraphAndModifySelection) \
 macro(moveToEndOfSentence) \
 macro(moveToEndOfSentenceAndModifySelection) \
+macro(moveToLeftEndOfLine) \
+macro(moveToLeftEndOfLineAndModifySelection) \
+macro(moveToRightEndOfLine) \
+macro(moveToRightEndOfLineAndModifySelection) \
 macro(moveUp) \
 macro(moveUpAndModifySelection) \
 macro(moveWordBackward) \

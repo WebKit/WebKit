@@ -2,6 +2,15 @@
 
         Reviewed by Adele Peterson.
 
+        <rdar://problem/6687005> Need support for new move-left/right selectors.
+
+        * WebView/WebHTMLView.mm: Added the four new selectors to the command-forwarding list.
+        * WebView/WebView.mm: Ditto.
+
+2009-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
         Bug 24477: REGRESSION (r41467): Page Down key scrolls two pages
         https://bugs.webkit.org/show_bug.cgi?id=24477
         rdar://problem/6674184

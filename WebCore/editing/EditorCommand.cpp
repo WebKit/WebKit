@@ -827,6 +827,30 @@ static bool executeMoveWordRightAndModifySelection(Frame* frame, Event*, EditorC
     return true;
 }
 
+static bool executeMoveToLeftEndOfLine(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->selection()->modify(SelectionController::MOVE, SelectionController::LEFT, LineBoundary, true);
+    return true;
+}
+
+static bool executeMoveToLeftEndOfLineAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->selection()->modify(SelectionController::EXTEND, SelectionController::LEFT, LineBoundary, true);
+    return true;
+}
+
+static bool executeMoveToRightEndOfLine(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->selection()->modify(SelectionController::MOVE, SelectionController::RIGHT, LineBoundary, true);
+    return true;
+}
+
+static bool executeMoveToRightEndOfLineAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->selection()->modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary, true);
+    return true;
+}
+
 static bool executeOutdent(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     applyCommand(IndentOutdentCommand::create(frame->document(), IndentOutdentCommand::Outdent));
@@ -1259,8 +1283,8 @@ static const CommandMap& createCommandMap()
         { "IgnoreSpelling", { executeIgnoreSpelling, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Indent", { executeIndent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertBacktab", { executeInsertBacktab, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "InsertHorizontalRule", { executeInsertHorizontalRule, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertHTML", { executeInsertHTML, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "InsertHorizontalRule", { executeInsertHorizontalRule, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertImage", { executeInsertImage, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertLineBreak", { executeInsertLineBreak, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertNewline", { executeInsertNewline, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion, doNotAllowExecutionWhenDisabled } },    
@@ -1311,6 +1335,10 @@ static const CommandMap& createCommandMap()
         { "MoveToEndOfParagraphAndModifySelection", { executeMoveToEndOfParagraphAndModifySelection, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveToEndOfSentence", { executeMoveToEndOfSentence, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveToEndOfSentenceAndModifySelection", { executeMoveToEndOfSentenceAndModifySelection, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "MoveToLeftEndOfLine", { executeMoveToLeftEndOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "MoveToLeftEndOfLineAndModifySelection", { executeMoveToLeftEndOfLineAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "MoveToRightEndOfLine", { executeMoveToRightEndOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "MoveToRightEndOfLineAndModifySelection", { executeMoveToRightEndOfLineAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveUp", { executeMoveUp, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveUpAndModifySelection", { executeMoveUpAndModifySelection, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveWordBackward", { executeMoveWordBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
