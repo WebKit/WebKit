@@ -1,5 +1,17 @@
 2009-03-17  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Move the results out of platform/mac since they're a cross-platform progression,
+        and non-Mac platforms are already skipping the tests.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac/fast/dom/Window/window-properties-expected.txt: Removed.
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Update layout test results now that the test passes.

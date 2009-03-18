@@ -4,6 +4,7 @@ navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
 navigator.cookieEnabled is OK
+navigator.geolocation is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.mimeTypes is OK
@@ -19,6 +20,7 @@ navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
 navigator.cookieEnabled is OK
+navigator.geolocation is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.mimeTypes is OK
