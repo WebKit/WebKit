@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Add platform-specific layout test results to accommodate geolocation.
+
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt: Copied from LayoutTests/fast/dom/Window/window-properties-expected.txt.
+        * platform/mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt: Copied from LayoutTests/fast/dom/navigator-detached-no-crash-expected.txt.
+        * platform/mac/fast/dom/Window/window-properties-expected.txt: Copied from LayoutTests/fast/dom/Window/window-properties-expected.txt.
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt: Copied from LayoutTests/fast/dom/navigator-detached-no-crash-expected.txt.
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove geolocation-not-implemented.html.
 
         * geolocation/geolocation-not-implemented-expected.txt: Removed.
