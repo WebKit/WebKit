@@ -1,5 +1,14 @@
 2009-03-18  Beth Dakin  <bdakin@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Updating test to reflect our joy.
+
+        * fast/dom/offset-parent-positioned-and-inline-expected.txt:
+        * fast/dom/offset-parent-positioned-and-inline.html:
+
+2009-03-18  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Test for <rdar://problem/6636747> REGRESSION (Safari 4 PB-r41326): 
