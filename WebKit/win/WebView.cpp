@@ -579,6 +579,12 @@ void WebView::close()
 
     m_didClose = true;
 
+    if (m_uiDelegatePrivate) {
+        COMPtr<IWebUIDelegatePrivate5> uiDelegatePrivate5(Query, m_uiDelegatePrivate);
+        if (uiDelegatePrivate5)
+            uiDelegatePrivate5->webViewClosing(this);
+    }
+
     removeFromAllWebViewsSet();
 
     Frame* frame = m_page->mainFrame();

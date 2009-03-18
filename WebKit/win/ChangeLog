@@ -1,3 +1,14 @@
+2009-03-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Add webViewClosing to private UI delegate.
+
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebView.cpp:
+        (WebView::close):
+
 2009-03-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

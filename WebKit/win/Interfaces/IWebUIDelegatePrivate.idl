@@ -92,3 +92,14 @@ interface IWebUIDelegatePrivate4 : IWebUIDelegatePrivate3
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
     HRESULT webViewSendResizeMessage([in] UINT uMsg, [in] WPARAM wParam, [in] LPARAM lParam);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(df3b4283-6868-4a1f-97f6-baf0b33f239c),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate5 : IWebUIDelegatePrivate4
+{
+    HRESULT webViewClosing([in] IWebView* sender);
+}
