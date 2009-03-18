@@ -1,3 +1,14 @@
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Use the normal search rules for tests inside the platform directory.
+
+        This allows tests inside the platform directory to have different results
+        on different versions of Mac OS X.
+
+        * Scripts/run-webkit-tests:
+
 2009-03-17  David Kilzer  <ddkilzer@apple.com>
 
         resolve-ChangeLogs should not die on unmerged non-ChangeLog files

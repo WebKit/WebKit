@@ -1440,14 +1440,6 @@ sub expectedDirectoryForTest($;$;$)
         return $directory if (-f "$directory/$base-$expectedTag.$expectedExtension");
     }
 
-    # For platform-specific tests, the results should go right next to the test itself.
-    # Note: The return value of this subroutine will be concatenated with $base
-    # to determine the location of the new results, so returning $expectedDirectory
-    # will put the results right next to the test.
-    # FIXME: We want to allow platform/mac tests with platform/mac-leopard results,
-    # so this needs to be enhanced.
-    return $expectedDirectory if $base =~ /^platform/;
-
     # For cross-platform tests, text-only results should go in the cross-platform directory,
     # while render tree dumps should go in the least-specific platform directory.
     return $isText ? $expectedDirectory : $platformHierarchy[$#platformHierarchy];
