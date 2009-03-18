@@ -1,3 +1,16 @@
+2009-03-18  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24674
+        Crashes in !PLATFORM(MAC)'s formatLocaleDate, in very specific situations
+
+        Make sure strftime never returns 2-digits years to avoid ambiguity and
+        a crash.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2009-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
