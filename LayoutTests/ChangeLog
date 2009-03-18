@@ -1,3 +1,31 @@
+2009-03-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24670
+        Add tests for XHR progress events during cross-origin requests.
+
+        * http/tests/xmlhttprequest/redirect-cross-origin-2-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-2.html: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-post.html: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-double-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync.html: Added.
+        * http/tests/xmlhttprequest/redirect-cross-origin.html: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-expected.txt: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync.html: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync.html: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events.html: Added.
+
 2009-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
