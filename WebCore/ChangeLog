@@ -1,3 +1,20 @@
+2009-03-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6636747> REGRESSION (Safari 4 PB-r41326): 
+        Popup menu appears at the wrong location on page at http://
+        www.signonsandiego.com/
+
+        This was a regression from http://trac.webkit.org/changeset/40769, 
+        which changed the base class of RenderInline to 
+        RenderBoxModelObject rather than RenderBox.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent): offsetParent should return a 
+        RenderBoxModelObject rather than just a RenderBox, which is more 
+        restrictive. 
+
 2009-03-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
