@@ -1,5 +1,16 @@
 2009-03-17  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove geolocation-not-implemented.html.
+
+        * geolocation/geolocation-not-implemented-expected.txt: Removed.
+        * geolocation/geolocation-not-implemented.html: Removed.
+        * geolocation/geolocation-test.js: Removed.
+        * platform/gtk/Skipped:
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Update layout test results to accommodate the updated Unicode text segmentation rules.
