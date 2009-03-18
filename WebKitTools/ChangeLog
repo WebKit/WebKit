@@ -1,3 +1,19 @@
+2009-03-17  David Kilzer  <ddkilzer@apple.com>
+
+        resolve-ChangeLogs should not die on unmerged non-ChangeLog files
+
+        Reviewed by Adam Roben.
+
+        Fixes the following bug in resolve-ChangeLogs:
+
+            Use of uninitialized value in -e at ./WebKitTools/Scripts/resolve-ChangeLogs line 132.
+            Died at ./WebKitTools/Scripts/resolve-ChangeLogs line 164.
+
+        * Scripts/resolve-ChangeLogs:
+        (findUnmergedChangeLogs): Check the result of findChangeLog() to
+        make sure we don't add undef values to the list of files being
+        returned.
+
 2009-03-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Simon Fraser.

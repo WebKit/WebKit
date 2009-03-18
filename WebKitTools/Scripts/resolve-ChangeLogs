@@ -220,13 +220,15 @@ sub findUnmergedChangeLogs()
     while (<STAT>) {
         if ($isSVN) {
             if (/^([C]).{5} (.+)$/) {
-                push @results, findChangeLog($2);
+                my $file = findChangeLog($2);
+                push @results, $file if $file;
             } else {
                 print;  # error output from svn stat
             }
         } elsif ($isGit) {
             if (/^([U])\t(.+)$/) {
-                push @results, findChangeLog($2);
+                my $file = findChangeLog($2);
+                push @results, $file if $file;
             } else {
                 print;  # error output from git diff
             }
