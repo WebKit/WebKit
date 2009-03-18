@@ -1,3 +1,13 @@
+2009-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix fast/encoding/char-decoding.html with recent ICU.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decode): Look for gb18030 case-insensitively,
+        as newer versions of ICU use GB18030 as the canonical name.
+
 2009-03-17  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.
