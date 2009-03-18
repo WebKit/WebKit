@@ -2,6 +2,33 @@
 
         Rubber-stamped by Dan Bernstein.
 
+        Land updated results for tests involving Geeza Pro.
+
+        * platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum.
+        * platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png.
+        * platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-CS-after-AN-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-CS-after-AN-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-CS-after-AN-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-CS-after-AN-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-CS-after-AN-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-neutral-run-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/bidi-neutral-run-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-run-expected.txt.
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
         Move the results out of platform/mac since they're a cross-platform progression,
         and non-Mac platforms are already skipping the tests.
 
