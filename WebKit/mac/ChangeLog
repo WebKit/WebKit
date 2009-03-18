@@ -1,3 +1,20 @@
+2009-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6504776> 
+        CrashTracer: [USER] 188 crashes in Safari at com.apple.WebCore • WTF::HashTableIterator<WTF::RefPtr<WebCore::ResourceLoader>, ...
+        
+        If the m_pluginView member was zeroed out as a result of making a call into the plug-in, the pluginFunctionCallDepth would be off
+        causing the plug-in never to be stopped. Simplify the code by using a RAII object.
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (PluginStopDeferrer::PluginStopDeferrer):
+        (PluginStopDeferrer::~PluginStopDeferrer):
+        (WebNetscapePluginStream::startStream):
+        (WebNetscapePluginStream::wantsAllStreams):
+        (WebNetscapePluginStream::destroyStream):
+
 2009-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

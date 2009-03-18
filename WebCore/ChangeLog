@@ -1,3 +1,15 @@
+2009-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6504776> 
+        CrashTracer: [USER] 188 crashes in Safari at com.apple.WebCore • WTF::HashTableIterator<WTF::RefPtr<WebCore::ResourceLoader>, ...
+
+        Return early in case calling the client ends up spinning the run loop and completing/cancelling the load.
+        
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+
 2009-03-18  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -54,6 +54,26 @@ using namespace WebCore;
 
 static NSString *CarbonPathFromPOSIXPath(NSString *posixPath);
 
+class PluginStopDeferrer {
+public:
+    PluginStopDeferrer(WebNetscapePluginView* pluginView)
+        : m_pluginView(pluginView)
+    {
+        ASSERT(m_pluginView);
+        
+        [m_pluginView.get() willCallPlugInFunction];
+    }
+    
+    ~PluginStopDeferrer()
+    {
+        ASSERT(m_pluginView);
+        [m_pluginView.get() didCallPlugInFunction];
+    }
+    
+private:
+    RetainPtr<WebNetscapePluginView> m_pluginView;
+};
+
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
@@ -218,9 +238,12 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
 
     // FIXME: Need a way to check if stream is seekable
 
-    [m_pluginView.get() willCallPlugInFunction];
-    NPError npErr = m_pluginFuncs->newstream(m_plugin, (char *)[m_mimeType.get() UTF8String], &m_stream, NO, &m_transferMode);
-    [m_pluginView.get() didCallPlugInFunction];
+    NPError npErr;
+    {
+        PluginStopDeferrer deferrer(m_pluginView.get());
+        npErr = m_pluginFuncs->newstream(m_plugin, (char *)[m_mimeType.get() UTF8String], &m_stream, NO, &m_transferMode);
+    }
+
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", m_responseURL.get(), m_mimeType.get(), npErr);
 
     if (npErr != NPERR_NO_ERROR) {
@@ -340,12 +363,11 @@ bool WebNetscapePluginStream::wantsAllStreams() const
     
     void *value = 0;
     NPError error;
-    [m_pluginView.get() willCallPlugInFunction];
     {
+        PluginStopDeferrer deferrer(m_pluginView.get());
         JSC::JSLock::DropAllLocks dropAllLocks(false);
         error = m_pluginFuncs->getvalue(m_plugin, NPPVpluginWantsAllNetworkStreams, &value);
     }
-    [m_pluginView.get() didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
         return false;
     
@@ -370,9 +392,9 @@ void WebNetscapePluginStream::destroyStream()
             ASSERT(m_path);
             NSString *carbonPath = CarbonPathFromPOSIXPath(m_path.get());
             ASSERT(carbonPath != NULL);
-            [m_pluginView.get() willCallPlugInFunction];
+            
+            PluginStopDeferrer deferrer(m_pluginView.get());
             m_pluginFuncs->asfile(m_plugin, &m_stream, [carbonPath fileSystemRepresentation]);
-            [m_pluginView.get() didCallPlugInFunction];
             LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", m_responseURL.get(), carbonPath);
         }
 
@@ -395,12 +417,11 @@ void WebNetscapePluginStream::destroyStream()
         }
 
         if (m_newStreamSuccessful) {
-            [m_pluginView.get() willCallPlugInFunction];
+            PluginStopDeferrer deferrer(m_pluginView.get());
 #if !LOG_DISABLED
             NPError npErr = 
 #endif
             m_pluginFuncs->destroystream(m_plugin, &m_stream, m_reason);
-            [m_pluginView.get() didCallPlugInFunction];
             LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", m_responseURL.get(), npErr);
         }
 
@@ -416,9 +437,8 @@ void WebNetscapePluginStream::destroyStream()
 
     if (m_sendNotification) {
         // NPP_URLNotify expects the request URL, not the response URL.
-        [m_pluginView.get() willCallPlugInFunction];
+        PluginStopDeferrer deferrer(m_pluginView.get());
         m_pluginFuncs->urlnotify(m_plugin, [m_requestURL.get() _web_URLCString], m_reason, m_notifyData);
-        [m_pluginView.get() didCallPlugInFunction];
         LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", m_requestURL.get(), m_reason);
     }
 
@@ -489,9 +509,8 @@ void WebNetscapePluginStream::deliverData()
     int32 totalBytesDelivered = 0;
 
     while (totalBytesDelivered < totalBytes) {
-        [m_pluginView.get() willCallPlugInFunction];
+        PluginStopDeferrer deferrer(m_pluginView.get());
         int32 deliveryBytes = m_pluginFuncs->writeready(m_plugin, &m_stream);
-        [m_pluginView.get() didCallPlugInFunction];
         LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", m_responseURL.get(), deliveryBytes);
 
         if (m_isTerminated)
@@ -505,9 +524,8 @@ void WebNetscapePluginStream::deliverData()
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
             NSData *subdata = [m_deliveryData.get() subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
-            [m_pluginView.get() willCallPlugInFunction];
+            PluginStopDeferrer deferrer(m_pluginView.get());
             deliveryBytes = m_pluginFuncs->write(m_plugin, &m_stream, m_offset, [subdata length], (void *)[subdata bytes]);
-            [m_pluginView.get() didCallPlugInFunction];
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.
                 cancelLoadAndDestroyStreamWithError(pluginCancelledConnectionError());

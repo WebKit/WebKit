@@ -119,6 +119,11 @@ void NetscapePlugInStreamLoader::didCancel(const ResourceError& error)
 
     m_client->didFail(this, error);
 
+    // If calling didFail spins the run loop the stream loader can reach the terminal state.
+    // If that's the case we just return early.
+    if (reachedTerminalState())
+        return;
+    
     // We need to remove the stream loader after the call to didFail, since didFail can 
     // spawn a new run loop and if the loader has been removed it won't be deferred when
     // the document loader is asked to defer loading.
