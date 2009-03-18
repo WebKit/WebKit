@@ -1,3 +1,19 @@
+2009-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23966
+        REGRESSION: Custom arrow navigation functionality doesn't work at dropular.net
+        <rdar://problem/6589657>
+
+        Match the CSSOM spec for getClientRects and getBoundingClientRect by
+        returning a 0x0 rect at the correct top/left position for empty inline
+        boxes.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+
 2009-03-18  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

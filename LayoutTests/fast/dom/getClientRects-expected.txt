@@ -41,7 +41,7 @@ Client bounding rects for #14
 PASS testRects.length is 3
 
 Client bounding rects for #15
-FAIL testRects.length should be 1. Was 0.
+PASS testRects.length is 1
 
 PASS successfullyParsed is true
 

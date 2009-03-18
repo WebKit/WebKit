@@ -197,15 +197,15 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #15
-testRect.top 0
-testRect.left 0
+testRect.top 2452
+testRect.left 8
 testRect.width 0
 testRect.height 0
-testRect.bottom 0
-testRect.right 0
+testRect.bottom 2452
+testRect.right 8
 
-FAIL testRect.top should be 2452. Was 0.
-FAIL testRect.left should be 8. Was 0.
+PASS testRect.top is 2452
+PASS testRect.left is 8
 PASS testRect.width is 0
 PASS testRect.height is 0
 PASS testRect.bottom is testRect.top + testRect.height
