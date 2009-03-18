@@ -1,3 +1,18 @@
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Update layout test results to accommodate the updated Unicode text segmentation rules.
+
+        * platform/mac-leopard/css1/text_properties/text_transform-expected.checksum: Renamed from LayoutTests/platform/mac/css1/text_properties/text_transform-expected.checksum.
+        * platform/mac-leopard/css1/text_properties/text_transform-expected.png: Renamed from LayoutTests/platform/mac/css1/text_properties/text_transform-expected.png.
+        * platform/mac-leopard/css1/text_properties/text_transform-expected.txt: Copied from LayoutTests/platform/mac/css1/text_properties/text_transform-expected.txt.
+        * platform/mac-leopard/css2.1/t1605-c545-txttrans-00-b-ag-expected.checksum: Renamed from LayoutTests/platform/mac/css2.1/t1605-c545-txttrans-00-b-ag-expected.checksum.
+        * platform/mac-leopard/css2.1/t1605-c545-txttrans-00-b-ag-expected.png: Renamed from LayoutTests/platform/mac/css2.1/t1605-c545-txttrans-00-b-ag-expected.png.
+        * platform/mac-leopard/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt.
+        * platform/mac/css1/text_properties/text_transform-expected.txt:
+        * platform/mac/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt:
+
 2009-03-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adele Peterson.
