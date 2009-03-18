@@ -1,3 +1,20 @@
+2009-03-17  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24662
+        Chromium build fixes.
+
+        Bug https://bugs.webkit.org/show_bug.cgi?id=24663 tracks
+        the invalid implementation of ScriptCallStack.
+
+        No change in behavior, so no test.
+
+        * bindings/v8/ScriptCallStack.h:
+        (WebCore::ScriptCallStack::state):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::drawRect):
+
 2009-03-17  David Carson  <dacarson@apple.com>
 
         Reviewed by David Hyatt.

@@ -50,6 +50,9 @@ namespace WebCore {
         // FIXME: implement retrieving and storing call stack trace
         unsigned size() const { return 1; }
 
+        // FIXME: This method is obviously not implemented.
+        ScriptState* state() const { return 0; }
+
     private:
         ScriptCallFrame m_lastCaller;
     };

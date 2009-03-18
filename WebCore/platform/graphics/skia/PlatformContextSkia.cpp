@@ -277,10 +277,14 @@ void PlatformContextSkia::drawRect(SkRect rect)
         if (oldFillColor != m_state->m_strokeColor)
             setFillColor(m_state->m_strokeColor);
         setupPaintForFilling(&paint);
-        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fTop, rect.width(), 1), paint);
-        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fBottom - 1, rect.width(), 1), paint);
-        canvas()->drawRect(WebCore::FloatRect(rect.fLeft, rect.fTop + 1, 1, rect.height() - 2), paint);
-        canvas()->drawRect(WebCore::FloatRect(rect.fRight - 1, rect.fTop + 1, 1, rect.height() - 2), paint);
+        SkRect topBorder = { rect.fLeft, rect.fTop, rect.width(), 1 };
+        canvas()->drawRect(topBorder, paint);
+        SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.width(), 1 };
+        canvas()->drawRect(bottomBorder, paint);
+        SkRect leftBorder = { rect.fLeft, rect.fTop + 1, 1, rect.height() - 2 };
+        canvas()->drawRect(leftBorder, paint);
+        SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, 1, rect.height() - 2 };
+        canvas()->drawRect(rightBorder, paint);
         if (oldFillColor != m_state->m_strokeColor)
             setFillColor(oldFillColor);
     }
