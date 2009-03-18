@@ -1,4 +1,12 @@
-This page tests a codegen bug with finally blocks. If the test passes, you'll see a PASS message below.
+Test that finally behaviour is correct.
 
-PASS
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS f() is true
+PASS (function () { var a = true; try { return a; } finally { a = false; }})() is true
+PASS (function () { var a = 'PASS'; try { throw a; } finally { a = 'FAIL'; }})() threw exception PASS.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

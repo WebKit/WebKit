@@ -1,31 +1,13 @@
-<p>This page tests a codegen bug with finally blocks. If the test passes, you'll
-see a PASS message below.</p>
-
-<pre id="console"></pre>
-
-<script>
-function log(s)
-{
-    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
-}
-
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-a = {
-    f: function() { return "PASS"; }
-};
-
-a.f.toString = function() { return "FAIL"; };
-
-function f() {
-    try {
-        a.f();
-        a.f();
-        return a.f();
-    } finally {
-        a.f();
-    }
-}
-log(f())
-</script>
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/finally-codegen-failure.js" type="text/javascript" charset="utf-8"></script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

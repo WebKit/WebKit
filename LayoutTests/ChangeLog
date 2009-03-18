@@ -1,3 +1,14 @@
+2009-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Update finally codegen test to newer style, add additional tests for
+        finaliser changing the return value.
+
+        * fast/js/finally-codegen-failure-expected.txt:
+        * fast/js/finally-codegen-failure.html:
+        * fast/js/resources/finally-codegen-failure.js: Added.
+
 2009-03-17  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

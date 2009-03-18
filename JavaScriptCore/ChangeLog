@@ -1,3 +1,19 @@
+2009-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        <rdar://problem/6692138> REGRESSION (Safari 4): Incorrect function return value when using IE "try ... finally" memory leak work-around (24654)
+        <https://bugs.webkit.org/show_bug.cgi?id=24654>
+
+        If the return value for a function is in a local register we need
+        to copy it before executing any finalisers, otherwise it is possible
+        for the finaliser to clobber the result.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::hasFinaliser):
+        * parser/Nodes.cpp:
+        (JSC::ReturnNode::emitBytecode):
+
 2009-03-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Mark Rowe.
