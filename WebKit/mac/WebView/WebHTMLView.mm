@@ -5369,6 +5369,15 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     coreFrame->editor()->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
 }
 
+static bool responderChainRespondsToSelector(NSResponder *firstResponder, SEL selector)
+{
+    for (NSResponder *responder = firstResponder; responder; responder = [responder nextResponder]) {
+        if ([responder respondsToSelector:selector])
+            return true;
+    }
+    return false;
+}
+
 - (void)doCommandBySelector:(SEL)selector
 {
     LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
@@ -5402,14 +5411,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             if (command.isSupported())
                 eventWasHandled = command.execute(event);
             else {
-                _private->selectorForDoCommandBySelector = selector;
                 // If WebKit does not support this command, we need to pass the selector to super.
+                _private->selectorForDoCommandBySelector = selector;
+                // We'll get the wrong value for eventWasHandled if respondsToSelector: doesn't
+                // exactly reflect what doCommandBySelector: does, for example an unusual class might
+                // not even pass the selector along to the next responder, or might handle a selector
+                // even though respondsToSelector: return NO. When that happens, there's a risk the
+                // event might end up handled twice. We know of no real-world examples of this.
+                eventWasHandled = responderChainRespondsToSelector(self, selector);
                 [super doCommandBySelector:selector];
                 _private->selectorForDoCommandBySelector = 0;
-                // In theory, [super doCommandBySelector:] can do some action that would cause WebKit 
-                // to need to consider the event handled.  But in practice, I've found no
-                // example of that happening and causing broken behavior.
-                eventWasHandled = false;
             }
         }
 
