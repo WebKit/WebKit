@@ -1,3 +1,14 @@
+2009-03-17  David Carson  <dacarson@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Add anchor elements to the simple style sheet so that applications that 
+        are using WebKit just for simple text and links will also take advantage
+        of the fast path.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle):
+
 2009-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
