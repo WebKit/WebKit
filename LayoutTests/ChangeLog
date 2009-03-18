@@ -1,5 +1,14 @@
 2009-03-17  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        Update layout test results now that the test passes.
+
+        * fast/xsl/mozilla-tests-expected.txt:
+        * platform/mac-leopard/fast/xsl/mozilla-tests-expected.txt: Copied from LayoutTests/fast/xsl/mozilla-tests-expected.txt.
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add platform-specific layout test results to accommodate geolocation.
