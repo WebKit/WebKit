@@ -1,3 +1,15 @@
+2009-03-18  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Match the changes done for windows in the bug
+        https://bugs.webkit.org/show_bug.cgi?id=24530.
+
+        No change in behavior, so no test.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::extraDefaultStyleSheet):
+
 2009-03-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Holger Freyther.

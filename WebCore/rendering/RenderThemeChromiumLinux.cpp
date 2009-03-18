@@ -95,7 +95,7 @@ RenderThemeChromiumLinux::RenderThemeChromiumLinux()
 // Use the Windows style sheets to match their metrics.
 String RenderThemeChromiumLinux::extraDefaultStyleSheet()
 {
-    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
+    return String(themeChromiumWinUserAgentStyleSheet, sizeof(themeChromiumWinUserAgentStyleSheet));
 }
 
 String RenderThemeChromiumLinux::extraQuirksStyleSheet()
