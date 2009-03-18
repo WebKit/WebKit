@@ -12,15 +12,7 @@ body { margin: 10; padding: 0 }
     function log(message)
     {
         var item = document.createElement("li");
-        var resultMessage = String(message);
-
-        // remove any memory addresses to make the test reproducable
-        resultMessage = resultMessage.replace(/0x[0-9a-fA-F]{8}/g, "0xXXXXXXXX");
-
-        // Leopard serializes empty attribute dictionaries as "{ }", turn these into "{}" to match Tiger
-        resultMessage = resultMessage.replace(/\{\s\}/g, "{}");
-
-        item.appendChild(document.createTextNode(resultMessage));
+        item.appendChild(document.createTextNode(message));
         console_messages.appendChild(item);
     }
     
@@ -33,15 +25,15 @@ body { margin: 10; padding: 0 }
             log("Testing text with br elements (<div><br></div>hello<br>)");
             window.getSelection().setPosition(document.body, 5);
 
-            log("(0, 0): " + textInputController.attributedSubstringFromRange(0, 0));
-            log("(0, 1): " + textInputController.attributedSubstringFromRange(0, 1));
-            log("(0, 2): " + textInputController.attributedSubstringFromRange(0, 2));
-            log("(1, 1): " + textInputController.attributedSubstringFromRange(1, 1));
-            log("(1, 5): " + textInputController.attributedSubstringFromRange(1, 5));
-            log("(1, 6): " + textInputController.attributedSubstringFromRange(1, 6));
-            log("(1, 100): " + textInputController.attributedSubstringFromRange(1, 100));
-            log("(6, 1): " + textInputController.attributedSubstringFromRange(6, 1));
-            log("(7, 1): " + textInputController.attributedSubstringFromRange(7, 1)); // should be empty
+            log("(0, 0): " + textInputController.attributedSubstringFromRange(0, 0).string());
+            log("(0, 1): " + textInputController.attributedSubstringFromRange(0, 1).string());
+            log("(0, 2): " + textInputController.attributedSubstringFromRange(0, 2).string());
+            log("(1, 1): " + textInputController.attributedSubstringFromRange(1, 1).string());
+            log("(1, 5): " + textInputController.attributedSubstringFromRange(1, 5).string());
+            log("(1, 6): " + textInputController.attributedSubstringFromRange(1, 6).string());
+            log("(1, 100): " + textInputController.attributedSubstringFromRange(1, 100).string());
+            log("(6, 1): " + textInputController.attributedSubstringFromRange(6, 1).string());
+            log("(7, 1): " + textInputController.attributedSubstringFromRange(7, 1).string()); // should be empty
             log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be undefined
             log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be undefined
             

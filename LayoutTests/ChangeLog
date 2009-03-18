@@ -2,6 +2,17 @@
 
         Rubber-stamped by Dan Bernstein.
 
+        Update layout test to avoid depending on formatting of -[NSAttributedString description].
+
+        The attributes aren't important to the test.
+
+        * platform/mac/fast/text/attributed-substring-from-range-001-expected.txt:
+        * platform/mac/fast/text/attributed-substring-from-range-001.html:
+
+2009-03-17  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
         Land updated results for tests involving Geeza Pro.
 
         * platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum.

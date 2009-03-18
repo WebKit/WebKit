@@ -1,12 +1,12 @@
 Testing text with br elements (<div><br></div>hello<br>)
 (0, 0):
-(0, 1): { NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(0, 2): h{ NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(1, 1): h{ NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(1, 5): hello{ NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(1, 6): hello { NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(1, 100): hello { NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(6, 1): { NSColor = NSDeviceRGBColorSpace 0 0 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 1):
+(0, 2): h
+(1, 1): h
+(1, 5): hello
+(1, 6): hello
+(1, 100): hello
+(6, 1):
 (7, 1):
 (100, 0): undefined
 (100, 100): undefined
