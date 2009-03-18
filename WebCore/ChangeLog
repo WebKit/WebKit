@@ -1,3 +1,16 @@
+2009-03-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/6685235>
+        <video> element poster cannot be set dynamically if not originally set up in HTML
+        
+        Allocate the media engine immediately so the plug-in proxy is available for
+        scripting right away.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer):
+
 2009-03-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

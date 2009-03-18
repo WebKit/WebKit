@@ -187,6 +187,14 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_playerProxy(0)
 #endif
 {
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    if (!engines.isEmpty()) {
+        m_currentMediaEngine = engines[0];
+        m_private.clear();
+        m_private.set(engines[0]->constructor(this));
+    }
+#endif
 }
 
 MediaPlayer::~MediaPlayer()
