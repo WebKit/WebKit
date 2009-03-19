@@ -1,12 +1,7 @@
-2009-03-18  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+2009-03-18  Ada Chan  <adachan@apple.com>
 
-        Reviewed by Darin Adler.
-
-        https://bugs.webkit.org/show_bug.cgi?id=24674
-        Crashes in !PLATFORM(MAC)'s formatLocaleDate, in very specific situations
-
-        Make sure strftime never returns 2-digits years to avoid ambiguity and
-        a crash.
+        Rolling out r41818 since it broke the windows build.
+        Error: ..\..\runtime\DatePrototype.cpp(30) : fatal error C1083: Cannot open include file: 'langinfo.h': No such file or directory
 
         * runtime/DatePrototype.cpp:
         (JSC::formatLocaleDate):

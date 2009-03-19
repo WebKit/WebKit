@@ -27,7 +27,6 @@
 #include "ObjectPrototype.h"
 #include "DateInstance.h"
 #include <float.h>
-#include <langinfo.h>
 #include <limits.h>
 #include <locale.h>
 #include <math.h>
@@ -182,7 +181,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
 
 static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, LocaleDateTimeFormat format)
 {
-    static const nl_item formats[] = { D_T_FMT, D_FMT, T_FMT };
+    static const char* const formatStrings[] = { "%#c", "%#x", "%X" };
  
     // Offset year if needed
     struct tm localTM = gdt;
@@ -191,20 +190,10 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
     if (yearNeedsOffset)
         localTM.tm_year = equivalentYearForDST(year) - 1900;
  
-    // We do not allow strftime to generate dates with 2-digits years,
-    // both to avoid ambiguity, and a crash in strncpy, for years that
-    // need offset.
-    char* formatString = strdup(nl_langinfo(formats[format]));
-    char* yPos = strchr(formatString, 'y');
-    if (yPos)
-        *yPos = 'Y';
-
     // Do the formatting
     const int bufsize = 128;
     char timebuffer[bufsize];
-    size_t ret = strftime(timebuffer, bufsize, formatString, &localTM);
-
-    free(formatString);
+    size_t ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
  
     if (ret == 0)
         return jsEmptyString(exec);
