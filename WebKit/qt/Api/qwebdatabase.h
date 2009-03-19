@@ -53,7 +53,7 @@ private:
 
 private:
     QExplicitlySharedDataPointer<QWebDatabasePrivate> d;
-}
+};
 
 #endif
 

@@ -62,6 +62,6 @@ private:
 
 private:
     QExplicitlySharedDataPointer<QWebSecurityOriginPrivate> d;
-}
+};
 
 #endif
