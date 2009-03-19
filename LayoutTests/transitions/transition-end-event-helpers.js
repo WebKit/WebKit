@@ -3,6 +3,9 @@ var _recordedEvents = new Array();
 var _expectedEventCount = 0;
 // Function invoked when we've received _expectedEventCount events.
 var _endFunction;
+// Have we processed the events? This is used to make sure we process the
+// events only once.
+var _processedEvents = false;
 
 /* Call this function to record manually transition end events:
 
@@ -54,6 +57,10 @@ function runTransitionTest(expected, timeout, callback)
   
   function processEndEvents(expected)
   {
+    if (_processedEvents)
+      return;  // Only need to process events once
+
+    _processedEvents = true;
 
     function compareEventInfo(e1, e2)
     {
