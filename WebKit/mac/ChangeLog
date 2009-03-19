@@ -1,5 +1,16 @@
 2009-03-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        WebKit side of <rdar://problem/6688244>.
+        
+        Try reinitializing the vendor port if it's invalid.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
+2009-03-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/6504776> 

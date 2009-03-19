@@ -118,6 +118,16 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
 
     kern_return_t kr = _WKPASpawnPluginHost(m_pluginVendorPort, reinterpret_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], &pluginHostPort);
 
+    if (kr == MACH_SEND_INVALID_DEST) {
+        // The plug-in vendor port has gone away for some reason. Try to reinitialize it.
+        m_pluginVendorPort = MACH_PORT_NULL;
+        if (!initializeVendorPort())
+            return false;
+        
+        // And spawn the plug-in host again.
+        kr = _WKPASpawnPluginHost(m_pluginVendorPort, reinterpret_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], &pluginHostPort);
+    }
+
     if (kr != KERN_SUCCESS) {
         // FIXME: Check for invalid dest and try to re-spawn the plug-in agent.
         LOG_ERROR("Failed to spawn plug-in host, error %x", kr);
