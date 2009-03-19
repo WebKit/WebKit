@@ -29,8 +29,13 @@
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include "SubstituteData.h"
-#include "Timer.h"
 #include <wtf/Forward.h>
+
+#if HAVE(RUNLOOP_TIMER)
+#include "RunLoopTimer.h"
+#else
+#include "Timer.h"
+#endif
 
 namespace WebCore {
 
@@ -56,7 +61,13 @@ namespace WebCore {
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
 
-        void handleDataLoadNow(Timer<MainResourceLoader>*);
+#if HAVE(RUNLOOP_TIMER)
+        typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
+#else
+        typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
+#endif
+
+        void handleDataLoadNow(MainResourceLoaderTimer*);
 
         bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
@@ -74,6 +85,7 @@ namespace WebCore {
         void handleEmptyLoad(const KURL&, bool forURLScheme);
         void handleDataLoadSoon(ResourceRequest& r);
 
+        void startDataLoadTimer();
         void handleDataLoad(ResourceRequest&);
 
         void receivedError(const ResourceError&);
@@ -90,7 +102,8 @@ namespace WebCore {
 
         ResourceRequest m_initialRequest;
         SubstituteData m_substituteData;
-        Timer<MainResourceLoader> m_dataLoadTimer;
+
+        MainResourceLoaderTimer m_dataLoadTimer;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         // The application cache that the main resource was loaded from (if any).

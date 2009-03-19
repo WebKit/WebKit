@@ -411,7 +411,7 @@ void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
     didReceiveResponse(response);
 }
 
-void MainResourceLoader::handleDataLoadNow(Timer<MainResourceLoader>*)
+void MainResourceLoader::handleDataLoadNow(MainResourceLoaderTimer*)
 {
     RefPtr<MainResourceLoader> protect(this);
 
@@ -423,12 +423,22 @@ void MainResourceLoader::handleDataLoadNow(Timer<MainResourceLoader>*)
     didReceiveResponse(response);
 }
 
+void MainResourceLoader::startDataLoadTimer()
+{
+    m_dataLoadTimer.startOneShot(0);
+
+#if HAVE(RUNLOOP_TIMER)
+    if (SchedulePairHashSet* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
+        m_dataLoadTimer.schedule(*scheduledPairs);
+#endif
+}
+
 void MainResourceLoader::handleDataLoadSoon(ResourceRequest& r)
 {
     m_initialRequest = r;
     
     if (m_documentLoader->deferMainResourceDataLoad())
-        m_dataLoadTimer.startOneShot(0);
+        startDataLoadTimer();
     else
         handleDataLoadNow(0);
 }
@@ -512,17 +522,16 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 void MainResourceLoader::setDefersLoading(bool defers)
 {
     ResourceLoader::setDefersLoading(defers);
-    
+
     if (defers) {
         if (m_dataLoadTimer.isActive())
             m_dataLoadTimer.stop();
     } else {
         if (m_initialRequest.isNull())
             return;
-        
-        if (m_substituteData.isValid() &&
-            m_documentLoader->deferMainResourceDataLoad())
-                m_dataLoadTimer.startOneShot(0);
+
+        if (m_substituteData.isValid() && m_documentLoader->deferMainResourceDataLoad())
+            startDataLoadTimer();
         else {
             ResourceRequest r(m_initialRequest);
             m_initialRequest = ResourceRequest();

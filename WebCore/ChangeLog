@@ -1,3 +1,35 @@
+2009-03-18  Timothy Hatcher  <timothy@apple.com>
+
+        Make the defered data loading timer honor the Page's scheduled runloop pairs.
+        Introduces a new RunLoopTimer class that has an API mimicking Timer but
+        allows it to be scheduled with one or more SchedulePairs.
+
+        <rdar://problem/6687342> -[WebView scheduleInRunLoop:forMode:] has no affect on timers
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Adds the new RunLoopTimer.{cpp,h} files.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::handleDataLoadNow): Use the MainResourceLoaderTimer typedef.
+        (WebCore::MainResourceLoader::startDataLoadTimer): Added. Start the timer and on
+        Mac platforms also schedule with the Page's SchedulePairs.
+        (WebCore::MainResourceLoader::handleDataLoadSoon): Call startDataLoadTimer().
+        (WebCore::MainResourceLoader::setDefersLoading): Ditto.
+        * loader/MainResourceLoader.h:
+        * platform/cf/RunLoopTimerCF.cpp: Added.
+        (WebCore::RunLoopTimerBase::~RunLoopTimerBase):
+        (WebCore::timerFired):
+        (WebCore::RunLoopTimerBase::start):
+        (WebCore::RunLoopTimerBase::schedule):
+        (WebCore::RunLoopTimerBase::stop):
+        (WebCore::RunLoopTimerBase::isActive):
+        * platform/RunLoopTimer.h: Added.
+        (WebCore::RunLoopTimerBase::RunLoopTimerBase):
+        (WebCore::RunLoopTimerBase::startRepeating):
+        (WebCore::RunLoopTimerBase::startOneShot):
+        (WebCore::RunLoopTimer::RunLoopTimer):
+        (WebCore::RunLoopTimer::fired):
+
 2009-03-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,11 @@
+2009-03-19  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/6687342> -[WebView scheduleInRunLoop:forMode:] has no affect on timers
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h: Added HAVE_RUNLOOP_TIMER for PLATFORM(MAC).
+
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

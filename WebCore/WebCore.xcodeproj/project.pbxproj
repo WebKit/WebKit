@@ -480,6 +480,8 @@
 		1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */; };
 		1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */; };
 		1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */; };
+		1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C63A2460F71646600C09D5A /* RunLoopTimer.h */; };
+		1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */; };
 		1C81B95A0E97330800266E07 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C81B9570E97330800266E07 /* InspectorController.cpp */; };
 		1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9580E97330800266E07 /* InspectorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5430,6 +5432,8 @@
 		1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrame.cpp; sourceTree = "<group>"; };
 		1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptCallFrame.h; sourceTree = "<group>"; };
 		1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrameCustom.cpp; sourceTree = "<group>"; };
+		1C63A2460F71646600C09D5A /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
+		1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopTimerCF.cpp; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
 		1C81B9570E97330800266E07 /* InspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorController.cpp; sourceTree = "<group>"; };
 		1C81B9580E97330800266E07 /* InspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorClient.h; sourceTree = "<group>"; };
@@ -9664,6 +9668,7 @@
 			children = (
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */,
+				1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */,
 				1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */,
 				1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */,
 				512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */,
@@ -13888,6 +13893,7 @@
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
+				1C63A2460F71646600C09D5A /* RunLoopTimer.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
@@ -16902,6 +16908,7 @@
 				A7D6B3490F61104500B79FD1 /* WorkerImportScriptsClient.h in Headers */,
 				FE6FD4880F676E5700092873 /* Coordinates.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
+				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18905,6 +18912,7 @@
 				A7D6B34A0F61104500B79FD1 /* WorkerImportScriptsClient.cpp in Sources */,
 				FE6FD4870F676E5700092873 /* Coordinates.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
+				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
