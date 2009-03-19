@@ -1,5 +1,15 @@
 2009-03-18  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Disable pluginDocumentView-deallocated-dataSource.html as it has not tested
+        what it was designed to test for some time, and is failing on some machines.
+        Fixing the test is tracked by <https://bugs.webkit.org/show_bug.cgi?id=24690>.
+
+        * platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html-disabled: Renamed from LayoutTests/platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html.
+
+2009-03-18  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Update test results for change to address <rdar://problem/6693300>.
