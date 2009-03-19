@@ -5,6 +5,9 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 # <rdar://problem/6687808> Crash when running accessibility/table-modification-crash.html
 accessibility/table-modification-crash.html
 
+# <rdar://problem/6530010> NPN_SetException is not working
+plugins/netscape-throw-exception.html
+
 # <rdar://problem/6497461> Many media tests fail due to logging, etc.
 media/progress-event-total.html
 media/progress-event.html

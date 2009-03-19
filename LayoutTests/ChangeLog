@@ -1,5 +1,13 @@
 2009-03-18  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Skip plugins/netscape-throw-exception.html due to <rdar://problem/6530010>.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-03-18  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Disable pluginDocumentView-deallocated-dataSource.html as it has not tested
