@@ -107,6 +107,10 @@ namespace WebCore {
 
         PopupListBox* listBox() const { return m_listBox.get(); }
 
+        // Gets the index of the item that the user is currently moused-over or
+        // has selected with the keyboard up/down arrows.
+        int selectedIndex() const;
+
         // Refresh the popup values from the PopupMenuClient.
         void refresh();
 

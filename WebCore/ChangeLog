@@ -1,3 +1,13 @@
+2009-03-19  Jay Campan  <jcampan@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=24625
+        Adding an accessor to the currently selected index in the PopupMenuChromium.
+        This is required for implementing the deletion of an autocomplete entry in Chromium.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::selectedIndex):
+        * platform/chromium/PopupMenuChromium.h:
+
 2009-03-19  Evan Stade  <estade@chromium.org>
 
         Reviewed by Dimitri Glazkov.
