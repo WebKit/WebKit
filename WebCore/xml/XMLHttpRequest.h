@@ -195,7 +195,7 @@ private:
     RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
     bool m_async;
-    bool m_includeCredentials;
+    bool m_includeCredentials; // FIXME: Currently, setting this flag is not implemented, so it is always false.
 
     RefPtr<ThreadableLoader> m_loader;
     State m_state;
@@ -217,6 +217,7 @@ private:
 
     bool m_error;
 
+    bool m_uploadEventsAllowed;
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;

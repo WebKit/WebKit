@@ -448,10 +448,17 @@ void XMLHttpRequest::send(File* body, ExceptionCode& ec)
 
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
+    // Upload event listeners should be disallowed for simple cross-origin requests, because POSTing to an URL that does not
+    // permit cross origin requests should look exactly like POSTing to an URL that does not respond at all. If a listener exists
+    // when creating the request, it will force preflight.
+    // Also, only async requests support upload progress events.
+    m_uploadEventsAllowed = false;
     if (m_async) {
         dispatchLoadStartEvent();
-        if (m_requestEntityBody && m_upload)
+        if (m_requestEntityBody && m_upload) {
+            m_uploadEventsAllowed = m_upload->hasListeners();
             m_upload->dispatchLoadStartEvent();
+        }
     }
 
     m_sameOriginRequest = scriptExecutionContext()->securityOrigin()->canRequest(m_url);
@@ -460,6 +467,8 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         makeCrossOriginAccessRequest(ec);
         return;
     }
+
+    m_uploadEventsAllowed = true;
 
     makeSameOriginRequest(ec);
 }
@@ -473,6 +482,7 @@ void XMLHttpRequest::makeSameOriginRequest(ExceptionCode& ec)
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
+        ASSERT(m_method != "HEAD");
         request.setHTTPBody(m_requestEntityBody.release());
     }
 
@@ -489,7 +499,7 @@ void XMLHttpRequest::makeCrossOriginAccessRequest(ExceptionCode& ec)
 {
     ASSERT(!m_sameOriginRequest);
 
-    if (isSimpleCrossOriginAccessRequest(m_method, m_requestHeaders))
+    if (!m_uploadEventsAllowed && isSimpleCrossOriginAccessRequest(m_method, m_requestHeaders))
         makeSimpleCrossOriginAccessRequest(ec);
     else
         makeCrossOriginAccessRequestWithPreflight(ec);
@@ -510,6 +520,12 @@ void XMLHttpRequest::makeSimpleCrossOriginAccessRequest(ExceptionCode& ec)
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
+
+    if (m_requestEntityBody) {
+        ASSERT(m_method != "GET");
+        ASSERT(m_method != "HEAD");
+        request.setHTTPBody(m_requestEntityBody.release());
+    }
 
     if (m_async)
         loadRequestAsynchronously(request);
@@ -549,6 +565,7 @@ void XMLHttpRequest::makeCrossOriginAccessRequestWithPreflight(ExceptionCode& ec
         }
 
         if (m_async) {
+            m_uploadEventsAllowed = true;
             loadRequestAsynchronously(preflightRequest);
             return;
         }
@@ -571,10 +588,12 @@ void XMLHttpRequest::makeCrossOriginAccessRequestWithPreflight(ExceptionCode& ec
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
+        ASSERT(m_method != "HEAD");
         request.setHTTPBody(m_requestEntityBody.release());
     }
 
     if (m_async) {
+        m_uploadEventsAllowed = true;
         loadRequestAsynchronously(request);
         return;
     }
@@ -603,9 +622,11 @@ void XMLHttpRequest::handleAsynchronousPreflightResult()
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
+        ASSERT(m_method != "HEAD");
         request.setHTTPBody(m_requestEntityBody.release());
     }
 
+    m_uploadEventsAllowed = true;
     loadRequestAsynchronously(request);
 }
 
@@ -670,7 +691,7 @@ void XMLHttpRequest::abort()
     dispatchAbortEvent();
     if (!m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_upload)
+        if (m_upload && m_uploadEventsAllowed)
             m_upload->dispatchAbortEvent();
     }
 }
@@ -725,7 +746,7 @@ void XMLHttpRequest::networkError()
     dispatchErrorEvent();
     if (!m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_upload)
+        if (m_upload && m_uploadEventsAllowed)
             m_upload->dispatchErrorEvent();
     }
     internalAbort();
@@ -737,7 +758,7 @@ void XMLHttpRequest::abortError()
     dispatchAbortEvent();
     if (!m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_upload)
+        if (m_upload && m_uploadEventsAllowed)
             m_upload->dispatchAbortEvent();
     }
 }
@@ -991,11 +1012,13 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     if (!m_upload)
         return;
 
-    m_upload->dispatchProgressEvent(bytesSent, totalBytesToBeSent);
+    if (m_uploadEventsAllowed)
+        m_upload->dispatchProgressEvent(bytesSent, totalBytesToBeSent);
 
     if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
         m_uploadComplete = true;
-        m_upload->dispatchLoadEvent();
+        if (m_uploadEventsAllowed)
+            m_upload->dispatchLoadEvent();
     }
 }
 

@@ -41,6 +41,11 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
 {
 }
 
+bool XMLHttpRequestUpload::hasListeners() const
+{
+    return m_onAbortListener || m_onErrorListener || m_onLoadListener || m_onLoadStartListener || m_onProgressListener || !m_eventListeners.isEmpty();
+}
+
 ScriptExecutionContext* XMLHttpRequestUpload::scriptExecutionContext() const
 {
     XMLHttpRequest* xmlHttpRequest = associatedXMLHttpRequest();

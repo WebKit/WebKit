@@ -1,3 +1,14 @@
+2009-03-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24676
+        Simple cross-origin requests shouldn't dispatch upload progress events
+
+        * http/tests/xmlhttprequest/resources/cross-site-progress-events.cgi: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt: Added.
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events.html: Added.
+
 2009-03-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

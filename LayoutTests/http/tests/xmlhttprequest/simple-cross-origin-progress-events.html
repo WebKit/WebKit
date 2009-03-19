@@ -1,0 +1,93 @@
+<html>
+<body>
+<p>Test that upload progress events are not dispatched for simple cross-origin requests
+(i.e. if the listener is set after calling send(), and there are no other reasons to make a preflight request).</p>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+var sawProgress;
+var sawUploadProgress;
+
+function progress(evt)
+{
+    if (!sawProgress)
+        log("onprogress");
+    sawProgress = true;
+}
+
+function uploadProgress(evt)
+{
+    if (!sawUploadProgress)
+        log("FAIL: upload.onprogress");
+    sawUploadProgress = true;
+}
+
+// Build a long string.
+var stringToSend = "a";
+for (var i = 0; i < 23; ++i)
+    stringToSend += stringToSend;
+
+function test1()
+{
+    sawProgress = false;
+    sawUploadProgress = false;
+
+    log("Test 1: The URL is allowed for cross-origin requests");
+
+    var xhr = new XMLHttpRequest();
+    xhr.onprogress = progress;
+    xhr.open("POST", "http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi?allow", true);
+    xhr.setRequestHeader("Content-Type", "text/plain");
+    xhr.send(stringToSend);
+    xhr.upload.onloadstart = function() { log("FAIL: upload.onloadstart") }
+    xhr.upload.onprogress = uploadProgress;
+    xhr.upload.onload = function() { log("FAIL: upload.onload") }
+    xhr.upload.onerror = function() { log("FAIL: upload.onerror") }
+    xhr.onerror = function() { report(xhr); log("onerror") }
+    xhr.onload = function() {
+        log("onload");
+        log("Response length: " + xhr.responseText.length);
+        test2();
+    }
+}
+
+function test2()
+{
+    sawProgress = false;
+    sawUploadProgress = false;
+
+    log("\nTest 2: The URL is not allowed for cross-origin requests");
+
+    var xhr = new XMLHttpRequest();
+    xhr.onprogress = progress;
+    xhr.open("POST", "http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi", true);
+    xhr.setRequestHeader("Content-Type", "text/plain");
+    xhr.send(stringToSend);
+    xhr.upload.onloadstart = function() { log("FAIL: upload.onloadstart") }
+    xhr.upload.onprogress = uploadProgress;
+    xhr.upload.onload = function() { log("FAIL: upload.onload") }
+    xhr.upload.onerror = function() { log("FAIL: upload.onerror") }
+    xhr.onerror = function() {
+        log("onerror (expected)");
+        log("Response length: " + xhr.responseText.length);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    xhr.onload = function() {
+        report(xhr);
+    }
+}
+
+test1();
+</script>
+</body>
+</html>

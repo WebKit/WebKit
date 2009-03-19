@@ -94,6 +94,8 @@ bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 
 bool passesAccessControlCheck(const ResourceResponse& response, bool includeCredentials, SecurityOrigin* securityOrigin)
 {
+    // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
+    // even with Access-Control-Allow-Credentials set to true.
     const String& accessControlOriginString = response.httpHeaderField("Access-Control-Allow-Origin");
     if (accessControlOriginString == "*" && !includeCredentials)
         return true;

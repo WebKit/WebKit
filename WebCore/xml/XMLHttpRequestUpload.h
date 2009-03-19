@@ -48,6 +48,8 @@ namespace WebCore {
             return adoptRef(new XMLHttpRequestUpload(xmlHttpRequest));
         }
 
+        bool hasListeners() const;
+
         virtual XMLHttpRequestUpload* toXMLHttpRequestUpload() { return this; }
 
         XMLHttpRequest* associatedXMLHttpRequest() const { return m_xmlHttpRequest; }
