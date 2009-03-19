@@ -1,3 +1,14 @@
+2009-03-19  Laurent Montel  <montel@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Another fix for pedantic compilation in QtWebKit
+
+        (patch from qt-copy)
+
+        * Api/qwebdatabase.h: Remove semicolons after class declaration.
+        * Api/qwebsecurityorigin.h: Remove semicolons after class declaration.
+
 2009-03-19  Ariya Hidayat <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
