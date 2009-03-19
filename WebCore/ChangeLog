@@ -1,3 +1,21 @@
+2009-03-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fixed support for doing calls from JavaScript into NPAPI Plugins for the Qt port on Windows.
+
+        Removed dead code for distinguishing between Widget and PluginView in the Qt port.
+
+        * bindings/js/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget): Removed incorrect isNPAPI check.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView): Removed m_isNPAPIPlugin variable.
+        * plugins/PluginView.h: Removed setter/getter.
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::init): Removed call to setIsNPAPIPlugin.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::init): Ditto.
+
 2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

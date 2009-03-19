@@ -558,9 +558,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #if PLATFORM(GTK) || defined(Q_WS_X11)
     , m_needsXEmbed(false)
 #endif
-#if PLATFORM(QT)
-    , m_isNPAPIPlugin(false)
-#endif
 #if PLATFORM(WIN_OS) && !PLATFORM(WX) && ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginWndProc(0)
     , m_lastMessage(0)

@@ -50,9 +50,7 @@ PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWid
 {
     if (widget->isPluginView()) {
         PluginView* pluginView = static_cast<PluginView*>(widget);
-        if (pluginView->isNPAPIPlugin())
-            return pluginView->bindingInstance();
-        return 0;
+        return pluginView->bindingInstance();
     }
 
     QWidget* platformWidget = widget->platformWidget();

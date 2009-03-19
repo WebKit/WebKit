@@ -158,8 +158,6 @@ void PluginView::init()
     m_npWindow.clipRect.right = 0;
     m_npWindow.clipRect.bottom = 0;
 
-    setIsNPAPIPlugin(true);
-
     show();
 
     m_status = PluginStatusLoadedSuccessfully;
