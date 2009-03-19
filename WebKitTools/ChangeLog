@@ -1,3 +1,14 @@
+2009-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Work around <rdar://problem/6698023> by activating fonts from disk.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Copy fonts into DumpRenderTree.resources
+        in the built products directory.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFonts): Activate the fonts from disk.
+
 2009-03-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

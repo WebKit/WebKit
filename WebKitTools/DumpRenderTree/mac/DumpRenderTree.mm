@@ -200,6 +200,7 @@ static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
 
 static void activateFonts()
 {
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_TIGER)
     static const char* fontSectionNames[] = {
         "Ahem",
         "WeightWatcher100",
@@ -230,6 +231,39 @@ static void activateFonts()
             exit(1);
         }
     }
+#else
+
+    // Work around <rdar://problem/6698023> by activating fonts from disk
+    // FIXME: This code can be removed once <rdar://problem/6698023> is addressed.
+
+    static const char* fontFileNames[] = {
+        "AHEM____.TTF",
+        "WebKitWeightWatcher100.ttf",
+        "WebKitWeightWatcher200.ttf",
+        "WebKitWeightWatcher300.ttf",
+        "WebKitWeightWatcher400.ttf",
+        "WebKitWeightWatcher500.ttf",
+        "WebKitWeightWatcher600.ttf",
+        "WebKitWeightWatcher700.ttf",
+        "WebKitWeightWatcher800.ttf",
+        "WebKitWeightWatcher900.ttf",
+        0
+    };
+
+    NSMutableArray *fontURLs = [NSMutableArray array];
+    NSURL *resourcesDirectory = [NSURL URLWithString:@"DumpRenderTree.resources" relativeToURL:[[NSBundle mainBundle] executableURL]];
+    for (unsigned i = 0; fontFileNames[i]; ++i) {
+        NSURL *fontURL = [resourcesDirectory URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]]];
+        [fontURLs addObject:fontURL];
+    }
+
+    CFArrayRef errors = 0;
+    if (!CTFontManagerRegisterFontsForURLs((CFArrayRef)fontURLs, kCTFontManagerScopeProcess, &errors)) {
+        NSLog(@"Failed to activate fonts: %@", errors);
+        CFRelease(errors);
+        exit(1);
+    }
+#endif
 }
 
 WebView *createWebViewAndOffscreenWindow()

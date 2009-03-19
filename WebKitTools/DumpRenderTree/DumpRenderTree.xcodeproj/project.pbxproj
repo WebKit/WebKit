@@ -34,6 +34,16 @@
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
 		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
+		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
+		5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */; };
+		5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */; };
+		5DB9AC9A0F722C3600684641 /* WebKitWeightWatcher300.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09730DAC3CB600C8B4E5 /* WebKitWeightWatcher300.ttf */; };
+		5DB9AC9B0F722C3600684641 /* WebKitWeightWatcher400.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09740DAC3CB600C8B4E5 /* WebKitWeightWatcher400.ttf */; };
+		5DB9AC9C0F722C3600684641 /* WebKitWeightWatcher500.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09750DAC3CB600C8B4E5 /* WebKitWeightWatcher500.ttf */; };
+		5DB9AC9D0F722C3600684641 /* WebKitWeightWatcher600.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09760DAC3CB600C8B4E5 /* WebKitWeightWatcher600.ttf */; };
+		5DB9AC9E0F722C3600684641 /* WebKitWeightWatcher700.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */; };
+		5DB9AC9F0F722C3600684641 /* WebKitWeightWatcher800.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */; };
+		5DB9ACA00F722C3600684641 /* WebKitWeightWatcher900.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
@@ -122,6 +132,29 @@
 			remoteInfo = DumpRenderTree;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5DB9ACAA0F722C4400684641 /* Copy Font Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = DumpRenderTree.resources;
+			dstSubfolderSpec = 7;
+			files = (
+				5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */,
+				5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */,
+				5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */,
+				5DB9AC9A0F722C3600684641 /* WebKitWeightWatcher300.ttf in Copy Font Files */,
+				5DB9AC9B0F722C3600684641 /* WebKitWeightWatcher400.ttf in Copy Font Files */,
+				5DB9AC9C0F722C3600684641 /* WebKitWeightWatcher500.ttf in Copy Font Files */,
+				5DB9AC9D0F722C3600684641 /* WebKitWeightWatcher600.ttf in Copy Font Files */,
+				5DB9AC9E0F722C3600684641 /* WebKitWeightWatcher700.ttf in Copy Font Files */,
+				5DB9AC9F0F722C3600684641 /* WebKitWeightWatcher800.ttf in Copy Font Files */,
+				5DB9ACA00F722C3600684641 /* WebKitWeightWatcher900.ttf in Copy Font Files */,
+			);
+			name = "Copy Font Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -511,6 +544,7 @@
 				9340994B08540CAE007F3BC8 /* Headers */,
 				9340994D08540CAE007F3BC8 /* Sources */,
 				9340994F08540CAE007F3BC8 /* Frameworks */,
+				5DB9ACAA0F722C4400684641 /* Copy Font Files */,
 			);
 			buildRules = (
 			);
