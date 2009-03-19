@@ -2188,6 +2188,31 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     return transformState;
 }
 
+
+static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, double* zOffset, const HitTestingTransformState* transformState)
+{
+    if (!hitLayer)
+        return false;
+
+    // The hit layer is depth-sorting with other layers, so just say that it was hit.
+    if (canDepthSort)
+        return true;
+    
+    // We need to look at z-depth to decide if this layer was hit.
+    if (zOffset) {
+        ASSERT(transformState);
+        // This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
+        double childZOffset = computeZOffset(*transformState);
+        if (childZOffset > *zOffset) {
+            *zOffset = childZOffset;
+            return true;
+        }
+        return false;
+    }
+
+    return true;
+}
+
 // hitTestPoint and hitTestRect are relative to rootLayer.
 // A 'flattening' layer is one preserves3D() == false.
 // transformState.m_accumulatedTransform holds the transform from the containing flattening layer.
@@ -2300,17 +2325,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
     if (m_posZOrderList) {
         for (int i = m_posZOrderList->size() - 1; i >= 0; --i) {
-            RenderLayer* hitLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (hitLayer) {
-                if (depthSortDescendants) {
-                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
-                    candidateLayer = hitLayer;
-                } else {
-                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
-                    if (zOffset && !zOffsetForDescendantsPtr)
-                        *zOffset = computeZOffset(*unflattenedTransformState);
+            HitTestResult tempResult(result.point());
+            RenderLayer* hitLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
+                result = tempResult;
+                if (!depthSortDescendants)
                     return hitLayer;
-                }
+
+                candidateLayer = hitLayer;
             }
         }
     }
@@ -2321,17 +2343,15 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
             RenderLayer* currLayer = m_normalFlowList->at(i);
             if (!currLayer->isSelfPaintingLayer())
                 continue;
+
+            HitTestResult tempResult(result.point());
             RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (hitLayer) {
-                if (depthSortDescendants) {
-                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
-                    candidateLayer = hitLayer;
-                } else {
-                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
-                    if (zOffset && !zOffsetForDescendantsPtr)
-                        *zOffset = computeZOffset(*unflattenedTransformState);
+            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
+                result = tempResult;
+                if (!depthSortDescendants)
                     return hitLayer;
-                }
+
+                candidateLayer = hitLayer;
             }
         }
     }
@@ -2340,38 +2360,27 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (fgRect.contains(hitTestPoint)) {
         // Hit test with a temporary HitTestResult, because we onlyl want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.point());
-        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants)) {
-            if (zOffsetForContentsPtr) {
-                double foregroundZOffset = computeZOffset(*unflattenedTransformState);
-                if (foregroundZOffset > *zOffsetForContentsPtr) {
-                    *zOffsetForContentsPtr = foregroundZOffset;
-                    result = tempResult;
-                    if (depthSortDescendants)
-                        candidateLayer = this;
-                    else
-                        return this;
-                }
-            } else {
-                result = tempResult;
+        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants) &&
+            isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
+            result = tempResult;
+            if (!depthSortDescendants)
                 return this;
-            }
+            // Foreground can depth-sort with descendant layers, so keep this as a candidate.
+            candidateLayer = this;
         }
     }
 
     // Now check our negative z-index children.
     if (m_negZOrderList) {
         for (int i = m_negZOrderList->size() - 1; i >= 0; --i) {
+            HitTestResult tempResult(result.point());
             RenderLayer* hitLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
-            if (hitLayer) {
-                if (depthSortDescendants) {
-                    // Don't return yet. Keep a ref to the frontmost layer, and keep looking.
-                    candidateLayer = hitLayer;
-                } else {
-                    // Our container needs to know the z of the hit layer. This is actually computing our z, but that's OK because the hitLayer is coplanar with us.
-                    if (zOffset && !zOffsetForDescendantsPtr)
-                        *zOffset = computeZOffset(*unflattenedTransformState);
+            if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
+                result = tempResult;
+                if (!depthSortDescendants)
                     return hitLayer;
-                }
+
+                candidateLayer = hitLayer;
             }
         }
     }
@@ -2382,18 +2391,10 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     if (bgRect.contains(hitTestPoint)) {
         HitTestResult tempResult(result.point());
-        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestSelf)) {
-            if (zOffsetForContentsPtr) {
-                double backgroundZOffset = computeZOffset(*unflattenedTransformState);
-                if (backgroundZOffset > *zOffsetForContentsPtr) {
-                    *zOffsetForContentsPtr = backgroundZOffset;
-                    result = tempResult;
-                    return this;
-                }
-            } else {
-                result = tempResult;
-                return this;
-            }
+        if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestSelf) &&
+            isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
+            result = tempResult;
+            return this;
         }
     }
     

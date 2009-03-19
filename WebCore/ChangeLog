@@ -1,3 +1,26 @@
+2009-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24686
+        
+        When hit testing a RenderLayer whose parent lives in a preserves-3D hierarchy,
+        we need to compare the computed z-offset with the depth-test z-offset before
+        deciding that such a RenderLayer was hit. This fixes an issue, tested by the
+        3d-point-mapping-overlapping.html test, where the child of a transformed element
+        is found by hit testing, even when some other element with greater Z overlaps
+        them both.
+        
+        Improved the code by adding a utility method, isHitCandidate(), which computes and tests
+        z-depth when necessary.
+
+        Tests: transforms/3d/point-mapping/3d-point-mapping-coplanar.html
+               transforms/3d/point-mapping/3d-point-mapping-overlapping.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::isHitCandidate):
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-03-19  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,17 @@
+2009-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24686
+        
+        New tests for hit testing transformed, coplanar elements, and transformed elements
+        with a transformed overlay.
+
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.txt: Added.
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.txt: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-coplanar.html: Added.
+        * transforms/3d/point-mapping/3d-point-mapping-overlapping.html: Added.
+
 2009-03-19  Scott Violet  <sky@google.com>
 
         Reviewed by Simon Fraser.
