@@ -32,6 +32,7 @@
 #define ScriptCallStack_h
 
 #include "ScriptCallFrame.h"
+#include "ScriptState.h"
 #include "ScriptValue.h"
 #include <wtf/Noncopyable.h>
 

@@ -103,7 +103,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
     if (!m_function.IsEmpty() && m_function->IsFunction())
         proxy->CallFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
     else
-        proxy->Evaluate(m_code.url(), m_code.startLine() - 1, m_code.source(), 0);
+        proxy->evaluate(m_code, 0);
 
     if (context->isDocument())
         static_cast<Document*>(context)->updateRendering();

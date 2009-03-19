@@ -1,3 +1,14 @@
+2009-03-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24702
+        Upstream miscellaneous bindings changes.
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): Changed to call lower-case evaluate.
+        * bindings/v8/ScriptCallStack.h: Added an extra include.
+
 2009-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
