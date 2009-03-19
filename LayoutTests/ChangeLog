@@ -1,3 +1,19 @@
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Made two layout tests less agressive, to accomodate a change I made
+        for <rdar://problem/6603562> REGRESSION (Safari 4): regular expression
+        pattern size limit lower than Safari 3.2, other browsers, breaks SAP (14873)
+
+        * fast/js/regexp-charclass-crash-expected.txt:
+        * fast/js/regexp-charclass-crash.html: Explicitly limit the number of iterations
+        in the test loop. Otherwise, regular expression engines supporting very
+        long patterns take a very very very long time to run this test.
+
+        * fast/js/resources/regexp-overflow.js: Made the "too big" regexp in
+        this test even bigger, to match our new limit.
+
 2009-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

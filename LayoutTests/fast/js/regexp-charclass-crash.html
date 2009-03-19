@@ -1,20 +1,13 @@
-<p>Tests a crash in the regular expression engine.
-If this stops with a single "regular expression too large" exception, then the test succeeded.</p>
+<p>Tests a crash in the regular expression engine. If this test prints a PASS message, then it succeeded.</p>
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 var string = "";
-for (i = 0; i < 1000; ++i) // >
+for (i = 0; i < 1000; ++i)
     string += "[[**]]";
-for (; i < 10000; ++i) { // >
+while (string.length < 8192) {
     string += "[[**]]";
-    try {
-        new RegExp(string);
-    } catch (exception) {
-        if (/too large/.test(exception) && i > 1000) {
-            document.writeln("<div>Got over 1000 iterations and then got this exception: " + exception + ".</div>");
-            break;
-        }
-    }
+    new RegExp(string);
 }
+document.writeln("<div>PASS: Got to pattern length of 8192 without crashing.</div>");
 </script>

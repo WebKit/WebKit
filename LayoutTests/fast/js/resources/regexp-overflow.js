@@ -21,7 +21,7 @@ shouldBe('/{([\\D-\\ca]]„£µ+?)}|[[\\B-\\u00d4]√π- ]]]{0,3}/i.exec("B√π
 shouldBe('/|[x\\B-\\u00b5]/i.exec("").toString()', '""');
 
 var s = "a";
-for (var i = 0; i < 17; i++)
+for (var i = 0; i < 21; i++)
     s += s;
 
 shouldThrow('new RegExp(s);');

@@ -40,12 +40,9 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-// Patterns longer than this can hang the compiler.
-static const int MaxPatternSize = (1 << 13);
-
 CompiledRegExp Generator::compileRegExp(JSGlobalData* globalData, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, RefPtr<ExecutablePool>& pool, bool ignoreCase, bool multiline)
 {
-    if (pattern.size() > MaxPatternSize) {
+    if (pattern.size() > MAX_PATTERN_SIZE) {
         *error_ptr = "regular expression too large";
         return 0;
     }

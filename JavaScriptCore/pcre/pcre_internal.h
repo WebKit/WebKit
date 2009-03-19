@@ -85,7 +85,7 @@ total length. */
 offsets within the compiled regex. The default is 2, which allows for compiled
 patterns up to 64K long. */
 
-#define LINK_SIZE   2
+#define LINK_SIZE   3
 
 /* Define DEBUG to get debugging output on stdout. */
 
@@ -124,9 +124,22 @@ static inline void put2ByteValue(unsigned char* opcodePtr, int value)
     opcodePtr[1] = value;
 }
 
+static inline void put3ByteValue(unsigned char* opcodePtr, int value)
+{
+    ASSERT(value >= 0 && value <= 0xFFFFFF);
+    opcodePtr[0] = value >> 16;
+    opcodePtr[1] = value >> 8;
+    opcodePtr[2] = value;
+}
+
 static inline int get2ByteValue(const unsigned char* opcodePtr)
 {
     return (opcodePtr[0] << 8) | opcodePtr[1];
+}
+
+static inline int get3ByteValue(const unsigned char* opcodePtr)
+{
+    return (opcodePtr[0] << 16) | (opcodePtr[1] << 8) | opcodePtr[2];
 }
 
 static inline void put2ByteValueAndAdvance(unsigned char*& opcodePtr, int value)
@@ -135,17 +148,36 @@ static inline void put2ByteValueAndAdvance(unsigned char*& opcodePtr, int value)
     opcodePtr += 2;
 }
 
+static inline void put3ByteValueAndAdvance(unsigned char*& opcodePtr, int value)
+{
+    put3ByteValue(opcodePtr, value);
+    opcodePtr += 3;
+}
+
 static inline void putLinkValueAllowZero(unsigned char* opcodePtr, int value)
 {
+#if LINK_SIZE == 3
+    put3ByteValue(opcodePtr, value);
+#elif LINK_SIZE == 2
     put2ByteValue(opcodePtr, value);
+#else
+#   error LINK_SIZE not supported.
+#endif
 }
 
 static inline int getLinkValueAllowZero(const unsigned char* opcodePtr)
 {
+#if LINK_SIZE == 3
+    return get3ByteValue(opcodePtr);
+#elif LINK_SIZE == 2
     return get2ByteValue(opcodePtr);
+#else
+#   error LINK_SIZE not supported.
+#endif
 }
 
-#define MAX_PATTERN_SIZE (1 << 16)
+#define MAX_PATTERN_SIZE 1024 * 1024 // Derived by empirical testing of compile time in PCRE and WREC.
+COMPILE_ASSERT(MAX_PATTERN_SIZE < (1 << (8 * LINK_SIZE)), pcre_max_pattern_fits_in_bytecode);
 
 static inline void putLinkValue(unsigned char* opcodePtr, int value)
 {

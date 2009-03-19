@@ -1,3 +1,35 @@
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/6603562> REGRESSION (Safari 4): regular expression
+        pattern size limit lower than Safari 3.2, other browsers, breaks SAP (14873)
+        
+        Bumped the pattern size limit to 1MB, and standardized it between PCRE
+        and WREC. (Empirical testing says that we can easily compile a 1MB regular
+        expression without risking a hang. Other browsers support bigger regular
+        expressions, but also hang.)
+        
+        SunSpider reports no change.
+        
+        I started with a patch posted to Bugzilla by Erik Corry (erikcorry@google.com).
+        
+        * pcre/pcre_internal.h:
+        (put3ByteValue):
+        (get3ByteValue):
+        (put3ByteValueAndAdvance):
+        (putLinkValueAllowZero):
+        (getLinkValueAllowZero): Made PCRE's "LINK_SIZE" (the number of bytes
+        used to record jumps between bytecodes) 3, to accomodate larger potential
+        jumps. Bumped PCRE's "MAX_PATTERN_SIZE" to 1MB. (Technically, at this
+        LINK_SIZE, we can support even larger patterns, but we risk a hang during
+        compilation, and it's not clear that such large patterns are important
+        on the web.)
+
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp): Match PCRE's maximum pattern size,
+        to avoid quirks between platforms.
+
 2009-03-18  Ada Chan  <adachan@apple.com>
 
         Rolling out r41818 since it broke the windows build.

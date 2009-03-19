@@ -1,3 +1,3 @@
-Tests a crash in the regular expression engine. If this stops with a single "regular expression too large" exception, then the test succeeded.
+Tests a crash in the regular expression engine. If this test prints a PASS message, then it succeeded.
 
-Got over 1000 iterations and then got this exception: SyntaxError: Invalid regular expression: regular expression too large.
+PASS: Got to pattern length of 8192 without crashing.
