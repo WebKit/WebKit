@@ -377,14 +377,14 @@ sub determinePassedArchitecture
     return if $searchedForPassedArchitecture;
     $searchedForPassedArchitecture = 1;
 
-    return unless isAppleMacWebKit();
-
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--32-bit$/i) {
             splice(@ARGV, $i, 1);
-            $passedArchitecture = `arch`;
-            chomp $passedArchitecture;
+            if (isAppleMacWebKit()) {
+                $passedArchitecture = `arch`;
+                chomp $passedArchitecture;
+            }
             return;
         }
     }
