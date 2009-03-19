@@ -1,3 +1,13 @@
+2009-03-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24675
+        Unforking frontend: add custom InspectorController methods
+        implementation.
+
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp: Added.
+
 2009-03-19  Jay Campan  <jcampan@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=24625
