@@ -28,7 +28,7 @@
 namespace WebCore {
     class SecurityOrigin;
     class ChromeClientQt;
-};
+}
 
 class QWebSecurityOriginPrivate;
 class QWebDatabase;

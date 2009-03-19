@@ -26,7 +26,7 @@
 
 namespace WebCore {
     class DatabaseDetails;
-};
+}
 
 class QWebDatabasePrivate;
 class QWebSecurityOrigin;

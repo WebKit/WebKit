@@ -1,3 +1,14 @@
+2009-03-19  Ariya Hidayat <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixes pedantic compilation in QtWebKit.
+
+        There are no semi-colons after namespace declarations.
+
+        * Api/qwebdatabase.h:
+        * Api/qwebsecurityorigin.h:
+
 2009-03-19  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.
