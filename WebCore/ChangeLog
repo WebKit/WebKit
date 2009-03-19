@@ -1,3 +1,21 @@
+2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 24596: ASSERT in JSC::PropertySlot::slotBase @ iGoogle homepage
+        <https://bugs.webkit.org/show_bug.cgi?id=24596>
+        <rdar://problem/6686493>
+
+        JSDOMWindow::customGetOwnPropertySlot() does an access check after calling
+        JSGlobalObject::getOwnPropertySlot(). This causes the PropertySlot to be
+        set twice, once to the value that is illegal to access, and then to undefined
+        This causes an assertion failure in property access caching code.
+
+        The fix is to do the access check before calling JSGlobalObject::getOwnPropertySlot().
+
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+
 2009-03-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

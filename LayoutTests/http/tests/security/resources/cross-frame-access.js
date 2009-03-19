@@ -44,6 +44,11 @@ function shouldBeFalse(b)
     shouldBe(b, "false"); 
 }
 
+function shouldBeUndefined(b) 
+{ 
+    shouldBe(b, "undefined"); 
+}
+
 function canGet(keyPath)
 {
     try {

@@ -1,3 +1,17 @@
+2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Add test for bug 24596: ASSERT in JSC::PropertySlot::slotBase @ iGoogle homepage
+        <https://bugs.webkit.org/show_bug.cgi?id=24596>
+        <rdar://problem/6686493>
+
+        * http/tests/security/cross-frame-access-get-custom-property-cached-expected.txt: Added.
+        * http/tests/security/cross-frame-access-get-custom-property-cached.html: Added.
+        * http/tests/security/resources/cross-frame-access-get-custom-property-cached-iframe.html: Added.
+        * http/tests/security/resources/cross-frame-access.js:
+        (shouldBeUndefined):
+
 2009-03-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

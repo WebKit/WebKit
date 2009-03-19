@@ -74,12 +74,10 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
     // is allowed.
     bool allowsAccess = allowsAccessFromNoErrorMessage(exec);
 
-    // Look for overrides before looking at any of our own properties.
-    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
-        // But ignore overrides completely if this is cross-domain access.
-        if (allowsAccess)
-            return true;
-    }
+    // Look for overrides before looking at any of our own properties, but ignore overrides completely
+    // if this is cross-domain access.
+    if (allowsAccess && JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))
+        return true;
 
     // We need this code here because otherwise JSC::Window will stop the search before we even get to the
     // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
