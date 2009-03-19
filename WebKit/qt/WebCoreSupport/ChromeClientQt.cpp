@@ -47,6 +47,7 @@
 #include "qwebsecurityorigin_p.h"
 
 #include <qtooltip.h>
+#include <qtextdocument.h>
 
 namespace WebCore
 {
@@ -373,7 +374,7 @@ void ChromeClientQt::setToolTip(const String &tip)
         view->setToolTip(QString());
         QToolTip::hideText();
     } else {
-        QString dtip = QLatin1String("<p>") + tip + QLatin1String("</p>");
+        QString dtip = QLatin1String("<p>") + Qt::escape(tip) + QLatin1String("</p>");
         view->setToolTip(dtip);
     }
 #else

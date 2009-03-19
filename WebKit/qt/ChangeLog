@@ -1,3 +1,14 @@
+2009-03-19  Paul Olav Tvete  <paul.tvete@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Properly escape tooltip text
+
+        ManualTest: http://xkcd.com/554/
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+
 2009-03-10  Adam Treat  <adam.treat@torchmobile.com>
 
         Build fix for Qt after r41555.
