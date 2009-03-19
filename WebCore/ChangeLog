@@ -1,3 +1,19 @@
+2009-03-19  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24526
+        Improve windows skia text stroking.
+
+        Test: LayoutTests/svg/custom/struct-use-09-b.svg
+
+        * platform/graphics/skia/SkiaFontWin.cpp: Close the path representing
+        each font glyph polygon, rather than only closing the path once per
+        letter. This fixes stroking for letters with multiple polygons, such
+        as 'A' or 'D'.
+        (WebCore::getPathForGlyph):
+        (WebCore::skiaDrawText):
+
 2009-03-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

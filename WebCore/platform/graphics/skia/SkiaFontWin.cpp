@@ -167,10 +167,10 @@ static bool getPathForGlyph(HDC dc, WORD glyph, SkPath* path)
             addPolyCurveToPath(polyCurve, path);
             curPoly += sizeof(WORD) * 2 + sizeof(POINTFX) * polyCurve->cpfx;
         }
+        path->close();
         curGlyph += polyHeader->cb;
     }
 
-    path->close();
     return true;
 }
 
@@ -302,7 +302,7 @@ static bool skiaDrawText(HFONT hfont,
         SkPath newPath;
         newPath.addPath(*path, x + offsetX, y + offsetY);
         canvas->drawPath(newPath, *paint);
-        
+
         x += advances[i];
     }
 
