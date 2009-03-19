@@ -1,3 +1,11 @@
+2009-03-19  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Removed obsolete warning about Flash and other plugins.
+
+        * Api/qwebsettings.cpp:
+
 2009-03-19  Paul Olav Tvete  <paul.tvete@nokia.com>
 
         Reviewed by Simon Hausmann.
