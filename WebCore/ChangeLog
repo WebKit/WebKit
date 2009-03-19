@@ -1,3 +1,19 @@
+2009-03-19  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24456
+        Split ColorChromium.cpp into Mac & Windows variants.
+        Remove Chromium Dependency on platform/graphics/mac/ColorMac.mm since we
+        ultimately need to take a different approach.  For now, createCGColor()
+        is copied from ColorMac.mm.
+
+        No observable change in behavior, so no test.
+
+        * platform/graphics/chromium/ColorChromium.cpp:
+        (WebCore::focusRingColor):
+        * platform/graphics/chromium/ColorChromiumMac.mm: Added.
+
 2009-03-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.
