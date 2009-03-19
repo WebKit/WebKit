@@ -38,6 +38,7 @@ static const unsigned NoCurrentItemIndex = UINT_MAX;
 
 BackForwardList::BackForwardList(Page* page)
     : m_page(page)
+    , m_client(0)
     , m_capacity(DefaultCapacity)
     , m_closed(true)
     , m_enabled(true)
@@ -128,7 +129,8 @@ HistoryItemVector& BackForwardList::entries()
 
 void BackForwardList::close()
 {
-    m_client->close();
+    if (m_client)
+        m_client->close();
     m_page = 0;
     m_closed = true;
 }

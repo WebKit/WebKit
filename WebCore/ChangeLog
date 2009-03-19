@@ -1,3 +1,15 @@
+2009-03-18  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24398
+        Fix a crash when loading a svg file in Chromium's test_shell and
+        then reloading the page.
+
+        * history/BackForwardListChromium.cpp:
+        (WebCore::BackForwardList::BackForwardList):
+        (WebCore::BackForwardList::close):
+
 2009-03-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
