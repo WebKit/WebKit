@@ -25,6 +25,46 @@
 
 #import "PluginObject.h"
 
+static void log(NPP instance, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    char message[2048] = "PLUGIN: ";
+    vsprintf(message + strlen(message), format, args);
+    va_end(args);
+
+    NPObject* windowObject = 0;
+    NPError error = browser->getvalue(instance, NPNVWindowNPObject, &windowObject);
+    if (error != NPERR_NO_ERROR) {
+        fprintf(stderr, "Failed to retrieve window object while logging: %s\n", message);
+        return;
+    }
+
+    NPVariant consoleVariant;
+    if (!browser->getproperty(instance, windowObject, browser->getstringidentifier("console"), &consoleVariant)) {
+        fprintf(stderr, "Failed to retrieve console object while logging: %s\n", message);
+        browser->releaseobject(windowObject);
+        return;
+    }
+
+    NPObject* consoleObject = NPVARIANT_TO_OBJECT(consoleVariant);
+
+    NPVariant messageVariant;
+    STRINGZ_TO_NPVARIANT(message, messageVariant);
+
+    NPVariant result;
+    if (!browser->invoke(instance, consoleObject, browser->getstringidentifier("log"), &messageVariant, 1, &result)) {
+        fprintf(stderr, "Failed to invoke console.log while logging: %s\n", message);
+        browser->releaseobject(consoleObject);
+        browser->releaseobject(windowObject);
+        return;
+    }
+
+    browser->releasevariantvalue(&result);
+    browser->releaseobject(consoleObject);
+    browser->releaseobject(windowObject);
+}
+
 // Mach-o entry points
 extern "C" {
     NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
@@ -144,7 +184,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
             free(obj->onURLNotify);
         
         if (obj->logDestroy)
-            printf("PLUGIN: NPP_Destroy\n");
+            log(instance, "NPP_Destroy");
 
         browser->releaseobject(&obj->header);
     }
@@ -157,7 +197,7 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 
     if (obj) {
         if (obj->logSetWindow) {
-            printf("PLUGIN: NPP_SetWindow: %d %d\n", (int)window->width, (int)window->height);
+            log(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = false;
         }
     }
@@ -226,7 +266,7 @@ void NPP_Print(NPP instance, NPPrint *platformPrint)
 }
 
 #ifndef NP_NO_CARBON
-static int16_t handleEventCarbon(PluginObject* obj, EventRecord* event)
+static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* event)
 {
     Point pt = { event->where.v, event->where.h };
 
@@ -236,29 +276,29 @@ static int16_t handleEventCarbon(PluginObject* obj, EventRecord* event)
             break;
         case mouseDown:
             GlobalToLocal(&pt);
-            printf("PLUGIN: mouseDown at (%d, %d)\n", pt.h, pt.v);
+            log(instance, "mouseDown at (%d, %d)", pt.h, pt.v);
             break;
         case mouseUp:
             GlobalToLocal(&pt);
-            printf("PLUGIN: mouseUp at (%d, %d)\n", pt.h, pt.v);
+            log(instance, "mouseUp at (%d, %d)", pt.h, pt.v);
             break;
         case keyDown:
-            printf("PLUGIN: keyDown '%c'\n", (char)(event->message & 0xFF));
+            log(instance, "keyDown '%c'", (char)(event->message & 0xFF));
             break;
         case keyUp:
-            printf("PLUGIN: keyUp '%c'\n", (char)(event->message & 0xFF));
+            log(instance, "keyUp '%c'", (char)(event->message & 0xFF));
             break;
         case autoKey:
-            printf("PLUGIN: autoKey '%c'\n", (char)(event->message & 0xFF));
+            log(instance, "autoKey '%c'", (char)(event->message & 0xFF));
             break;
         case updateEvt:
-            printf("PLUGIN: updateEvt\n");
+            log(instance, "updateEvt");
             break;
         case diskEvt:
-            printf("PLUGIN: diskEvt\n");
+            log(instance, "diskEvt");
             break;
         case activateEvt:
-            printf("PLUGIN: activateEvt\n");
+            log(instance, "activateEvt");
             break;
         case osEvt:
             printf("PLUGIN: osEvt - ");
@@ -274,36 +314,36 @@ static int16_t handleEventCarbon(PluginObject* obj, EventRecord* event)
             }
             break;
         case kHighLevelEvent:
-            printf("PLUGIN: kHighLevelEvent\n");
+            log(instance, "kHighLevelEvent");
             break;
         // NPAPI events
         case getFocusEvent:
-            printf("PLUGIN: getFocusEvent\n");
+            log(instance, "getFocusEvent");
             break;
         case loseFocusEvent:
-            printf("PLUGIN: loseFocusEvent\n");
+            log(instance, "loseFocusEvent");
             break;
         case adjustCursorEvent:
-            printf("PLUGIN: adjustCursorEvent\n");
+            log(instance, "adjustCursorEvent");
             break;
         default:
-            printf("PLUGIN: event %d\n", event->what);
+            log(instance, "event %d", event->what);
     }
     
     return 0;
 }
 #endif
 
-static int16_t handleEventCocoa(PluginObject* obj, NPCocoaEvent* event)
+static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* event)
 {
     switch (event->type) {
         case NPCocoaEventWindowFocusChanged:
             
         case NPCocoaEventFocusChanged:
             if (event->data.focus.hasFocus)
-                printf("PLUGIN: getFocusEvent\n");
+                log(instance, "getFocusEvent");
             else
-                printf("PLUGIN: loseFocusEvent\n");
+                log(instance, "loseFocusEvent");
             return 1;
 
         case NPCocoaEventDrawRect:
@@ -315,12 +355,12 @@ static int16_t handleEventCocoa(PluginObject* obj, NPCocoaEvent* event)
             return 1;
 
         case NPCocoaEventMouseDown:
-            printf("PLUGIN: mouseDown at (%d, %d)\n", 
+            log(instance, "mouseDown at (%d, %d)", 
                    (int)event->data.mouse.pluginX,
                    (int)event->data.mouse.pluginY);
             return 1;
         case NPCocoaEventMouseUp:
-            printf("PLUGIN: mouseUp at (%d, %d)\n", 
+            log(instance, "mouseUp at (%d, %d)", 
                    (int)event->data.mouse.pluginX,
                    (int)event->data.mouse.pluginY);
             return 1;
@@ -345,11 +385,11 @@ int16 NPP_HandleEvent(NPP instance, void *event)
 
 #ifndef NP_NO_CARBON
     if (obj->eventModel == NPEventModelCarbon)
-        return handleEventCarbon(obj, static_cast<EventRecord*>(event));
+        return handleEventCarbon(instance, obj, static_cast<EventRecord*>(event));
 #endif
 
     assert(obj->eventModel == NPEventModelCocoa);
-    return handleEventCocoa(obj, static_cast<NPCocoaEvent*>(event));
+    return handleEventCocoa(instance, obj, static_cast<NPCocoaEvent*>(event));
 }
 
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)

@@ -1,3 +1,20 @@
+2009-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6693300> Don't rely on printf from TestNetscapePlugIn appearing in test results
+
+        Switch from using printf to using the NPAPI to invoke console.log so that plug-in messages appear
+        in test results even when the plug-in's stdout differs from DumpRenderTree's stdout.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (log): Invoke console.log via the NPAPI.
+        (NPP_Destroy): Call log instead of printf.
+        (NPP_SetWindow): Ditto.
+        (handleEventCarbon): Ditto.
+        (handleEventCocoa): Ditto.
+        (NPP_HandleEvent): Pass the instance in to the event handler.
+
 2009-03-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
