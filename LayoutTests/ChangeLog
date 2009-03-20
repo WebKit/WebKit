@@ -1,3 +1,17 @@
+2009-03-20  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24721
+
+        The test in this change is just to verify a no crash.  Full tree
+        dump is not necessary, so change to test to dumpAsText and update
+        the affected test results.
+
+        * fast/block/float/crash-on-absolute-positioning-expected.txt: Added.
+        * fast/block/float/crash-on-absolute-positioning.html:
+        * platform/mac/fast/block/float/crash-on-absolute-positioning-expected.txt: Removed.
+
 2009-03-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
