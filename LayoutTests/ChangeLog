@@ -1,3 +1,19 @@
+2009-03-20  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24706
+        Remove ScriptExecutionContext::encoding() since Workers do not need it.
+        WorkerContext::encoding() is simply removed, while Document::encoding()
+        made non-virtual and private. Workers use UTF-8 now except when instructed
+        otherwise by http header. Updated test.
+        Also, added test for encoding used by importScripts().
+
+        * http/tests/workers/resources/subworker-encoded.php: Added.
+        * http/tests/workers/resources/worker-encoded.php:
+        * http/tests/workers/text-encoding-expected.txt:
+        * http/tests/workers/text-encoding.html:
+
 2009-03-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

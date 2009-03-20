@@ -43,6 +43,7 @@
 #include "FrameLoader.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
+#include "TextEncoding.h"
 #include "WorkerContextProxy.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
@@ -68,7 +69,7 @@ Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode
     ASSERT(scriptExecutionContext()->isDocument());
     Document* document = static_cast<Document*>(scriptExecutionContext());
 
-    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, scriptExecutionContext()->encoding());
+    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, "UTF-8");
     if (!m_cachedScript) {
         dispatchErrorEvent();
         return;
@@ -118,7 +119,7 @@ void Worker::notifyFinished(CachedResource* unusedResource)
     if (m_cachedScript->errorOccurred())
         dispatchErrorEvent();
     else
-        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), scriptExecutionContext()->encoding(), m_cachedScript->script());
+        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), m_cachedScript->script());
 
     m_cachedScript->removeClient(this);
     m_cachedScript = 0;

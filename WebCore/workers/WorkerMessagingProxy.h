@@ -50,7 +50,7 @@ namespace WebCore {
 
         // Implementations of WorkerContextProxy.
         // (Only use these methods in the worker object thread.)
-        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& encoding, const String& sourceCode);
+        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode);
         virtual void terminateWorkerContext();
         virtual void postMessageToWorkerContext(const String& message);
         virtual bool hasPendingActivity() const;

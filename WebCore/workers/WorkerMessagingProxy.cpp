@@ -198,9 +198,9 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
            || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
 }
 
-void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& encoding, const String& sourceCode)
+void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
 {
-    RefPtr<WorkerThread> thread = WorkerThread::create(scriptURL, userAgent, encoding, sourceCode, this);
+    RefPtr<WorkerThread> thread = WorkerThread::create(scriptURL, userAgent, sourceCode, this);
     workerThreadCreated(thread);
     thread->start();
 }

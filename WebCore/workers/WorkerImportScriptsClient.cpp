@@ -52,7 +52,7 @@ void WorkerImportScriptsClient::didReceiveData(const char* data, int len)
         if (!m_responseEncoding.isEmpty())
             m_decoder = TextResourceDecoder::create("text/javascript", m_responseEncoding);
         else
-            m_decoder = TextResourceDecoder::create("text/javascript", m_scriptExecutionContext->encoding());
+            m_decoder = TextResourceDecoder::create("text/javascript", "UTF-8");
     }
 
     if (!len)

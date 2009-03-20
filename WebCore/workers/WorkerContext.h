@@ -48,9 +48,9 @@ namespace WebCore {
 
     class WorkerContext : public RefCounted<WorkerContext>, public ScriptExecutionContext, public EventTarget {
     public:
-        static PassRefPtr<WorkerContext> create(const KURL& url, const String& userAgent, const String& encoding, WorkerThread* thread)
+        static PassRefPtr<WorkerContext> create(const KURL& url, const String& userAgent, WorkerThread* thread)
         {
-            return adoptRef(new WorkerContext(url, userAgent, encoding, thread));
+            return adoptRef(new WorkerContext(url, userAgent, thread));
         }
 
         virtual ~WorkerContext();
@@ -63,7 +63,6 @@ namespace WebCore {
         KURL completeURL(const String&) const;
 
         virtual String userAgent(const KURL&) const;
-        virtual String encoding() const;
 
         WorkerLocation* location() const { return m_location.get(); }
         WorkerNavigator* navigator() const;
@@ -111,14 +110,13 @@ namespace WebCore {
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 
-        WorkerContext(const KURL&, const String&, const String& encoding, WorkerThread*);
+        WorkerContext(const KURL&, const String&, WorkerThread*);
 
         virtual const KURL& virtualURL() const;
         virtual KURL virtualCompleteURL(const String&) const;
 
         KURL m_url;
         String m_userAgent;
-        String m_encoding;
         RefPtr<WorkerLocation> m_location;
         mutable RefPtr<WorkerNavigator> m_navigator;
 

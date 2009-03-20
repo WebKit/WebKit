@@ -4,10 +4,11 @@
 This test verifies handling of text encoding in workers. The behavior matches FF3.1b2 with a single exclusion (see below).<br>
 This is what's tested:<br>
 - If http header 'Content-Type' with 'charset' specified is on response with worker script or XHR payload, that encoding is used.<br>
-- In absense of http header, the script of the worker is decoded using the text encoding of the parent document.<br>
-- In absense of http header, the content of the XHR request is decoded using UTF-8.<br>
+- In absence of http header, the script of the worker is decoded using UTF-8.<br>
+- In absence of http header, the content of the XHR request is decoded using UTF-8.<br>
 - The URLs used in workers (for subworkers or XHR) are always encoded using UTF-8 (in regular html documents parts of the query an hash may be encoded with other encodings).<br>
-- The base URL for the worker (used to resolve relative URLs for subworkers and XHR) is the URL of its script. Note: this is different from FF 3.1b2 which is using the URL of the parent document, which may be a bug (TBD).<br><br>
+- The base URL for the worker (used to resolve relative URLs for subworkers and XHR) is the URL of its script.<br>
+- importScripts() decodes the scripts using UTF-8.<br>
 
 <div style="background:beige; padding:10px;" id="status"></div>
 

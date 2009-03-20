@@ -1,3 +1,40 @@
+2009-03-20  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24706
+        Remove ScriptExecutionContext::encoding() since Workers do not need it.
+        WorkerContext::encoding() is simply removed, while Document::encoding()
+        made non-virtual and private. Workers use UTF-8 now except when instructed
+        otherwise by http header. Also updated test.
+
+        * dom/Document.h: Made encoding() non-virtual and private.
+        * dom/ScriptExecutionContext.h: removed encoding().
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerContext.cpp: removed encoding() implementation.
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::completeURL):
+        * workers/WorkerContext.h: removed encoding()
+        (WebCore::WorkerContext::create):
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerImportScriptsClient.cpp:
+        (WebCore::WorkerImportScriptsClient::didReceiveData):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::create):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        In all these, removed storing encoding and 'inheriting' it from the parent.
+        Instead, they are all using UTF-8 now.
+
 2009-03-20  Timothy Hatcher  <timothy@apple.com>
 
         Change how threading exceptions are checked so they are reported
