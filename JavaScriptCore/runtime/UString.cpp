@@ -93,7 +93,7 @@ static inline void copyChars(UChar* destination, const UChar* source, unsigned n
     memcpy(destination, source, numCharacters * sizeof(UChar));
 }
 
-COMPILE_ASSERT(sizeof(UChar) == 2, uchar_is_2_bytes)
+COMPILE_ASSERT(sizeof(UChar) == 2, uchar_is_2_bytes);
 
 CString::CString(const char* c)
     : m_length(strlen(c))

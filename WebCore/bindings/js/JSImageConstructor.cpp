@@ -30,7 +30,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor)
+ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor);
 
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 

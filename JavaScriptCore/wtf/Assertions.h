@@ -194,7 +194,7 @@ while (0)
 
 /* COMPILE_ASSERT */
 #ifndef COMPILE_ASSERT
-#define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1];
+#define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
 #endif
 
 /* FATAL */

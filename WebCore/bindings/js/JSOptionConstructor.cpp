@@ -30,7 +30,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor)
+ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor);
 
 const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 

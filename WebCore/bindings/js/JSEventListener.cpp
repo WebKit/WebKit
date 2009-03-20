@@ -40,7 +40,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSAbstractEventListener)
+ASSERT_CLASS_FITS_IN_CELL(JSAbstractEventListener);
 
 void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 {

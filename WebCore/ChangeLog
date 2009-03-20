@@ -1,3 +1,32 @@
+2009-03-20  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24535
+
+        Fixes missing line terminator character (;) after macro call.
+        It is common practice to add the trailing ";" where macros are substituted
+        and not where they are defined with #define.
+        This change is consistent with other macro declarations across webkit,
+        and it also solves compilation failure with symbian compilers. 
+ 
+        No change in behavior, so no test.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        * bindings/js/JSNamedNodesCollection.cpp:
+        * bindings/js/JSNodeFilterCondition.cpp:
+        * bindings/js/JSOptionConstructor.cpp:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        * bindings/js/JSRGBColor.cpp:
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-03-20  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Dimitri Glazkov and Dave Hyatt.

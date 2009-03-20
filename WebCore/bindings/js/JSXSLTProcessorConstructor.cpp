@@ -37,7 +37,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSXSLTProcessorConstructor)
+ASSERT_CLASS_FITS_IN_CELL(JSXSLTProcessorConstructor);
 
 const ClassInfo JSXSLTProcessorConstructor::s_info = { "XSLTProcessorConsructor", 0, 0, 0 };
 

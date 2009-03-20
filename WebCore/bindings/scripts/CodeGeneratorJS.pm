@@ -757,7 +757,7 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className)\n\n");
+    push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className);\n\n");
 
     # - Add all attributes in a hashtable definition
     my $numAttributes = @{$dataNode->attributes};

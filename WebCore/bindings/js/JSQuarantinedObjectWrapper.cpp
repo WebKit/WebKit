@@ -32,7 +32,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSQuarantinedObjectWrapper)
+ASSERT_CLASS_FITS_IN_CELL(JSQuarantinedObjectWrapper);
 
 const ClassInfo JSQuarantinedObjectWrapper::s_info = { "JSQuarantinedObjectWrapper", 0, 0, 0 };
 

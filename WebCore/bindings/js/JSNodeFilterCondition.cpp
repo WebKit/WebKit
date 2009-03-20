@@ -29,7 +29,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition)
+ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition);
 
 JSNodeFilterCondition::JSNodeFilterCondition(JSValuePtr filter)
     : m_filter(filter)

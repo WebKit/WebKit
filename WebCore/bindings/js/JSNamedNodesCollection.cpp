@@ -35,7 +35,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-ASSERT_CLASS_FITS_IN_CELL(JSNamedNodesCollection)
+ASSERT_CLASS_FITS_IN_CELL(JSNamedNodesCollection);
 
 const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0, 0 };
 

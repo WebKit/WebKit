@@ -44,7 +44,7 @@ static JSValuePtr jsRGBColorBlue(ExecState*, const Identifier&, const PropertySl
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSRGBColor)
+ASSERT_CLASS_FITS_IN_CELL(JSRGBColor);
 
 const ClassInfo JSRGBColor::s_info = { "RGBColor", 0, &JSRGBColorTable, 0 };
 
