@@ -737,12 +737,10 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
-#ifndef BUILDING_ON_TIGER
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
         [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     else
         [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-#endif
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
@@ -3630,18 +3628,14 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
 {
-#ifndef BUILDING_ON_TIGER
     if (runLoop && mode)
         core(self)->addSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
-#endif
 }
 
 - (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
 {
-#ifndef BUILDING_ON_TIGER
     if (runLoop && mode)
         core(self)->removeSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
-#endif
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
