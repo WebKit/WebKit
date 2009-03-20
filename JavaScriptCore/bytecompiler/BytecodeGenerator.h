@@ -438,11 +438,11 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_argumentsRegister;
         int m_activationRegisterIndex;
-        SegmentedVector<RegisterID, 512> m_calleeRegisters;
-        SegmentedVector<RegisterID, 512> m_parameters;
-        SegmentedVector<RegisterID, 512> m_globals;
-        SegmentedVector<LabelScope, 256> m_labelScopes;
-        SegmentedVector<Label, 256> m_labels;
+        SegmentedVector<RegisterID, 32> m_calleeRegisters;
+        SegmentedVector<RegisterID, 32> m_parameters;
+        SegmentedVector<RegisterID, 32> m_globals;
+        SegmentedVector<LabelScope, 8> m_labelScopes;
+        SegmentedVector<Label, 32> m_labels;
         RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;

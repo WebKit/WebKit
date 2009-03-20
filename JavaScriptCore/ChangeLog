@@ -1,3 +1,27 @@
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich and Oliver Hunt.
+
+        Fixed <rdar://problem/6406045> REGRESSION: Stack overflow on PowerPC on
+        fast/workers/use-machine-stack.html (22531)
+
+        Dialed down the re-entry allowance to 64 (from 128).
+        
+        On a 512K stack, this leaves about 64K for other code on the stack while
+        JavaScript is running. Not perfect, but it solves our crash on PPC.
+
+        Different platforms may want to dial this down even more.
+
+        Also, substantially shrunk BytecodeGenerator. Since we allocate one on
+        the stack in order to throw a stack overflow exception -- well, let's
+        just say the old code had an appreciation for irony.
+
+        SunSpider reports no change.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.h:
+        (JSC::):
+
 2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

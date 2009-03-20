@@ -62,7 +62,7 @@ namespace JSC {
         WillExecuteStatement
     };
 
-    enum { MaxReentryDepth = 128 };
+    enum { MaxReentryDepth = 64 };
 
     class Interpreter {
         friend class JIT;
