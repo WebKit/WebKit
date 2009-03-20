@@ -1,3 +1,20 @@
+2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        Separate gtk unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=24039
+
+        Split the current single-file unit test to make it more
+        modularized and manageable in the future as more unit tests are
+        written.
+
+        * tests/main.c: Removed.
+        * tests/testwebbackforwardlist.c: Copied from WebKit/gtk/tests/main.c.
+        (main):
+        * tests/testwebframe.c: Copied from WebKit/gtk/tests/main.c.
+        (main):
+
 2009-03-16  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Adam Roben.

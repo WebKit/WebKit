@@ -23,19 +23,6 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
-static void test_webkit_web_frame_create_destroy(void)
-{
-    WebKitWebView* webView;
-    g_test_bug("21837");
-
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(webView);
-    g_assert_cmpint(G_OBJECT(webView)->ref_count, ==, 1);
-
-    // This crashed with the original version
-    g_object_unref(webView);
-}
-
 static void test_webkit_web_history_item_lifetime(void)
 {
     WebKitWebView* webView;
@@ -116,32 +103,6 @@ static void test_webkit_web_history_item_lifetime(void)
 
     g_assert_cmpint(G_OBJECT(backForwardList)->ref_count, ==, 1);
     g_object_unref(backForwardList);
-}
-
-static void test_webkit_web_frame_lifetime(void)
-{
-    WebKitWebView* webView;
-    WebKitWebFrame* webFrame;
-    g_test_bug("21837");
-
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(webView);
-    g_assert_cmpint(G_OBJECT(webView)->ref_count, ==, 1);
-    webFrame = webkit_web_view_get_main_frame(webView);
-    g_assert_cmpint(G_OBJECT(webFrame)->ref_count, ==, 1);
-
-    // Add dummy reference on the WebKitWebFrame to keep it alive
-    g_object_ref(webFrame);
-    g_assert_cmpint(G_OBJECT(webFrame)->ref_count, ==, 2);
-
-    // This crashed with the original version
-    g_object_unref(webView);
-
-    // Make sure that the frame got deleted as well. We did this
-    // by adding an extra ref on the WebKitWebFrame and we should
-    // be the one holding the last reference.
-    g_assert_cmpint(G_OBJECT(webFrame)->ref_count, ==, 1);
-    g_object_unref(webFrame);
 }
 
 static void test_webkit_web_back_forward_list_order(void)
@@ -311,8 +272,6 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");
-    g_test_add_func("/webkit/webview/create_destroy", test_webkit_web_frame_create_destroy);
-    g_test_add_func("/webkit/webframe/lifetime", test_webkit_web_frame_lifetime);
     g_test_add_func("/webkit/webbackforwardlist/add_item", test_webkit_web_back_forward_list_add_item);
     g_test_add_func("/webkit/webbackforwardlist/list_order", test_webkit_web_back_forward_list_order);
     g_test_add_func("/webkit/webhistoryitem/lifetime", test_webkit_web_history_item_lifetime);
