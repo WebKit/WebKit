@@ -1,5 +1,17 @@
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/6033712> -- a little bit of hardening in the Collector.
+        
+        SunSpider reports no change. I also verified in the disassembly that
+        we end up with a single compare to constant.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::heapAllocate):
+
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Cameron Zwarich and Oliver Hunt.
 
         Fixed <rdar://problem/6406045> REGRESSION: Stack overflow on PowerPC on
