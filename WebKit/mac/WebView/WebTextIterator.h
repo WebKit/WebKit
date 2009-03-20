@@ -44,7 +44,9 @@
 
 /*!
  @method advance
- @abstract Makes the WebTextIterator iterate to the next visible text element.
+ @abstract Moves the WebTextIterator to the next bit of text or boundary between runs of text.
+ The iterator can break up runs of text however it finds convenient, so clients need to handle
+ text runs that are broken up into arbitary pieces.
  */
 - (void)advance;
 
@@ -55,22 +57,30 @@
 - (BOOL)atEnd;
 
 /*!
- @method currentRange
- @result A range, indicating the position within the document of the current text.
+ @method currentTextLength
+ @result Length of the current text. Length of zero means that the iterator is at a boundary,
+ such as an image, that separates runs of text.
  */
-- (DOMRange *)currentRange;
+- (WebNSUInteger)currentTextLength;
 
 /*!
  @method currentTextPointer
- @result A pointer to the current text. The pointer becomes invalid after any modification is made to the document; it must be used right away.
+ @result A pointer to the current text. Like the WebTextIterator itself, the pointer becomes
+ invalid after any modification is made to the document; it must be used before the document
+ is changed or the iterator is advanced.
  */
 - (const unichar *)currentTextPointer;
 
 /*!
- @method currentTextLength
- @result lengthPtr Length of the current text.
+ @method currentRange
+ @abstract A function that identifies the specific document range that text corresponds to.
+ This can be quite costly to compute for non-text items, so when possible this should only
+ be called once the caller has determined that the text is text it wants to process. If you
+ call currentRange every time you advance the iterator, performance will be extremely slow
+ due to the cost of computing a DOM range.
+ @result A DOM range indicating the position within the document of the current text.
  */
-- (WebNSUInteger)currentTextLength;
+- (DOMRange *)currentRange;
 
 @end
 

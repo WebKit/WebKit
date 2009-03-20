@@ -1,5 +1,12 @@
 2009-03-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Timothy Hatcher.
+
+        * WebView/WebTextIterator.h: Improved comments to point out some of the pitfalls
+        of this SPI.
+
+2009-03-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele Peterson.
 
         Use a better technique to handle finding out if something responds to a selector
