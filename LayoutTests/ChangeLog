@@ -1,3 +1,10 @@
+2009-03-20  Dmitry Titov  <dimich@chromium.org>
+
+        Fix broken LayoutTest/http/tests/workers/text-encoding.html.
+        Forgot to add a new file with the previous patch.
+
+        * http/tests/workers/resources/subworker-encoded.php: Added.
+
 2009-03-20  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Darin Fisher.
