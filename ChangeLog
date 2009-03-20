@@ -2,6 +2,17 @@
 
         Reviewed by Holger Freyther.
 
+        [GTK] Misc patches for WebKitWebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=24493
+
+        Added build support for build the WebKitWebHistoryItem unit test.
+
+        * GNUmakefile.am:
+
+2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
+
+        Reviewed by Holger Freyther.
+
         Separate gtk unit tests
         https://bugs.webkit.org/show_bug.cgi?id=24039
 
