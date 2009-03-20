@@ -894,7 +894,6 @@ void tst_QWebPage::textSelection()
     QVERIFY(page->action(QWebPage::SelectEndOfDocument) != 0);
 
     // right now they are disabled because contentEditable is false
-    QCOMPARE(page->action(QWebPage::SelectAll)->isEnabled(), false);
     QCOMPARE(page->action(QWebPage::SelectNextChar)->isEnabled(), false);
     QCOMPARE(page->action(QWebPage::SelectPreviousChar)->isEnabled(), false);
     QCOMPARE(page->action(QWebPage::SelectNextWord)->isEnabled(), false);
@@ -907,6 +906,9 @@ void tst_QWebPage::textSelection()
     QCOMPARE(page->action(QWebPage::SelectEndOfBlock)->isEnabled(), false);
     QCOMPARE(page->action(QWebPage::SelectStartOfDocument)->isEnabled(), false);
     QCOMPARE(page->action(QWebPage::SelectEndOfDocument)->isEnabled(), false);
+
+    // ..but SelectAll is awalys enabled
+    QCOMPARE(page->action(QWebPage::SelectAll)->isEnabled(), true);
 
     // make it editable before navigating the cursor
     page->setContentEditable(true);

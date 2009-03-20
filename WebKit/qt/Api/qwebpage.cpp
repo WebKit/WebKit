@@ -463,61 +463,35 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         case QWebPage::Reload:
             enabled = !loader->isLoading();
             break;
-        case QWebPage::Cut:
-            enabled = editor->canCut();
-            break;
-        case QWebPage::Copy:
-            enabled = editor->canCopy();
-            break;
-        case QWebPage::Paste:
-            enabled = editor->canPaste();
-            break;
 #ifndef QT_NO_UNDOSTACK
         case QWebPage::Undo:
         case QWebPage::Redo:
             // those two are handled by QUndoStack
             break;
 #endif // QT_NO_UNDOSTACK
-        case QWebPage::MoveToNextChar:
-        case QWebPage::MoveToPreviousChar:
-        case QWebPage::MoveToNextWord:
-        case QWebPage::MoveToPreviousWord:
-        case QWebPage::MoveToNextLine:
-        case QWebPage::MoveToPreviousLine:
-        case QWebPage::MoveToStartOfLine:
-        case QWebPage::MoveToEndOfLine:
-        case QWebPage::MoveToStartOfBlock:
-        case QWebPage::MoveToEndOfBlock:
-        case QWebPage::MoveToStartOfDocument:
-        case QWebPage::MoveToEndOfDocument:
-        case QWebPage::SelectAll:
-        case QWebPage::SelectNextChar:
-        case QWebPage::SelectPreviousChar:
-        case QWebPage::SelectNextWord:
-        case QWebPage::SelectPreviousWord:
-        case QWebPage::SelectNextLine:
-        case QWebPage::SelectPreviousLine:
-        case QWebPage::SelectStartOfLine:
-        case QWebPage::SelectEndOfLine:
-        case QWebPage::SelectStartOfBlock:
-        case QWebPage::SelectEndOfBlock:
-        case QWebPage::SelectStartOfDocument:
-        case QWebPage::SelectEndOfDocument:
-        case QWebPage::DeleteStartOfWord:
-        case QWebPage::DeleteEndOfWord:
+        case QWebPage::SelectAll: // editor command is always enabled
+            break;
         case QWebPage::SetTextDirectionDefault:
         case QWebPage::SetTextDirectionLeftToRight:
         case QWebPage::SetTextDirectionRightToLeft:
-        case QWebPage::ToggleBold:
-        case QWebPage::ToggleItalic:
-        case QWebPage::ToggleUnderline:
-            enabled = editor->canEditRichly();
-            if (enabled)
-                checked = editor->command(editorCommandForWebActions(action)).state() != FalseTriState;
-            else
-                checked = false;
+            enabled = editor->canEdit();
+            checked = false;
             break;
-        default: break;
+        default: {
+            // see if it's an editor command
+            const char* commandName = editorCommandForWebActions(action);
+
+            // if it's an editor command, let it's logic determine state
+            if (commandName) {
+                Editor::Command command = editor->command(commandName);
+                enabled = command.isEnabled();
+                if (enabled)
+                    checked = command.state() != FalseTriState;
+                else
+                    checked = false;
+            }
+            break;
+        }
     }
 
     a->setEnabled(enabled);
@@ -551,7 +525,6 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::MoveToEndOfBlock);
     updateAction(QWebPage::MoveToStartOfDocument);
     updateAction(QWebPage::MoveToEndOfDocument);
-    updateAction(QWebPage::SelectAll);
     updateAction(QWebPage::SelectNextChar);
     updateAction(QWebPage::SelectPreviousChar);
     updateAction(QWebPage::SelectNextWord);
@@ -1130,8 +1103,13 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \enum QWebPage::WebAction
 
     This enum describes the types of action which can be performed on the web page.
-    Actions which are related to text editing, cursor movement, and text selection
-    only have an effect if \l contentEditable is true.
+
+    Actions only have an effect when they are applicable. The availability of
+    actions can be be determined by checking \l{QAction::}{enabled()} on the
+    action returned by \l{QWebPage::}{action()}.
+
+    One method of enabling the text editing, cursor movement, and text selection actions
+    is by setting \l contentEditable to true.
 
     \value NoWebAction No action is triggered.
     \value OpenLink Open the current link.
