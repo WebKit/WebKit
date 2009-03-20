@@ -37,7 +37,7 @@ module window {
         CustomDeleteProperty,
         CustomGetPropertyNames
     ] Location {
-                 attribute [CustomSetter, V8DisallowShadowing] DOMString href;
+                 attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;
 
         [Custom, V8OnInstance] void assign(in DOMString url);
         [Custom, V8OnInstance] void replace(in DOMString url);

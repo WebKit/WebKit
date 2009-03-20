@@ -1,3 +1,15 @@
+2009-03-20  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24705
+
+        A bug in the V8 bindings is preventing chromium from setting the href on the
+        location object...any attempt throws a security error, not just for javascript
+        protocol
+
+        * page/Location.idl:
+
 2009-03-20  Craig Schlenter  <craig.schlenter@gmail.com>
 
         Reviewed by Dimitri Glazkov.
