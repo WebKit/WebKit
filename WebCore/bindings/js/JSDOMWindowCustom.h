@@ -126,7 +126,7 @@ inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& 
     if (!impl()->frame())
         return true;
 
-    // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
+    // Optimization: access JavaScript global variables directly before involving the DOM.
     JSC::PropertySlot getSlot;
     bool slotIsWriteable;
     if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, getSlot, slotIsWriteable)) {
