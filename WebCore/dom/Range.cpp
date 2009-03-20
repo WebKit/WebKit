@@ -840,6 +840,17 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
             processEnd = processEnd->parentNode();
     }
 
+    // Collapse the range, making sure that the result is not within a node that was partially selected.
+    if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
+        if (partialStart)
+            setStart(partialStart->parentNode(), partialStart->nodeIndex() + 1, ec);
+        else if (partialEnd)
+            setStart(partialEnd->parentNode(), partialEnd->nodeIndex(), ec);
+        if (ec)
+            return 0;
+        m_end = m_start;
+    }
+
     // Now add leftContents, stuff in between, and rightContents to the fragment
     // (or just delete the stuff in between)
 
