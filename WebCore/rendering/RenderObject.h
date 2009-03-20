@@ -878,6 +878,11 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
     RenderObject* last = this;
 
     while (o) {
+        // Don't mark the outermost object of an unrooted subtree. That object will be 
+        // marked when the subtree is added to the document.
+        RenderObject* container = o->container();
+        if (!container && !o->isRenderView())
+            return;
         if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
             if ((last->style()->top().isAuto() && last->style()->bottom().isAuto()) || last->style()->top().isStatic()) {
                 RenderObject* parent = last->parent();
@@ -904,7 +909,7 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         last = o;
         if (scheduleRelayout && objectIsRelayoutBoundary(last))
             break;
-        o = o->container();
+        o = container;
     }
 
     if (scheduleRelayout)

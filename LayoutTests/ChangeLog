@@ -1,3 +1,17 @@
+2009-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=20909 REGRESSION 
+        (r35318): A press release at pfizer.com does not display correctly
+        - and corresponding -
+        <rdar://problem/6680073>
+
+        * http/tests/misc/generated-content-inside-table.html: Added.
+        * platform/mac/http/tests/misc/generated-content-inside-table-expected.checksum: Added.
+        * platform/mac/http/tests/misc/generated-content-inside-table-expected.png: Added.
+        * platform/mac/http/tests/misc/generated-content-inside-table-expected.txt: Added.
+
 2009-03-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

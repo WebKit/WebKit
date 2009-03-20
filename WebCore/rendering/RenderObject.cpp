@@ -563,12 +563,18 @@ void RenderObject::invalidateContainerPrefWidths()
     // in the chain that we mark dirty (even though they're kind of irrelevant).
     RenderObject* o = isTableCell() ? containingBlock() : container();
     while (o && !o->m_prefWidthsDirty) {
+        // Don't invalidate the outermost object of an unrooted subtree. That object will be 
+        // invalidated when the subtree is added to the document.
+        RenderObject* container = o->isTableCell() ? o->containingBlock() : o->container();
+        if (!container && !o->isRenderView())
+            break;
+
         o->m_prefWidthsDirty = true;
         if (o->style()->position() == FixedPosition || o->style()->position() == AbsolutePosition)
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
             break;
-        o = o->isTableCell() ? o->containingBlock() : o->container();
+        o = container;
     }
 }
 
