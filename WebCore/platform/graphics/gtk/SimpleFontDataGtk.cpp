@@ -53,6 +53,13 @@ void SimpleFontData::platformInit()
     m_ascent = static_cast<int>(font_extents.ascent);
     m_descent = static_cast<int>(font_extents.descent);
     m_lineSpacing = static_cast<int>(font_extents.height);
+    // There seems to be some rounding error in cairo (or in how we
+    // use cairo) with some fonts, like DejaVu Sans Mono, which makes
+    // cairo report a height smaller than ascent + descent, which is
+    // wrong and confuses WebCore's layout system. Workaround this
+    // while we figure out what's going on.
+    if (m_lineSpacing < m_ascent + m_descent)
+        m_lineSpacing = m_ascent + m_descent;
     cairo_scaled_font_text_extents(m_font.m_scaledFont, "x", &text_extents);
     m_xHeight = text_extents.height;
     cairo_scaled_font_text_extents(m_font.m_scaledFont, " ", &text_extents);
