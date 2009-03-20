@@ -1,3 +1,12 @@
+2009-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Only release the result NPVariant if the call to NPN_Invoke was successful.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testNPRuntime):
+
 2009-03-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Mark Rowe.

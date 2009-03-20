@@ -715,8 +715,8 @@ void testNPRuntime(NPP npp)
     OBJECT_TO_NPVARIANT(windowScriptObject, args[6]);
     
     NPVariant result;
-    browser->invoke(npp, windowScriptObject, testNPInvoke, args, 7, &result);
+    if (browser->invoke(npp, windowScriptObject, testNPInvoke, args, 7, &result))
+        browser->releasevariantvalue(&result);
     
-    browser->releasevariantvalue(&result);
     browser->releaseobject(windowScriptObject);
 }
