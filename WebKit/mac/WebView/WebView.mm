@@ -744,7 +744,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 #endif
 
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
-        [self scheduleInRunLoop:runLoop forMode:NSRunLoopCommonModes];
+        [self scheduleInRunLoop:runLoop forMode:(NSString *)kCFRunLoopCommonModes];
     else
         [self scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
 
