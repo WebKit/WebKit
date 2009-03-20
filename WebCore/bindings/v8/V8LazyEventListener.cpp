@@ -155,23 +155,24 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
         v8::Context::Scope scope(context);
 
         // FIXME: cache the wrapper function.
-        String code = "(function (evt) {\n";
 
         // Nodes other than the document object, when executing inline event handlers push document, form, and the target node on the scope chain.
         // We do this by using 'with' statement.
         // See chrome/fast/forms/form-action.html
         //     chrome/fast/forms/selected-index-value.html
         //     base/fast/overflow/onscroll-layer-self-destruct.html
-        code.append("  with (this.ownerDocument ? this.ownerDocument : {}) {\n");
-        code.append("    with (this.form ? this.form : {}) {\n");
-        code.append("      with (this) {\n");
-        code.append("        return (function(evt){");
+        String code = "(function (evt) {\n" \
+                      "  with (this.ownerDocument ? this.ownerDocument : {}) {\n" \
+                      "    with (this.form ? this.form : {}) {\n" \
+                      "      with (this) {\n" \
+                      "        return (function(evt){\n";
         code.append(m_code);
-        code.append("\n}).call(this, evt);\n");
-        code.append("      }\n");
-        code.append("    }\n");
-        code.append("  }\n");
-        code.append("})");
+        code.append(  "\n" \
+                      "}).call(this, evt);\n" \
+                      "      }\n" \
+                      "    }\n" \
+                      "  }\n" \
+                      "})");
         v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
         v8::Handle<v8::Script> script = V8Proxy::CompileScript(codeExternalString, m_frame->document()->url(), m_lineNumber - 4);
         if (!script.IsEmpty()) {
