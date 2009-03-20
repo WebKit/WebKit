@@ -218,9 +218,17 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     }
 
     TransformationMatrix matrix;
+    // CG platforms will handle the gradient space transform for text in
+    // teardown, so we don't apply it here.  For non-CG platforms, we
+    // want the text bounding box applied to the gradient space transform now,
+    // so the gradient shader can use it.
+#if PLATFORM(CG)
     if (boundingBoxMode() && !isPaintingText) {
+#else
+    if (boundingBoxMode()) {
+#endif
         FloatRect bbox = object->relativeBBox(false);
-        // Don't use gradientes for 1d objects like horizontal/vertical 
+        // Don't use gradients for 1d objects like horizontal/vertical 
         // lines or rectangles without width or height.
         if (bbox.width() == 0 || bbox.height() == 0) {
             Color color(0, 0, 0);

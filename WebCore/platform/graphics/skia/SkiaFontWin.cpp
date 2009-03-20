@@ -266,23 +266,9 @@ static bool skiaDrawText(HFONT hfont,
                          int numGlyphs)
 {
     SkShader* shader = NULL;
-    SkMatrix oldShaderMatrix;
-    if (gradient) {
+    if (gradient)
         shader = gradient->platformGradient();
-        // Get the length of the string in pixels.
-        int width = 0;
-        for (int i = 0; i < numGlyphs; i++)
-            width += advances[i];
-
-        // Save the current shader matrix.
-        shader->getLocalMatrix(&oldShaderMatrix);
-
-        // Scale up the gradient matrix by the width of the text string.
-        SkMatrix shaderMatrix(oldShaderMatrix);
-        shaderMatrix.postScale(static_cast<float>(width), 1.0f);
-        shaderMatrix.postTranslate(point.fX, point.fY);
-        shader->setLocalMatrix(shaderMatrix);
-    } else if (pattern)
+    else if (pattern)
         shader = pattern->createPlatformPattern(transformationMatrix);
 
     paint->setShader(shader);
@@ -305,10 +291,6 @@ static bool skiaDrawText(HFONT hfont,
 
         x += advances[i];
     }
-
-    // Restore the previous shader matrix.
-    if (gradient)
-        shader->setLocalMatrix(oldShaderMatrix);
 
     return true;
 }

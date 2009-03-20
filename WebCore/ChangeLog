@@ -1,3 +1,23 @@
+2009-03-20  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix for LayoutTests/fast/canvas/canvas-text-alignment.html
+        on chromium/skia.  The problem was that the gradient matrix
+        for text was being applied twice.  Fixed by reverting some of
+        https://bugs.webkit.org/show_bug.cgi?id=23957, so that skiaDrawText
+        is no longer responsible for measuring the text and scaling up
+        the gradient matrix.  Instead, the text bounding box is passed
+        in from SVGPaintServerGradient.  I didn't make this change for CG,
+        since it uses a different method (the gradient is drawn using the
+        text as a pre-rendered mask).
+        https://bugs.webkit.org/show_bug.cgi?id=24687
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::skiaDrawText):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+
 2009-03-20  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Holger Freyther.
