@@ -341,7 +341,11 @@ void JSGlobalObject::reset(JSValuePtr prototype)
 void JSGlobalObject::resetPrototype(JSValuePtr prototype)
 {
     setPrototype(prototype);
-    lastInPrototypeChain(this)->setPrototype(d()->objectPrototype);
+
+    JSObject* oldLastInPrototypeChain = lastInPrototypeChain(this);
+    JSObject* objectPrototype = d()->objectPrototype;
+    if (oldLastInPrototypeChain != objectPrototype)
+        oldLastInPrototypeChain->setPrototype(objectPrototype);
 }
 
 void JSGlobalObject::mark()

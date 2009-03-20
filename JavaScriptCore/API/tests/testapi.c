@@ -991,6 +991,22 @@ int main(int argc, char* argv[])
     JSGlobalContextRelease(context);
     JSClassRelease(globalObjectClass);
 
+    // Test for an infinite prototype chain that used to be created. This test
+    // passes if the call to JSObjectHasProperty() does not hang.
+
+    JSClassDefinition prototypeLoopClassDefinition = kJSClassDefinitionEmpty;
+    prototypeLoopClassDefinition.staticFunctions = globalObject_staticFunctions;
+    JSClassRef prototypeLoopClass = JSClassCreate(&prototypeLoopClassDefinition);
+    JSGlobalContextRef prototypeLoopContext = JSGlobalContextCreateInGroup(NULL, prototypeLoopClass);
+
+    JSStringRef nameProperty = JSStringCreateWithUTF8CString("name");
+    JSObjectHasProperty(prototypeLoopContext, JSContextGetGlobalObject(prototypeLoopContext), nameProperty);
+
+    JSGlobalContextRelease(prototypeLoopContext);
+    JSClassRelease(prototypeLoopClass);
+
+    printf("PASS: Infinite prototype chain does not occur.\n");
+
     printf("PASS: Program exited normally.\n");
     return 0;
 }

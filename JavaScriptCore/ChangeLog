@@ -1,3 +1,18 @@
+2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff Garen.
+
+        Bug 23771: REGRESSION (r36016): JSObjectHasProperty freezes on global class without kJSClassAttributeNoAutomaticPrototype
+        <https://bugs.webkit.org/show_bug.cgi?id=23771>
+        <rdar://problem/6561016>
+
+        * API/tests/testapi.c:
+        (main): Add a test for this bug.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resetPrototype): Don't set the prototype of the
+        last object in the prototype chain to the object prototype when the
+        object prototype is already the last object in the prototype chain.
+
 2009-03-19  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/6687342> -[WebView scheduleInRunLoop:forMode:] has no affect on timers
