@@ -537,17 +537,37 @@ int RenderTableSection::layoutRows(int toAdd)
                 (!table()->style()->height().isAuto() && rHeight != cell->height());
 
             for (RenderObject* o = cell->firstChild(); o; o = o->nextSibling()) {
-                if (!o->isText() && o->style()->height().isPercent() && (o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow()) || flexAllChildren)) {
+                if (!o->isText() && o->style()->height().isPercent() && (flexAllChildren || o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow()))) {
                     // Tables with no sections do not flex.
                     if (!o->isTable() || static_cast<RenderTable*>(o)->hasSections()) {
                         o->setNeedsLayout(true, false);
-                        cell->setChildNeedsLayout(true, false);
                         cellChildrenFlex = true;
                     }
                 }
             }
-            
+
+            if (HashSet<RenderBox*>* percentHeightDescendants = cell->percentHeightDescendants()) {
+                HashSet<RenderBox*>::iterator end = percentHeightDescendants->end();
+                for (HashSet<RenderBox*>::iterator it = percentHeightDescendants->begin(); it != end; ++it) {
+                    RenderBox* box = *it;
+                    if (!box->isReplaced() && !box->scrollsOverflow() && !flexAllChildren)
+                        continue;
+
+                    while (box != cell) {
+                        if (box->normalChildNeedsLayout())
+                            break;
+                        box->setChildNeedsLayout(true, false);
+                        box = box->containingBlock();
+                        ASSERT(box);
+                        if (!box)
+                            break;
+                    }
+                    cellChildrenFlex = true;
+                }
+            }
+
             if (cellChildrenFlex) {
+                cell->setChildNeedsLayout(true, false);
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage.

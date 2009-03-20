@@ -131,6 +131,7 @@ public:
 
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);
+    HashSet<RenderBox*>* percentHeightDescendants() const;
 
     virtual void positionListMarker() { }
 

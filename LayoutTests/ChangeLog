@@ -1,3 +1,17 @@
+2009-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test, updated test and results for https://bugs.webkit.org/show_bug.cgi?id=23739
+          <rdar://problem/6556371> REGRESSION (r36513): iframe isn't sized properly upon load
+
+        * fast/replaced/percent-height-in-anonymous-block-in-table.html: Added.
+        * fast/replaced/table-percent-height-expected.txt:
+        * fast/replaced/table-percent-height.html:
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-in-table-expected.checksum: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-in-table-expected.png: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-in-table-expected.txt: Added.
+
 2009-03-20  Dmitry Titov  <dimich@chromium.org>
 
         Fix broken LayoutTest/http/tests/workers/text-encoding.html.

@@ -2530,6 +2530,11 @@ void RenderBlock::removePercentHeightDescendant(RenderBox* descendant)
     delete containerSet;
 }
 
+HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
+{
+    return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
+}
+
 int RenderBlock::leftOffset() const
 {
     return borderLeft() + paddingLeft();

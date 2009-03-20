@@ -1,3 +1,18 @@
+2009-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=23739
+          <rdar://problem/6556371> REGRESSION (r36513): iframe isn't sized properly upon load
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::percentHeightDescendants): Added this accessor.
+        * rendering/RenderBlock.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): Extended the check for
+        children that flex to include other descendants with percent height
+        which is relative to the cell.
+
 2009-03-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
