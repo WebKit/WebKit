@@ -1,3 +1,21 @@
+2009-03-20  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24679
+
+        Change the layout test from using a data: URL to using a file:///
+        URL for the iframe.  If DRT's frame loader has
+        AllowLocalLoadsForLocalOnly, then it's not possible to load an image
+        from disk into the iframe.  Since this test is about D&D, not
+        local load checks, switch to a local file that doesn't have this
+        problem.
+
+        This should fix the test on win DRT as well.
+
+        * fast/events/resources/standalone-image-drag-to-editable-frame.html: Added.
+        * fast/events/standalone-image-drag-to-editable.html:
+
 2009-03-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
