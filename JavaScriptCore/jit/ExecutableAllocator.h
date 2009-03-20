@@ -40,6 +40,18 @@
 
 namespace JSC {
 
+inline size_t roundUpAllocationSize(size_t request, size_t granularity)
+{
+    if ((std::numeric_limits<size_t>::max() - granularity) <= request)
+        CRASH(); // Allocation is too large
+    
+    // Round up to next page boundary
+    size_t size = request + (granularity - 1);
+    size = size & ~(granularity - 1);
+    ASSERT(size >= request);
+    return size;
+}
+
 class ExecutablePool : public RefCounted<ExecutablePool> {
 private:
     struct Allocation {
@@ -85,18 +97,6 @@ public:
 private:
     static Allocation systemAlloc(size_t n);
     static void systemRelease(const Allocation& alloc);
-
-    inline size_t roundUpAllocationSize(size_t request, size_t granularity)
-    {
-        if ((std::numeric_limits<size_t>::max() - granularity) <= request)
-            CRASH(); // Allocation is too large
-        
-        // Round up to next page boundary
-        size_t size = request + (granularity - 1);
-        size = size & ~(granularity - 1);
-        ASSERT(size >= request);
-        return size;
-    }
 
     ExecutablePool(size_t n);
 

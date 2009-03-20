@@ -1,3 +1,29 @@
+2009-03-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        A little cleanup in the RegisterFile code.
+        
+        Moved large inline functions out of the class declaration, to make it
+        more readable.
+        
+        Switched over to using the roundUpAllocationSize function to avoid
+        duplicate code and subtle bugs.
+        
+        Renamed m_maxCommitted to m_commitEnd, to match m_end.
+        
+        Renamed allocationSize to commitSize because it's the chunk size for
+        committing memory, not allocating memory.
+        
+        SunSpider reports no change.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::shrink):
+        (JSC::RegisterFile::grow):
+        * jit/ExecutableAllocator.h:
+        (JSC::roundUpAllocationSize):
+
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
