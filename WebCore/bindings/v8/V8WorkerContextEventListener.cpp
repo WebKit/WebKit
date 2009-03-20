@@ -88,7 +88,7 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Hand
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
     v8::Local<v8::Value> result = handlerFunction->Call(receiver, 1, parameters);
 
-    m_proxy->TrackEvent(event);
+    m_proxy->trackEvent(event);
 
     return result;
 }

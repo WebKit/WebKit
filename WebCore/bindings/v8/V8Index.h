@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,58 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8Proxy_h
-#define V8Proxy_h
+#ifndef V8Index_h
+#define V8Index_h
 
 // FIXME: This is a temporary forwarding header until all bindings have migrated
-// over and v8_proxy actually becomes V8Proxy.
-#include "v8_proxy.h"
+// over and v8_index actually becomes V8Index.
+#include "v8_index.h"
 
-namespace WebCore {
-
-    // Used by an interceptor callback that it hasn't found anything to
-    // intercept.
-    inline static v8::Local<v8::Object> notHandledByInterceptor()
-    {
-        return v8::Local<v8::Object>();
-    }
-
-    inline static v8::Local<v8::Boolean> deletionNotHandledByInterceptor()
-    {
-        return v8::Local<v8::Boolean>();
-    }
-
-    // FIXME: Remove once migration is complete.
-    inline static DOMWrapperMap<void>& domObjectMap()
-    {
-        return GetDOMObjectMap();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type = V8Proxy::TYPE_ERROR)
-    {
-        V8Proxy::ThrowError(type, message);
-        return v8::Undefined();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec)
-    {
-        V8Proxy::SetDOMException(ec);
-        return v8::Undefined();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception)
-    {
-        v8::ThrowException(exception);
-        return v8::Undefined();
-    }
-
-    template <class T> inline v8::Handle<v8::Object> toV8(PassRefPtr<T> object, v8::Local<v8::Object> holder)
-    {
-        object->ref();
-        V8Proxy::SetJSWrapperForDOMObject(object.get(), v8::Persistent<v8::Object>::New(holder));
-        return holder;
-    }
-
-}
-
-#endif // V8Proxy_h
+#endif // V8Index_h

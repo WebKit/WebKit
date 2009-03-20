@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,58 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8Proxy_h
-#define V8Proxy_h
+#ifndef WorkerScriptController_h
+#define WorkerScriptController_h
 
-// FIXME: This is a temporary forwarding header until all bindings have migrated
-// over and v8_proxy actually becomes V8Proxy.
-#include "v8_proxy.h"
+#if ENABLE(WORKERS)
+
+#include <wtf/OwnPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-    // Used by an interceptor callback that it hasn't found anything to
-    // intercept.
-    inline static v8::Local<v8::Object> notHandledByInterceptor()
-    {
-        return v8::Local<v8::Object>();
-    }
+    class ScriptSourceCode;
+    class ScriptValue;
+    class WorkerContext;
+    class WorkerContextExecutionProxy;
 
-    inline static v8::Local<v8::Boolean> deletionNotHandledByInterceptor()
-    {
-        return v8::Local<v8::Boolean>();
-    }
+    class WorkerScriptController {
+    public:
+        WorkerScriptController(WorkerContext*);
+        ~WorkerScriptController();
 
-    // FIXME: Remove once migration is complete.
-    inline static DOMWrapperMap<void>& domObjectMap()
-    {
-        return GetDOMObjectMap();
-    }
+        WorkerContextExecutionProxy* proxy() { return m_proxy.get(); }
 
-    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type = V8Proxy::TYPE_ERROR)
-    {
-        V8Proxy::ThrowError(type, message);
-        return v8::Undefined();
-    }
+        ScriptValue evaluate(const ScriptSourceCode&);
+        ScriptValue evaluate(const ScriptSourceCode&, ScriptValue* exception);
 
-    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec)
-    {
-        V8Proxy::SetDOMException(ec);
-        return v8::Undefined();
-    }
+        void setException(ScriptValue);
 
-    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception)
-    {
-        v8::ThrowException(exception);
-        return v8::Undefined();
-    }
+        void forbidExecution();
 
-    template <class T> inline v8::Handle<v8::Object> toV8(PassRefPtr<T> object, v8::Local<v8::Object> holder)
-    {
-        object->ref();
-        V8Proxy::SetJSWrapperForDOMObject(object.get(), v8::Persistent<v8::Object>::New(holder));
-        return holder;
-    }
+    private:
+        WorkerContext* m_workerContext;
+        OwnPtr<WorkerContextExecutionProxy> m_proxy;
 
-}
+        Mutex m_sharedDataMutex;
+        bool m_executionForbidden;
+    };
 
-#endif // V8Proxy_h
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS)
+
+#endif // WorkerScriptController_h

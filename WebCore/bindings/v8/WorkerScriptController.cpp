@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,58 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8Proxy_h
-#define V8Proxy_h
+#include "config.h"
 
-// FIXME: This is a temporary forwarding header until all bindings have migrated
-// over and v8_proxy actually becomes V8Proxy.
-#include "v8_proxy.h"
+#if ENABLE(WORKERS)
+
+#include "WorkerScriptController.h"
+
+#include <v8.h>
+
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
+#include "DOMTimer.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
+#include "WorkerObjectProxy.h"
+#include "WorkerThread.h"
 
 namespace WebCore {
 
-    // Used by an interceptor callback that it hasn't found anything to
-    // intercept.
-    inline static v8::Local<v8::Object> notHandledByInterceptor()
-    {
-        return v8::Local<v8::Object>();
-    }
-
-    inline static v8::Local<v8::Boolean> deletionNotHandledByInterceptor()
-    {
-        return v8::Local<v8::Boolean>();
-    }
-
-    // FIXME: Remove once migration is complete.
-    inline static DOMWrapperMap<void>& domObjectMap()
-    {
-        return GetDOMObjectMap();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type = V8Proxy::TYPE_ERROR)
-    {
-        V8Proxy::ThrowError(type, message);
-        return v8::Undefined();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec)
-    {
-        V8Proxy::SetDOMException(ec);
-        return v8::Undefined();
-    }
-
-    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception)
-    {
-        v8::ThrowException(exception);
-        return v8::Undefined();
-    }
-
-    template <class T> inline v8::Handle<v8::Object> toV8(PassRefPtr<T> object, v8::Local<v8::Object> holder)
-    {
-        object->ref();
-        V8Proxy::SetJSWrapperForDOMObject(object.get(), v8::Persistent<v8::Object>::New(holder));
-        return holder;
-    }
-
+WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
+    : m_workerContext(workerContext)
+    , m_proxy(new WorkerContextExecutionProxy(workerContext))
+    , m_executionForbidden(false)
+{
 }
 
-#endif // V8Proxy_h
+WorkerScriptController::~WorkerScriptController()
+{
+}
+
+ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
+{
+    {
+        MutexLocker lock(m_sharedDataMutex);
+        if (m_executionForbidden)
+            return ScriptValue();
+    }
+
+    v8::Local<v8::Value> result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1);
+    m_workerContext->thread()->workerObjectProxy()->reportPendingActivity(m_workerContext->hasPendingActivity());
+    return ScriptValue();
+}
+
+ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* /* exception */)
+{
+    // FIXME: Need to return an exception.
+    return evaluate(sourceCode);
+}
+
+void WorkerScriptController::forbidExecution()
+{
+    // This function is called from another thread.
+    MutexLocker lock(m_sharedDataMutex);
+    m_executionForbidden = true;
+}
+
+void WorkerScriptController::setException(ScriptValue /* exception */)
+{
+    notImplemented();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS)

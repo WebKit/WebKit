@@ -1,3 +1,19 @@
+2009-03-20  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24689
+        Add (upstream) V8 bindings for Workers. Mostly style cleaning.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp: Added.
+        * bindings/v8/WorkerContextExecutionProxy.h: Added.
+        * bindings/v8/WorkerScriptController.cpp: Added.
+        * bindings/v8/WorkerScriptController.h: Added.
+        * bindings/v8/V8Index.h: Added. This is just a wrapper for v8_index.h, like V8Proxy.h
+        * bindings/v8/V8Proxy.h: Added domObjectMap() function that wraps GetDOMObjectMap().
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::callListenerFunction): TrackEvent() renamed trackEvent()
+
 2009-03-20  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.
