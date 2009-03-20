@@ -1,5 +1,14 @@
 2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
 
+        Not reviewed. Fix style issues with my previous commit (r41866) as
+        suggested by Holger in https://bugs.webkit.org/show_bug.cgi?id=24493
+
+        * tests/testwebhistoryitem.c:
+        (test_webkit_web_history_item_get_data):
+        (test_webkit_web_history_item_alternate_title):
+
+2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
+
         Reviewed by Holger Freyther.
 
         [GTK] Misc patches for WebKitWebHistoryItem

@@ -44,17 +44,15 @@ static void web_history_item_fixture_teardown(WebHistoryItemFixture* fixture,
     g_assert_cmpint(G_OBJECT(fixture->item)->ref_count, ==, 1);
 }
 
-static void
-test_webkit_web_history_item_get_data(WebHistoryItemFixture* fixture,
-                                      gconstpointer data)
+static void test_webkit_web_history_item_get_data(WebHistoryItemFixture* fixture,
+                                                  gconstpointer data)
 {
     g_assert_cmpstr(webkit_web_history_item_get_title(fixture->item), ==, "Example1");
     g_assert_cmpstr(webkit_web_history_item_get_uri(fixture->item), ==, "http://example.com/");
 }
 
-static void
-test_webkit_web_history_item_alternate_title(WebHistoryItemFixture* fixture,
-                                             gconstpointer data)
+static void test_webkit_web_history_item_alternate_title(WebHistoryItemFixture* fixture,
+                                                         gconstpointer data)
 {
     webkit_web_history_item_set_alternate_title(fixture->item, "Alternate title");
     g_assert_cmpstr(webkit_web_history_item_get_alternate_title(fixture->item), ==, "Alternate title");
