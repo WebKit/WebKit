@@ -694,7 +694,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
 {
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
 #ifndef NDEBUG
     WTF::RefCountedLeakCounter::suppressMessages(webViewIsOpen);
@@ -2386,7 +2386,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (needsWebViewInitThreadWorkaround())
         return [[self _webkit_invokeOnMainThread] initWithFrame:f frameName:frameName groupName:groupName];
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
     return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
 }
 
@@ -2395,7 +2395,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (needsWebViewInitThreadWorkaround())
         return [[self _webkit_invokeOnMainThread] initWithCoder:decoder];
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
     WebView *result = nil;
 
     @try {

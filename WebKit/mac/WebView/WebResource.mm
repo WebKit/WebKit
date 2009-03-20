@@ -121,7 +121,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
     if (!self)
@@ -205,7 +205,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] data];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -221,7 +221,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] URL];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -236,7 +236,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] MIMEType];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -251,7 +251,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] textEncodingName];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -266,7 +266,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] frameName];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -323,7 +323,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     }
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return;
@@ -343,7 +343,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
     if (!self)
@@ -379,7 +379,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] _suggestedFilename];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
         return nil;
@@ -404,7 +404,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] _response];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     NSURLResponse *response = nil;
     if (_private->coreResource)
@@ -419,7 +419,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return [[self _webkit_invokeOnMainThread] _stringValue];
 #endif
 
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundTwo();
 
     WebCore::TextEncoding encoding;
     if (_private->coreResource)
@@ -435,12 +435,14 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 #ifdef MAIL_THREAD_WORKAROUND
 
+static const double newMailBundleVersion = 1050.0;
+
 @implementation WebResource (WebMailThreadWorkaround)
 
 + (BOOL)_needMailThreadWorkaroundIfCalledOffMainThread
 {
-    static BOOL isOldMail = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_MAIL_THREAD_WORKAROUND)
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+    static BOOL isOldMail = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"]
+        && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue] < newMailBundleVersion;
     return isOldMail;
 }
 

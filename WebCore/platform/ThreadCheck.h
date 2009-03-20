@@ -33,12 +33,18 @@ namespace WebCore {
         LogOnThreadViolation,
         RaiseExceptionOnThreadViolation
     };
-    void setDefaultThreadViolationBehavior(ThreadViolationBehavior);
-    void reportThreadViolation(const char* function);
+    enum ThreadViolationRound {
+        ThreadViolationRoundOne = 0,
+        ThreadViolationRoundTwo,
+        MaximumThreadViolationRound
+    };
+    void setDefaultThreadViolationBehavior(ThreadViolationBehavior, ThreadViolationRound);
+    void reportThreadViolation(const char* function, ThreadViolationRound);
 }
 
-extern "C" void WebCoreReportThreadViolation(const char* function);
+extern "C" void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolationRound);
 
-#define WebCoreThreadViolationCheck() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION)
+#define WebCoreThreadViolationCheckRoundOne() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION, WebCore::ThreadViolationRoundOne)
+#define WebCoreThreadViolationCheckRoundTwo() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION, WebCore::ThreadViolationRoundTwo)
 
 #endif

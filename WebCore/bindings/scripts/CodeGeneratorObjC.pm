@@ -79,7 +79,7 @@ my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
-my $assertMainThread = "{ DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheck(); }";
+my $assertMainThread = "{ DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); }";
 
 my %conflictMethod = (
     # FIXME: Add C language keywords?

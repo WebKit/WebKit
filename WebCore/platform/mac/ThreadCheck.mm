@@ -32,56 +32,74 @@
 
 namespace WebCore {
 
-static ThreadViolationBehavior defaultThreadViolationBehavior = RaiseExceptionOnThreadViolation;
-
 static bool didReadThreadViolationBehaviorFromUserDefaults = false;
-static bool threadViolationBehaviorIsDefault;
-static ThreadViolationBehavior threadViolationBehavior;
+static bool threadViolationBehaviorIsDefault = true;
+static ThreadViolationBehavior threadViolationBehavior[MaximumThreadViolationRound] = { RaiseExceptionOnThreadViolation, RaiseExceptionOnThreadViolation };
 
 static void readThreadViolationBehaviorFromUserDefaults()
 {
-    NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreThreadCheck"];
-    if ([threadCheckLevel isEqualToString:@"None"])
-        threadViolationBehavior = NoThreadCheck;
-    else if ([threadCheckLevel isEqualToString:@"Exception"])
-        threadViolationBehavior = RaiseExceptionOnThreadViolation;
-    else if ([threadCheckLevel isEqualToString:@"Log"])
-        threadViolationBehavior = LogOnThreadViolation;
-    else if ([threadCheckLevel isEqualToString:@"LogOnce"])
-        threadViolationBehavior = LogOnFirstThreadViolation;
-    else {
-        threadViolationBehavior = defaultThreadViolationBehavior;
-        threadViolationBehaviorIsDefault = true;
-    }
     didReadThreadViolationBehaviorFromUserDefaults = true;
+
+    ThreadViolationBehavior newBehavior = LogOnFirstThreadViolation;
+    NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreThreadCheck"];
+    if (!threadCheckLevel)
+        return;
+
+    if ([threadCheckLevel isEqualToString:@"None"])
+        newBehavior = NoThreadCheck;
+    else if ([threadCheckLevel isEqualToString:@"Exception"])
+        newBehavior = RaiseExceptionOnThreadViolation;
+    else if ([threadCheckLevel isEqualToString:@"Log"])
+        newBehavior = LogOnThreadViolation;
+    else if ([threadCheckLevel isEqualToString:@"LogOnce"])
+        newBehavior = LogOnFirstThreadViolation;
+    else
+        ASSERT_NOT_REACHED();
+
+    threadViolationBehaviorIsDefault = false;
+
+    for (unsigned i = 0; i < MaximumThreadViolationRound; ++i)
+        threadViolationBehavior[i] = newBehavior;
 }
 
-void setDefaultThreadViolationBehavior(ThreadViolationBehavior behavior)
+void setDefaultThreadViolationBehavior(ThreadViolationBehavior behavior, ThreadViolationRound round)
 {
-    defaultThreadViolationBehavior = behavior;
-    if (threadViolationBehaviorIsDefault)
-        threadViolationBehavior = behavior;
-}
-
-void reportThreadViolation(const char* function)
-{
+    ASSERT(round < MaximumThreadViolationRound);
+    if (round >= MaximumThreadViolationRound)
+        return;
     if (!didReadThreadViolationBehaviorFromUserDefaults)
-        readThreadViolationBehaviorFromUserDefaults();    
-    if (threadViolationBehavior == NoThreadCheck)
+        readThreadViolationBehaviorFromUserDefaults();
+    if (threadViolationBehaviorIsDefault)
+        threadViolationBehavior[round] = behavior;
+}
+
+void reportThreadViolation(const char* function, ThreadViolationRound round)
+{
+    ASSERT(round < MaximumThreadViolationRound);
+    if (round >= MaximumThreadViolationRound)
+        return;
+    if (!didReadThreadViolationBehaviorFromUserDefaults)
+        readThreadViolationBehaviorFromUserDefaults();
+    if (threadViolationBehavior[round] == NoThreadCheck)
         return;
     if (pthread_main_np())
         return;
-    WebCoreReportThreadViolation(function);
+    WebCoreReportThreadViolation(function, round);
 }
 
 } // namespace WebCore
 
 // Split out the actual reporting of the thread violation to make it easier to set a breakpoint
-void WebCoreReportThreadViolation(const char* function)
+void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolationRound round)
 {
     using namespace WebCore;
+
+    ASSERT(round < MaximumThreadViolationRound);
+    if (round >= MaximumThreadViolationRound)
+        return;
+
     DEFINE_STATIC_LOCAL(HashSet<String>, loggedFunctions, ());
-    switch (threadViolationBehavior) {
+    switch (threadViolationBehavior[round]) {
         case NoThreadCheck:
             break;
         case LogOnFirstThreadViolation:

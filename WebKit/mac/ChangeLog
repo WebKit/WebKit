@@ -1,3 +1,28 @@
+2009-03-20  Timothy Hatcher  <timothy@apple.com>
+
+        Change how threading exceptions are checked so they are reported
+        by what round they were added. That way WebKit can decided the
+        behavior per-round based on linked-on-or-after checks.
+
+        <rdar://problem/6626741&6648478&6635474&6674079>
+
+        Reviewed by Darin Adler.
+
+        * History/WebBackForwardList.mm: Use the new WebCoreThreadViolationCheckRoundOne macro.
+        * History/WebHistoryItem.mm: Ditto.
+        * Misc/WebIconDatabase.mm: Ditto.
+
+        * WebView/WebArchive.mm: Use the new WebCoreThreadViolationCheckRoundTwo macro.
+        * WebView/WebResource.mm: Ditto.
+        (+[WebResource _needMailThreadWorkaroundIfCalledOffMainThread]): Check Mail's bundle version
+        to truly decide if it is an old Mail client.
+        * WebView/WebView.mm: Ditto.
+
+        * Misc/WebKitVersionChecks.h: Add a new linked-on-or-after version define.
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]): Set the default thread violation behavior per-round
+        based on difference version checks and the Mail workaround check.
+
 2009-03-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Timothy Hatcher.

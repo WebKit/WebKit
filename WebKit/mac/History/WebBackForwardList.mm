@@ -82,7 +82,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (id)initWithBackForwardList:(PassRefPtr<BackForwardList>)backForwardList
 {   
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundOne();
     self = [super init];
     if (!self)
         return nil;
@@ -127,7 +127,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (void)finalize
 {
-    WebCoreThreadViolationCheck();
+    WebCoreThreadViolationCheckRoundOne();
     BackForwardList* backForwardList = core(self);
     ASSERT(backForwardList);
     if (backForwardList) {

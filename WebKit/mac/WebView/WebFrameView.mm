@@ -49,6 +49,7 @@
 #import "WebNSWindowExtras.h"
 #import "WebPDFView.h"
 #import "WebPreferenceKeysPrivate.h"
+#import "WebResourceInternal.h"
 #import "WebSystemInterface.h"
 #import "WebViewFactory.h"
 #import "WebViewInternal.h"
@@ -314,9 +315,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             WKDisableCGDeferredUpdates();
 
         if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS))
-            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation);
+            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundOne);
+
+        if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_TWO_MAIN_THREAD_EXCEPTIONS) || needMailThreadWorkaround())
+            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundTwo);
     }
-    
+
     _private = [[WebFrameViewPrivate alloc] init];
 
     WebDynamicScrollBarsView *scrollView = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)];

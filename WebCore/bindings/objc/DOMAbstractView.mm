@@ -44,7 +44,7 @@
 
 - (void)dealloc
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheck(); }
+    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); }
     [super dealloc];
 }
 
@@ -79,7 +79,7 @@
 
 - (id)_initWithFrame:(WebCore::Frame *)impl
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheck(); };
+    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     WebCore::addDOMWrapper(self, impl);
@@ -88,7 +88,7 @@
 
 + (DOMAbstractView *)_wrapAbstractView:(WebCore::DOMWindow *)impl
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheck(); };
+    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
 
     if (!impl)
         return nil;

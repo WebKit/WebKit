@@ -1,3 +1,23 @@
+2009-03-20  Timothy Hatcher  <timothy@apple.com>
+
+        Change how threading exceptions are checked so they are reported
+        by what round they were added. That way WebKit can decided the
+        behavior per-round based on linked-on-or-after checks.
+
+        <rdar://problem/6626741&6648478&6635474&6674079>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.base.exp: Export the new symbols.
+        * bindings/objc/DOMAbstractView.mm: Use the new WebCoreThreadViolationCheckRoundOne macro.
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+        * platform/ThreadCheck.h:
+        * platform/mac/ThreadCheck.mm:
+        (WebCore::readThreadViolationBehaviorFromUserDefaults): Refactor how the default is read.
+        (WebCore::setDefaultThreadViolationBehavior): Take a round argument.
+        (WebCore::reportThreadViolation): Ditto.
+        (WebCoreReportThreadViolation): Ditto.
+
 2009-03-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
