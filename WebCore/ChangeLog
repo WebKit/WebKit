@@ -1,3 +1,15 @@
+2009-03-20  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22834
+
+        Make sure to consistently match new/delete and fastMalloc/fastFree.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        (WebCore::CSSSelectorList::deleteSelectors):
+
 2009-03-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

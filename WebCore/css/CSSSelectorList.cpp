@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +55,11 @@ void CSSSelectorList::adoptSelectorVector(Vector<CSSSelector*>& selectorVector)
     m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectorVector.size()));
     for (size_t i = 0; i < size; ++i) {
         memcpy(&m_selectorArray[i], selectorVector[i], sizeof(CSSSelector));
-        fastFree(selectorVector[i]);
+        // We want to free the memory (which was allocated with new), but we
+        // don't want the destructor to run since it will affect the copy
+        // we've just made. In theory this is undefined, but operator delete
+        // is only defined taking a void*, so in practice it should be ok.
+        delete reinterpret_cast<char*>(selectorVector[i]);
         ASSERT(!m_selectorArray[i].isLastInSelectorList());
     }
     m_selectorArray[size - 1].setLastInSelectorList();
@@ -65,15 +70,25 @@ void CSSSelectorList::deleteSelectors()
 {
     if (!m_selectorArray)
         return;
+
+    // We had two cases in adoptSelectVector. The fast case of a 1 element
+    // vector took the CSSSelector directly, which was allocated with new.
+    // The second case we allocated a new fastMalloc buffer, which should be
+    // freed with fastFree, and the destructors called manually.
     CSSSelector* s = m_selectorArray;
-    while (1) {
-        bool done = s->isLastInSelectorList();
-        s->~CSSSelector();
-        if (done)
-            break;
-        ++s;
+    bool done = s->isLastInSelectorList();
+    if (done)
+        delete s;
+    else {
+        while (1) {
+            s->~CSSSelector();
+            if (done)
+                break;
+            ++s;
+            done = s->isLastInSelectorList();
+        }
+        fastFree(m_selectorArray);
     }
-    fastFree(m_selectorArray); 
 }
 
 }
