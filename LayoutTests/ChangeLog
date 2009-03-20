@@ -1,3 +1,13 @@
+2009-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Update test results for changes in handling of CMYK.
+
+        * fast/canvas/resources/set-colors.js:
+        * fast/canvas/set-colors-expected.txt:
+        * platform/mac-leopard/fast/canvas/set-colors-expected.txt: Copied from LayoutTests/fast/canvas/set-colors-expected.txt.
+
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -125,8 +125,8 @@ shouldBe("testSetFillColor('1')", "white");
 shouldBe("testSetFillColor('1, 0.8')", "translucentWhite");
 shouldBe("testSetFillColor('0, 1, 0, 1')", "green");
 shouldBe("testSetFillColor('0, 1, 0, 0.8')", "translucentGreen");
-shouldBe("testSetFillColor('0, 0, 0, 1, 1')", "'#141414'");
-shouldBe("testSetFillColor('0, 0, 0, 1, 0.8')", "'rgba(20, 20, 20, 0.8)'");
+shouldBe("testSetFillColor('0, 0, 0, 1, 1')", "'#1a1a1a'");                   // This test is expected to fail on older versions of Mac OS X.
+shouldBe("testSetFillColor('0, 0, 0, 1, 0.8')", "'rgba(25, 25, 25, 0.8)'");   // Ditto.
 shouldBe("testSetFillColor('0, 0, 0, 1, 0')", "transparent");
 shouldBe("testStrokeStyle('transparent')", "transparent");
 shouldBe("testStrokeStyle('blue')", "blue");
@@ -156,8 +156,8 @@ shouldBe("testSetStrokeColor('1')", "white");
 shouldBe("testSetStrokeColor('1, 0.8')", "translucentWhite");
 shouldBe("testSetStrokeColor('0, 1, 0, 1')", "green");
 shouldBe("testSetStrokeColor('0, 1, 0, 0.8')", "translucentGreen");
-shouldBe("testSetStrokeColor('0, 0, 0, 1, 1')", "'#141414'");
-shouldBe("testSetStrokeColor('0, 0, 0, 1, 0.8')", "'rgba(20, 20, 20, 0.8)'");
+shouldBe("testSetStrokeColor('0, 0, 0, 1, 1')", "'#1a1a1a'");                  // This test is expected to fail on older versions of Mac OS X.
+shouldBe("testSetStrokeColor('0, 0, 0, 1, 0.8')", "'rgba(25, 25, 25, 0.8)'");  // Ditto.
 shouldBe("testSetStrokeColor('0, 0, 0, 1, 0')", "transparent");
 
 var successfullyParsed = true;
