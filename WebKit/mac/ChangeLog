@@ -1,3 +1,22 @@
+2009-03-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Use a better technique to handle finding out if something responds to a selector
+        in WebHTMLView's doCommandBySelector method.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView doCommandBySelector:]): Removed unneeded check for 0 coreFrame;
+        this is already handled by coreCommandBySelector: so doesn't need to be checked
+        twice. Got rid of initial value for eventWasHandled boolean to make it more clear.
+        Use WebResponderChainSink to find out if a command is handled rather than walking
+        the responder chain explicitly.
+        (-[WebResponderChainSink initWithResponderChain:]): Added.
+        (-[WebResponderChainSink detach]): Added.
+        (-[WebResponderChainSink receivedUnhandledCommand]): Added.
+        (-[WebResponderChainSink noResponderFor:]): Added.
+        (-[WebResponderChainSink doCommandBySelector:]): Added.
+
 2009-03-19  Timothy Hatcher  <timothy@apple.com>
 
         Remove #ifndef BUILDING_ON_TIGER around code that schedules runloop modes

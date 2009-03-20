@@ -132,6 +132,15 @@ using namespace WTF;
 }
 @end
 
+@interface WebResponderChainSink : NSResponder {
+    NSResponder* _lastResponderInChain;
+    BOOL _receivedUnhandledCommand;
+}
+- (id)initWithResponderChain:(NSResponder *)chain;
+- (void)detach;
+- (BOOL)receivedUnhandledCommand;
+@end
+
 static IMP oldSetCursorIMP = NULL;
 
 #ifdef BUILDING_ON_TIGER
@@ -5021,12 +5030,14 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
                 if ([self coreCommandBySelector:NSSelectorFromString(commands[i].commandName)].isTextInsertion())
                     haveTextInsertionCommands = true;
             }
-            if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char)
-                for (size_t i = 0; i < size; ++i)
+            if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
+                for (size_t i = 0; i < size; ++i) {
                     if (commands[i].commandName == "insertText:")
                         [self insertText:commands[i].text];
                     else
                         [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
+                }
+            }
         }
         _private->interpretKeyEventsParameters = 0;
     }
@@ -5373,15 +5384,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     coreFrame->editor()->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
 }
 
-static bool responderChainRespondsToSelector(NSResponder *firstResponder, SEL selector)
-{
-    for (NSResponder *responder = firstResponder; responder; responder = [responder nextResponder]) {
-        if ([responder respondsToSelector:selector])
-            return true;
-    }
-    return false;
-}
-
 - (void)doCommandBySelector:(SEL)selector
 {
     LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
@@ -5406,24 +5408,27 @@ static bool responderChainRespondsToSelector(NSResponder *firstResponder, SEL se
         // Make sure that only direct calls to doCommandBySelector: see the parameters by setting to 0.
         _private->interpretKeyEventsParameters = 0;
 
-        bool eventWasHandled = true;
+        bool eventWasHandled;
 
         WebView *webView = [self _webView];
-        Frame* coreFrame = core([self _frame]);
-        if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector] && coreFrame) {
+        if ([[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector])
+            eventWasHandled = true;
+        else {
             Editor::Command command = [self coreCommandBySelector:selector];
             if (command.isSupported())
                 eventWasHandled = command.execute(event);
             else {
                 // If WebKit does not support this command, we need to pass the selector to super.
                 _private->selectorForDoCommandBySelector = selector;
-                // We'll get the wrong value for eventWasHandled if respondsToSelector: doesn't
-                // exactly reflect what doCommandBySelector: does, for example an unusual class might
-                // not even pass the selector along to the next responder, or might handle a selector
-                // even though respondsToSelector: return NO. When that happens, there's a risk the
-                // event might end up handled twice. We know of no real-world examples of this.
-                eventWasHandled = responderChainRespondsToSelector(self, selector);
+
+                // The sink does two things: 1) Tells us if the responder went unhandled, and
+                // 2) prevents any NSBeep; we don't ever want to beep here.
+                WebResponderChainSink *sink = [[WebResponderChainSink alloc] initWithResponderChain:self];
                 [super doCommandBySelector:selector];
+                eventWasHandled = ![sink receivedUnhandledCommand];
+                [sink detach];
+                [sink release];
+
                 _private->selectorForDoCommandBySelector = 0;
             }
         }
@@ -6036,6 +6041,41 @@ static bool responderChainRespondsToSelector(NSResponder *firstResponder, SEL se
     NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", WebDataProtocolScheme, UUIDString]];
     CFRelease(UUIDString);
     return URL;
+}
+
+@end
+
+@implementation WebResponderChainSink
+
+- (id)initWithResponderChain:(NSResponder *)chain
+{
+    self = [super init];
+    _lastResponderInChain = chain;
+    while (NSResponder *next = [_lastResponderInChain nextResponder])
+        _lastResponderInChain = next;
+    [_lastResponderInChain setNextResponder:self];
+    return self;
+}
+
+- (void)detach
+{
+    [_lastResponderInChain setNextResponder:nil];
+    _lastResponderInChain = nil;
+}
+
+- (BOOL)receivedUnhandledCommand
+{
+    return _receivedUnhandledCommand;
+}
+
+- (void)noResponderFor:(SEL)selector
+{
+    _receivedUnhandledCommand = YES;
+}
+
+- (void)doCommandBySelector:(SEL)selector
+{
+    _receivedUnhandledCommand = YES;
 }
 
 @end
