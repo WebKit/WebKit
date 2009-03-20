@@ -33,6 +33,10 @@
 #if USE(GOOGLEURL)
 #include "KURL.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 #include "CString.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"

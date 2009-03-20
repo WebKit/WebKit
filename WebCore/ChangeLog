@@ -1,3 +1,13 @@
+2009-03-20  Craig Schlenter  <craig.schlenter@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24608
+
+        Include stdio.h needed for printf on gcc 4.4.0
+
+        * platform/KURLGoogle.cpp:
+
 2009-03-20  Mike Belshe <mike@belshe.com>
 
         Reviewed by Darin Fisher.
