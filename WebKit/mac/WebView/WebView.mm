@@ -737,10 +737,16 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
+#ifndef BUILDING_ON_TIGER
+    NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
+#else
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+#endif
+
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
-        [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+        [self scheduleInRunLoop:runLoop forMode:NSRunLoopCommonModes];
     else
-        [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        [self scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
