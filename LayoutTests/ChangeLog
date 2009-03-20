@@ -1,3 +1,15 @@
+2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Add tests for bug 24350: REGRESSION: Safari 4 breaks SPAW wysiwyg editor multiple instances
+        <https://bugs.webkit.org/show_bug.cgi?id=24350>
+        <rdar://problem/6674182>
+
+        * fast/js/function-constructor-newline-after-brace-expected.txt: Added.
+        * fast/js/function-constructor-newline-after-brace.html: Added.
+        * fast/js/resources/function-constructor-newline-after-brace.js: Added.
+
 2009-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Stephanie Lewis.

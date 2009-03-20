@@ -1,5 +1,21 @@
 2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 24350: REGRESSION: Safari 4 breaks SPAW wysiwyg editor multiple instances
+        <https://bugs.webkit.org/show_bug.cgi?id=24350>
+        <rdar://problem/6674182>
+
+        The SPAW editor's JavaScript assumes that toString() on a function
+        constructed with the Function constructor produces a function with
+        a newline after the opening brace.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction): Add a newline after the opening brace of the
+        function's source code.
+
+2009-03-19  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Geoff Garen.
 
         Bug 23771: REGRESSION (r36016): JSObjectHasProperty freezes on global class without kJSClassAttributeNoAutomaticPrototype
