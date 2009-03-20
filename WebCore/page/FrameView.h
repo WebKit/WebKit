@@ -211,6 +211,8 @@ private:
     void updateDeferredRepaintDelay();
     double adjustedDeferredRepaintDelay() const;
 
+    bool updateWidgets();
+    
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
     unsigned m_refCount;

@@ -81,6 +81,9 @@ static const double maxDeferredRepaintDelayDuringLoading = 0;
 static const double deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
+// The maximum number of updateWidgets iterations that should be done before returning.
+static const unsigned maxUpdateWidgetsIterations = 2;
+
 struct ScheduledEvent {
     RefPtr<Event> m_event;
     RefPtr<Node> m_eventTarget;
@@ -1054,6 +1057,29 @@ void FrameView::resumeScheduledEvents()
     ASSERT(m_scheduledEvents.isEmpty() || m_enqueueEvents);
 }
 
+bool FrameView::updateWidgets()
+{
+    if (m_nestedLayoutCount > 1 || !m_widgetUpdateSet || m_widgetUpdateSet->isEmpty())
+        return true;
+    
+    Vector<RenderPartObject*> objectVector;
+    copyToVector(*m_widgetUpdateSet, objectVector);
+    size_t size = objectVector.size();
+    for (size_t i = 0; i < size; ++i) {
+        RenderPartObject* object = objectVector[i];
+        object->updateWidget(false);
+        
+        // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
+        // alive by checking if it's still in m_widgetUpdateSet.
+        if (m_widgetUpdateSet->contains(object)) {
+            object->updateWidgetPosition();
+            m_widgetUpdateSet->remove(object);
+        }
+    }
+    
+    return m_widgetUpdateSet->isEmpty();
+}
+    
 void FrameView::performPostLayoutTasks()
 {
     if (m_firstLayoutCallbackPending) {
@@ -1069,22 +1095,12 @@ void FrameView::performPostLayoutTasks()
     RenderView* root = m_frame->contentRenderer();
 
     root->updateWidgetPositions();
-    if (m_widgetUpdateSet && m_nestedLayoutCount <= 1) {
-        Vector<RenderPartObject*> objectVector;
-        copyToVector(*m_widgetUpdateSet, objectVector);
-        size_t size = objectVector.size();
-        for (size_t i = 0; i < size; ++i) {
-            RenderPartObject* object = objectVector[i];
-            object->updateWidget(false);
-
-            // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
-            // alive by checking if it's still in m_widgetUpdateSet.
-            if (m_widgetUpdateSet->contains(object))
-                object->updateWidgetPosition();
-        }
-        m_widgetUpdateSet->clear();
+    
+    for (unsigned i = 0; i < maxUpdateWidgetsIterations; i++) {
+        if (updateWidgets())
+            break;
     }
-
+    
     resumeScheduledEvents();
 
     if (!root->printing()) {

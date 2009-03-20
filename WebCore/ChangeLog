@@ -1,3 +1,21 @@
+2009-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6682554> Flash content not being rendered (Shockwave Flash 10.0 r22)
+        
+        If calling updateWidget for some reason resulted in another widget being added to m_widgetUpdateSet, then
+        that object would never be updated.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidgets):
+        Factor the widget updating code out into this method. Return true if the update set is empty.
+        
+        (WebCore::FrameView::performPostLayoutTasks):
+        Loop over the update set multiple times until all widgets have been updated or until we reach the cap.
+        
+        * page/FrameView.h:
+
 2009-03-18  Timothy Hatcher  <timothy@apple.com>
 
         Make the defered data loading timer honor the Page's scheduled runloop pairs.
