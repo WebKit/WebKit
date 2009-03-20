@@ -20,6 +20,20 @@ shouldBe('/[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{
 shouldBe('/{([\\D-\\ca]]„£µ+?)}|[[\\B-\\u00d4]√π- ]]]{0,3}/i.exec("B√π- ]]").toString()', '"B√π- ]],"');
 shouldBe('/|[x\\B-\\u00b5]/i.exec("").toString()', '""');
 
+var complexPattern = "";
+for (var i = 0; i < 18; ++i)
+    complexPattern += "a?";
+for (var i = 0; i < 18; ++i)
+    complexPattern += "a";
+complexPattern = "(" + complexPattern + ")";
+
+var complexInput = "";
+for (var i = 0; i < 18; ++i)
+    complexInput += "a";
+
+shouldBe('new RegExp(complexPattern).exec(complexInput)[0]', 'complexInput'); // Big but OK
+shouldBe('new RegExp(complexPattern + complexPattern).exec(complexInput + complexInput)', 'null'); // Too big
+
 var s = "a";
 for (var i = 0; i < 21; i++)
     s += s;

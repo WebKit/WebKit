@@ -1,3 +1,16 @@
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/6279213> Regular expression run-time complexity
+        limit too low for long inputs (21485)
+        
+        Added a test for a complex regexp match that should succeed, and one
+        that should fail.
+
+        * fast/js/regexp-overflow-expected.txt:
+        * fast/js/resources/regexp-overflow.js:
+
 2009-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

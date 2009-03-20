@@ -23,6 +23,25 @@
 
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/6279213> Regular expression run-time complexity
+        limit too low for long inputs (21485)
+        
+        I raised PCRE's "matchLimit" (limit on backtracking) by an order of
+        magnitude. This fixes all the reported examples of timing out on legitimate
+        regular expression matches.
+        
+        In my testing on a Core Duo MacBook Pro, the longest you can get stuck
+        trying to match a string is still under 1s, so this seems like a safe change.
+        
+        I can think of a number of better solutions that are more complicated,
+        but this is a good improvement for now.
+
+        * pcre/pcre_exec.cpp:
+
+2009-03-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Fixed <rdar://problem/6603562> REGRESSION (Safari 4): regular expression

@@ -175,7 +175,7 @@ reqByte match. */
 /* The below limit restricts the number of "recursive" match calls in order to
 avoid spending exponential time on complex regular expressions. */
 
-static const unsigned matchLimit = 100000;
+static const unsigned matchLimit = 1000000;
 
 #ifdef DEBUG
 /*************************************************
