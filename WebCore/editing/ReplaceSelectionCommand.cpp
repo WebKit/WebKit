@@ -509,10 +509,11 @@ void ReplaceSelectionCommand::handlePasteAsQuotationNode()
 VisiblePosition ReplaceSelectionCommand::positionAtEndOfInsertedContent()
 {
     Node* lastNode = m_lastLeafInserted.get();
-    Node* enclosingSelect = enclosingNodeWithTag(Position(lastNode, 0), selectTag);
+    // FIXME: Why is this hack here?  What's special about <select> tags?
+    Node* enclosingSelect = enclosingNodeWithTag(firstDeepEditingPositionForNode(lastNode), selectTag);
     if (enclosingSelect)
         lastNode = enclosingSelect;
-    return VisiblePosition(Position(lastNode, maxDeepOffset(lastNode)));
+    return lastDeepEditingPositionForNode(lastNode);
 }
 
 VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()

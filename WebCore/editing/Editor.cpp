@@ -1702,7 +1702,8 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     
     // topNode defines the whole range we want to operate on 
     Node* topNode = highestEditableRoot(position);
-    spellingSearchRange->setEnd(topNode, maxDeepOffset(topNode), ec);
+    // FIXME: lastOffsetForEditing() is wrong here if editingIgnoresContent(highestEditableRoot()) returns true (e.g. a <table>)
+    spellingSearchRange->setEnd(topNode, lastOffsetForEditing(topNode), ec);
 
     // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking
     // at a word boundary. Going back by one char and then forward by a word does the trick.

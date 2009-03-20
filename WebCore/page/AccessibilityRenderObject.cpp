@@ -1600,17 +1600,20 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRange() const
     Node* node = m_renderer->node();
     if (!node)
         return VisiblePositionRange();
-    
-    VisiblePosition startPos = VisiblePosition(node, 0, VP_DEFAULT_AFFINITY);
-    VisiblePosition endPos = VisiblePosition(node, maxDeepOffset(node), VP_DEFAULT_AFFINITY);
-    
+
+    VisiblePosition startPos = firstDeepEditingPositionForNode(node);
+    VisiblePosition endPos = lastDeepEditingPositionForNode(node);
+
     // the VisiblePositions are equal for nodes like buttons, so adjust for that
+    // FIXME: Really?  [button, 0] and [button, 1] are distinct (before and after the button)
+    // I expect this code is only hit for things like empty divs?  In which case I don't think
+    // the behavior is correct here -- eseidel
     if (startPos == endPos) {
         endPos = endPos.next();
         if (endPos.isNull())
             endPos = startPos;
     }
-    
+
     return VisiblePositionRange(startPos, endPos);
 }
 

@@ -36,7 +36,13 @@ using namespace HTMLNames;
 
 PositionIterator::operator Position() const
 {
-    return Position(m_parent, m_child ? m_child->nodeIndex() : (m_parent->hasChildNodes() ? maxDeepOffset(m_parent) : m_offset));
+    if (m_child) {
+        ASSERT(m_child->parentNode() == m_parent);
+        return positionBeforeNode(m_child);
+    }
+    if (m_parent->hasChildNodes())
+        return lastDeepEditingPositionForNode(m_parent);
+    return Position(m_parent, m_offset);
 }
 
 void PositionIterator::increment()
@@ -51,7 +57,7 @@ void PositionIterator::increment()
         return;
     }
 
-    if (!m_parent->hasChildNodes() && m_offset < maxDeepOffset(m_parent))
+    if (!m_parent->hasChildNodes() && m_offset < lastOffsetForEditing(m_parent))
         m_offset = Position::uncheckedNextOffset(m_parent, m_offset);
     else {
         m_child = m_parent;
@@ -70,7 +76,7 @@ void PositionIterator::decrement()
         m_parent = m_child->previousSibling();
         if (m_parent) {
             m_child = 0;
-            m_offset = m_parent->hasChildNodes() ? 0 : maxDeepOffset(m_parent);
+            m_offset = m_parent->hasChildNodes() ? 0 : lastOffsetForEditing(m_parent);
         } else {
             m_child = m_child->parentNode();
             m_parent = m_child->parentNode();
@@ -85,7 +91,7 @@ void PositionIterator::decrement()
         if (m_parent->hasChildNodes()) {
             m_parent = m_parent->lastChild();
             if (!m_parent->hasChildNodes())
-                m_offset = maxDeepOffset(m_parent);
+                m_offset = lastOffsetForEditing(m_parent);
         } else {
             m_child = m_parent;
             m_parent = m_parent->parentNode();
@@ -108,7 +114,7 @@ bool PositionIterator::atEnd() const
         return true;
     if (m_child)
         return false;
-    return !m_parent->parentNode() && (m_parent->hasChildNodes() || m_offset >= maxDeepOffset(m_parent));
+    return !m_parent->parentNode() && (m_parent->hasChildNodes() || m_offset >= lastOffsetForEditing(m_parent));
 }
 
 bool PositionIterator::atStartOfNode() const
@@ -126,7 +132,7 @@ bool PositionIterator::atEndOfNode() const
         return true;
     if (m_child)
         return false;
-    return m_parent->hasChildNodes() || m_offset >= maxDeepOffset(m_parent);
+    return m_parent->hasChildNodes() || m_offset >= lastOffsetForEditing(m_parent);
 }
 
 bool PositionIterator::isCandidate() const

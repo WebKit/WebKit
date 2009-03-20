@@ -148,8 +148,8 @@ void InsertListCommand::doApply()
         VisiblePosition start;
         VisiblePosition end;
         if (listChildNode->hasTagName(liTag)) {
-            start = VisiblePosition(Position(listChildNode, 0));
-            end = VisiblePosition(Position(listChildNode, maxDeepOffset(listChildNode)));
+            start = firstDeepEditingPositionForNode(listChildNode);
+            end = lastDeepEditingPositionForNode(listChildNode);
             nextListChild = listChildNode->nextSibling();
             previousListChild = listChildNode->previousSibling();
         } else {

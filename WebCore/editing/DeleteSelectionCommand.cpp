@@ -56,9 +56,7 @@ static bool isTableRow(const Node* node)
 static bool isTableCellEmpty(Node* cell)
 {
     ASSERT(isTableCell(cell));
-    VisiblePosition firstInCell(Position(cell, 0));
-    VisiblePosition lastInCell(Position(cell, maxDeepOffset(cell)));
-    return firstInCell == lastInCell;
+    return VisiblePosition(firstDeepEditingPositionForNode(cell)) == VisiblePosition(lastDeepEditingPositionForNode(cell));
 }
 
 static bool isTableRowEmpty(Node* row)
@@ -363,9 +361,9 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         return;
     }
     
-    if (node == m_startBlock && !isEndOfBlock(VisiblePosition(m_startBlock.get(), 0, DOWNSTREAM).previous()))
+    if (node == m_startBlock && !isEndOfBlock(VisiblePosition(firstDeepEditingPositionForNode(m_startBlock.get())).previous()))
         m_needPlaceholder = true;
-    else if (node == m_endBlock && !isStartOfBlock(VisiblePosition(m_endBlock.get(), maxDeepOffset(m_endBlock.get()), DOWNSTREAM).next()))
+    else if (node == m_endBlock && !isStartOfBlock(VisiblePosition(lastDeepEditingPositionForNode(m_startBlock.get())).next()))
         m_needPlaceholder = true;
     
     // FIXME: Update the endpoints of the range being deleted.
@@ -413,7 +411,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
             deleteTextFromNode(text, caretMaxOffset(startNode), text->length() - caretMaxOffset(startNode));
     }
 
-    if (startOffset >= maxDeepOffset(startNode)) {
+    if (startOffset >= lastOffsetForEditing(startNode)) {
         startNode = startNode->traverseNextSibling();
         startOffset = 0;
     }
@@ -424,14 +422,13 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
     if (startNode == m_downstreamEnd.node()) {
         // The selection to delete is all in one node.
-        if (!startNode->renderer() || 
-            (startOffset == 0 && m_downstreamEnd.m_offset >= maxDeepOffset(startNode))) {
+        if (!startNode->renderer() || (startOffset == 0 && m_downstreamEnd.atLastEditingPositionForNode())) {
             // just delete
             removeNode(startNode);
         } else if (m_downstreamEnd.m_offset - startOffset > 0) {
             if (startNode->isTextNode()) {
                 // in a text node that needs to be trimmed
-                Text *text = static_cast<Text *>(startNode);
+                Text* text = static_cast<Text*>(startNode);
                 deleteTextFromNode(text, startOffset, m_downstreamEnd.m_offset - startOffset);
             } else {
                 removeChildrenInRange(startNode, startOffset, m_downstreamEnd.m_offset);
@@ -481,7 +478,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
         
         if (m_downstreamEnd.node() != startNode && !m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.m_offset >= caretMinOffset(m_downstreamEnd.node())) {
-            if (m_downstreamEnd.m_offset >= maxDeepOffset(m_downstreamEnd.node()) && !canHaveChildrenForEditing(m_downstreamEnd.node())) {
+            if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(m_downstreamEnd.node())) {
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.node());
             } else {

@@ -78,8 +78,13 @@ public:
     static int uncheckedPreviousOffsetForBackwardDeletion(const Node*, int current);
     static int uncheckedNextOffset(const Node*, int current);
 
-    bool atStart() const;
-    bool atEnd() const;
+    // These can be either inside or just before/after the node, depending on
+    // if the node is ignored by editing or not.
+    bool atFirstEditingPositionForNode() const;
+    bool atLastEditingPositionForNode() const;
+
+    bool atStartOfTree() const;
+    bool atEndOfTree() const;
 
     // FIXME: Make these non-member functions and put them somewhere in the editing directory.
     // These aren't really basic "position" operations. More high level editing helper functions.
@@ -127,6 +132,12 @@ inline bool operator!=(const Position& a, const Position& b)
 
 Position startPosition(const Range*);
 Position endPosition(const Range*);
+
+// NOTE: first/lastDeepEditingPositionForNode can return "editing positions" (like [img, 0])
+// for elements which editing "ignores".  the rest of the editing code will treat [img, 0]
+// as "the last position before the img"
+Position firstDeepEditingPositionForNode(Node*);
+Position lastDeepEditingPositionForNode(Node*);
 
 } // namespace WebCore
 

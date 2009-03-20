@@ -221,7 +221,7 @@ Position nextVisuallyDistinctCandidate(const Position& position)
 {
     Position p = position;
     Position downstreamStart = p.downstream();
-    while (!p.atEnd()) {
+    while (!p.atEndOfTree()) {
         p = p.next(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
@@ -244,7 +244,7 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 {
     Position p = position;
     Position downstreamStart = p.downstream();
-    while (!p.atStart()) {
+    while (!p.atStartOfTree()) {
         p = p.previous(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
@@ -255,14 +255,14 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
     // position falls before highestRoot.
-    if (comparePositions(position, Position(highestRoot, 0)) == -1 && highestRoot->isContentEditable())
-        return VisiblePosition(Position(highestRoot, 0));
-        
+    if (comparePositions(position, firstDeepEditingPositionForNode(highestRoot)) == -1 && highestRoot->isContentEditable())
+        return firstDeepEditingPositionForNode(highestRoot);
+
     Position p = position;
     
     if (Node* shadowAncestor = p.node()->shadowAncestorNode())
         if (shadowAncestor != p.node())
-            p = Position(shadowAncestor, maxDeepOffset(shadowAncestor));
+            p = lastDeepEditingPositionForNode(shadowAncestor);
     
     while (p.node() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
@@ -276,14 +276,14 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
 VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& position, Node* highestRoot)
 {
     // When position falls after highestRoot, the result is easy to compute.
-    if (comparePositions(position, Position(highestRoot, maxDeepOffset(highestRoot))) == 1)
-        return VisiblePosition(Position(highestRoot, maxDeepOffset(highestRoot)));
-        
+    if (comparePositions(position, lastDeepEditingPositionForNode(highestRoot)) == 1)
+        return lastDeepEditingPositionForNode(highestRoot);
+
     Position p = position;
     
     if (Node* shadowAncestor = p.node()->shadowAncestorNode())
         if (shadowAncestor != p.node())
-            p = Position(shadowAncestor, 0);
+            p = firstDeepEditingPositionForNode(shadowAncestor);
     
     while (p.node() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
@@ -294,6 +294,7 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
     return VisiblePosition(p);
 }
 
+// FIXME: The method name, comment, and code say three different things here!
 // Whether or not content before and after this node will collapse onto the same line as it.
 bool isBlock(const Node* node)
 {
@@ -361,7 +362,7 @@ Position rangeCompliantEquivalent(const VisiblePosition& vpos)
 // in a node.  It returns 1 for some elements even though they do not have children, which
 // creates technically invalid DOM Positions.  Be sure to call rangeCompliantEquivalent
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
-int maxDeepOffset(const Node *node)
+int lastOffsetForEditing(const Node* node)
 {
     ASSERT(node);
     if (!node)
@@ -541,7 +542,7 @@ Position positionOutsideContainingSpecialElement(const Position &pos, Node **con
 Node* isFirstPositionAfterTable(const VisiblePosition& visiblePosition)
 {
     Position upstream(visiblePosition.deepEquivalent().upstream());
-    if (upstream.node() && upstream.node()->renderer() && upstream.node()->renderer()->isTable() && upstream.m_offset == maxDeepOffset(upstream.node()))
+    if (upstream.node() && upstream.node()->renderer() && upstream.node()->renderer()->isTable() && upstream.atLastEditingPositionForNode())
         return upstream.node();
     
     return 0;
@@ -550,19 +551,21 @@ Node* isFirstPositionAfterTable(const VisiblePosition& visiblePosition)
 Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
 {
     Position downstream(visiblePosition.deepEquivalent().downstream());
-    if (downstream.node() && downstream.node()->renderer() && downstream.node()->renderer()->isTable() && downstream.m_offset == 0)
+    if (downstream.node() && downstream.node()->renderer() && downstream.node()->renderer()->isTable() && downstream.atFirstEditingPositionForNode())
         return downstream.node();
     
     return 0;
 }
 
-Position positionBeforeNode(const Node *node)
+Position positionBeforeNode(const Node* node)
 {
+    // FIXME: This should ASSERT(node->parentNode())
     return Position(node->parentNode(), node->nodeIndex());
 }
 
-Position positionAfterNode(const Node *node)
+Position positionAfterNode(const Node* node)
 {
+    // FIXME: This should ASSERT(node->parentNode())
     return Position(node->parentNode(), node->nodeIndex() + 1);
 }
 
@@ -699,16 +702,17 @@ static Node* appendedSublist(Node* listItem)
     return 0;
 }
 
+// FIXME: This method should not need to call isStartOfParagraph/isEndOfParagraph
 Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
 {
     // Check that position is on a line by itself inside a list item
     Node* listChildNode = enclosingListChild(visiblePos.deepEquivalent().node());
     if (!listChildNode || !isStartOfParagraph(visiblePos) || !isEndOfParagraph(visiblePos))
         return 0;
-        
-    VisiblePosition firstInListChild(Position(listChildNode, 0));
-    VisiblePosition lastInListChild(Position(listChildNode, maxDeepOffset(listChildNode)));
-    
+
+    VisiblePosition firstInListChild(firstDeepEditingPositionForNode(listChildNode));
+    VisiblePosition lastInListChild(lastDeepEditingPositionForNode(listChildNode));
+
     if (firstInListChild != visiblePos || lastInListChild != visiblePos)
         return 0;
     
@@ -899,7 +903,7 @@ int caretMaxOffset(const Node* n)
     if (n->isTextNode() && n->renderer())
         return n->renderer()->caretMaxOffset();
     // For containers return the number of children.  For others do the same as above.
-    return maxDeepOffset(n);
+    return lastOffsetForEditing(n);
 }
 
 bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)

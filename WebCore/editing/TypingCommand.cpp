@@ -477,7 +477,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
                 downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
             // When deleting tables: Select the table first, then perform the deletion
             if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.m_offset == 0) {
-                setEndingSelection(VisibleSelection(endingSelection().end(), Position(downstreamEnd.node(), maxDeepOffset(downstreamEnd.node())), DOWNSTREAM));
+                setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.node()), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
             }

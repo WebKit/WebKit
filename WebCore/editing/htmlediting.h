@@ -43,7 +43,7 @@ class VisiblePosition;
 
 Position rangeCompliantEquivalent(const Position&);
 Position rangeCompliantEquivalent(const VisiblePosition&);
-int maxDeepOffset(const Node*);
+int lastOffsetForEditing(const Node*);
 bool isAtomicNode(const Node*);
 bool editingIgnoresContent(const Node*);
 bool canHaveChildrenForEditing(const Node*);

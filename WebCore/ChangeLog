@@ -1,3 +1,101 @@
+2009-03-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        maxDeepOffset is confusing and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=24586
+
+        Abstract some hard-to-read (but shared) logic into a new renderedAsNonInlineTableOrHR function.
+        Add first/lastDeepEditingPositionForNode Position creation functions
+        and deploy them to places we used to call maxDeepOffset.
+
+        Rename Position::atStart and atEnd to atStartOfTree atEndOfTree
+        Add a new Position::atFirst/atLastEditingPositionForNode() and use these
+        to replace a few more callers for maxDeepOffset()
+        
+        Rename maxDeepOffset to lastEditingOffsetForNode (so that we mere mortals have some clue what it does)
+
+        "Editing positions" are confusing because they have one
+        of two behaviors, depending on if the container node is ignored
+        by editing (if editingIgnoresContent(node) returns true) or not.
+        Positions referring to nodes ignored by editing are
+        neighbor-relative (they are before or after the node) where as
+        positions reffering to other nodes are container-relative
+        (they are between two child nodes of the container, identified
+        by the offset() member).  I will be fixing this confusion in
+        future patches.  These renames hopefully make the current behavior clearer.
+
+        * dom/Position.cpp:
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::atFirstEditingPositionForNode):
+        (WebCore::Position::atLastEditingPositionForNode):
+        (WebCore::Position::atStartOfTree):
+        (WebCore::Position::atEndOfTree):
+        (WebCore::Position::previousCharacterPosition):
+        (WebCore::Position::nextCharacterPosition):
+        (WebCore::Position::upstream):
+        (WebCore::Position::isCandidate):
+        (WebCore::firstDeepEditingPositionForNode):
+        (WebCore::lastDeepEditingPositionForNode):
+        * dom/Position.h:
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position):
+        (WebCore::PositionIterator::increment):
+        (WebCore::PositionIterator::decrement):
+        (WebCore::PositionIterator::atEnd):
+        (WebCore::PositionIterator::atEndOfNode):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableCellEmpty):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::left):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::right):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::selectionFromContentsOfNode):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/htmlediting.cpp:
+        (WebCore::nextVisuallyDistinctCandidate):
+        (WebCore::previousVisuallyDistinctCandidate):
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        (WebCore::lastOffsetForEditing):
+        (WebCore::isFirstPositionAfterTable):
+        (WebCore::isLastPositionBeforeTable):
+        (WebCore::positionBeforeNode):
+        (WebCore::positionAfterNode):
+        (WebCore::enclosingEmptyListItem):
+        (WebCore::caretMaxOffset):
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::renderedAsNonInlineTableOrHR):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        (WebCore::startOfEditableContent):
+        (WebCore::endOfEditableContent):
+        * page/AccessibilityObject.cpp:
+        (WebCore::endOfStyleRange):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+
 2009-03-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.
