@@ -51,6 +51,12 @@ public:
     virtual void suspend();
     virtual void resume();
 
+    // The lowest allowable timer setting (in seconds, 0.001 == 1 ms).
+    // Default is 10ms.
+    // Chromium uses a non-default timeout.
+    static double minTimerInterval() { return s_minTimerInterval; }
+    static void setMinTimerInterval(double value) { s_minTimerInterval = value; }
+
 private:
     DOMTimer(ScriptExecutionContext*, ScheduledAction*, int timeout, bool singleShot);
     virtual void fired();
@@ -60,6 +66,7 @@ private:
     OwnPtr<ScheduledAction> m_action;
     double m_nextFireInterval;
     double m_repeatInterval;
+    static double s_minTimerInterval;
 };
 
 } // namespace WebCore

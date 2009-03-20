@@ -38,7 +38,7 @@ namespace WebCore {
 
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
-static const double minTimerInterval = 0.010; // 10 milliseconds
+double DOMTimer::s_minTimerInterval = 0.010; // 10 milliseconds
 
 static int timerNestingLevel = 0;
 
@@ -64,8 +64,8 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int
     // Use a minimum interval of 10 ms to match other browsers, but only once we've
     // nested enough to notice that we're repeating.
     // Faster timers might be "better", but they're incompatible.
-    if (intervalMilliseconds < minTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
-        intervalMilliseconds = minTimerInterval;
+    if (intervalMilliseconds < s_minTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
+        intervalMilliseconds = s_minTimerInterval;
     if (singleShot)
         startOneShot(intervalMilliseconds);
     else
@@ -105,10 +105,10 @@ void DOMTimer::fired()
 
     // Simple case for non-one-shot timers.
     if (isActive()) {
-        if (repeatInterval() && repeatInterval() < minTimerInterval) {
+        if (repeatInterval() && repeatInterval() < s_minTimerInterval) {
             m_nestingLevel++;
             if (m_nestingLevel >= maxTimerNestingLevel)
-                augmentRepeatInterval(minTimerInterval - repeatInterval());
+                augmentRepeatInterval(s_minTimerInterval - repeatInterval());
         }
         
         // No access to member variables after this point, it can delete the timer.

@@ -1,3 +1,18 @@
+2009-03-20  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Dimitri Glazkov and Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24324
+
+        Make the minimum timer configurable for different platforms.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        * page/DOMTimer.h:
+        (WebCore::DOMTimer::minTimerInterval):
+        (WebCore::DOMTimer::setMinTimerInterval):
+
 2009-03-20  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Darin Adler.
