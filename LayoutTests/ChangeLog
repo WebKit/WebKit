@@ -1,3 +1,14 @@
+2009-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Fix fast/text/Geeza-Pro-vertical-metrics-adjustment.html on Leopard by moving the results in to the location
+        that run-webkit-tests currently looks for them.
+       
+        * platform/mac-leopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum: Renamed from LayoutTests/platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum.
+        * platform/mac-leopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Renamed from LayoutTests/platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png.
+        * platform/mac-leopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Renamed from LayoutTests/platform/mac-leopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt.
+
 2009-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

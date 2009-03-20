@@ -1,0 +1,1 @@
+These test results should live in platform/mac-leopard, but run-webkit-tests currently does not strip the platform prefix from tests (<https://bugs.webkit.org/show_bug.cgi?id=24708>).
