@@ -477,13 +477,21 @@ AC_ARG_ENABLE([jit],
               [],[enable_jit="yes"])
 if test "$enable_jit" = "yes"; then
     case "$target_cpu" in
-        i*86)
+        i*86|x86_64)
             AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
             AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_CALL], [1], [Define to enable optimizing calls])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS], [1], [Define to enable optimized property access])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_ARITHMETIC], [1], [Define to enable optimized arithmetic])
-            AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_VA_LIST], [1], [Use stub va_list])
+            case "$target_cpu" in
+                i*86)
+                    AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_VA_LIST], [1], [Use stub va_list])
+                ;;
+                x86_64)
+                    AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_REGISTER], [1], [Use stub register])
+                    AC_DEFINE([WTF_USE_ALTERNATE_JSIMMEDIATE], [1], [Use alternate JSImmediate])
+                ;;
+            esac
         ;;
         *)
             enable_jit="no (CPU '$target_cpu' not supported)"

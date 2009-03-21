@@ -137,6 +137,7 @@ javascriptcore_sources += \
 	JavaScriptCore/assembler/AssemblerBuffer.h \
 	JavaScriptCore/assembler/MacroAssembler.h \
 	JavaScriptCore/assembler/MacroAssemblerX86.h \
+	JavaScriptCore/assembler/MacroAssemblerX86_64.h \
 	JavaScriptCore/assembler/MacroAssemblerX86Common.h \
 	JavaScriptCore/os-win32/stdbool.h \
 	JavaScriptCore/os-win32/stdint.h \
