@@ -1,16 +1,5 @@
 2009-03-20  Mike Hommey  <glandium@debian.org>
 
-        Reviewed by Gavin Barraclough. Landed by Jan Alonzo.
-
-        Enable JIT on x86-64
-        https://bugs.webkit.org/show_bug.cgi?id=24724
-
-        Enable JIT on x86-64 gtk+
-
-        * GNUmakefile.am:
-
-2009-03-20  Mike Hommey  <glandium@debian.org>
-
         Reviewed by Mark Rowe. Committed by Jan Alonzo.
 
         Use the proper definition of RETURN_PAIR on !MSVC
