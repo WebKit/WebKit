@@ -15,6 +15,15 @@
 
 2009-03-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        Fixed a JavaScriptCore crash on the Windows buildbot.
+
+        * bytecompiler/BytecodeGenerator.h: Reduced the AST recursion limit.
+        Apparently, Windows has small stacks.
+
+2009-03-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
         
         A little cleanup in the RegisterFile code.

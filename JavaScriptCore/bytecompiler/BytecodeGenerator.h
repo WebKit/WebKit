@@ -473,7 +473,7 @@ namespace JSC {
         bool m_regeneratingForExceptionInfo;
         CodeBlock* m_codeBlockBeingRegeneratedFrom;
 
-        static const unsigned s_maxEmitNodeDepth = 10000;
+        static const unsigned s_maxEmitNodeDepth = 5000;
     };
 
 }
