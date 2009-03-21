@@ -1,3 +1,18 @@
+2009-03-20  Mike Hommey  <glandium@debian.org>
+
+        Reviewed by Mark Rowe. Committed by Jan Alonzo.
+
+        Use the proper definition of RETURN_PAIR on !MSVC
+
+        The other version is actually a work around for a quirk in the windows
+        ABI, so checking whether we're under MSVC is more a appropriate check for
+        it. It also happens this workaround is not 64-bits safe, so we also error
+        out on x86-64 MSVC.
+
+        Thanks Gavin Barraclough.
+
+        * jit/JITStubs.h:
+
 2009-03-20  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
