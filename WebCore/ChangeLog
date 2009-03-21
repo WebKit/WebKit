@@ -1,3 +1,15 @@
+2009-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/6574185> REGRESSION (3.2.2-TOT): hang in text drawing code
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs): Changed glyph stroking to fill and stroke each
+        glyph as a separate path, instead of all glyphs as a single path. This
+        matches what CGContextShowGlyphsWithAdvances() does, and has comparable
+        performance.
+
 2009-03-20  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser

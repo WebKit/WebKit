@@ -223,8 +223,6 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
         }
     } else {
-        RetainPtr<CGMutablePathRef> path(AdoptCF, CGPathCreateMutable());
-
         XFORM xform;
         GetWorldTransform(hdc, &xform);
         TransformationMatrix hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
@@ -233,16 +231,8 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             initialGlyphTransform = CGAffineTransformConcat(initialGlyphTransform, CGAffineTransformMake(1, 0, tanf(syntheticObliqueAngle * piFloat / 180.0f), 1, 0, 0));
         initialGlyphTransform.tx = 0;
         initialGlyphTransform.ty = 0;
-        CGAffineTransform glyphTranslation = CGAffineTransformIdentity;
-
-        for (unsigned i = 0; i < numGlyphs; ++i) {
-            RetainPtr<CGPathRef> glyphPath(AdoptCF, createPathForGlyph(hdc, glyphBuffer.glyphAt(from + i)));
-            CGAffineTransform glyphTransform = CGAffineTransformConcat(initialGlyphTransform, glyphTranslation);
-            CGPathAddPath(path.get(), &glyphTransform, glyphPath.get());
-            glyphTranslation = CGAffineTransformTranslate(glyphTranslation, gdiAdvances[i], 0);
-        }
-
         CGContextRef cgContext = graphicsContext->platformContext();
+
         CGContextSaveGState(cgContext);
 
         BOOL fontSmoothingEnabled = false;
@@ -252,26 +242,36 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
         CGContextScaleCTM(cgContext, 1.0, -1.0);
         CGContextTranslateCTM(cgContext, point.x() + glyphBuffer.offsetAt(from).width(), -(point.y() + glyphBuffer.offsetAt(from).height()));
 
-        if (drawingMode & cTextFill) {
-            CGContextAddPath(cgContext, path.get());
-            CGContextFillPath(cgContext);
-            if (font->m_syntheticBoldOffset) {
-                CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
-                CGContextAddPath(cgContext, path.get());
+        for (unsigned i = 0; i < numGlyphs; ++i) {
+            RetainPtr<CGPathRef> glyphPath(AdoptCF, createPathForGlyph(hdc, glyphBuffer.glyphAt(from + i)));
+            CGContextSaveGState(cgContext);
+            CGContextConcatCTM(cgContext, initialGlyphTransform);
+
+            if (drawingMode & cTextFill) {
+                CGContextAddPath(cgContext, glyphPath.get());
                 CGContextFillPath(cgContext);
-                CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                if (font->m_syntheticBoldOffset) {
+                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                    CGContextAddPath(cgContext, glyphPath.get());
+                    CGContextFillPath(cgContext);
+                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                }
             }
-        }
-        if (drawingMode & cTextStroke) {
-            CGContextAddPath(cgContext, path.get());
-            CGContextStrokePath(cgContext);
-            if (font->m_syntheticBoldOffset) {
-                CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
-                CGContextAddPath(cgContext, path.get());
+            if (drawingMode & cTextStroke) {
+                CGContextAddPath(cgContext, glyphPath.get());
                 CGContextStrokePath(cgContext);
-                CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                if (font->m_syntheticBoldOffset) {
+                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                    CGContextAddPath(cgContext, glyphPath.get());
+                    CGContextStrokePath(cgContext);
+                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                }
             }
+
+            CGContextRestoreGState(cgContext);
+            CGContextTranslateCTM(cgContext, gdiAdvances[i], 0);
         }
+
         CGContextRestoreGState(cgContext);
     }
 
