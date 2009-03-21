@@ -1,3 +1,11 @@
+2009-03-21  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Kevin Decker
+
+        - remove some redundant #include statements
+
+        * bindings/js/JSDOMWindowBase.cpp:
+
 2009-03-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
