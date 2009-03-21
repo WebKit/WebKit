@@ -74,16 +74,13 @@ namespace JSC {
 #endif
 
 // The Mac compilers are fine with this, 
-#if !COMPILER(MSVC)
+#if PLATFORM(MAC)
     struct VoidPtrPair {
         void* first;
         void* second;
     };
 #define RETURN_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
 #else
-    #if PLATFORM(X86_64)
-    #error MSVC version of RETURN_PAIR is not 64-bits safe
-    #endif
     typedef uint64_t VoidPtrPair;
     union VoidPtrPairValue {
         struct { void* first; void* second; } s;
