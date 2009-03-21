@@ -1,3 +1,11 @@
+2009-03-20  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrameView.mm: (-[WebFrameView initWithFrame:]):
+
 2009-03-20  Timothy Hatcher  <timothy@apple.com>
 
         Change how threading exceptions are checked so they are reported

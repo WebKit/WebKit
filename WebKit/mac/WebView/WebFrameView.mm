@@ -317,7 +317,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS))
             setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundOne);
 
-        if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_TWO_MAIN_THREAD_EXCEPTIONS) || needMailThreadWorkaround())
+        bool throwExceptionsForRoundTwo = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_TWO_MAIN_THREAD_EXCEPTIONS);
+#ifdef MAIL_THREAD_WORKAROUND
+        // Even if old Mail is linked with new WebKit, don't throw exceptions.
+        if (needMailThreadWorkaround())
+            throwExceptionsForRoundTwo = false;
+#endif
+        if (!throwExceptionsForRoundTwo)
             setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundTwo);
     }
 
