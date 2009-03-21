@@ -1,3 +1,12 @@
+2009-03-20  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Build fix for ENABLE(3D_RENDERING)
+
+        * rendering/RenderObject.h:
+        (WebCore::makeMatrixRenderable):
+
 2009-03-20  Dave Moore  <davemoore@google.com>
 
         Reviewed by Dimitri Glazkov.

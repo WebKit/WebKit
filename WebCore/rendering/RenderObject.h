@@ -31,6 +31,7 @@
 #include "RenderObjectChildList.h"
 #include "RenderStyle.h"
 #include "TransformationMatrix.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -920,6 +921,8 @@ inline void makeMatrixRenderable(TransformationMatrix& matrix)
 {
 #if !ENABLE(3D_RENDERING)
     matrix.makeAffine();
+#else
+    UNUSED_PARAM(matrix);
 #endif
 }
 
