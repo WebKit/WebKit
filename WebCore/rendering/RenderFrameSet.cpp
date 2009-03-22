@@ -565,8 +565,8 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
             return false;
         if (evt->type() == eventNames().mousedownEvent && evt->button() == LeftButton) {
             FloatPoint pos = localToAbsolute();
-            startResizing(m_cols, evt->pageX() - pos.x());
-            startResizing(m_rows, evt->pageY() - pos.y());
+            startResizing(m_cols, evt->absoluteLocation().x() - pos.x());
+            startResizing(m_rows, evt->absoluteLocation().y() - pos.y());
             if (m_cols.m_splitBeingResized != noSplit || m_rows.m_splitBeingResized != noSplit) {
                 setIsResizing(true);
                 return true;
@@ -575,8 +575,8 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
     } else {
         if (evt->type() == eventNames().mousemoveEvent || (evt->type() == eventNames().mouseupEvent && evt->button() == LeftButton)) {
             FloatPoint pos = localToAbsolute();
-            continueResizing(m_cols, evt->pageX() - pos.x());
-            continueResizing(m_rows, evt->pageY() - pos.y());
+            continueResizing(m_cols, evt->absoluteLocation().x() - pos.x());
+            continueResizing(m_rows, evt->absoluteLocation().y() - pos.y());
             if (evt->type() == eventNames().mouseupEvent && evt->button() == LeftButton) {
                 setIsResizing(false);
                 return true;

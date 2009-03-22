@@ -1,3 +1,63 @@
+2009-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24733
+        
+        Fix hit testing on video controls after full page zoom by fixing wider issue
+        with event->pageX(), pageY() with zooming. pageX and pageY are "fixed" to be
+        invariant under zooming (for JavaScript), so we keep an actual page point around
+        in MouseEvent::absoluteLocation() to avoid the need to factor in zooming everywhere.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::MouseRelatedEvent::computePageLocation):
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::absoluteLocation):
+        (WebCore::MouseRelatedEvent::setAbsoluteLocation):
+        Member var, and getter and setter for absoluteLocation.
+        New method, computePageLocation(), to compute the actual page point,
+        and call it when creating and initting mouse-related events.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchMouseEvent):
+        (WebCore::Node::dispatchWheelEvent):
+        Keep non-adjusted pageX and pageY around, and call setAbsoluteLocation()
+        on the event to replace a potentially rounded point.
+        
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        Clean up slider handling code.
+        
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Add FIXME comment for use of offsetX/offsetY.
+        
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        Use absoluteLocation() when hit testing for context menus.
+        
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        Use absoluteLocation() when resizing frames.
+        
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::forwardEvent):
+        Use absoluteLocation() when hit testing media controls.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+        (WebCore::RenderSlider::mouseEventIsInThumb):
+        Use absoluteLocation() when handling slider events.
+
+        (WebCore::RenderSlider::forwardEvent):
+        Factor some code out of HTMLInputElement::defaultEventHandler().
+        
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        Use absoluteLocation() when hit testing search field buttons, which fixees
+        bugs in the search field with zooming.
+
 2009-03-21  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

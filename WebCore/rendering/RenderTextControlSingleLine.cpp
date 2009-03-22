@@ -325,7 +325,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
         return;
     }
 
-    FloatPoint localPoint = innerTextRenderer->absoluteToLocal(FloatPoint(static_cast<MouseEvent*>(event)->pageX(), static_cast<MouseEvent*>(event)->pageY()), false, true);
+    FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);
     else if (m_cancelButton && localPoint.x() > innerTextRenderer->borderBoxRect().right())

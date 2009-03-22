@@ -678,6 +678,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 
         // Convert to coords relative to the list box if needed.
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(evt);
+        // FIXME: need to adjust offsetX/offsetY for full page zoom
         int offsetX = mouseEvent->offsetX();
         int offsetY = mouseEvent->offsetY();
         Node* target = evt->target()->toNode();

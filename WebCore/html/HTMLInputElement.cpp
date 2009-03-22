@@ -1100,6 +1100,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             m_yPos = 0;
         } else {
             // FIXME: This doesn't work correctly with transforms.
+            // FIXME: pageX/pageY need adjusting for pageZoomFactor(). Use actualPageLocation()?
             IntPoint absOffset = roundedIntPoint(renderer()->localToAbsolute());
             m_xPos = me->pageX() - absOffset.x();
             m_yPos = me->pageY() - absOffset.y();
@@ -1338,20 +1339,8 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == eventNames().blurEvent || evt->type() == eventNames().focusEvent))
         static_cast<RenderTextControlSingleLine*>(renderer())->forwardEvent(evt);
 
-    if (inputType() == RANGE && renderer()) {
-        RenderSlider* slider = static_cast<RenderSlider*>(renderer());
-        if (evt->isMouseEvent() && evt->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-            MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
-            if (!slider->mouseEventIsInThumb(mEvt)) {
-                IntPoint eventOffset(mEvt->offsetX(), mEvt->offsetY());
-                if (mEvt->target() != this) // Does this ever happen now? Was originally added for <video> controls.
-                    eventOffset = roundedIntPoint(renderer()->absoluteToLocal(FloatPoint(mEvt->pageX(), mEvt->pageY()), false, true));
-                slider->setValueForPosition(slider->positionForOffset(eventOffset));
-            }
-        }
-        if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())
-            slider->forwardEvent(evt);
-    }
+    if (inputType() == RANGE && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent()))
+        static_cast<RenderSlider*>(renderer())->forwardEvent(evt);
 
     if (!callBaseClassEarly && !evt->defaultHandled())
         HTMLFormControlElementWithState::defaultEventHandler(evt);

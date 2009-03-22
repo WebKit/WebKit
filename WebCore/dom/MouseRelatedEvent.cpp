@@ -97,6 +97,8 @@ void MouseRelatedEvent::initCoordinates()
     m_layerY = m_pageY;
     m_offsetX = m_pageX;
     m_offsetY = m_pageY;
+
+    computePageLocation();
 }
 
 void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
@@ -112,6 +114,14 @@ void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
     m_layerY = m_pageY;
     m_offsetX = m_pageX;
     m_offsetY = m_pageY;
+
+    computePageLocation();
+}
+
+void MouseRelatedEvent::computePageLocation()
+{
+    float zoomFactor = (view() && view()->frame()) ? view()->frame()->pageZoomFactor() : 1.0f;
+    setAbsoluteLocation(roundedIntPoint(FloatPoint(pageX() * zoomFactor, pageY() * zoomFactor)));
 }
 
 void MouseRelatedEvent::receivedTarget()
