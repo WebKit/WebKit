@@ -1,3 +1,18 @@
+2009-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24743
+        
+        Fix hit testing regression from r41840. We need to pass the temporary
+        HitTestResult when testing sublayers, then only copy to 'result' when
+        the layer is known to have been hit.
+
+        Test: fast/layers/zindex-hit-test.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -2345,7 +2345,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
                 continue;
 
             HitTestResult tempResult(result.point());
-            RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            RenderLayer* hitLayer = currLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
             if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
                 result = tempResult;
                 if (!depthSortDescendants)
@@ -2374,7 +2374,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (m_negZOrderList) {
         for (int i = m_negZOrderList->size() - 1; i >= 0; --i) {
             HitTestResult tempResult(result.point());
-            RenderLayer* hitLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, this, request, result, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
+            RenderLayer* hitLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, localTransformState.get(), zOffsetForDescendantsPtr);
             if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState.get())) {
                 result = tempResult;
                 if (!depthSortDescendants)
