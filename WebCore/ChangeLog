@@ -2,6 +2,19 @@
 
         Reviewed by Dimitri Glazkov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24727
+        Add V8XMLHttpRequest*.
+
+        * bindings/v8/V8XMLHttpRequestUtilities.cpp: Added.
+        * bindings/v8/V8XMLHttpRequestUtilities.h: Added.
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp: Added.
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp: Added.
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp: Added.
+
+2009-03-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         https://bugs.webkit.org/show_bug.cgi?id=24725
         Add V8NodeFilter.
 
