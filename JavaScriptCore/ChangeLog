@@ -1,3 +1,16 @@
+2009-03-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20049: testapi failure: MyObject - 0 should be NaN but instead is 1.
+        <https://bugs.webkit.org/show_bug.cgi?id=20049>
+        <rdar://problem/6079127>
+
+        In this case, the test is wrong. According to the ECMA spec, subtraction
+        uses ToNumber, not ToPrimitive. Change the test to match the spec.
+
+        * API/tests/testapi.js:
+
 2009-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

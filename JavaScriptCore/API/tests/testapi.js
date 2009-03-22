@@ -114,7 +114,7 @@ shouldBe("MyObject ? 1 : 0", true); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
 shouldBe("(MyObject.toString())", "[object MyObject]"); // toString
 shouldBe("String(MyObject)", "MyObjectAsString"); // type conversion to string
-shouldBe("MyObject - 0", NaN); // toPrimitive
+shouldBe("MyObject - 0", 1); // toNumber
 
 shouldBe("typeof MyConstructor", "object");
 constructedObject = new MyConstructor(1);
