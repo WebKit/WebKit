@@ -1,3 +1,13 @@
+2009-03-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24725
+        Add V8NodeFilter.
+
+        * bindings/v8/V8NodeFilter.cpp: Added.
+        * bindings/v8/V8NodeFilter.h: Added.
+
 2009-03-21  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Kevin Decker
@@ -2158,7 +2168,7 @@
 
 2009-03-12  David Levin  <levin@chromium.org>
 
-        Reviewed by  Darin Fisher.
+        Reviewed by Darin Fisher.
 
         Bug 24530: width100percent-searchfield.html should be fixed for chromium.
         <https://bugs.webkit.org/show_bug.cgi?id=24530>
@@ -13174,7 +13184,7 @@
 
         Reviewed by Eric Seidel.
 
-        Bug 23792: unused param is used in RenderLayer.cp but not #include'd
+        Bug 23792: unused param is used in RenderLayer.cpp but not #include'd
         <https://bugs.webkit.org/show_bug.cgi?id=23792>
 
         Add include file for UnusedParam which is used in this file.
