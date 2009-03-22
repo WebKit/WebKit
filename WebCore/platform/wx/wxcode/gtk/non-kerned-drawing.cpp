@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "SimpleFontData.h"
 
+#include <wx/dc.h>
 #include <wx/dcgraph.h>
 #include <wx/defs.h>
 #include <wx/dcclient.h>
