@@ -8,6 +8,20 @@
 
         Reviewed by Dan Bernstein
         
+        https://bugs.webkit.org/show_bug.cgi?id=24665
+        
+        Image-map code in RenderImage could result in RenderImage::nodeAtPoint()
+        setting HitTestResult::innerNode(), but returning false, which violates
+        hit testing rules. Use a temporary HitTestResult so that we only fill in
+        result when we know we've hit.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+
+2009-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
         https://bugs.webkit.org/show_bug.cgi?id=24743
         
         Fix hit testing regression from r41840. We need to pass the temporary
