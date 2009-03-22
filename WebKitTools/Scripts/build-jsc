@@ -64,7 +64,7 @@ my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() 
 chdir "JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
 my $result;
 if (isAppleMacWebKit()) {
-    $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj -target jsc "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
+    $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
 } elsif (isChromium()) {

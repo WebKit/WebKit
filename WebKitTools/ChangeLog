@@ -1,3 +1,11 @@
+2009-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Make build-jsc build testapi and minidom in addition to jsc itself.
+
+        * Scripts/build-jsc:
+
 2009-03-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
