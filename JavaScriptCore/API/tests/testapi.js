@@ -22,6 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+var failed = false;
+function pass(msg)
+{
+    print("PASS: " + msg, "green");
+}
+
+function fail(msg)
+{
+    print("FAIL: " + msg, "red");
+    failed = true;
+}
 
 function shouldBe(a, b)
 {
@@ -33,23 +44,22 @@ function shouldBe(a, b)
     }
     
     if (evalA == b || isNaN(evalA) && typeof evalA == 'number' && isNaN(b) && typeof b == 'number')
-        print("PASS: " + a + " should be " + b + " and is.", "green");
+        pass(a + " should be " + b + " and is.");
     else
-        print("__FAIL__: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
+        fail(a + " should be " + b + " but instead is " + evalA + ".");
 }
 
 function shouldThrow(a)
 {
-    var result = "__FAIL__: " + a + " did not throw an exception.";
-    
     var evalA;
     try {
         eval(a);
     } catch(e) {
-        result = "PASS: " + a + " threw: " + e;
+        pass(a + " threw: " + e);
+        return;
     }
-    
-    print(result);
+
+    fail(a + " did not throw an exception.");
 }
 
 function globalStaticFunction()
@@ -82,12 +92,16 @@ for (var p in MyObject) {
     if (p == "regularType")
         foundRegularType = true;
 }
-print(foundMyPropertyName
-      ? "PASS: MyObject.myPropertyName was enumerated"
-      : "__FAIL__: MyObject.myPropertyName was not enumerated");
-print(foundRegularType
-      ? "PASS: MyObject.regularType was enumerated"
-      : "__FAIL__: MyObject.regularType was not enumerated");
+
+if (foundMyPropertyName)
+    pass("MyObject.myPropertyName was enumerated");
+else
+    fail("MyObject.myPropertyName was not enumerated");
+
+if (foundRegularType)
+    pass("MyObject.regularType was enumerated");
+else
+    fail("MyObject.regularType was not enumerated");
 
 myObject = new MyObject();
 
@@ -130,3 +144,7 @@ shouldBe("derived.baseDup = 0", 2);
 shouldBe("derived.baseOnly = 0", 1);
 shouldBe("derived.derivedOnly = 0", 2)
 shouldBe("derived.protoDup = 0", 2);
+
+if (failed)
+    throw "Some tests failed";
+

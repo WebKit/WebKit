@@ -1,3 +1,22 @@
+2009-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Improve testapi by making it report failures in a way we can pick up
+        from our test scripts.
+
+        * API/tests/testapi.c:
+        (assertEqualsAsBoolean):
+        (assertEqualsAsNumber):
+        (assertEqualsAsUTF8String):
+        (assertEqualsAsCharactersPtr):
+        (main):
+        * API/tests/testapi.js:
+        (pass):
+        (fail):
+        (shouldBe):
+        (shouldThrow):
+
 2009-03-20  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.

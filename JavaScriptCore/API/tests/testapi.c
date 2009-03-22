@@ -41,11 +41,13 @@ static double nan(const char*)
 #endif
 
 static JSGlobalContextRef context = 0;
-
+static int failed = 0;
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
-    if (JSValueToBoolean(context, value) != expectedValue)
+    if (JSValueToBoolean(context, value) != expectedValue) {
         fprintf(stderr, "assertEqualsAsBoolean failed: %p, %d\n", value, expectedValue);
+        failed = 1;
+    }
 }
 
 static void assertEqualsAsNumber(JSValueRef value, double expectedValue)
@@ -55,8 +57,10 @@ static void assertEqualsAsNumber(JSValueRef value, double expectedValue)
     // FIXME <rdar://4668451> - On i386 the isnan(double) macro tries to map to the isnan(float) function,
     // causing a build break with -Wshorten-64-to-32 enabled.  The issue is known by the appropriate team.
     // After that's resolved, we can remove these casts
-    if (number != expectedValue && !(isnan((float)number) && isnan((float)expectedValue)))
+    if (number != expectedValue && !(isnan((float)number) && isnan((float)expectedValue))) {
         fprintf(stderr, "assertEqualsAsNumber failed: %p, %lf\n", value, expectedValue);
+        failed = 1;
+    }
 }
 
 static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue)
@@ -68,12 +72,17 @@ static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue
     JSStringGetUTF8CString(valueAsString, jsBuffer, jsSize);
     
     unsigned i;
-    for (i = 0; jsBuffer[i]; i++)
-        if (jsBuffer[i] != expectedValue[i])
+    for (i = 0; jsBuffer[i]; i++) {
+        if (jsBuffer[i] != expectedValue[i]) {
             fprintf(stderr, "assertEqualsAsUTF8String failed at character %d: %c(%d) != %c(%d)\n", i, jsBuffer[i], jsBuffer[i], expectedValue[i], expectedValue[i]);
-        
-    if (jsSize < strlen(jsBuffer) + 1)
+            failed = 1;
+        }
+    }
+
+    if (jsSize < strlen(jsBuffer) + 1) {
         fprintf(stderr, "assertEqualsAsUTF8String failed: jsSize was too small\n");
+        failed = 1;
+    }
 
     free(jsBuffer);
     JSStringRelease(valueAsString);
@@ -94,12 +103,16 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     CFStringGetCharacters(expectedValueAsCFString, CFRangeMake(0, cfLength), cfBuffer);
     CFRelease(expectedValueAsCFString);
 
-    if (memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) != 0)
+    if (memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) != 0) {
         fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsBuffer != cfBuffer\n");
+        failed = 1;
+    }
     
-    if (jsLength != (size_t)cfLength)
+    if (jsLength != (size_t)cfLength) {
         fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%ld) != cfLength(%ld)\n", jsLength, cfLength);
-    
+        failed = 1;
+    }
+
     free(cfBuffer);
     JSStringRelease(valueAsString);
 }
@@ -846,7 +859,7 @@ int main(int argc, char* argv[])
     JSStringRelease(functionBody);
     
     string = JSValueToStringCopy(context, function, NULL);
-    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) {return foo;}");
+    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) {\nreturn foo;\n}");
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
@@ -1006,6 +1019,11 @@ int main(int argc, char* argv[])
     JSClassRelease(prototypeLoopClass);
 
     printf("PASS: Infinite prototype chain does not occur.\n");
+
+    if (failed) {
+        printf("FAIL: Some tests failed.\n");
+        return 1;
+    }
 
     printf("PASS: Program exited normally.\n");
     return 0;
