@@ -859,7 +859,7 @@ int main(int argc, char* argv[])
     JSStringRelease(functionBody);
     
     string = JSValueToStringCopy(context, function, NULL);
-    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) {\nreturn foo;\n}");
+    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) { return foo;\n}");
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
@@ -967,9 +967,10 @@ int main(int argc, char* argv[])
     JSStringRelease(script);
 
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
-    if (!scriptUTF8)
+    if (!scriptUTF8) {
         printf("FAIL: Test script could not be loaded.\n");
-    else {
+        failed = 1;
+    } else {
         script = JSStringCreateWithUTF8CString(scriptUTF8);
         result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
         if (JSValueIsUndefined(context, result))
@@ -981,6 +982,7 @@ int main(int argc, char* argv[])
             CFShow(exceptionCF);
             CFRelease(exceptionCF);
             JSStringRelease(exceptionIString);
+            failed = 1;
         }
         JSStringRelease(script);
         free(scriptUTF8);

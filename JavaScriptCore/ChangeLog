@@ -1,5 +1,18 @@
 2009-03-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Ensure that JSObjectMakeFunction doesn't produce incorrect line numbers.
+
+        Also make test api correctly propagate failures.
+
+        * API/tests/testapi.c:
+        (main):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+
+2009-03-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mark Rowe.
 
         Improve testapi by making it report failures in a way we can pick up

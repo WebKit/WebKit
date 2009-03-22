@@ -93,16 +93,19 @@ FunctionBodyNode* extractFunctionBody(ProgramNode* program)
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
+    // Functions need to have a space following the opening { due to for web compatibility
+    // see https://bugs.webkit.org/show_bug.cgi?id=24350
+    // We also need \n before the closing } to handle // comments at the end of the last line
     UString program;
     if (args.isEmpty())
-        program = "(function(){})";
+        program = "(function() { \n})";
     else if (args.size() == 1)
-        program = "(function(){\n" + args.at(exec, 0).toString(exec) + "\n})";
+        program = "(function() { " + args.at(exec, 0).toString(exec) + "\n})";
     else {
         program = "(function(" + args.at(exec, 0).toString(exec);
         for (size_t i = 1; i < args.size() - 1; i++)
             program += "," + args.at(exec, i).toString(exec);
-        program += "){\n" + args.at(exec, args.size() - 1).toString(exec) + "\n})";
+        program += ") { " + args.at(exec, args.size() - 1).toString(exec) + "\n})";
     }
 
     int errLine;
