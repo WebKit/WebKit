@@ -1,3 +1,23 @@
+2009-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Based on a patch by Nico Weber <nicolasweber@gmx.de>
+
+        Bug 24755: LayoutTests/http/tests/misc/url-in-utf16le.html regression
+        https://bugs.webkit.org/show_bug.cgi?id=24755
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::isUTF7Encoding): Added. Checks if the current encoding
+        is UTF7 without loading extended codecs.
+        (WebCore::TextEncoding::encodingForFormSubmission): Use isUTF7Encoding() instead
+        of comparing with UTF7Encoding(). Eliminate the explicit check of
+        noExtendedTextEncodingNameUsed() because that's now handled by the functions
+        that this function calls instead.
+
+        * platform/text/TextEncoding.h: Added isUTF7Encoding function.
+        Also tweaked formatting a bit.
+
 2009-03-20  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.

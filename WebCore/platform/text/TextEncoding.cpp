@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -166,12 +166,21 @@ bool TextEncoding::isNonByteBasedEncoding() const
 {
     if (noExtendedTextEncodingNameUsed()) {
         return *this == UTF16LittleEndianEncoding()
-               || *this == UTF16BigEndianEncoding();
+            || *this == UTF16BigEndianEncoding();
     }
+
     return *this == UTF16LittleEndianEncoding()
-           || *this == UTF16BigEndianEncoding()
-           || *this == UTF32BigEndianEncoding()
-           || *this == UTF32LittleEndianEncoding();
+        || *this == UTF16BigEndianEncoding()
+        || *this == UTF32BigEndianEncoding()
+        || *this == UTF32LittleEndianEncoding();
+}
+
+bool TextEncoding::isUTF7Encoding() const
+{
+    if (noExtendedTextEncodingNameUsed())
+        return false;
+
+    return *this == UTF7Encoding();
 }
 
 const TextEncoding& TextEncoding::closestByteBasedEquivalent() const
@@ -188,9 +197,7 @@ const TextEncoding& TextEncoding::closestByteBasedEquivalent() const
 // but it's fraught with problems and we'd rather steer clear of it.
 const TextEncoding& TextEncoding::encodingForFormSubmission() const
 {
-    if (noExtendedTextEncodingNameUsed())
-        return *this;
-    if (isNonByteBasedEncoding() || *this == UTF7Encoding())
+    if (isNonByteBasedEncoding() || isUTF7Encoding())
         return UTF8Encoding();
     return *this;
 }
