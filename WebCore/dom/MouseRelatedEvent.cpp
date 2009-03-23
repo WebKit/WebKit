@@ -143,9 +143,10 @@ void MouseRelatedEvent::receivedTarget()
     // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {
         if (RenderObject* r = targ->renderer()) {
-            IntPoint localPos = roundedIntPoint(r->absoluteToLocal(FloatPoint(m_pageX, m_pageY), false, true));
-            m_offsetX = localPos.x();
-            m_offsetY = localPos.y();
+            FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
+            float zoomFactor = (view() && view()->frame()) ? view()->frame()->pageZoomFactor() : 1.0f;
+            m_offsetX = lroundf(localPos.x() / zoomFactor);
+            m_offsetY = lroundf(localPos.y() / zoomFactor);
         }
     }
 

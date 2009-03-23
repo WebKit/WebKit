@@ -1,5 +1,26 @@
 2009-03-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24736
+        
+        Test listbox hit testing, slider hit testing, and search field
+        hit testing with zoom style (which, unfortunately, isn't quite
+        the same as testing full page zoom).
+
+        * fast/forms/listbox-hit-test-zoomed.html: Added.
+        * fast/forms/search-zoomed.html: Added.
+        * fast/forms/slider-zoomed-expected.txt: Added.
+        * fast/forms/slider-zoomed.html: Added.
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.checksum: Added.
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.png: Added.
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.txt: Added.
+        * platform/mac/fast/forms/search-zoomed-expected.checksum: Added.
+        * platform/mac/fast/forms/search-zoomed-expected.png: Added.
+        * platform/mac/fast/forms/search-zoomed-expected.txt: Added.
+
+2009-03-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
         
         https://bugs.webkit.org/show_bug.cgi?id=24753

@@ -678,16 +678,8 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 
         // Convert to coords relative to the list box if needed.
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(evt);
-        // FIXME: need to adjust offsetX/offsetY for full page zoom
-        int offsetX = mouseEvent->offsetX();
-        int offsetY = mouseEvent->offsetY();
-        Node* target = evt->target()->toNode();
-        if (target != this) {
-            FloatPoint absPos = renderer()->absoluteToLocal(FloatPoint(offsetX, offsetY), false, true);
-            offsetX = absPos.x();
-            offsetY = absPos.y();
-        }
-        int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(offsetX, offsetY);
+        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
+        int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(localOffset.x(), localOffset.y());
         if (listIndex >= 0) {
             // Save the selection so it can be compared to the new selection when we call onChange during mouseup, or after autoscroll finishes.
             saveLastSelection();

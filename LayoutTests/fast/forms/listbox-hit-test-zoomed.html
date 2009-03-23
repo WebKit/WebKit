@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <style type="text/css" media="screen">
+          html {
+            zoom: 120%;
+          }
+        </style>
+        <script>
+            function setup() {
+                var results = document.createElement('div');
+                results.id = "res";
+                results.appendChild(document.createTextNode("Results:"));
+                document.body.appendChild(results);
+            }
+            function test() {
+                setup();
+                
+                mouseDownOnSelect("sl1", 1, false, false);                
+                var expectedSelectionResults = new Array(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 1);
+
+                mouseDownOnSelect("sl1", 6, false, false);                
+                expectedSelectionResults = new Array(false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 2);
+            }
+            
+            function mouseDownOnSelect(selId, index, shift, meta) {
+                var sl = document.getElementById(selId);
+                var itemHeight = 14 * 1.2;
+                var borderPaddingTop = 20 * 1.2;
+                var borderPaddingLeft = 20 * 1.2;
+                var y = index * itemHeight - window.pageYOffset + borderPaddingTop + itemHeight / 2;
+                
+                var clickX = sl.offsetLeft + borderPaddingLeft + 5;
+                var clickY = sl.offsetTop + y;
+                var event = document.createEvent("MouseEvent");
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, clickX, clickY, clickX, clickY, false, false, shift, meta, 0, document);
+                sl.dispatchEvent(event);
+            }
+            
+            function testResults(selId, expectedArr, testNum) {
+                var sl = document.getElementById(selId);
+                var res = document.getElementById('res');
+                var resultsArr = new Array(sl.options.length);
+                
+                var i;
+                for (i=0; i < sl.options.length; i++) {
+                    resultsArr[i] = sl.options[i].selected;
+                }
+                var successString = "Failed";
+                var success = false;
+                if (expectedArr.join() == resultsArr.join()) {
+                    success = true;
+                    successString = "Passed";
+                }
+                
+               log("Test " + testNum + " " + successString);
+                if (!success) {
+                    log("<pre>     Expected: " + expectedArr.join() + "<br>" + "     Actual: " + resultsArr.join() + "</pre>");
+                }
+            }
+            
+            function log(msg) {
+                var r = document.getElementById('res');
+                r.innerHTML = r.innerHTML + "<br>" + msg;
+            }
+        </script>
+    </head>
+    <body onload="test()">
+
+    <select id="sl1" multiple style="height: 135px; border: 10px solid; padding: 10px;">
+        <option>one</option>
+        <option>two</option>
+        <option>three</option>
+        <option>four</option>
+        <option>five</option>
+        <option>six</option>
+        <option>seven</option>
+        <option>eight</option>
+        <option>nine</option>
+        <option>ten</option>
+        <option>eleven</option>
+        <option>twelve</option>
+        <option>thirteen</option>
+        <option>fourteen</option>
+        <option>fifteen</option>
+        <option>sixteen</option>
+        <option>seventeen</option>
+    </select>
+    
+    </body>
+</html>

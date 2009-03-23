@@ -1,0 +1,51 @@
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>slider-transformed</title>
+  <style type="text/css" media="screen">
+    html {
+/*      zoom: 120%;*/
+    }
+    input[type="range"] {
+      width: 200px;
+    }
+    
+    #results {
+      margin-top: 60px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function dispatchEvent(eventType, clientX, clientY)
+    {
+      var ev = document.createEvent("MouseEvent");
+      ev.initMouseEvent(eventType, true, true, window, 1, 1, 1, clientX, clientY, false, false, false, false, 0, document);
+      var target = document.elementFromPoint(ev.pageX, ev.pageY);
+      target.dispatchEvent(ev);
+    }
+    
+    function test()
+    {
+      // For some reason the slider needs mouseup/mousedown, not just a "click"
+      dispatchEvent("mousedown", 150, 15);
+      dispatchEvent("mouseup", 150, 15);
+
+      const expectedValue = 72;
+      var val = document.getElementById('slider').value;
+      var result;
+      if (val == expectedValue)
+        result = "PASS: slider value set to " + expectedValue;
+      else
+        result = "FAIL: expected slider value " + expectedValue + ", got " + val;
+      document.getElementById('results').innerHTML = result;
+    }
+  </script>
+</head>
+<body onload="test()">
+  <input type="range" id="slider" min="0" max="100" value="10">
+  <div id="results">
+  </div>
+</body>
+</html>

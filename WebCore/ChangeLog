@@ -24,6 +24,33 @@
 
 2009-03-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=24736
+        
+        Fix three mostly-unrelated problems with full-page zoom:
+        
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        Document::elementFromPoint() needs to take full-page zoom into account.
+        
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        Take full-page zoom into account when computing offsetX/offsetY.
+        
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Don't use offsetX/offsetY when hit testing list boxes; offsets were broken
+        with full-page zoom, and using pageX/pageY is easier because we don't
+        have to worry about the event target, and we already have a point in
+        absolute coordinates.
+
+        Tests: fast/forms/listbox-hit-test-zoomed.html
+               fast/forms/search-zoomed.html
+               fast/forms/slider-zoomed.html
+
+2009-03-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
 
         https://bugs.webkit.org/show_bug.cgi?id=24753
