@@ -1,3 +1,12 @@
+2009-03-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        Require gnome-keyring 2.26.0, since we were depending on an
+        unreleased trunk revision between 2.25.91 and 2.26.0.
+
+        * configure.ac:
+
 2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
 
         Reviewed by Holger Freyther.
