@@ -70,6 +70,8 @@ namespace WebCore {
 
         virtual int minimumMenuListSize(RenderStyle*) const;
 
+        virtual void adjustSliderThumbSize(RenderObject*) const;
+
         virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return paintButton(o, i, r); }
         virtual void setCheckboxSize(RenderStyle*) const;
 
@@ -81,6 +83,10 @@ namespace WebCore {
         virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
         virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return paintTextField(o, i, r); }
+
+        virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+        virtual bool paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return paintSliderTrack(o, i, r); }
 
         virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
@@ -122,6 +128,7 @@ namespace WebCore {
 
     private:
         unsigned determineState(RenderObject*);
+        unsigned determineSliderThumbState(RenderObject*);
         unsigned determineClassicState(RenderObject*);
 
         ThemeData getThemeData(RenderObject*);

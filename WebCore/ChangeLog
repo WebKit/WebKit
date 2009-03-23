@@ -1,3 +1,20 @@
+2009-03-20  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24720
+        RenderThemeChromium should draw something for Slider parts instead of
+        dropping them on the floor.
+
+        * platform/chromium/ChromiumBridge.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::adjustSliderThumbSize):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::RenderThemeChromiumWin::determineSliderThumbState):
+        (WebCore::RenderThemeChromiumWin::getThemeData):
+        * rendering/RenderThemeChromiumWin.h:
+        (WebCore::RenderThemeChromiumWin::paintSliderThumb):
+
 2009-03-23  Glen Murphy  <glen@chromium.org>
 
         Reviewed by Darin Fisher.

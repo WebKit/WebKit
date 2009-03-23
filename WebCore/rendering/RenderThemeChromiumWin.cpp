@@ -36,6 +36,7 @@
 #include "FontUtilsChromiumWin.h"
 #include "GraphicsContext.h"
 #include "RenderBox.h"
+#include "RenderSlider.h"
 #include "ScrollbarTheme.h"
 #include "SkiaUtils.h"
 #include "TransparencyWin.h"
@@ -395,6 +396,20 @@ int RenderThemeChromiumWin::minimumMenuListSize(RenderStyle* style) const
     return 0;
 }
 
+void RenderThemeChromiumWin::adjustSliderThumbSize(RenderObject* o) const
+{
+    // These sizes match what WinXP draws for various menus.
+    const int sliderThumbAlongAxis = 11;
+    const int sliderThumbAcrossAxis = 21;
+    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == MediaSliderThumbPart) {
+        o->style()->setWidth(Length(sliderThumbAlongAxis, Fixed));
+        o->style()->setHeight(Length(sliderThumbAcrossAxis, Fixed));
+    } else if (o->style()->appearance() == SliderThumbVerticalPart) {
+        o->style()->setWidth(Length(sliderThumbAcrossAxis, Fixed));
+        o->style()->setHeight(Length(sliderThumbAlongAxis, Fixed));
+    }
+}
+
 void RenderThemeChromiumWin::setCheckboxSize(RenderStyle* style) const
 {
     // If the width and height are both specified, then we have nothing to do.
@@ -432,6 +447,19 @@ bool RenderThemeChromiumWin::paintButton(RenderObject* o, const RenderObject::Pa
 bool RenderThemeChromiumWin::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     return paintTextFieldInternal(o, i, r, true);
+}
+
+bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    const ThemeData& themeData = getThemeData(o);
+
+    WebCore::ThemePainter painter(i.context, r);
+    ChromiumBridge::paintTrackbar(painter.context(),
+                                  themeData.m_part,
+                                  themeData.m_state,
+                                  themeData.m_classicState,
+                                  painter.drawRect());
+    return false;
 }
 
 bool RenderThemeChromiumWin::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -575,6 +603,20 @@ unsigned RenderThemeChromiumWin::determineState(RenderObject* o)
     return result;
 }
 
+unsigned RenderThemeChromiumWin::determineSliderThumbState(RenderObject* o)
+{
+    unsigned result = TUS_NORMAL;
+    if (!isEnabled(o->parent()))
+        result = TUS_DISABLED;
+    else if (supportsFocus(o->style()->appearance()) && isFocused(o->parent()))
+        result = TUS_FOCUSED;
+    else if (static_cast<RenderSlider*>(o->parent())->inDragMode())
+        result = TUS_PRESSED;
+    else if (isHovered(o))
+        result = TUS_HOT;
+    return result;
+}
+
 unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
 {
     unsigned result = 0;
@@ -593,29 +635,48 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
 {
     ThemeData result;
     switch (o->style()->appearance()) {
-    case PushButtonPart:
-    case ButtonPart:
-        result.m_part = BP_PUSHBUTTON;
-        result.m_classicState = DFCS_BUTTONPUSH;
-        break;
     case CheckboxPart:
         result.m_part = BP_CHECKBOX;
+        result.m_state = determineState(o);
         result.m_classicState = DFCS_BUTTONCHECK;
         break;
     case RadioPart:
         result.m_part = BP_RADIOBUTTON;
+        result.m_state = determineState(o);
         result.m_classicState = DFCS_BUTTONRADIO;
+        break;
+    case PushButtonPart:
+    case ButtonPart:
+        result.m_part = BP_PUSHBUTTON;
+        result.m_state = determineState(o);
+        result.m_classicState = DFCS_BUTTONPUSH;
+        break;
+    case SliderHorizontalPart:
+        result.m_part = TKP_TRACK;
+        result.m_state = TRS_NORMAL;
+        break;
+    case SliderVerticalPart:
+        result.m_part = TKP_TRACKVERT;
+        result.m_state = TRVS_NORMAL;
+        break;
+    case SliderThumbHorizontalPart:
+        result.m_part = TKP_THUMBBOTTOM;
+        result.m_state = determineSliderThumbState(o);
+        break;
+    case SliderThumbVerticalPart:
+        result.m_part = TKP_THUMBVERT;
+        result.m_state = determineSliderThumbState(o);
         break;
     case ListboxPart:
     case MenulistPart:
     case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:
-        result.m_part = ETS_NORMAL;
+        result.m_part = EP_EDITTEXT;
+        result.m_state = determineState(o);
         break;
     }
 
-    result.m_state = determineState(o);
     result.m_classicState |= determineClassicState(o);
 
     return result;

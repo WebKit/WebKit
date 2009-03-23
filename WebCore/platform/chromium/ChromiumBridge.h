@@ -152,6 +152,8 @@ namespace WebCore {
             GraphicsContext*, int part, int state, int classicState, const IntRect&, const IntRect& alignRect);
         static void paintTextField(
             GraphicsContext*, int part, int state, int classicState, const IntRect&, const Color&, bool fillContentArea, bool drawEdges);
+        static void paintTrackbar(
+            GraphicsContext*, int part, int state, int classicState, const IntRect&);
 #endif
 
         // Trace Event --------------------------------------------------------
