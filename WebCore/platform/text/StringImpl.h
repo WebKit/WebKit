@@ -166,7 +166,14 @@ public:
     operator NSString*();
 #endif
 
+    void operator delete(void*);
+
 private:
+    // Allocation from a custom buffer is only allowed internally to avoid
+    // mismatched allocators. Callers should use create().
+    void* operator new(size_t size);
+    void* operator new(size_t size, void* address);
+
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
 
     unsigned m_length;
@@ -174,6 +181,10 @@ private:
     mutable unsigned m_hash;
     bool m_inTable;
     bool m_hasTerminatingNullCharacter;
+    // In some cases, we allocate the StringImpl struct and its data
+    // within a single heap buffer. In this case, the m_data pointer
+    // is an "internal buffer", and does not need to be deallocated.
+    bool m_bufferIsInternal;
 };
 
 bool equal(StringImpl*, StringImpl*);
