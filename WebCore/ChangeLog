@@ -1,3 +1,16 @@
+2009-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=24753
+        
+        The rect for CSS 'clip' needs to have zooming applied to it.
+
+        Test: fast/css/clip-zooming.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2009-03-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

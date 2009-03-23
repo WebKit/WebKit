@@ -3234,7 +3234,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(horizontalBorderSpacing, HorizontalBorderSpacing)
         if (!primitiveValue)
             return;
-        short spacing =  primitiveValue->computeLengthShort(style(), zoomFactor);
+        short spacing = primitiveValue->computeLengthShort(style(), zoomFactor);
         m_style->setHorizontalBorderSpacing(spacing);
         return;
     }
@@ -3242,7 +3242,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(verticalBorderSpacing, VerticalBorderSpacing)
         if (!primitiveValue)
             return;
-        short spacing =  primitiveValue->computeLengthShort(style(), zoomFactor);
+        short spacing = primitiveValue->computeLengthShort(style(), zoomFactor);
         m_style->setVerticalBorderSpacing(spacing);
         return;
     }
@@ -3941,8 +3941,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 right = m_parentStyle->clipRight();
                 bottom = m_parentStyle->clipBottom();
                 left = m_parentStyle->clipLeft();
-            }
-            else {
+            } else {
                 hasClip = false;
                 top = right = bottom = left = Length();
             }
@@ -3955,11 +3954,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             Rect* rect = primitiveValue->getRectValue();
             if (!rect)
                 return;
-            top = convertToLength(rect->top(), style());
-            right = convertToLength(rect->right(), style());
-            bottom = convertToLength(rect->bottom(), style());
-            left = convertToLength(rect->left(), style());
 
+            top = Length(rect->top()->computeLengthIntForLength(style(), zoomFactor), Fixed);
+            right = Length(rect->right()->computeLengthIntForLength(style(), zoomFactor), Fixed);
+            bottom = Length(rect->bottom()->computeLengthIntForLength(style(), zoomFactor), Fixed);
+            left = Length(rect->left()->computeLengthIntForLength(style(), zoomFactor), Fixed);
         } else if (primitiveValue->getIdent() != CSSValueAuto) {
             return;
         }

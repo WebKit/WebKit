@@ -1,3 +1,13 @@
+2009-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24753
+
+        Test for CSS clip with zooming.
+
+        * fast/css/clip-zooming.html: Added.
+
 2009-03-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
