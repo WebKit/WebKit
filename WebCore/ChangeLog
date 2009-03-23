@@ -1,3 +1,17 @@
+2009-03-23  Glen Murphy  <glen@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24657
+
+        Fix Skia drawing of highly scaled bitmaps; the conversion to
+        IntRect produced visible layout test failures in highly scaled 
+        coordinate systems.
+
+        Test: svg/custom/image-small-width-height.svg
+
+        * WebCore\platform\graphics\skia\ImageSkia.cpp:
+
 2009-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Provide JavaScript exception information after slow script timeout

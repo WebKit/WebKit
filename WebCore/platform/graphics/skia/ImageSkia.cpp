@@ -427,7 +427,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     paintSkBitmap(ctxt->platformContext(),
                   *bm,
                   enclosingIntRect(normSrcRect),
-                  enclosingIntRect(normDstRect),
+                  normDstRect,
                   WebCoreCompositeToSkiaComposite(compositeOp));
 }
 
@@ -447,7 +447,7 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
     paintSkBitmap(ctxt->platformContext(),
                   m_nativeImage,
                   enclosingIntRect(normSrcRect),
-                  enclosingIntRect(normDstRect),
+                  normDstRect,
                   WebCoreCompositeToSkiaComposite(compositeOp));
 }
 
