@@ -751,18 +751,22 @@ JSValueEncodedAsPointer* JITStubs::cti_op_instanceof(STUB_ARGS)
         VM_THROW_EXCEPTION();
     }
 
-    if (!asObject(baseVal)->structure()->typeInfo().implementsHasInstance())
+    JSObject* baseObj = asObject(baseVal);
+    TypeInfo typeInfo = baseObj->structure()->typeInfo();
+    if (!typeInfo.implementsHasInstance())
         return JSValuePtr::encode(jsBoolean(false));
 
-    if (!proto.isObject()) {
-        throwError(callFrame, TypeError, "instanceof called on an object with an invalid prototype property.");
-        VM_THROW_EXCEPTION();
+    if (!typeInfo.overridesHasInstance()) {
+        if (!proto.isObject()) {
+            throwError(callFrame, TypeError, "instanceof called on an object with an invalid prototype property.");
+            VM_THROW_EXCEPTION();
+        }
+
+        if (!value.isObject())
+            return JSValuePtr::encode(jsBoolean(false));
     }
-        
-    if (!value.isObject())
-        return JSValuePtr::encode(jsBoolean(false));
 
-    JSValuePtr result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
+    JSValuePtr result = jsBoolean(baseObj->hasInstance(callFrame, value, proto));
     CHECK_FOR_EXCEPTION_AT_END();
 
     return JSValuePtr::encode(result);
