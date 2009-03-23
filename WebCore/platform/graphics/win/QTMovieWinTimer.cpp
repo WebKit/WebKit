@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,9 @@ static LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wPara
         processingCustomTimerMessage = true;
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
+    } else if (message == WM_TIMER && wParam == timerID) {
+        stopSharedTimer();
+        sharedTimerFiredFunction();
     } else
         return DefWindowProc(hWnd, message, wParam, lParam);
     return 0;
@@ -79,11 +82,6 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-static void CALLBACK timerFired(HWND, UINT, UINT_PTR, DWORD)
-{
-    sharedTimerFiredFunction();
-}
-
 void setSharedTimerFireDelay(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
@@ -99,29 +97,27 @@ void setSharedTimerFireDelay(double interval)
             intervalInMS = (unsigned)interval;
     }
 
-    if (timerID) {
-        KillTimer(0, timerID);
-        timerID = 0;
-    }
+    stopSharedTimer();
+    initializeOffScreenTimerWindow();
 
     // We don't allow nested PostMessages, since the custom messages will effectively starve
     // painting and user input. (Win32 has a tri-level queue with application messages > 
     // user input > WM_PAINT/WM_TIMER.)
     // In addition, if the queue contains input events that have been there since the last call to
     // GetQueueStatus, PeekMessage or GetMessage we favor timers.
-    if (intervalInMS < USER_TIMER_MINIMUM && processingCustomTimerMessage &&
-        !LOWORD(::GetQueueStatus(QS_ALLINPUT))) {
+    if (intervalInMS < USER_TIMER_MINIMUM 
+        && !processingCustomTimerMessage 
+        && !LOWORD(::GetQueueStatus(QS_ALLINPUT))) {
         // Windows SetTimer does not allow timeouts smaller than 10ms (USER_TIMER_MINIMUM)
-        initializeOffScreenTimerWindow();
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
     } else
-        timerID = SetTimer(0, 0, intervalInMS, timerFired);
+        timerID = SetTimer(timerWindowHandle, timerFiredMessage, intervalInMS, 0);
 }
 
 void stopSharedTimer()
 {
     if (timerID) {
-        KillTimer(0, timerID);
+        KillTimer(timerWindowHandle, timerID);
         timerID = 0;
     }
 }

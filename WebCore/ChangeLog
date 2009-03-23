@@ -1,5 +1,27 @@
 2009-03-23  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6704282>
+        https://bugs.webkit.org/show_bug.cgi?id=24719
+        QTMovieWinTimer logic inversion
+
+        Fix logic inversion in the Win32 timer used by QTMovieWin that caused it to always
+        use SetTimer, even when the intervals was below USER_TIMER_MINIMUM. A side effect of
+        this was that a movie timer would sometimes be blocked for significant amounts of time 
+        because WM_TIMER messages are not processed when the thread's message queue has any
+        higher priority messages, and WebCore/Win's timer uses PostMessage for low interval
+        timers. Also change SetTimer call to use HWND and custom message instead of 
+        timer function since the timer already has an HWND for processing PostMessage.
+
+        Not possible to make a test for this because it is so timing dependant.
+
+        * platform/graphics/win/QTMovieWinTimer.cpp:
+        (TimerWindowWndProc):
+        (setSharedTimerFireDelay):
+
+2009-03-23  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Adele Peterson.
 
         https://bugs.webkit.org/show_bug.cgi?id=24588
