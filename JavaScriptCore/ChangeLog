@@ -1,3 +1,41 @@
+2009-03-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix exception handling in API
+
+        We can't just use the ExecState exception slot for returning exceptions
+        from class introspection functions provided through the API as many JSC
+        functions will explicitly clear the ExecState exception when returning.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Base>::getOwnPropertySlot):
+        (JSC::JSCallbackObject<Base>::put):
+        (JSC::JSCallbackObject<Base>::deleteProperty):
+        (JSC::JSCallbackObject<Base>::construct):
+        (JSC::JSCallbackObject<Base>::hasInstance):
+        (JSC::JSCallbackObject<Base>::call):
+        (JSC::JSCallbackObject<Base>::toNumber):
+        (JSC::JSCallbackObject<Base>::toString):
+        (JSC::JSCallbackObject<Base>::staticValueGetter):
+        (JSC::JSCallbackObject<Base>::callbackGetter):
+        * API/tests/testapi.c:
+        (MyObject_hasProperty):
+        (MyObject_getProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_callAsFunction):
+        (MyObject_callAsConstructor):
+        (MyObject_hasInstance):
+        (EvilExceptionObject_hasInstance):
+        (EvilExceptionObject_convertToType):
+        (EvilExceptionObject_class):
+        (main):
+        * API/tests/testapi.js:
+        (EvilExceptionObject.hasInstance):
+        (EvilExceptionObject.toNumber):
+        (EvilExceptionObject.toStringExplicit):
+
 2009-03-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

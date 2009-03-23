@@ -80,9 +80,14 @@ shouldBe("MyObject.alwaysOne", 1);
 MyObject.cantDelete = 1;
 delete MyObject.cantDelete;
 shouldBe("MyObject.cantDelete", 1);
-shouldBe("delete MyObject.throwOnDelete", 2); // deleteProperty -- should throw 2
+shouldBe("delete MyObject.throwOnDelete", "an exception");
 MyObject.cantSet = 1;
 shouldBe("MyObject.cantSet", undefined);
+shouldBe("MyObject.throwOnGet", "an exception");
+shouldBe("MyObject.throwOnSet = 5", "an exception");
+shouldBe("MyObject('throwOnCall')", "an exception");
+shouldBe("new MyObject('throwOnConstruct')", "an exception");
+shouldBe("'throwOnHasInstance' instanceof MyObject", "an exception");
 
 var foundMyPropertyName = false;
 var foundRegularType = false;
@@ -144,6 +149,19 @@ shouldBe("derived.baseDup = 0", 2);
 shouldBe("derived.baseOnly = 0", 1);
 shouldBe("derived.derivedOnly = 0", 2)
 shouldBe("derived.protoDup = 0", 2);
+
+shouldBe("undefined instanceof MyObject", false);
+EvilExceptionObject.hasInstance = function f() { return f(); };
+EvilExceptionObject.__proto__ = undefined;
+shouldThrow("undefined instanceof EvilExceptionObject");
+EvilExceptionObject.hasInstance = function () { return true; };
+shouldBe("undefined instanceof EvilExceptionObject", true);
+
+EvilExceptionObject.toNumber = function f() { return f(); }
+shouldThrow("EvilExceptionObject*5");
+EvilExceptionObject.toStringExplicit = function f() { return f(); }
+shouldThrow("String(EvilExceptionObject)");
+
 
 if (failed)
     throw "Some tests failed";

@@ -128,6 +128,7 @@ static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStr
 
     if (JSStringIsEqualToUTF8CString(propertyName, "alwaysOne")
         || JSStringIsEqualToUTF8CString(propertyName, "cantFind")
+        || JSStringIsEqualToUTF8CString(propertyName, "throwOnGet")
         || JSStringIsEqualToUTF8CString(propertyName, "myPropertyName")
         || JSStringIsEqualToUTF8CString(propertyName, "hasPropertyLie")
         || JSStringIsEqualToUTF8CString(propertyName, "0")) {
@@ -153,7 +154,11 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
     if (JSStringIsEqualToUTF8CString(propertyName, "cantFind")) {
         return JSValueMakeUndefined(context);
     }
-    
+
+    if (JSStringIsEqualToUTF8CString(propertyName, "throwOnGet")) {
+        return JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+    }
+
     if (JSStringIsEqualToUTF8CString(propertyName, "0")) {
         *exception = JSValueMakeNumber(context, 1);
         return JSValueMakeNumber(context, 1);
@@ -172,6 +177,10 @@ static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSStr
     if (JSStringIsEqualToUTF8CString(propertyName, "cantSet"))
         return true; // pretend we set the property in order to swallow it
     
+    if (JSStringIsEqualToUTF8CString(propertyName, "throwOnSet")) {
+        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+    }
+    
     return false;
 }
 
@@ -184,7 +193,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
         return true;
     
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnDelete")) {
-        *exception = JSValueMakeNumber(context, 2);
+        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
         return false;
     }
 
@@ -214,6 +223,11 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     UNUSED_PARAM(thisObject);
     UNUSED_PARAM(exception);
 
+    if (argumentCount > 0 && JSValueIsString(context, arguments[0]) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, arguments[0], 0), "throwOnCall")) {
+        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        return JSValueMakeUndefined(context);
+    }
+
     if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
         return JSValueMakeNumber(context, 1);
     
@@ -225,6 +239,11 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
 
+    if (argumentCount > 0 && JSValueIsString(context, arguments[0]) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, arguments[0], 0), "throwOnConstruct")) {
+        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        return object;
+    }
+
     if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
         return JSValueToObject(context, JSValueMakeNumber(context, 1), exception);
     
@@ -235,6 +254,11 @@ static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, 
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(constructor);
+
+    if (JSValueIsString(context, possibleValue) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, possibleValue, 0), "throwOnHasInstance")) {
+        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), constructor, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        return false;
+    }
 
     JSStringRef numberString = JSStringCreateWithUTF8CString("Number");
     JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString, exception), exception);
@@ -309,6 +333,83 @@ static JSClassRef MyObject_class(JSContextRef context)
     
     return jsClass;
 }
+
+static bool EvilExceptionObject_hasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleValue, JSValueRef* exception)
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(constructor);
+    
+    JSStringRef hasInstanceName = JSStringCreateWithUTF8CString("hasInstance");
+    JSValueRef hasInstance = JSObjectGetProperty(context, constructor, hasInstanceName, exception);
+    JSStringRelease(hasInstanceName);
+    
+    JSObjectRef function = JSValueToObject(context, hasInstance, exception);
+    JSValueRef result = JSObjectCallAsFunction(context, function, constructor, 1, &possibleValue, exception);
+    return result && JSValueToBoolean(context, result);
+}
+
+static JSValueRef EvilExceptionObject_convertToType(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(exception);
+    JSStringRef funcName;
+    switch (type) {
+    case kJSTypeNumber:
+        funcName = JSStringCreateWithUTF8CString("toNumber");
+        break;
+    case kJSTypeString:
+        funcName = JSStringCreateWithUTF8CString("toStringExplicit");
+        break;
+    default:
+        return NULL;
+        break;
+    }
+    
+    JSValueRef func = JSObjectGetProperty(context, object, funcName, exception);
+    JSStringRelease(funcName);    
+    JSObjectRef function = JSValueToObject(context, func, exception);
+    if (!function)
+        return NULL;
+    JSValueRef value = JSObjectCallAsFunction(context, function, object, 0, NULL, exception);
+    if (!value)
+        return (JSValueRef)JSStringCreateWithUTF8CString("convertToType failed");
+    return value;
+}
+
+JSClassDefinition EvilExceptionObject_definition = {
+    0,
+    kJSClassAttributeNone,
+
+    "EvilExceptionObject",
+    NULL,
+
+    NULL,
+    NULL,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    EvilExceptionObject_hasInstance,
+    EvilExceptionObject_convertToType,
+};
+
+static JSClassRef EvilExceptionObject_class(JSContextRef context)
+{
+    UNUSED_PARAM(context);
+    
+    static JSClassRef jsClass;
+    if (!jsClass)
+        jsClass = JSClassCreate(&EvilExceptionObject_definition);
+    
+    return jsClass;
+}
+
 
 static JSValueRef Base_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -668,6 +769,11 @@ int main(int argc, char* argv[])
     JSStringRef myObjectIString = JSStringCreateWithUTF8CString("MyObject");
     JSObjectSetProperty(context, globalObject, myObjectIString, myObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myObjectIString);
+    
+    JSObjectRef EvilExceptionObject = JSObjectMake(context, EvilExceptionObject_class(context), NULL);
+    JSStringRef EvilExceptionObjectIString = JSStringCreateWithUTF8CString("EvilExceptionObject");
+    JSObjectSetProperty(context, globalObject, EvilExceptionObjectIString, EvilExceptionObject, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(EvilExceptionObjectIString);
     
     JSValueRef exception;
 
