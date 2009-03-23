@@ -2,10 +2,14 @@ Test that play() from EMPTY network state triggers load() and async play event.
 
 EXPECTED (video.networkState == '0') OK
 RUN(video.play())
-EVENT(loadstart)
-EXPECTED (video.paused == 'true') OK
 SCRIPT DONE
-EVENT(play)
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EVENT(playing)
 EXPECTED (video.paused == 'false') OK
 END OF TEST
 

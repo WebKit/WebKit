@@ -1,0 +1,9 @@
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'content/bogus.mpeg') OK
+
+EVENT(error)
+EXPECTED (relativeURL(video.currentSrc) == 'content/bogus.mpeg') OK
+EXPECTED (media.error.code == '4') OK
+
+END OF TEST
+Test that a <source> element is not used when a bogus 'src' attribute is present

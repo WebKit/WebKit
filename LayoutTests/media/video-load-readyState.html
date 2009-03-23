@@ -1,18 +1,21 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-    function testReadyState(expected, endIt)
+    function testReadyState(expected, endit, op)
     {
-        testExpected("video.readyState", expected);
-        if (endIt)
+        testExpected("video.readyState", expected, op);
+        if (endit)
             endTest();
     }
 
-    testExpected("video.readyState", HTMLMediaElement.DATA_UNAVAILABLE);
-    waitForEvent("loadstart", function () { testReadyState(HTMLMediaElement.DATA_UNAVAILABLE); } );
-    waitForEvent("loadedmetadata", function () { testReadyState(HTMLMediaElement.DATA_UNAVAILABLE); } );
-    waitForEvent("loadedfirstframe", function () { testReadyState(HTMLMediaElement.CAN_SHOW_CURRENT_FRAME); } );
-    waitForEvent("canshowcurrentframe", function () { testReadyState(HTMLMediaElement.CAN_SHOW_CURRENT_FRAME); } );
-    waitForEvent("canplaythrough", function () { testReadyState(HTMLMediaElement.CAN_PLAY_THROUGH, true); } );
+    testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+    waitForEvent("loadstart");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEventAndFail("play");
+    waitForEventAndFail("playing");
+    waitForEvent("canplaythrough", function () { testReadyState(HTMLMediaElement.HAVE_ENOUGH_DATA, true ); } );
+
     video.src = "content/test.mp4";
 </script>

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class MediaError : public RefCounted<MediaError> {
 public:
-    enum Code { MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE };
+    enum Code { MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE, MEDIA_ERR_NONE_SUPPORTED };
 
     static PassRefPtr<MediaError> create(Code code) { return adoptRef(new MediaError(code)); }
 

@@ -1,0 +1,43 @@
+<html>
+<body>
+    <script src=video-test.js></script>
+
+    <video controls>
+        <source src=content/test.mp4 type="video/mpeg; codecs=&quot;avc1.4D400C&quot;">
+    </video>
+
+    <script>
+        findMediaElement();
+
+        var counter = 0;
+        function checkLoad() 
+        { 
+            consoleWrite("");
+            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            if (++counter == 2)
+                endTest();
+            run("video.src = 'content/silence.mpg'");
+            setTimeout(checkLoad, 200);
+            consoleWrite("");
+        };
+
+        waitForEvent("loadstart");
+        waitForEvent("ratechange");
+        waitForEvent("waiting");
+        waitForEvent("ratechange");
+        waitForEvent("durationchange");
+        waitForEvent("loadedmetadata");
+        waitForEvent("loadeddata");
+        waitForEvent("canplay");
+        waitForEvent("canplaythrough");
+        waitForEvent("play");
+        waitForEvent('loadstart', checkLoad);
+
+    </script>
+
+<p>Test that adding a 'src' attribute does nothing when a &lt;source&gt; element has already 
+been chosen
+</p>
+
+</body>
+</html>

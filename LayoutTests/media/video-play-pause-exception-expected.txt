@@ -1,6 +1,10 @@
-Video has no src. Test that play() and pause() rethrow the exception from load(). Test that the play and pause events are not dispatched.
+Video has no src. Test that the playing event is not dispatched.
 
-TEST(video.play()) THROWS(DOMException.INVALID_STATE_ERR) OK
-TEST(video.pause()) THROWS(DOMException.INVALID_STATE_ERR) OK
+RUN(video.play())
+RUN(video.pause())
+EVENT(waiting)
+EVENT(timeupdate)
+EVENT(pause)
+EXPECTED (video.networkState == '4') OK
 END OF TEST
 

@@ -1,6 +1,12 @@
-Test that removing src attribute triggers load
-EVENT(emptied)
-EVENT(loadstart)
-EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
-END OF TEST
 
+EVENT(loadedmetadata)
+EXPECTED (relativeURL(video.currentSrc) == 'content/silence.mpg') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+RUN(video.removeAttribute('src'))
+
+EXPECTED (relativeURL(video.currentSrc) == 'content/silence.mpg') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+END OF TEST
+Test that removing valid 'src' attribute DOES NOT trigger load of <source> elements

@@ -1,0 +1,17 @@
+
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'bogus.mov') OK
+
+EVENT(error)
+EXPECTED (video.error.code == '4') OK
+RUN(video.removeAttribute('src'))
+
+EVENT(loadstart)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
+
+EVENT(loadedmetadata)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+END OF TEST
+Test that removing invalid 'src' attribute triggers load of <source> elements

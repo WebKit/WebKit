@@ -97,9 +97,7 @@ private:
     void doSeek();
     void cancelSeek();
     void seekTimerFired(Timer<MediaPlayerPrivate>*);
-    void endPointTimerFired(Timer<MediaPlayerPrivate>*);
     float maxTimeLoaded() const;
-    void startEndPointTimerIfNeeded();
 
     virtual void movieEnded(QTMovieWin*);
     virtual void movieLoadStateChanged(QTMovieWin*);
@@ -117,9 +115,9 @@ private:
     float m_seekTo;
     float m_endTime;
     Timer<MediaPlayerPrivate> m_seekTimer;
-    Timer<MediaPlayerPrivate> m_endPointTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
+    unsigned m_enabledTrackCount;
     bool m_startedPlaying;
     bool m_isStreaming;
 #if DRAW_FRAME_RATE

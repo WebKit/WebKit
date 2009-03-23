@@ -4,11 +4,22 @@
 <script>
     video.src = "content/test.mp4";
 
-    waitForEvent('play', function () { testExpected("video.paused", true);} );
-    waitForEvent('timeupdate', function () { testExpected("video.paused", true);} );
+    waitForEvent("loadstart");
+    waitForEvent("ratechange");
+    waitForEvent("waiting");
+    waitForEvent("ratechange");
+    waitForEvent("durationchange");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEvent("canplaythrough");
+    waitForEvent("play");
+    waitForEvent("timeupdate");
     waitForEvent('pause', function () { testExpected("video.paused", true); endTest(); } );
+
 
     run("video.play()");
     run("video.pause()");
+    
     consoleWrite("SCRIPT DONE");
 </script>

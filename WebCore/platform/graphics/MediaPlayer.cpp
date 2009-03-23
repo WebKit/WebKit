@@ -82,7 +82,7 @@ public:
     virtual void setVolume(float) { }
 
     virtual MediaPlayer::NetworkState networkState() const { return MediaPlayer::Empty; }
-    virtual MediaPlayer::ReadyState readyState() const { return MediaPlayer::DataUnavailable; }
+    virtual MediaPlayer::ReadyState readyState() const { return MediaPlayer::HaveNothing; }
 
     virtual float maxTimeSeekable() const { return 0; }
     virtual float maxTimeBuffered() const { return 0; }
@@ -452,10 +452,28 @@ void MediaPlayer::timeChanged()
         m_mediaPlayerClient->mediaPlayerTimeChanged(this);
 }
 
+void MediaPlayer::sizeChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerSizeChanged(this);
+}
+
 void MediaPlayer::repaint()
 {
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerRepaint(this);
+}
+
+void MediaPlayer::durationChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerDurationChanged(this);
+}
+
+void MediaPlayer::rateChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerRateChanged(this);
 }
 
 }

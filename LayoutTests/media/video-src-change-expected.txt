@@ -1,10 +1,20 @@
-Test that changing src attribute triggers load when network state is empty.
-Test that it does not trigger load when network state is non-empty.
-EVENT(emptied)
-EXPECTED (video.networkState == '0') OK
-EVENT(loadstart)
+1. Test that an invalid src attribute fires an error when the file fails to load.
+2. Test that changing src attribute triggers load after a load fails.
+3. Test that changing src does not trigger load once a file is loaded.
+
+
+EVENT(error)
+EXPECTED (relativeURL(video.currentSrc) == 'bogus') OK
+EXPECTED (video.networkState == '4') OK
+EXPECTED (video.error.code == '4') OK
+
+RUN(video.setAttribute('src', 'content/test.mp4'))
+
+EVENT(loadedmetadata)
 EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
-EVENT(load)
-EXPECTED (video.networkState != '0') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+RUN(video.setAttribute('src', 'content/silence.mpg'))
+
 END OF TEST
 

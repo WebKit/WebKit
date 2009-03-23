@@ -127,7 +127,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isEndReached(false)
     , m_volume(0.5f)
     , m_networkState(MediaPlayer::Empty)
-    , m_readyState(MediaPlayer::DataUnavailable)
+    , m_readyState(MediaPlayer::HaveNothing)
     , m_startedPlaying(false)
     , m_isStreaming(false)
     , m_size(IntSize())
@@ -163,8 +163,8 @@ void MediaPlayerPrivate::load(const String& url)
         m_networkState = MediaPlayer::Loading;
         m_player->networkStateChanged();
     }
-    if (m_readyState != MediaPlayer::DataUnavailable) {
-        m_readyState = MediaPlayer::DataUnavailable;
+    if (m_readyState != MediaPlayer::HaveNothing) {
+        m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
     }
 
@@ -475,12 +475,11 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(pending));
 
         if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::CanPlayThrough;
+            m_readyState = MediaPlayer::HaveEnoughData;
         } else if (state == GST_STATE_PAUSED) {
-            m_readyState = MediaPlayer::CanPlayThrough;
+            m_readyState = MediaPlayer::HaveEnoughData;
         }
-        if (m_networkState < MediaPlayer::Loaded)
-            m_networkState = MediaPlayer::Loaded;
+        m_networkState = MediaPlayer::Loaded;
 
         g_object_get(m_playBin, "source", &m_source, NULL);
         if (!m_source)
@@ -498,12 +497,11 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
         if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::CanPlay;
+            m_readyState = MediaPlayer::HaveFutureData;
         } else if (state == GST_STATE_PAUSED) {
-            m_readyState = MediaPlayer::CanPlay;
+            m_readyState = MediaPlayer::HaveCurrentData;
         }
-        if (m_networkState < MediaPlayer::LoadedMetaData)
-            m_networkState = MediaPlayer::LoadedMetaData;
+        m_networkState = MediaPlayer::Loading;
         break;
     default:
         LOG_VERBOSE(Media, "Else : %d", ret);
@@ -511,7 +509,7 @@ void MediaPlayerPrivate::updateStates()
     }
 
     if (seeking())
-        m_readyState = MediaPlayer::DataUnavailable;
+        m_readyState = MediaPlayer::HaveNothing;
 
     if (m_networkState != oldNetworkState) {
         LOG_VERBOSE(Media, "Network State Changed from %u to %u",
@@ -560,12 +558,12 @@ void MediaPlayerPrivate::didEnd()
 
 void MediaPlayerPrivate::loadingFailed()
 {
-    if (m_networkState != MediaPlayer::LoadFailed) {
-        m_networkState = MediaPlayer::LoadFailed;
+    if (m_networkState != MediaPlayer::NetworkError) {
+        m_networkState = MediaPlayer::NetworkError;
         m_player->networkStateChanged();
     }
-    if (m_readyState != MediaPlayer::DataUnavailable) {
-        m_readyState = MediaPlayer::DataUnavailable;
+    if (m_readyState != MediaPlayer::HaveNothing) {
+        m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
     }
 }

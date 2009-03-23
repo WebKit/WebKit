@@ -1,17 +1,46 @@
-<video controls></video>
-<script src=video-test.js></script>
-<script>
-    function testNetworkState(expected, endIt)
-    {
-        testExpected("video.networkState", expected);
-        if (endIt)
-            endTest();
-    }
+<html>
+<body>
 
-    testExpected("video.networkState", HTMLMediaElement.EMPTY);
-    waitForEvent("loadstart", function () { testNetworkState(HTMLMediaElement.LOADING); } );
-    waitForEvent("loadedmetadata", function () { testNetworkState(HTMLMediaElement.LOADED_METADATA); } );
-    waitForEvent("loadedfirstframe", function () { testNetworkState(HTMLMediaElement.LOADED_FIRST_FRAME); } );
-    waitForEvent("load", function () { testNetworkState(HTMLMediaElement.LOADED, true); } );
-    video.src = "content/test.mp4";
-</script>
+    <video controls></video>
+
+    <p>Test that setting src to an invalid url triggers load(), which sets networkState
+    to NETWORK_NO_SOURCE. Setting src to a valid url should then trigger the loading
+    events and end up with networkState >= NETWORK_LOADING.
+     </p>
+    
+    <script src=video-test.js></script>
+    <script>
+        function testNetworkState(expected, endit, op)
+        {
+            testExpected("video.networkState", expected, op);
+            if (endit)
+                endTest();
+        }
+        
+        waitForEvent("loadstart");
+        waitForEvent("loadedmetadata");
+        waitForEvent("loadeddata");
+        waitForEvent("canplay");
+        waitForEventAndFail("play");
+        waitForEventAndFail("playing");
+        waitForEvent("canplaythrough", function () { testNetworkState(HTMLMediaElement.NETWORK_LOADING, true, '>=' ); } );
+    
+        function someTimeLater()
+        {
+            testNetworkState(HTMLMediaElement.NETWORK_NO_SOURCE );
+            consoleWrite("");
+
+            // now set a valid url
+            run("video.src = 'content/test.mp4'");
+        }
+        
+        // first set the src to a bogus url, it should attempt a load
+        consoleWrite("");
+        testNetworkState(HTMLMediaElement.NETWORK_EMPTY);
+        run("video.src = 'bogus/movie.mpg'");
+        setTimeout(someTimeLater, 400) 
+    
+    </script>
+
+</body>
+</html>

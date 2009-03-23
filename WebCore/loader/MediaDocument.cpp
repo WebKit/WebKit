@@ -149,15 +149,14 @@ void MediaDocument::defaultEventHandler(Event* event)
     Node* targetNode = event->target()->toNode();
     if (targetNode && targetNode->hasTagName(videoTag)) {
         HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
-        ExceptionCode ec;
         if (event->type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
-                video->pause(ec);
+                video->pause();
                 event->setDefaultHandled();
             }
         } else if (event->type() == eventNames().dblclickEvent) {
             if (video->canPlay()) {
-                video->play(ec);
+                video->play();
                 event->setDefaultHandled();
             }
         }

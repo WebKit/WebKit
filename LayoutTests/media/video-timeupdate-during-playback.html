@@ -1,0 +1,56 @@
+<html>
+<body>
+    
+    <video src=content/test.mp4 controls></video>
+
+    <p>
+    Test 'timeupdate' events are posted while playing but not while paused.
+    </p
+    <script src=video-test.js></script>
+    <script>
+    
+        var timeupdateEventCount = 0;
+        var countWhilePlaying = 0;
+
+        function someTimeLater()
+        {
+            if (countWhilePlaying != timeupdateEventCount)
+                failTest("'timeupdate' events posted after pausing");
+            endTest();
+        }
+
+        function pause()
+        {
+            countWhilePlaying = timeupdateEventCount;
+            setTimeout(someTimeLater, 400) ;
+            consoleWrite("");
+        }
+        
+        function playing()
+        {
+            setTimeout(function () { run("video.pause()"); }, 500) ;
+            consoleWrite("");
+        }
+
+        media.addEventListener("timeupdate", function () { ++timeupdateEventCount; });
+
+        waitForEvent('error');
+        waitForEvent("loadstart");
+        waitForEvent("ratechange");
+        waitForEvent("waiting");
+        waitForEvent("ratechange");
+        waitForEvent("durationchange");
+        waitForEvent("loadedmetadata");
+        waitForEvent("loadeddata");
+        waitForEvent("canplay");
+        waitForEvent("canplaythrough");
+        waitForEvent("pause", pause);
+        waitForEvent("play");
+        waitForEvent("playing", playing);
+
+        run("video.play()");
+        consoleWrite("");
+    </script>
+
+</body>
+</html>

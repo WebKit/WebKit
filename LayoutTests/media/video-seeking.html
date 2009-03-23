@@ -1,21 +1,51 @@
 <video controls></video>
-<p>Test that seeking attribute is true in timeupdate event after seek and goes back to false when seeking completes </p>
+<p>Test that seeking attribute is true immediately after a seek,
+ goes back to false when seeking completes, and that a 'seeked' event
+ is fired for each seek
+ </p>
 <script src=video-test.js></script>
 <script>
-waitForEvent('load',
-    function () 
-    {
-        testExpected("video.seeking", false);
-        waitForEvent('timeupdate', function () {
-            testExpected("video.seeking", true);
-            testExpected("video.currentTime", 2);
-            setTimeout(function () {
-                testExpected("video.seeking", false);
-                endTest();
-            }, 200);
-        });
-        run("video.currentTime = 2");
+
+    var seekedCount = 0;
+    var counter;
+
+    function seeked()
+    { 
+        ++seekedCount; 
+        consoleWrite("");
     }
-);
-video.src = "content/test.mp4";
+
+    function someTimeLater()
+    {
+        testExpected("seekedCount", counter);
+        testExpected("video.seeking", false);
+        testExpected("video.currentTime", counter * 0.5);
+        run("video.currentTime = " + (counter + 1) * 0.5);
+        testExpected("video.seeking", true);
+
+        if (counter == 3)
+        {
+            consoleWrite("");
+            endTest();
+        }
+
+        ++counter;
+        consoleWrite("");
+     }
+
+    function loaded() 
+    {
+        run("video.currentTime = 0.5");
+        counter = 1;
+        setTimeout(someTimeLater, 200) 
+        setTimeout(someTimeLater, 400) 
+        setTimeout(someTimeLater, 600) 
+        consoleWrite("");
+    }
+    
+    waitForEvent('waiting' );
+    waitForEvent('seeked', seeked );
+    waitForEvent('load', loaded);
+
+    video.src = "content/test.mp4";
 </script>

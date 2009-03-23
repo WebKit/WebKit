@@ -102,24 +102,26 @@ namespace WebCore {
     macro(webkitBeforeTextInserted) \
     macro(webkitEditableContentChanged) \
     \
-    macro(canshowcurrentframe) \
     macro(canplay) \
     macro(canplaythrough) \
-    macro(dataunavailable) \
     macro(durationchange) \
     macro(emptied) \
     macro(ended) \
-    macro(loadedfirstframe) \
+    macro(loadeddata) \
     macro(loadedmetadata) \
     macro(pause) \
     macro(play) \
+    macro(playing) \
     macro(ratechange) \
+    macro(seeked) \
+    macro(seeking) \
     macro(timeupdate) \
     macro(volumechange) \
     macro(waiting) \
     \
     macro(progress) \
     macro(stalled) \
+    macro(suspend) \
     \
     macro(webkitAnimationEnd) \
     macro(webkitAnimationStart) \

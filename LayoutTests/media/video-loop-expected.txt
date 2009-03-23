@@ -13,10 +13,12 @@ EVENT(play)
 EXPECTED (video.paused == 'false') OK
 RUN(video.currentTime = video.duration - 0.4)
 
+EVENT(playing)
 EXPECTED (video.ended == 'false') OK
 EXPECTED (media.currentTime > '0') OK
+EXPECTED (media.currentTime < '8.00') OK
 RUN(video.loop = false)
-RUN(video.currentTime = video.duration - 0.4)
+RUN(video.currentTime = video.duration - 0.3)
 
 EXPECTED (video.ended == 'true') OK
 EXPECTED (media.currentTime == 'media.duration') OK

@@ -1,9 +1,13 @@
 Test that the media element is in correct state after load fails.
 
+
 EXPECTED (video.error == 'null') OK
-EVENT(emptied)
-EXPECTED (video.error.code == '2') OK
-EXPECTED (video.duration == '0') OK
+
+EVENT(error)
+EXPECTED (video.error != 'null') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '4') OK
+EXPECTED (isNaN(video.duration) == 'true') OK
 EXPECTED (video.currentTime == '0') OK
 EXPECTED (video.buffered.length == '0') OK
 EXPECTED (video.seekable.length == '0') OK

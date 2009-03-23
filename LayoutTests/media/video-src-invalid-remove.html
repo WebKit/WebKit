@@ -1,0 +1,50 @@
+<html>
+<body>
+    <script src=video-test.js></script>
+
+    <video src=bogus.mov controls>
+        <source src=content/test.mp4>
+    </video>
+
+    <p>Test that removing invalid 'src' attribute triggers load of &lt;source&gt; elements</p>
+
+    <script>
+        video = media = document.getElementsByTagName('video')[0];
+
+        var loadCount = 0;
+        
+        function loadStart()
+        {
+            ++loadCount;
+            if (loadCount == 1)
+                testExpected("relativeURL(video.currentSrc)", "bogus.mov");
+            else if (loadCount == 2)
+                testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            else
+                failTest("'loadCount' fired " + loadCount + "times" );
+            consoleWrite("");
+        }
+
+        function loadedmetadata()
+        {
+            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            testExpected("isNaN(video.duration)", false);
+            consoleWrite("");
+        }
+
+        function errorEvent()
+        {
+            testExpected("video.error.code", MediaError.MEDIA_ERR_NONE_SUPPORTED);
+            setTimeout(function () { endTest(); } , 500) ;
+            run("video.removeAttribute('src')");
+            consoleWrite("");
+        }
+
+        consoleWrite("");
+        waitForEvent('loadedmetadata', loadedmetadata);
+        waitForEvent('loadstart', loadStart );
+        waitForEvent('error', errorEvent);
+    </script>
+
+</body>
+</html>

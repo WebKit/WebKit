@@ -4,9 +4,8 @@ RUN(video.play())
 RUN(video.pause())
 SCRIPT DONE
 EVENT(play)
-EXPECTED (video.paused == 'true') OK
+EVENT(waiting)
 EVENT(timeupdate)
-EXPECTED (video.paused == 'true') OK
 EVENT(pause)
 EXPECTED (video.paused == 'true') OK
 END OF TEST

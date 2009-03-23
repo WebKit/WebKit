@@ -2,16 +2,26 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-testExpected("video.error", null);
-waitForEventAndTest("load", "false");
-waitForEvent("emptied", function () {
-    testExpected("video.error.code", MediaError.MEDIA_ERR_NETWORK);
-    testExpected("video.duration", 0);
-    testExpected("video.currentTime", 0);
-    testExpected("video.buffered.length", 0);
-    testExpected("video.seekable.length", 0);
-    testExpected("video.buffered.length", 0);
-    endTest();
-});
-video.src = "content/does-not-exist.mpeg";
+
+    consoleWrite("");
+    testExpected("video.error", null);
+
+    waitForEventAndTest("load", "false");
+    
+    waitForEvent("error", function () {
+        testExpected("video.error", null, "!=");
+        testExpected("video.error.code", MediaError.MEDIA_ERR_NONE_SUPPORTED);
+    
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+    
+        testExpected("isNaN(video.duration)", true);
+        testExpected("video.currentTime", 0);
+        testExpected("video.buffered.length", 0);
+        testExpected("video.seekable.length", 0);
+        testExpected("video.buffered.length", 0);
+        endTest();
+    });
+    
+    video.src = "content/does-not-exist.mpeg";
+    consoleWrite("");
 </script>

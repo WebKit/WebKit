@@ -3,8 +3,18 @@
 <script src=video-test.js></script>
 <script>
     video.src = "content/test.mp4";
-    testExpected("video.networkState", HTMLMediaElement.EMPTY);
-    waitForEventAndEnd('loadstart');
+    testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+
+    waitForEvent("loadstart");
+    waitForEvent("ratechange");
+    waitForEvent("waiting");
+    waitForEvent("ratechange");
+    waitForEvent("durationchange");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEventAndEnd("canplaythrough");
+
     run("video.pause()");
     consoleWrite("SCRIPT DONE");
 </script>

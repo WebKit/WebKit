@@ -52,19 +52,21 @@ namespace WebCore {
         Q_ENUMS(ReadyState NetworkState PhononState)
 
         enum ReadyState {
-            DataUnavailable,
-            CanShowCurrentFrame,
-            CanPlay,
-            CanPlayThrough
+            HaveNothing, 
+            HaveMetadata, 
+            HaveCurrentData, 
+            HaveFutureData, 
+            HaveEnoughData
         };
 
         enum NetworkState {
-            Empty,
-            LoadFailed,
-            Loading,
-            LoadedMetaData,
-            LoadedFirstFrame,
-            Loaded
+            Empty, 
+            Idle, 
+            Loading, 
+            Loaded, 
+            FormatError, 
+            NetworkError, 
+            DecodeError
         };
 
         enum PhononState {

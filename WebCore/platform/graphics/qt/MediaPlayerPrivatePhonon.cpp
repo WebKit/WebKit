@@ -77,7 +77,7 @@ namespace WebCore {
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_networkState(MediaPlayer::Empty)
-    , m_readyState(MediaPlayer::DataUnavailable)
+    , m_readyState(MediaPlayer::HaveNothing)
     , m_mediaObject(new MediaObject())
     , m_videoWidget(new VideoWidget(0))
     , m_audioOutput(new AudioOutput())
@@ -169,8 +169,8 @@ void MediaPlayerPrivate::load(const String& url)
     }
 
     // And we don't have any data yet
-    if (m_readyState != MediaPlayer::DataUnavailable) {
-        m_readyState = MediaPlayer::DataUnavailable;
+    if (m_readyState != MediaPlayer::HaveNothing) {
+        m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
     }
 
@@ -225,7 +225,7 @@ bool MediaPlayerPrivate::seeking() const
 
 float MediaPlayerPrivate::duration() const
 {
-    if (m_networkState < MediaPlayer::LoadedMetaData)
+    if (m_readyState < MediaPlayer::HaveMetadata)
         return 0.0f;
 
     float duration = m_mediaObject->totalTime() / 1000.0f;
@@ -329,18 +329,19 @@ void MediaPlayerPrivate::updateStates()
     Phonon::State phononState = m_mediaObject->state();
 
     if (phononState == Phonon::StoppedState) {
-        if (oldNetworkState < MediaPlayer::LoadedMetaData) {
-            m_networkState = MediaPlayer::LoadedMetaData;
-            m_readyState = MediaPlayer::DataUnavailable;
+        if (m_readyState < MediaPlayer::HaveMetadata) {
+            m_networkState = MediaPlayer::Loading; // FIXME: should this be MediaPlayer::Idle?
+            m_readyState = MediaPlayer::HaveMetadata;
             m_mediaObject->pause();
         }
     } else if (phononState == Phonon::PausedState) {
         m_networkState = MediaPlayer::Loaded;
-        m_readyState = MediaPlayer::CanPlayThrough;
+        m_readyState = MediaPlayer::HaveEnoughData;
     } else if (phononState == Phonon::ErrorState) {
          if (!m_mediaObject || m_mediaObject->errorType() == Phonon::FatalError) {
-             m_networkState = MediaPlayer::LoadFailed;
-             m_readyState = MediaPlayer::DataUnavailable;
+             // FIXME: is it possile to differentiate between different types of errors
+             m_networkState = MediaPlayer::NetworkError;
+             m_readyState = MediaPlayer::HaveNothing;
              cancelLoad();
          } else {
              m_mediaObject->pause();
@@ -348,7 +349,7 @@ void MediaPlayerPrivate::updateStates()
     }
 
     if (seeking())
-        m_readyState = MediaPlayer::DataUnavailable;
+        m_readyState = MediaPlayer::HaveNothing;
 
     if (m_networkState != oldNetworkState) {
         const QMetaObject* metaObj = this->metaObject();
@@ -399,7 +400,7 @@ IntSize MediaPlayerPrivate::naturalSize() const
         return IntSize();
     }
 
-    if (m_networkState < MediaPlayer::LoadedMetaData) {
+    if (m_readyState < MediaPlayer::HaveMetadata) {
         LOG(Media, "MediaPlayerPrivatePhonon::naturalSize() -> %dx%d",
                            0, 0);
         return IntSize();

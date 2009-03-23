@@ -1,3 +1,202 @@
+2009-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24588
+        
+        Update media element implementation to current HTML5 spec
+
+        New tests: 
+               media/media-constants.html
+               media/video-seek-no-src-exception.html
+               media/video-source-add-src.html
+               media/video-src-invalid-remove.html
+               media/video-src-plus-source.html
+               media/video-timeupdate-during-playback.html
+
+        * dom/EventNames.h: Remove obsolute events, add new ones.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize new member vars.
+        (WebCore::HTMLMediaElement::attributeChanged): Trigger load() only when we don't
+        have a source.
+        (WebCore::HTMLMediaElement::removedFromDocument): Deal with state name changes.
+        (WebCore::HTMLMediaElement::scheduleProgressEvent): New, create a progress event and 
+        add it to the event queue to be dispatch when the timer fires.
+        (WebCore::HTMLMediaElement::scheduleEvent): New, create a generic event and add
+        it to the event queue to be dispatch when the timer fires.
+        (WebCore::HTMLMediaElement::enqueueEvent): Add an event to the queue and ticke the 
+        asynch event timer.
+        (WebCore::HTMLMediaElement::asyncEventTimerFired): Dispatch all pending events.
+        (WebCore::HTMLMediaElement::loadTimerFired): Either trigger the initial load or
+        try to load the next <source> url.
+        (WebCore::HTMLMediaElement::load): Minor style change.
+        (WebCore::HTMLMediaElement::loadInternal): The first part of the spec load algorithm, cleanup
+        the current load (if any) and set up state for a new load.
+        (WebCore::HTMLMediaElement::selectMediaResource): Deal with no 'src' or <source>, post 'loadstart'
+        event, and initiate load from 'src' if present.
+        (WebCore::HTMLMediaElement::loadNextSourceChild): Initiate load from next <source> url, or trigger
+        noneSupported() if no more to consider.
+        (WebCore::HTMLMediaElement::loadResource): Instantiate a new MediaPlayer and ask it to load a url.
+        (WebCore::HTMLMediaElement::startProgressEventTimer): Start the repeating progress event timer.
+        (WebCore::HTMLMediaElement::noneSupported): Post error event and set up state when no valid 
+        media url was found.
+        (WebCore::HTMLMediaElement::mediaEngineError): Post error event and set up state when no valid 
+        media engine failed with a decode error or a network error.
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::setNetworkState): Updated for new spec network states.
+        (WebCore::HTMLMediaElement::mediaPlayerReadyStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState): Updated for new spec ready state.
+        (WebCore::HTMLMediaElement::progressEventTimerFired): Bail if the network is not active.
+        (WebCore::HTMLMediaElement::seek): Return INVALID_STATE_ERR exception if state is too low or
+        if player hasn't been set up yet. This is necessary becase load() is async. Clear the flag
+        we use to guard against sending 'ended' more than once.
+        (WebCore::HTMLMediaElement::duration): Don't bother calling media engine before it has metadata.
+        (WebCore::HTMLMediaElement::setDefaultPlaybackRate): Remove exception param, 0 is no longer an
+        invalid rate. 
+        (WebCore::HTMLMediaElement::setPlaybackRate): Remove exception param, 0 is no longer an
+        invalid rate. Cache rate being set so we can use it later if media engine isn't ready now.
+        (WebCore::HTMLMediaElement::play): Remove exception param, play() before load() now just
+        starts loading asynchronously.
+        (WebCore::HTMLMediaElement::playInternal): Remove exception param. Fire 'waiting' or 'playing'
+        event depending on current state.
+        (WebCore::HTMLMediaElement::pause): Remove exception param, pause() before load() now just
+        starts loading asynchronously.
+        (WebCore::HTMLMediaElement::pauseInternal): Remove exception param.
+        (WebCore::HTMLMediaElement::setVolume): dispatchEventAsync -> scheduleEvent
+        (WebCore::HTMLMediaElement::setMuted): dispatchEventAsync -> scheduleEvent
+        (WebCore::HTMLMediaElement::togglePlayState): Remove exception param.
+        (WebCore::HTMLMediaElement::beginScrubbing): pause() doesn't take an exception param.
+        (WebCore::HTMLMediaElement::startPlaybackProgressTimer): New, starts timer that fires 4 times per
+        second when the movie is playing to timeupdate so we can post 'timeupdate' events.
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Timer proc.
+        (WebCore::HTMLMediaElement::scheduleTimeupdateEvent): Bottleneck around scheduling a 'timeupdate'
+        event because we both fire them them when the spec says we should and when the media engine
+        says that time has jumped, but we don't want to fire more than one at a given movie time. We also
+        use this bottleneck to keep track of the last time one was posted so we won't fire too often
+        during playback.
+        (WebCore::HTMLMediaElement::canPlay): readyState now tracks whether or not we have metadata.
+        (WebCore::HTMLMediaElement::havePotentialSourceChild): New, checks to see if there are a <source>
+        element with a 'src' attribute that we have not tried to load yet.
+        (WebCore::HTMLMediaElement::nextSourceChild): New, returns the url and content type of the next
+        <source> element that we haven't tried to load.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Schedule 'seeked' event when seeking completes.
+        Set a flag when we post the 'ended' event, clear it when time changed and we aren't at the end since
+        some media engines call this proc more than once when playback reaches the end and stops, but we
+        don't want to post 'ended' more than once.
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged): New, added so media engine can inform
+        when the movie duration changes and we can post 'durationchanged' event.
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged): New, added so media engine can inform when
+        the rate changed and we can updated our cached rate. This is useful because we only want to know
+        post periodic 'timeupdate' events when the movie is actually playing, and because we want to know
+        the actual playback rate when it differs from what we tried to set.
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged): New, added so media engine can inform when
+        a movie's intrinsic size changes and we can inform the renderer.
+        (WebCore::HTMLMediaElement::potentiallyPlaying): Renamed from activelyPlaying since the spec now
+        uses "actively playing" for this concept. Update logic for new state names and un-comment calls
+        to stoppedDueToErrors() and pausedForUserInteraction() since the spec says those condiditons
+        are part of the answer.
+        (WebCore::HTMLMediaElement::endedPlayback): Update logic for new state names. 
+        (WebCore::HTMLMediaElement::stoppedDueToErrors): New, spec says this logic should be part of
+        the determination of "potentially playing".
+        (WebCore::HTMLMediaElement::pausedForUserInteraction): New, placeholder for when (if) user
+        agent supports this spec concept.
+        (WebCore::HTMLMediaElement::updatePlayState): Stop timer used to fire periodic 'timeupdate' 
+        events when we pauses the movie. Set the media engine rate before calling play() in case it
+        wasn't set up when the rate was changed.
+        (WebCore::HTMLMediaElement::stopPeriodicTimers): New, stop the progress event and 'timeupate'
+        event timers.
+        (WebCore::HTMLMediaElement::userCancelledLoad): New, logic pulled out of documentWillBecomeInactive
+        and updated for the current spec.
+        (WebCore::HTMLMediaElement::documentWillBecomeInactive): Moved some logic to userCancelledLoad.
+        (WebCore::HTMLMediaElement::documentDidBecomeActive): Update comments.
+        (WebCore::HTMLMediaElement::initialURL): Update for refactoring of code that determines the 
+        initial url.
+        * html/HTMLMediaElement.h: Change ReadyState and NetworkState enums to match names in the spec,
+        update for changes in .cpp.
+        (WebCore::HTMLMediaElement::):
+
+        * html/HTMLMediaElement.idl: Update ready state and network state constants for spec changes.
+        defaultPlaybackRate, playbackRate, play(), and pause() no longer raise exceptions.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedIntoDocument): Update for network state name changes.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::updatePosterImage): Update for ready state name changes.
+
+        * html/MediaError.h:
+        (WebCore::MediaError::): add MEDIA_ERR_NONE_SUPPORTED.
+
+        * html/MediaError.idl: add MEDIA_ERR_NONE_SUPPORTED.
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler): play() and pause() don't take an exception.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::readyState): Update for newtork state name changes.
+        (WebCore::MediaPlayer::sizeChanged): New, so engine can report intrinsic size changes.
+        (WebCore::MediaPlayer::rateChanged): New, so engine can report rate changes.
+        (WebCore::MediaPlayer::durationChanged): New, so engine can report duration changes.
+        * platform/graphics/MediaPlayer.h: Update NetworkState and ReadyState enum names to match spec
+        states.
+        (WebCore::MediaPlayerClient::mediaPlayerDurationChanged): New.
+        (WebCore::MediaPlayerClient::mediaPlayerRateChanged): New.
+        (WebCore::MediaPlayerClient::mediaPlayerSizeChanged): New.
+        (WebCore::MediaPlayer::):
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::load): Ditto.
+        (WebCore::MediaPlayerPrivate::updateStates): Ditto.
+        (WebCore::MediaPlayerPrivate::loadingFailed): Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Update for network/ready state name changes.
+        Remove endPointTimer, it is no longer necessary. Add m_enabledTrackCount and m_duration.
+        (WebCore::MediaPlayerPrivate::metaDataAvailable):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): No more m_endPointTimer or m_endTime. Initialize
+        m_enabledTrackCount and m_duration. Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::load): Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::play): No more m_endPointTimer.
+        (WebCore::MediaPlayerPrivate::pause): Ditto.
+        (WebCore::MediaPlayerPrivate::currentTime): No more m_endTime.
+        (WebCore::MediaPlayerPrivate::seek): Ditto.
+        (WebCore::MediaPlayerPrivate::doSeek): Ditto, plus don't call setRate(0) when the rate is
+        already zero.
+        (WebCore::MediaPlayerPrivate::setEndTime): No more m_endTime.
+        (WebCore::MediaPlayerPrivate::updateStates): Update for network/ready state name changes. Return
+        different errors depending on what causes a failure. Watch for and report duration changes.
+        (WebCore::MediaPlayerPrivate::rateChanged): Report rate changes.
+        (WebCore::MediaPlayerPrivate::sizeChanged): Report size changes.
+        (WebCore::MediaPlayerPrivate::didEnd): No more endpoint timer.
+        (WebCore::MediaPlayerPrivate::setVisible): Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks): Don't return number of unsupported
+        tracks, store in m_enabledTrackCount so we can use it to help determine causes of failure.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::load): Ditto.
+        (WebCore::MediaPlayerPrivate::duration): Ditto.
+        (WebCore::MediaPlayerPrivate::updateStates): Ditto.
+        (WebCore::MediaPlayerPrivate::naturalSize): Ditto.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): No more m_endPointTimer. Update for 
+        network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::load): Update for network/ready state name changes. No more
+        m_endPointTimer.
+        (WebCore::MediaPlayerPrivate::play): No more m_endPointTimer.
+        (WebCore::MediaPlayerPrivate::pause): Ditto. 
+        (WebCore::MediaPlayerPrivate::setEndTime): Ditto.
+        (WebCore::MediaPlayerPrivate::updateStates): Update for network/ready state name changes.
+        (WebCore::MediaPlayerPrivate::didEnd): No more m_endPointTimer.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler): Update for network/ready state 
+        name changes.
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler): Ditto.
+
 2009-03-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxGTK build fix. Add missing header.

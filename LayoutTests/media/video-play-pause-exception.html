@@ -1,10 +1,26 @@
+
 <video controls></video>
-<p>Video has no src. Test that play() and pause() rethrow the exception from load(). Test that the play and pause events are not dispatched.</p>
+
+<p>Video has no src. Test that the playing event is not dispatched.</p>
+
 <script src=video-test.js></script>
 <script>
-waitForEventAndFail('play');
-waitForEventAndFail('pause');
-testException("video.play()", "DOMException.INVALID_STATE_ERR");
-testException("video.pause()", "DOMException.INVALID_STATE_ERR");
-endTestLater();
+    waitForEventAndFail('playing');
+
+    waitForEvent("loadstart");
+    waitForEvent("timeupdate");
+    waitForEvent("pause");
+    waitForEvent("waiting");
+
+    run("video.play()");
+    run("video.pause()");
+
+    function someTimeLater()
+    {
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+        endTest();
+        consoleWrite("");
+     }
+    
+    setTimeout(someTimeLater, 400) 
 </script>

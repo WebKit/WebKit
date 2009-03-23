@@ -1,19 +1,52 @@
+<html>
 <body>
-<div>
-Test that removing src attribute triggers load
-</div>
-<script src=video-test.js></script>
-<video src=bogus controls>
-    <source src=content/test.mp4></source>
-</video>
-<script>
-    video = media = document.getElementsByTagName('video')[0];
-    waitForEvent('emptied', function () {
-        video.removeAttribute('src')
+    <script src=video-test.js></script>
 
-        waitForEvent('loadstart', function () { 
-            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+    <video src=content/silence.mpg controls>
+        <source src=content/test.mp4>
+    </video>
+
+    <p>Test that removing valid 'src' attribute DOES NOT trigger load of &lt;source&gt; elements</p>
+
+    <script>
+        findMediaElement();
+
+        var loadCount = 0;
+        
+        function testSrc()
+        {
+            testExpected("relativeURL(video.currentSrc)", "content/silence.mpg");
+            testExpected("isNaN(video.duration)", false);
+            consoleWrite("");
+        }
+
+        function loadedmetadata()
+        {
+            ++loadCount;
+            if (loadCount == 1)
+            {
+                testSrc();
+                run("video.removeAttribute('src')");
+            }
+            else
+            {
+                consoleWrite("<span style='color:red'>FAIL</span> : 'loadCount' fired " + loadCount + "times" );
+                endTest();
+            }
+            consoleWrite("");
+        }
+        
+        function someTimeLater()
+        {
+            testSrc();
             endTest();
-        } );
-    });
-</script>
+            consoleWrite("");
+        }
+
+        consoleWrite("");
+        waitForEvent('loadedmetadata', loadedmetadata);
+        setTimeout(someTimeLater, 400) ;
+    </script>
+
+</body>
+</html>

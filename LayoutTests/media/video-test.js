@@ -1,3 +1,4 @@
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
@@ -6,11 +7,16 @@ var video;
 var media;
 var console = document.createElement('div');
 document.body.appendChild(console);
-try {
-    video = document.getElementsByTagName('video')[0];
-    if (video)
-        media = video;
-} catch (ex) { }
+findMediaElement();
+
+function findMediaElement()
+{
+    try {
+        video = document.getElementsByTagName('video')[0];
+        if (video)
+            media = video;
+    } catch (ex) { }
+}
 
 function hanged()
 {
@@ -47,9 +53,11 @@ function testExpected(testFuncString, expected, comparison)
     var success = false;
     switch (comparison)
     {
-        case '<':  success = observed <  expected; break;
-        case '>':  success = observed >  expected; break;
-        case '!=': success = observed != expected; break;
+        case '<':   success = observed <  expected; break;
+        case '<=': success = observed <= expected; break;
+        case '>':   success = observed >  expected; break;
+        case '>=': success = observed >= expected; break;
+        case '!=':  success = observed != expected; break;
         case '==': success = observed == expected; break;
     }
     
@@ -93,7 +101,7 @@ function waitForEvent(eventName, func, endit)
             endTest();    
     }
 
-    media.addEventListener(eventName, _eventCallback);    
+    media.addEventListener(eventName, _eventCallback);
 }
 
 function waitForEventTestAndEnd(eventName, testFuncString)
@@ -149,6 +157,13 @@ function failTestIn(ms)
         endTest();
     }, ms);
 }
+
+function failTest(text)
+{
+    logResult(fasle, text);
+    endTest();
+}
+
 
 function logResult(success, text)
 {

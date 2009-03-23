@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,11 +89,12 @@ private:
     float duration() const;
     float currentTime() const;
     void seek(float time);
-    void setEndTime(float time);
     
     void setRate(float);
     void setVolume(float);
-    
+
+    void setEndTime(float time);
+
     int dataRate() const;
     
     MediaPlayer::NetworkState networkState() const { return m_networkState; }
@@ -123,12 +124,10 @@ private:
     void doSeek();
     void cancelSeek();
     void seekTimerFired(Timer<MediaPlayerPrivate>*);
-    void endPointTimerFired(Timer<MediaPlayerPrivate>*);
     float maxTimeLoaded() const;
-    void startEndPointTimerIfNeeded();
-    void disableUnsupportedTracks(unsigned& enabledTrackCount);
+    void disableUnsupportedTracks();
     
-    bool metaDataAvailable() const { return m_qtMovie && m_networkState >= MediaPlayer::LoadedMetaData; }
+    bool metaDataAvailable() const { return m_qtMovie && m_readyState >= MediaPlayer::HaveMetadata; }
 
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
@@ -136,15 +135,15 @@ private:
     RetainPtr<QTVideoRendererWebKitOnly> m_qtVideoRenderer;
     RetainPtr<WebCoreMovieObserver> m_objcObserver;
     float m_seekTo;
-    float m_endTime;
     Timer<MediaPlayerPrivate> m_seekTimer;
-    Timer<MediaPlayerPrivate> m_endPointTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     bool m_startedPlaying;
     bool m_isStreaming;
     bool m_visible;
     IntRect m_rect;
+    unsigned m_enabledTrackCount;
+    float m_duration;
 #if DRAW_FRAME_RATE
     int  m_frameCountWhilePlaying;
     double m_timeStartedPlaying;

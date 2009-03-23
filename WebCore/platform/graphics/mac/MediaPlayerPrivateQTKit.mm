@@ -157,8 +157,6 @@ using namespace std;
 
 namespace WebCore {
 
-static const float endPointTimerInterval = 0.020f;
-
 #ifdef BUILDING_ON_TIGER
 static const long minimumQuickTimeVersion = 0x07300000; // 7.3
 #endif
@@ -179,15 +177,15 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_objcObserver(AdoptNS, [[WebCoreMovieObserver alloc] initWithCallback:this])
     , m_seekTo(-1)
-    , m_endTime(numeric_limits<float>::infinity())
     , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
-    , m_endPointTimer(this, &MediaPlayerPrivate::endPointTimerFired)
     , m_networkState(MediaPlayer::Empty)
-    , m_readyState(MediaPlayer::DataUnavailable)
+    , m_readyState(MediaPlayer::HaveNothing)
     , m_startedPlaying(false)
     , m_isStreaming(false)
     , m_visible(false)
     , m_rect()
+    , m_enabledTrackCount(0)
+    , m_duration(-1.0f)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -407,12 +405,11 @@ void MediaPlayerPrivate::load(const String& url)
         m_networkState = MediaPlayer::Loading;
         m_player->networkStateChanged();
     }
-    if (m_readyState != MediaPlayer::DataUnavailable) {
-        m_readyState = MediaPlayer::DataUnavailable;
+    if (m_readyState != MediaPlayer::HaveNothing) {
+        m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
     }
     cancelSeek();
-    m_endPointTimer.stop();
     
     [m_objcObserver.get() setDelayCallbacks:YES];
 
@@ -433,7 +430,6 @@ void MediaPlayerPrivate::play()
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() setRate:m_player->rate()];
     [m_objcObserver.get() setDelayCallbacks:NO];
-    startEndPointTimerIfNeeded();
 }
 
 void MediaPlayerPrivate::pause()
@@ -447,7 +443,6 @@ void MediaPlayerPrivate::pause()
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() stop];
     [m_objcObserver.get() setDelayCallbacks:NO];
-    m_endPointTimer.stop();
 }
 
 float MediaPlayerPrivate::duration() const
@@ -465,7 +460,7 @@ float MediaPlayerPrivate::currentTime() const
     if (!metaDataAvailable())
         return 0;
     QTTime time = [m_qtMovie.get() currentTime];
-    return min(static_cast<float>(time.timeValue) / time.timeScale, m_endTime);
+    return static_cast<float>(time.timeValue) / time.timeScale;
 }
 
 void MediaPlayerPrivate::seek(float time)
@@ -477,7 +472,7 @@ void MediaPlayerPrivate::seek(float time)
     
     if (time > duration())
         time = duration();
-    
+
     m_seekTo = time;
     if (maxTimeLoaded() >= m_seekTo)
         doSeek();
@@ -495,7 +490,7 @@ void MediaPlayerPrivate::doSeek()
     [m_qtMovie.get() setCurrentTime:qttime];
     float timeAfterSeek = currentTime();
     // restore playback only if not at end, othewise QTMovie will loop
-    if (timeAfterSeek < duration() && timeAfterSeek < m_endTime)
+    if (oldRate && timeAfterSeek < duration())
         [m_qtMovie.get() setRate:oldRate];
     cancelSeek();
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -528,27 +523,8 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
     }
 }
 
-void MediaPlayerPrivate::setEndTime(float time)
+void MediaPlayerPrivate::setEndTime(float)
 {
-    m_endTime = time;
-    startEndPointTimerIfNeeded();
-}
-
-void MediaPlayerPrivate::startEndPointTimerIfNeeded()
-{
-    if (m_endTime < duration() && m_startedPlaying && !m_endPointTimer.isActive())
-        m_endPointTimer.startRepeating(endPointTimerInterval);
-}
-
-void MediaPlayerPrivate::endPointTimerFired(Timer<MediaPlayerPrivate>*)
-{
-    float time = currentTime();
-    
-    // just do end for now
-    if (time >= m_endTime) {
-        pause();
-        didEnd();
-    }
 }
 
 bool MediaPlayerPrivate::paused() const
@@ -660,51 +636,62 @@ void MediaPlayerPrivate::updateStates()
     
     long loadState = m_qtMovie ? [[m_qtMovie.get() attributeForKey:QTMovieLoadStateAttribute] longValue] : static_cast<long>(QTMovieLoadStateError);
     
-    if (loadState >= QTMovieLoadStateLoaded && m_networkState < MediaPlayer::LoadedMetaData && !m_player->inMediaDocument()) {
-        unsigned enabledTrackCount;
-        disableUnsupportedTracks(enabledTrackCount);
-        // FIXME: We should differentiate between load errors and decode errors <rdar://problem/5605692>
-        if (!enabledTrackCount)
+    if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata && !m_player->inMediaDocument()) {
+        disableUnsupportedTracks();
+        if (!m_enabledTrackCount)
             loadState = QTMovieLoadStateError;
     }
 
-    // "Loaded" is reserved for fully buffered movies, never the case when streaming
     if (loadState >= QTMovieLoadStateComplete && !m_isStreaming) {
-        if (m_networkState < MediaPlayer::Loaded)
-            m_networkState = MediaPlayer::Loaded;
-        m_readyState = MediaPlayer::CanPlayThrough;
+        // "Loaded" is reserved for fully buffered movies, never the case when streaming
+        m_networkState = MediaPlayer::Loaded;
+        m_readyState = MediaPlayer::HaveEnoughData;
     } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
-        if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
-            m_networkState = MediaPlayer::LoadedFirstFrame;
-        m_readyState = MediaPlayer::CanPlayThrough;
+        m_readyState = MediaPlayer::HaveEnoughData;
     } else if (loadState >= QTMovieLoadStatePlayable) {
-        if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
-            m_networkState = MediaPlayer::LoadedFirstFrame;
         // FIXME: This might not work correctly in streaming case, <rdar://problem/5693967>
-        m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::CanPlay : MediaPlayer::DataUnavailable;
+        m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
     } else if (loadState >= QTMovieLoadStateLoaded) {
-        if (m_networkState < MediaPlayer::LoadedMetaData)
-            m_networkState = MediaPlayer::LoadedMetaData;
-        m_readyState = MediaPlayer::DataUnavailable;
+        m_readyState = MediaPlayer::HaveMetadata;
     } else if (loadState > QTMovieLoadStateError) {
-        if (m_networkState < MediaPlayer::Loading)
-            m_networkState = MediaPlayer::Loading;
-        m_readyState = MediaPlayer::DataUnavailable;        
+        m_networkState = MediaPlayer::Loading;
+        m_readyState = MediaPlayer::HaveNothing;        
     } else {
-        m_networkState = MediaPlayer::LoadFailed;
-        m_readyState = MediaPlayer::DataUnavailable; 
+        float loaded = maxTimeLoaded();
+
+        if (!loaded)
+            m_readyState = MediaPlayer::HaveNothing;
+
+        if (!m_enabledTrackCount)
+            m_networkState = MediaPlayer::FormatError;
+        else {
+            // FIXME: We should differentiate between load/network errors and decode errors <rdar://problem/5605692>
+            if (loaded > 0)
+                m_networkState = MediaPlayer::DecodeError;
+            else
+                m_readyState = MediaPlayer::HaveNothing;
+        }
     }
 
     if (seeking())
-        m_readyState = MediaPlayer::DataUnavailable;
-    
+        m_readyState = MediaPlayer::HaveNothing;
+
     if (m_networkState != oldNetworkState)
         m_player->networkStateChanged();
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
 
-    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::LoadedMetaData && m_player->visible())
+    if (loadState >= QTMovieLoadStateLoaded && oldReadyState < MediaPlayer::HaveMetadata && m_player->visible())
         setUpVideoRendering();
+
+    if (loadState >= QTMovieLoadStateLoaded) {
+        float dur = duration();
+        if (dur != m_duration) {
+            if (m_duration != -1.0f)
+                m_player->durationChanged();
+            m_duration = dur;
+        }
+    }
 }
 
 void MediaPlayerPrivate::loadStateChanged()
@@ -715,10 +702,12 @@ void MediaPlayerPrivate::loadStateChanged()
 void MediaPlayerPrivate::rateChanged()
 {
     updateStates();
+    m_player->rateChanged();
 }
 
 void MediaPlayerPrivate::sizeChanged()
 {
+    m_player->sizeChanged();
 }
 
 void MediaPlayerPrivate::timeChanged()
@@ -729,7 +718,6 @@ void MediaPlayerPrivate::timeChanged()
 
 void MediaPlayerPrivate::didEnd()
 {
-    m_endPointTimer.stop();
     m_startedPlaying = false;
 #if DRAW_FRAME_RATE
     m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
@@ -761,7 +749,7 @@ void MediaPlayerPrivate::setVisible(bool b)
     if (m_visible != b) {
         m_visible = b;
         if (b) {
-            if (m_networkState >= MediaPlayer::LoadedMetaData)
+            if (m_readyState >= MediaPlayer::HaveMetadata)
                 setUpVideoRendering();
         } else
             tearDownVideoRendering();
@@ -905,10 +893,10 @@ bool MediaPlayerPrivate::isAvailable()
 #endif
 }
     
-void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
+void MediaPlayerPrivate::disableUnsupportedTracks()
 {
     if (!m_qtMovie) {
-        enabledTrackCount = 0;
+        m_enabledTrackCount = 0;
         return;
     }
     
@@ -927,7 +915,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
     NSArray *tracks = [m_qtMovie.get() tracks];
     
     unsigned trackCount = [tracks count];
-    enabledTrackCount = trackCount;
+    m_enabledTrackCount = trackCount;
     for (unsigned trackIndex = 0; trackIndex < trackCount; trackIndex++) {
         // Grab the track at the current index. If there isn't one there, then
         // we can move onto the next one.
@@ -955,7 +943,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         if (!allowedTrackTypes->contains(mediaType)) {
             // If this track type is not allowed, then we need to disable it.
             [track setEnabled:NO];
-            --enabledTrackCount;
+            --m_enabledTrackCount;
         }
         
         // Disable chapter tracks. These are most likely to lead to trouble, as
@@ -987,7 +975,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         
         // Disable the evil, evil track.
         [chapterTrack setEnabled:NO];
-        --enabledTrackCount;
+        --m_enabledTrackCount;
     }
 }
 

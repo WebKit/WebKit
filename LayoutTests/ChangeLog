@@ -1,3 +1,68 @@
+2009-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24588
+        Bug 24588: Update media element implementation to current spec
+
+        * media/media-constants-expected.txt: Test all media constants.
+        * media/media-constants.html: Ditto.
+        * media/remove-from-document-expected.txt: Updated for spec changes.
+        * media/remove-from-document-no-load.html: Ditto.
+        * media/remove-from-document.html: Ditto.
+        * media/unsupported-rtsp-expected.txt: Ditto.
+        * media/unsupported-rtsp.html: Ditto.
+        * media/video-currentTime-set-expected.txt: Ditto.
+        * media/video-currentTime-set.html: Ditto.
+        * media/video-error-does-not-exist-expected.txt: Ditto.
+        * media/video-error-does-not-exist.html: Ditto.
+        * media/video-load-networkState-expected.txt: Ditto.
+        * media/video-load-networkState.html: Ditto.
+        * media/video-load-readyState-expected.txt: Ditto.
+        * media/video-load-readyState.html: Ditto.
+        * media/video-loop-expected.txt: Ditto.
+        * media/video-loop.html: Ditto.
+        * media/video-pause-empty-events-expected.txt: Ditto.
+        * media/video-pause-empty-events.html: Ditto.
+        * media/video-play-empty-events-expected.txt: Ditto.
+        * media/video-play-empty-events.html: Ditto.
+        * media/video-play-pause-events-expected.txt: Ditto.
+        * media/video-play-pause-events.html: Ditto.
+        * media/video-play-pause-exception-expected.txt: Ditto.
+        * media/video-play-pause-exception.html: Ditto.
+        * media/video-seek-no-src-exception-expected.txt: Test that seeking 
+        whene there is no 'src' attribute throws an INVALID_STATE_ERR exception.
+        * media/video-seek-no-src-exception.html: 
+        * media/video-seek-past-end-playing-expected.txt: Ditto.
+        * media/video-seek-past-end-playing.html: Ditto.
+        * media/video-seeking-expected.txt: Ditto.
+        * media/video-seeking.html: Ditto.
+        * media/video-source-add-src-expected.txt: Test that adding a 'src' 
+        attribute does nothing when a <source> element has already been chosen.
+        * media/video-source-add-src.html: 
+        * media/video-src-change-expected.txt: Ditto.
+        * media/video-src-change.html: Ditto.
+        * media/video-src-invalid-remove-expected.txt: Test that removing invalid 
+        'src' attribute triggers <source> elements loading.
+        * media/video-src-invalid-remove.html: 
+        * media/video-src-plus-source-expected.txt: Test that a <source> element 
+        is not used when a bogus 'src' attribute is present.
+        * media/video-src-plus-source.html: 
+        * media/video-src-remove-expected.txt: Ditto.
+        * media/video-src-remove.html: Ditto.
+        * media/video-test.js: 
+        (findMediaElement):
+        (testExpected):
+        (waitForEvent):
+        (failTest):
+        * media/video-timeupdate-during-playback-expected.txt: Test that 'timeupdate' events
+        are posted while an element is playing but not while paused.
+        * media/video-timeupdate-during-playback.html:
+
+        * platform/mac/Skipped: Skip media/video-error-abort.html for now, need to figure out how to 
+        test now that the 'loadstart' event is now fired asynchronously.
+        * platform/win/Skipped
+
 2009-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

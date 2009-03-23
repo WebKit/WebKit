@@ -52,11 +52,30 @@ class String;
 class MediaPlayerClient {
 public:
     virtual ~MediaPlayerClient() { }
+
+    // the network state has changed
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) { }
+
+    // the ready state has changed
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*) { }
+
+    // the volume or muted state has changed
     virtual void mediaPlayerVolumeChanged(MediaPlayer*) { }
+
+    // time has jumped, eg. not as a result of normal playback
     virtual void mediaPlayerTimeChanged(MediaPlayer*) { }
+    
+    // a new frame of video is available
     virtual void mediaPlayerRepaint(MediaPlayer*) { }
+
+    // the media file duration has changed, or is now known
+    virtual void mediaPlayerDurationChanged(MediaPlayer*) { }
+    
+    // the playback rate has changed
+    virtual void mediaPlayerRateChanged(MediaPlayer*) { }
+
+    // the movie size has changed
+    virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
 };
 
 class MediaPlayer : Noncopyable {
@@ -115,16 +134,19 @@ public:
     
     void paint(GraphicsContext*, const IntRect&);
     
-    enum NetworkState { Empty, LoadFailed, Loading, LoadedMetaData, LoadedFirstFrame, Loaded };
+    enum NetworkState { Empty, Idle, Loading, Loaded, FormatError, NetworkError, DecodeError };
     NetworkState networkState();
 
-    enum ReadyState  { DataUnavailable, CanShowCurrentFrame, CanPlay, CanPlayThrough };
+    enum ReadyState  { HaveNothing, HaveMetadata, HaveCurrentData, HaveFutureData, HaveEnoughData };
     ReadyState readyState();
     
     void networkStateChanged();
     void readyStateChanged();
     void volumeChanged();
     void timeChanged();
+    void sizeChanged();
+    void rateChanged();
+    void durationChanged();
 
     void repaint();
 

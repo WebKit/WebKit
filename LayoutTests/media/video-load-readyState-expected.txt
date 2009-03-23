@@ -1,13 +1,9 @@
 EXPECTED (video.readyState == '0') OK
 EVENT(loadstart)
-EXPECTED (video.readyState == '0') OK
 EVENT(loadedmetadata)
-EXPECTED (video.readyState == '0') OK
-EVENT(loadedfirstframe)
-EXPECTED (video.readyState == '1') OK
-EVENT(canshowcurrentframe)
-EXPECTED (video.readyState == '1') OK
+EVENT(loadeddata)
+EVENT(canplay)
 EVENT(canplaythrough)
-EXPECTED (video.readyState == '3') OK
+EXPECTED (video.readyState == '4') OK
 END OF TEST
 

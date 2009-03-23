@@ -1,15 +1,15 @@
-<video controls></video>
+<video controls autoplay></video>
 <p>Test that removing a media element from the tree pauses playback but does not unload the media.</p>
 <script src=video-test.js></script>
 <script>
     waitForEvent('load', function () {
 
-        testExpected("video.networkState", HTMLMediaElement.LOADED);
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_LOADED);
         testExpected("video.paused", false);
 
         run("document.body.removeChild(video)");
 
-        testExpected("video.networkState", HTMLMediaElement.LOADED);
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_LOADED);
         testExpected("video.paused", true);
 
         document.body.offsetTop;
@@ -17,5 +17,4 @@
     } );
 
 video.src = "content/test.mp4";
-video.play();
 </script>

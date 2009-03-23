@@ -1,15 +1,27 @@
-<video src=content/test.mp4 controls></video>
-<script src=video-test.js></script>
-<script>
-waitForEvent('load',  
-function () { 
-    video.currentTime = video.duration - 0.2; 
-    video.play(); 
-    waitForEvent('timeupdate', function () {
+<html>
+<body>
+
+    <video src=content/test.mp4 controls></video>
+    
+    <p>Test that setting currentTime changes the time, and that 'ended' event is fired in a reasonable amount of time</p>
+    
+    <script src=video-test.js></script>
+    <script>
+    waitForEvent('load',  
+    function () { 
+        waitForEventAndEnd('ended');
+    
+        testExpected("video.currentTime", 0);
+        run("video.currentTime = video.duration - 0.2"); 
+        testExpected("video.currentTime.toFixed(2)", (video.duration - 0.2).toFixed(2));
+        run("video.play()"); 
+        consoleWrite("");
+    
         var timeout = 800;
-        setTimeout(function () { logResult("No timeupdate event in " + timeout/1000  + "seconds", false); }, timeout);
+        setTimeout(function () { logResult("No 'ended' event in " + timeout/1000  + "seconds", false); }, timeout);
     });
-    waitForEventAndEnd('ended');
-});
-video.src = "content/test.mp4";
-</script>
+    video.src = "content/test.mp4";
+    </script>
+
+</body>
+</html>

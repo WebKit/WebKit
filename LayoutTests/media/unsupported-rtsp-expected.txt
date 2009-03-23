@@ -2,6 +2,7 @@ Test that QuickTime file with RTSP URL generates a load error.
 
 EVENT(error)
 EXPECTED (video.error != 'null') OK
-EXPECTED (video.error.code == '2') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '4') OK
 END OF TEST
 

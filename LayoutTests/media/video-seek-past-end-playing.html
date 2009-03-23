@@ -4,6 +4,8 @@
 <script>
 
     waitForEvent('load', function () { 
+        testExpected("video.paused", true);
+        run("video.play()");
         testExpected("video.paused", false);
         setTimeout(timeCheck1, 200);
     });
@@ -14,7 +16,7 @@
         consoleWrite("");
         testExpected("video.paused", false);
         testExpected("media.currentTime", 0, '>');
-        video.currentTime = 500;
+        run("video.currentTime = 500");
         setTimeout(timeCheck2, 200);
     }
 
@@ -28,6 +30,5 @@
     }
 
     run("video.src = 'content/test.mp4'");
-    run("video.play()");
     consoleWrite("");
 </script>
