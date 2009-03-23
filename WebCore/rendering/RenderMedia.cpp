@@ -103,6 +103,28 @@ MediaPlayer* RenderMedia::player() const
     return mediaElement()->player();
 }
 
+void RenderMedia::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderReplaced::styleDidChange(diff, oldStyle);
+
+    if (m_controlsShadowRoot) {
+        if (m_panel->renderer())
+            m_panel->renderer()->setStyle(getCachedPseudoStyle(MEDIA_CONTROLS_PANEL));
+
+        if (m_timelineContainer->renderer())
+            m_timelineContainer->renderer()->setStyle(getCachedPseudoStyle(MEDIA_CONTROLS_TIMELINE_CONTAINER));
+        
+        m_muteButton->updateStyle();
+        m_playButton->updateStyle();
+        m_seekBackButton->updateStyle();
+        m_seekForwardButton->updateStyle();
+        m_timeline->updateStyle();
+        m_fullscreenButton->updateStyle();
+        m_currentTimeDisplay->updateStyle();
+        m_timeRemainingDisplay->updateStyle();
+    }
+}
+
 void RenderMedia::layout()
 {
     IntSize oldSize = contentBoxRect().size();

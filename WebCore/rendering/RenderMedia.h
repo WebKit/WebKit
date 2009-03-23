@@ -98,6 +98,8 @@ private:
     void changeOpacity(HTMLElement*, float opacity);
     void opacityAnimationTimerFired(Timer<RenderMedia>*);
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
     RefPtr<HTMLElement> m_controlsShadowRoot;
     RefPtr<HTMLElement> m_panel;
     RefPtr<MediaControlMuteButtonElement> m_muteButton;

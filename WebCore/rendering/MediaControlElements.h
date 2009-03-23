@@ -56,6 +56,8 @@ public:
     
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_mediaElement; }
+
+    void updateStyle();
     
 private:
     HTMLMediaElement* m_mediaElement;    
@@ -69,8 +71,10 @@ public:
     MediaTextDisplayElement(Document*, PseudoId, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
+    void updateStyle();
 protected:
     HTMLMediaElement* m_mediaElement;   
+    PseudoId m_pseudoStyleId;
 };
 
 // ----------------------------
@@ -87,9 +91,11 @@ public:
     MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
+    void updateStyle();
     bool hitTest(const IntPoint& absPoint);
 protected:
     HTMLMediaElement* m_mediaElement;   
+    PseudoId m_pseudoStyleId;
 };
 
 // ----------------------------

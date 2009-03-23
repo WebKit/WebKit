@@ -1,3 +1,30 @@
+2009-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24733
+        
+        Fix media controller with full-page zoom. Previously, the media controller
+        shadow nodes never saw style changes on the RenderMedia, so did not respond
+        to zooming at all. Now, we update the style on the shadow renderers
+        whenever RenderMedia gets a style change. Also fix the video thumb in
+        the theme to be scaled properly.
+
+        Test: media/video-controls-zoomed.html
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::updateStyle):
+        (WebCore::MediaTextDisplayElement::MediaTextDisplayElement):
+        (WebCore::MediaTextDisplayElement::updateStyle):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlInputElement::updateStyle):
+        * rendering/MediaControlElements.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::styleDidChange):
+        * rendering/RenderMedia.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+
 2009-03-23  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Adler.

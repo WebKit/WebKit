@@ -1,0 +1,41 @@
+<html>
+<head>
+  <title>Test controls with zooming</title>
+  <style type="text/css" media="screen">
+    video {
+      margin: 50px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function runTest()
+    {
+      window.setTimeout(function() {
+        document.documentElement.style.zoom = '150%';
+        if (window.eventSender) 
+        {
+            eventSender.mouseMoveTo(120,432); // over play button
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+        testExpected("video.paused", false);
+        endTest();
+      }, 50);
+    }
+  </script>
+</head>
+<body>
+    <video controls></video>
+    <p>Test controls on zoomed video.</p>
+    <p>This test only runs in DRT!</p>
+    <script src=video-test.js></script>
+    <script>
+        testExpected("video.controls", null, '!=');
+        waitForEvent('load', function() {
+            runTest();
+        } );
+        video.src = 'content/test.mp4';
+    </script>
+</body>
+</html>
+
+

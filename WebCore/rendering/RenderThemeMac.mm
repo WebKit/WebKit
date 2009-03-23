@@ -1455,8 +1455,8 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
             height = size.height;
         }
 
-        o->style()->setWidth(Length(width, Fixed));
-        o->style()->setHeight(Length(height, Fixed));
+        o->style()->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
+        o->style()->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
     }
 #endif
 }
