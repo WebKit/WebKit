@@ -117,7 +117,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
         return comp.value();
     }
 
-    if (comp.complType() == Throw)
+    if (comp.complType() == Throw || comp.complType() == Interrupted)
         reportException(exec, comp.value());
 
     m_sourceURL = savedSourceURL;

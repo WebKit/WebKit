@@ -1,3 +1,13 @@
+2009-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Provide JavaScript exception information after slow script timeout
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Changed to report
+        exceptions for the Interrupted completion type as well.
+
 2009-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

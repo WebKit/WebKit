@@ -1,3 +1,17 @@
+2009-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Provide JavaScript exception information after slow script timeout
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/Completion.cpp:
+        (JSC::evaluate): Set the exception object as the Completion
+        object's value for slow script timeouts.  This is used in
+        WebCore when reporting the exception.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::toString): Added.  Provides a
+        description message for the exception when it is reported.
+
 2009-03-23  Gustavo Noronha Silva  <gns@gnome.org> and Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 
         Reviewed by Adam Roben.

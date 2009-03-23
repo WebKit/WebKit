@@ -68,7 +68,7 @@ Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& s
 
     if (exception) {
         if (exception.isObject() && asObject(exception)->isWatchdogException())
-            return Completion(Interrupted, result);
+            return Completion(Interrupted, exception);
         return Completion(Throw, exception);
     }
     return Completion(Normal, result);
