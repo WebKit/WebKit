@@ -1,3 +1,7 @@
+2009-03-23  Darin Adler  <darin@apple.com>
+
+        * WebView/WebTextIterator.h: Fixed a spelling error in a comment.
+
 2009-03-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

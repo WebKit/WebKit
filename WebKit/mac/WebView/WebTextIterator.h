@@ -46,7 +46,7 @@
  @method advance
  @abstract Moves the WebTextIterator to the next bit of text or boundary between runs of text.
  The iterator can break up runs of text however it finds convenient, so clients need to handle
- text runs that are broken up into arbitary pieces.
+ text runs that are broken up into arbitrary pieces.
  */
 - (void)advance;
 
