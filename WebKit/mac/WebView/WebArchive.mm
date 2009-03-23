@@ -320,8 +320,9 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             }
         }
     }
-    
-    return [[_private->cachedSubresources retain] autorelease];
+    // Maintain the WebKit 3 behavior of this API, which is documented and
+    // relied upon by some clients, of returning nil if there are no subresources.
+    return [_private->cachedSubresources count] ? [[_private->cachedSubresources retain] autorelease] : nil;
 }
 
 - (NSArray *)subframeArchives

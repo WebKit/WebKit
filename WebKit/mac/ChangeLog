@@ -1,3 +1,17 @@
+2009-03-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6640741> Messages not displaying after the
+          Safari 4 beta was installed
+
+        Mail assumes that if -[WebArchive subresources] is not nil, then it
+        contains at least one object.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive subresources]): Preserve the behavior of returning nil
+        if there are no subresources.
+
 2009-03-20  Adele Peterson  <adele@apple.com>
 
         Build fix.
