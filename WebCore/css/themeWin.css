@@ -93,6 +93,10 @@ select[size="1"] {
     -webkit-border-radius: 0;
     margin: 0;
 }
+/* Options always use the selects' fonts */
+option {
+    font: inherit !important;
+}
 
 textarea {
   font-family: monospace;

@@ -1,3 +1,30 @@
+2009-03-23  Ada Chan  <adachan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=24762
+        Support text-indent in <option> elements on windows platform.
+
+        Reviewed by Adele Peterson.
+
+        * css/themeWin.css:
+        * platform/PopupMenuStyle.h: We don't honor font specified on <option> elements right now.  Make this
+        explicit via windows themed default stylesheet.
+        (WebCore::PopupMenuStyle::PopupMenuStyle): Also store text-indent and text-direction.
+        (WebCore::PopupMenuStyle::textIndent):
+        (WebCore::PopupMenuStyle::textDirection):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint): Adjust the text's x-coordinate if text-indent is supported for options and 
+        text-indent is specified with LTR direction.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth): Take text-indent into account if theme supports text-indent for options.
+        (WebCore::RenderMenuList::itemStyle): Use new PopupMenuStyle constructor on windows.
+        (WebCore::RenderMenuList::menuStyle): Ditto.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::menuStyle): Ditto.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::popupOptionSupportsTextIndent): Added.  Default is false since we are only supporting it in windows for now.
+        * rendering/RenderThemeWin.h:
+        (WebCore::RenderThemeWin::popupOptionSupportsTextIndent): Returns true for windows.
+
 2009-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

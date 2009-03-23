@@ -92,6 +92,8 @@ public:
     virtual bool paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
+    virtual bool popupOptionSupportsTextIndent() const { return true; }
+
     virtual int buttonInternalPaddingLeft() const;
     virtual int buttonInternalPaddingRight() const;
     virtual int buttonInternalPaddingTop() const;

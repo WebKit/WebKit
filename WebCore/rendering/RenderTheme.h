@@ -135,6 +135,7 @@ public:
     virtual int popupInternalPaddingRight(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingTop(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingBottom(RenderStyle*) const { return 0; }
+    virtual bool popupOptionSupportsTextIndent() const { return false; }
 
     virtual int buttonInternalPaddingLeft() const { return 0; }
     virtual int buttonInternalPaddingRight() const { return 0; }
