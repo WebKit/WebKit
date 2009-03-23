@@ -44,6 +44,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderTextControl.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/RandomNumber.h>
 
 #include <limits>
@@ -60,6 +61,14 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+static int64_t generateFormDataIdentifier()
+{
+    // Initialize to the current time to reduce the likelihood of generating
+    // identifiers that overlap with those from past/future browser sessions.
+    static int64_t nextIdentifier = static_cast<int64_t>(currentTime() * 1000000.0);
+    return ++nextIdentifier;
+}
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
@@ -240,6 +249,8 @@ PassRefPtr<FormData> HTMLFormElement::createFormData(const CString& boundary)
         m_formDataBuilder.addBoundaryToMultiPartHeader(encodedData, boundary, true);
 
     result->appendData(encodedData.data(), encodedData.size());
+
+    result->setIdentifier(generateFormDataIdentifier());
     return result;
 }
 

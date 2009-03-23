@@ -29,7 +29,8 @@
 namespace WebCore {
 
 inline FormData::FormData()
-    : m_hasGeneratedFiles(false)
+    : m_identifier(0)
+    , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
 {
 }
@@ -37,6 +38,7 @@ inline FormData::FormData()
 inline FormData::FormData(const FormData& data)
     : RefCounted<FormData>()
     , m_elements(data.m_elements)
+    , m_identifier(data.m_identifier)
     , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
 {

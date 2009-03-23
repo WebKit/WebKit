@@ -86,11 +86,17 @@ public:
     bool alwaysStream() const { return m_alwaysStream; }
     void setAlwaysStream(bool alwaysStream) { m_alwaysStream = alwaysStream; }
 
+    // Identifies a particular form submission instance.  A value of 0 is used
+    // to indicate an unspecified identifier.
+    void setIdentifier(int64_t identifier) { m_identifier = identifier; }
+    int64_t identifier() const { return m_identifier; }
+
 private:
     FormData();
     FormData(const FormData&);
-     
+
     Vector<FormDataElement> m_elements;
+    int64_t m_identifier;
     bool m_hasGeneratedFiles;
     bool m_alwaysStream;
 };
