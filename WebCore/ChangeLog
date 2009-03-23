@@ -1,3 +1,20 @@
+2009-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24699
+        REGRESSION: Java Applets broken
+        <rdar://problem/6707494>
+
+        Fix loading Java applets without a codeBase. Only pass the base (up to the
+        the last path component) of the baseURL to the plug-in.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * platform/KURL.cpp:
+        (WebCore::KURL::baseAsString):
+        * platform/KURL.h:
+
 2009-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

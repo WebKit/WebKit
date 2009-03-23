@@ -605,6 +605,11 @@ bool KURL::hasRef() const
     return m_fragmentEnd != m_queryEnd;
 }
 
+String KURL::baseAsString() const
+{
+    return m_string.left(m_pathAfterLastSlash);
+}
+
 #ifdef NDEBUG
 
 static inline void assertProtocolIsGood(const char*)
