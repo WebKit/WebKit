@@ -921,6 +921,7 @@ bool HTMLElement::inEitherTagList(const Node* newChild)
     if (newChild->isHTMLElement()) {
         const HTMLElement* child = static_cast<const HTMLElement*>(newChild);
         if (inlineTagList()->contains(child->tagQName().localName().impl())) {
+#if PLATFORM(MAC)
             if (child->tagQName().localName() == styleTag) {
                 // Leopard Mail doesn't expect <style> to be in the body of the document, so don't allow it in that case.
                 // See <rdar://problem/6621310>
@@ -928,6 +929,7 @@ bool HTMLElement::inEitherTagList(const Node* newChild)
                 if (settings && settings->needsLeopardMailQuirks())
                     return false;
             }
+#endif
             return true;
         }
         if (blockTagList()->contains(child->tagQName().localName().impl()))

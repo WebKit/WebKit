@@ -1,3 +1,12 @@
+2009-03-24  Adele Peterson  <adele@apple.com>
+
+        RS by Mark Rowe.
+
+        Only build these Mail quirks checks in on the Mac.
+
+        * dom/Document.cpp: (WebCore::disableRangeMutation):
+        * html/HTMLElement.cpp: (WebCore::HTMLElement::inEitherTagList):
+
 2009-03-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no review.

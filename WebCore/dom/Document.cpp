@@ -277,9 +277,13 @@ static bool acceptsEditingFocus(Node *node)
 
 static bool disableRangeMutation(Page* page)
 {
+#if PLATFORM(MAC)
     // Disable Range mutation on document modifications in Tiger and Leopard Mail
     // See <rdar://problem/5865171>
     return page && (page->settings()->needsLeopardMailQuirks() || page->settings()->needsTigerMailQuirks());
+#else
+    return false;
+#endif
 }
 
 static HashSet<Document*>* changedDocuments = 0;
