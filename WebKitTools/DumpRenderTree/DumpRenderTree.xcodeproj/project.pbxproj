@@ -725,6 +725,48 @@
 			};
 			name = Release;
 		};
+		90CBC3500F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
+			buildSettings = {
+				WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework/Versions/A/Resources;
+			};
+			name = Production;
+		};
+		90CBC3510F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+			};
+			name = Production;
+		};
+		90CBC3520F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
+			buildSettings = {
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				SKIP_INSTALL = NO;
+			};
+			name = Production;
+		};
+		90CBC3530F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
+			buildSettings = {
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				SKIP_INSTALL = NO;
+			};
+			name = Production;
+		};
+		90CBC3540F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
+			buildSettings = {
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				SKIP_INSTALL = NO;
+			};
+			name = Production;
+		};
 		A84F609308B1371400E9745F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -783,45 +825,50 @@
 			buildConfigurations = (
 				141BF222096A441E00E0753C /* Debug */,
 				141BF223096A441E00E0753C /* Release */,
+				90CBC3540F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		149C29BF08902C6D008A9EFC /* Build configuration list for PBXNativeTarget "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C29C008902C6D008A9EFC /* Debug */,
 				149C29C108902C6D008A9EFC /* Release */,
+				90CBC3520F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C29C408902C6D008A9EFC /* Debug */,
 				149C29C508902C6D008A9EFC /* Release */,
+				90CBC3500F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		A84F609208B1371400E9745F /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A84F609308B1371400E9745F /* Debug */,
 				A84F609408B1371400E9745F /* Release */,
+				90CBC3510F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B5A7526508AF4A4A00138E45 /* Debug */,
 				B5A7526608AF4A4A00138E45 /* Release */,
+				90CBC3530F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};
