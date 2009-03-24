@@ -1,3 +1,21 @@
+2009-03-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=21789, overflow:hidden elements should clip their foreground contents.
+        
+        This first patch makes overflow:hidden properly clip the foreground contents of overflow:hidden replaced elements.  Common
+        replaced elements now default to overflow:hidden in the UA stylesheet (this is what the spec specifically recommends be
+        done).
+    
+        Added fast/replaced/border-radius-clip.html
+
+        * css/html4.css:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2009-03-24  Adele Peterson  <adele@apple.com>
 
         RS by Mark Rowe.

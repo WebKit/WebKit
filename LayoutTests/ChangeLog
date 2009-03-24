@@ -1,3 +1,14 @@
+2009-03-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=21789
+
+        * fast/replaced/border-radius-clip.html: Added.
+        * platform/mac/fast/replaced/border-radius-clip-expected.checksum: Added.
+        * platform/mac/fast/replaced/border-radius-clip-expected.png: Added.
+        * platform/mac/fast/replaced/border-radius-clip-expected.txt: Added.
+
 2009-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         Update media tests broken by r41907.

@@ -191,6 +191,17 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
 #endif
 
+    bool clipToBorderRadius = style()->overflowX() != OVISIBLE && style()->hasBorderRadius(); 
+    if (clipToBorderRadius) {
+        // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
+        paintInfo.context->save();
+        paintInfo.context->addRoundedRectClip(IntRect(tx, ty, width(), height()),
+                                              style()->borderTopLeftRadius(),
+                                              style()->borderTopRightRadius(), 
+                                              style()->borderBottomLeftRadius(),
+                                              style()->borderBottomRightRadius());
+    }
+
     if (m_widget) {
         // Move the widget if necessary.  We normally move and resize widgets during layout, but sometimes
         // widgets can move without layout occurring (most notably when you scroll a document that
@@ -201,6 +212,9 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         // to paint itself.  That way it will composite properly with z-indexed layers.
         m_widget->paint(paintInfo.context, paintInfo.rect);
     }
+
+    if (clipToBorderRadius)
+        paintInfo.context->restore();
 
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document()->printing()) {
