@@ -2305,6 +2305,11 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
     if (Node* node = this->node())
         return VisiblePosition(node, offset, affinity);
 
+    // We don't want to cross the boundary between editable and non-editable
+    // regions of the document, but that is either impossible or at least
+    // extremely unlikely in any normal case because we stop as soon as we
+    // find a single non-anonymous renderer.
+
     // Find a nearby non-anonymous renderer.
     RenderObject* child = this;
     while (RenderObject* parent = child->parent()) {
