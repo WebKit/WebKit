@@ -2,6 +2,21 @@
 
         Reviewed by Simon Fraser
 
+        https://bugs.webkit.org/show_bug.cgi?id=21789, overflow:hidden elements should clip their foreground contents
+        to a border-radius.
+
+        This patch makes non-self-painting overflow layers and control clips work with border-radius.  RenderLayers
+        that should be clipped by overflow ancestors with border-radius are still broken.
+
+        Added fast/clip/overflow-border-radius-clip.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+
+2009-03-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
         https://bugs.webkit.org/show_bug.cgi?id=21789, overflow:hidden elements should clip their foreground contents.
         
         This first patch makes overflow:hidden properly clip the foreground contents of overflow:hidden replaced elements.  Common
