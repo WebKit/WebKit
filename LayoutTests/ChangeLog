@@ -1,3 +1,11 @@
+2009-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Update media tests broken by r41907.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/media/video-play-stall-seek.html:
+        * http/tests/media/video-play-stall.html:
+
 2009-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

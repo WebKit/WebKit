@@ -1,10 +1,11 @@
 Test that playback can be resumed by seeking backwards after load stalls.
 
+RUN(video.play())
 EVENT(waiting)
-TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
-RUN(video.currentTime = 0.5)
+EXPECTED (video.readyState == '2') OK
+RUN(video.currentTime = 0.1)
 EVENT(canplay)
-TEST(video.readyState == HTMLMediaElement.CAN_PLAY) OK
-TEST(video.networkState == HTMLMediaElement.LOADED_FIRST_FRAME) OK
+EXPECTED (video.readyState >= '2') OK
+EXPECTED (video.networkState == '2') OK
 END OF TEST
 

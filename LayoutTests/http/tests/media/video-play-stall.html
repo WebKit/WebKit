@@ -1,16 +1,30 @@
 <video></video>
-<p>Test that dataunavailable, timeupdate and waiting events are sent when media load stalls in the middle.</p>
+<p>Test that stalled, timeupdate and waiting events are sent when media load stalls in the middle.</p>
 <script src=../../../media/video-test.js></script>
 <script>
-waitForEvent('durationchange');
-waitForEvent('loadedmetadata');
-waitForEvent('loadedfirstframe');
-waitForEvent('canshowcurrentframe');
-waitForEvent('canplay', function () {
-    waitForEvent('dataunavailable');
-    waitForEvent('timeupdate');
-    waitForEventAndEnd('waiting');
-} );
-video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";
-video.play();
+
+    var timeupdateCount = 0;
+
+    waitForEvent('durationchange');
+    waitForEvent('loadedmetadata');
+    waitForEvent('loadeddata');
+    waitForEvent('canplaythrough');
+    waitForEvent('canplay', function () {
+
+        media.addEventListener('timeupdate', function () {
+            // timeupdate events are fired as playback progresses so only verify that at least one
+            // event is fired
+            ++timeupdateCount;
+            if (timeupdateCount == 1)
+                consoleWrite("EVENT(timeupdate)");
+        } );
+
+        waitForEvent('waiting', function () {
+            waitForEventAndEnd('timeupdate');
+        } );
+
+        waitForEventAndEnd('stalled');
+    } );
+    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";
+    run("video.play()");
 </script>

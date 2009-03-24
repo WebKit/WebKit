@@ -1,12 +1,12 @@
-Test that dataunavailable, timeupdate and waiting events are sent when media load stalls in the middle.
+Test that stalled, timeupdate and waiting events are sent when media load stalls in the middle.
 
+RUN(video.play())
 EVENT(durationchange)
 EVENT(loadedmetadata)
-EVENT(loadedfirstframe)
-EVENT(canshowcurrentframe)
+EVENT(loadeddata)
 EVENT(canplay)
-EVENT(dataunavailable)
 EVENT(timeupdate)
 EVENT(waiting)
+EVENT(stalled)
 END OF TEST
 

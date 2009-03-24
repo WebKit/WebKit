@@ -625,6 +625,9 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
 
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 {
+    // Set "wasPotentiallyPlaying" BEFORE updating m_readyState, potentiallyPlaying() uses it
+    bool wasPotentiallyPlaying = potentiallyPlaying();
+
     ReadyState oldState = m_readyState;
     m_readyState = static_cast<ReadyState>(state);
 
@@ -643,7 +646,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         m_seeking = false;
     }
 
-    bool wasPotentiallyPlaying = potentiallyPlaying();
     if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
         // 4.8.10.9
         scheduleTimeupdateEvent(false);
