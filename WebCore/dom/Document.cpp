@@ -3124,9 +3124,10 @@ KURL Document::completeURL(const String& url) const
     // See also [CSS]StyleSheet::completeURL(const String&)
     if (url.isNull())
         return KURL();
+    const KURL& baseURL = ((m_baseURL.isEmpty() || m_baseURL == blankURL()) && parentDocument()) ? parentDocument()->baseURL() : m_baseURL;
     if (!m_decoder)
-        return KURL(m_baseURL, url);
-    return KURL(m_baseURL, url, m_decoder->encoding());
+        return KURL(baseURL, url);
+    return KURL(baseURL, url, m_decoder->encoding());
 }
 
 void Document::setInPageCache(bool flag)

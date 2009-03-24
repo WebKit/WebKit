@@ -1,3 +1,18 @@
+2009-03-24  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23310: Setting an absolute path (/abs) on an <iframe> with no src doesn't resolve the URL properly
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23310>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/frames/iframe-no-src-set-location.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL): If m_baseURL is empty or is
+        about:blank and we have a parent document, use the parent
+        document's URL for the base when completing a new URL.
+
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

@@ -1,3 +1,15 @@
+2009-03-24  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23310: Setting an absolute path (/abs) on an <iframe> with no src doesn't resolve the URL properly
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23310>
+
+        Reviewed by Darin Adler.
+
+        * fast/frames/iframe-no-src-set-location-expected.txt: Added.
+        * fast/frames/iframe-no-src-set-location.html: Added.
+        * fast/frames/resources/iframe-no-src-set-location-pass.html: Copied from LayoutTests/fast/dom/Document/early-document-access-expected.txt.
+
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
