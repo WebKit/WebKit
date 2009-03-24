@@ -1,3 +1,22 @@
+2009-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24782
+
+        Fix regression with CSS clip rects with non-length values, by reverting to
+        the original code, but passing the zoom multiplier through convertToLength().
+        
+        Also make stylistic change in createTransformOperations(), renaming 'inStyle'
+        to 'style.
+        
+        Tested by existing tests.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+
 2009-03-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser
