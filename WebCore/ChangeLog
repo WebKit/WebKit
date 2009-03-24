@@ -1,3 +1,24 @@
+2009-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        document.write() should be able to make a document strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=24336
+
+        Remove an implicit write of "<html>" on the first document.write call
+        this was added as part of a KDE import http://trac.webkit.org/changeset/798
+        with no layout test or explanation.  I can't think of any reason why
+        an implicit <html> write is necessary (or correct), so I'm removing it and
+        adding a test for the correct behavior.  The parser will add any necessary
+        HTMLHTMLElements during the write() anyway.
+
+        Our behavior is now tested by fast/dom/Document/document-write-doctype
+        and matches IE, FF fails this new test.  Mozilla bug filed:
+        https://bugzilla.mozilla.org/show_bug.cgi?id=483908
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+
 2009-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

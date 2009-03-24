@@ -1696,15 +1696,10 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
         printf("Beginning a document.write at %d\n", elapsedTime());
 #endif
 
-    if (!m_tokenizer) {
+    if (!m_tokenizer)
         open(ownerDocument);
-        ASSERT(m_tokenizer);
-        if (!m_tokenizer)
-            return;
-        UChar documentPrefix[] = { '<', 'h', 't', 'm', 'l', '>' };
-        m_tokenizer->write(SegmentedString(documentPrefix, sizeof(documentPrefix) / sizeof(documentPrefix[0])), false);
-    }
 
+    ASSERT(m_tokenizer);
     m_tokenizer->write(text, false);
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING

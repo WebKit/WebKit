@@ -1,3 +1,18 @@
+2009-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        document.write() should be able to make a document strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=24336
+
+        Our behavior is now tested by fast/dom/Document/document-write-doctype
+        and matches IE, FF fails this new test.  Mozilla bug filed:
+        https://bugzilla.mozilla.org/show_bug.cgi?id=483908
+
+        * fast/dom/Document/document-write-doctype-expected.txt: Added.
+        * fast/dom/Document/document-write-doctype.html: Added.
+        * fast/dom/Document/resources/document-write-doctype.js: Added.
+
 2009-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
