@@ -5252,7 +5252,11 @@ static BOOL isInPasswordField(Frame* coreFrame)
 - (NSRange)markedRange
 {
     WebFrame *webFrame = [self _frame];
-    NSRange result = [webFrame _convertToNSRange:core(webFrame)->editor()->compositionRange().get()];
+    Frame* coreFrame = core(webFrame);
+    if (!coreFrame)
+        return NSMakeRange(0, 0);
+    NSRange result = [webFrame _convertToNSRange:coreFrame->editor()->compositionRange().get()];
+
     LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
     return result;
 }

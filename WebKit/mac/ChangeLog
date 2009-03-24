@@ -1,3 +1,14 @@
+2009-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - speculative fix for <rdar://problem/6630134> Crash at
+          Editor::compositionRange()
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView markedRange]): Null-check the Frame like most other
+        methods in this class.
+
 2009-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
