@@ -89,7 +89,7 @@ PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, PassRefPtr<N
 
 PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, const Position& start, const Position& end)
 {
-    return adoptRef(new Range(ownerDocument, start.container.get(), start.m_offset, end.container.get(), end.m_offset));
+    return adoptRef(new Range(ownerDocument, start.node(), start.m_offset, end.node(), end.m_offset));
 }
 
 Range::~Range()
@@ -527,7 +527,7 @@ short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containe
 
 short Range::compareBoundaryPoints(const Position& a, const Position& b)
 {
-    return compareBoundaryPoints(a.container.get(), a.m_offset, b.container.get(), b.m_offset);
+    return compareBoundaryPoints(a.node(), a.m_offset, b.node(), b.m_offset);
 }
 
 bool Range::boundaryPointsValid() const

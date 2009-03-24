@@ -1,3 +1,42 @@
+2009-03-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename Position::container to m_anchorNode and make it private
+        https://bugs.webkit.org/show_bug.cgi?id=24760
+
+        More code cleanup for Position.
+
+        Change all uses of m_container to node()
+        Eventually most uses of node() should change to anchorNode() to designate
+        that it's the node the Position is anchored to, but not necessarily the
+        container of the position (it could be the before/after neighbor).
+
+        Remove any code which sets m_container, and change it to use a new
+        Position::moveToPosition function which takes a node and offset.
+        It never makes sense to change the node and leave the offset.
+
+        * dom/Position.h:
+        (WebCore::Position::Position):
+        (WebCore::Position::clear):
+        (WebCore::Position::anchorNode):
+        (WebCore::Position::node):
+        (WebCore::Position::moveToPosition):
+        (WebCore::Position::moveToOffset):
+        (WebCore::Position::isNull):
+        (WebCore::Position::isNotNull):
+        (WebCore::operator==):
+        * dom/Range.cpp:
+        (WebCore::Range::create):
+        (WebCore::Range::compareBoundaryPoints):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::container):
+        (WebCore::RangeBoundaryPoint::set):
+        (WebCore::RangeBoundaryPoint::setOffset):
+        (WebCore::RangeBoundaryPoint::setToChild):
+        (WebCore::RangeBoundaryPoint::setToStart):
+        (WebCore::RangeBoundaryPoint::setToEnd):
+
 2009-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt.

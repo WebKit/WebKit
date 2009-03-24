@@ -52,19 +52,36 @@ enum PositionMoveType {
 
 class Position {
 public:
-    RefPtr<Node> container;
-    int m_offset;
-
     Position() : m_offset(0) { }
-    Position(PassRefPtr<Node> c, int o) : container(c), m_offset(o) { }
 
-    void clear() { container.clear(); m_offset = 0; }
+    // This constructor should be private
+    Position(PassRefPtr<Node> anchorNode, int offset)
+        : m_anchorNode(anchorNode)
+        , m_offset(offset)
+    {}
 
-    Node* node() const { return container.get(); }
+    void clear() { m_anchorNode.clear(); m_offset = 0; }
+
+    Node* anchorNode() const { return m_anchorNode.get(); }
+
+    // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
+    // For nodes which editingIgnoresContent(node()) returns true, positions like [ignoredNode, 0]
+    // will be treated as before ignoredNode (thus node() is really after the position, not containing it).
+    Node* node() const { return m_anchorNode.get(); }
     Element* documentElement() const;
 
-    bool isNull() const { return !container; }
-    bool isNotNull() const { return container; }
+    void moveToPosition(PassRefPtr<Node> node, int offset)
+    {
+        m_anchorNode = node;
+        m_offset = offset;
+    }
+    void moveToOffset(int offset)
+    {
+        m_offset = offset;
+    }
+
+    bool isNull() const { return !m_anchorNode; }
+    bool isNotNull() const { return m_anchorNode; }
 
     Element* element() const;
     PassRefPtr<CSSComputedStyleDeclaration> computedStyle() const;
@@ -118,11 +135,20 @@ private:
 
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;
+
+    RefPtr<Node> m_anchorNode;
+public:
+    // m_offset can be the offset inside m_anchorNode, or if editingIgnoresContent(m_anchorNode)
+    // returns true, then other places in editing will treat m_offset == 0 as "before the anchor"
+    // and m_offset > 0 as "after the anchor node".  See rangeCompliantEquivalent for more info.
+    int m_offset; // FIXME: This should be made private.
 };
 
 inline bool operator==(const Position& a, const Position& b)
 {
-    return a.container == b.container && a.m_offset == b.m_offset;
+    // FIXME: In <div><img></div> [div, 0] != [img, 0] even though most of the
+    // editing code will treat them as identical.
+    return a.anchorNode() == b.anchorNode() && a.m_offset == b.m_offset;
 }
 
 inline bool operator!=(const Position& a, const Position& b)

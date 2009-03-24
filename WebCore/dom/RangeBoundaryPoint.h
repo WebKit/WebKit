@@ -55,6 +55,10 @@ public:
 private:
     static const int invalidOffset = -1;
 
+    // FIXME: RangeBoundaryPoint is the only file to ever use -1 as am expected offset for Position
+    // RangeBoundaryPoint currently needs to store a Position object to make the
+    // position() function be able to return a const& (and thus avoid ref-churn).
+    
     mutable Position m_position;
     Node* m_childBefore;
 };
@@ -72,7 +76,7 @@ inline RangeBoundaryPoint::RangeBoundaryPoint(PassRefPtr<Node> container)
 
 inline Node* RangeBoundaryPoint::container() const
 {
-    return m_position.container.get();
+    return m_position.node();
 }
 
 inline Node* RangeBoundaryPoint::childBefore() const
@@ -104,47 +108,43 @@ inline void RangeBoundaryPoint::set(PassRefPtr<Node> container, int offset, Node
 {
     ASSERT(offset >= 0);
     ASSERT(childBefore == (offset ? container->childNode(offset - 1) : 0));
-    m_position.container = container;
-    m_position.m_offset = offset;
+    m_position.moveToPosition(container, offset);
     m_childBefore = childBefore;
 }
 
 inline void RangeBoundaryPoint::setOffset(int offset)
 {
-    ASSERT(m_position.container);
-    ASSERT(m_position.container->offsetInCharacters());
+    ASSERT(m_position.node());
+    ASSERT(m_position.node()->offsetInCharacters());
     ASSERT(m_position.m_offset >= 0);
     ASSERT(!m_childBefore);
-    m_position.m_offset = offset;
+    m_position.moveToOffset(offset);
 }
 
 inline void RangeBoundaryPoint::setToChild(Node* child)
 {
     ASSERT(child);
     ASSERT(child->parentNode());
-    m_position.container = child->parentNode();
     m_childBefore = child->previousSibling();
-    m_position.m_offset = m_childBefore ? invalidOffset : 0;
+    m_position.moveToPosition(child->parentNode(), m_childBefore ? invalidOffset : 0);
 }
 
 inline void RangeBoundaryPoint::setToStart(PassRefPtr<Node> container)
 {
     ASSERT(container);
-    m_position.container = container;
-    m_position.m_offset = 0;
+    m_position.moveToPosition(container, 0);
     m_childBefore = 0;
 }
 
 inline void RangeBoundaryPoint::setToEnd(PassRefPtr<Node> container)
 {
     ASSERT(container);
-    m_position.container = container;
-    if (m_position.container->offsetInCharacters()) {
-        m_position.m_offset = m_position.container->maxCharacterOffset();
+    if (container->offsetInCharacters()) {
+        m_position.moveToPosition(container, container->maxCharacterOffset());
         m_childBefore = 0;
     } else {
-        m_childBefore = m_position.container->lastChild();
-        m_position.m_offset = m_childBefore ? invalidOffset : 0;
+        m_childBefore = container->lastChild();
+        m_position.moveToPosition(container, m_childBefore ? invalidOffset : 0);
     }
 }
 
