@@ -2253,7 +2253,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         // We can't just map hitTestPoint and hitTestRect because they may have been flattened (losing z)
         // by our container.
         IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
-        IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
+        IntRect localHitTestRect;
+#if USE(ACCELERATED_COMPOSITING)
+        if (isComposited()) {
+            // It doesn't make sense to project hitTestRect into the plane of this layer, so use the same bounds we use for painting.
+            localHitTestRect = compositor()->calculateCompositedBounds(this, this);
+        } else
+#endif
+            localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
 
         // Now do a hit test with the root layer shifted to be us.
         return hitTestLayer(this, containerLayer, request, result, localHitTestRect, localPoint, true, newTransformState.get(), zOffset);

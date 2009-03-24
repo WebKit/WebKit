@@ -1,6 +1,22 @@
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24659
+        
+        When hit-testing 3d-transformed layers, it doesn't make sense to project the hitTestRect
+        into the coordinate space of the layer, and doing so can result in pathalogical quads
+        that break hit testing. In that case, simply use the same bounds as used for painting,
+        which are the composited bounds for this layer.
+
+        Test: transforms/3d/hit-testing/rotated-hit-test.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
+2009-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=24436
         
