@@ -412,6 +412,40 @@ static JSClassRef EvilExceptionObject_class(JSContextRef context)
     return jsClass;
 }
 
+JSClassDefinition EmptyObject_definition = {
+    0,
+    kJSClassAttributeNone,
+    
+    NULL,
+    NULL,
+    
+    NULL,
+    NULL,
+    
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
+static JSClassRef EmptyObject_class(JSContextRef context)
+{
+    UNUSED_PARAM(context);
+    
+    static JSClassRef jsClass;
+    if (!jsClass)
+        jsClass = JSClassCreate(&EmptyObject_definition);
+    
+    return jsClass;
+}
+
 
 static JSValueRef Base_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -776,6 +810,11 @@ int main(int argc, char* argv[])
     JSStringRef EvilExceptionObjectIString = JSStringCreateWithUTF8CString("EvilExceptionObject");
     JSObjectSetProperty(context, globalObject, EvilExceptionObjectIString, EvilExceptionObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(EvilExceptionObjectIString);
+    
+    JSObjectRef EmptyObject = JSObjectMake(context, EmptyObject_class(context), NULL);
+    JSStringRef EmptyObjectIString = JSStringCreateWithUTF8CString("EmptyObject");
+    JSObjectSetProperty(context, globalObject, EmptyObjectIString, EmptyObject, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(EmptyObjectIString);
     
     JSValueRef exception;
 

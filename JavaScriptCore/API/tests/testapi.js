@@ -162,6 +162,7 @@ shouldThrow("EvilExceptionObject*5");
 EvilExceptionObject.toStringExplicit = function f() { return f(); }
 shouldThrow("String(EvilExceptionObject)");
 
+shouldBe("EmptyObject", "[object CallbackObject]");
 
 if (failed)
     throw "Some tests failed";

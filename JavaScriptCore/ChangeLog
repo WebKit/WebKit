@@ -1,5 +1,18 @@
 2009-03-23  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Fix className() for API defined class
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::className):
+        * API/tests/testapi.c:
+        (EmptyObject_class):
+        (main):
+        * API/tests/testapi.js:
+
+2009-03-23  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         Make testapi assertions run in release builds, so that testapi actually
