@@ -347,6 +347,7 @@
 #if PLATFORM(DARWIN)
 
 #define HAVE_ERRNO_H 1
+#define HAVE_LANGINFO_H 1
 #define HAVE_MMAP 1
 #define HAVE_MERGESORT 1
 #define HAVE_SBRK 1
