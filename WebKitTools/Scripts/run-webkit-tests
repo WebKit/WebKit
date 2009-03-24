@@ -93,7 +93,8 @@ sub validateSkippedArg($$;$);
 sub htmlForResultsSection(\@$&);
 sub deleteExpectedAndActualResults($);
 sub recordActualResultsAndDiff($$);
-sub buildPlatformHierarchy();
+sub buildPlatformResultHierarchy();
+sub buildPlatformTestHierarchy(@);
 sub epiloguesAndPrologues($$);
 sub parseLeaksandPrintUniqueLeaks();
 sub readFromDumpToolWithTimer(*;$);
@@ -303,7 +304,8 @@ my $testDirectory = File::Spec->rel2abs($layoutTestsName);
 my $expectedDirectory = $testDirectory;
 my $platformBaseDirectory = catdir($testDirectory, "platform");
 my $platformTestDirectory = catdir($platformBaseDirectory, $platform);
-my @platformHierarchy = buildPlatformHierarchy();
+my @platformResultHierarchy = buildPlatformResultHierarchy();
+my @platformTestHierarchy = buildPlatformTestHierarchy(@platformResultHierarchy);
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
@@ -375,7 +377,7 @@ if ($ignoreTests) {
 }
 
 if (!$ignoreSkipped) {
-    foreach my $level (@platformHierarchy) {
+    foreach my $level (@platformTestHierarchy) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose && !$skippedOnly) {
                 my ($dir, $name) = splitpath($level);
@@ -435,7 +437,7 @@ for my $test (@ARGV) {
     } elsif (-d $fullPath) {
         find({ preprocess => $directoryFilter, wanted => $fileFilter }, $fullPath);
 
-        for my $level (@platformHierarchy) {
+        for my $level (@platformTestHierarchy) {
             my $platformPath = catfile($level, $test);
             find({ preprocess => $directoryFilter, wanted => $fileFilter }, $platformPath) if (-d $platformPath);
         }
@@ -446,7 +448,7 @@ for my $test (@ARGV) {
 if (!scalar @ARGV) {
     find({ preprocess => $directoryFilter, wanted => $fileFilter }, $testDirectory);
 
-    for my $level (@platformHierarchy) {
+    for my $level (@platformTestHierarchy) {
         find({ preprocess => $directoryFilter, wanted => $fileFilter }, $level);
     }
 }
@@ -1431,7 +1433,7 @@ sub expectedDirectoryForTest($;$;$)
 {
     my ($base, $isText, $expectedExtension) = @_;
 
-    my @directories = @platformHierarchy;
+    my @directories = @platformResultHierarchy;
     push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-leopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
@@ -1442,7 +1444,7 @@ sub expectedDirectoryForTest($;$;$)
 
     # For cross-platform tests, text-only results should go in the cross-platform directory,
     # while render tree dumps should go in the least-specific platform directory.
-    return $isText ? $expectedDirectory : $platformHierarchy[$#platformHierarchy];
+    return $isText ? $expectedDirectory : $platformResultHierarchy[$#platformResultHierarchy];
 }
 
 sub countFinishedTest($$$$) {
@@ -1695,7 +1697,7 @@ sub recordActualResultsAndDiff($$)
     system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 }
 
-sub buildPlatformHierarchy()
+sub buildPlatformResultHierarchy()
 {
     mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
 
@@ -1721,6 +1723,14 @@ sub buildPlatformHierarchy()
     return @hierarchy;
 }
 
+sub buildPlatformTestHierarchy(@)
+{
+    my (@platformHierarchy) = @_;
+    return @platformHierarchy if (@platformHierarchy < 2);
+
+    return ($platformHierarchy[0], $platformHierarchy[$#platformHierarchy]);
+}
+
 sub epiloguesAndPrologues($$) {
     my ($lastDirectory, $directory) = @_;
     my @lastComponents = split('/', $lastDirectory);
@@ -1738,7 +1748,7 @@ sub epiloguesAndPrologues($$) {
     my $leaving = $lastDirectory;
     foreach (@lastComponents) {
         my $epilogue = $leaving . "/resources/run-webkit-tests-epilogue.html";
-        foreach (@platformHierarchy) {
+        foreach (@platformResultHierarchy) {
             push @result, catdir($_, $epilogue) if (stat(catdir($_, $epilogue)));
         }
         push @result, catdir($testDirectory, $epilogue) if (stat(catdir($testDirectory, $epilogue)));
@@ -1750,7 +1760,7 @@ sub epiloguesAndPrologues($$) {
         $entering .= '/' . $_;
         my $prologue = $entering . "/resources/run-webkit-tests-prologue.html";
         push @result, catdir($testDirectory, $prologue) if (stat(catdir($testDirectory, $prologue)));
-        foreach (reverse @platformHierarchy) {
+        foreach (reverse @platformResultHierarchy) {
             push @result, catdir($_, $prologue) if (stat(catdir($_, $prologue)));
         }
     }

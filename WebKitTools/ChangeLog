@@ -1,3 +1,14 @@
+2009-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use a different platform search path for tests and skip lists, so that Tiger doesn't end up
+        using the Leopard skip list.  Tests and skip lists are now looked for in the directory for
+        the current OS and the generic "mac" directory.  Tests and skip lists for newer OS versions are
+        ignored.
+
+        * Scripts/run-webkit-tests:
+
 2009-03-23  Stephanie  <slewis@apple.com>
 
         Fix root build.
