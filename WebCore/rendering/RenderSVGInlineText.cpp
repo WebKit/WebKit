@@ -152,13 +152,13 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
     SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(firstTextBox());
 
     if (!textBox || textLength() == 0)
-        return VisiblePosition(node(), 0, DOWNSTREAM);
+        return createVisiblePosition(0, DOWNSTREAM);
 
     SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
     RenderBlock* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
-        return VisiblePosition(node(), 0, DOWNSTREAM);
+        return createVisiblePosition(0, DOWNSTREAM);
 
     int closestOffsetInBox = 0;
 
@@ -181,7 +181,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
         }
     }
 
-    return VisiblePosition(node(), closestOffsetInBox, DOWNSTREAM);
+    return createVisiblePosition(closestOffsetInBox, DOWNSTREAM);
 }
 
 void RenderSVGInlineText::destroy()

@@ -209,7 +209,7 @@ VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
-        return VisiblePosition(node(), 0, DOWNSTREAM);
+        return createVisiblePosition(0, DOWNSTREAM);
 
     // FIXME: This code is buggy if the replaced element is relative positioned.
 
@@ -219,15 +219,15 @@ VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
     int bottom = root->nextRootBox() ? root->nextRootBox()->topOverflow() : root->bottomOverflow();
 
     if (point.y() + y() < top)
-        return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM); // coordinates are above
+        return createVisiblePosition(caretMinOffset(), DOWNSTREAM); // coordinates are above
     
     if (point.y() + y() >= bottom)
-        return VisiblePosition(node(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
+        return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (node()) {
         if (point.x() <= width() / 2)
-            return VisiblePosition(node(), 0, DOWNSTREAM);
-        return VisiblePosition(node(), 1, DOWNSTREAM);
+            return createVisiblePosition(0, DOWNSTREAM);
+        return createVisiblePosition(1, DOWNSTREAM);
     }
 
     return RenderBox::positionForPoint(point);

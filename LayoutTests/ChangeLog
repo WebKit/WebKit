@@ -1,3 +1,14 @@
+2009-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 24726: hit testing doesn't work right when the click is on anonymous content
+        https://bugs.webkit.org/show_bug.cgi?id=24726
+        rdar://problem/6696992
+
+        * editing/selection/hit-test-anonymous-expected.txt: Added.
+        * editing/selection/hit-test-anonymous.html: Added.
+
 2009-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Antti Koivisto

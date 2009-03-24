@@ -96,7 +96,7 @@ unsigned RenderBR::caretMaxRenderedOffset() const
 
 VisiblePosition RenderBR::positionForPoint(const IntPoint&)
 {
-    return VisiblePosition(node(), 0, DOWNSTREAM);
+    return createVisiblePosition(0, DOWNSTREAM);
 }
 
 } // namespace WebCore

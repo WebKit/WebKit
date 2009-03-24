@@ -2674,7 +2674,7 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
-        return firstDeepEditingPositionForNode(node());
+        return createVisiblePosition(firstDeepEditingPositionForNode(node()));
 
     int xPos = point.x();
     int yPos = point.y();
@@ -2685,8 +2685,8 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
         
         if (xPos < 0 || xPos > right || yPos < 0 || yPos > bottom) {
             if (xPos <= right / 2)
-                return firstDeepEditingPositionForNode(node());
-            return lastDeepEditingPositionForNode(node());
+                return createVisiblePosition(firstDeepEditingPositionForNode(node()));
+            return createVisiblePosition(lastDeepEditingPositionForNode(node()));
         }
     }
 
@@ -2757,7 +2757,7 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
     if (closestRenderer)
         return closestRenderer->positionForCoordinates(newX - closestRenderer->x(), newY - closestRenderer->y());
     
-    return firstDeepEditingPositionForNode(node());
+    return createVisiblePosition(firstDeepEditingPositionForNode(node()));
 }
 
 bool RenderBox::shrinkToAvoidFloats() const

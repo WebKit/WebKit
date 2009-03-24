@@ -1896,7 +1896,7 @@ VisiblePosition RenderObject::positionForCoordinates(int x, int y)
 
 VisiblePosition RenderObject::positionForPoint(const IntPoint&)
 {
-    return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM);
+    return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
 }
 
 void RenderObject::updateDragState(bool dragOn)
@@ -2297,6 +2297,52 @@ RenderBoxModelObject* RenderObject::offsetParent() const
         curr = curr->parent();
     }
     return curr && curr->isBoxModelObject() ? toRenderBoxModelObject(curr) : 0;
+}
+
+VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
+{
+    // If is is a non-anonymous renderer, then it's simple.
+    if (Node* node = this->node())
+        return VisiblePosition(node, offset, affinity);
+
+    // Find a nearby non-anonymous renderer.
+    RenderObject* child = this;
+    while (RenderObject* parent = child->parent()) {
+        // Find non-anonymous content after.
+        RenderObject* renderer = child;
+        while ((renderer = renderer->nextInPreOrder(parent))) {
+            if (Node* node = renderer->node())
+                return VisiblePosition(node, 0, DOWNSTREAM);
+        }
+
+        // Find non-anonymous content before.
+        renderer = child;
+        while ((renderer = renderer->previousInPreOrder())) {
+            if (renderer == parent)
+                break;
+            if (Node* node = renderer->node())
+                return VisiblePosition(node, numeric_limits<int>::max(), DOWNSTREAM);
+        }
+
+        // Use the parent itself unless it too is anonymous.
+        if (Node* node = parent->node())
+            return VisiblePosition(node, 0, DOWNSTREAM);
+
+        // Repeat at the next level up.
+        child = parent;
+    }
+
+    // Everything was anonymous. Give up.
+    return VisiblePosition();
+}
+
+VisiblePosition RenderObject::createVisiblePosition(const Position& position)
+{
+    if (position.container)
+        return VisiblePosition(position);
+
+    ASSERT(!node());
+    return createVisiblePosition(0, DOWNSTREAM);
 }
 
 #if ENABLE(SVG)

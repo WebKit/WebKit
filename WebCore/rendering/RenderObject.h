@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "RenderObjectChildList.h"
 #include "RenderStyle.h"
+#include "TextAffinity.h"
 #include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
@@ -39,6 +40,7 @@ class AnimationController;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
+class Position;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
@@ -459,6 +461,8 @@ public:
 
     VisiblePosition positionForCoordinates(int x, int y);
     virtual VisiblePosition positionForPoint(const IntPoint&);
+    VisiblePosition createVisiblePosition(int offset, EAffinity);
+    VisiblePosition createVisiblePosition(const Position&);
 
     virtual void dirtyLinesFromChangedChild(RenderObject*);
 
