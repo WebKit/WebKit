@@ -1,3 +1,16 @@
+2009-03-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24759
+        Add missing methods Element.prototype.removeMatchingStyleClasses and
+        Node.prototype.enclosingNodeOrSelfWithNodeNameInArray to SourceFrame content
+        iframe. These methods are called by Element.prototype.removeStyleClass and
+        Node.prototype.enclosingNodeOrSelfWithNodeName.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+
 2009-03-24  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Mark Rowe.

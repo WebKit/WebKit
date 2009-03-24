@@ -225,8 +225,10 @@ WebInspector.SourceFrame.prototype = {
 
         this.element.contentWindow.Element.prototype.addStyleClass = Element.prototype.addStyleClass;
         this.element.contentWindow.Element.prototype.removeStyleClass = Element.prototype.removeStyleClass;
+        this.element.contentWindow.Element.prototype.removeMatchingStyleClasses = Element.prototype.removeMatchingStyleClasses;
         this.element.contentWindow.Element.prototype.hasStyleClass = Element.prototype.hasStyleClass;
         this.element.contentWindow.Node.prototype.enclosingNodeOrSelfWithNodeName = Node.prototype.enclosingNodeOrSelfWithNodeName;
+        this.element.contentWindow.Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = Node.prototype.enclosingNodeOrSelfWithNodeNameInArray;
 
         this._addExistingMessagesToSource();
         this._addExistingBreakpointsToSource();
