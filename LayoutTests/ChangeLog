@@ -1,5 +1,13 @@
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        Skip fast/forms/search-zoomed.html as it currently fails due to <rdar://problem/6718460>.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-03-24  Mark Rowe  <mrowe@apple.com>
+
         Skip some more media tests for now.
 
         * platform/mac-snowleopard/Skipped:
