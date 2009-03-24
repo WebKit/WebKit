@@ -1,5 +1,12 @@
 2009-03-23  Eric Seidel  <eric@webkit.org>
 
+        Build fix, no review.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition): change .container to .isNotNull()
+
+2009-03-23  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         Rename Position::container to m_anchorNode and make it private
