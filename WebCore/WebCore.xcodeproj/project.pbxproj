@@ -4378,7 +4378,7 @@
 		E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */; };
 		E1C36D340EB0A094007410BC /* JSWorkerContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */; };
 		E1C36D350EB0A094007410BC /* JSWorkerContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36D330EB0A094007410BC /* JSWorkerContextBase.h */; };
-		E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */; };
+		E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */; };
 		E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */; };
 		E1C416170F6563180092D2FB /* CrossOriginAccessControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */; };

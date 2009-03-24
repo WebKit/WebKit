@@ -163,4 +163,11 @@ bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, con
     return false;
 }
 
+void CrossOriginPreflightResultCache::empty()
+{
+    MutexLocker lock(m_mutex);
+    deleteAllValues(m_preflightHashMap);
+    m_preflightHashMap.clear();
+}
+
 } // namespace WebCore

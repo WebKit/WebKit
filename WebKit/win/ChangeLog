@@ -1,3 +1,13 @@
+2009-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6140966>
+        Empty Caches does not clear the Cross-site XMLHttpRequest preflight cache
+
+        * WebCache.cpp:
+        (WebCache::empty): Also add application cache emptying to match the mac.
+
 2009-03-18  Steve Falkenburg  <sfalken@apple.com>
 
         Add webViewClosing to private UI delegate.

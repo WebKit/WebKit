@@ -1,3 +1,16 @@
+2009-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6140966>
+        Empty Caches does not clear the Cross-site XMLHttpRequest preflight cache
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::empty):
+        * loader/CrossOriginPreflightResultCache.h:
+
 2009-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

@@ -64,6 +64,8 @@ namespace WebCore {
         void appendEntry(const String& origin, const KURL&, CrossOriginPreflightResultCacheItem*);
         bool canSkipPreflight(const String& origin, const KURL&, bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
 
+        void empty();
+
     private:
         CrossOriginPreflightResultCache() { }
 

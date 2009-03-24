@@ -30,7 +30,9 @@
 #include "CFDictionaryPropertyBag.h"
 
 #pragma warning(push, 0)
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Cache.h>
+#include <WebCore/CrossOriginPreflightResultCache.h>
 #pragma warning(pop)
 
 // WebCache ---------------------------------------------------------------------------
@@ -206,6 +208,13 @@ HRESULT STDMETHODCALLTYPE WebCache::empty( void)
         return S_OK;
     WebCore::cache()->setDisabled(true);
     WebCore::cache()->setDisabled(false);
+
+    // Empty the application cache.
+    WebCore::cacheStorage().empty();
+
+    // Empty the Cross-Origin Preflight cache
+    WebCore::CrossOriginPreflightResultCache::shared().empty();
+
     return S_OK;
 }
 

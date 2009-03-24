@@ -1,3 +1,13 @@
+2009-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6140966>
+        Empty Caches does not clear the Cross-site XMLHttpRequest preflight cache
+
+        * Misc/WebCache.mm:
+        (+[WebCache empty]):
+
 2009-03-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mark Rowe & Dave Hyatt.
