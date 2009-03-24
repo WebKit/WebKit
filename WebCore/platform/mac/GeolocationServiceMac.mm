@@ -176,7 +176,7 @@ void GeolocationServiceMac::errorOccurred(PassRefPtr<PositionError> error)
                             speed);
     WTF::RefPtr<WebCore::Geoposition> newPosition = WebCore::Geoposition::create(
                              newCoordinates.release(),
-                             [newLocation.timestamp timeIntervalSinceReferenceDate] * 1000.0); // seconds -> milliseconds
+                             [newLocation.timestamp timeIntervalSince1970] * 1000.0); // seconds -> milliseconds
     
     m_callback->positionChanged(newPosition.release());
 }

@@ -1,3 +1,14 @@
+2009-03-23  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24771
+        
+        DOMTimeStamps are based upon 1970.
+
+        * platform/mac/GeolocationServiceMac.mm:
+        (-[WebCoreCoreLocationObserver locationManager:didUpdateToLocation:fromLocation:]):
+
 2009-03-23  Eric Seidel  <eric@webkit.org>
 
         Build fix, no review.
