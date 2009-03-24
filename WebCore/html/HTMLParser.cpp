@@ -61,6 +61,13 @@ using namespace HTMLNames;
 static const unsigned cMaxRedundantTagDepth = 20;
 static const unsigned cResidualStyleMaxDepth = 200;
 
+static const int minBlockLevelTagPriority = 3;
+
+// A cap on the number of tags with priority minBlockLevelTagPriority or higher
+// allowed in m_blockStack. The cap is enforced by adding such new elements as
+// siblings instead of children once it is reached.
+static const size_t cMaxBlockDepth = 4096;
+
 struct HTMLStackElem : Noncopyable {
     HTMLStackElem(const AtomicString& t, int lvl, Node* n, bool r, HTMLStackElem* nx)
         : tagName(t)
@@ -117,6 +124,7 @@ HTMLParser::HTMLParser(HTMLDocument* doc, bool reportErrors)
     , m_current(doc)
     , m_didRefCurrent(false)
     , m_blockStack(0)
+    , m_blocksInStack(0)
     , m_hasPElementInScope(NotInScope)
     , m_head(0)
     , m_inBody(false)
@@ -134,6 +142,7 @@ HTMLParser::HTMLParser(DocumentFragment* frag)
     , m_current(frag)
     , m_didRefCurrent(true)
     , m_blockStack(0)
+    , m_blocksInStack(0)
     , m_hasPElementInScope(NotInScope)
     , m_head(0)
     , m_inBody(true)
@@ -319,7 +328,12 @@ bool HTMLParser::insertNode(Node* n, bool flat)
     // and close up the first table, and then start the second table as a sibling.
     if (m_inStrayTableContent && localName == tableTag)
         popBlock(tableTag);
-    
+
+    if (tagPriority >= minBlockLevelTagPriority) {
+        while (m_blocksInStack >= cMaxBlockDepth)
+            popBlock(m_blockStack->tagName);
+    }
+
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
     Node* newNode = m_current->addChild(n);
@@ -1309,6 +1323,8 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTab
 void HTMLParser::pushBlock(const AtomicString& tagName, int level)
 {
     m_blockStack = new HTMLStackElem(tagName, level, m_current, m_didRefCurrent, m_blockStack);
+    if (level >= minBlockLevelTagPriority)
+        m_blocksInStack++;
     m_didRefCurrent = false;
     if (tagName == pTag)
         m_hasPElementInScope = InScope;
@@ -1411,6 +1427,10 @@ inline HTMLStackElem* HTMLParser::popOneBlockCommon()
     if (m_current && elem->node != m_current)
         m_current->finishParsingChildren();
 
+    if (m_blockStack->level >= minBlockLevelTagPriority) {
+        ASSERT(m_blocksInStack > 0);
+        m_blocksInStack--;
+    }
     m_blockStack = elem->next;
     m_current = elem->node;
     m_didRefCurrent = elem->didRefNode;
@@ -1485,6 +1505,7 @@ void HTMLParser::freeBlock()
 {
     while (m_blockStack)
         popOneBlock();
+    ASSERT(!m_blocksInStack);
 }
 
 void HTMLParser::createHead()

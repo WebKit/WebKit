@@ -159,6 +159,11 @@ private:
 
     HTMLStackElem* m_blockStack;
 
+    // The number of tags with priority minBlockLevelTagPriority or higher
+    // currently in m_blockStack. The parser enforces a cap on this value by
+    // adding such new elements as siblings instead of children once it is reached.
+    size_t m_blocksInStack;
+
     enum ElementInScopeState { NotInScope, InScope, Unknown }; 
     ElementInScopeState m_hasPElementInScope;
 
