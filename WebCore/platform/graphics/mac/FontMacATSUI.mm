@@ -30,6 +30,7 @@
 #import "Logging.h"
 #import "ShapeArabic.h"
 #import "SimpleFontData.h"
+#import <AppKit/NSGraphicsContext.h>
 #import <wtf/OwnArrayPtr.h>
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14

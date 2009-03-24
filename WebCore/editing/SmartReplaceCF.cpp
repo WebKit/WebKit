@@ -30,6 +30,7 @@
 #include "SmartReplace.h"
 
 #include <CoreFoundation/CFCharacterSet.h>
+#include <CoreFoundation/CFString.h>
 
 namespace WebCore {
 

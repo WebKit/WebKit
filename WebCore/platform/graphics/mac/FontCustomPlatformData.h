@@ -22,6 +22,7 @@
 #define FontCustomPlatformData_h
 
 #include "FontRenderingMode.h"
+#include <CoreFoundation/CFBase.h>
 #include <wtf/Noncopyable.h>
 
 typedef struct CGFont* CGFontRef;

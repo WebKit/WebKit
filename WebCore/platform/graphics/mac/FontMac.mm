@@ -29,6 +29,7 @@
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
+#import <AppKit/AppKit.h>
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 

@@ -38,6 +38,7 @@
 #import "FontDescription.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
+#import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <float.h>
 #import <unicode/uchar.h>

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Color.h"
 
+#import <AppKit/NSColor.h>
 #import <wtf/Assertions.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>

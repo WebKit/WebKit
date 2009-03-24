@@ -35,7 +35,8 @@
 #import "FontPlatformData.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
-#include <wtf/StdLibExtras.h>
+#import <AppKit/AppKit.h>
+#import <wtf/StdLibExtras.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;

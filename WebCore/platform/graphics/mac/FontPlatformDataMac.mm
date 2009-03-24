@@ -24,6 +24,7 @@
 #import "FontPlatformData.h"
 
 #import "WebCoreSystemInterface.h"
+#import <AppKit/NSFont.h>
 
 namespace WebCore {
 

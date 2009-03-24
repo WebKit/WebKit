@@ -36,6 +36,8 @@
 
 #include "ShapeArabic.h"
 
+#include <stdbool.h>
+#include <string.h>
 #include <unicode/utypes.h>
 #include <unicode/uchar.h>
 #include <unicode/ustring.h>

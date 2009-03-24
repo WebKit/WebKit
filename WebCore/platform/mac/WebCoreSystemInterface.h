@@ -40,12 +40,21 @@ typedef struct _NSRect NSRect;
 #endif
 
 #ifdef __OBJC__
+@class NSArray;
 @class NSButtonCell;
 @class NSData;
+@class NSDate;
 @class NSEvent;
 @class NSFont;
+@class NSImage;
+@class NSMenu;
 @class NSMutableURLRequest;
+@class NSString;
+@class NSTextFieldCell;
+@class NSURLConnection;
 @class NSURLRequest;
+@class NSURLResponse;
+@class NSView;
 @class QTMovie;
 @class QTMovieView;
 #else

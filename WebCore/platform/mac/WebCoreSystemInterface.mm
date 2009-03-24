@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WebCoreSystemInterface.h"
+#import <Foundation/Foundation.h>
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);

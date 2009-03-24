@@ -25,6 +25,7 @@
 #define RenderThemeChromiumMac_h
 
 #import "RenderTheme.h"
+#import <AppKit/AppKit.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 

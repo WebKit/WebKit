@@ -31,6 +31,7 @@
 #import "GraphicsContext.h"
 #import "IntPoint.h"
 #import "WebFontCache.h"
+#import <AppKit/AppKit.h>
 
 using namespace WebCore;
 

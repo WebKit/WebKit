@@ -31,6 +31,8 @@
 #import "WebFontCache.h"
 
 #import "FontTraitsMask.h"
+#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
 #import <math.h>
 
 using namespace WebCore;

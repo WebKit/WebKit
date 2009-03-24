@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "PlatformString.h"
+#include <CoreFoundation/CFString.h>
 
 namespace WebCore {
 

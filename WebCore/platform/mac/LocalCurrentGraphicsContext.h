@@ -19,7 +19,11 @@
 
 #include <wtf/Noncopyable.h>
 
+#ifdef __OBJC__
+@class NSGraphicsContext;
+#else
 class NSGraphicsContext;
+#endif
 
 namespace WebCore {
 

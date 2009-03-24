@@ -33,7 +33,6 @@ class NSFont;
 #endif
 
 typedef struct CGFont* CGFontRef;
-typedef UInt32 ATSUFontID;
 #ifndef BUILDING_ON_TIGER
 typedef const struct __CTFont* CTFontRef;
 #endif
@@ -41,6 +40,8 @@ typedef const struct __CTFont* CTFontRef;
 #include <CoreFoundation/CFBase.h>
 #include <objc/objc-auto.h>
 #include <wtf/RetainPtr.h>
+
+typedef UInt32 ATSUFontID;
 
 namespace WebCore {
 

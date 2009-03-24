@@ -23,6 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <AppKit/NSFontManager.h>
+#import <CoreFoundation/CFString.h>
+
+#ifdef __OBJC__
+@class NSColor;
+@class NSFont;
+@class NSString;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

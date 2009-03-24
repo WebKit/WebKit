@@ -27,6 +27,10 @@
 
 #include "StringImpl.h"
 
+#ifdef __OBJC__
+#include <objc/objc.h>
+#endif
+
 #if USE(JSC)
 #include <runtime/Identifier.h>
 #else

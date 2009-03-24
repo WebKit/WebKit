@@ -27,9 +27,12 @@
 #import "GraphicsContext.h"
 
 #import "../cg/GraphicsContextPlatformPrivateCG.h"
+#import <AppKit/AppKit.h>
 #import <wtf/StdLibExtras.h>
 
 #import "WebCoreSystemInterface.h"
+
+@class NSColor;
 
 // FIXME: More of this should use CoreGraphics instead of AppKit.
 // FIXME: More of this should move into GraphicsContextCG.cpp.

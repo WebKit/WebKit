@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreFoundation/CFBase.h>
+#import <Foundation/NSObject.h>
+
 // nil-checked CFRetain/CFRelease covers for Objective-C ids
 
 // Use CFRetain, CFRelease, HardRetain, or HardRelease instead of
