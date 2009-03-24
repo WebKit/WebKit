@@ -1,3 +1,15 @@
+2009-03-24  Eli Fidler  <eli.fidler@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Correct warnings which in some environments are treated as errors.
+
+        * wtf/dtoa.cpp:
+        (WTF::b2d):
+        (WTF::d2b):
+        (WTF::strtod):
+        (WTF::dtoa):
+
 2009-03-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
