@@ -41,7 +41,11 @@
         temporary clip rects for hit testing, if the page is in compositing mode.
 
         * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
         (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::parentClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
 
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
