@@ -1936,14 +1936,9 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Make sure the parent's clip rects have been calculated.
         IntRect clipRect = paintDirtyRect;
         if (parent()) {
-            if (temporaryClipRects) {
-                ClipRects parentClipRects;
-                parent()->calculateClipRects(rootLayer, parentClipRects);
-                clipRect = parentClipRects.overflowClipRect();
-            } else {
-                parent()->updateClipRects(rootLayer);
-                clipRect = parent()->clipRects()->overflowClipRect();
-            }
+            ClipRects parentRects;
+            parentClipRects(rootLayer, parentRects, temporaryClipRects);
+            clipRect = parentRects.overflowClipRect();
             clipRect.intersect(paintDirtyRect);
         }
         
@@ -2226,15 +2221,20 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
                                                 const HitTestingTransformState* transformState, double* zOffset)
 {
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
+
+    bool useTemporaryClipRects = false;
+#if USE(ACCELERATED_COMPOSITING)
+    useTemporaryClipRects = compositor()->inCompositingMode();
+#endif
     
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
         // Make sure the parent's clip rects have been calculated.
         if (parent()) {
-            parent()->updateClipRects(rootLayer);
-        
+            ClipRects parentRects;
+            parentClipRects(rootLayer, parentRects, useTemporaryClipRects);
+            IntRect clipRect = parentRects.overflowClipRect();
             // Go ahead and test the enclosing clip now.
-            IntRect clipRect = parent()->clipRects()->overflowClipRect();
             if (!clipRect.contains(hitTestPoint))
                 return 0;
         }
@@ -2294,7 +2294,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     IntRect bgRect;
     IntRect fgRect;
     IntRect outlineRect;
-    calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect);
+    calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect, useTemporaryClipRects);
     
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
     // descendants.
@@ -2516,24 +2516,30 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
     }
 }
 
+void RenderLayer::parentClipRects(const RenderLayer* rootLayer, ClipRects& clipRects, bool temporaryClipRects) const
+{
+    ASSERT(parent());
+    if (temporaryClipRects) {
+        parent()->calculateClipRects(rootLayer, clipRects);
+        return;
+    }
+
+    parent()->updateClipRects(rootLayer);
+    clipRects = *parent()->clipRects();
+}
+
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
                                  IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects) const
 {
     if (rootLayer != this && parent()) {
-        ClipRects parentClipRects;
-        if (temporaryClipRects)
-            parent()->calculateClipRects(rootLayer, parentClipRects);
-        else {
-            parent()->updateClipRects(rootLayer);
-            parentClipRects = *parent()->clipRects();
-        }
-
-        backgroundRect = renderer()->style()->position() == FixedPosition ? parentClipRects.fixedClipRect() :
-                         (renderer()->isPositioned() ? parentClipRects.posClipRect() : 
-                                                     parentClipRects.overflowClipRect());
+        ClipRects parentRects;
+        parentClipRects(rootLayer, parentRects, temporaryClipRects);
+        backgroundRect = renderer()->style()->position() == FixedPosition ? parentRects.fixedClipRect() :
+                         (renderer()->isPositioned() ? parentRects.posClipRect() : 
+                                                       parentRects.overflowClipRect());
         RenderView* view = renderer()->view();
         ASSERT(view);
-        if (view && parentClipRects.fixed() && rootLayer->renderer() == view)
+        if (view && parentRects.fixed() && rootLayer->renderer() == view)
             backgroundRect.move(view->frameView()->scrollX(), view->frameView()->scrollY());
 
         backgroundRect.intersect(paintDirtyRect);

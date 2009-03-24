@@ -475,6 +475,8 @@ private:
     void createReflection();
     void updateReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
+    
+    void parentClipRects(const RenderLayer* rootLayer, ClipRects&, bool temporaryClipRects = false) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
 

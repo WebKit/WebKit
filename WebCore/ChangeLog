@@ -1,5 +1,19 @@
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=24436
+        
+        When compositing is enabled, painting and hit testing end up using different
+        clipping roots, because, for painting, every composited layer is a clipping root,
+        but for hit testing only layers with transforms are. To fix this, we use
+        temporary clip rects for hit testing, if the page is in compositing mode.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
+2009-03-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
         
         https://bugs.webkit.org/show_bug.cgi?id=24782
