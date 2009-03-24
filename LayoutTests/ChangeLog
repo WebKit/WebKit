@@ -1,3 +1,38 @@
+2009-03-24  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Add tests of font choices and metrics, to isolate those dependencies.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24566
+
+        * fonts: Added.
+        * fonts/cursive.html: Added.
+        * fonts/default.html: Added.
+        * fonts/fantasy.html: Added.
+        * fonts/monospace.html: Added.
+        * fonts/sans-serif.html: Added.
+        * fonts/serif.html: Added.
+        * platform/mac/fonts: Added.
+        * platform/mac/fonts/cursive-expected.checksum: Added.
+        * platform/mac/fonts/cursive-expected.png: Added.
+        * platform/mac/fonts/cursive-expected.txt: Added.
+        * platform/mac/fonts/default-expected.checksum: Added.
+        * platform/mac/fonts/default-expected.png: Added.
+        * platform/mac/fonts/default-expected.txt: Added.
+        * platform/mac/fonts/fantasy-expected.checksum: Added.
+        * platform/mac/fonts/fantasy-expected.png: Added.
+        * platform/mac/fonts/fantasy-expected.txt: Added.
+        * platform/mac/fonts/monospace-expected.checksum: Added.
+        * platform/mac/fonts/monospace-expected.png: Added.
+        * platform/mac/fonts/monospace-expected.txt: Added.
+        * platform/mac/fonts/sans-serif-expected.checksum: Added.
+        * platform/mac/fonts/sans-serif-expected.png: Added.
+        * platform/mac/fonts/sans-serif-expected.txt: Added.
+        * platform/mac/fonts/serif-expected.checksum: Added.
+        * platform/mac/fonts/serif-expected.png: Added.
+        * platform/mac/fonts/serif-expected.txt: Added.
+
 2009-03-24  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23310: Setting an absolute path (/abs) on an <iframe> with no src doesn't resolve the URL properly
