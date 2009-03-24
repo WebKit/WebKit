@@ -1,3 +1,17 @@
+2009-03-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24779
+        Conditionalize CFNetwork-specific code in WebView to permit
+        support for other network backends.
+
+        * WebView.cpp:
+        (WebView::setCacheModel): Add CFNETWORK check around CFNetwork
+        specific cache implementation.
+        (updateSharedSettingsFromPreferencesIfNeeded): Add CFNETWORK
+        check around use of CFHTTPCookie code.
+
 2009-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -50,7 +50,6 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #pragma warning( push, 0 )
-#include <CoreGraphics/CGContext.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/BString.h>
@@ -105,10 +104,21 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValue.h>
+
+#if PLATFORM(CG)
+#include <CoreGraphics/CGContext.h>
+#endif
+
+#if PLATFORM(CF)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+#if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
-#include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
+#endif
+
 #include <wtf/HashSet.h>
 #include <dimm.h>
 #include <oleacc.h>
@@ -366,6 +376,7 @@ void WebView::removeFromAllWebViewsSet()
 
 void WebView::setCacheModel(WebCacheModel cacheModel)
 {
+#if USE(CFNETWORK)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
@@ -541,6 +552,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     s_didSetCacheModel = true;
     s_cacheModel = cacheModel;
     return;
+#endif
 }
 
 WebCacheModel WebView::cacheModel()
@@ -4227,9 +4239,11 @@ HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences* preferences
     if (FAILED(hr))
         return hr;
 
+#if USE(CFNETWORK)
     // Set cookie storage accept policy
     if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, acceptPolicy);
+#endif
 
     return S_OK;
 }
