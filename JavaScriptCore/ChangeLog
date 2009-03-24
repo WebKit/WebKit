@@ -1,3 +1,18 @@
+2009-03-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Make testapi assertions run in release builds, so that testapi actually
+        works in a release build.
+
+        Many of the testapi assertions have side effects that are necessary, and
+        given testapi is a testing program, perf impact of an assertion is not
+        important, so it makes sense to apply the assertions in release builds
+        anyway.
+
+        * API/tests/testapi.c:
+        (EvilExceptionObject_hasInstance):
+
 2009-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Provide JavaScript exception information after slow script timeout

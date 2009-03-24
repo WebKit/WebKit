@@ -84,12 +84,9 @@ if (!defined($root)){
     }
 }
 
-# Find JavaScriptCore directory
-chdirWebKit();
-chdir("JavaScriptCore");
 
 my $productDir = productDir();
-chdir "tests/mozilla" or die;
+
 $productDir .= "/JavaScriptCore" if isQt();
 $productDir .= "/Programs" if isGtk();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
@@ -103,6 +100,26 @@ sub jscPath($)
     return "$productDir/$jscName";
 }
 
+sub testapiPath($)
+{
+    my ($productDir) = @_;
+    my $jscName = "testapi";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$jscName";
+}
+
+#run api tests
+if (isAppleMacWebKit()) {
+    chdirWebKit();
+    chdir($productDir) or die;
+    my $testapiResult = system testapiPath($productDir);
+    exit exitStatus($testapiResult)  if $testapiResult;
+}
+
+# Find JavaScriptCore directory
+chdirWebKit();
+chdir("JavaScriptCore");
+chdir "tests/mozilla" or die;
 printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
 exit exitStatus($result)  if $result;

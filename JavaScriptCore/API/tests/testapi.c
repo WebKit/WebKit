@@ -26,6 +26,7 @@
 #include "JavaScriptCore.h"
 #include "JSBasePrivate.h"
 #include <math.h>
+#define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
@@ -342,7 +343,8 @@ static bool EvilExceptionObject_hasInstance(JSContextRef context, JSObjectRef co
     JSStringRef hasInstanceName = JSStringCreateWithUTF8CString("hasInstance");
     JSValueRef hasInstance = JSObjectGetProperty(context, constructor, hasInstanceName, exception);
     JSStringRelease(hasInstanceName);
-    
+    if (!hasInstance)
+        return false;
     JSObjectRef function = JSValueToObject(context, hasInstance, exception);
     JSValueRef result = JSObjectCallAsFunction(context, function, constructor, 1, &possibleValue, exception);
     return result && JSValueToBoolean(context, result);

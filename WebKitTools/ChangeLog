@@ -1,3 +1,15 @@
+2009-03-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Make testapi run as part of the standard JavaScriptCore tests.
+
+        We only run testapi on the mac as currently windows webkit doesn't
+        place all the necessary files for testapi, and we also test the
+        JSC/CF APIs as well.
+
+        * Scripts/run-javascriptcore-tests:
+
 2009-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.
