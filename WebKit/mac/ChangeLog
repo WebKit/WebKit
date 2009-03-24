@@ -1,3 +1,14 @@
+2009-03-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mark Rowe & Dave Hyatt.
+
+        Merge some of the individual Mail quirks into two settings that we can check for future quirks.
+
+        * WebView/WebView.mm:
+        (runningLeopardMail):
+        (runningTigerMail):
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-03-23  Darin Adler  <darin@apple.com>
 
         * WebView/WebTextIterator.h: Fixed a spelling error in a comment.

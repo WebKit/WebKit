@@ -70,6 +70,8 @@ Settings::Settings(Page* page)
 #endif
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_needsKeyboardEventDisambiguationQuirks(false)
+    , m_needsLeopardMailQuirks(false)
+    , m_needsTigerMailQuirks(false)
     , m_isDOMPasteAllowed(false)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
@@ -82,7 +84,6 @@ Settings::Settings(Page* page)
     , m_webArchiveDebugModeEnabled(false)
     , m_inApplicationChromeMode(false)
     , m_offlineWebApplicationCacheEnabled(false)
-    , m_rangeMutationDisabledForOldAppleMail(false)
     , m_shouldPaintCustomScrollbars(false)
     , m_zoomsTextOnly(false)
     , m_enforceCSSMIMETypeInStrictMode(true)
@@ -296,6 +297,16 @@ void Settings::setNeedsKeyboardEventDisambiguationQuirks(bool needsQuirks)
     m_needsKeyboardEventDisambiguationQuirks = needsQuirks;
 }
 
+void Settings::setNeedsLeopardMailQuirks(bool needsQuirks)
+{
+    m_needsLeopardMailQuirks = needsQuirks;
+}
+
+void Settings::setNeedsTigerMailQuirks(bool needsQuirks)
+{
+    m_needsTigerMailQuirks = needsQuirks;
+}
+    
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
 {
     m_isDOMPasteAllowed = DOMPasteAllowed;
@@ -375,11 +386,6 @@ void Settings::setWebArchiveDebugModeEnabled(bool enabled)
 void Settings::setLocalStorageDatabasePath(const String& path)
 {
     m_localStorageDatabasePath = path;
-}
-
-void Settings::disableRangeMutationForOldAppleMail(bool disable)
-{
-    m_rangeMutationDisabledForOldAppleMail = disable;
 }
 
 void Settings::setApplicationChromeMode(bool mode)

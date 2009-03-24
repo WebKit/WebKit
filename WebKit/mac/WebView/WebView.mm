@@ -677,6 +677,22 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     initialized = YES;
 }
 
+static bool runningLeopardMail()
+{
+#ifdef BUILDING_ON_LEOPARD
+    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+#endif
+    return NO;
+}
+
+static bool runningTigerMail()
+{
+#ifdef BUILDING_ON_TIGER
+    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+#endif
+    return NO;    
+}
+
 - (void)_registerDraggedTypes
 {
     NSArray *editableTypes = [WebHTMLView _insertablePasteboardTypes];
@@ -1354,9 +1370,10 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
+    settings->setNeedsLeopardMailQuirks(runningLeopardMail());
+    settings->setNeedsTigerMailQuirks(runningTigerMail());
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
-    settings->disableRangeMutationForOldAppleMail(WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0));
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
