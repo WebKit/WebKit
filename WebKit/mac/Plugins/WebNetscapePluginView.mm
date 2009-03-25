@@ -494,6 +494,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif /* NP_NO_QUICKDRAW */
 
         case NPDrawingModelCoreGraphics: {            
+            if (![self canDraw]) {
+                portState = NULL;
+                break;
+            }
+            
             ASSERT([NSView focusView] == self);
 
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
@@ -892,10 +897,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     // A plug-in can only update if it's (1) already been started (2) isn't stopped
     // and (3) is able to draw on-screen. To meet condition (3) the plug-in must not
-    // be hidden and be attached to a window. QuickDraw plug-ins are an important
-    // excpetion to rule (3) because they manually must be told when to stop writing
+    // be hidden and be attached to a window. There are two exceptions to this rule:
+    //
+    // Exception 1: QuickDraw plug-ins must be manually told when to stop writing
     // bits to the window backing store, thus to do so requires a new call to
     // NPP_SetWindow() with an empty NPWindow struct.
+    //
+    // Exception 2: CoreGraphics plug-ins expect to have their drawable area updated
+    // when they are moved to a background tab, via a NPP_SetWindow call. This is
+    // accomplished by allowing -saveAndSetNewPortStateForUpdate to "clip-out" the window's
+    // clipRect. Flash is curently an exception to this. See 6453738.
+    //
+    
     if (!_isStarted)
         return;
     
@@ -905,9 +918,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #else
     if (drawingModel == NPDrawingModelQuickDraw)
         [self tellQuickTimeToChill];
-    else if (drawingModel == NPDrawingModelCoreGraphics && ![self canDraw])
+    else if (drawingModel == NPDrawingModelCoreGraphics && ![self canDraw] && _isFlash) {
+        // The Flash plug-in does not expect an NPP_SetWindow call from WebKit in this case.
+        // See Exception 2 above.
         return;
-    
+    }
 #endif // NP_NO_QUICKDRAW
     
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
@@ -918,7 +933,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self restorePortState:portState];
         if (portState != (PortState)1)
             free(portState);
-    }   
+    } else if (drawingModel == NPDrawingModelCoreGraphics)
+        [self setWindowIfNecessary];        
+
     if (didLockFocus)
         [self unlockFocus];
 }
@@ -936,11 +953,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         NPError npErr;
         ASSERT(!inSetWindow);
         
-        inSetWindow = YES;
-        
-        // A CoreGraphics plugin's window may only be set while the plugin is being updated
-        ASSERT((drawingModel != NPDrawingModelCoreGraphics) || [NSView focusView] == self);
-        
+        inSetWindow = YES;        
         [self willCallPlugInFunction];
         {
             JSC::JSLock::DropAllLocks dropAllLocks(false);
@@ -959,8 +972,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif /* NP_NO_QUICKDRAW */
             
             case NPDrawingModelCoreGraphics:
-                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
-                npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
+                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
+                npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height, 
+                    window.clipRect.right - window.clipRect.left, window.clipRect.bottom - window.clipRect.top);
             break;
 
             case NPDrawingModelCoreAnimation:
@@ -2059,6 +2073,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
     
+    _isFlash = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.macromedia.Flash Player.plugin"];
     _isSilverlight = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.microsoft.SilverlightPlugin"];
 
     [[self class] setCurrentPluginView:self];

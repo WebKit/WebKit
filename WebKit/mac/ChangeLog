@@ -1,3 +1,30 @@
+2009-03-25  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        <rdar://problem/6453738> call SetWindow when user creates a new tab
+        
+        CoreGraphics plug-ins now receive an NPP_SetWindow call when moving to a background tab.
+        Flash is excluded from this change in behavior, as it has historical WebKit-specific code
+        that isn't compatible with this change.
+
+        * Plugins/WebNetscapePluginView.h:
+            Added an _isFlash ivar.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _createPlugin]):
+            Set the new _isFlash ivar based on the bundle identifier.
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+            When using the CG drawing model and in a non-drawable state,  set the portState
+            to NULL and return early.
+        (-[WebNetscapePluginView updateAndSetWindow]):
+            When using the CG drawing model, call -setWindowIfNecessary even if the portState is NULL.
+            Flash is an exception to this, due to its historical behavior.
+        (-[WebNetscapePluginView setWindowIfNecessary]):
+            Removed an assertion that was no longer true.  The [NSView focus] view
+            is no longer guaranteed to be 'self' at this point.
+            Also modified the debug logging for CG plug-ins to include the size of the 
+            window's clipRect, which was useful in verifying the correct behavior of this patch.
+
 2009-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
