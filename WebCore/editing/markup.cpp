@@ -408,8 +408,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
             
             bool useRenderedText = !enclosingNodeWithTag(Position(const_cast<Node*>(node), 0), selectTag);
             String markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range), false);
-            if (annotate)
-                markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
+            markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
             append(result, markup);
             break;
         }

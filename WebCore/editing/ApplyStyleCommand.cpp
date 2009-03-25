@@ -1219,13 +1219,13 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     Position s = start;
     Position e = end;
 
-    Node *node = start.node();
+    Node* node = start.node();
     while (node) {
-        Node *next = node->traverseNextNode();
+        Node* next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
-            HTMLElement *elem = static_cast<HTMLElement *>(node);
-            Node *prev = elem->traversePreviousNodePostOrder();
-            Node *next = elem->traverseNextNode();
+            HTMLElement* elem = static_cast<HTMLElement*>(node);
+            Node* prev = elem->traversePreviousNodePostOrder();
+            Node* next = elem->traverseNextNode();
             if (m_styledInlineElement && elem->hasTagName(m_styledInlineElement->tagQName()))
                 removeNodePreservingChildren(elem);
             if (isHTMLStyleNode(style.get(), elem))

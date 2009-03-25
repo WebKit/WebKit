@@ -679,6 +679,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
             if (!o)
                 break;
         }
+        ASSERT(o);
 
         if (!o->isInline() || o->isReplaced()) {
             point = o->localToAbsolute();
@@ -715,9 +716,8 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     if (!renderer())
         return false;
 
-    RenderObject *o = renderer();
-    if (!o->isInline() || o->isReplaced())
-    {
+    RenderObject* o = renderer();
+    if (!o->isInline() || o->isReplaced()) {
         RenderBox* box = toRenderBox(o);
         point = o->localToAbsolute();
         point.move(box->width(), box->height());
@@ -731,8 +731,8 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
         else if (o->previousSibling())
             o = o->previousSibling();
         else {
-            RenderObject *prev = 0;
-            while(!prev) {
+            RenderObject* prev = 0;
+            while (!prev) {
                 o = o->parent();
                 if (!o)
                     return false;
@@ -740,6 +740,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             }
             o = prev;
         }
+        ASSERT(o);
         if (o->isText() || o->isReplaced()) {
             point = o->container()->localToAbsolute();
             if (o->isText()) {
@@ -764,8 +765,7 @@ IntRect ContainerNode::getRect() const
     
     // If we've found one corner, but not the other,
     // then we should just return a point at the corner that we did find.
-    if (foundUpperLeft != foundLowerRight)
-    {
+    if (foundUpperLeft != foundLowerRight) {
         if (foundUpperLeft)
             lowerRight = upperLeft;
         else

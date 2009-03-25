@@ -2,6 +2,37 @@
 
         Reviewed by Simon Fraser.
 
+        Style cleanup and dead code removal in dom, editing
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        (WebCore::ContainerNode::getRect):
+          Coverty was (rightly) confused as to what the hell "o" was being used for
+          and whether or not it would ever be NULL.  I added some ASSERTS so that people (and machines)
+          would be less confused about the logic in getUpperLeftCorner/getLowerRightCorner
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+          Remove dead code, this block already checked that change == Force
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+          Coverty correctly identified that traversePreviousNodePostOrder can return NULL, thus
+          prev will be null, and we don't really explicitly handle it (like we probably should)
+          It's OK though, because we end up creating a null position object, which may not have
+          been what we intended, but we certainly don't crash.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+          Remove dead code, insertionPosition.node() is already checked to be non-null above.
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+          removed dead code, annotate is already known to be true at this point in the file
+          !annotate was checked above, and break; was called.
+
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         CSS dead code removal and cleanup from Coverty errors
         https://bugs.webkit.org/show_bug.cgi?id=24684
 

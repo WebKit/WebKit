@@ -253,7 +253,7 @@ void InsertParagraphSeparatorCommand::doApply()
     
     // Split at pos if in the middle of a text node.
     if (insertionPosition.node()->isTextNode()) {
-        Text *textNode = static_cast<Text *>(insertionPosition.node());
+        Text* textNode = static_cast<Text*>(insertionPosition.node());
         bool atEnd = (unsigned)insertionPosition.m_offset >= textNode->length();
         if (insertionPosition.m_offset > 0 && !atEnd) {
             splitTextNode(textNode, insertionPosition.m_offset);
@@ -323,7 +323,6 @@ void InsertParagraphSeparatorCommand::doApply()
         insertionPosition = Position(insertionPosition.node(), 0);
         if (!insertionPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
-            ASSERT(insertionPosition.node());
             ASSERT(insertionPosition.node()->isTextNode());
             ASSERT(!insertionPosition.node()->renderer() || insertionPosition.node()->renderer()->style()->collapseWhiteSpace());
             deleteInsignificantTextDownstream(insertionPosition);
