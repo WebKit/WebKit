@@ -1,5 +1,15 @@
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Jon "The Most Boring Man in the World" Honeycutt.
+
+        Explicitly map NSNotFound to -1 so that the result of-characterIndexForPointX:Y: does
+        not differ between 32- and 64-bit.
+
+        * DumpRenderTree/mac/TextInputController.m:
+        (-[TextInputController characterIndexForPointX:Y:]):
+
+2009-03-24  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Use a different platform search path for tests and skip lists, so that Tiger doesn't end up

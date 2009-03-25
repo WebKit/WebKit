@@ -1,5 +1,13 @@
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Jon "The Most Boring Man in the World" Honeycutt.
+
+        Update test result for change to explicitly map NSNotFound to -1 in textInputController.characterIndexForPoint.
+
+        * platform/mac/fast/dom/character-index-for-point-expected.txt:
+
+2009-03-24  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Skip some more tests that are failing.
