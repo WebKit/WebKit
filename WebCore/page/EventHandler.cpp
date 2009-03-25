@@ -1362,12 +1362,13 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         // FIXME: this ordering was explicitly chosen to match WinIE. However,
         // it is sometimes incorrect when dragging within subframes, as seen with
         // LayoutTests/fast/events/drag-in-frames.html.
-        if (newTarget)
+        if (newTarget) {
             if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
                 accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
             else
                 accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
-        
+        }
+
         if (m_dragTarget) {
             Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) 
                             ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
@@ -1377,11 +1378,12 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
         }
     } else {
-        if (newTarget)
+        if (newTarget) {
             if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
                 accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
             else
                 accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
+        }
     }
     m_dragTarget = newTarget;
 

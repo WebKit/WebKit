@@ -119,11 +119,12 @@ void TextControlInnerTextElement::defaultEventHandler(Event* evt)
     Node* shadowAncestor = shadowAncestorNode();
     if (shadowAncestor && shadowAncestor->renderer()) {
         ASSERT(shadowAncestor->renderer()->isTextControl());
-        if (evt->isBeforeTextInsertedEvent())
+        if (evt->isBeforeTextInsertedEvent()) {
             if (shadowAncestor->renderer()->isTextField())
                 static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
             else
                 static_cast<HTMLTextAreaElement*>(shadowAncestor)->defaultEventHandler(evt);
+        }
         if (evt->type() == eventNames().webkitEditableContentChangedEvent)
             toRenderTextControl(shadowAncestor->renderer())->subtreeHasChanged();
     }

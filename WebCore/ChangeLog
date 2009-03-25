@@ -1,3 +1,18 @@
+2009-03-25  Eli Fidler  <eli.fidler@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fix ambiguous else cases by adding braces to nested if()s with elses.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toArmenianUnder10000):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+
 2009-03-24  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by George Staikos.
