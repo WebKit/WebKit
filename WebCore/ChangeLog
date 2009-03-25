@@ -1,3 +1,29 @@
+2009-03-25  Brett Wilson  <brettw@dhcp-172-22-71-191.mtv.corp.google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix complex text opacity on the Chromium Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=24757
+
+        Test: fast/text/complex-text-opacity.html
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::init):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::estimateTextBounds):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::hdc):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::~TransparencyAwareUniscribePainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::estimateTextBounds):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+
 2009-03-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel

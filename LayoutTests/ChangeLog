@@ -1,3 +1,17 @@
+2009-03-25  Brett Wilson  <brettw@dhcp-172-22-71-191.mtv.corp.google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix complex text opacity on the Chromium Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=24757
+
+        Revision 1.
+
+        * fast/text/complex-text-opacity.html: Added.
+        * platform/mac/fast/text/complex-text-opacity-expected.checksum: Added.
+        * platform/mac/fast/text/complex-text-opacity-expected.png: Added.
+        * platform/mac/fast/text/complex-text-opacity-expected.txt: Added.
+
 2009-03-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel

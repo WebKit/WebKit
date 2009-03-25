@@ -58,53 +58,24 @@ bool canvasHasMultipleLayers(const SkCanvas* canvas)
     return !iter.done();  // There is > 1 layer if the the iterator can stil advance.
 }
 
-// Estimates the bounding box of the given text. This is copied from
-// FontCGWin.cpp, it is possible, but a lot more work, to get the precide
-// bounds.
-IntRect estimateTextBounds(const SimpleFontData* font,
-                           const GlyphBuffer& glyphBuffer,
-                           int from, int numGlyphs,
-                           const FloatPoint& point)
-{
-    int totalWidth = 0;
-    for (int i = 0; i < numGlyphs; i++)
-        totalWidth += lroundf(glyphBuffer.advanceAt(from + i));
-
-    return IntRect(point.x() - (font->ascent() + font->descent()) / 2,
-                   point.y() - font->ascent() - font->lineGap(),
-                   totalWidth + font->ascent() + font->descent(),
-                   font->lineSpacing()); 
-}
-
 class TransparencyAwareFontPainter {
 public:
-    TransparencyAwareFontPainter(GraphicsContext* context,
-                                 const SimpleFontData* font,
-                                 const GlyphBuffer& glyphBuffer,
-                                 int from, int numGlyphs,
-                                 const FloatPoint& point);
-    TransparencyAwareFontPainter(GraphicsContext* context,
-                                 const SimpleFontData* font);
+    TransparencyAwareFontPainter(GraphicsContext*, const FloatPoint&);
     ~TransparencyAwareFontPainter();
 
-    // Draws the partial string of glyphs, starting at |startAdvance| to the
-    // left of m_point. We express it this way so that if we're using the Skia
-    // drawing path we can use floating-point positioning, even though we have
-    // to use integer positioning in the GDI path.
-    bool drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances,
-                    int startAdvance) const;
+protected:
+    // Called by our subclass' constructor to initialize GDI if necessary. This
+    // is a separate function so it can be called after the subclass finishes
+    // construction (it calls virtual functions).
+    void init();
 
-private:
-    // Call when we're using GDI mode to initialize the TransparencyWin to help
-    // us draw GDI text.
-    void initializeForGDI(const GlyphBuffer& glyphBuffer, int from, int numGlyphs);
+    virtual IntRect estimateTextBounds() = 0;
 
     // Use the context from the transparency helper when drawing with GDI. It
     // may point to a temporary one.
     GraphicsContext* m_graphicsContext;
     PlatformGraphicsContext* m_platformContext;
 
-    const SimpleFontData* m_font;
     FloatPoint m_point;
 
     // Set when Windows can handle the type of drawing we're doing.
@@ -112,32 +83,34 @@ private:
 
     // These members are valid only when m_useGDI is set.
     HDC m_hdc;
-    HGDIOBJ m_oldFont;  // For restoring the DC to its original state.
     TransparencyWin m_transparency;
+
+private:
+    // Call when we're using GDI mode to initialize the TransparencyWin to help
+    // us draw GDI text.
+    void initializeForGDI();
+
     bool m_createdTransparencyLayer;  // We created a layer to give the font some alpha.
 };
 
-TransparencyAwareFontPainter::TransparencyAwareFontPainter(
-    GraphicsContext* context,
-    const SimpleFontData* font,
-    const GlyphBuffer& glyphBuffer,
-    int from, int numGlyphs,
-    const FloatPoint& point)
+TransparencyAwareFontPainter::TransparencyAwareFontPainter(GraphicsContext* context,
+                                                           const FloatPoint& point)
     : m_graphicsContext(context)
     , m_platformContext(context->platformContext())
-    , m_font(font)
     , m_point(point)
     , m_useGDI(windowsCanHandleTextDrawing(context))
     , m_hdc(0)
-    , m_oldFont(0)
     , m_createdTransparencyLayer(false)
 {
-    if (m_useGDI)
-        initializeForGDI(glyphBuffer, from, numGlyphs);
 }
 
-void TransparencyAwareFontPainter::initializeForGDI(const GlyphBuffer& glyphBuffer,
-                                                    int from, int numGlyphs)
+void TransparencyAwareFontPainter::init()
+{
+    if (m_useGDI)
+        initializeForGDI();
+}
+
+void TransparencyAwareFontPainter::initializeForGDI()
 {
     SkColor color = m_platformContext->effectiveFillColor();
     if (SkColorGetA(color) != 0xFF) {
@@ -157,7 +130,7 @@ void TransparencyAwareFontPainter::initializeForGDI(const GlyphBuffer& glyphBuff
         // enhance this to actually check, since it will often be opaque
         // and we could do ClearType in that case.
         layerMode = TransparencyWin::TextComposite;
-        layerRect = estimateTextBounds(m_font, glyphBuffer, from, numGlyphs, m_point);
+        layerRect = estimateTextBounds();
 
         // The transparency helper requires that we draw text in black in
         // this mode and it will apply the color.
@@ -167,7 +140,7 @@ void TransparencyAwareFontPainter::initializeForGDI(const GlyphBuffer& glyphBuff
         // When we're drawing a web page, we know the background is opaque,
         // but if we're drawing to a layer, we still need extra work.
         layerMode = TransparencyWin::OpaqueCompositeLayer;
-        layerRect = estimateTextBounds(m_font, glyphBuffer, from, numGlyphs, m_point);
+        layerRect = estimateTextBounds();
     } else {
         // Common case of drawing onto the bottom layer of a web page: we
         // know everything is opaque so don't need to do anything special.
@@ -177,7 +150,6 @@ void TransparencyAwareFontPainter::initializeForGDI(const GlyphBuffer& glyphBuff
 
     // Set up the DC, using the one from the transparency helper.
     m_hdc = m_transparency.platformContext()->canvas()->beginPlatformPaint();
-    m_oldFont = ::SelectObject(m_hdc, m_font->platformData().hfont());
     SetTextColor(m_hdc, skia::SkColorToCOLORREF(color));
     SetBkMode(m_hdc, TRANSPARENT);
 }
@@ -189,15 +161,82 @@ TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
     m_transparency.composite();
     if (m_createdTransparencyLayer)
         m_graphicsContext->endTransparencyLayer();
-
-    ::SelectObject(m_hdc, m_oldFont);
     m_platformContext->canvas()->endPlatformPaint();
 }
 
-bool TransparencyAwareFontPainter::drawGlyphs(int numGlyphs,
-                                              const WORD* glyphs,
-                                              const int* advances,
-                                              int startAdvance) const
+// Specialization for simple GlyphBuffer painting.
+class TransparencyAwareGlyphPainter : public TransparencyAwareFontPainter {
+ public:
+    TransparencyAwareGlyphPainter(GraphicsContext*,
+                                  const SimpleFontData*,
+                                  const GlyphBuffer&,
+                                  int from, int numGlyphs,
+                                  const FloatPoint&);
+    ~TransparencyAwareGlyphPainter();
+
+    // Draws the partial string of glyphs, starting at |startAdvance| to the
+    // left of m_point. We express it this way so that if we're using the Skia
+    // drawing path we can use floating-point positioning, even though we have
+    // to use integer positioning in the GDI path.
+    bool drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, int startAdvance) const;
+
+ private:
+    virtual IntRect estimateTextBounds();
+
+    const SimpleFontData* m_font;
+    const GlyphBuffer& m_glyphBuffer;
+    int m_from;
+    int m_numGlyphs;
+
+    // When m_useGdi is set, this stores the previous HFONT selected into the
+    // m_hdc so we can restore it.
+    HGDIOBJ m_oldFont;  // For restoring the DC to its original state.
+};
+
+TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter(
+    GraphicsContext* context,
+    const SimpleFontData* font,
+    const GlyphBuffer& glyphBuffer,
+    int from, int numGlyphs,
+    const FloatPoint& point)
+    : TransparencyAwareFontPainter(context, point)
+    , m_font(font)
+    , m_glyphBuffer(glyphBuffer)
+    , m_from(from)
+    , m_numGlyphs(numGlyphs)
+    , m_oldFont(0)
+{
+    init();
+
+    m_oldFont = ::SelectObject(m_hdc, m_font->platformData().hfont());
+}
+
+TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter()
+{
+    if (m_useGDI)
+        ::SelectObject(m_hdc, m_oldFont);
+}
+
+
+// Estimates the bounding box of the given text. This is copied from
+// FontCGWin.cpp, it is possible, but a lot more work, to get the precide
+// bounds.
+IntRect TransparencyAwareGlyphPainter::estimateTextBounds()
+{
+    int totalWidth = 0;
+    for (int i = 0; i < m_numGlyphs; i++)
+        totalWidth += lroundf(m_glyphBuffer.advanceAt(m_from + i));
+
+    return IntRect(m_point.x() - (m_font->ascent() + m_font->descent()) / 2,
+                   m_point.y() - m_font->ascent() - m_font->lineGap(),
+                   totalWidth + m_font->ascent() + m_font->descent(),
+                   m_font->lineSpacing()); 
+}
+
+bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
+                                               const WORD* glyphs,
+                                               const int* advances,
+                                               int startAdvance) const
 {
     if (!m_useGDI) {
         SkPoint origin = m_point;
@@ -211,6 +250,69 @@ bool TransparencyAwareFontPainter::drawGlyphs(int numGlyphs,
     int x = lroundf(m_point.x() + startAdvance);
     int y = lroundf(m_point.y() - m_font->ascent());
     return !!ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
+}
+
+
+class TransparencyAwareUniscribePainter : public TransparencyAwareFontPainter {
+ public:
+    TransparencyAwareUniscribePainter(GraphicsContext*,
+                                      const Font*,
+                                      const TextRun&,
+                                      int from, int to,
+                                      const FloatPoint&);
+    ~TransparencyAwareUniscribePainter();
+
+    // Uniscibe will draw directly into our buffer, so we need to expose our DC.
+    HDC hdc() const { return m_hdc; }
+
+ private:
+    virtual IntRect estimateTextBounds();
+
+    const Font* m_font;
+    const TextRun& m_run;
+    int m_from;
+    int m_to;
+};
+
+TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter(
+    GraphicsContext* context,
+    const Font* font,
+    const TextRun& run,
+    int from, int to,
+    const FloatPoint& point)
+    : TransparencyAwareFontPainter(context, point)
+    , m_font(font)
+    , m_run(run)
+    , m_from(from)
+    , m_to(to)
+{
+    init();
+}
+
+TransparencyAwareUniscribePainter::~TransparencyAwareUniscribePainter()
+{
+}
+
+IntRect TransparencyAwareUniscribePainter::estimateTextBounds()
+{
+    // This case really really sucks. There is no convenient way to estimate
+    // the bounding box. So we run Uniscribe twice. If we find this happens a
+    // lot, the way to fix it is to make the extra layer after the
+    // UniscribeHelper has measured the text.
+    IntPoint intPoint(lroundf(m_point.x()),
+                      lroundf(m_point.y()));
+
+    UniscribeHelperTextRun state(m_run, *m_font);
+    int left = lroundf(m_point.x()) + state.characterToX(m_from);
+    int right = lroundf(m_point.x()) + state.characterToX(m_to);
+
+    // This algorithm for estimating how much extra space we need (the text may
+    // go outside the selection rect) is based roughly on
+    // TransparencyAwareGlyphPainter::estimateTextBounds above.
+    return IntRect(left - (m_font->ascent() + m_font->descent()) / 2,
+                   m_point.y() - m_font->ascent() - m_font->lineGap(),
+                   (right - left) + m_font->ascent() + m_font->descent(),
+                   m_font->lineSpacing());
 }
 
 }  // namespace
@@ -228,7 +330,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke)
         return;
 
-    TransparencyAwareFontPainter painter(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
+    TransparencyAwareGlyphPainter painter(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
 
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
     // the arrays of characters and advances. Since ExtTextOut is the
@@ -298,13 +400,15 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     PlatformGraphicsContext* context = graphicsContext->platformContext();
     UniscribeHelperTextRun state(run, *this);
 
-    SkColor color = context->effectiveFillColor();
+    SkColor color = graphicsContext->platformContext()->effectiveFillColor();
     unsigned char alpha = SkColorGetA(color);
     // Skip 100% transparent text; no need to draw anything.
-    if (!alpha)
+    if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke)
         return;
 
-    HDC hdc = context->canvas()->beginPlatformPaint();
+    TransparencyAwareUniscribePainter painter(graphicsContext, this, run, from, to, point);
+
+    HDC hdc = painter.hdc();
 
     // TODO(maruel): http://b/700464 SetTextColor doesn't support transparency.
     // Enforce non-transparent color.
