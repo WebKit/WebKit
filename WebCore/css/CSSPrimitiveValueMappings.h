@@ -297,13 +297,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)
 {
     switch (e) {
         case BorderFillBox:
-            m_value.ident = CSSValueBorder;
+            m_value.ident = CSSValueBorderBox;
             break;
         case PaddingFillBox:
-            m_value.ident = CSSValuePadding;
+            m_value.ident = CSSValuePaddingBox;
             break;
         case ContentFillBox:
-            m_value.ident = CSSValueContent;
+            m_value.ident = CSSValueContentBox;
             break;
         case TextFillBox:
             m_value.ident = CSSValueText;
@@ -315,10 +315,13 @@ template<> inline CSSPrimitiveValue::operator EFillBox() const
 {
     switch (m_value.ident) {
         case CSSValueBorder:
+        case CSSValueBorderBox:
             return BorderFillBox;
         case CSSValuePadding:
+        case CSSValuePaddingBox:
             return PaddingFillBox;
         case CSSValueContent:
+        case CSSValueContentBox:
             return ContentFillBox;
         case CSSValueText:
             return TextFillBox;

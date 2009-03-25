@@ -1,3 +1,20 @@
+2009-03-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24809, background-clip/origin don't use the correct
+        values.  Add support for the new values (while preserving the old values for backwards
+        compatibility).
+
+        Changed some existing test cases to use the new values.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFillBox):
+        * css/CSSValueKeywords.in:
+
 2009-03-25  Brett Wilson  <brettw@dhcp-172-22-71-191.mtv.corp.google.com>
 
         Reviewed by Dimitri Glazkov.

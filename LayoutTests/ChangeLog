@@ -1,3 +1,16 @@
+2009-03-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Change a few test cases to use the new values just to verify that they work.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24809
+
+        * fast/backgrounds/size/backgroundSize17.html:
+        * fast/backgrounds/size/backgroundSize18.html:
+        * fast/backgrounds/size/backgroundSize19.html:
+        * fast/gradients/simple-gradients.html:
+
 2009-03-25  Brett Wilson  <brettw@dhcp-172-22-71-191.mtv.corp.google.com>
 
         Reviewed by Dimitri Glazkov.

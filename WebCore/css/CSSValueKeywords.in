@@ -537,9 +537,13 @@ round
 #
 # CSS_PROP_BACKGROUND_CLIP/ORIGIN
 #
+# border/content/padding are deprecated and ultimately will only apply to the -webkit- form of these properties.
+# border-box/content-box/padding-box should be used instead.
+#
 border
 content
 padding
+padding-box
 
 #
 # CSS_PROP_BOX_SIZING
