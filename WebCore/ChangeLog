@@ -1,3 +1,18 @@
+2009-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6472150> repro crash in
+          RenderBlock::rightmostPosition(bool, bool) const at mercotte.fr using
+          menus
+
+        Test: fast/inline/continuation-positioned-reparenting.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow): When repurposing the existing
+        container as the "pre" block, clear its positioned objects list, because
+        positioned descendants may end up in a different block after the split.
+
 2009-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

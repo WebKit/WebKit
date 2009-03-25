@@ -1,0 +1,5 @@
+Test for rdar://problem/6472150 repro crash in RenderBlock::rightmostPosition(bool, bool) const at mercotte.fr using menus.
+
+The test passes if it does not crash.
+
+
