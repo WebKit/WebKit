@@ -2,6 +2,19 @@
 
         Reviewed by Holger Freyther.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24750
+        [GTK] requests download instead of displaying page
+
+        Fix the Content-Type headers we get from soup, so that we set a
+        proper media type on the ResourceResponse.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+
+2009-03-25  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         https://bugs.webkit.org/show_bug.cgi?id=24600
         [GTK] responses with status code >= 400 should not be given special treatment
 

@@ -159,11 +159,37 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     while (soup_message_headers_iter_next(&iter, &name, &value))
         response->setHTTPHeaderField(name, value);
 
-    String contentType = soup_message_headers_get(msg->response_headers, "Content-Type");
+    GHashTable* contentTypeParameters = 0;
+    String contentType = soup_message_headers_get_content_type(msg->response_headers, &contentTypeParameters);
+
+    // When the server sends multiple Content-Type headers, soup will
+    // give us their values concatenated with commas as a separator;
+    // we need to handle this and use only one value. We use the first
+    // value, and add all the parameters, afterwards, if any.
+    Vector<String> contentTypes;
+    contentType.split(',', true, contentTypes);
+    contentType = contentTypes[0];
+
+    if (contentTypeParameters) {
+        GHashTableIter hashTableIter;
+        gpointer hashKey;
+        gpointer hashValue;
+
+        g_hash_table_iter_init(&hashTableIter, contentTypeParameters);
+        while (g_hash_table_iter_next(&hashTableIter, &hashKey, &hashValue)) {
+            contentType += String("; ");
+            contentType += String(static_cast<char*>(hashKey));
+            contentType += String("=");
+            contentType += String(static_cast<char*>(hashValue));
+        }
+        g_hash_table_destroy(contentTypeParameters);
+    }
+
+    response->setMimeType(extractMIMETypeFromMediaType(contentType));
+
     char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
     response->setURL(KURL(KURL(), uri));
     g_free(uri);
-    response->setMimeType(extractMIMETypeFromMediaType(contentType));
     response->setTextEncodingName(extractCharsetFromMediaType(contentType));
     response->setExpectedContentLength(soup_message_headers_get_content_length(msg->response_headers));
     response->setHTTPStatusCode(msg->status_code);
