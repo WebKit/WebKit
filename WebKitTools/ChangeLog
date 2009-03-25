@@ -1,3 +1,11 @@
+2009-03-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Update test result search path for Windows now that it has updated versions of ICU, libxml2, and friends.
+
+        * Scripts/run-webkit-tests:
+
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build some more.

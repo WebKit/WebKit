@@ -1434,7 +1434,7 @@ sub expectedDirectoryForTest($;$;$)
     my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformResultHierarchy;
-    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-leopard mac) if isCygwin();
+    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
