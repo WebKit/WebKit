@@ -542,9 +542,8 @@ void WebNetscapePluginStream::deliverData()
         if (totalBytesDelivered < totalBytes) {
             NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
             [newDeliveryData appendBytes:(char *)[m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
-            [m_deliveryData.get() release];
-            m_deliveryData = newDeliveryData;
-            [newDeliveryData release];
+            
+            m_deliveryData.adoptNS(newDeliveryData);
         } else {
             [m_deliveryData.get() setLength:0];
             if (m_reason != WEB_REASON_NONE) 

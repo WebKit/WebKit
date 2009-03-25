@@ -1,3 +1,15 @@
+2009-03-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6714964>
+        CrashTracer: [REGRESSION] 51 crashes in Safari at com.apple.WebKit • WebNetscapePluginStream::deliverData + 775
+        
+        Don't release m_deliveryData since it's a RetainPtr. Also, use adoptNS instead of releasing newDeliveryData manually.
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+
 2009-03-25  Mike Thole  <mthole@apple.com>
 
         Reviewed by Kevin Decker.
