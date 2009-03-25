@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,9 @@ namespace WebCore {
 
 static const NSString *LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
 
-// FIXME: Is it possible to parse in a Cocoa-style resource response manually, 
-// without NSKeyed(Un)Archiver, manipulating plists directly?
-ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef responseData)
+// FIXME: If is is possible to parse in a serialized NSURLResponse manually, without using
+// NSKeyedUnarchiver, manipulating plists directly, we would prefer to do that instead.
+ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFDataRef responseData)
 {    
     ASSERT(responseData);
     if (!responseData)
@@ -56,19 +56,21 @@ ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef responseDat
     return ResourceResponse(response);
 }
 
-RetainPtr<CFDataRef> propertyListDataFromResourceResponse(const ResourceResponse& response)
+RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const ResourceResponse& response)
 {    
     NSURLResponse *nsResponse = response.nsURLResponse();
+    ASSERT(nsResponse);
     if (!nsResponse)
         return 0;
-        
-    NSMutableData *responseData = (NSMutableData *)CFDataCreateMutable(0, 0);
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:responseData];
+
+    CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
+
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData];
     [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
     [archiver finishEncoding];
     [archiver release];
     
-    return RetainPtr<CFDataRef>(AdoptCF, (CFDataRef)responseData);
+    return RetainPtr<CFDataRef>(AdoptCF, responseData);
 }
 
 }

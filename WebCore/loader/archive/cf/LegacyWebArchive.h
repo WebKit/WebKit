@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@
 
 #include "Archive.h"
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class Frame;
@@ -40,27 +38,32 @@ class Node;
 class Range;
 
 class LegacyWebArchive : public Archive {
-public:    
+public:
     static PassRefPtr<LegacyWebArchive> create();
     static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
     static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<PassRefPtr<ArchiveResource> >& subresources, Vector<PassRefPtr<LegacyWebArchive> >& subframeArchives);
     static PassRefPtr<LegacyWebArchive> create(Node*);
     static PassRefPtr<LegacyWebArchive> create(Frame*);
-    static PassRefPtr<LegacyWebArchive> createFromSelection(Frame* frame);
+    static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
     static PassRefPtr<LegacyWebArchive> create(Range*);
-    static PassRefPtr<LegacyWebArchive> create(const String& markupString, Frame*, Vector<Node*>& nodes);
 
     RetainPtr<CFDataRef> rawDataRepresentation();
 
 private:
-    LegacyWebArchive();
-    bool init(SharedBuffer*);
-    bool extract(CFDictionaryRef);
-    
-};
+    LegacyWebArchive() { }
 
-ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
-RetainPtr<CFDataRef> propertyListDataFromResourceResponse(const ResourceResponse&);
+    enum MainResourceStatus { Subresource, MainResource };
+
+    static PassRefPtr<LegacyWebArchive> create(const String& markupString, Frame*, const Vector<Node*>& nodes);
+    static PassRefPtr<ArchiveResource> createResource(CFDictionaryRef);
+    static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
+    static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
+    static RetainPtr<CFDataRef> createPropertyListRepresentation(const ResourceResponse&);
+    static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(Archive*);
+    static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(ArchiveResource*, MainResourceStatus);
+
+    bool extract(CFDictionaryRef);
+};
 
 }
 

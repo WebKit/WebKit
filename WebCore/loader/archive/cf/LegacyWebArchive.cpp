@@ -63,15 +63,16 @@ static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("We
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
 
-static RetainPtr<CFDictionaryRef> createPropertyListRepresentationFromResource(ArchiveResource* resource, bool mainResource)
+RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(ArchiveResource* resource, MainResourceStatus isMainResource)
 {
     if (!resource) {
-        // The property list representation of a null/empty WebResource has the following 3 objects stored as nil
+        // The property list representation of a null/empty WebResource has the following 3 objects stored as nil.
+        // FIXME: 0 is not serializable. Presumably we need to use kCFNull here instead for compatibility.
+        // FIXME: But why do we need to support a resource of 0? Who relies on that?
         RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, CFDictionaryCreateMutable(0, 3, 0, 0));
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, 0);
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceURLKey, 0);
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceMIMETypeKey, 0);
-
         return propertyList;
     }
     
@@ -97,7 +98,7 @@ static RetainPtr<CFDictionaryRef> createPropertyListRepresentationFromResource(A
 
     // FrameName should be left out if empty for subresources, but always included for main resources
     const String& frameName(resource->frameName());
-    if (!frameName.isEmpty() || mainResource) {
+    if (!frameName.isEmpty() || isMainResource) {
         RetainPtr<CFStringRef> cfFrameName(AdoptCF, frameName.createCFString());
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceFrameNameKey, cfFrameName.get());
     }
@@ -116,8 +117,8 @@ static RetainPtr<CFDictionaryRef> createPropertyListRepresentationFromResource(A
     }
 
     // Don't include the resource response for the main resource
-    if (!mainResource) {
-        RetainPtr<CFDataRef> resourceResponseData = propertyListDataFromResourceResponse(resource->response());
+    if (!isMainResource) {
+        RetainPtr<CFDataRef> resourceResponseData = createPropertyListRepresentation(resource->response());
         if (resourceResponseData)
             CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceResponseKey, resourceResponseData.get());    
     }
@@ -125,19 +126,20 @@ static RetainPtr<CFDictionaryRef> createPropertyListRepresentationFromResource(A
     return propertyList;
 }
 
-static RetainPtr<CFDictionaryRef> createPropertyListRep(Archive* archive)
+RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Archive* archive)
 {
     RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, CFDictionaryCreateMutable(0, 3, 0, &kCFTypeDictionaryValueCallBacks));
     
-    RetainPtr<CFDictionaryRef> mainResourceDict = createPropertyListRepresentationFromResource(archive->mainResource(), true);
+    RetainPtr<CFDictionaryRef> mainResourceDict = createPropertyListRepresentation(archive->mainResource(), MainResource);
+    ASSERT(mainResourceDict);
     if (!mainResourceDict)
         return 0;
     CFDictionarySetValue(propertyList.get(), LegacyWebArchiveMainResourceKey, mainResourceDict.get());
-        
+
     RetainPtr<CFMutableArrayRef> subresourcesArray(AdoptCF, CFArrayCreateMutable(0, archive->subresources().size(), &kCFTypeArrayCallBacks));
     const Vector<RefPtr<ArchiveResource> >& subresources(archive->subresources());
     for (unsigned i = 0; i < subresources.size(); ++i) {
-        RetainPtr<CFDictionaryRef> subresource = createPropertyListRepresentationFromResource(subresources[i].get(), false);
+        RetainPtr<CFDictionaryRef> subresource = createPropertyListRepresentation(subresources[i].get(), Subresource);
         if (subresource)
             CFArrayAppendValue(subresourcesArray.get(), subresource.get());
         else
@@ -149,7 +151,7 @@ static RetainPtr<CFDictionaryRef> createPropertyListRep(Archive* archive)
     RetainPtr<CFMutableArrayRef> subframesArray(AdoptCF, CFArrayCreateMutable(0, archive->subframeArchives().size(), &kCFTypeArrayCallBacks));
     const Vector<RefPtr<Archive> >& subframeArchives(archive->subframeArchives());
     for (unsigned i = 0; i < subframeArchives.size(); ++i) {
-        RetainPtr<CFDictionaryRef> subframeArchive = createPropertyListRep(subframeArchives[i].get());
+        RetainPtr<CFDictionaryRef> subframeArchive = createPropertyListRepresentation(subframeArchives[i].get());
         if (subframeArchive)
             CFArrayAppendValue(subframesArray.get(), subframeArchive.get());
         else
@@ -161,22 +163,23 @@ static RetainPtr<CFDictionaryRef> createPropertyListRep(Archive* archive)
     return propertyList;
 }
 
-static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef data, CFStringRef responseDataType)
+ResourceResponse LegacyWebArchive::createResourceResponseFromPropertyListData(CFDataRef data, CFStringRef responseDataType)
 {
     ASSERT(data);
     if (!data)
         return ResourceResponse();
     
-    // If the ResourceResponseVersion (passed in as responseDataType) exists at all, this is a "new" webarchive that we can parse well in a cross platform manner
-    // If it doesn't exist, we will assume this is an "old" Cocoa-based WebArchive, and parse the ResourceResponse as such
+    // If the ResourceResponseVersion (passed in as responseDataType) exists at all, this is a "new" web archive that we
+    // can parse well in a cross platform manner If it doesn't exist, we will assume this is an "old" web archive with,
+    // NSURLResponse objects in it and parse the ResourceResponse as such.
     if (!responseDataType)
         return createResourceResponseFromMacArchivedData(data);
         
-    // FIXME: Parse the "new" format that the above comment references here
+    // FIXME: Parse the "new" format that the above comment references here. This format doesn't exist yet.
     return ResourceResponse();
 }
 
-static PassRefPtr<ArchiveResource> createResource(CFDictionaryRef dictionary)
+PassRefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dictionary)
 {
     ASSERT(dictionary);
     if (!dictionary)
@@ -238,17 +241,6 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create()
     return adoptRef(new LegacyWebArchive);
 }
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(SharedBuffer* data)
-{
-    LOG(Archives, "LegacyWebArchive - Creating from raw data");
-    
-    RefPtr<LegacyWebArchive> archive = create();
-    if (!archive->init(data))
-        return 0;
-        
-    return archive.release();
-}
-
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(PassRefPtr<ArchiveResource> mainResource, Vector<PassRefPtr<ArchiveResource> >& subresources, Vector<PassRefPtr<LegacyWebArchive> >& subframeArchives)
 {
     ASSERT(mainResource);
@@ -267,19 +259,19 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(PassRefPtr<ArchiveResource
     return archive.release();
 }
 
-LegacyWebArchive::LegacyWebArchive()
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(SharedBuffer* data)
 {
-}
-
-bool LegacyWebArchive::init(SharedBuffer* data)
-{
+    LOG(Archives, "LegacyWebArchive - Creating from raw data");
+    
+    RefPtr<LegacyWebArchive> archive = create();
+        
     ASSERT(data);
     if (!data)
-        return false;
+        return 0;
         
     RetainPtr<CFDataRef> cfData(AdoptCF, data->createCFData());
     if (!cfData)
-        return false;
+        return 0;
         
     CFStringRef errorString = 0;
     
@@ -291,15 +283,18 @@ bool LegacyWebArchive::init(SharedBuffer* data)
 #endif
         if (errorString)
             CFRelease(errorString);
-        return false;
+        return 0;
     }
     
     if (CFGetTypeID(plist.get()) != CFDictionaryGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Archive property list is not the expected CFDictionary, aborting invalid WebArchive");
-        return false;
+        return 0;
     }
     
-    return extract(plist.get());
+    if (!archive->extract(plist.get()))
+        return 0;
+
+    return archive.release();
 }
 
 bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
@@ -372,7 +367,8 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
 
 RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
 {
-    RetainPtr<CFDictionaryRef> propertyList = createPropertyListRep(this);
+    RetainPtr<CFDictionaryRef> propertyList = createPropertyListRepresentation(this);
+    ASSERT(propertyList);
     if (!propertyList) {
         LOG(Archives, "LegacyWebArchive - Failed to create property list for archive, returning no data");
         return 0;
@@ -384,6 +380,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
     CFPropertyListWriteToStream(propertyList.get(), stream.get(), kCFPropertyListBinaryFormat_v1_0, 0);
 
     RetainPtr<CFDataRef> plistData(AdoptCF, static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
+    ASSERT(plistData);
 
     CFWriteStreamClose(stream.get());
 
@@ -396,20 +393,21 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
 }
 
 #if !PLATFORM(MAC)
-// FIXME: Is it possible to parse in a Cocoa-style resource response manually, 
-// without NSKeyed(Un)Archiver, manipulating plists directly?
-// If so, the code that does it will go here.  
-// In the meantime, Mac will continue to NSKeyed(Un)Archive the response as it always has
-ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef responseData)
+
+ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFDataRef responseData)
 {
+    // FIXME: If is is possible to parse in a serialized NSURLResponse manually, without using
+    // NSKeyedUnarchiver, manipulating plists directly, then we want to do that here.
+    // Until then, this can be done on Mac only.
     return ResourceResponse();
 }
 
-RetainPtr<CFDataRef> propertyListDataFromResourceResponse(const ResourceResponse& response)
+RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const ResourceResponse& response)
 {
-    // FIXME: Write out the "new" format described in ::createResourceResponseFromPropertyListData() up above
+    // FIXME: Write out the "new" format described in createResourceResponseFromPropertyListData once we invent it.
     return 0;
 }
+
 #endif
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node)
@@ -453,7 +451,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
     Vector<PassRefPtr<ArchiveResource> > subresources;
     documentLoader->getSubresources(subresources);
 
-    return LegacyWebArchive::create(documentLoader->mainResource(), subresources, subframeArchives);
+    return create(documentLoader->mainResource(), subresources, subframeArchives);
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
@@ -481,7 +479,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     return create(markupString, frame, nodeList);
 }
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, Vector<Node*>& nodes)
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes)
 {
     ASSERT(frame);
     
@@ -498,16 +496,14 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
     Vector<PassRefPtr<ArchiveResource> > subresources;
     HashSet<KURL> uniqueSubresources;
-    
-    Vector<Node*>::iterator it = nodes.begin();
-    Vector<Node*>::iterator end = nodes.end();
-    
-    for (; it != end; ++it) {
+
+    size_t nodesSize = nodes.size();    
+    for (size_t i = 0; i < nodesSize; ++i) {
+        Node* node = nodes[i];
         Frame* childFrame;
-        if (((*it)->hasTagName(HTMLNames::frameTag) || (*it)->hasTagName(HTMLNames::iframeTag) || (*it)->hasTagName(HTMLNames::objectTag)) &&
-             (childFrame = static_cast<HTMLFrameOwnerElement*>(*it)->contentFrame())) {
-            RefPtr<LegacyWebArchive> subframeArchive;
-            subframeArchive = LegacyWebArchive::create(childFrame->document());
+        if ((node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag) || node->hasTagName(HTMLNames::objectTag)) &&
+             (childFrame = static_cast<HTMLFrameOwnerElement*>(node)->contentFrame())) {
+            RefPtr<LegacyWebArchive> subframeArchive = create(childFrame->document());
             
             if (subframeArchive)
                 subframeArchives.append(subframeArchive);
@@ -515,7 +511,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree()->name().string().utf8().data());
         } else {
             ListHashSet<KURL> subresourceURLs;
-            (*it)->getSubresourceURLs(subresourceURLs);
+            node->getSubresourceURLs(subresourceURLs);
             
             DocumentLoader* documentLoader = frame->loader()->documentLoader();
             ListHashSet<KURL>::iterator iterEnd = subresourceURLs.end();
@@ -547,8 +543,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         }
     }
 
-    // Add favicon if one exists for this page
-    if (iconDatabase() && iconDatabase()->isEnabled()) {
+    // Add favicon if one exists for this page, if we are archiving the entire page.
+    if (nodesSize && nodes[0]->isDocumentNode() && iconDatabase() && iconDatabase()->isEnabled()) {
         const String& iconURL = iconDatabase()->iconURLForPageURL(responseURL);
         if (!iconURL.isEmpty() && iconDatabase()->iconDataKnownForIconURL(iconURL)) {
             if (Image* iconImage = iconDatabase()->iconForPageURL(responseURL, IntSize(16, 16))) {
@@ -586,7 +582,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
     subframeArchives.append(archive);
     
-    archive = LegacyWebArchive::create(iframeResource.release(), subresources, subframeArchives);
+    archive = create(iframeResource.release(), subresources, subframeArchives);
     
     return archive.release();
 }
