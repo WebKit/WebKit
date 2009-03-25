@@ -41,6 +41,7 @@ using namespace HTMLNames;
 class TextTokenizer : public Tokenizer {
 public:
     TextTokenizer(Document*);
+    virtual ~TextTokenizer();
     TextTokenizer(HTMLViewSourceDocument*);
 
     virtual void write(const SegmentedString&, bool appendData);
@@ -91,7 +92,13 @@ TextTokenizer::TextTokenizer(HTMLViewSourceDocument* doc)
     m_size = 254;
     m_buffer = static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size));
     m_dest = m_buffer;
-}    
+}
+
+TextTokenizer::~TextTokenizer()
+{
+    // finish() should have been called to prevent any leaks
+    ASSERT(!m_buffer);
+}
 
 void TextTokenizer::write(const SegmentedString& s, bool)
 {
@@ -157,7 +164,9 @@ void TextTokenizer::finish()
 {
     m_preElement = 0;
     fastFree(m_buffer);
-        
+    m_buffer = 0;
+    m_dest = 0;
+
     m_doc->finishedParsing();
 }
 

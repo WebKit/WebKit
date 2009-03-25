@@ -17,6 +17,19 @@
 
 2009-03-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        Make TextTokenizer ASSERT that the buffer was freed
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::TextTokenizer):
+        (WebCore::TextTokenizer::~TextTokenizer):
+        (WebCore::TextTokenizer::finish):
+          Make it clear by adding a ~TextTokenizer that finish() will always be called and the memory never leaked.
+
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         Fix case where lBreak.obj->isBR() when lBreak.obj was NULL
