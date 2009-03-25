@@ -1,3 +1,27 @@
+2009-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Bug 24740: crash in RenderSlider::setPositionFromValue when calling pause() after setting <video> to display: none
+        https://bugs.webkit.org/show_bug.cgi?id=24740
+        rdar://problem/6679873
+
+        Bug 12104: Native Slider: When the thumb's height is specified as a percentage, it is not centered properly
+        https://bugs.webkit.org/show_bug.cgi?id=12104
+
+        * media/video-display-none-crash-expected.txt: Added.
+        * media/video-display-none-crash.html: Added.
+
+        * platform/mac/fast/forms/box-shadow-override-expected.txt: Updated since a slider's thumb is no longer
+        relative-positioned and hence no longer gets its own layer.
+        * platform/mac/fast/forms/input-appearance-height-expected.txt: Ditto.
+        * platform/mac/fast/forms/slider-padding-expected.txt: Ditto.
+        * platform/mac/fast/forms/slider-thumb-shared-style-expected.txt: Ditto.
+        * platform/mac/fast/forms/slider-thumb-stylability-expected.txt: Ditto.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Ditto.
+        * platform/mac/media/video-controls-rendering-expected.txt: Ditto.
+        * platform/mac/media/video-display-toggle-expected.txt: Ditto.
+
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon "The Most Boring Man in the World" Honeycutt.

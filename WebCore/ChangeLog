@@ -1,3 +1,67 @@
+2009-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Bug 24740: crash in RenderSlider::setPositionFromValue when calling pause() after setting <video> to display: none
+        https://bugs.webkit.org/show_bug.cgi?id=24740
+        rdar://problem/6679873
+
+        Bug 12104: Native Slider: When the thumb's height is specified as a percentage, it is not centered properly
+        https://bugs.webkit.org/show_bug.cgi?id=12104
+
+        Test: media/video-display-none-crash.html
+
+        The problem here was that RenderSlider was trying to position its thumb in a way that
+        requires it to call updateLayout inside rendering code. The right way to position a
+        child renderer is to do layout, so I had to write a layout function. And then fix a few
+        other small problems shown by the same test case.
+
+        * rendering/RenderSlider.cpp: Made defaultTrackLength have internal linkage.
+        Renamed HTMLSliderThumbElement to SliderThumbElement because we only use the HTML
+        prefix for public DOM classes, not elements used as implementation details.
+        Made SliderThumbElement function members private and got rid of unneeded default
+        argument value for shadowParent.
+        (WebCore::SliderRange::SliderRange): Added. Parses precision, max, and min attributes.
+        (WebCore::SliderRange::clampValue): Added. Does standard clamping based on the above.
+        (WebCore::SliderRange::valueFromElement): Added. Reads the value from the element in
+        a way that clamps to the range.
+        (WebCore::sliderPosition): Added. Computes the slider position: a double.
+        (WebCore::SliderThumbElement::SliderThumbElement): Removed unneeded explicit
+        initialization of m_initialClickPoint.
+        (WebCore::SliderThumbElement::defaultEventHandler): Call setValueForPosition instead
+        of calling setCurrentPosition and valueChanged.
+        (WebCore::RenderSlider::RenderSlider): Remove unneeded explicit initialization of m_thumb.
+        (WebCore::RenderSlider::styleDidChange): Remove unneeded second argument to createThumbStyle.
+        (WebCore::RenderSlider::createThumbStyle): Remove unneeded second argument. Get rid of code
+        setting the position to relative and setting the left and top. We now handle positioning
+        in a custom layout function.
+        (WebCore::RenderSlider::layout): Rewrote to handle positioning of the thumb as layout.
+        (WebCore::RenderSlider::updateFromElement): Added code to immediately update the value
+        in the element if it's out of range. This clamping used to be done as a side effect of
+        setPositionFromValue. Also, this has nothing to do with the renderer, so at some point
+        it could be moved into HTMLInputElement. Removed call to setPositionFromValue
+        and instead just rely on the call to setNeedsLayout. Fix the setNeedsLayout call to be
+        a normal setNeedsLayout(true), not a setNeedsLayout(true, false), because we do want
+        this to be propagated to the parent -- it's not called during layout.
+        (WebCore::RenderSlider::setValueForPosition): Refactor to use the new SliderRange
+        class. Also don't call setCurrentPosition; instead just call setNeedsLayout.
+        (WebCore::RenderSlider::currentPosition): Use the actual position of the renderer rather
+        than the style to find the position; that means this needs to be done after layout is done.
+        Also removed unneeded runtime checks and replaced them with assertions, after checking
+        all callers to see they already guarantee this.
+        (WebCore::RenderSlider::trackSize): Removed unneeded runtime checks and replaced them
+        with assertions, after checking all callers to see they already guarantee this.
+        (WebCore::RenderSlider::inDragMode): Added a null check for m_thumb so this won't
+        crash if called early on a brand new RenderSlider.
+
+        * rendering/RenderSlider.h: Made all functions private except for forwardEvent and inDragMode.
+        Renamed HTMLSliderThumbElement to SliderThumbElement because we only use the HTML
+        prefix for public DOM classes, not elements used as implementation details. Made the
+        mouseEventIsInThumb function non-virtual. Removed the return value and argument from
+        setPositionFromValue. Removed valueChanged and setCurrentPosition. Removed the oldStyle
+        argument to createThumbStyle (see above). Made SliderThumbElement a friend so it can use some
+        private member functions.
+
 2009-03-25  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by George Staikos.

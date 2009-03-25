@@ -35,6 +35,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (40,9) size 4x18
           text run at (40,9) width 4: " "
         RenderSlider {INPUT} at (46,8) size 129x15 [bgcolor=#FFFFFF]
+          RenderBlock {DIV} at (57,0) size 15x15
         RenderText {#text} at (177,9) size 4x18
           text run at (177,9) width 4: " "
         RenderFileUploadControl {INPUT} at (183,10) size 237x18
@@ -77,5 +78,3 @@ layer at (30,104) size 112x13
   RenderBlock {DIV} at (17,0) size 112x13
 layer at (35,127) size 107x13
   RenderBlock {DIV} at (22,0) size 107x13
-layer at (111,153) size 15x15
-  RenderBlock (relative positioned) {DIV} at (0,0) size 15x15

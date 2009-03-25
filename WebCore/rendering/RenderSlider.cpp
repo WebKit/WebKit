@@ -1,6 +1,5 @@
-/**
- *
- * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.
+/*
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +34,7 @@
 #include "MouseEvent.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include <wtf/MathExtras.h>
 
 using std::min;
@@ -43,40 +43,95 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const int defaultTrackLength = 129;
+static const int defaultTrackLength = 129;
 
-class HTMLSliderThumbElement : public HTMLDivElement {
+// FIXME: The SliderRange class and functions are entirely based on the DOM,
+// and could be put with HTMLInputElement (possibly with a new name) instead of here.
+struct SliderRange {
+    bool isIntegral;
+    double minimum;
+    double maximum;
+
+    explicit SliderRange(HTMLInputElement*);
+    double clampValue(double value);
+    double valueFromElement(HTMLInputElement*, bool* wasClamped = 0);
+};
+
+SliderRange::SliderRange(HTMLInputElement* element)
+{
+    // FIXME: What's the right way to handle an integral range with non-integral minimum and maximum?
+    // Currently values are guaranteed to be integral but could be outside the range in that case.
+
+    isIntegral = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
+
+    // FIXME: This treats maximum strings that can't be parsed as 0, but perhaps 100 would be more appropriate.
+    const AtomicString& maxString = element->getAttribute(maxAttr);
+    maximum = maxString.isNull() ? 100.0 : maxString.toDouble();
+
+    // If the maximum is smaller, use it as the minimum.
+    minimum = min(element->getAttribute(minAttr).toDouble(), maximum);
+}
+
+double SliderRange::clampValue(double value)
+{
+    double clampedValue = max(minimum, min(value, maximum));
+    return isIntegral ? round(clampedValue) : clampedValue;
+}
+
+double SliderRange::valueFromElement(HTMLInputElement* element, bool* wasClamped)
+{
+    String valueString = element->value();
+    double oldValue = valueString.isNull() ? (minimum + maximum) / 2 : valueString.toDouble();
+    double newValue = clampValue(oldValue);
+
+    if (wasClamped)
+        *wasClamped = valueString.isNull() || newValue != oldValue;
+
+    return newValue;
+}
+
+// Returns a value between 0 and 1.
+// As with SliderRange, this could be on HTMLInputElement instead of here.
+static double sliderPosition(HTMLInputElement* element)
+{
+    SliderRange range(element);
+    double value = range.valueFromElement(element);
+    return (value - range.minimum) / (range.maximum - range.minimum);
+}
+
+class SliderThumbElement : public HTMLDivElement {
 public:
-    HTMLSliderThumbElement(Document*, Node* shadowParent = 0);
-        
-    virtual void defaultEventHandler(Event*);
-    virtual bool isShadowNode() const { return true; }
-    virtual Node* shadowParentNode() { return m_shadowParent; }
+    SliderThumbElement(Document*, Node* shadowParent);
     
     bool inDragMode() const { return m_inDragMode; }
-private:
+
+    virtual void defaultEventHandler(Event*);
+
+private:        
+    virtual bool isShadowNode() const { return true; }
+    virtual Node* shadowParentNode() { return m_shadowParent; }
+
     Node* m_shadowParent;
     FloatPoint m_initialClickPoint;       // initial click point in RenderSlider-local coordinates
     int m_initialPosition;
     bool m_inDragMode;
 };
 
-HTMLSliderThumbElement::HTMLSliderThumbElement(Document* doc, Node* shadowParent)
-    : HTMLDivElement(divTag, doc)
+SliderThumbElement::SliderThumbElement(Document* document, Node* shadowParent)
+    : HTMLDivElement(divTag, document)
     , m_shadowParent(shadowParent)
-    , m_initialClickPoint(IntPoint())
     , m_initialPosition(0)
     , m_inDragMode(false)
 {
 }
 
-void HTMLSliderThumbElement::defaultEventHandler(Event* event)
+void SliderThumbElement::defaultEventHandler(Event* event)
 {
     const AtomicString& eventType = event->type();
     if (eventType == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         RenderSlider* slider;
-        if (document()->frame() && renderer() && renderer()->parent() &&
+        if (document()->frame() && renderer() &&
                 (slider = static_cast<RenderSlider*>(renderer()->parent())) &&
                 slider->mouseEventIsInThumb(mouseEvent)) {
             
@@ -106,15 +161,9 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
 
             FloatPoint curPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
-            int newPosition = slider->positionForOffset(
-                IntPoint(m_initialPosition + curPoint.x() - m_initialClickPoint.x()
-                        + (renderBox()->width() / 2), 
-                    m_initialPosition + curPoint.y() - m_initialClickPoint.y()
-                        + (renderBox()->height() / 2)));
-            if (slider->currentPosition() != newPosition) {
-                slider->setCurrentPosition(newPosition);
-                slider->valueChanged();
-            }
+            IntPoint eventOffset(m_initialPosition + curPoint.x() - m_initialClickPoint.x() + renderBox()->width() / 2, 
+                m_initialPosition + curPoint.y() - m_initialClickPoint.y() + renderBox()->height() / 2);
+            slider->setValueForPosition(slider->positionForOffset(eventOffset));
             event->setDefaultHandled();
             return;
         }
@@ -125,7 +174,6 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
 
 RenderSlider::RenderSlider(HTMLInputElement* element)
     : RenderBlock(element)
-    , m_thumb(0)
 {
 }
 
@@ -173,14 +221,14 @@ void RenderSlider::calcPrefWidths()
 void RenderSlider::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-    
+
     if (m_thumb)
-        m_thumb->renderer()->setStyle(createThumbStyle(style(), m_thumb->renderer()->style()));
-        
+        m_thumb->renderer()->setStyle(createThumbStyle(style()));
+
     setReplaced(isInline());
 }
 
-PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parentStyle, const RenderStyle* oldStyle)
+PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parentStyle)
 {
     RefPtr<RenderStyle> style;
     RenderStyle* pseudoStyle = getCachedPseudoStyle(SLIDER_THUMB);
@@ -194,16 +242,11 @@ PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parent
         style->inheritFrom(parentStyle);
 
     style->setDisplay(BLOCK);
-    style->setPosition(RelativePosition);
-    if (oldStyle) {
-        style->setLeft(oldStyle->left());
-        style->setTop(oldStyle->top());
-    }
 
     if (parentStyle->appearance() == SliderVerticalPart)
-       style->setAppearance(SliderThumbVerticalPart);
+        style->setAppearance(SliderThumbVerticalPart);
     else if (parentStyle->appearance() == SliderHorizontalPart)
-       style->setAppearance(SliderThumbHorizontalPart);
+        style->setAppearance(SliderThumbHorizontalPart);
     else if (parentStyle->appearance() == MediaSliderPart)
         style->setAppearance(MediaSliderThumbPart);
 
@@ -211,42 +254,97 @@ PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parent
 }
 
 void RenderSlider::layout()
-{    
-    bool relayoutChildren = false;
-    
-    if (m_thumb && m_thumb->renderer()) {
-            
-        int oldWidth = width();
-        calcWidth();
-        int oldHeight = height();
-        calcHeight();
-        
-        if (oldWidth != width() || oldHeight != height())
-            relayoutChildren = true;  
+{
+    ASSERT(needsLayout());
 
-        // Allow the theme to set the size of the thumb
-        if (m_thumb->renderer()->style()->hasAppearance())
-            theme()->adjustSliderThumbSize(m_thumb->renderer());
+    RenderBox* thumb = m_thumb ? toRenderBox(m_thumb->renderer()) : 0;
 
-        if (style()->appearance() == SliderVerticalPart) {
-            // FIXME: Handle percentage widths correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
-            m_thumb->renderer()->style()->setLeft(Length(contentWidth() / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
-        } else {
-            // FIXME: Handle percentage heights correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
-            m_thumb->renderer()->style()->setTop(Length(contentHeight() / 2 - m_thumb->renderer()->style()->height().value() / 2, Fixed));
+    IntSize baseSize(borderLeft() + paddingLeft() + paddingRight() + borderRight(),
+        borderTop() + paddingTop() + paddingBottom() + borderBottom());
+
+    if (thumb) {
+        // Allow the theme to set the size of the thumb.
+        if (thumb->style()->hasAppearance()) {
+            // FIXME: This should pass the style, not the renderer, to the theme.
+            theme()->adjustSliderThumbSize(thumb);
         }
 
-        if (relayoutChildren)
-            setPositionFromValue(true);
+        baseSize.expand(thumb->style()->width().calcMinValue(0), thumb->style()->height().calcMinValue(0));
     }
 
-    RenderBlock::layoutBlock(relayoutChildren);
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+
+    IntSize oldSize = size();
+
+    setSize(baseSize);
+    calcWidth();
+    calcHeight();
+
+    IntRect overflowRect(IntPoint(), size());
+
+    if (thumb) {
+        if (oldSize != size())
+            thumb->setChildNeedsLayout(true, false);
+
+        LayoutStateMaintainer statePusher(view(), this, size());
+
+        IntRect oldThumbRect = thumb->frameRect();
+
+        thumb->layoutIfNeeded();
+
+        IntRect thumbRect;
+
+        thumbRect.setWidth(thumb->style()->width().calcMinValue(contentWidth()));
+        thumbRect.setHeight(thumb->style()->height().calcMinValue(contentHeight()));
+
+        double fraction = sliderPosition(static_cast<HTMLInputElement*>(node()));
+        IntRect contentRect = contentBoxRect();
+        if (style()->appearance() == SliderVerticalPart) {
+            thumbRect.setX(contentRect.x() + (contentRect.width() - thumbRect.width()) / 2);
+            thumbRect.setY(contentRect.y() + static_cast<int>(nextafter((contentRect.height() - thumbRect.height()) + 1, 0) * (1 - fraction)));
+        } else {
+            thumbRect.setX(contentRect.x() + static_cast<int>(nextafter((contentRect.width() - thumbRect.width()) + 1, 0) * fraction));
+            thumbRect.setY(contentRect.y() + (contentRect.height() - thumbRect.height()) / 2);
+        }
+
+        thumb->setFrameRect(thumbRect);
+
+        if (thumb->checkForRepaintDuringLayout())
+            thumb->repaintDuringLayoutIfMoved(oldThumbRect);
+
+        statePusher.pop();
+
+        IntRect thumbOverflowRect = thumb->overflowRect();
+        thumbOverflowRect.move(thumb->x(), thumb->y());
+        overflowRect.unite(thumbOverflowRect);
+    }
+
+    // FIXME: m_overflowWidth and m_overflowHeight should be renamed
+    // m_overflowRight and m_overflowBottom.
+    m_overflowLeft = overflowRect.x();
+    m_overflowTop = overflowRect.y();
+    m_overflowWidth = overflowRect.right();
+    m_overflowHeight = overflowRect.bottom();
+
+    repainter.repaintAfterLayout();    
+
+    setNeedsLayout(false);
 }
 
 void RenderSlider::updateFromElement()
 {
+    HTMLInputElement* element = static_cast<HTMLInputElement*>(node());
+
+    // Send the value back to the element if the range changes it.
+    SliderRange range(element);
+    bool clamped;
+    double value = range.valueFromElement(element, &clamped);
+    if (clamped)
+        element->setValueFromRenderer(String::number(value));
+
+    // Layout will take care of the thumb's size and position.
     if (!m_thumb) {
-        m_thumb = new HTMLSliderThumbElement(document(), node());
+        m_thumb = new SliderThumbElement(document(), node());
         RefPtr<RenderStyle> thumbStyle = createThumbStyle(style());
         m_thumb->setRenderer(m_thumb->createRenderer(renderArena(), thumbStyle.get()));
         m_thumb->renderer()->setStyle(thumbStyle.release());
@@ -254,8 +352,7 @@ void RenderSlider::updateFromElement()
         m_thumb->setInDocument(true);
         addChild(m_thumb->renderer());
     }
-    setPositionFromValue();
-    setNeedsLayout(true, false);
+    setNeedsLayout(true);
 }
 
 bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
@@ -279,77 +376,32 @@ void RenderSlider::setValueForPosition(int position)
 {
     if (!m_thumb || !m_thumb->renderer())
         return;
-    
-    const AtomicString& minStr = static_cast<HTMLInputElement*>(node())->getAttribute(minAttr);
-    const AtomicString& maxStr = static_cast<HTMLInputElement*>(node())->getAttribute(maxAttr);
-    const AtomicString& precision = static_cast<HTMLInputElement*>(node())->getAttribute(precisionAttr);
-    
-    double minVal = minStr.isNull() ? 0.0 : minStr.toDouble();
-    double maxVal = maxStr.isNull() ? 100.0 : maxStr.toDouble();
-    minVal = min(minVal, maxVal); // Make sure the range is sane.
-    
-    // Calculate the new value based on the position
-    double factor = (double)position / (double)trackSize();
+
+    HTMLInputElement* element = static_cast<HTMLInputElement*>(node());
+
+    // Calculate the new value based on the position, and send it to the element.
+    SliderRange range(element);
+    double fraction = static_cast<double>(position) / trackSize();
     if (style()->appearance() == SliderVerticalPart)
-        factor = 1.0 - factor;
-    double val = minVal + factor * (maxVal - minVal);
-            
-    val = max(minVal, min(val, maxVal)); // Make sure val is within min/max.
+        fraction = 1 - fraction;
+    double value = range.clampValue(range.minimum + fraction * (range.maximum - range.minimum));
+    element->setValueFromRenderer(String::number(value));
 
-    // Force integer value if not float.
-    if (!equalIgnoringCase(precision, "float"))
-        val = lround(val);
-
-    static_cast<HTMLInputElement*>(node())->setValueFromRenderer(String::number(val));
-    
+    // Also update the position if appropriate.
     if (position != currentPosition()) {
-        setCurrentPosition(position);
-        static_cast<HTMLInputElement*>(node())->onChange();
+        setNeedsLayout(true);
+
+        // FIXME: It seems like this could send extra change events if the same value is set
+        // multiple times with no layout in between.
+        element->onChange();
     }
-}
-
-double RenderSlider::setPositionFromValue(bool inLayout)
-{
-    if (!m_thumb || !m_thumb->renderer())
-        return 0;
-    
-    if (!inLayout)
-        document()->updateLayout();
-        
-    String value = static_cast<HTMLInputElement*>(node())->value();
-    const AtomicString& minStr = static_cast<HTMLInputElement*>(node())->getAttribute(minAttr);
-    const AtomicString& maxStr = static_cast<HTMLInputElement*>(node())->getAttribute(maxAttr);
-    const AtomicString& precision = static_cast<HTMLInputElement*>(node())->getAttribute(precisionAttr);
-    
-    double minVal = minStr.isNull() ? 0.0 : minStr.toDouble();
-    double maxVal = maxStr.isNull() ? 100.0 : maxStr.toDouble();
-    minVal = min(minVal, maxVal); // Make sure the range is sane.
-    
-    double oldVal = value.isNull() ? (maxVal + minVal)/2.0 : value.toDouble();
-    double val = max(minVal, min(oldVal, maxVal)); // Make sure val is within min/max.
-        
-    // Force integer value if not float.
-    if (!equalIgnoringCase(precision, "float"))
-        val = lround(val);
-
-    // Calculate the new position based on the value
-    double factor = (val - minVal) / (maxVal - minVal);
-    if (style()->appearance() == SliderVerticalPart)
-        factor = 1.0 - factor;
-
-    setCurrentPosition((int)(factor * trackSize()));
-    
-    if (value.isNull() || val != oldVal)
-        static_cast<HTMLInputElement*>(node())->setValueFromRenderer(String::number(val));
-    
-    return val;
 }
 
 int RenderSlider::positionForOffset(const IntPoint& p)
 {
     if (!m_thumb || !m_thumb->renderer())
         return 0;
-   
+
     int position;
     if (style()->appearance() == SliderVerticalPart)
         position = p.y() - m_thumb->renderBox()->height() / 2;
@@ -359,65 +411,44 @@ int RenderSlider::positionForOffset(const IntPoint& p)
     return max(0, min(position, trackSize()));
 }
 
-void RenderSlider::valueChanged()
-{
-    setValueForPosition(currentPosition());
-    static_cast<HTMLInputElement*>(node())->onChange();
-}
-
 int RenderSlider::currentPosition()
 {
-    if (!m_thumb || !m_thumb->renderer())
-        return 0;
+    ASSERT(m_thumb);
+    ASSERT(m_thumb->renderer());
 
     if (style()->appearance() == SliderVerticalPart)
-        return m_thumb->renderer()->style()->top().value();
-    return m_thumb->renderer()->style()->left().value();
-}
-
-void RenderSlider::setCurrentPosition(int pos)
-{
-    if (!m_thumb || !m_thumb->renderer())
-        return;
-
-    if (style()->appearance() == SliderVerticalPart)
-        m_thumb->renderer()->style()->setTop(Length(pos, Fixed));
-    else
-        m_thumb->renderer()->style()->setLeft(Length(pos, Fixed));
-
-    m_thumb->renderBox()->layer()->updateLayerPosition();
-    repaint();
-    m_thumb->renderer()->repaint();
+        return toRenderBox(m_thumb->renderer())->y() - contentBoxRect().y();
+    return toRenderBox(m_thumb->renderer())->x() - contentBoxRect().x();
 }
 
 int RenderSlider::trackSize()
 {
-    if (!m_thumb || !m_thumb->renderer())
-        return 0;
+    ASSERT(m_thumb);
+    ASSERT(m_thumb->renderer());
 
     if (style()->appearance() == SliderVerticalPart)
         return contentHeight() - m_thumb->renderBox()->height();
     return contentWidth() - m_thumb->renderBox()->width();
 }
 
-void RenderSlider::forwardEvent(Event* evt)
+void RenderSlider::forwardEvent(Event* event)
 {
-    if (evt->isMouseEvent()) {
-        MouseEvent* mouseEvt = static_cast<MouseEvent*>(evt);
-        if (evt->type() == eventNames().mousedownEvent && mouseEvt->button() == LeftButton) {
-            if (!mouseEventIsInThumb(mouseEvt)) {
-                IntPoint eventOffset = roundedIntPoint(absoluteToLocal(mouseEvt->absoluteLocation(), false, true));
+    if (event->isMouseEvent()) {
+        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+        if (event->type() == eventNames().mousedownEvent && mouseEvent->button() == LeftButton) {
+            if (!mouseEventIsInThumb(mouseEvent)) {
+                IntPoint eventOffset = roundedIntPoint(absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
                 setValueForPosition(positionForOffset(eventOffset));
             }
         }
     }
 
-    m_thumb->defaultEventHandler(evt);
+    m_thumb->defaultEventHandler(event);
 }
 
 bool RenderSlider::inDragMode() const
 {
-    return m_thumb->inDragMode();
+    return m_thumb && m_thumb->inDragMode();
 }
 
 } // namespace WebCore
