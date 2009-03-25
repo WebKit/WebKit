@@ -886,15 +886,15 @@ void RenderLayer::insertOnlyThisLayer()
         // We need to connect ourselves when our renderer() has a parent.
         // Find our enclosingLayer and add ourselves.
         RenderLayer* parentLayer = renderer()->parent()->enclosingLayer();
+        ASSERT(parentLayer);
         RenderLayer* beforeChild = parentLayer->reflectionLayer() != this ? renderer()->parent()->findNextLayer(parentLayer, renderer()) : 0;
-        if (parentLayer)
-            parentLayer->addChild(this, beforeChild);
+        parentLayer->addChild(this, beforeChild);
     }
-    
+
     // Remove all descendant layers from the hierarchy and add them to the new position.
     for (RenderObject* curr = renderer()->firstChild(); curr; curr = curr->nextSibling())
         curr->moveLayers(m_parent, this);
-        
+
     // Clear out all the clip rects.
     clearClipRectsIncludingDescendants();
 }
@@ -1287,7 +1287,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     ExceptionCode ec;
 
     if (difference.width()) {
-        if (element && element->isFormControlElement()) {
+        if (element->isFormControlElement()) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             style->setProperty(CSSPropertyMarginLeft, String::number(renderer->marginLeft() / zoomFactor) + "px", false, ec);
             style->setProperty(CSSPropertyMarginRight, String::number(renderer->marginRight() / zoomFactor) + "px", false, ec);
@@ -1299,7 +1299,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     }
 
     if (difference.height()) {
-        if (element && element->isFormControlElement()) {
+        if (element->isFormControlElement()) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             style->setProperty(CSSPropertyMarginTop, String::number(renderer->marginTop() / zoomFactor) + "px", false, ec);
             style->setProperty(CSSPropertyMarginBottom, String::number(renderer->marginBottom() / zoomFactor) + "px", false, ec);

@@ -19,6 +19,29 @@
 
         Reviewed by Darin Adler.
 
+        Remove dead code and style cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+          Coverty was annoyed that we didn't initialize all of our members.  I agree, but I didn't
+          want to paste all 8 members each time, so I just cleaned up the existing constructors and left them.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedNode):
+          "node" was checked just above and is already known to be non-null
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+          We were already using parentLayer w/o a NULL check above, so just add an explicit ASSERT and use it w/o NULL check
+        (WebCore::RenderLayer::resize):
+          element is already ASSERTed above, no need to null check it here
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+          currentCell.cell was just assigned to the value "cell" which is known to be non-null, no need to null check again.
+
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Move ASSERT(foo) to before where foo-> is used
         https://bugs.webkit.org/show_bug.cgi?id=24684
 

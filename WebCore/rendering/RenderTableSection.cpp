@@ -244,7 +244,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 
         for (int r = 0; r < rSpan; r++) {
             CellStruct& c = cellAt(m_cRow + r, m_cCol);
-            if (currentCell.cell && !c.cell)
+            if (!c.cell)
                 c.cell = currentCell.cell;
             if (currentCell.inColSpan)
                 c.inColSpan = true;
@@ -254,10 +254,8 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
         currentCell.cell = 0;
         currentCell.inColSpan = true;
     }
-    if (cell) {
-        cell->setRow(m_cRow);
-        cell->setCol(table()->effColToCol(col));
-    }
+    cell->setRow(m_cRow);
+    cell->setCol(table()->effColToCol(col));
 }
 
 void RenderTableSection::setCellWidths()
