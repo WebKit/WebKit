@@ -178,11 +178,11 @@ rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-backface-visibility) : visible
 rect: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-background-clip) : border
+rect: style.getPropertyValue(-webkit-background-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-composite) : source-over
 rect: style.getPropertyCSSValue(-webkit-background-composite) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-background-origin) : padding
+rect: style.getPropertyValue(-webkit-background-origin) : padding-box
 rect: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
@@ -262,11 +262,11 @@ rect: style.getPropertyValue(-webkit-mask-position) : 0% 0%
 rect: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
 rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-clip) : border
+rect: style.getPropertyValue(-webkit-mask-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-composite) : source-over
 rect: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-origin) : border
+rect: style.getPropertyValue(-webkit-mask-origin) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
@@ -572,11 +572,11 @@ g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-backface-visibility) : visible
 g: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-background-clip) : border
+g: style.getPropertyValue(-webkit-background-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-composite) : source-over
 g: style.getPropertyCSSValue(-webkit-background-composite) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-background-origin) : padding
+g: style.getPropertyValue(-webkit-background-origin) : padding-box
 g: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
@@ -656,11 +656,11 @@ g: style.getPropertyValue(-webkit-mask-position) : 0% 0%
 g: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-mask-repeat) : repeat
 g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-clip) : border
+g: style.getPropertyValue(-webkit-mask-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-composite) : source-over
 g: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-origin) : border
+g: style.getPropertyValue(-webkit-mask-origin) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
