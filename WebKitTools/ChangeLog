@@ -1,5 +1,11 @@
 2009-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Fix the Tiger build.
+
+        * DumpRenderTree/mac/TextInputController.m:
+
+2009-03-24  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Jon "The Most Boring Man in the World" Honeycutt.
 
         Explicitly map NSNotFound to -1 so that the result of-characterIndexForPointX:Y: does

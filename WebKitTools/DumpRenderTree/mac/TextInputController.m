@@ -34,6 +34,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebScriptObject.h>
+#import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 
 @interface TextInputController (DumpRenderTreeInputMethodHandler)
