@@ -1430,8 +1430,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         m_canvas->willDraw(FloatRect(0, 0, m_canvas->width(), m_canvas->height()));
     }
     
-    CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
 #if PLATFORM(CG)
+    CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
     if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
         // FIXME: The rect is not big enough for miters on stroked text.
         IntRect maskRect = enclosingIntRect(textRect);

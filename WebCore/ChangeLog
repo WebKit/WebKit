@@ -1,3 +1,12 @@
+2009-03-24  Eli Fidler  <eli.fidler@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Move variable into proper platform block to quiet warning.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
 2009-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.
