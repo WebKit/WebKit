@@ -1,3 +1,20 @@
+2009-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24817
+        
+        When the slider range is zero, avoid a divide by zero, which caused the
+        thumb to be positioned off in the weeds, which broke painting.
+
+        Test: media/video-empty-source.html
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderRange::proportionFromValue):
+        (WebCore::SliderRange::valueFromProportion):
+        (WebCore::sliderPosition):
+        (WebCore::RenderSlider::setValueForPosition):
+
 2009-03-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
