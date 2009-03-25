@@ -17,6 +17,21 @@
 
 2009-03-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Fix case where lBreak.obj->isBR() when lBreak.obj was NULL
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        I don't have a test case where we were taking the wrong path here
+        However, adding an ASSERT(lBreak.obj) before this usage caused
+        multiple bidi tests to fail, so lBreak.obj can be null here.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+          lBreak.obj can be null, so we can't call ->isBR() on it unconditionally.
+
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         Style cleanup and dead code removal in dom, editing
