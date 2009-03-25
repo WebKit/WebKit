@@ -593,13 +593,13 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         scheduleProgressEvent(eventNames().suspendEvent);
     }
 
-    if (state == MediaPlayer::Loading && m_networkState < NETWORK_LOADING) {
+    if (state == MediaPlayer::Loading && (m_networkState < NETWORK_LOADING || m_networkState == NETWORK_NO_SOURCE)) {
         ASSERT(static_cast<ReadyState>(m_player->readyState()) < HAVE_ENOUGH_DATA);
         m_networkState = NETWORK_LOADING;
         startProgressEventTimer();
     }
 
-    if (state == MediaPlayer::Loaded && m_networkState < NETWORK_LOADED) {
+    if (state == MediaPlayer::Loaded && (m_networkState < NETWORK_LOADED || m_networkState == NETWORK_NO_SOURCE)) {
         m_networkState = NETWORK_LOADED;
         m_progressEventTimer.stop();
 

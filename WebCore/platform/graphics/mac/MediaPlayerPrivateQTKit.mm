@@ -635,7 +635,7 @@ void MediaPlayerPrivate::updateStates()
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     
     long loadState = m_qtMovie ? [[m_qtMovie.get() attributeForKey:QTMovieLoadStateAttribute] longValue] : static_cast<long>(QTMovieLoadStateError);
-    
+
     if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata && !m_player->inMediaDocument()) {
         disableUnsupportedTracks();
         if (!m_enabledTrackCount)
@@ -647,15 +647,18 @@ void MediaPlayerPrivate::updateStates()
         m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::HaveEnoughData;
     } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
-        m_readyState = MediaPlayer::HaveEnoughData;
+        m_readyState = MediaPlayer::HaveFutureData;
+        m_networkState = MediaPlayer::Loading;
     } else if (loadState >= QTMovieLoadStatePlayable) {
         // FIXME: This might not work correctly in streaming case, <rdar://problem/5693967>
         m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
+        m_networkState = MediaPlayer::Loading;
     } else if (loadState >= QTMovieLoadStateLoaded) {
         m_readyState = MediaPlayer::HaveMetadata;
-    } else if (loadState > QTMovieLoadStateError) {
         m_networkState = MediaPlayer::Loading;
+    } else if (loadState > QTMovieLoadStateError) {
         m_readyState = MediaPlayer::HaveNothing;        
+        m_networkState = MediaPlayer::Loading;
     } else {
         float loaded = maxTimeLoaded();
 

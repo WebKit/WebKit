@@ -1,3 +1,18 @@
+2009-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix for <rdar://problem/6719375> Deal with QTKit loadstate changes when playing streaming movies
+
+        *  WebCore/html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setNetworkState): Deal with media engine reviving after having
+        network state of NETWORK_NO_SOURCE.
+
+        *  WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates): Reset m_readyState at each state change since
+        some types of movies currently cause QTKit's load state to bounce around. QTMovieLoadStatePlaythroughOK
+        corresponds to HaveFutureData, not HaveEnoughData.
+
 2009-03-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
