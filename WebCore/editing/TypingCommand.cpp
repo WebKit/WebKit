@@ -373,10 +373,10 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             selectionAfterUndo = selectionToDelete;
             break;
         case VisibleSelection::CaretSelection: {
-            if (breakOutOfEmptyMailBlockquotedParagraph()) {
+            // After breaking out of an empty mail blockquote, we still want continue with the deletion
+            // so actual content will get deleted, and not just the quote style.
+            if (breakOutOfEmptyMailBlockquotedParagraph())
                 typingAddedToOpenCommand();
-                return;
-            }
         
             m_smartDelete = false;
 

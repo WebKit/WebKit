@@ -1,3 +1,14 @@
+2009-03-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=24707
+        <rdar://problem/6593021> Deleting with a caret in a blank, quoted line decreases the quoting, but does not delete the line
+
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::deleteKeyPressed):
+        After breaking out of an empty mail blockquote, we still want continue with the deletion
+        so actual content will get deleted, and not just the quote style.
+
 2009-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
