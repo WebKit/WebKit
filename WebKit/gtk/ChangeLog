@@ -1,3 +1,22 @@
+2009-03-23  Alejandro Garcia Castro  <alex@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Current API does not allow us to open target="_blank" links
+        in new tabs instead of windows
+        https://bugs.webkit.org/show_bug.cgi?id=23932
+
+        Added a signal to the API (new-window-policy-decision-requested)
+        that allows the browser to decide the policy for the new window
+        request, if the signal is not handled we open the new window as
+        usual.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::getNavigationAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * webkit/webkitwebview.cpp:
+
 2009-03-20  Jan Michael Alonzo  <jmalonzo@gmail.com>
 
         Not reviewed. Fix style issues with my previous commit (r41866) as

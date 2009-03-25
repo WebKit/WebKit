@@ -303,6 +303,39 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
         webkit_web_policy_decision_ignore (policyDecision);
 }
 
+static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& action)
+{
+    gint button = -1;
+
+    const Event* event = action.event();
+    if (event && event->isMouseEvent()) {
+        const MouseEvent* mouseEvent = static_cast<const MouseEvent*>(event);
+        // DOM button values are 0, 1 and 2 for left, middle and right buttons.
+        // GTK+ uses 1, 2 and 3, so let's add 1 to remain consistent.
+        button = mouseEvent->button() + 1;
+    }
+
+    gint modifierFlags = 0;
+    UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
+    if (keyStateEvent) {
+        if (keyStateEvent->shiftKey())
+            modifierFlags |= GDK_SHIFT_MASK;
+        if (keyStateEvent->ctrlKey())
+            modifierFlags |= GDK_CONTROL_MASK;
+        if (keyStateEvent->altKey())
+            modifierFlags |= GDK_MOD1_MASK;
+        if (keyStateEvent->metaKey())
+            modifierFlags |= GDK_MOD2_MASK;
+    }
+
+    return WEBKIT_WEB_NAVIGATION_ACTION(g_object_new(WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
+                                                     "reason", kit(action.type()),
+                                                     "original-uri", action.url().string().utf8().data(),
+                                                     "button", button,
+                                                     "modifier-state", modifierFlags,
+                                                     NULL));
+}
+
 void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& s)
 {
     ASSERT(policyFunction);
@@ -314,9 +347,26 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
         return;
     }
 
+    WebKitWebPolicyDecision* policyDecision = webkit_web_policy_decision_new(m_frame, policyFunction);
+
+    if (m_policyDecision)
+        g_object_unref(m_policyDecision);
+    m_policyDecision = policyDecision;
+
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
+    WebKitWebNavigationAction* navigationAction = getNavigationAction(action);
+    gboolean isHandled = false;
+
+    g_signal_emit_by_name(webView, "new-window-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
+
+    g_object_unref(navigationAction);
+    g_object_unref(request);
+
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
-    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
+    if (!isHandled)
+        (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
@@ -353,36 +403,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         g_object_unref(m_policyDecision);
     m_policyDecision = policyDecision;
 
-    gint button = -1;
-    gint modifierFlags = 0;
-
-    const Event* event = action.event();
-    if (event && event->isMouseEvent()) {
-        const MouseEvent* mouseEvent = static_cast<const MouseEvent*>(event);
-        // DOM button values are 0, 1 and 2 for left, middle and right buttons.
-        // GTK+ uses 1, 2 and 3, so let's add 1 to remain consistent.
-        button = mouseEvent->button() + 1;
-    }
-
-    UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
-    if (keyStateEvent) {
-        if (keyStateEvent->shiftKey())
-            modifierFlags |= GDK_SHIFT_MASK;
-        if (keyStateEvent->ctrlKey())
-            modifierFlags |= GDK_CONTROL_MASK;
-        if (keyStateEvent->altKey())
-            modifierFlags |= GDK_MOD1_MASK;
-        if (keyStateEvent->metaKey())
-            modifierFlags |= GDK_MOD2_MASK;
-    }
-
-    GObject* navigationAction = G_OBJECT(g_object_new(WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
-                                                     "reason", kit(action.type()),
-                                                      "original-uri", action.url().string().utf8().data(),
-                                                      "button", button,
-                                                      "modifier-state", modifierFlags,
-                                                      NULL));
-
+    WebKitWebNavigationAction* navigationAction = getNavigationAction(action);
     gboolean isHandled = false;
     g_signal_emit_by_name(webView, "navigation-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
 

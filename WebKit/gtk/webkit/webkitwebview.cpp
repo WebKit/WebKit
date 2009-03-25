@@ -112,6 +112,7 @@ extern "C" {
 enum {
     /* normal signals */
     NAVIGATION_REQUESTED,
+    NEW_WINDOW_POLICY_DECISION_REQUESTED,
     NAVIGATION_POLICY_DECISION_REQUESTED,
     MIME_TYPE_POLICY_DECISION_REQUESTED,
     CREATE_WEB_VIEW,
@@ -1050,6 +1051,45 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_NAVIGATION_RESPONSE, 2,
             WEBKIT_TYPE_WEB_FRAME,
             WEBKIT_TYPE_NETWORK_REQUEST);
+
+    /**
+     * WebKitWebView::new-window-policy-decision-requested:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame that required the navigation
+     * @request: a #WebKitNetworkRequest
+     * @navigation_action: a #WebKitWebNavigation
+     * @policy_decision: a #WebKitWebPolicyDecision
+     * @return: TRUE if the signal will be handled, FALSE to have the
+     *          default behavior apply
+     *
+     * Emitted when @frame requests opening a new window. With this
+     * signal the browser can use the context of the request to decide
+     * about the new window. If the request is not handled the default
+     * behavior is to allow opening the new window to load the url,
+     * which will cause a create-web-view signal emission where the
+     * browser handles the new window action but without information
+     * of the context that caused the navigation. The following
+     * navigation-policy-decision-requested emissions will load the
+     * page after the creation of the new window just with the
+     * information of this new navigation context, without any
+     * information about the action that made this new window to be
+     * opened.
+     *
+     * Since: 1.1.4
+     */
+    webkit_web_view_signals[NEW_WINDOW_POLICY_DECISION_REQUESTED] =
+        g_signal_new("new-window-policy-decision-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_OBJECT_OBJECT_OBJECT,
+            G_TYPE_BOOLEAN, 4,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_NETWORK_REQUEST,
+            WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
+            WEBKIT_TYPE_WEB_POLICY_DECISION);
 
     /**
      * WebKitWebView::navigation-policy-decision-requested:
