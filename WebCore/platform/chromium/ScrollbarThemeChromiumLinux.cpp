@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -46,28 +46,46 @@ int ScrollbarThemeChromium::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeChromium::invalidateOnMouseEnterExit()
 {
-    notImplemented();
     return false;
+}
+
+static void drawVertLine(SkCanvas* canvas, int x, int y1, int y2, const SkPaint& paint)
+{
+    SkIRect skrect;
+    skrect.set(x, y1, x + 1, y2 + 1);
+    canvas->drawIRect(skrect, paint);
+}
+
+static void drawHorizLine(SkCanvas* canvas, int x1, int x2, int y, const SkPaint& paint)
+{
+    SkIRect skrect;
+    skrect.set(x1, y, x2 + 1, y + 1);
+    canvas->drawIRect(skrect, paint);
+}
+
+static void drawBox(SkCanvas* canvas, const IntRect& rect, const SkPaint& paint)
+{
+    const int right = rect.x() + rect.width() - 1;
+    const int bottom = rect.y() + rect.height() - 1;
+    drawHorizLine(canvas, rect.x(), right, rect.y(), paint);
+    drawVertLine(canvas, right, rect.y(), bottom, paint);
+    drawHorizLine(canvas, rect.x(), right, bottom, paint);
+    drawVertLine(canvas, rect.x(), rect.y(), bottom, paint);
 }
 
 void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar,
                                              const IntRect& rect, ScrollbarPart partType)
 {
-    const int right = rect.x() + rect.width();
-    const int bottom = rect.y() + rect.height();
     SkCanvas* const canvas = gc->platformContext()->canvas();
-
     SkPaint paint;
+    SkIRect skrect;
+
+    skrect.set(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
     paint.setARGB(0xff, 0xe3, 0xdd, 0xd8);
-    SkRect skrect;
-    skrect.set(rect.x(), rect.y(), right, bottom);
-    canvas->drawRect(skrect, paint);
+    canvas->drawIRect(skrect, paint);
 
     paint.setARGB(0xff, 0xc5, 0xba, 0xb0);
-    canvas->drawLine(rect.x(), rect.y(), rect.x(), bottom, paint);
-    canvas->drawLine(right - 1, rect.y(), right - 1, bottom, paint);
-    canvas->drawLine(rect.x(), rect.y(), right - 1, rect.y(), paint);
-    canvas->drawLine(rect.x(), bottom - 1, right - 1, bottom - 1, paint);
+    drawBox(canvas, rect, paint);
 }
 
 void ScrollbarThemeChromium::paintButton(GraphicsContext* gc, Scrollbar* scrollbar,
@@ -79,8 +97,6 @@ void ScrollbarThemeChromium::paintButton(GraphicsContext* gc, Scrollbar* scrollb
 void ScrollbarThemeChromium::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
 {
     const bool hovered = scrollbar->hoveredPart() == ThumbPart;
-    const int right = rect.x() + rect.width();
-    const int bottom = rect.y() + rect.height();
     const int midx = rect.x() + rect.width() / 2;
     const int midy = rect.y() + rect.height() / 2;
     const bool vertical = scrollbar->orientation() == VerticalScrollbar;
@@ -92,37 +108,34 @@ void ScrollbarThemeChromium::paintThumb(GraphicsContext* gc, Scrollbar* scrollba
     else
         paint.setARGB(0xff, 0xf4, 0xf2, 0xef);
 
-    SkRect skrect;
-    if (vertical) {
-      skrect.set(rect.x(), rect.y(), midx + 1, bottom);
-    } else {
-      skrect.set(rect.x(), rect.y(), right, midy + 1);
-    }
-    canvas->drawRect(skrect, paint);
+    SkIRect skrect;
+    if (vertical)
+        skrect.set(rect.x(), rect.y(), midx + 1, rect.y() + rect.height());
+    else
+        skrect.set(rect.x(), rect.y(), rect.x() + rect.width(), midy + 1);
 
-    if (hovered) {
-      paint.setARGB(0xff, 0xf4, 0xf2, 0xef);
-    } else {
-      paint.setARGB(0xff, 0xea, 0xe5, 0xe0);
-    }
-    if (vertical) {
-      skrect.set(midx + 1, rect.y(), right, bottom);
-    } else {
-      skrect.set(rect.x(), midy + 1, right, bottom);
-    }
-    canvas->drawRect(skrect, paint);
+    canvas->drawIRect(skrect, paint);
+
+    if (hovered)
+        paint.setARGB(0xff, 0xf4, 0xf2, 0xef);
+    else
+        paint.setARGB(0xff, 0xea, 0xe5, 0xe0);
+
+    if (vertical)
+        skrect.set(midx + 1, rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
+    else
+        skrect.set(rect.x(), midy + 1, rect.x() + rect.width(), rect.y() + rect.height());
+
+    canvas->drawIRect(skrect, paint);
 
     paint.setARGB(0xff, 0x9d, 0x96, 0x8e);
-    canvas->drawLine(rect.x(), rect.y(), rect.x(), bottom, paint);
-    canvas->drawLine(right, rect.y(), right, bottom, paint);
-    canvas->drawLine(rect.x(), rect.y(), right, rect.y(), paint);
-    canvas->drawLine(rect.x(), bottom, right, bottom, paint);
+    drawBox(canvas, rect, paint);
 
     if (rect.height() > 10 && rect.width() > 10) {
-      paint.setARGB(0xff, 0x9d, 0x96, 0x8e);
-      canvas->drawLine(midx - 1, midy, midx + 3, midy, paint);
-      canvas->drawLine(midx - 1, midy - 3, midx + 3, midy - 3, paint);
-      canvas->drawLine(midx - 1, midy + 3, midx + 3, midy + 3, paint);
+        paint.setARGB(0xff, 0x9d, 0x96, 0x8e);
+        drawHorizLine(canvas, midx - 1, midx + 3, midy, paint);
+        drawHorizLine(canvas, midx - 1, midx + 3, midy - 3, paint);
+        drawHorizLine(canvas, midx - 1, midx + 3, midy + 3, paint);
     }
 }
 
