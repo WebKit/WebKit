@@ -1,3 +1,16 @@
+2009-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24784
+        
+        Test for transforms with zoom.
+
+        * fast/transforms/transforms-with-zoom.html: Added.
+        * platform/mac/fast/transforms/transforms-with-zoom-expected.checksum: Added.
+        * platform/mac/fast/transforms/transforms-with-zoom-expected.png: Added.
+        * platform/mac/fast/transforms/transforms-with-zoom-expected.txt: Added.
+
 2009-03-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
