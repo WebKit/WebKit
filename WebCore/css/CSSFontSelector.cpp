@@ -433,7 +433,9 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     // or the next darker otherwise."
     // For '400', we made up our own rule (which then '500' follows).
 
-    static const FontTraitsMask weightFallbackRules[9][8] = {
+    static const unsigned fallbackRuleSets = 9;
+    static const unsigned rulesPerSet = 8;
+    static const FontTraitsMask weightFallbackRuleSets[fallbackRuleSets][rulesPerSet] = {
         { FontWeight200Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
         { FontWeight100Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
         { FontWeight200Mask, FontWeight100Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
@@ -445,14 +447,16 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
         { FontWeight800Mask, FontWeight700Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask }
     };
 
-    const FontTraitsMask* weightFallbackRule = weightFallbackRules[0];
+    unsigned ruleSetIndex = 0;
     unsigned w = FontWeight100Bit;
     while (!(desiredTraitsMaskForComparison & (1 << w))) {
         w++;
-        weightFallbackRule += 8;
+        ruleSetIndex++;
     }
 
-    for (unsigned i = 0; i < 8; ++i) {
+    ASSERT(ruleSetIndex < fallbackRuleSets);
+    const FontTraitsMask* weightFallbackRule = weightFallbackRuleSets[ruleSetIndex];
+    for (unsigned i = 0; i < rulesPerSet; ++i) {
         if (secondTraitsMask & weightFallbackRule[i])
             return false;
         if (firstTraitsMask & weightFallbackRule[i])

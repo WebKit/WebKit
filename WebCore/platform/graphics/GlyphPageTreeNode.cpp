@@ -218,6 +218,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                         }
                         haveGlyphs |= pageToFill->fill(from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
                         if (scratchPage) {
+                            ASSERT(to <=  static_cast<int>(GlyphPage::size));
                             for (int j = from; j < to; j++) {
                                 if (!m_page->m_glyphs[j].glyph && pageToFill->m_glyphs[j].glyph)
                                     m_page->m_glyphs[j] = pageToFill->m_glyphs[j];
