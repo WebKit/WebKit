@@ -358,6 +358,20 @@ void ChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
 
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
+    // If a tooltip must be displayed it will be, afterwards, when
+    // setToolTip is called; this is just a work-around to make sure
+    // it updates its location correctly; see
+    // https://bugs.webkit.org/show_bug.cgi?id=15793.
+    g_object_set(m_webView, "has-tooltip", FALSE, NULL);
+
+    GdkDisplay* gdkDisplay;
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    if (GTK_WIDGET_TOPLEVEL(window))
+        gdkDisplay = gtk_widget_get_display(window);
+    else
+        gdkDisplay = gdk_display_get_default();
+    gtk_tooltip_trigger_tooltip_query(gdkDisplay);
+
     // check if the element is a link...
     bool isLink = hit.isLiveLink();
     if (isLink) {
