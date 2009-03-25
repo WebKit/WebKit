@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "DumpRenderTreeMac.h"
 #import "TextInputController.h"
 
 #import <AppKit/NSInputManager.h>
