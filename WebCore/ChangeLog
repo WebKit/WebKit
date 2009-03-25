@@ -1,3 +1,14 @@
+2009-03-25  Eli Fidler  <eli.fidler@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fix compiler warnings regarding assignments in if statements.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::createFormData):
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::compare):
+
 2009-03-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

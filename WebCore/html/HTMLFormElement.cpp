@@ -211,7 +211,8 @@ PassRefPtr<FormData> HTMLFormElement::createFormData(const CString& boundary)
                         if (!path.isEmpty()) {
                             if (Page* page = document()->page()) {
                                 String generatedFileName;
-                                if (shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName))
+                                shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
+                                if (shouldGenerateFile)
                                     fileName = generatedFileName;
                             }
                         }

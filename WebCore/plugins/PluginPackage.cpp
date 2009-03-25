@@ -91,7 +91,8 @@ int PluginPackage::compare(const PluginPackage& compareTo) const
     if (diff)
         return diff;
 
-    if (diff = compareFileVersion(compareTo.version()))
+    diff = compareFileVersion(compareTo.version());
+    if (diff)
         return diff;
 
     return strcmp(parentDirectory().utf8().data(), compareTo.parentDirectory().utf8().data());
