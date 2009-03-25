@@ -46,9 +46,9 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
     UNUSED_PARAM(rootFilter);
 #endif
 
+    ASSERT(object);
     SVGElement* svgElement = static_cast<SVGElement*>(object->node());
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
-    ASSERT(object);
 
     SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const RenderStyle* style = object->style();

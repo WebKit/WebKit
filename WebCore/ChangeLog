@@ -17,6 +17,21 @@
 
 2009-03-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Move ASSERT(foo) to before where foo-> is used
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+          Move ASSERTs to the top of the function, code was using "node" before ASSERT(node), once I moved
+          ASSERT(node) to the top of the function it made sense to move the rest of them there too.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+          move ASSERT(object) to *before* we use "object" :)
+
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         Make TextTokenizer ASSERT that the buffer was freed
