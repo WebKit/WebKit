@@ -1,3 +1,12 @@
+2009-03-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium build fix. Fix #include in V8NodeFilterCondition.cpp due to the
+        rename of V8NodeFilter to V8NodeFilterCondition.
+
+        * bindings/v8/V8NodeFilterCondition.cpp:
+
 2009-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "V8NodeFilter.h"
+#include "V8NodeFilterCondition.h"
 
 #include "Node.h"
 #include "NodeFilter.h"
