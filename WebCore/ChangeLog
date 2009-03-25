@@ -1,3 +1,20 @@
+2009-03-25  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24600
+        [GTK] responses with status code >= 400 should not be given special treatment
+
+        Do not special case requests that have HTTP responses >=
+        400. Redirects are handled automatically by libsoup, but the rest
+        of the responses should be treated like any other.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+        (WebCore::gotHeadersCallback):
+        (WebCore::gotChunkCallback):
+        (WebCore::finishedCallback):
+
 2009-03-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

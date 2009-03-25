@@ -208,13 +208,20 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
 
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 {
-    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
+    // The 304 status code (SOUP_STATUS_NOT_MODIFIED) needs to be fed
+    // into WebCore, as opposed to other kinds of redirections, which
+    // are handled by soup directly, so we special-case it here and in
+    // gotChunk.
+    if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
+        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED)))
         return;
 
     // We still don't know anything about Content-Type, so we will try
     // sniffing the contents of the file, and then report that we got
-    // headers
-    if (!soup_message_headers_get_content_type(msg->response_headers, NULL))
+    // headers; we will not do content sniffing for 304 responses,
+    // though, since they do not have a body.
+    if ((msg->status_code != SOUP_STATUS_NOT_MODIFIED)
+        && !soup_message_headers_get_content_type(msg->response_headers, NULL))
         return;
 
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
@@ -234,7 +241,8 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 
 static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
 {
-    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
+    if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
+        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED)))
         return;
 
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
@@ -285,18 +293,6 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         g_free(uri);
         client->didFail(handle.get(), error);
         return;
-    }
-
-    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
-        fillResponseFromMessage(msg, &d->m_response);
-        client->didReceiveResponse(handle.get(), d->m_response);
-
-        // WebCore might have cancelled the job in the while
-        if (d->m_cancelled)
-            return;
-
-        if (msg->response_body->data)
-            client->didReceiveData(handle.get(), msg->response_body->data, msg->response_body->length, true);
     }
 
     client->didFinishLoading(handle.get());
