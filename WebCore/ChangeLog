@@ -1,3 +1,32 @@
+2009-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Coverty inspired fixes in Animations/Transforms
+        https://bugs.webkit.org/show_bug.cgi?id=24684
+
+        * page/animation/AnimationBase.h:
+          Fix animate() signatures to match so that the virtual methods actually override one another. :)
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::removeFromStartTimeResponseWaitList):
+          Attempt to fix this method, prevAnimation was never set to anything but NULL,
+          as far as I can tell the author originally intended to update it at the end
+          of the loop, which is what I changed this code to do.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+          Make method signature match AnimationBase::animate
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+          Make method signature match AnimationBase::animate
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::PerspectiveTransformOperation::blend):
+          if (blendToIdentity) already returned above.
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+          if (blendToIdentity) already returned above.
+
 2009-03-25  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by George Staikos.

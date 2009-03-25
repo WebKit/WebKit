@@ -396,6 +396,7 @@ void AnimationControllerPrivate::removeFromStartTimeResponseWaitList(AnimationBa
                 
             animationToRemove->setNext(0);
         }
+        prevAnimation = animation;
     }
 }
 

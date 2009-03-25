@@ -49,8 +49,8 @@ public:
     virtual void onAnimationEnd(double elapsedTime);
     virtual bool startAnimation(double beginTime);
     virtual void endAnimation(bool reset);
-    
-    virtual void animate(CompositeAnimation*, RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
+
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle);
     virtual void reset(RenderStyle* to);
 

@@ -44,8 +44,8 @@ public:
     {
         return adoptRef(new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     };
-    
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
+
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle);
 
     const AtomicString& name() const { return m_keyframes.animationName(); }

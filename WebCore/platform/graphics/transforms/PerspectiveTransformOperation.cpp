@@ -43,10 +43,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
     const PerspectiveTransformOperation* fromOp = static_cast<const PerspectiveTransformOperation*>(from);
     double fromP = fromOp ? fromOp->m_p : 0;
     double toP = m_p;
-    
-    if (blendToIdentity)
-        swap(fromP, toP);
-    
+
     TransformationMatrix fromT;
     TransformationMatrix toT;
     fromT.applyPerspective(fromP);

@@ -51,10 +51,7 @@ PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOp
     }
 
     const RotateTransformOperation* toOp = this;
-    
-    if (blendToIdentity)
-        swap(fromOp, toOp);
-    
+
     // Create the 2 rotation matrices
     TransformationMatrix fromT;
     TransformationMatrix toT;
@@ -87,8 +84,7 @@ PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOp
         y /= length;
         z /= length;
         angle = rad2deg(acos(decomp.quaternionW) * 2);
-    }
-    else {
+    } else {
         x = 0;
         y = 0;
         z = 1;

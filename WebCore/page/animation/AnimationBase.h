@@ -124,9 +124,8 @@ public:
 
     double progress(double scale, double offset, const TimingFunction*) const;
 
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* /*currentStyle*/, 
-        const RenderStyle* /*targetStyle*/, RefPtr<RenderStyle>& /*animatedStyle*/) { }
-    virtual void getAnimatedStyle(RefPtr<RenderStyle>& /*animatedStyle*/) { }
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* /*currentStyle*/, RenderStyle* /*targetStyle*/, RefPtr<RenderStyle>& /*animatedStyle*/) = 0;
+    virtual void getAnimatedStyle(RefPtr<RenderStyle>& /*animatedStyle*/) = 0;
 
     virtual bool shouldFireEvents() const { return false; }
 
