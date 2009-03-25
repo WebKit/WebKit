@@ -1,3 +1,18 @@
+2009-03-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Fix for bug 23198, border images should not clip to border radii.  The border-image should just ignore
+        the border-radius, since the assumption is that any desired rounding will be built into the border-image
+        itself.
+
+        Note that I do not agree with this change, but I am matching the spec.
+
+        Added fast/borders/border-image-border-radius.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
 2009-03-25  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.

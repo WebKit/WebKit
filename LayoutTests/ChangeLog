@@ -1,3 +1,14 @@
+2009-03-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Test case for bug 23198.
+
+        * fast/borders/border-image-border-radius.html: Added.
+        * platform/mac/fast/borders/border-image-border-radius-expected.checksum: Added.
+        * platform/mac/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/mac/fast/borders/border-image-border-radius-expected.txt: Added.
+
 2009-03-25  Darin Adler  <darin@apple.com>
 
         Reviewed by David Hyatt.

@@ -601,21 +601,14 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
                                                const NinePieceImage& ninePieceImage, CompositeOperator op)
 {
     StyleImage* styleImage = ninePieceImage.image();
-    if (!styleImage || !styleImage->canRender(style->effectiveZoom()))
+    if (!styleImage)
         return false;
 
     if (!styleImage->isLoaded())
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
-    // If we have a border radius, the image gets clipped to the rounded rect.
-    bool clipped = false;
-    if (style->hasBorderRadius()) {
-        IntRect clipRect(tx, ty, w, h);
-        graphicsContext->save();
-        graphicsContext->addRoundedRectClip(clipRect, style->borderTopLeftRadius(), style->borderTopRightRadius(),
-                                            style->borderBottomLeftRadius(), style->borderBottomRightRadius());
-        clipped = true;
-    }
+    if (!styleImage->canRender(style->effectiveZoom()))
+        return false;
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
@@ -711,10 +704,6 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
                                         h - topWidth - bottomWidth),
                                         IntRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
                                         (Image::TileRule)hRule, (Image::TileRule)vRule, op);
-
-    // Clear the clip for the border radius.
-    if (clipped)
-        graphicsContext->restore();
 
     return true;
 }
