@@ -21,7 +21,6 @@
 #define JSEventListener_h
 
 #include "EventListener.h"
-#include "PlatformString.h"
 #include <runtime/Protect.h>
 
 namespace WebCore {
@@ -86,38 +85,6 @@ namespace WebCore {
 
     private:
         JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
-    };
-
-    class JSLazyEventListener : public JSProtectedEventListener {
-    public:
-        enum LazyEventListenerType {
-            HTMLLazyEventListener
-#if ENABLE(SVG)
-            , SVGLazyEventListener
-#endif
-        };
-
-        virtual bool wasCreatedFromMarkup() const { return true; }
-
-        static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
-        {
-            return adoptRef(new JSLazyEventListener(type, functionName, code, globalObject, node, lineNumber));
-        }
-        virtual JSC::JSObject* listenerObj() const;
-
-    protected:
-        JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
-
-    private:
-        void parseCode() const;
-
-        mutable String m_functionName;
-        mutable String m_code;
-        mutable bool m_parsed;
-        int m_lineNumber;
-        Node* m_originalNode;
-
-        LazyEventListenerType m_type;
     };
 
 } // namespace WebCore

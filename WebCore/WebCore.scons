@@ -658,6 +658,7 @@ sources['bindings/js'] = [
     "bindings/js/JSInspectedObjectWrapper.cpp",
     "bindings/js/JSInspectorCallbackWrapper.cpp",
     "bindings/js/JSJavaScriptCallFrameCustom.cpp",
+    "bindings/js/JSLazyEventListener.cpp",
     "bindings/js/JSLocationCustom.cpp",
     "bindings/js/JSMessageChannelConstructor.cpp",
     "bindings/js/JSMessageChannelCustom.cpp",

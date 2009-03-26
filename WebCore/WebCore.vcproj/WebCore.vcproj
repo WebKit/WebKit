@@ -14241,6 +14241,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSLazyEventListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSLazyEventListener.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSLocationCustom.cpp"
 					>
 				</File>

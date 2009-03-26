@@ -2,6 +2,40 @@
 
         Reviewed by Geoff Garen.
 
+        Split JSLazyEventListener out into its own separate source file.
+        We'll be removing JSAbstractEventListener and JSProtectedEventListener soon,
+        so leave those in the same file with JSEventListener.
+
+        * GNUmakefile.am: Added JSLazyEventListener.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSEventListener.cpp: Removed the JSLazyEventListener part.
+        Removed unneeded includes. Removed incorrect ASSERT_CLASS_FITS_IN_CELL, since
+        JSAbstractEventListener is not derived from JSCell.
+
+        * bindings/js/JSEventListener.h: Removed the JSLazyEventListener part
+        and the now-unneeded include of PlatformString.h.
+
+        * bindings/js/JSLazyEventListener.cpp: Copied from bindings/js/JSEventListener.cpp.
+        Kept only the JSLazyEventListener part.
+        (WebCore::eventParameterName): Made this have internal linkage by adding "static".
+        Also moved the default case out of the switch statement so we will get a warning
+        if we omit any cases in the future.
+
+        * bindings/js/JSLazyEventListener.h: Copied from bindings/js/JSEventListener.h.
+        Kept only the JSLazyEventListener part.
+
+        * bindings/js/ScriptController.cpp: Removed unneeded includes and sorted the
+        remanining ones. Include JSLazyEventListener.h instead of JSEventListener.h.
+
+2009-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Renamed JSUnprotectedEventListener to JSEventListener.
         And related renames.
 

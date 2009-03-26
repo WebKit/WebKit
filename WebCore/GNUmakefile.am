@@ -316,6 +316,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.h \
 	WebCore/bindings/js/JSInspectorControllerCustom.cpp \
 	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
+	WebCore/bindings/js/JSLazyEventListener.cpp \
+	WebCore/bindings/js/JSLazyEventListener.h \
 	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSLocationCustom.h \
 	WebCore/bindings/js/JSMessageChannelConstructor.cpp \

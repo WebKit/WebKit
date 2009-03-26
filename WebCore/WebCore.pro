@@ -488,6 +488,7 @@ SOURCES += \
     bindings/js/JSMimeTypeArrayCustom.cpp \
     bindings/js/JSDOMBinding.cpp \
     bindings/js/JSEventListener.cpp \
+    bindings/js/JSLazyEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \

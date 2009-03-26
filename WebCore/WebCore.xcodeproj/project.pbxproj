@@ -2001,6 +2001,8 @@
 		935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */; };
 		935C477309AC4D7700A6AAB4 /* WheelEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */; };
 		935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C477409AC4D8D00A6AAB4 /* GapRects.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */; };
+		935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */; };
 		935FBC4509BA00B900E230B1 /* EventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBC4409BA00B900E230B1 /* EventListener.h */; };
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; };
 		9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6951,6 +6953,8 @@
 		935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformMouseEventMac.mm; sourceTree = "<group>"; };
 		935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WheelEventMac.mm; sourceTree = "<group>"; };
 		935C477409AC4D8D00A6AAB4 /* GapRects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapRects.h; sourceTree = "<group>"; };
+		935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLazyEventListener.cpp; sourceTree = "<group>"; };
+		935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLazyEventListener.h; sourceTree = "<group>"; };
 		935FBC4409BA00B900E230B1 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
 		9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectionDirection.h; sourceTree = "<group>"; };
@@ -13418,6 +13422,8 @@
 				C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */,
 				C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */,
 				C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */,
+				935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */,
+				935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */,
 				E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */,
 				E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */,
 				BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */,
@@ -16909,6 +16915,7 @@
 				FE6FD4880F676E5700092873 /* Coordinates.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
+				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18913,6 +18920,7 @@
 				FE6FD4870F676E5700092873 /* Coordinates.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
+				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
