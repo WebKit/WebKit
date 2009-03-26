@@ -1,3 +1,13 @@
+2009-03-26  Steve Falkenburg  <sfalken@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=24837
+        Escape key should dismiss select menu
+
+        Reviewed by Adam Roben.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupWndProc):
+
 2009-03-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Alexey Proskuryakov.

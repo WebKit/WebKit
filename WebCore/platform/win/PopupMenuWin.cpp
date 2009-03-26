@@ -685,6 +685,9 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         ::SendMessage(popup->client()->hostWindow()->platformWindow(), message, wParam, lParam);
                         popup->client()->hidePopup();
                         break;
+                    case VK_ESCAPE:
+                        popup->client()->hidePopup();
+                        break;
                     default:
                         if (isASCIIPrintable(wParam))
                             // Send the keydown to the WebView so it can be used for type-to-select.
