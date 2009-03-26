@@ -1,3 +1,13 @@
+2009-03-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure the script uses LF line endings even on Windows.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24805
+
+        * WebCore/make-generated-sources.sh: Change svn:eol-style to LF
+
 2009-03-26  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by George Staikos.
