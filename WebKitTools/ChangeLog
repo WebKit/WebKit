@@ -1,5 +1,22 @@
 2009-03-26  Adam Roben  <aroben@apple.com>
 
+        Reduce run-webkit-tests's time out limit to 15 seconds (or 2.5 minutes
+        under GuardMalloc)
+
+        The previous limit was 60 seconds (or 10 minutes under GuardMalloc).
+        There's no evidence that we need the limit to be this long, and having
+        it be so long just makes timed-out tests take forever to complete.
+        DRT's watchdog timer is 10 seconds, so still has time to fire before
+        run-webkit-tests will cut it off.
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/run-webkit-tests:
+        (sub readFromDumpToolWithTimer): Reduced the limit to 15 seconds (or
+        2.5 mintues under GuardMalloc).
+
+2009-03-26  Adam Roben  <aroben@apple.com>
+
         Make DRT's watchdog timer actually work on Windows
 
         We were previously trying to use a CFRunLoopTimer for the watchdog

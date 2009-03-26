@@ -1809,7 +1809,7 @@ sub readFromDumpToolWithTimer(*;$)
 
     setFileHandleNonBlocking($fh, 1);
 
-    my $maximumSecondsWithoutOutput = 60;
+    my $maximumSecondsWithoutOutput = 15;
     $maximumSecondsWithoutOutput *= 10 if $guardMalloc;
     my $microsecondsToWaitBeforeReadingAgain = 1000;
 
