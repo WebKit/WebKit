@@ -1,5 +1,19 @@
 2009-03-20  Erik L. Bunce  <elbunce@xendom.com>
 
+        Reviewed by Simon Hausmann.
+
+        Fix for InsertParagraphSeparator and InsertLineSeparator so that
+        QWebPage::action() creates QActions for them. Also make sure they get
+        updated appropriately.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::action):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::textEditing):
+
+2009-03-20  Erik L. Bunce  <elbunce@xendom.com>
+
         Reviewed by Tor Arne Vestbø.
 
         Fix QWebPage::WebActions action states to more closely match when they are
