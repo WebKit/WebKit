@@ -224,6 +224,12 @@ RenderLayerCompositor* RenderLayer::compositor() const
     ASSERT(renderer()->view());
     return renderer()->view()->compositor();
 }
+    
+void RenderLayer::rendererContentChanged()
+{
+    if (m_backing)
+        m_backing->rendererContentChanged();
+}    
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void RenderLayer::setStaticY(int staticY)

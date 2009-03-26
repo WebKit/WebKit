@@ -1,3 +1,40 @@
+2009-03-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=23361
+
+        When using hardware compositing, some images can be directly
+        rendered by the hardware - no need to draw them into a separate
+        context, therefore saving memory.
+        Only images with certain style properties can be directly
+        composited - basically anything that is not a simple image requires
+        the usual rendering path (eg. if the image has borders).
+
+        Test: compositing/direct-image-compositing.html
+
+        * manual-tests/resources/simple_image.png: Added.
+        * manual-tests/simple-image-compositing.html: Added.
+        * platform/graphics/Image.h:
+        (WebCore::Image::startAnimation):
+            - move this to public
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+            - poke compositing layer if image has changed
+        (WebCore::RenderImage::notifyFinished):
+            - let the compositing layer know that it can render the image
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rendererContentChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::canUseInnerContentLayer):
+        (WebCore::RenderLayerBacking::detectDrawingOptimizations):
+        (WebCore::RenderLayerBacking::rendererContentChanged):
+        * rendering/RenderLayerBacking.h:
+            - code to hook up direct compositing of images where
+              possible
+
 2009-03-25  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

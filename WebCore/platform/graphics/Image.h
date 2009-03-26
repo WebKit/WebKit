@@ -114,9 +114,9 @@ public:
 
     SharedBuffer* data() { return m_data.get(); }
 
-    // It may look unusual that there is no start animation call as public API.  This is because
-    // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
-    // automatically pause once all observers no longer want to render the image anywhere.
+    // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
+    // It will automatically pause once all observers no longer want to render the image anywhere.
+    virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) { }
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
     
@@ -157,8 +157,6 @@ protected:
     // Supporting tiled drawing
     virtual bool mayFillWithSolidColor() { return false; }
     virtual Color solidColor() const { return Color(); }
-    
-    virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) { }
     
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);

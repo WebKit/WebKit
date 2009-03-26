@@ -282,6 +282,10 @@ public:
     
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor* compositor() const;
+    
+    // Notification from the renderer that its content changed (e.g. current frame of image changed).
+    // Allows updates of layer content without repainting.
+    void rendererContentChanged();
 #endif
     
     void updateLayerPosition();

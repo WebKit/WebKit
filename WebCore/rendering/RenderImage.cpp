@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RenderView.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(WML)
 #include "WMLImageElement.h"
@@ -311,9 +312,32 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
             repaintRect = contentBoxRect();
         
         repaintRectangle(repaintRect);
+
+#if USE(ACCELERATED_COMPOSITING)
+        if (hasLayer()) {
+            // Tell any potential compositing layers that the image needs updating.
+            layer()->rendererContentChanged();
+        }
+#endif
     }
 }
 
+void RenderImage::notifyFinished(CachedResource* newImage)
+{
+    if (documentBeingDestroyed())
+        return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if ((newImage == m_cachedImage) && hasLayer()) {
+        // tell any potential compositing layers
+        // that the image is done and they can reference it directly.
+        layer()->rendererContentChanged();
+    }
+#else
+    UNUSED_PARAM(newImage);
+#endif
+}
+    
 void RenderImage::resetAnimation()
 {
     if (m_cachedImage) {

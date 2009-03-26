@@ -555,6 +555,34 @@ bool RenderLayerBacking::hasNonCompositingContent() const
     return false;
 }
 
+// A layer can use an inner content layer if the render layer's object is a replaced object and has no children.
+// This allows the GraphicsLayer to display the RenderLayer contents directly; it's used for images.
+bool RenderLayerBacking::canUseInnerContentLayer() const
+{
+    RenderObject* renderObject = renderer();
+    
+    // Reject anything that isn't a RenderReplaced.
+    if (!renderObject->isReplaced())
+        return false;
+    
+    if (renderObject->hasMask())
+        return false;
+    
+    RenderStyle* style = renderObject->style();
+    
+    // Reject anything that has a background other than a solid color.
+    if (!hasSimpleBackground(style))
+        return false;
+    
+    // Only optimize images that are unadorned.
+    if (renderObject->isImage())
+        // Reject anything that has a border, a border-radius, outline, margin or padding.
+        return !hasBorderOutlineOrShadow(style) && !style->hasMargin() && !style->hasPadding();
+    
+    return false;
+}
+    
+    
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
 // This is a useful optimization, because it allows us to avoid allocating backing store.
@@ -572,15 +600,63 @@ void RenderLayerBacking::detectDrawingOptimizations()
 {
     bool drawsContent = true;
 
-    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow())
+    // Check if a replaced layer can be further simplified.
+    bool hasImageBackgroundColor = false;
+    if (canUseInnerContentLayer()) {
+        if (renderer()->isImage()) {
+            RenderImage* imageRenderer = (RenderImage*)renderer();
+            if (imageRenderer && imageRenderer->cachedImage() && imageRenderer->cachedImage()->image())
+                rendererContentChanged();
+            
+            drawsContent = false;
+        }
+        
+        if (rendererHasBackground()) {
+            m_graphicsLayer->setBackgroundColor(rendererBackgroundColor());
+            hasImageBackgroundColor = true;
+        }
+    } else {
+        m_graphicsLayer->clearContents();
+        drawsContent = true;
+        
+        if (isSimpleContainerCompositingLayer())
+            drawsContent = false;
+        else if (!hasImageBackgroundColor) {
+            // Clear the background color in case we are swapping away from a simple layer.
+            m_graphicsLayer->clearBackgroundColor();
+        }
+    }
+    
+    if (paintingGoesToWindow())
         drawsContent = false;
-
+    
     m_graphicsLayer->setDrawsContent(drawsContent);
 }
 
 void RenderLayerBacking::invalidateDrawingOptimizations()
 {
     m_simpleCompositingLayerStatusDirty = true;
+}
+
+void RenderLayerBacking::rendererContentChanged()
+{
+    if (canUseInnerContentLayer() && renderer()->isImage()) {
+        RenderImage* imageRenderer = (RenderImage*)renderer();
+        if (imageRenderer &&
+            imageRenderer->cachedImage() &&
+            imageRenderer->cachedImage()->image() &&
+            imageRenderer->cachedImage()->isLoaded()) {
+            // We have to wait until the image is fully loaded before setting it on the layer.
+            
+            // This is a no-op if the layer doesn't have an inner layer for the image.
+            m_graphicsLayer->setContentsToImage(imageRenderer->cachedImage()->image());
+            
+            // Image animation is "lazy", in that it automatically stops unless someone is drawing
+            // the image. So we have to kick the animation each time; this has the downside that the
+            // image will keep animating, even if its layer is not visible.
+            imageRenderer->cachedImage()->image()->startAnimation();
+        }
+    }
 }
 
 FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const

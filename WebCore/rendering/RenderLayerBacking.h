@@ -88,6 +88,9 @@ public:
     // r is in the coordinate space of the layer's render object
     void setContentsNeedDisplayInRect(const IntRect& r);
 
+    // Notification from the renderer that its content changed; used by RenderImage.
+    void rendererContentChanged();
+
     // Interface to start, finish, suspend and resume animations and transitions
     bool startAnimation(double beginTime, const Animation* anim, const KeyframeList& keyframes);
     bool startTransition(double beginTime, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle);
@@ -135,6 +138,9 @@ private:
     // Returns true if this RenderLayer only has content that can be rendered directly
     // by the compositing layer, without drawing (e.g. solid background color).
     bool isSimpleContainerCompositingLayer();
+    // Returns true if we can optimize the RenderLayer to draw the replaced content
+    // directly into a compositing buffer
+    bool canUseInnerContentLayer() const;
 
     bool rendererHasBackground() const;
     const Color& rendererBackgroundColor() const;

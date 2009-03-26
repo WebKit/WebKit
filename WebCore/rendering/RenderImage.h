@@ -48,6 +48,7 @@ public:
     virtual int minimumReplacedHeight() const;
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+    virtual void notifyFinished(CachedResource*);
     
     bool setImageSizeForAltText(CachedImage* newImage = 0);
 

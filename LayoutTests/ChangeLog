@@ -1,3 +1,17 @@
+2009-03-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23361
+        
+        Test for direct compositing of images using hardware acceleration.
+
+        * compositing/direct-image-compositing.html: Added.
+        * compositing/resources/simple_image.png: Added.
+        * platform/mac/compositing/direct-image-compositing-expected.checksum: Added.
+        * platform/mac/compositing/direct-image-compositing-expected.png: Added.
+        * platform/mac/compositing/direct-image-compositing-expected.txt: Added.
+
 2009-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.
