@@ -234,6 +234,18 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
 
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 {
+    // For 401, we will accumulate the resource body, and only use it
+    // in case authentication with the soup feature doesn't happen
+    if (msg->status_code == SOUP_STATUS_UNAUTHORIZED) {
+        soup_message_body_set_accumulate(msg->response_body, TRUE);
+        return;
+    }
+
+    // For all the other responses, we handle each chunk ourselves,
+    // and we don't need msg->response_body to contain all of the data
+    // we got, when we finish downloading.
+    soup_message_body_set_accumulate(msg->response_body, FALSE);
+
     // The 304 status code (SOUP_STATUS_NOT_MODIFIED) needs to be fed
     // into WebCore, as opposed to other kinds of redirections, which
     // are handled by soup directly, so we special-case it here and in
@@ -268,7 +280,8 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
 {
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
-        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED)))
+        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED))
+        || (msg->status_code == SOUP_STATUS_UNAUTHORIZED))
         return;
 
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
@@ -319,6 +332,18 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         g_free(uri);
         client->didFail(handle.get(), error);
         return;
+    }
+
+    if (msg->status_code == SOUP_STATUS_UNAUTHORIZED) {
+        fillResponseFromMessage(msg, &d->m_response);
+        client->didReceiveResponse(handle.get(), d->m_response);
+
+        // WebCore might have cancelled the job in the while
+        if (d->m_cancelled)
+            return;
+
+        if (msg->response_body->data)
+            client->didReceiveData(handle.get(), msg->response_body->data, msg->response_body->length, true);
     }
 
     client->didFinishLoading(handle.get());
@@ -507,9 +532,6 @@ bool ResourceHandle::startHttp(String urlString)
     // balanced by a deref() in finishedCallback, which should always run
     ref();
 
-    // We handle each chunk ourselves, and we don't need msg->response_body
-    // to contain all of the data we got, when we finish downloading.
-    soup_message_body_set_accumulate(msg->response_body, FALSE);
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;
