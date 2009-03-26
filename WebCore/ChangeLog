@@ -1,3 +1,61 @@
+2009-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Removed code that casts EventListener down to derived classes
+        without type checking. A crash could happen if you added event
+        listeners with Objective-C and then manipulated the class with
+        JavaScript.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::mark): Removed all the casts
+        and used the markIfNotNull function and mark functions on
+        EventListener instead.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark): Ditto.
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::mark): Ditto.
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::mark): Ditto.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark): Ditto.
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark): Ditto.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Used function,
+        the new name for what used to be called listenerObj.
+        (WebCore::JSAbstractEventListener::virtualIsInline): Renamed since
+        this doesn't need to be virtual for callers who have a pointer to
+        this class, not the base class.
+        (WebCore::JSEventListener::function): Renamed from listenerObj.
+        (WebCore::JSProtectedEventListener::function): Ditto.
+
+        * bindings/js/JSEventListener.h: Removed unneeded forward class
+        declarations. Made all virtual functions private since there's no
+        need to call any of them on a particular derived class, only on
+        EventListener. Explicitly declare JSEventListener::mark as virtual
+        since it's now overriding a function in the EventListener base class.
+        Made JSProtectedEventListener::m_globalObject protected so the
+        JSLazyEventListener derived class can use it directly instead of using
+        a virtual function to get the pointer.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode): Use m_globalObject instead
+        of globalObject since the latter is a virtual function and there's no
+        need to pay virtual function overhead.
+        (WebCore::JSLazyEventListener::function): Renamed from listenerObj.
+
+        * bindings/js/JSLazyEventListener.h: Moved forward declaration of the
+        Node class here from JSEventListener.h.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed now-unneeded cast to
+        JSEventListener when getting the script object from a listener.
+
+        * dom/EventListener.h: Added virtual function and mark functions
+        so we can extract the JavaScript function object or mark a JavaScript
+        event listener in a type safe manner.
+
 2009-03-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adele Peterson.

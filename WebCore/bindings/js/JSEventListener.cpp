@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
     JSLock lock(false);
 
-    JSObject* listener = listenerObj();
+    JSObject* listener = function();
     if (!listener)
         return;
 
@@ -125,7 +125,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     }
 }
 
-bool JSAbstractEventListener::isInline() const
+bool JSAbstractEventListener::virtualIsInline() const
 {
     return m_isInline;
 }
@@ -153,7 +153,7 @@ JSEventListener::~JSEventListener()
     }
 }
 
-JSObject* JSEventListener::listenerObj() const
+JSObject* JSEventListener::function() const
 {
     return m_listener;
 }
@@ -207,7 +207,7 @@ JSProtectedEventListener::~JSProtectedEventListener()
 #endif
 }
 
-JSObject* JSProtectedEventListener::listenerObj() const
+JSObject* JSProtectedEventListener::function() const
 {
     return m_listener;
 }

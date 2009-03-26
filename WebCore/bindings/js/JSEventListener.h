@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,16 +25,11 @@
 
 namespace WebCore {
 
-    class Event;
     class JSDOMGlobalObject;
-    class Node;
 
     class JSAbstractEventListener : public EventListener {
     public:
-        virtual void handleEvent(Event*, bool isWindowEvent);
-        virtual bool isInline() const;
-        virtual JSC::JSObject* listenerObj() const = 0;
-        virtual JSDOMGlobalObject* globalObject() const = 0;
+        bool isInline() const { return m_isInline; }
 
     protected:
         JSAbstractEventListener(bool isInline)
@@ -43,6 +38,10 @@ namespace WebCore {
         }
 
     private:
+        virtual void handleEvent(Event*, bool isWindowEvent);
+        virtual JSDOMGlobalObject* globalObject() const = 0;
+        virtual bool virtualIsInline() const;
+
         bool m_isInline;
     };
 
@@ -54,13 +53,14 @@ namespace WebCore {
         }
         virtual ~JSEventListener();
 
-        virtual JSC::JSObject* listenerObj() const;
-        virtual JSDOMGlobalObject* globalObject() const;
         void clearGlobalObject();
-        void mark();
 
     private:
         JSEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
+
+        virtual JSC::JSObject* function() const;
+        virtual void mark();
+        virtual JSDOMGlobalObject* globalObject() const;
 
         JSC::JSObject* m_listener;
         JSDOMGlobalObject* m_globalObject;
@@ -74,17 +74,17 @@ namespace WebCore {
         }
         virtual ~JSProtectedEventListener();
 
-        virtual JSC::JSObject* listenerObj() const;
-        virtual JSDOMGlobalObject* globalObject() const;
         void clearGlobalObject();
 
     protected:
         JSProtectedEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
 
         mutable JSC::ProtectedPtr<JSC::JSObject> m_listener;
+        JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
 
     private:
-        JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+        virtual JSC::JSObject* function() const;
+        virtual JSDOMGlobalObject* globalObject() const;
     };
 
 } // namespace WebCore

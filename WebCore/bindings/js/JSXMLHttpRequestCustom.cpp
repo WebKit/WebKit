@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,32 +59,19 @@ void JSXMLHttpRequest::mark()
             wrapper->mark();
     }
 
-    if (JSEventListener* onReadyStateChangeListener = static_cast<JSEventListener*>(m_impl->onreadystatechange()))
-        onReadyStateChangeListener->mark();
-
-    if (JSEventListener* onAbortListener = static_cast<JSEventListener*>(m_impl->onabort()))
-        onAbortListener->mark();
-
-    if (JSEventListener* onErrorListener = static_cast<JSEventListener*>(m_impl->onerror()))
-        onErrorListener->mark();
-
-    if (JSEventListener* onLoadListener = static_cast<JSEventListener*>(m_impl->onload()))
-        onLoadListener->mark();
-
-    if (JSEventListener* onLoadStartListener = static_cast<JSEventListener*>(m_impl->onloadstart()))
-        onLoadStartListener->mark();
-    
-    if (JSEventListener* onProgressListener = static_cast<JSEventListener*>(m_impl->onprogress()))
-        onProgressListener->mark();
+    markIfNotNull(m_impl->onreadystatechange());
+    markIfNotNull(m_impl->onabort());
+    markIfNotNull(m_impl->onerror());
+    markIfNotNull(m_impl->onload());
+    markIfNotNull(m_impl->onloadstart());
+    markIfNotNull(m_impl->onprogress());
     
     typedef XMLHttpRequest::EventListenersMap EventListenersMap;
     typedef XMLHttpRequest::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) {
-            JSEventListener* listener = static_cast<JSEventListener*>(vecIter->get());
-            listener->mark();
-        }
+        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
+            (*vecIter)->mark();
     }
 }
 

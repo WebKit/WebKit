@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,10 @@
 
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+    class JSObject;
+}
+
 namespace WebCore {
 
     class Event;
@@ -31,9 +35,20 @@ namespace WebCore {
     public:
         virtual ~EventListener() { }
         virtual void handleEvent(Event*, bool isWindowEvent = false) = 0;
-        virtual bool isInline() const { return false; }
         virtual bool wasCreatedFromMarkup() const { return false; }
+
+#if USE(JSC)
+        virtual JSC::JSObject* function() const { return 0; }
+        virtual void mark() { }
+#endif
+
+        bool isInline() const { return virtualIsInline(); }
+
+    private:
+        virtual bool virtualIsInline() const { return false; }
     };
+
+    inline void markIfNotNull(EventListener* listener) { if (listener) listener->mark(); }
 
 }
 

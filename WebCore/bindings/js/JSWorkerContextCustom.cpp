@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,17 +53,14 @@ void JSWorkerContext::mark()
 
     markActiveObjectsForContext(*globalData(), scriptExecutionContext());
 
-    if (JSEventListener* listener = static_cast<JSEventListener*>(impl()->onmessage()))
-        listener->mark();
+    markIfNotNull(impl()->onmessage());
 
     typedef WorkerContext::EventListenersMap EventListenersMap;
     typedef WorkerContext::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = impl()->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) {
-            JSEventListener* listener = static_cast<JSEventListener*>(vecIter->get());
-            listener->mark();
-        }
+        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
+            (*vecIter)->mark();
     }
 }
 

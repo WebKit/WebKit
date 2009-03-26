@@ -1086,19 +1086,12 @@ sub GenerateImplementation
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                     push(@implContent, "    return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))") . " : jsUndefined();\n");
                 } elsif ($type eq "EventListener") {
-                    $implIncludes{"JSEventListener.h"} = 1;
                     $implIncludes{"EventListener.h"} = 1;
-                    my $listenerType;
-                    if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
-                        $listenerType = "JSProtectedEventListener";
-                    } else {
-                        $listenerType = "JSEventListener";
-                    }
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
-                    push(@implContent, "    if (${listenerType}* listener = static_cast<${listenerType}*>(imp->$implGetterFunctionName())) {\n");
-                    push(@implContent, "        if (JSObject* listenerObj = listener->listenerObj())\n");
-                    push(@implContent, "            return listenerObj;\n");
+                    push(@implContent, "    if (EventListener* listener = imp->$implGetterFunctionName()) {\n");
+                    push(@implContent, "        if (JSObject* function = listener->function())\n");
+                    push(@implContent, "            return function;\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    return jsNull();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {

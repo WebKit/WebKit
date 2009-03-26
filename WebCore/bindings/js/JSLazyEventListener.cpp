@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ JSLazyEventListener::JSLazyEventListener(LazyEventListenerType type, const Strin
         m_lineNumber = 1;
 }
 
-JSObject* JSLazyEventListener::listenerObj() const
+JSObject* JSLazyEventListener::function() const
 {
     parseCode();
     return m_listener;
@@ -74,8 +74,8 @@ void JSLazyEventListener::parseCode() const
     if (m_parsed)
         return;
 
-    if (globalObject()->scriptExecutionContext()->isDocument()) {
-        JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject());
+    if (m_globalObject->scriptExecutionContext()->isDocument()) {
+        JSDOMWindow* window = static_cast<JSDOMWindow*>(m_globalObject.get());
         Frame* frame = window->impl()->frame();
         if (!frame)
             return;
@@ -87,10 +87,10 @@ void JSLazyEventListener::parseCode() const
 
     m_parsed = true;
 
-    ExecState* exec = globalObject()->globalExec();
+    ExecState* exec = m_globalObject->globalExec();
 
     ArgList args;
-    UString sourceURL(globalObject()->scriptExecutionContext()->url().string());
+    UString sourceURL(m_globalObject->scriptExecutionContext()->url().string());
     args.append(eventParameterName(m_type, exec));
     args.append(jsString(exec, m_code));
 
@@ -123,7 +123,7 @@ void JSLazyEventListener::parseCode() const
 
     if (m_listener) {
         ASSERT(isInline());
-        JSDOMWindow::ProtectedListenersMap& listeners = globalObject()->jsProtectedInlineEventListeners();
+        JSDOMWindow::ProtectedListenersMap& listeners = m_globalObject->jsProtectedInlineEventListeners();
         listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }
 }
