@@ -1732,7 +1732,12 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
             goto vm_throw;
 
         JSObject* baseObj = asObject(baseVal);
-        callFrame[dst] = jsBoolean(baseObj->structure()->typeInfo().implementsHasInstance() ? baseObj->hasInstance(callFrame, callFrame[value].jsValue(callFrame), callFrame[baseProto].jsValue(callFrame)) : false);
+        if (baseObj->structure()->typeInfo().implementsHasInstance()) {
+            bool result = baseObj->hasInstance(callFrame, callFrame[value].jsValue(callFrame), callFrame[baseProto].jsValue(callFrame));
+            CHECK_FOR_EXCEPTION();
+            callFrame[dst] = jsBoolean(result);
+        } else
+            callFrame[dst] = jsBoolean(false);
 
         vPC += 5;
         NEXT_INSTRUCTION();

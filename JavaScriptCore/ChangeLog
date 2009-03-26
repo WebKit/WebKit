@@ -1,3 +1,12 @@
+2009-03-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix exception handling for instanceof in the interpreter.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2009-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
