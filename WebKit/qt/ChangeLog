@@ -1,3 +1,11 @@
+2009-03-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Fix the documentation of the QLocale usage in userAgentForUrl.
+
+        * Api/qwebpage.cpp:
+
 2009-03-20  Erik L. Bunce  <elbunce@xendom.com>
 
         Reviewed by Simon Hausmann.
