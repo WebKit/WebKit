@@ -1,3 +1,19 @@
+2009-03-26  Adam Roben  <aroben@apple.com>
+
+        Copy testapi.js to $WebKitOutputDir on Windows
+
+        Part of Bug 24856: run-javascriptcore-tests should run testapi on
+        Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=24856>
+
+        This matches what Mac does, which will help once we enable running
+        testapi from run-javascriptcore-tests on Windows.
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj: Copy testapi.js next
+        to testapi.exe.
+
 2009-03-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
