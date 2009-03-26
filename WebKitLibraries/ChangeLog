@@ -1,3 +1,11 @@
+2009-03-26  Adam Roben  <aroben@apple.com>
+
+        Remove SafariThemeConstants.h, which is now provided by
+        WebKitSupportLibrary
+
+        * win/include/SafariTheme: Removed.
+        * win/include/SafariTheme/SafariThemeConstants.h: Removed.
+
 2009-03-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
