@@ -1,3 +1,15 @@
+2009-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed <rdar://problem/6724011> Write to freed memory in JSC::Label::deref
+        when reloading http://helpme.att.net/speedtest/
+
+        * bytecompiler/BytecodeGenerator.h: Reversed the declaration order for
+        m_labelScopes and m_labels to reverse their destruction order.
+        m_labelScopes has references to memory within m_labels, so its destructor
+        needs to run first.
+
 2009-03-24  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by George Staikos.

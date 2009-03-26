@@ -433,6 +433,8 @@ namespace JSC {
         ScopeNode* m_scopeNode;
         CodeBlock* m_codeBlock;
 
+        // Some of these objects keep pointers to one another. They are arranged
+        // to ensure a sane destruction order that avoids references to freed memory.
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
@@ -441,8 +443,8 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<RegisterID, 32> m_globals;
-        SegmentedVector<LabelScope, 8> m_labelScopes;
         SegmentedVector<Label, 32> m_labels;
+        SegmentedVector<LabelScope, 8> m_labelScopes;
         RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
