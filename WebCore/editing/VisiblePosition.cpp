@@ -223,7 +223,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
         p = Position(renderer->node(), offset);
 
-        if (p.isCandidate() && p.downstream() != downstreamStart || p.atStartOfTree() || p.atEndOfTree())
+        if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
     }
 }
@@ -366,7 +366,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
         p = Position(renderer->node(), offset);
 
-        if (p.isCandidate() && p.downstream() != downstreamStart || p.atStartOfTree() || p.atEndOfTree())
+        if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
     }
 }
@@ -487,7 +487,7 @@ Position VisiblePosition::canonicalPosition(const Position& position)
         
     // If the html element is editable, descending into its body will look like a descent 
     // from non-editable to editable content since rootEditableElement() always stops at the body.
-    if (editingRoot && editingRoot->hasTagName(htmlTag) || position.node()->isDocumentNode())
+    if ((editingRoot && editingRoot->hasTagName(htmlTag)) || position.node()->isDocumentNode())
         return next.isNotNull() ? next : prev;
         
     bool prevIsInSameEditableElement = prevNode && editableRootForPosition(prev) == editingRoot;

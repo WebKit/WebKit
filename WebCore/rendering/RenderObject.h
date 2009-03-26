@@ -868,7 +868,7 @@ inline bool objectIsRelayoutBoundary(const RenderObject *obj)
     // Table cells are excluded because even when their CSS height is fixed, their height()
     // may depend on their contents.
     return obj->isTextControl()
-        || obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell()
+        || (obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell())
 #if ENABLE(SVG)
            || obj->isSVGRoot()
 #endif

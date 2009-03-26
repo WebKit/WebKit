@@ -97,8 +97,8 @@ void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
                 count += 4;
             }
             out[didx++] = base64EncMap[(data[sidx] >> 2) & 077];
-            out[didx++] = base64EncMap[(data[sidx + 1] >> 4) & 017 | (data[sidx] << 4) & 077];
-            out[didx++] = base64EncMap[(data[sidx + 2] >> 6) & 003 | (data[sidx + 1] << 2) & 077];
+            out[didx++] = base64EncMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
+            out[didx++] = base64EncMap[((data[sidx + 2] >> 6) & 003) | ((data[sidx + 1] << 2) & 077)];
             out[didx++] = base64EncMap[data[sidx + 2] & 077];
             sidx += 3;
         }
@@ -110,7 +110,7 @@ void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
 
         out[didx++] = base64EncMap[(data[sidx] >> 2) & 077];
         if (sidx < len - 1) {
-            out[didx++] = base64EncMap[(data[sidx + 1] >> 4) & 017 | (data[sidx] << 4) & 077];
+            out[didx++] = base64EncMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
             out[didx++] = base64EncMap[(data[sidx + 1] << 2) & 077];
         } else
             out[didx++] = base64EncMap[(data[sidx] << 4) & 077];

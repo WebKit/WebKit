@@ -529,8 +529,8 @@ void ScrollView::adjustScrollbarsAvoidingResizerCount(int overlapDelta)
         // If we went from n to 0 or from 0 to n and we're the outermost view,
         // we need to invalidate the windowResizerRect(), since it will now need to paint
         // differently.
-        if (oldCount > 0 && m_scrollbarsAvoidingResizer == 0 ||
-            oldCount == 0 && m_scrollbarsAvoidingResizer > 0)
+        if ((oldCount > 0 && m_scrollbarsAvoidingResizer == 0) ||
+            (oldCount == 0 && m_scrollbarsAvoidingResizer > 0))
             invalidateRect(windowResizerRect());
     }
 }

@@ -119,7 +119,7 @@ void ImageLoader::updateFromElement()
     // a quirk that preserves old behavior that Dashboard widgets
     // need (<rdar://problem/5994621>).
     CachedImage* newImage = 0;
-    if (!(attr.isNull() || attr.isEmpty() && document->baseURI().isLocalFile())) {
+    if (!(attr.isNull() || (attr.isEmpty() && document->baseURI().isLocalFile()))) {
         if (m_loadManually) {
             document->docLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(sourceURI(attr));

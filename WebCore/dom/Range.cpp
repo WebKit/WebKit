@@ -554,8 +554,8 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
         return false;
     }
     
-    if (!m_start.container() && refNode->attached()
-            || m_start.container() && !refNode->attached()
+    if ((!m_start.container() && refNode->attached())
+            || (m_start.container() && !refNode->attached())
             || refNode->document() != m_ownerDocument) {
         // Firefox doesn't throw an exception for these cases; it returns false.
         return false;

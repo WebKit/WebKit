@@ -307,7 +307,7 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
             attr->setValue(attrSize);
 
         m_size = max(size, 1);
-        if ((oldUsesMenuList != usesMenuList() || !oldUsesMenuList && m_size != oldSize) && attached()) {
+        if ((oldUsesMenuList != usesMenuList() || (!oldUsesMenuList && m_size != oldSize)) && attached()) {
             detach();
             attach();
             setRecalcListItems();

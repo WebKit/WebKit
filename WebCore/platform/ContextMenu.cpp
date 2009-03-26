@@ -425,7 +425,7 @@ void ContextMenu::populate()
             if (Page* page = frame->page()) {
                 if (Settings* settings = page->settings()) {
                     bool includeTextDirectionSubmenu = settings->textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAlwaysIncluded
-                        || settings->textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAutomaticallyIncluded && frame->editor()->hasBidiSelection();
+                        || (settings->textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAutomaticallyIncluded && frame->editor()->hasBidiSelection());
                     if (includeTextDirectionSubmenu) {
                         ContextMenuItem TextDirectionMenuItem(SubmenuType, ContextMenuItemTagTextDirectionMenu, 
                             contextMenuItemTagTextDirectionMenu());

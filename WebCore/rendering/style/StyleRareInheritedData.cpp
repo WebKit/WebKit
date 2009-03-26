@@ -85,7 +85,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const
 {
-    if (!textShadow && o.textShadow || textShadow && !o.textShadow)
+    if ((!textShadow && o.textShadow) || (textShadow && !o.textShadow))
         return false;
     if (textShadow && o.textShadow && (*textShadow != *o.textShadow))
         return false;

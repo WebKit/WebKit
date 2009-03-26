@@ -288,8 +288,8 @@ void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
         }
 
         ASSERT(anonymousChild->isTable());
-        if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP
-                || newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION
+        if ((newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
+                || (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
                 || newChild->isTableSection()
                 || newChild->isTableRow()
                 || newChild->isTableCell()) {
@@ -1536,7 +1536,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
             // Only repaint the object if it is overhanging, is not in its own layer, and
             // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
             // condition is replaced with being a descendant of us.
-            if (r->m_bottom > height() && (paintAllDescendants && r->m_renderer->isDescendantOf(this) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {                
+            if (r->m_bottom > height() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {
                 r->m_renderer->repaint();
                 r->m_renderer->repaintOverhangingFloats();
             }
@@ -2076,7 +2076,7 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
             result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, ty + selTop,
                                                         rootBlock, blockX, blockY, paintInfo));
 
-        if (!paintInfo || ty + selTop < paintInfo->rect.bottom() && ty + selTop + selHeight > paintInfo->rect.y())
+        if (!paintInfo || (ty + selTop < paintInfo->rect.bottom() && ty + selTop + selHeight > paintInfo->rect.y()))
             result.unite(curr->fillLineSelectionGap(selTop, selHeight, rootBlock, blockX, blockY, tx, ty, paintInfo));
 
         lastSelectedLine = curr;
@@ -3497,9 +3497,9 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
     IntPoint pointInContents(contentsX, contentsY);
 
     if (isReplaced()) {
-        if (point.y() < 0 || point.y() < height() && point.x() < 0)
+        if (point.y() < 0 || (point.y() < height() && point.x() < 0))
             return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
-        if (point.y() >= height() || point.y() >= 0 && point.x() >= width())
+        if (point.y() >= height() || (point.y() >= 0 && point.x() >= width()))
             return createVisiblePosition(caretMaxOffset(), DOWNSTREAM);
     } 
 
@@ -4080,14 +4080,14 @@ void RenderBlock::calcInlinePrefWidths()
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
                     clearPreviousFloat = (prevFloat
-                        && (prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT)
-                            || prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT)));
+                        && ((prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT))
+                            || (prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT))));
                     prevFloat = child;
                 } else
                     clearPreviousFloat = false;
 
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
-                if (canBreakReplacedElement && (autoWrap || oldAutoWrap) || clearPreviousFloat) {
+                if ((canBreakReplacedElement && (autoWrap || oldAutoWrap)) || clearPreviousFloat) {
                     m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                     inlineMin = 0;
                 }
@@ -4339,8 +4339,8 @@ void RenderBlock::calcBlockPrefWidths()
 
 bool RenderBlock::hasLineIfEmpty() const
 {
-    return node() && (node()->isContentEditable() && node()->rootEditableElement() == node() ||
-                         node()->isShadowNode() && node()->shadowParentNode()->hasTagName(inputTag));
+    return node() && ((node()->isContentEditable() && node()->rootEditableElement() == node()) ||
+            (node()->isShadowNode() && node()->shadowParentNode()->hasTagName(inputTag)));
 }
 
 int RenderBlock::lineHeight(bool firstLine, bool isRootLineBox) const

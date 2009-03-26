@@ -206,7 +206,7 @@ public:
     {
        // If the style pointers are the same, don't bother doing the test.
        // If either is null, return false. If both are null, return true.
-       if (!a && !b || a == b)
+       if ((!a && !b) || a == b)
            return true;
        if (!a || !b)
             return false;
@@ -283,7 +283,7 @@ public:
         ShadowData* shadowA = (a->*m_getter)();
         ShadowData* shadowB = (b->*m_getter)();
 
-        if (!shadowA && shadowB || shadowA && !shadowB)
+        if ((!shadowA && shadowB) || (shadowA && !shadowB))
             return false;
         if (shadowA && shadowB && (*shadowA != *shadowB))
             return false;

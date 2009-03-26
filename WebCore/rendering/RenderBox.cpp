@@ -755,8 +755,8 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     if (!parent())
         return;
 
-    if (style()->borderImage().image() && style()->borderImage().image()->data() == image ||
-        style()->maskBoxImage().image() && style()->maskBoxImage().image()->data() == image) {
+    if ((style()->borderImage().image() && style()->borderImage().image()->data() == image) ||
+        (style()->maskBoxImage().image() && style()->maskBoxImage().image()->data() == image)) {
         repaint();
         return;
     }
@@ -2630,7 +2630,7 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
     int fontHeight = style()->font().height();
-    if (fontHeight > rect.height() || !isReplaced() && !isTable())
+    if (fontHeight > rect.height() || (!isReplaced() && !isTable()))
         rect.setHeight(fontHeight);
 
     if (extraWidthToEndOfLine)
@@ -2706,7 +2706,7 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
         newY += y();
     }
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
-        if (!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() 
+        if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() )
             || renderObject->style()->visibility() != VISIBLE)
             continue;
         
@@ -2771,7 +2771,7 @@ bool RenderBox::shrinkToAvoidFloats() const
     // FIXME: Technically we should be able to shrink replaced elements on a line, but this is difficult to accomplish, since this
     // involves doing a relayout during findNextLineBreak and somehow overriding the containingBlockWidth method to return the
     // current remaining width on a line.
-    if (isInline() && !isHTMLMarquee() || !avoidsFloats())
+    if ((isInline() && !isHTMLMarquee()) || !avoidsFloats())
         return false;
 
     // All auto-width objects that avoid floats should always use lineWidth.

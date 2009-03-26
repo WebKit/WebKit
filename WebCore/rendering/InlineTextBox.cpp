@@ -157,7 +157,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     bool ltrEllipsisWithinBox = ltr && (ellipsisX < m_x + m_width);
     bool rtlEllipsisWithinBox = !ltr && (ellipsisX > m_x);
     if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
-        if (ltr && direction() == RTL || !ltr && direction() == LTR)
+        if ((ltr && direction() == RTL) || (!ltr && direction() == LTR))
             return -1; // FIXME: Support cases in which the last run's directionality differs from the context.
 
         foundBox = true;

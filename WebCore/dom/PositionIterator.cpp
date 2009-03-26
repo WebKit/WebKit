@@ -105,7 +105,7 @@ bool PositionIterator::atStart() const
         return true;
     if (m_parent->parentNode())
         return false;
-    return !m_parent->hasChildNodes() && !m_offset || m_child && !m_child->previousSibling();
+    return (!m_parent->hasChildNodes() && !m_offset) || (m_child && !m_child->previousSibling());
 }
 
 bool PositionIterator::atEnd() const

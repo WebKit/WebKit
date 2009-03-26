@@ -147,7 +147,7 @@ Position Position::next(PositionMoveType moveType) const
     ASSERT(o >= 0);
 
     Node* child = n->childNode(o);
-    if (child || !n->hasChildNodes() && o < lastOffsetForEditing(n)) {
+    if (child || (!n->hasChildNodes() && o < lastOffsetForEditing(n))) {
         if (child)
             return firstDeepEditingPositionForNode(child);
 
@@ -420,7 +420,7 @@ Position Position::upstream() const
                     otherBox = otherBox->nextLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                    if (otherBox == lastTextBox || (otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset))
                         continuesOnNextLine = false;
                 }
 
@@ -429,7 +429,7 @@ Position Position::upstream() const
                     otherBox = otherBox->prevLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                    if (otherBox == lastTextBox || (otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset))
                         continuesOnNextLine = false;
                 }
 
@@ -532,7 +532,7 @@ Position Position::downstream() const
                     otherBox = otherBox->nextLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                    if (otherBox == lastTextBox || (otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset))
                         continuesOnNextLine = false;
                 }
 
@@ -541,7 +541,7 @@ Position Position::downstream() const
                     otherBox = otherBox->prevLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                    if (otherBox == lastTextBox || (otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset))
                         continuesOnNextLine = false;
                 }
 
@@ -837,7 +837,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     RenderObject* renderer = node()->renderer();
     if (!renderer->isText()) {
         inlineBox = renderer->isBox() ? toRenderBox(renderer)->inlineBoxWrapper() : 0;
-        if (!inlineBox || caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset())
+        if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
             return;
     } else {
         RenderText* textRenderer = toRenderText(renderer);
@@ -849,7 +849,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             int caretMinOffset = box->caretMinOffset();
             int caretMaxOffset = box->caretMaxOffset();
 
-            if (caretOffset < caretMinOffset || caretOffset > caretMaxOffset || caretOffset == caretMaxOffset && box->isLineBreak())
+            if (caretOffset < caretMinOffset || caretOffset > caretMaxOffset || (caretOffset == caretMaxOffset && box->isLineBreak()))
                 continue;
 
             if (caretOffset > caretMinOffset && caretOffset < caretMaxOffset) {

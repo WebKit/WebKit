@@ -725,9 +725,9 @@ void ReplaceSelectionCommand::doApply()
     Position insertionPos = selection.start();
     bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.node());
     
-    if (selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote ||
+    if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote) ||
         startBlock == currentRoot ||
-        startBlock && startBlock->renderer() && startBlock->renderer()->isListItem() ||
+        (startBlock && startBlock->renderer() && startBlock->renderer()->isListItem()) ||
         selectionIsPlainText)
         m_preventNesting = false;
     

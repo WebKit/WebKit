@@ -1,3 +1,104 @@
+2009-03-26  Eli Fidler  <eli.fidler@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Remove warnings all over the place by making operator precedence
+        explicit in cases like x && y || z.  No functional change.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseShadow):
+        * dom/Document.cpp:
+        (WebCore::Document::shouldScheduleLayout):
+        * dom/Node.cpp:
+        (WebCore::Node::isBlockFlowOrBlockTable):
+        * dom/Node.h:
+        (WebCore::Node::document):
+        * dom/Position.cpp:
+        (WebCore::Position::next):
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::atStart):
+        * dom/Range.cpp:
+        (WebCore::Range::intersectsNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::canonicalPosition):
+        * editing/htmlediting.cpp:
+        (WebCore::isMailBlockquote):
+        (WebCore::lineBreakExistsAtPosition):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        * page/AccessibilityObject.cpp:
+        (WebCore::updateAXLineStartForVisiblePosition):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperGetter::equals):
+        (WebCore::PropertyWrapperShadow::equals):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::adjustScrollbarsAvoidingResizerCount):
+        * platform/text/Base64.cpp:
+        (WebCore::base64Encode):
+        * platform/text/BidiResolver.h:
+        (WebCore::::raiseExplicitEmbeddingLevel):
+        (WebCore::::createBidiRunsForLine):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+        (WebCore::RenderBlock::positionForPoint):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::localCaretRect):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::shrinkToAvoidFloats):
+        * rendering/RenderObject.h:
+        (WebCore::objectIsRelayoutBoundary):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcPrefWidths):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::textWidth):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::cursorDataEquivalent):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::shadowDataEquivalent):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::shadowDataEquivalent):
+        (WebCore::StyleRareNonInheritedData::animationDataEquivalent):
+        (WebCore::StyleRareNonInheritedData::transitionDataEquivalent):
+
 2009-03-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.
