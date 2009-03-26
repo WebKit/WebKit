@@ -677,20 +677,30 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
         return false;
 
     RenderLayer* compositingAncestor = layer->ancestorCompositingLayer();
+    if (!compositingAncestor)
+        return false;
 
-    // We need ancestor clipping if something clips between this layer and its compositing, stacking context ancestor
-    for (RenderLayer* curLayer = layer->parent(); curLayer && curLayer != compositingAncestor; curLayer = curLayer->parent()) {
-        // FIXME: need to look at hasClip() too eventually
-        if (curLayer->renderer()->hasOverflowClip())
-            return true;
-        
-        // Clip is reset for an absolutely positioned element.
-        // FIXME: many cases are broken. We need more of the logic in calculateClipRects() here
-        if (curLayer->renderer()->style()->position() == AbsolutePosition)
+    // If the compositingAncestor clips, that will be taken care of by clipsCompositingDescendants(),
+    // so we only care about clipping between its first child that is our ancestor (the computeClipRoot),
+    // and layer.
+    RenderLayer* computeClipRoot = 0;
+    RenderLayer* curr = layer;
+    while (curr) {
+        RenderLayer* next = curr->parent();
+        if (next == compositingAncestor) {
+            computeClipRoot = curr;
             break;
+        }
+        curr = next;
     }
+    
+    if (!computeClipRoot || computeClipRoot == layer)
+        return false;
 
-    return false;
+    ClipRects parentRects;
+    layer->parentClipRects(computeClipRoot, parentRects, true);
+
+    return parentRects.overflowClipRect() != ClipRects::infiniteRect();
 }
 
 // Return true if the given layer is a stacking context and has compositing child
@@ -700,7 +710,6 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer* layer
 {
     // FIXME: need to look at hasClip() too eventually
     return layer->hasCompositingDescendant() &&
-           layer->isStackingContext() &&
            layer->renderer()->hasOverflowClip();
 }
 

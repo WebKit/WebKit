@@ -2468,10 +2468,9 @@ void RenderLayer::updateClipRects(const RenderLayer* rootLayer)
 
 void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& clipRects, bool useCached) const
 {
-    IntRect infiniteRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX);
     if (!parent()) {
         // The root layer's clip rect is always infinite.
-        clipRects.reset(infiniteRect);
+        clipRects.reset(ClipRects::infiniteRect());
         return;
     }
 
@@ -2487,7 +2486,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
             parentLayer->calculateClipRects(rootLayer, clipRects);
     }
     else
-        clipRects.reset(infiniteRect);
+        clipRects.reset(ClipRects::infiniteRect());
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.

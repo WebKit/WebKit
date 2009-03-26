@@ -1,3 +1,20 @@
+2009-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23914
+        
+        Tests for overflow:hidden with various configurations of position.
+
+        * compositing/overflow/ancestor-overflow.html: Added.
+        * compositing/overflow/parent-overflow.html: Added.
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.checksum: Added.
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.txt: Added.
+        * platform/mac/compositing/overflow/parent-overflow-expected.checksum: Added.
+        * platform/mac/compositing/overflow/parent-overflow-expected.png: Added.
+        * platform/mac/compositing/overflow/parent-overflow-expected.txt: Added.
+
 2009-03-25  Brian Weinstein  <bweinstein@gmail.com>
 
         Update Windows skipped list based on failures in r41995, to try and make Windows build-bot green
