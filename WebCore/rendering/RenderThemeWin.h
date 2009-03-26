@@ -99,7 +99,6 @@ public:
     virtual int buttonInternalPaddingTop() const;
     virtual int buttonInternalPaddingBottom() const;
 
-    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

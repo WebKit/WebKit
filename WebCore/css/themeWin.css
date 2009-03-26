@@ -34,10 +34,14 @@
 
 input:not([type]), 
 input[type="text"],
-input[type="password"],
-input[type="search"] {
+input[type="password"] {
     margin:0;
     padding:1px 0;
+}
+
+input[type="search"] {
+    margin:0;
+    padding:1px;
 }
 
 input[type="checkbox"] {

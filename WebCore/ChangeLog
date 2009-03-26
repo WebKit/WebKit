@@ -1,3 +1,14 @@
+2009-03-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24859
+        Use CSS file instead of code to adjust search field styling.
+
+        * css/themeWin.css:
+        * rendering/RenderThemeWin.cpp:
+        * rendering/RenderThemeWin.h:
+
 2009-03-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
