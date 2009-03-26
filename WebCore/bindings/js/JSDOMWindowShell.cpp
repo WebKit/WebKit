@@ -54,11 +54,17 @@ JSDOMWindowShell::~JSDOMWindowShell()
 {
 }
 
-void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> window)
+void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 {
+    // Explicitly protect the global object's prototype so it isn't collected
+    // when we allocate the global object. (Once the global object is fully
+    // constructed, it can mark its own prototype.)
     RefPtr<Structure> prototypeStructure = JSDOMWindowPrototype::createStructure(jsNull());
-    RefPtr<Structure> structure = JSDOMWindow::createStructure(new JSDOMWindowPrototype(prototypeStructure.release()));
-    setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(structure.release(), window, this));
+    ProtectedPtr<JSDOMWindowPrototype> prototype = new JSDOMWindowPrototype(prototypeStructure.release());
+
+    RefPtr<Structure> structure = JSDOMWindow::createStructure(prototype);
+    JSDOMWindow* jsDOMWindow = new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(structure.release(), domWindow, this);
+    setWindow(jsDOMWindow);
 }
 
 // ----

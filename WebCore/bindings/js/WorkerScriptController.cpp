@@ -68,8 +68,13 @@ void WorkerScriptController::initScript()
 
     JSLock lock(false);
 
+    // Explicitly protect the global object's prototype so it isn't collected
+    // when we allocate the global object. (Once the global object is fully
+    // constructed, it can mark its own prototype.)
     RefPtr<Structure> prototypeStructure = JSWorkerContextPrototype::createStructure(jsNull());
-    RefPtr<Structure> structure = JSWorkerContext::createStructure(new (m_globalData.get()) JSWorkerContextPrototype(prototypeStructure.release()));
+    ProtectedPtr<JSWorkerContextPrototype> prototype = new (m_globalData.get()) JSWorkerContextPrototype(prototypeStructure.release());
+
+    RefPtr<Structure> structure = JSWorkerContext::createStructure(prototype);
     m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(structure.release(), m_workerContext);
 }
 

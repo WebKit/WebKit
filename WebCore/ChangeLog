@@ -1,3 +1,26 @@
+2009-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt and Darin Adler.
+        
+        Fixed <rdar://problem/6603167> Crash in WebKit!JSC::JSGlobalObject::resetPrototype
+        during Stress test (#3 & #7 WER crashes for Safari 4 Beta)
+        
+        The problem was that allocation of the global object would, for just a
+        moment, leave the global object's prototype unprotected from GC. This
+        bug doesn't apply to non-global DOM objects because their prototypes are
+        cached and marked by the global object.
+
+        No test case because the crashing condition is hard to deterministically
+        produce in a normal build, and in a Windows Release build with
+        COLLECT_ON_EVERY_ALLOCATION set to 1, existing tests crash/hang.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript): Protect the global object's
+        prototype from GC during construction, since the global object does not
+        yet point to it, and therefore won't mark it.
+
 2009-03-25  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser
