@@ -99,6 +99,8 @@ public:
     void startTimers(bool throttleTimers);
     void stopTimers();
     
+    void invalidateRect(double x, double y, double width, double height);
+    
     // NPRuntime
     bool getWindowNPObject(uint32_t& objectID);
     bool getPluginElementNPObject(uint32_t& objectID);

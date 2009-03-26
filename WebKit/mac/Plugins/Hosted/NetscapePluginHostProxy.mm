@@ -386,8 +386,7 @@ kern_return_t WKPCInvalidateRect(mach_port_t clientPort, uint32_t pluginID, doub
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    [instanceProxy->pluginView() setNeedsDisplayInRect:NSMakeRect(x, y, width, height)];
-    
+    instanceProxy->invalidateRect(x, y, width, height);
     return KERN_SUCCESS;
 }
 

@@ -138,6 +138,8 @@ void NetscapePluginInstanceProxy::cleanup()
 {
     stopAllStreams();
     
+    m_requestTimer.stop();
+    
     // Clear the object map, this will cause any outstanding JS objects that the plug-in had a reference to 
     // to go away when the next garbage collection takes place.
     m_objects.clear();
@@ -152,6 +154,8 @@ void NetscapePluginInstanceProxy::cleanup()
     ProxyInstanceSet::const_iterator end = instances.end();
     for (ProxyInstanceSet::const_iterator it = instances.begin(); it != end; ++it)
         (*it)->invalidate();
+    
+    m_pluginView = nil;
 }
 
 void NetscapePluginInstanceProxy::invalidate()
@@ -191,10 +195,9 @@ void NetscapePluginInstanceProxy::pluginHostDied()
 {
     m_pluginHostProxy = 0;
 
-    cleanup();
-    
     [m_pluginView pluginHostDied];
-    m_pluginView = nil;
+
+    cleanup();
 }
 
 void NetscapePluginInstanceProxy::focusChanged(bool hasFocus)
@@ -377,6 +380,8 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
 
 void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
 {
+    ASSERT(m_pluginView);
+    
     NSURLRequest *request = pluginRequest->request();
     NSString *frameName = pluginRequest->frameName();
     WebFrame *frame = nil;
@@ -449,6 +454,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
 void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstanceProxy>*)
 {
     ASSERT(!m_pluginRequests.isEmpty());
+    ASSERT(m_pluginView);
     
     PluginRequest* request = m_pluginRequests.first();
     m_pluginRequests.removeFirst();
@@ -1135,6 +1141,13 @@ uint32_t NetscapePluginInstanceProxy::nextRequestID()
     return requestID;
 }
 
+void NetscapePluginInstanceProxy::invalidateRect(double x, double y, double width, double height)
+{
+    ASSERT(m_pluginView);
+    
+    [m_pluginView setNeedsDisplayInRect:NSMakeRect(x, y, width, height)];
+}
+    
 
 } // namespace WebKit
 
