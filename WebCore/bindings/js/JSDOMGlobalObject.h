@@ -33,7 +33,7 @@ namespace WebCore {
 
     class Event;
     class JSProtectedEventListener;
-    class JSUnprotectedEventListener;
+    class JSEventListener;
     class ScriptExecutionContext;
 
     typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::Structure> > JSDOMStructureMap;
@@ -60,18 +60,18 @@ namespace WebCore {
         PassRefPtr<JSProtectedEventListener> findOrCreateJSProtectedEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-        JSUnprotectedEventListener* findJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
+        JSEventListener* findJSEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-        PassRefPtr<JSUnprotectedEventListener> findOrCreateJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
+        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         typedef HashMap<JSC::JSObject*, JSProtectedEventListener*> ProtectedListenersMap;
-        typedef HashMap<JSC::JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
+        typedef HashMap<JSC::JSObject*, JSEventListener*> JSListenersMap;
 
         ProtectedListenersMap& jsProtectedEventListeners();
         ProtectedListenersMap& jsProtectedInlineEventListeners();
-        UnprotectedListenersMap& jsUnprotectedEventListeners();
-        UnprotectedListenersMap& jsUnprotectedInlineEventListeners();
+        JSListenersMap& jsEventListeners();
+        JSListenersMap& jsInlineEventListeners();
 
         void setCurrentEvent(Event*);
         Event* currentEvent();
@@ -87,8 +87,8 @@ namespace WebCore {
 
             JSDOMGlobalObject::ProtectedListenersMap jsProtectedEventListeners;
             JSDOMGlobalObject::ProtectedListenersMap jsProtectedInlineEventListeners;
-            JSDOMGlobalObject::UnprotectedListenersMap jsUnprotectedEventListeners;
-            JSDOMGlobalObject::UnprotectedListenersMap jsUnprotectedInlineEventListeners;
+            JSDOMGlobalObject::JSListenersMap jsEventListeners;
+            JSDOMGlobalObject::JSListenersMap jsInlineEventListeners;
 
             Event* evt;
         };

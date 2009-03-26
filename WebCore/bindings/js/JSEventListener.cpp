@@ -143,43 +143,43 @@ bool JSAbstractEventListener::isInline() const
 
 // -------------------------------------------------------------------------
 
-JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
+JSEventListener::JSEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
     : JSAbstractEventListener(isInline)
     , m_listener(listener)
     , m_globalObject(globalObject)
 {
     if (m_listener) {
-        JSDOMWindow::UnprotectedListenersMap& listeners = isInline
-            ? globalObject->jsUnprotectedInlineEventListeners() : globalObject->jsUnprotectedEventListeners();
+        JSDOMWindow::JSListenersMap& listeners = isInline
+            ? globalObject->jsInlineEventListeners() : globalObject->jsEventListeners();
         listeners.set(m_listener, this);
     }
 }
 
-JSUnprotectedEventListener::~JSUnprotectedEventListener()
+JSEventListener::~JSEventListener()
 {
     if (m_listener && m_globalObject) {
-        JSDOMWindow::UnprotectedListenersMap& listeners = isInline()
-            ? m_globalObject->jsUnprotectedInlineEventListeners() : m_globalObject->jsUnprotectedEventListeners();
+        JSDOMWindow::JSListenersMap& listeners = isInline()
+            ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
         listeners.remove(m_listener);
     }
 }
 
-JSObject* JSUnprotectedEventListener::listenerObj() const
+JSObject* JSEventListener::listenerObj() const
 {
     return m_listener;
 }
 
-JSDOMGlobalObject* JSUnprotectedEventListener::globalObject() const
+JSDOMGlobalObject* JSEventListener::globalObject() const
 {
     return m_globalObject;
 }
 
-void JSUnprotectedEventListener::clearGlobalObject()
+void JSEventListener::clearGlobalObject()
 {
     m_globalObject = 0;
 }
 
-void JSUnprotectedEventListener::mark()
+void JSEventListener::mark()
 {
     if (m_listener && !m_listener->marked())
         m_listener->mark();

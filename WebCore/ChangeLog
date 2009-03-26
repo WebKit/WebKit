@@ -2,6 +2,60 @@
 
         Reviewed by Geoff Garen.
 
+        Renamed JSUnprotectedEventListener to JSEventListener.
+        And related renames.
+
+        Soon Geoff will make all JavaScript event listeners use mark instead
+        of protect, so there's no need to emphasize "unprotected".
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::mark):
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::findJSEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSEventListener):
+        (WebCore::JSDOMGlobalObject::jsEventListeners):
+        (WebCore::JSDOMGlobalObject::jsInlineEventListeners):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::listenerObj):
+        (WebCore::JSEventListener::globalObject):
+        (WebCore::JSEventListener::clearGlobalObject):
+        (WebCore::JSEventListener::mark):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::mark):
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::mark):
+        (WebCore::JSWorker::addEventListener):
+        (WebCore::JSWorker::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        All just renaming.
+
+2009-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Renamed JSEventListener to JSProtectedEventListener.
         And related renames.
 
@@ -37,6 +91,7 @@
         * bindings/js/JSSVGElementInstanceCustom.cpp:
         (WebCore::JSSVGElementInstance::addEventListener):
         (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
         All just renaming.
 
 2009-03-26  Dan Bernstein  <mitz@apple.com>

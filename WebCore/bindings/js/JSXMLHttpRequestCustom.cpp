@@ -59,22 +59,22 @@ void JSXMLHttpRequest::mark()
             wrapper->mark();
     }
 
-    if (JSUnprotectedEventListener* onReadyStateChangeListener = static_cast<JSUnprotectedEventListener*>(m_impl->onreadystatechange()))
+    if (JSEventListener* onReadyStateChangeListener = static_cast<JSEventListener*>(m_impl->onreadystatechange()))
         onReadyStateChangeListener->mark();
 
-    if (JSUnprotectedEventListener* onAbortListener = static_cast<JSUnprotectedEventListener*>(m_impl->onabort()))
+    if (JSEventListener* onAbortListener = static_cast<JSEventListener*>(m_impl->onabort()))
         onAbortListener->mark();
 
-    if (JSUnprotectedEventListener* onErrorListener = static_cast<JSUnprotectedEventListener*>(m_impl->onerror()))
+    if (JSEventListener* onErrorListener = static_cast<JSEventListener*>(m_impl->onerror()))
         onErrorListener->mark();
 
-    if (JSUnprotectedEventListener* onLoadListener = static_cast<JSUnprotectedEventListener*>(m_impl->onload()))
+    if (JSEventListener* onLoadListener = static_cast<JSEventListener*>(m_impl->onload()))
         onLoadListener->mark();
 
-    if (JSUnprotectedEventListener* onLoadStartListener = static_cast<JSUnprotectedEventListener*>(m_impl->onloadstart()))
+    if (JSEventListener* onLoadStartListener = static_cast<JSEventListener*>(m_impl->onloadstart()))
         onLoadStartListener->mark();
     
-    if (JSUnprotectedEventListener* onProgressListener = static_cast<JSUnprotectedEventListener*>(m_impl->onprogress()))
+    if (JSEventListener* onProgressListener = static_cast<JSEventListener*>(m_impl->onprogress()))
         onProgressListener->mark();
     
     typedef XMLHttpRequest::EventListenersMap EventListenersMap;
@@ -82,7 +82,7 @@ void JSXMLHttpRequest::mark()
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) {
-            JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(vecIter->get());
+            JSEventListener* listener = static_cast<JSEventListener*>(vecIter->get());
             listener->mark();
         }
     }
@@ -181,7 +181,7 @@ JSValuePtr JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& ar
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
         return jsUndefined();
-    RefPtr<JSUnprotectedEventListener> listener = globalObject->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
+    RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
@@ -193,7 +193,7 @@ JSValuePtr JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList&
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = globalObject->findJSUnprotectedEventListener(exec, args.at(exec, 1));
+    JSEventListener* listener = globalObject->findJSEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));

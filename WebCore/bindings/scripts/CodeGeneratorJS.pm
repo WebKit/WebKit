@@ -1092,7 +1092,7 @@ sub GenerateImplementation
                     if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
                         $listenerType = "JSProtectedEventListener";
                     } else {
-                        $listenerType = "JSUnprotectedEventListener";
+                        $listenerType = "JSEventListener";
                     }
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
@@ -1223,7 +1223,7 @@ sub GenerateImplementation
                             if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
                                 $listenerType = "JSProtectedEventListener";
                             } else {
-                                $listenerType = "JSUnprotectedEventListener";
+                                $listenerType = "JSEventListener";
                             }
                             if ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<$className*>(thisObject);\n");
