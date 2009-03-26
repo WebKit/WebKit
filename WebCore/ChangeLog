@@ -1,3 +1,20 @@
+2009-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix <rdar://problem/6725042> BidiResolver::createBidiRunsForLine can
+          create runs extending beyond the end
+
+        No test because Safari does not use this version of
+        createBidiRunsForLine() with the end iterator not pointing to the end
+        of the text run.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::appendRun): Cap the end of the run at the end
+        of the line and set the reachedEndOfLine flag. This mirrors the logic
+        in the specialized version of appendRun() in bidi.cpp, which is why the
+        problem did not show up in HTML. Also avoid creating empty runs.
+
 2009-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
