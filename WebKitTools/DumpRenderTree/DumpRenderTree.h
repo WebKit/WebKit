@@ -42,11 +42,6 @@
 #include "DumpRenderTreeGtk.h"
 #endif
 
-#if PLATFORM(CF)
-#include <CoreFoundation/CoreFoundation.h>
-extern CFRunLoopTimerRef waitToDumpWatchdog;
-#endif
-
 #include <string>
 
 #if !PLATFORM(OPENBSD)

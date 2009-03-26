@@ -54,4 +54,6 @@ WindowToWebViewMap& windowToWebViewMap();
 
 void setPersistentUserStyleSheetLocation(CFStringRef);
 
+extern UINT_PTR waitToDumpWatchdog;
+
 #endif // DumpRenderTreeWin_h

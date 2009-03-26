@@ -1,3 +1,36 @@
+2009-03-26  Adam Roben  <aroben@apple.com>
+
+        Make DRT's watchdog timer actually work on Windows
+
+        We were previously trying to use a CFRunLoopTimer for the watchdog
+        timer on Windows. This doesn't work because we don't use a CFRunLoop
+        on the main thread on Windows.
+
+        This patch changes the watchdog timer on Windows be a normal Windows
+        timer.
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/DumpRenderTree.h: Moved declaration of
+        waitToDumpWatchdog from here...
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: ...to here.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (invalidateAnyPreviousWaitToDumpWatchdog): Added. This function
+        cancels an existing watchdog timer.
+        (dump): Call invalidateAnyPreviousWaitToDumpWatchdog. This will
+        prevent watchdogs from previous tests firing during subsequent ones.
+        This matches Mac's behavior.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Added a declaration of
+        waitToDumpWatchdog.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (waitUntilDoneWatchdogFired): Converted this to be a Windows
+        TIMERPROC.
+        (LayoutTestController::setWaitToDump): Changed to use SetTimer instead
+        of CFRunLoopAddTimer.
+
 2009-03-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Steve Falkenburg.

@@ -598,7 +598,7 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
-static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
+static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
     fprintf(stderr, message);
@@ -608,12 +608,9 @@ static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
-    // Same as on mac.  This can be shared.
     m_waitToDump = waitUntilDone;
-    if (m_waitToDump && !waitToDumpWatchdog) {
-        waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 0, 0, 0, waitUntilDoneWatchdogFired, NULL);
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog, kCFRunLoopCommonModes);
-    }
+    if (m_waitToDump && !waitToDumpWatchdog)
+        waitToDumpWatchdog = SetTimer(0, 0, waitToDumpWatchdogInterval * 1000, waitUntilDoneWatchdogFired);
 }
 
 int LayoutTestController::windowCount()

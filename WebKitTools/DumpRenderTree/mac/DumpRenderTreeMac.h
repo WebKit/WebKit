@@ -57,6 +57,8 @@ extern PolicyDelegate* policyDelegate;
 extern const unsigned maxViewHeight;
 extern const unsigned maxViewWidth;
 
+extern CFRunLoopTimerRef waitToDumpWatchdog;
+
 WebView* createWebViewAndOffscreenWindow();
 void setPersistentUserStyleSheetLocation(CFStringRef);
 
