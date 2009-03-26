@@ -723,6 +723,18 @@ interface IWebView : IUnknown
         + (void)registerURLSchemeAsLocal:(NSString *)scheme;
     */
     HRESULT registerURLSchemeAsLocal([in] BSTR scheme);
+
+    /*!
+        @method close
+        @abstract Closes the receiver, unloading its web page and canceling any pending loads.
+        Once the receiver has closed, it will no longer respond to requests or fire delegate methods.
+        (However, the -close method itself may fire delegate methods.)
+        @discussion A garbage collected application is required to call close when the receiver is no longer needed.
+        The close method will be called automatically when the window or hostWindow closes and shouldCloseWithWindow returns YES.
+        A non-garbage collected application can still call close, providing a convenient way to prevent receiver
+        from doing any more loading and firing any future delegate methods.
+    */
+    HRESULT close();
 }
 
 /*

@@ -1,3 +1,14 @@
+2009-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - add close() to the WebView API.
+
+        * Interfaces/IWebView.idl:
+        * WebView.cpp:
+        (WebView::close):
+        * WebView.h:
+
 2009-03-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

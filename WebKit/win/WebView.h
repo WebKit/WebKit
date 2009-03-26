@@ -296,6 +296,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsLocal( 
         /* [in] */ BSTR scheme);
 
+    virtual HRESULT STDMETHODCALLTYPE close();
+
     // IWebIBActions
 
     virtual HRESULT STDMETHODCALLTYPE takeStringURLFrom( 
@@ -756,7 +758,6 @@ public:
     void frameRect(RECT* rect);
     void closeWindow();
     void closeWindowSoon();
-    void close();
     bool didClose() const { return m_didClose; }
 
     bool transparent() const { return m_transparent; }
