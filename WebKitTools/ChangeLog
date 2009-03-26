@@ -1,3 +1,11 @@
+2009-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/do-webcore-rename: Update for rename of JSEventListener to
+        JSProtectedEventListener. This includes all the related renames, but
+        not that one because that one renames the file.
+
 2009-03-26  Adam Roben  <aroben@apple.com>
 
         Reduce run-webkit-tests's time out limit to 15 seconds (or 2.5 minutes

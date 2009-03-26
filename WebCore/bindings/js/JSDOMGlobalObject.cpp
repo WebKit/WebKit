@@ -50,13 +50,13 @@ JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<Structure> structure, JSDOMGloba
 JSDOMGlobalObject::~JSDOMGlobalObject()
 {
     // Clear any backpointers to the window
-    ListenersMap::iterator i1 = d()->jsEventListeners.begin();
-    ListenersMap::iterator e1 = d()->jsEventListeners.end();
+    ProtectedListenersMap::iterator i1 = d()->jsProtectedEventListeners.begin();
+    ProtectedListenersMap::iterator e1 = d()->jsProtectedEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearGlobalObject();
 
-    i1 = d()->jsInlineEventListeners.begin();
-    e1 = d()->jsInlineEventListeners.end();
+    i1 = d()->jsProtectedInlineEventListeners.begin();
+    e1 = d()->jsProtectedInlineEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearGlobalObject();
 
@@ -86,25 +86,25 @@ void JSDOMGlobalObject::mark()
     }
 }
 
-JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValuePtr val, bool isInline)
+JSProtectedEventListener* JSDOMGlobalObject::findJSProtectedEventListener(JSValuePtr val, bool isInline)
 {
     if (!val.isObject())
         return 0;
     JSObject* object = asObject(val);
-    ListenersMap& listeners = isInline ? d()->jsInlineEventListeners : d()->jsEventListeners;
+    ProtectedListenersMap& listeners = isInline ? d()->jsProtectedInlineEventListeners : d()->jsProtectedEventListeners;
     return listeners.get(object);
 }
 
-PassRefPtr<JSEventListener> JSDOMGlobalObject::findOrCreateJSEventListener(ExecState*, JSValuePtr val, bool isInline)
+PassRefPtr<JSProtectedEventListener> JSDOMGlobalObject::findOrCreateJSProtectedEventListener(ExecState*, JSValuePtr val, bool isInline)
 {
-    if (JSEventListener* listener = findJSEventListener(val, isInline))
+    if (JSProtectedEventListener* listener = findJSProtectedEventListener(val, isInline))
         return listener;
 
     if (!val.isObject())
         return 0;
 
-    // The JSEventListener constructor adds it to our jsEventListeners map.
-    return JSEventListener::create(asObject(val), this, isInline).get();
+    // The JSProtectedEventListener constructor adds it to our jsProtectedEventListeners map.
+    return JSProtectedEventListener::create(asObject(val), this, isInline).get();
 }
 
 JSUnprotectedEventListener* JSDOMGlobalObject::findJSUnprotectedEventListener(ExecState*, JSValuePtr val, bool isInline)
@@ -128,14 +128,14 @@ PassRefPtr<JSUnprotectedEventListener> JSDOMGlobalObject::findOrCreateJSUnprotec
     return JSUnprotectedEventListener::create(asObject(val), this, isInline).get();
 }
 
-JSDOMGlobalObject::ListenersMap& JSDOMGlobalObject::jsEventListeners()
+JSDOMGlobalObject::ProtectedListenersMap& JSDOMGlobalObject::jsProtectedEventListeners()
 {
-    return d()->jsEventListeners;
+    return d()->jsProtectedEventListeners;
 }
 
-JSDOMGlobalObject::ListenersMap& JSDOMGlobalObject::jsInlineEventListeners()
+JSDOMGlobalObject::ProtectedListenersMap& JSDOMGlobalObject::jsProtectedInlineEventListeners()
 {
-    return d()->jsInlineEventListeners;
+    return d()->jsProtectedInlineEventListeners;
 }
 
 JSDOMGlobalObject::UnprotectedListenersMap& JSDOMGlobalObject::jsUnprotectedEventListeners()

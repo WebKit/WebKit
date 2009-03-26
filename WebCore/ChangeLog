@@ -1,3 +1,44 @@
+2009-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Renamed JSEventListener to JSProtectedEventListener.
+        And related renames.
+
+        Soon Geoff will make all JavaScript event listeners use mark instead
+        of protect, and so this class will be be obsolete. We will rename
+        JSUnrpotectedEventListener to JSEventListener in the next check-in,
+        since that one will remain.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::findJSProtectedEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSProtectedEventListener):
+        (WebCore::JSDOMGlobalObject::jsProtectedEventListeners):
+        (WebCore::JSDOMGlobalObject::jsProtectedInlineEventListeners):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSProtectedEventListener::JSProtectedEventListener):
+        (WebCore::JSProtectedEventListener::~JSProtectedEventListener):
+        (WebCore::JSProtectedEventListener::listenerObj):
+        (WebCore::JSProtectedEventListener::globalObject):
+        (WebCore::JSProtectedEventListener::clearGlobalObject):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSProtectedEventListener::create):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        All just renaming.
+
 2009-03-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

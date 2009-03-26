@@ -191,14 +191,14 @@ static WTF::RefCountedLeakCounter eventListenerCounter("EventListener");
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
+JSProtectedEventListener::JSProtectedEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
     : JSAbstractEventListener(isInline)
     , m_listener(listener)
     , m_globalObject(globalObject)
 {
     if (m_listener) {
-        JSDOMWindow::ListenersMap& listeners = isInline
-            ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
+        JSDOMWindow::ProtectedListenersMap& listeners = isInline
+            ? m_globalObject->jsProtectedInlineEventListeners() : m_globalObject->jsProtectedEventListeners();
         listeners.set(m_listener, this);
     }
 #ifndef NDEBUG
@@ -206,11 +206,11 @@ JSEventListener::JSEventListener(JSObject* listener, JSDOMGlobalObject* globalOb
 #endif
 }
 
-JSEventListener::~JSEventListener()
+JSProtectedEventListener::~JSProtectedEventListener()
 {
     if (m_listener && m_globalObject) {
-        JSDOMWindow::ListenersMap& listeners = isInline()
-            ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
+        JSDOMWindow::ProtectedListenersMap& listeners = isInline()
+            ? m_globalObject->jsProtectedInlineEventListeners() : m_globalObject->jsProtectedEventListeners();
         listeners.remove(m_listener);
     }
 #ifndef NDEBUG
@@ -218,17 +218,17 @@ JSEventListener::~JSEventListener()
 #endif
 }
 
-JSObject* JSEventListener::listenerObj() const
+JSObject* JSProtectedEventListener::listenerObj() const
 {
     return m_listener;
 }
 
-JSDOMGlobalObject* JSEventListener::globalObject() const
+JSDOMGlobalObject* JSProtectedEventListener::globalObject() const
 {
     return m_globalObject;
 }
 
-void JSEventListener::clearGlobalObject()
+void JSProtectedEventListener::clearGlobalObject()
 {
     m_globalObject = 0;
 }
@@ -236,7 +236,7 @@ void JSEventListener::clearGlobalObject()
 // -------------------------------------------------------------------------
 
 JSLazyEventListener::JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
-    : JSEventListener(0, globalObject, true)
+    : JSProtectedEventListener(0, globalObject, true)
     , m_functionName(functionName)
     , m_code(code)
     , m_parsed(false)
@@ -332,7 +332,7 @@ void JSLazyEventListener::parseCode() const
 
     if (m_listener) {
         ASSERT(isInline());
-        JSDOMWindow::ListenersMap& listeners = globalObject()->jsInlineEventListeners();
+        JSDOMWindow::ProtectedListenersMap& listeners = globalObject()->jsProtectedInlineEventListeners();
         listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }
 }

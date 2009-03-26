@@ -1090,7 +1090,7 @@ sub GenerateImplementation
                     $implIncludes{"EventListener.h"} = 1;
                     my $listenerType;
                     if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
-                        $listenerType = "JSEventListener";
+                        $listenerType = "JSProtectedEventListener";
                     } else {
                         $listenerType = "JSUnprotectedEventListener";
                     }
@@ -1221,7 +1221,7 @@ sub GenerateImplementation
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
                             my $listenerType;
                             if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
-                                $listenerType = "JSEventListener";
+                                $listenerType = "JSProtectedEventListener";
                             } else {
                                 $listenerType = "JSUnprotectedEventListener";
                             }

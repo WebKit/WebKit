@@ -67,20 +67,20 @@ namespace WebCore {
         JSDOMGlobalObject* m_globalObject;
     };
 
-    class JSEventListener : public JSAbstractEventListener {
+    class JSProtectedEventListener : public JSAbstractEventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
+        static PassRefPtr<JSProtectedEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
         {
-            return adoptRef(new JSEventListener(listener, globalObject, isInline));
+            return adoptRef(new JSProtectedEventListener(listener, globalObject, isInline));
         }
-        virtual ~JSEventListener();
+        virtual ~JSProtectedEventListener();
 
         virtual JSC::JSObject* listenerObj() const;
         virtual JSDOMGlobalObject* globalObject() const;
         void clearGlobalObject();
 
     protected:
-        JSEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
+        JSProtectedEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
 
         mutable JSC::ProtectedPtr<JSC::JSObject> m_listener;
 
@@ -88,7 +88,7 @@ namespace WebCore {
         JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
     };
 
-    class JSLazyEventListener : public JSEventListener {
+    class JSLazyEventListener : public JSProtectedEventListener {
     public:
         enum LazyEventListenerType {
             HTMLLazyEventListener
