@@ -1,3 +1,10 @@
+2009-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * platform/text/TextEncodingDetectorICU.cpp:
+        * platform/text/TextEncodingDetectorNone.cpp:
+
 2009-03-26  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Cameron Zwarich.

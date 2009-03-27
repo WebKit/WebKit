@@ -32,7 +32,7 @@
 #include "TextEncodingDetector.h"
 
 #include "TextEncoding.h"
-#include "UnusedParam.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

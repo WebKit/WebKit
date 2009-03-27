@@ -32,7 +32,7 @@
 #include "TextEncodingDetector.h"
 
 #include "TextEncoding.h"
-#include "UnusedParam.h"
+#include <wtf/UnusedParam.h>
 
 #ifndef BUILDING_ON_TIGER
 #include "unicode/ucnv.h"
