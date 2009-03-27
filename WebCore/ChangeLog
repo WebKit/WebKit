@@ -1,3 +1,18 @@
+2009-03-26  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Cameron Zwarich.
+
+        1. Fix the crash in setHintEncoding
+        2. Fix build failures on Tiger and Qt.
+        UnusedParam.h was not included by TextEncodingDetector{None,ICU}.cpp
+        in the patch landed in r42023
+        for http://bugs.webkit.org/show_bug.cgi?id=16482
+
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::setHintEncoding):
+        * platform/text/TextEncodingDetectorICU.cpp:
+        * platform/text/TextEncodingDetectorNone.cpp:
+
 2009-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix when ACCELERATED_COMPOSITING is turned on.
