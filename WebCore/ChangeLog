@@ -1,3 +1,20 @@
+2009-03-27  Zack Rusin <zack@kde.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24275
+
+        Fix text field theming in the Qt build with the KDE 4 Oxygen
+        style by adjusting the size vertically and horizontally to
+        set padding on the element equal to the width of the style painted border.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::paintTextField):
+        * platform/qt/RenderThemeQt.h:
+
 2009-03-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
