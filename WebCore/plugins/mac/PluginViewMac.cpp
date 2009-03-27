@@ -69,14 +69,18 @@ using JSC::ExecState;
 using JSC::Interpreter;
 using JSC::JSLock;
 using JSC::JSObject;
-using JSC::JSValue;
+using JSC::JSValuePtr;
 using JSC::UString;
 
 #if PLATFORM(QT)
 #include <QWidget>
 #include <QKeyEvent>
 QT_BEGIN_NAMESPACE
-extern Q_GUI_EXPORT OSWindowRef qt_mac_window_for(const QWidget *w);
+#if QT_VERSION < 0x040500
+extern Q_GUI_EXPORT WindowPtr qt_mac_window_for(const QWidget* w);
+#else
+extern Q_GUI_EXPORT OSWindowRef qt_mac_window_for(const QWidget* w);
+#endif
 QT_END_NAMESPACE
 #endif
 
