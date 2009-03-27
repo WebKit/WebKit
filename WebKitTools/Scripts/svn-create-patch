@@ -75,6 +75,7 @@ sub testfilecmp($$);
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
+my $svnVersion = `svn --version --quiet`;
 
 my $result = GetOptions(
     "help"       => \$showHelp,
@@ -280,8 +281,15 @@ sub generateFileList($\%)
     open STAT, "svn stat '$statPath' |" or die;
     while (my $line = <STAT>) {
         chomp $line;
-        my $stat = substr($line, 0, 7);
-        my $path = substr($line, 7);
+        my $stat;
+        my $path;
+        if (eval "v$svnVersion" ge v1.6) { 
+            $stat = substr($line, 0, 8);
+            $path = substr($line, 8);
+        } else {
+            $stat = substr($line, 0, 7);
+            $path = substr($line, 7);
+        }
         next if -d $path;
         my $modificationType = findModificationType($stat);
         if ($modificationType) {

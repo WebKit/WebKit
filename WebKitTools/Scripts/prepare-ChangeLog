@@ -122,6 +122,11 @@ my $isSVN = isSVNDirectory(firstDirectoryOrCwd());
 
 $isSVN || $isGit || die "Couldn't determine your version control system.";
 
+my $SVN = "svn";
+my $GIT = "git";
+
+my $svnVersion = `svn --version --quiet` if $isSVN;
+
 # Find the list of modified files
 my @changed_files;
 my $changed_files_string;
@@ -129,8 +134,6 @@ my %changed_line_ranges;
 my %function_lists;
 my @conflict_files;
 
-my $SVN = "svn";
-my $GIT = "git";
 
 my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
 my @addedRegressionTests = ();
@@ -1223,9 +1226,17 @@ sub generateFileList(\@\@\%)
         my $file;
 
         if ($isSVN) {
-            if (/^([ACDMR]).{5} (.+)$/) {
+            my $matches;
+            if (eval "v$svnVersion" ge v1.6) {
+                $matches = /^([ACDMR]).{6} (.+)$/;
                 $status = $1;
                 $file = $2;
+            } else {
+                $matches = /^([ACDMR]).{5} (.+)$/;
+                $status = $1;
+                $file = $2;
+            }
+            if ($matches) {
                 $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
             } else {
                 print;  # error output from svn stat
