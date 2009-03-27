@@ -832,7 +832,7 @@ void tst_QWebPage::cursorMovements()
     // cursor will be before the word "be"
     page->triggerAction(QWebPage::MoveToStartOfBlock);
     QVERIFY(page->isSelectionCollapsed());
-    QCOMPARE(page->selectionStartOffset(), 2);
+    QCOMPARE(page->selectionStartOffset(), 0);
 
     // cursor will be after the word "you!"
     page->triggerAction(QWebPage::MoveToEndOfBlock);
