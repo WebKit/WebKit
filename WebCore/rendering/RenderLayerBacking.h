@@ -140,7 +140,8 @@ private:
     bool isSimpleContainerCompositingLayer();
     // Returns true if we can optimize the RenderLayer to draw the replaced content
     // directly into a compositing buffer
-    bool canUseInnerContentLayer() const;
+    bool canUseDirectCompositing() const;
+    void updateImageContents();
 
     bool rendererHasBackground() const;
     const Color& rendererBackgroundColor() const;

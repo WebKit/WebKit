@@ -391,15 +391,19 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
     return finalOpacity;
 }
 
-// A simple background is either none or a solid color.
-static bool hasSimpleBackground(RenderStyle* style)
+static bool hasBorderOutlineOrShadow(const RenderStyle* style)
 {
-    return !style->hasBackgroundImage();
+    return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow();
 }
 
-static bool hasBorderOutlineOrShadow(RenderStyle* style)
+static bool hasBoxDecorations(const RenderStyle* style)
 {
-    return (style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || (style->boxShadow() != 0));
+    return hasBorderOutlineOrShadow(style) || style->hasBackground();
+}
+
+static bool hasBoxDecorationsWithBackgroundImage(const RenderStyle* style)
+{
+    return hasBorderOutlineOrShadow(style) || style->hasBackgroundImage();
 }
 
 bool RenderLayerBacking::rendererHasBackground() const
@@ -454,8 +458,7 @@ bool RenderLayerBacking::canBeSimpleContainerCompositingLayer() const
     // Reject anything that has a border, a border-radius or outline,
     // or any background (color or image).
     // FIXME: we could optimize layers for simple backgrounds.
-    if (hasBorderOutlineOrShadow(style) ||
-        style->hasBackground())
+    if (hasBoxDecorations(style))
         return false;
 
     // If we have got this far and the renderer has no children, then we're ok.
@@ -472,8 +475,7 @@ bool RenderLayerBacking::canBeSimpleContainerCompositingLayer() const
         
         // Reject anything that has a border, a border-radius or outline,
         // or is not a simple background (no background, or solid color).
-        if (hasBorderOutlineOrShadow(style) ||
-            !hasSimpleBackground(style))
+        if (hasBoxDecorationsWithBackgroundImage(style))
             return false;
         
         // Now look at the body's renderer.
@@ -484,8 +486,7 @@ bool RenderLayerBacking::canBeSimpleContainerCompositingLayer() const
         
         style = bodyObject->style();
         
-        if (hasBorderOutlineOrShadow(style) ||
-            !hasSimpleBackground(style))
+        if (hasBoxDecorationsWithBackgroundImage(style))
             return false;
 
         // Ceck to see if all the body's children are compositing layers.
@@ -555,33 +556,23 @@ bool RenderLayerBacking::hasNonCompositingContent() const
     return false;
 }
 
-// A layer can use an inner content layer if the render layer's object is a replaced object and has no children.
+// A layer can use direct compositing if the render layer's object is a replaced object and has no children.
 // This allows the GraphicsLayer to display the RenderLayer contents directly; it's used for images.
-bool RenderLayerBacking::canUseInnerContentLayer() const
+bool RenderLayerBacking::canUseDirectCompositing() const
 {
     RenderObject* renderObject = renderer();
     
-    // Reject anything that isn't a RenderReplaced.
-    if (!renderObject->isReplaced())
+    // Reject anything that isn't a RenderReplaced, and not an image or video
+    if (!renderObject->isReplaced() || (!renderObject->isImage() && !renderObject->isVideo()))
         return false;
     
-    if (renderObject->hasMask())
+    if (renderObject->hasMask() || renderObject->hasReflection())
         return false;
     
-    RenderStyle* style = renderObject->style();
-    
-    // Reject anything that has a background other than a solid color.
-    if (!hasSimpleBackground(style))
-        return false;
-    
-    // Only optimize images that are unadorned.
-    if (renderObject->isImage())
-        // Reject anything that has a border, a border-radius, outline, margin or padding.
-        return !hasBorderOutlineOrShadow(style) && !style->hasMargin() && !style->hasPadding();
-    
-    return false;
+    // Reject anything that would require the image to be drawn via the GraphicsContext,
+    // like border, shadows etc. Solid background color is OK.
+    return !hasBoxDecorationsWithBackgroundImage(renderObject->style());
 }
-    
     
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
@@ -601,30 +592,23 @@ void RenderLayerBacking::detectDrawingOptimizations()
     bool drawsContent = true;
 
     // Check if a replaced layer can be further simplified.
-    bool hasImageBackgroundColor = false;
-    if (canUseInnerContentLayer()) {
+    if (canUseDirectCompositing()) {
         if (renderer()->isImage()) {
-            RenderImage* imageRenderer = (RenderImage*)renderer();
-            if (imageRenderer && imageRenderer->cachedImage() && imageRenderer->cachedImage()->image())
-                rendererContentChanged();
-            
+            updateImageContents();
             drawsContent = false;
         }
         
-        if (rendererHasBackground()) {
+        if (rendererHasBackground())
             m_graphicsLayer->setBackgroundColor(rendererBackgroundColor());
-            hasImageBackgroundColor = true;
-        }
+        else
+            m_graphicsLayer->clearBackgroundColor();
+
     } else {
+        m_graphicsLayer->clearBackgroundColor();
         m_graphicsLayer->clearContents();
-        drawsContent = true;
         
         if (isSimpleContainerCompositingLayer())
             drawsContent = false;
-        else if (!hasImageBackgroundColor) {
-            // Clear the background color in case we are swapping away from a simple layer.
-            m_graphicsLayer->clearBackgroundColor();
-        }
     }
     
     if (paintingGoesToWindow())
@@ -640,23 +624,34 @@ void RenderLayerBacking::invalidateDrawingOptimizations()
 
 void RenderLayerBacking::rendererContentChanged()
 {
-    if (canUseInnerContentLayer() && renderer()->isImage()) {
-        RenderImage* imageRenderer = (RenderImage*)renderer();
-        if (imageRenderer &&
-            imageRenderer->cachedImage() &&
-            imageRenderer->cachedImage()->image() &&
-            imageRenderer->cachedImage()->isLoaded()) {
-            // We have to wait until the image is fully loaded before setting it on the layer.
-            
-            // This is a no-op if the layer doesn't have an inner layer for the image.
-            m_graphicsLayer->setContentsToImage(imageRenderer->cachedImage()->image());
-            
-            // Image animation is "lazy", in that it automatically stops unless someone is drawing
-            // the image. So we have to kick the animation each time; this has the downside that the
-            // image will keep animating, even if its layer is not visible.
-            imageRenderer->cachedImage()->image()->startAnimation();
-        }
-    }
+    if (canUseDirectCompositing() && renderer()->isImage())
+        updateImageContents();
+}
+
+void RenderLayerBacking::updateImageContents()
+{
+    ASSERT(renderer()->isImage());
+    RenderImage* imageRenderer = static_cast<RenderImage*>(renderer());
+
+    CachedImage* cachedImage = imageRenderer->cachedImage();
+    if (!cachedImage)
+        return;
+
+    Image* image = cachedImage->image();
+    if (!image)
+        return;
+
+    // We have to wait until the image is fully loaded before setting it on the layer.
+    if (!cachedImage->isLoaded())
+        return;
+
+    // This is a no-op if the layer doesn't have an inner layer for the image.
+    m_graphicsLayer->setContentsToImage(image);
+    
+    // Image animation is "lazy", in that it automatically stops unless someone is drawing
+    // the image. So we have to kick the animation each time; this has the downside that the
+    // image will keep animating, even if its layer is not visible.
+    image->startAnimation();
 }
 
 FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const

@@ -286,6 +286,30 @@
 
         Reviewed by Dave Hyatt
         
+        https://bugs.webkit.org/show_bug.cgi?id=24864
+
+        Change the terminology from "inner content layer" to "direct compositing"
+        for cases where we can push an image directly over to the compositing system,
+        without having to draw it.
+        
+        Clean up much of the code which looks at style to determine if this is possible,
+        and fix some bugs when backgrounds change dynamically.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::hasBorderOutlineOrShadow):
+        (WebCore::hasBoxDecorations):
+        (WebCore::hasBoxDecorationsWithBackgroundImage):
+        (WebCore::RenderLayerBacking::canBeSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::canUseDirectCompositing):
+        (WebCore::RenderLayerBacking::detectDrawingOptimizations):
+        (WebCore::RenderLayerBacking::rendererContentChanged):
+        (WebCore::RenderLayerBacking::updateImageContents):
+        * rendering/RenderLayerBacking.h:
+
+2009-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
         https://bugs.webkit.org/show_bug.cgi?id=23914
 
         Tests: compositing/overflow/ancestor-overflow.html
