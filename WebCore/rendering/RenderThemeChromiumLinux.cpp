@@ -30,6 +30,7 @@
 #include "Image.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
+#include "RenderBox.h"
 #include "RenderObject.h"
 #include "ScrollbarTheme.h"
 #include "TransformationMatrix.h"
@@ -53,6 +54,16 @@ static const int styledMenuListInternalPadding[4] = { 1, 4, 1, 4 };
 // size for the "system font", and as a base size (which we then shrink) for
 // form control fonts.
 static const float DefaultFontSize = 16.0;
+
+// These values all match Safari/Win.
+static const float defaultControlFontPixelSize = 13;
+static const float defaultCancelButtonSize = 9;
+static const float minCancelButtonSize = 5;
+static const float maxCancelButtonSize = 21;
+static const float defaultSearchFieldResultsDecorationSize = 13;
+static const float minSearchFieldResultsDecorationSize = 9;
+static const float maxSearchFieldResultsDecorationSize = 30;
+static const float defaultSearchFieldResultsButtonWidth = 18;
 
 static bool supportsFocus(ControlPart appearance)
 {
@@ -95,7 +106,7 @@ RenderThemeChromiumLinux::RenderThemeChromiumLinux()
 // Use the Windows style sheets to match their metrics.
 String RenderThemeChromiumLinux::extraDefaultStyleSheet()
 {
-    return String(themeChromiumWinUserAgentStyleSheet, sizeof(themeChromiumWinUserAgentStyleSheet));
+    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
 }
 
 String RenderThemeChromiumLinux::extraQuirksStyleSheet()
@@ -275,24 +286,114 @@ bool RenderThemeChromiumLinux::paintTextField(RenderObject* o, const RenderObjec
     return true;
 }
 
-bool RenderThemeChromiumLinux::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+void RenderThemeChromiumLinux::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    return true;
+    // Scale the button size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int cancelButtonSize = lroundf(std::min(std::max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
+    style->setWidth(Length(cancelButtonSize, Fixed));
+    style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumLinux::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    return true;
+    IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent() || !o->parent()->isBox())
+        return false;
+    
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
+
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
+    
+    // Make sure the scaled button stays square and will fit in its parent's box
+    bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
+    bounds.setWidth(bounds.height());
+
+    // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
+
+    static Image* cancelImage = Image::loadPlatformResource("searchCancel").releaseRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").releaseRef();
+    i.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage, bounds);
+    return false;
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+void RenderThemeChromiumLinux::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    return true;
+    IntSize emptySize(1, 11);
+    style->setWidth(Length(emptySize.width(), Fixed));
+    style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+void RenderThemeChromiumLinux::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    return true;
+    // Scale the decoration size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int magnifierSize = lroundf(std::min(std::max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+                                         maxSearchFieldResultsDecorationSize));
+    style->setWidth(Length(magnifierSize, Fixed));
+    style->setHeight(Length(magnifierSize, Fixed));
+}
+
+bool RenderThemeChromiumLinux::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent() || !o->parent()->isBox())
+        return false;
+    
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
+    
+    // Make sure the scaled decoration stays square and will fit in its parent's box
+    bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
+    bounds.setWidth(bounds.height());
+
+    // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
+    
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").releaseRef();
+    i.context->drawImage(magnifierImage, bounds);
+    return false;
+}
+
+void RenderThemeChromiumLinux::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    // Scale the button size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int magnifierHeight = lroundf(std::min(std::max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+                                           maxSearchFieldResultsDecorationSize));
+    int magnifierWidth = lroundf(magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);
+    style->setWidth(Length(magnifierWidth, Fixed));
+    style->setHeight(Length(magnifierHeight, Fixed));
+}
+
+bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent())
+        return false;
+    if (!o->parent() || !o->parent()->isBox())
+        return false;
+    
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
+    IntRect parentBox = parentRenderBox->absoluteContentBox();
+    
+    // Make sure the scaled decoration will fit in its parent's box
+    bounds.setHeight(std::min(parentBox.height(), bounds.height()));
+    bounds.setWidth(std::min(parentBox.width(), static_cast<int>(bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize)));
+
+    // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
+
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").releaseRef();
+    i.context->drawImage(magnifierImage, bounds);
+    return false;
 }
 
 void RenderThemeChromiumLinux::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const

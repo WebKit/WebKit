@@ -1,3 +1,36 @@
+2009-03-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24861
+        Chromium port did not render decorations for <input type="search">.
+        This copies RenderThemeWin.*.
+
+        * css/themeChromiumWin.css: Removed.
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumLinux::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeChromiumLinux::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumLinux::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeChromiumLinux::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeChromiumLinux::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumLinux::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeChromiumLinux::paintSearchFieldResultsButton):
+        * rendering/RenderThemeChromiumLinux.h:
+        (WebCore::RenderThemeChromiumLinux::paintSearchField):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::RenderThemeChromiumWin::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeChromiumWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumWin::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeChromiumWin::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeChromiumWin::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumWin::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeChromiumWin::paintSearchFieldResultsButton):
+        * rendering/RenderThemeChromiumWin.h:
+        (WebCore::RenderThemeChromiumWin::paintSearchField):
+
 2009-03-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser
