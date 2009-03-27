@@ -1,3 +1,12 @@
+2009-03-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24852
+        Build fix for GNU mode RVCT compilation
+
+        * html/PreloadScanner.cpp:
+
 2009-03-27  Erik L. Bunce  <elbunce@xendom.com>
 
         Reviewed by Simon Hausmann.
