@@ -153,6 +153,18 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
     return Qt::NoPen;
 }
 
+static inline Qt::FillRule toQtFillRule(WindRule rule)
+{
+    switch(rule) {
+    case RULE_EVENODD:
+        return Qt::OddEvenFill;
+    case RULE_NONZERO:
+        return Qt::WindingFill;
+    }
+    qDebug("Qt: unrecognized wind rule!");
+    return Qt::OddEvenFill;
+}
+
 struct TransparencyLayer
 {
     TransparencyLayer(const QPainter* p, const QRect &rect)
@@ -606,6 +618,7 @@ void GraphicsContext::fillPath()
 
     QPainter *p = m_data->p();
     QPainterPath path = m_data->currentPath;
+    path.setFillRule(toQtFillRule(fillRule()));
 
     switch (m_common->state.fillColorSpace) {
     case SolidColorSpace:
@@ -634,6 +647,7 @@ void GraphicsContext::strokePath()
     QPainter *p = m_data->p();
     QPen pen = p->pen();
     QPainterPath path = m_data->currentPath;
+    path.setFillRule(toQtFillRule(fillRule()));
 
     switch (m_common->state.strokeColorSpace) {
     case SolidColorSpace:
