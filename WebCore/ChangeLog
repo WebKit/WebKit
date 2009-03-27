@@ -1,3 +1,10 @@
+2009-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix when ACCELERATED_COMPOSITING is turned on.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::canUseDirectCompositing):
+
 2009-03-26  Eric Seidel  <eric@webkit.org>
 
         No additional review, committing previously reviewed files for build fix only.

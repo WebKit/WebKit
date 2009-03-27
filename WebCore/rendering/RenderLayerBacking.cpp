@@ -562,8 +562,8 @@ bool RenderLayerBacking::canUseDirectCompositing() const
 {
     RenderObject* renderObject = renderer();
     
-    // Reject anything that isn't a RenderReplaced, and not an image or video
-    if (!renderObject->isReplaced() || (!renderObject->isImage() && !renderObject->isVideo()))
+    // Reject anything that isn't an image
+    if (!renderObject->isImage())
         return false;
     
     if (renderObject->hasMask() || renderObject->hasReflection())
