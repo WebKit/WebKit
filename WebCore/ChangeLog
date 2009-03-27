@@ -1,3 +1,18 @@
+2009-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Make scrollLeft, scrollTop, scrollWidth, and scrollHeight
+        virtual to fix the broken layout tests from my last commit.
+
+        Reviewed by Mark Rowe.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollLeft):
+        (WebCore::Element::scrollTop):
+        (WebCore::Element::scrollWidth):
+        (WebCore::Element::scrollHeight):
+        * dom/Element.h:
+        * html/HTMLBodyElement.h:
+
 2009-03-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

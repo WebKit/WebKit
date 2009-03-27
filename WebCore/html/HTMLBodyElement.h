@@ -61,14 +61,14 @@ public:
     String vLink() const;
     void setVLink(const String&);
 
-    int scrollLeft() const;
-    void setScrollLeft(int scrollLeft);
+    virtual int scrollLeft() const;
+    virtual void setScrollLeft(int scrollLeft);
     
-    int scrollTop() const;
-    void setScrollTop(int scrollTop);
+    virtual int scrollTop() const;
+    virtual void setScrollTop(int scrollTop);
     
-    int scrollHeight() const;
-    int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual int scrollWidth() const;
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
     

@@ -77,12 +77,12 @@ public:
     int clientTop();
     int clientWidth();
     int clientHeight();
-    int scrollLeft();
-    int scrollTop();
-    void setScrollLeft(int);
-    void setScrollTop(int);
-    int scrollWidth();
-    int scrollHeight();
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
 
     PassRefPtr<ClientRectList> getClientRects() const;
     PassRefPtr<ClientRect> getBoundingClientRect() const;

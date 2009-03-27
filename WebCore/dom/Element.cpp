@@ -377,7 +377,7 @@ int Element::clientHeight()
     return 0;
 }
 
-int Element::scrollLeft()
+int Element::scrollLeft() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -385,7 +385,7 @@ int Element::scrollLeft()
     return 0;
 }
 
-int Element::scrollTop()
+int Element::scrollTop() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -407,7 +407,7 @@ void Element::setScrollTop(int newTop)
         rend->setScrollTop(static_cast<int>(newTop * rend->style()->effectiveZoom()));
 }
 
-int Element::scrollWidth()
+int Element::scrollWidth() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -415,7 +415,7 @@ int Element::scrollWidth()
     return 0;
 }
 
-int Element::scrollHeight()
+int Element::scrollHeight() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
