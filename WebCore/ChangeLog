@@ -1,3 +1,13 @@
+2009-03-27  John Abd-El-Malek  <jam@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24836
+        Fix navigator.plugins.refresh(false) in Chromium.
+
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginData::refresh):
+
 2009-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Make scrollLeft, scrollTop, scrollWidth, and scrollHeight
