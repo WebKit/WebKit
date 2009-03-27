@@ -792,13 +792,12 @@ void WebFrameLoaderClient::updateGlobalHistory()
                                           withTitle:loader->title()
                                              method:loader->originalRequestCopy().httpMethod()
                                          wasFailure:loader->urlForHistoryReflectsFailure()];
-
-    updateGlobalHistoryRedirectLinks();
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+    ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
         if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])

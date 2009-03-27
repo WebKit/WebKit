@@ -4724,6 +4724,8 @@ void FrameLoader::updateHistoryForStandardLoad()
             if (!needPrivacy) {
                 m_client->updateGlobalHistory();
                 m_documentLoader->setDidCreateGlobalHistoryEntry(true);
+                if (m_documentLoader->unreachableURL().isEmpty())
+                    m_client->updateGlobalHistoryRedirectLinks();
             }
             if (Page* page = m_frame->page())
                 page->setGlobalHistoryItem(needPrivacy ? 0 : page->backForwardList()->currentItem());
@@ -4814,6 +4816,8 @@ void FrameLoader::updateHistoryForRedirectWithLockedBackForwardList()
                 if (!needPrivacy) {
                     m_client->updateGlobalHistory();
                     m_documentLoader->setDidCreateGlobalHistoryEntry(true);
+                    if (m_documentLoader->unreachableURL().isEmpty())
+                        m_client->updateGlobalHistoryRedirectLinks();
                 }
                 if (Page* page = m_frame->page())
                     page->setGlobalHistoryItem(needPrivacy ? 0 : page->backForwardList()->currentItem());

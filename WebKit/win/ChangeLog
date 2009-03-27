@@ -1,3 +1,18 @@
+2009-03-27  Adam Roben  <aroben@apple.com>
+
+        Don't include substitute data URLs in global history redirect chains
+
+        <rdar://6690169>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Don't call
+        updateGlobalHistoryRedirectLinks. FrameLoader calls this for us now.
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        Added an assertion to help catch cases where we might be adding a
+        substitute data URL into a redirect chain.
+
 2009-03-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

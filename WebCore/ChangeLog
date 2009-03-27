@@ -1,3 +1,26 @@
+2009-03-27  Adam Roben  <aroben@apple.com>
+
+        Don't include substitute data URLs in global history redirect chains
+
+        <rdar://6690169>
+
+        Reviewed by Darin Adler.
+
+        This might be testable if:
+          - support were added to DRT for providing substitute data on failed
+            loads
+          - support were added to DRT for dumping redirect chains
+
+        I tried doing the above and was still unable to make a test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForStandardLoad):
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedBackForwardList):
+        Call updateGlobalHistoryRedirectLinks only if the load succeeded
+        (i.e., there is no unreachableURL). Previous the FrameLoaderClient
+        implementations were unconditionally calling
+        updateGlobalHistoryRedirectLinks from within updateGlobalHistory.
+
 2009-03-27  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

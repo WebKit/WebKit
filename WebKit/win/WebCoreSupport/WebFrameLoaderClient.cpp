@@ -482,7 +482,6 @@ void WebFrameLoaderClient::updateGlobalHistory()
 
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
     history->visitedURL(loader->urlForHistory(), loader->title(), loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure());
-    updateGlobalHistoryRedirectLinks();
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -492,6 +491,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
         return;
 
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
+    ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
         if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->clientRedirectSourceForHistory())) {
