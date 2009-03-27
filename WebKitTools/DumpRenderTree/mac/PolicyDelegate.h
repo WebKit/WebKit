@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+class LayoutTestController;
 
 @interface PolicyDelegate : NSObject {
     BOOL permissiveDelegate;
+    LayoutTestController* controllerToNotifyDone;
 }
 
 - (void)setPermissive:(BOOL)permissive;
+- (void)setControllerToNotifyDone:(LayoutTestController*)controller;
 
 @end

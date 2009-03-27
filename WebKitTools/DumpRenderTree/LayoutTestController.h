@@ -43,13 +43,13 @@ public:
     void addDisallowedURL(JSStringRef url);
     void clearAllDatabases();
     void clearBackForwardList();
+    void clearPersistentUserStyleSheet();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
-    void execCommand(JSStringRef name, JSStringRef value);
     void display();
+    void execCommand(JSStringRef name, JSStringRef value);
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
-    size_t webHistoryItemCount();
     void notifyDone();
     JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);
@@ -64,16 +64,17 @@ public:
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);
     void setJavaScriptProfilingEnabled(bool profilingEnabled);
     void setMainFrameIsFirstResponder(bool flag);
-    void setPrivateBrowsingEnabled(bool flag);
+    void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPopupBlockingEnabled(bool flag);
-    void setTabKeyCyclesThroughElements(bool cycles);
-    void setSmartInsertDeleteEnabled(bool flag);
+    void setPrivateBrowsingEnabled(bool flag);
     void setSelectTrailingWhitespaceEnabled(bool flag);
+    void setSmartInsertDeleteEnabled(bool flag);
+    void setTabKeyCyclesThroughElements(bool cycles);
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
-    void setPersistentUserStyleSheetLocation(JSStringRef path);
-    void clearPersistentUserStyleSheet();
+    void waitForPolicyDelegate();
+    size_t webHistoryItemCount();
     int windowCount();
     
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);

@@ -1,3 +1,63 @@
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added waitForPolicyDelegate, a more-reliable way to make our mailto form submission
+        tests work.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (getFocusedElementCallback): Use static_cast instead of reinterpret_cast because there's
+        no reason to use reinterpret_cast just to get from void* to a specific type.
+        (getRootElementCallback): Ditto.
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (toAXElement): Ditto.
+        * DumpRenderTree/GCController.cpp:
+        (collectCallback): Ditto.
+        (collectOnAlternateThreadCallback): Ditto.
+        (getJSObjectCountCallback): Ditto.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (many functions):  Ditto.
+        (waitForPolicyDelegateCallback): Added.
+        (LayoutTestController::staticFunctions): Sorted functions by name.
+        Added waitForPolicyDelegate.
+
+        * DumpRenderTree/LayoutTestController.h: Sorted functions by name.
+        Added waitForPolicyDelegate.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting): Added code to reset the state of the
+        policy delegate.
+        (runTest): Added an additional call to resetWebViewToConsistentStateBeforeTesting just
+        before loading an empty page. This prevents extra policy delegate calls from being logged.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::waitForPolicyDelegate): Added. Puts us into wait mode, and then
+        tells the policy delegate to notify when done, then points the web view at the policy delegate.
+
+        * DumpRenderTree/mac/PolicyDelegate.h: Added setControllerToNotifyDone: method.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        Added code to do notifyDone if controllerToNotifyDone is set.
+        (-[PolicyDelegate setControllerToNotifyDone:]): Added.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting): Added code to reset the state of the
+        policy delegate. Also moved the call to resetUndoManager in here.
+        (runTest): Removed the call to resetUndoManager (see above). Added an additional call to
+        resetWebViewToConsistentStateBeforeTesting to match the Mac code.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate): 0, not NULL.
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::PolicyDelegate): Initialize m_controllerToNotifyDone to 0.
+        (PolicyDelegate::decidePolicyForNavigationAction): Added code to do notifyDone if
+        m_controllerToNotifyDone is set.
+
+        * DumpRenderTree/win/PolicyDelegate.h: Added setControllerToNotifyDone and
+        m_controllerToNotifyDone.
+
 2009-03-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include "PolicyDelegate.h"
 
 #include "DumpRenderTree.h"
-
+#include "LayoutTestController.h"
 #include <string>
 
 using std::wstring;
@@ -38,6 +38,7 @@ using std::wstring;
 PolicyDelegate::PolicyDelegate()
     : m_refCount(1)
     , m_permissiveDelegate(false)
+    , m_controllerToNotifyDone(0)
 {
 }
 
@@ -119,6 +120,11 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
         listener->use();
     else
         listener->ignore();
+
+    if (m_controllerToNotifyDone) {
+        m_controllerToNotifyDone->notifyDone();
+        m_controllerToNotifyDone = 0;
+    }
 
     return S_OK;
 }

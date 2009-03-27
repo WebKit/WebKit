@@ -44,7 +44,7 @@ GCController::~GCController()
 
 static JSValueRef collectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    GCController* controller = reinterpret_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
     controller->collect();
     return JSValueMakeUndefined(context);
 }
@@ -55,7 +55,7 @@ static JSValueRef collectOnAlternateThreadCallback(JSContextRef context, JSObjec
     if (argumentCount > 0)
         waitUntilDone = JSValueToBoolean(context, arguments[0]);
 
-    GCController* controller = reinterpret_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
     controller->collectOnAlternateThread(waitUntilDone);
 
     return JSValueMakeUndefined(context);
@@ -63,7 +63,7 @@ static JSValueRef collectOnAlternateThreadCallback(JSContextRef context, JSObjec
 
 static JSValueRef getJSObjectCountCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    GCController* controller = reinterpret_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
     size_t jsObjectCount = controller->getJSObjectCount();
 
     return JSValueMakeNumber(context, jsObjectCount);

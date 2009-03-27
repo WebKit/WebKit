@@ -420,3 +420,10 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
 {
     return [mainFrame _numberOfActiveAnimations];
 }
+
+void LayoutTestController::waitForPolicyDelegate()
+{
+    setWaitToDump(true);
+    [policyDelegate setControllerToNotifyDone:this];
+    [[mainFrame webView] setPolicyDelegate:policyDelegate];
+}

@@ -1016,6 +1016,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView resetPageZoom:nil];
     [webView setTabKeyCyclesThroughElements:YES];
     [webView setPolicyDelegate:nil];
+    [policyDelegate setPermissive:NO];
+    [policyDelegate setControllerToNotifyDone:0];
     [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     [webView _clearMainFrameName];
     [[webView undoManager] removeAllActions];
@@ -1131,7 +1133,9 @@ static void runTest(const string& testPathOrURL)
             [window close];
         }
     }
-    
+
+    resetWebViewToConsistentStateBeforeTesting();
+
     [mainFrame loadHTMLString:@"<html></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
     [mainFrame stopLoading];
     

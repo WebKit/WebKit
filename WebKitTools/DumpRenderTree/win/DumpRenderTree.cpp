@@ -643,6 +643,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
         return;
 
     webView->setPolicyDelegate(0);
+    policyDelegate->setPermissive(false);
+    policyDelegate->setControllerToNotifyDone(0);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);
     if (webIBActions) {
@@ -689,6 +691,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
         SetFocus(viewWindow);
 
     webViewPrivate->clearMainFrameName();
+
+    sharedUIDelegate->resetUndoManager();
 }
 
 static void runTest(const string& testPathOrURL)
@@ -740,7 +744,6 @@ static void runTest(const string& testPathOrURL)
         history->setOptionalSharedHistory(0);
 
     resetWebViewToConsistentStateBeforeTesting();
-    sharedUIDelegate->resetUndoManager();
 
     prevTestBFItem = 0;
     COMPtr<IWebView> webView;
@@ -776,6 +779,8 @@ static void runTest(const string& testPathOrURL)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    resetWebViewToConsistentStateBeforeTesting();
 
     frame->stopLoading();
 

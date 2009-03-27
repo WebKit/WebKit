@@ -152,6 +152,11 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permis
     // FIXME: implement
 }
 
+void LayoutTestController::waitForPolicyDelegate()
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
 {
     // FIXME: implement

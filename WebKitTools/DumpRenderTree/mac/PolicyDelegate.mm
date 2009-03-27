@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,11 @@
 #import "PolicyDelegate.h"
 
 #import "DumpRenderTree.h"
-#import "DumpRenderTreeDraggingInfo.h"
+#import "LayoutTestController.h"
 #import <WebKit/WebPolicyDelegate.h>
 
 @implementation PolicyDelegate
+
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation
                                                            request:(NSURLRequest *)request
                                                              frame:(WebFrame *)frame
@@ -70,6 +71,11 @@
         [listener use];
     else
         [listener ignore];
+
+    if (controllerToNotifyDone) {
+        controllerToNotifyDone->notifyDone();
+        controllerToNotifyDone = 0;
+    }
 }
 
 - (void)setPermissive:(BOOL)permissive
@@ -77,5 +83,9 @@
     permissiveDelegate = permissive;
 }
 
+- (void)setControllerToNotifyDone:(LayoutTestController*)controller
+{
+    controllerToNotifyDone = controller;
+}
 
 @end
