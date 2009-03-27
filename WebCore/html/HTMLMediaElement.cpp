@@ -1127,7 +1127,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     
     float now = currentTime();
     float dur = duration();
-    if (now >= dur) {
+    if (!isnan(dur) && dur && now >= dur) {
         if (loop()) {
             ExceptionCode ignoredException;
             m_sentEndEvent = false;
@@ -1224,7 +1224,11 @@ bool HTMLMediaElement::potentiallyPlaying() const
 
 bool HTMLMediaElement::endedPlayback() const
 {
-    return m_player && m_readyState >= HAVE_METADATA && currentTime() >= duration() && !loop();
+    if (!m_player || m_readyState < HAVE_METADATA)
+        return false;
+    
+    float dur = duration();
+    return !isnan(dur) && currentTime() >= dur && !loop();
 }
 
 bool HTMLMediaElement::stoppedDueToErrors() const
