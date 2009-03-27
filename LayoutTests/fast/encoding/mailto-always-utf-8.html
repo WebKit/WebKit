@@ -15,12 +15,11 @@
 function test() {
   if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-    layoutTestController.setCustomPolicyDelegate(true);
+    layoutTestController.waitForPolicyDelegate();
     var a = document.getElementsByTagName("a")[0];
     eventSender.mouseMoveTo(a.offsetLeft + 5, a.offsetTop + 5);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    layoutTestController.setCustomPolicyDelegate(false);
   }
 }
 </script>

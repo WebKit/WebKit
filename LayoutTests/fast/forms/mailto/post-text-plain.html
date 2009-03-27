@@ -13,9 +13,8 @@
 function test() {
   if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-    layoutTestController.setCustomPolicyDelegate(true);
+    layoutTestController.waitForPolicyDelegate();
     document.getElementsByTagName("form")[0].submit();
-    layoutTestController.setCustomPolicyDelegate(false);
   }
 }
 </script>
