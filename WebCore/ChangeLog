@@ -1,3 +1,15 @@
+2009-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=24876>.
+        Bug 24876: fast/forms/select-max-length.html times out in debug builds due to HTMLSelectElement::setLength being O(N^2)
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength): Repeatedly calling remove to remove elements causes us to recalculate the list
+        items after each node is removed, leading to O(N^2) behaviour.  By inlining the batch removal in to setLength we can avoid
+        this gratuitous recalcuation.
+
 2009-03-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.

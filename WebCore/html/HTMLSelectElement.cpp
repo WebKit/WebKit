@@ -1064,10 +1064,18 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
             if (ec)
                 break;
         } while (++diff);
+    } else {
+        const Vector<HTMLElement*>& items = listItems();
+
+        size_t optionIndex = 0;
+        for (size_t listIndex = 0; listIndex < items.size(); listIndex++) {
+            if (items[listIndex]->hasLocalName(optionTag) && optionIndex++ >= newLen) {
+                Element *item = items[listIndex];
+                ASSERT(item->parentNode());
+                item->parentNode()->removeChild(item, ec);
+            }
+        }
     }
-    else // remove elements
-        while (diff-- > 0)
-            remove(newLen);
 }
 
 void HTMLSelectElement::scrollToSelection()
