@@ -1,3 +1,51 @@
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        To prepare for work on a form loading fix, remove some unused functions,
+        consolidate some functions, and make many more functions private in
+        FrameLoader.
+
+        * WebCore.base.exp: Remove some unused entry points, update another.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach): Clear m_frame directly instead of using
+        clearFramePointer.
+        * dom/Document.h: Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Consolidate the two functions
+        of this name into a single function. Also changed the event argument
+        to be PassRefPtr<Event>.
+        (WebCore::FrameLoader::submitForm): Changed the event argument to
+        be PassRefPtr<Event>.
+        (WebCore::FrameLoader::scheduleLocationChange): Call completeURL
+        explicitly so we can remove the version of changeLocation that does
+        completeURL for us.
+        (WebCore::FrameLoader::redirectionTimerFired): Ditto.
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Set m_provisionalHistoryItem
+        directly so we don't need a setProvisionalHistoryItem function.
+        (WebCore::FrameLoader::canCachePageContainingThisFrame): Get at
+        m_quickRedirectComing directly so we don't need a isQuickRedirectComing
+        function.
+        (WebCore::FrameLoader::logCanCacheFrameDecision): Ditto.
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues): Changed the
+        event argument to be PassRefPtr<Event>.
+        (WebCore::FrameLoader::loadURL): Move the logic of the continueLoadWithData
+        function here because this is the only caller. If we want to make the
+        resulting function smaller we should refactor some other way. Also
+        streamlined the user-chosen encoding logic, but did not change what it does.
+        (WebCore::FrameLoader::finishedLoadingDocument): Changed the event argument
+        to be PassRefPtr<Event>.
+        (WebCore::FrameLoader::loadPostRequest): Ditto.
+        (WebCore::FrameLoader::receivedMainResourceError): Moved the logic from
+        the didNotOpenURL function here, since this was the only caller.
+
+        * loader/FrameLoader.h: Removed include of FormState.h and used a forward
+        declaration instead. Removed unneeded forward declation of Element.
+        Moved many functions into the private section, and removed some other
+        unused or uneeded functions.
+
 2009-03-27  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

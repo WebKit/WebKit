@@ -1318,20 +1318,16 @@ void Document::detach()
         render->destroy();
     
     // This is required, as our Frame might delete itself as soon as it detaches
-    // us.  However, this violates Node::detach() symantics, as it's never
-    // possible to re-attach.  Eventually Document::detach() should be renamed
-    // or this call made explicit in each of the callers of Document::detach().
-    clearFramePointer();
+    // us. However, this violates Node::detach() symantics, as it's never
+    // possible to re-attach. Eventually Document::detach() should be renamed,
+    // or this setting of the frame to 0 could be made explicit in each of the
+    // callers of Document::detach().
+    m_frame = 0;
     
     if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;
     }
-}
-
-void Document::clearFramePointer()
-{
-    m_frame = 0;
 }
 
 void Document::removeAllEventListenersFromAllNodes()
