@@ -1,3 +1,13 @@
+2009-03-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Update fast/repaint/lines-with-layout-delta.html pixel results.
+        Hyatt says it's a progression, blame him if it ain't.
+
+        * platform/mac/fast/repaint/lines-with-layout-delta-expected.checksum:
+        * platform/mac/fast/repaint/lines-with-layout-delta-expected.png:
+
 2009-03-26  Mark Rowe  <mrowe@apple.com>
 
         Update layout test results for changes to Geeza Pro.
