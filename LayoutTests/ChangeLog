@@ -1,3 +1,16 @@
+2009-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Update layout test results for changes to Geeza Pro.
+
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.txt: Removed.
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum: Renamed from LayoutTests/platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.checksum.
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.png: Renamed from LayoutTests/platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.png.
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+
 2009-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
