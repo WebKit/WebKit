@@ -1,3 +1,17 @@
+2009-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6642221>
+        REGRESSION: With the Movie widget, movie trailer fails to load if movie had been previously viewed
+        
+        Add a dashboard specific workaround so that we always create renderers for object elements, even if display:none is set.
+        
+        I've filed <rdar://problem/6731022> against the Movies widget.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+
 2009-03-25  Timothy Hatcher  <timothy@apple.com>
 
         Expose new DOM methods as public Objective-C API.
