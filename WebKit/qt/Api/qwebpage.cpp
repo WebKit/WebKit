@@ -181,6 +181,21 @@ static const char* editorCommandWebActions[] =
 
     "SelectAll", // SelectAll
 
+    "PasteAndMatchStyle", // PasteAndMatchStyle
+    "RemoveFormat", // RemoveFormat
+    "Strikethrough", // ToggleStrikethrough,
+    "Subscript", // ToggleSubscript
+    "Superscript", // ToggleSuperscript
+    "InsertUnorderedList", // InsertUnorderedList
+    "InsertOrderedList", // InsertOrderedList
+    "Indent", // Indent
+    "Outdent", // Outdent,
+
+    "AlignCenter", // AlignCenter,
+    "AlignJustified", // AlignJustified,
+    "AlignLeft", // AlignLeft,
+    "AlignRight", // AlignRight,
+
     0 // WebActionCount
 };
 
@@ -547,6 +562,19 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::ToggleUnderline);
     updateAction(QWebPage::InsertParagraphSeparator);
     updateAction(QWebPage::InsertLineSeparator);
+    updateAction(QWebPage::PasteAndMatchStyle);
+    updateAction(QWebPage::RemoveFormat);
+    updateAction(QWebPage::ToggleStrikethrough);
+    updateAction(QWebPage::ToggleSubscript);
+    updateAction(QWebPage::ToggleSuperscript);
+    updateAction(QWebPage::InsertUnorderedList);
+    updateAction(QWebPage::InsertOrderedList);
+    updateAction(QWebPage::Indent);
+    updateAction(QWebPage::Outdent);
+    updateAction(QWebPage::AlignCenter);
+    updateAction(QWebPage::AlignJustified);
+    updateAction(QWebPage::AlignLeft);
+    updateAction(QWebPage::AlignRight);
 }
 
 void QWebPagePrivate::timerEvent(QTimerEvent *ev)
@@ -1167,6 +1195,21 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \value InsertParagraphSeparator Insert a new paragraph.
     \value InsertLineSeparator Insert a new line.
     \value SelectAll Selects all content.
+    \value PasteAndMatchStyle Paste content from the clipboard with current style.
+    \value RemoveFormat Removes formatting and style.
+    \value ToggleStrikethrough Toggle the formatting between strikethrough and normal style.
+    \value ToggleSubscript Toggle the formatting between subscript and baseline.
+    \value ToggleSuperscript Toggle the formatting between supercript and baseline.
+    \value InsertUnorderedList Toggles the selection between an ordered list and a normal block.
+    \value InsertOrderedList Toggles the selection between an ordered list and a normal block.
+    \value Indent Increases the indentation of the currently selected format block by one increment.
+    \value Outdent Decreases the indentation of the currently selected format block by one increment.
+    \value AlignCenter Applies center alignment to content.
+    \value AlignJustified Applies full justification to content.
+    \value AlignLeft Applies left justification to content.
+    \value AlignRight Applies right justification to content.
+
+
     \omitvalue WebActionCount
 
 */
@@ -1871,6 +1914,52 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case InsertLineSeparator:
             text = tr("Insert a new line");
+            break;
+
+        case PasteAndMatchStyle:
+            text = tr("Paste and Match Style");
+            break;
+        case RemoveFormat:
+            text = tr("Remove formatting");
+            break;
+
+        case ToggleStrikethrough:
+            text = tr("Strikethrough");
+            checkable = true;
+            break;
+        case ToggleSubscript:
+            text = tr("Subscript");
+            checkable = true;
+            break;
+        case ToggleSuperscript:
+            text = tr("Superscript");
+            checkable = true;
+            break;
+        case InsertUnorderedList:
+            text = tr("Insert Bulleted List");
+            checkable = true;
+            break;
+        case InsertOrderedList:
+            text = tr("Insert Numbered List");
+            checkable = true;
+            break;
+        case Indent:
+            text = tr("Indent");
+            break;
+        case Outdent:
+            text = tr("Outdent");
+            break;
+        case AlignCenter:
+            text = tr("Center");
+            break;
+        case AlignJustified:
+            text = tr("Justify");
+            break;
+        case AlignLeft:
+            text = tr("Align Left");
+            break;
+        case AlignRight:
+            text = tr("Align Right");
             break;
 
         case NoWebAction:

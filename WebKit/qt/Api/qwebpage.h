@@ -150,6 +150,22 @@ public:
 
         SelectAll,
 
+        PasteAndMatchStyle,
+        RemoveFormat,
+
+        ToggleStrikethrough,
+        ToggleSubscript,
+        ToggleSuperscript,
+        InsertUnorderedList,
+        InsertOrderedList,
+        Indent,
+        Outdent,
+
+        AlignCenter,
+        AlignJustified,
+        AlignLeft,
+        AlignRight,
+
         WebActionCount
     };
 

@@ -1,3 +1,26 @@
+2009-03-27  Erik L. Bunce  <elbunce@xendom.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24746
+
+        Add new editing related QWebPage::WebActions
+        * Clipboard: PasteAndMatchStyle
+        * Formatting: RemoveFormat, ToggleStrikethrough, ToggleSubscript, and
+          ToggleSuperscript
+        * List Editing: InsertUnorderedList, InsertOrderedList, Indent, Outdent
+        * Paragraph Justification: AlignCenter, AlignJustified, AlignLeft, AlignRight 
+
+        Improved selection and editing tests.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::textSelection):
+        (tst_QWebPage::textEditing):
+
 2009-03-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.
