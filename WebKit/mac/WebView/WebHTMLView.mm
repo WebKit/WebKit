@@ -4639,7 +4639,13 @@ static BOOL writingDirectionKeyBindingsEnabled()
 // support them via the key bindings mechanism.
 - (BOOL)_wantsKeyDownForEvent:(NSEvent *)event
 {
-    return YES;
+    bool haveWebCoreFrame = core([self _frame]);
+
+    // If we have a frame, our keyDown method will handle key bindings after sending
+    // the event through the DOM, so ask AppKit not to do its early special key binding
+    // mapping. If we don't have a frame, just let things work the normal way without
+    // a keyDown.
+    return haveWebCoreFrame;
 }
 
 #else

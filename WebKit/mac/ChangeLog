@@ -1,5 +1,14 @@
 2009-03-27  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6541923> REGRESSION (r38629): Tab cycle in empty tab is broken
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _wantsKeyDownForEvent:]): Only return YES when we have a Frame.
+
+2009-03-27  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan and Anders Carlsson.
 
         <rdar://problem/5987442> Pasteboard not exposed to WebEditingDelegate for WebViewInsertActionPasted (needed for system services)
