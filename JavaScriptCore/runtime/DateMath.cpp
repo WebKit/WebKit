@@ -68,10 +68,6 @@
 #include <sys/timeb.h>
 #endif
 
-#if HAVE(STRINGS_H)
-#include <strings.h>
-#endif
-
 using namespace WTF;
 
 namespace JSC {

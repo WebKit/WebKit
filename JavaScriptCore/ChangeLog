@@ -1,3 +1,13 @@
+2009-03-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 24884: Include strings.h for strcasecmp()
+        https://bugs.webkit.org/show_bug.cgi?id=24884
+
+        * runtime/DateMath.cpp: Reversed previous change including strings.h
+        * wtf/StringExtras.h: Include strings.h here is available
+
 2009-03-26  Adam Roben  <aroben@apple.com>
 
         Copy testapi.js to $WebKitOutputDir on Windows

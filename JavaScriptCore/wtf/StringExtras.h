@@ -29,6 +29,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#if HAVE(STRINGS_H) 
+#include <strings.h> 
+#endif 
+
 #if COMPILER(MSVC)
 
 inline int snprintf(char* buffer, size_t count, const char* format, ...) 
