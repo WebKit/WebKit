@@ -1,3 +1,17 @@
+2009-03-26  Eric Seidel  <eric@webkit.org>
+
+        No additional review, committing previously reviewed files for build fix only.
+
+        Add files I missed when commiting Jungshik's patch in r42022.
+        https://bugs.webkit.org/show_bug.cgi?id=16482
+
+        * icu/unicode/ucsdet.h: Added.
+        * platform/text/TextEncodingDetector.h: Added.
+        * platform/text/TextEncodingDetectorICU.cpp: Added.
+        (WebCore::detectTextEncoding):
+        * platform/text/TextEncodingDetectorNone.cpp: Added.
+        (WebCore::detectTextEncoding):
+
 2009-03-26  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
