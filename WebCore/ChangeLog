@@ -1,3 +1,16 @@
+2009-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Remove redundant attributes and functions from IDL files that have the
+        same attributes and functions defined in the super class.
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove DOMHTMLBodyElementPrivate.h.
+        * bindings/objc/PublicDOMInterfaces.h: Remove focus and blur from DOMHTMLElement.
+        * html/HTMLBodyElement.idl: Remove scrollLeft, scrollTop, scrollWidth
+        and scrollHeight.
+        * html/HTMLElement.idl: Remove blur and focus.
+
 2009-03-27  Adam Roben  <aroben@apple.com>
 
         Don't include substitute data URLs in global history redirect chains

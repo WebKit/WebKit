@@ -31,12 +31,6 @@ module html {
         attribute [ConvertNullToNullString] DOMString link;
         attribute [ConvertNullToNullString] DOMString text;
         attribute [ConvertNullToNullString] DOMString vLink; 
-
-        // IE Extensions
-                 attribute long scrollLeft;
-                 attribute long scrollTop;
-        readonly attribute long scrollWidth;
-        readonly attribute long scrollHeight;
     };
 
 }

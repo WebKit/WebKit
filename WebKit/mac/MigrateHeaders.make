@@ -84,7 +84,6 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLBaseElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLBaseFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLBodyElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLBodyElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLButtonElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLCollection.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDListElement.h \

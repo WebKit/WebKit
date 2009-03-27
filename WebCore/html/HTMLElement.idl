@@ -36,8 +36,6 @@ module html {
                  attribute [ConvertNullToNullString] DOMString className;
 
                  attribute long            tabIndex;
-                 void                      blur();
-                 void                      focus();
 
         // Extensions
                  attribute [ConvertNullToNullString] DOMString innerHTML

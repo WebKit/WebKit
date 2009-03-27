@@ -474,8 +474,6 @@
 @property(readonly) BOOL isContentEditable;
 @property(readonly, copy) NSString *titleDisplayString AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property int tabIndex;
-- (void)blur;
-- (void)focus;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement WEBKIT_VERSION_1_3

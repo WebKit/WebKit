@@ -1,3 +1,8 @@
+2009-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        * MigrateHeaders.make: Remove DOMHTMLBodyElementPrivate.h since it
+        is not generated anymore.
+
 2009-03-27  Adam Roben  <aroben@apple.com>
 
         Don't include substitute data URLs in global history redirect chains

@@ -514,7 +514,6 @@
 		1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */; };
 		1CF6BE150E9BB4670025E1CD /* ObjCNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF6BE130E9BB4670025E1CD /* ObjCNodeFilterCondition.h */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
-		1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */; };
 		2951A2AE0E646C8800DB9ADE /* AccessibilityObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */; };
 		2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */; };
 		2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */; };
@@ -4521,7 +4520,6 @@
 				8575DF800AA612D600F5DBB5 /* DOMHTMLBaseElement.h in Copy Generated Headers */,
 				85ECBF090AA7628900544F0B /* DOMHTMLBaseFontElement.h in Copy Generated Headers */,
 				8575DF810AA612D600F5DBB5 /* DOMHTMLBodyElement.h in Copy Generated Headers */,
-				1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in Copy Generated Headers */,
 				85BA4CE50AA686510088052D /* DOMHTMLButtonElement.h in Copy Generated Headers */,
 				93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */,
 				1C11CCBA0AA6093700DADB20 /* DOMHTMLCollection.h in Copy Generated Headers */,
@@ -5406,7 +5404,6 @@
 		1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCNodeFilterCondition.mm; sourceTree = "<group>"; };
 		1CF6BE130E9BB4670025E1CD /* ObjCNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCNodeFilterCondition.h; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
-		1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLBodyElementPrivate.h; sourceTree = "<group>"; };
 		2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectMac.mm; sourceTree = "<group>"; };
 		2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityImageMapLink.h; sourceTree = "<group>"; };
 		2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityImageMapLink.cpp; sourceTree = "<group>"; };
@@ -10987,7 +10984,6 @@
 				85ECBEE00AA7626800544F0B /* DOMHTMLBaseFontElement.mm */,
 				859A9C3F0AA5E3BD00B694B2 /* DOMHTMLBodyElement.h */,
 				859A9C400AA5E3BD00B694B2 /* DOMHTMLBodyElement.mm */,
-				1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */,
 				85BA4CD50AA6861B0088052D /* DOMHTMLButtonElement.h */,
 				85BA4CD60AA6861B0088052D /* DOMHTMLButtonElement.mm */,
 				93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */,
