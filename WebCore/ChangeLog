@@ -1,3 +1,10 @@
+2009-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Try and fix the Qt build.
+
+        * platform/text/TextEncodingDetectorNone.cpp:
+        (WebCore::detectTextEncoding):
+
 2009-03-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
