@@ -1,3 +1,13 @@
+2009-03-27  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24303
+        Using keyboard select RTL text, Highlights goes to opposite direction from Firefox and IE.
+
+        * editing/selection/extend-selection-expected.txt: Added.
+        * editing/selection/extend-selection.html: Added.
+
 2009-03-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser

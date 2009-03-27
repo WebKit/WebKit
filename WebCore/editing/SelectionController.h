@@ -130,10 +130,14 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
-    VisiblePosition modifyExtendingRightForward(TextGranularity);
+    TextDirection directionOfEnclosingBlock();
+
+    VisiblePosition modifyExtendingRight(TextGranularity);
+    VisiblePosition modifyExtendingForward(TextGranularity);
     VisiblePosition modifyMovingRight(TextGranularity);
     VisiblePosition modifyMovingForward(TextGranularity);
-    VisiblePosition modifyExtendingLeftBackward(TextGranularity);
+    VisiblePosition modifyExtendingLeft(TextGranularity);
+    VisiblePosition modifyExtendingBackward(TextGranularity);
     VisiblePosition modifyMovingLeft(TextGranularity);
     VisiblePosition modifyMovingBackward(TextGranularity);
 
@@ -187,3 +191,4 @@ void showTree(const WebCore::SelectionController*);
 #endif
 
 #endif // SelectionController_h
+

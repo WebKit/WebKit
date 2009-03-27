@@ -1,3 +1,29 @@
+2009-03-27  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24303
+        Using keyboard select RTL text, Highlights goes to opposite direction from Firefox and IE.
+
+        Test: editing/selection/extend-selection.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::directionOfEnclosingBlock): Added
+        (WebCore::SelectionController::modifyExtendingRight): Added. Currenctly 
+        implemented for character and word granularity, all other granularities
+        are treated as "forward".
+        (WebCore::SelectionController::modifyExtendingForward): Renamed 
+        modifyExtendingRightForward() to this.
+        (WebCore::SelectionController::modifyExtendingLeft): Added. Currenctly
+        implemented for character and word granularity, all other granularities
+        are treated as "backward".
+        (WebCore::SelectionController::modifyExtendingBackward): Renamed
+        modifyExtendingLeftBackward() to this.
+        (WebCore::SelectionController::modify): Change to call either the 
+        left/right or backward/forward methods depending on the 'dir' argument
+        for extends.
+        * editing/SelectionController.h:
+
 2009-03-27  John Abd-El-Malek  <jam@google.com>
 
         Reviewed by Eric Seidel.

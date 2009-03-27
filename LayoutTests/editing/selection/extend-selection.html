@@ -1,0 +1,299 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        div.test {
+            -webkit-user-modify: read-write;
+            padding: 4px;
+            border: 1px dashed lightblue;
+            margin: 4px 4px 4px 24px;
+            outline: none;
+            font-family: Lucida Grande;
+            counter-increment: test-number;
+        }
+        div.test:before { content: counter(test-number); position: absolute; left: 8px; font-size: x-small; text-align: right; width: 20px; }
+        div.test span { background-color: #def; }
+        div.test img { width: 1em; height: 1em; background-color: lightgreen; }
+        div.test img + img { background-color: lightblue; }
+        div.test div { border: 1px dashed pink; padding: 3px; height: 2em; }
+    </style>
+    <script>
+        function log(message)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(message));
+        }
+
+        function positionsExtendingInDirectionForEnclosingBlock(sel, direction, granularity)
+        {
+            var positions = [];
+            var ltrNum;
+            var rtlNum;
+            if (granularity == "character") {
+                ltrNum = 5;
+            } else {
+                ltrNum = 1;
+            }
+            if (granularity == "character") {
+                rtlNum = 15;
+            } else {
+                rtlNum = 3;
+            }
+            var index = 0;
+            while (index <= ltrNum) {
+                positions.push({ node: sel.extentNode, begin: sel.baseOffset, end: sel.extentOffset });
+                sel.modify("extend", direction, granularity);
+                ++index;
+            }
+            var antiDirection = direction;
+            if (antiDirection == 'left') {
+                antiDirection = "right";
+            } else if (antiDirection = 'right') {
+                antiDirection = "left";
+            }
+
+            index = 0;
+            while (index <= rtlNum) {
+                positions.push({ node: sel.extentNode, begin: sel.baseOffset, end: sel.extentOffset });
+                sel.modify("extend", antiDirection, granularity);
+                ++index;
+            }
+            var index = 0;
+            while (index < ltrNum) {
+                positions.push({ node: sel.extentNode, begin: sel.baseOffset, end: sel.extentOffset });
+                sel.modify("extend", direction, granularity);
+                ++index;
+            }
+            return positions;
+        }
+
+
+        function positionsExtendingInDirection(sel, direction, granularity)
+        {
+            var positions = [];
+            
+            while (true) {
+                positions.push({ node: sel.extentNode, begin: sel.baseOffset, end: sel.extentOffset });
+                sel.modify("extend", direction, granularity);
+                if (positions[positions.length - 1].node == sel.extentNode && positions[positions.length - 1].end == sel.extentOffset)
+                    break;
+            };
+            return positions;
+        }
+
+        function fold(string)
+        {
+            var result = "";
+            for (var i = 0; i < string.length; ++i) {
+                var char = string.charCodeAt(i);
+                if (char >= 0x05d0)
+                    char -= 0x058f;
+                else if (char == 10) {
+                    result += "\\n";
+                    continue;
+                }
+                result += String.fromCharCode(char);
+            }
+            return result;
+        }
+
+        function logPositions(positions)
+        {
+            for (var i = 0; i < positions.length; ++i) {
+                if (i) {
+                    if (positions[i].node != positions[i - 1].node)
+                        log("]");
+                    log(", ");
+                }
+                if (!i || positions[i].node != positions[i - 1].node)
+                    log((positions[i].node instanceof Text ? '"' + fold(positions[i].node.data) + '"' : "<" + positions[i].node.tagName + ">") + "[");
+                log("(" + positions[i].begin + "," + positions[i].end + ")");
+            }
+            log("]");
+        }
+
+        function checkReverseOrder(inputPositions, inputReversePositions)
+        {
+            var positions = inputPositions.slice();
+            var reversePositions = inputReversePositions.slice();
+            var mismatch = (positions.length != reversePositions.length);
+            if (mismatch)
+                log("WARNING: positions should be the same, but the length are not the same " +  positions.length + " vs. " + reversePositions.length + "\n");
+            while (!mismatch) {
+                var pos = positions.pop();
+                if (!pos)
+                    break;
+                var reversePos = reversePositions.shift();
+                if (pos.node != reversePos.node) {
+                    mismatch = true;
+                    log("WARNING: positions should be the reverse, but node are not the reverse\n");
+                } 
+                if (pos.begin != reversePos.begin) {
+                    mismatch = true;
+                    log("WARNING: positions should be the same, but begin are not " + pos.begin + " vs. " + reversePos.begin + "\n");
+                }
+                if (pos.end != reversePos.end) {
+                    mismatch = true;
+                    log("WARNING: positions should be the same, but end are not " + pos.end + " vs. " + reversePos.end + "\n");
+                }
+            }
+        }
+
+
+        function checkSameOrder(inputPositions, inputSamePositions)
+        {
+            var positions = inputPositions.slice();
+            var samePositions = inputSamePositions.slice();
+            var mismatch = positions.length != samePositions.length;
+            if (mismatch)
+                log("WARNING: positions should be the same, but the length are not the same " +  positions.length + " vs. " + samePositions.length + "\n");
+            while (!mismatch) {
+                var pos = positions.pop();
+                if (!pos)
+                    break;
+                var samePos = samePositions.pop();
+                if (pos.node != samePos.node) {
+                    mismatch = true;
+                    log("WARNING: positions should be the same, but node are not the same\n");
+                } 
+                if (pos.begin != samePos.begin) {
+                    mismatch = true;
+                    log("WARNING: positions should be the same, but begin are not the same " + pos.begin + " vs. " + samePos.begin + "\n");
+                }
+                if (pos.end != samePos.end) {
+                    mismatch = true;
+                    log("WARNING: positions should be the same, but end are not the same " + pos.end + " vs. " + samePos.end + "\n");
+                }
+           }
+        }
+
+
+        function extendingSelection(sel, direction, granularity, option)
+        {
+            var positions;
+            if (option == 0) {
+                positions = positionsExtendingInDirection(sel, direction, granularity);
+            } else {
+                positions = positionsExtendingInDirectionForEnclosingBlock(sel, direction, granularity);
+            }
+            logPositions(positions);
+            log("\n");
+            return positions;
+        }
+
+        function testExtendingSelection(tests, sel, granularity)
+        {
+            for (var i = 0; i < tests.length; ++i) {
+                tests[i].style.direction = "ltr";
+                log("Test " + (i + 1) + ", LTR:\n  Extending right: ");
+                sel.setPosition(tests[i], 0);
+                var ltrRightPos = extendingSelection(sel, "right", granularity, 0);
+    
+                log("  Extending left:  ");
+                var ltrLeftPos = extendingSelection(sel, "left", granularity, 0);
+    
+                log("  Extending forward: ");
+                sel.setPosition(tests[i], 0);
+                var ltrForwardPos = extendingSelection(sel, "forward", granularity, 0);
+    
+                log("  Extending backward:  ");
+                var ltrBackwardPos = extendingSelection(sel, "backward", granularity, 0);
+    
+                tests[i].style.direction = "rtl";
+    
+                log("Test " + (i + 1) + ", RTL:\n  Extending left: ");
+                sel.setPosition(tests[i], 0);
+                var rtlLeftPos = extendingSelection(sel, "left", granularity, 0);
+    
+                log("  Extending right:  ");
+                var rtlRightPos = extendingSelection(sel, "right", granularity, 0);
+    
+                log("  Extending forward: ");
+                sel.setPosition(tests[i], 0);
+                var rtlForwardPos = extendingSelection(sel, "forward", granularity, 0);
+    
+                log("  Extending backward: ");
+                var rtlBackwardPos = extendingSelection(sel, "backward", granularity, 0);
+
+                // validations
+                log("\n\n  validating ltrRight and ltrLeft\n");
+                if (granularity == "character")
+                    checkReverseOrder(ltrRightPos, ltrLeftPos);
+                // Order might not be reversed for extending by word because the 1-point shift by space.
+
+                log("  validating ltrRight and ltrForward\n");
+                checkSameOrder(ltrRightPos, ltrForwardPos);
+                log("  validating ltrForward and rtlForward\n");
+                checkSameOrder(ltrForwardPos, rtlForwardPos);
+                log("  validating ltrLeft and ltrBackward\n");
+                checkSameOrder(ltrLeftPos, ltrBackwardPos);
+                log("  validating ltrBackward and rtlBackward\n");
+                checkSameOrder(ltrBackwardPos, rtlBackwardPos);
+                log("  validating ltrRight and rtlLeft\n");
+                checkSameOrder(ltrRightPos, rtlLeftPos);
+                log("  validating ltrLeft and rtlRight\n");
+                checkSameOrder(ltrLeftPos, rtlRightPos);
+                log("\n\n");
+            }
+        }
+
+        function testExtendingSelectionForEnclosingBlock(tests, sel, granularity)
+        {
+            for (var i = 0; i < tests.length; ++i) {
+                log("Test " + (i + 1) + ", LTR:\n  Extending right: ");
+                sel.setPosition(tests[i], 0);
+                var ltrRightPos = extendingSelection(sel, "right", granularity, 1);
+    
+                log("  Extending left:  ");
+                var ltrLeftPos = extendingSelection(sel, "left", granularity, 1);
+            }
+        }
+
+        onload = function()
+        {
+            if (!window.layoutTestController)
+                return;
+
+            layoutTestController.dumpAsText();
+
+            var tests = document.getElementsByClassName("test");
+            var sel = getSelection();
+
+            log("\n\n\nExtending by character\n");
+            testExtendingSelection(tests,  sel, "character", 0);
+            log("\n\n\n\n\nExtending by word\n");
+            testExtendingSelection(tests,  sel, "word", 0);
+
+            tests = document.getElementsByClassName("testEnclosingBlock");
+            sel = getSelection();
+
+            log("\n\n\nExtending by character\n");
+            testExtendingSelectionForEnclosingBlock(tests,  sel, "character", 1);
+            log("\n\n\n\n\nExtending by word\n");
+            testExtendingSelectionForEnclosingBlock(tests,  sel, "word", 1);
+        }
+
+    </script>
+</head>
+<body>
+<div contenteditable class="test">
+abc &#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def
+</div>
+<div contenteditable class="test">
+&#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def &#1494;&#1495;&#1496;
+</div>
+<div contenteditable class="test">
+&#1488;&#1489;&#1490; &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;
+</div>
+<div contenteditable class="test">
+abc efd dabeb
+</div>
+
+
+<div contenteditable  class="test">Lorem <span  style="direction: rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test">Lorem <span  dir="rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="test">Lorem <span  style="direction: ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test">Lorem <span  dir="ltr">ipsum dolor sit</span> amet</div>
+
+<div contenteditable class="testEnclosingBlock">Lorem <div  dir="rtl">ipsum dolor sit</div> amett</div>
+
+<pre id="console"></pre>
+</body>

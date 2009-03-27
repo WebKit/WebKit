@@ -252,7 +252,53 @@ void SelectionController::willBeModified(EAlteration alter, EDirection direction
     }
 }
 
-VisiblePosition SelectionController::modifyExtendingRightForward(TextGranularity granularity)
+TextDirection SelectionController::directionOfEnclosingBlock() {
+    Node* n = m_sel.extent().node();
+    Node* enclosingBlockNode = enclosingBlock(n);
+    if (!enclosingBlockNode)
+        return LTR;
+    RenderObject* renderer = enclosingBlockNode->renderer();
+    if (renderer)
+        return renderer->style()->direction();
+    return LTR;
+}
+
+VisiblePosition SelectionController::modifyExtendingRight(TextGranularity granularity)
+{
+    VisiblePosition pos(m_sel.extent(), m_sel.affinity());
+
+    // The difference between modifyExtendingRight and modifyExtendingForward is:
+    // modifyExtendingForward always extends forward logically.
+    // modifyExtendingRight behaves the same as modifyExtendingForward except for extending character or word,
+    // it extends forward logically if the enclosing block is LTR direction,
+    // but it extends backward logically if the enclosing block is RTL direction.
+    switch (granularity) {
+        case CharacterGranularity:
+            if (directionOfEnclosingBlock() == LTR)
+                pos = pos.next(true);                
+            else
+                pos = pos.previous(true);
+            break;
+        case WordGranularity:
+            if (directionOfEnclosingBlock() == LTR)
+                pos = nextWordPosition(pos);
+            else
+                pos = previousWordPosition(pos);
+            break;
+        case SentenceGranularity:
+        case LineGranularity:
+        case ParagraphGranularity:
+        case SentenceBoundary:
+        case LineBoundary:
+        case ParagraphBoundary:
+        case DocumentBoundary:
+            // FIXME: implement all of the above?
+            pos = modifyExtendingForward(granularity);
+    }
+    return pos;
+}    
+        
+VisiblePosition SelectionController::modifyExtendingForward(TextGranularity granularity)
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
     switch (granularity) {
@@ -366,10 +412,44 @@ VisiblePosition SelectionController::modifyMovingForward(TextGranularity granula
     return pos;
 }
 
-VisiblePosition SelectionController::modifyExtendingLeftBackward(TextGranularity granularity)
+VisiblePosition SelectionController::modifyExtendingLeft(TextGranularity granularity)
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
-        
+
+    // The difference between modifyExtendingLeft and modifyExtendingBackward is:
+    // modifyExtendingBackward always extends backward logically.
+    // modifyExtendingLeft behaves the same as modifyExtendingBackward except for extending character or word,
+    // it extends backward logically if the enclosing block is LTR direction,
+    // but it extends forward logically if the enclosing block is RTL direction.
+    switch (granularity) {
+        case CharacterGranularity:
+            if (directionOfEnclosingBlock() == LTR)
+                pos = pos.previous(true);
+            else
+                pos = pos.next(true);
+            break;
+        case WordGranularity:
+            if (directionOfEnclosingBlock() == LTR)
+                pos = previousWordPosition(pos);
+            else
+                pos = nextWordPosition(pos);
+            break;
+        case SentenceGranularity:
+        case LineGranularity:
+        case ParagraphGranularity:
+        case SentenceBoundary:
+        case LineBoundary:
+        case ParagraphBoundary:
+        case DocumentBoundary:
+            pos = modifyExtendingBackward(granularity);
+    }
+    return pos;
+}
+       
+VisiblePosition SelectionController::modifyExtendingBackward(TextGranularity granularity)
+{
+    VisiblePosition pos(m_sel.extent(), m_sel.affinity());
+
     // Extending a selection backward by word or character from just after a table selects
     // the table.  This "makes sense" from the user perspective, esp. when deleting.
     // It was done here instead of in VisiblePosition because we want VPs to iterate
@@ -501,11 +581,11 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
             if (alter == MOVE)
                 pos = modifyMovingRight(granularity);
             else
-                pos = modifyExtendingRightForward(granularity);
+                pos = modifyExtendingRight(granularity);
             break;
         case FORWARD:
             if (alter == EXTEND)
-                pos = modifyExtendingRightForward(granularity);
+                pos = modifyExtendingForward(granularity);
             else
                 pos = modifyMovingForward(granularity);
             break;
@@ -513,11 +593,11 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
             if (alter == MOVE)
                 pos = modifyMovingLeft(granularity);
             else
-                pos = modifyExtendingLeftBackward(granularity);
+                pos = modifyExtendingLeft(granularity);
             break;
         case BACKWARD:
             if (alter == EXTEND)
-                pos = modifyExtendingLeftBackward(granularity);
+                pos = modifyExtendingBackward(granularity);
             else
                 pos = modifyMovingBackward(granularity);
             break;
