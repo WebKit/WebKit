@@ -4303,6 +4303,8 @@
 		C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */; };
 		C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */; };
 		C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */; };
+		C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */; };
+		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -9155,6 +9157,8 @@
 		C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuarantinedObjectWrapper.cpp; sourceTree = "<group>"; };
 		C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuarantinedObjectWrapper.h; sourceTree = "<group>"; };
 		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
+		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
+		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -13336,6 +13340,8 @@
 				B2C3DA150D006C1D00EF6F26 /* TextDirection.h */,
 				B2C3DA160D006C1D00EF6F26 /* TextEncoding.cpp */,
 				B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */,
+				C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */,
+				C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */,
 				B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */,
 				B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */,
 				B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */,
@@ -16708,6 +16714,7 @@
 				B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */,
 				1A6938020A11100A00C127FE /* TextDocument.h in Headers */,
 				B2C3DA470D006C1D00EF6F26 /* TextEncoding.h in Headers */,
+				C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */,
 				B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
 				93309E18099E64920056E581 /* TextGranularity.h in Headers */,
@@ -18739,6 +18746,7 @@
 				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
 				1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
+				C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */,
 				B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */,
 				933A142E0B7D188600A53FFD /* TextEvent.cpp in Sources */,
 				93309E1B099E64920056E581 /* TextIterator.cpp in Sources */,

@@ -87,6 +87,7 @@ Settings::Settings(Page* page)
     , m_shouldPaintCustomScrollbars(false)
     , m_zoomsTextOnly(false)
     , m_enforceCSSMIMETypeInStrictMode(true)
+    , m_usesEncodingDetector(false)
     , m_maximumDecodedImageSize(std::numeric_limits<size_t>::max())
     , m_allowScriptsToCloseWindows(false)
 {
@@ -423,6 +424,11 @@ void Settings::setShouldPaintNativeControls(bool shouldPaintNativeControls)
     gShouldPaintNativeControls = shouldPaintNativeControls;
 }
 #endif
+
+void Settings::setUsesEncodingDetector(bool usesEncodingDetector)
+{
+    m_usesEncodingDetector = usesEncodingDetector;
+}
 
 void Settings::setAllowScriptsToCloseWindows(bool allowScriptsToCloseWindows)
 {

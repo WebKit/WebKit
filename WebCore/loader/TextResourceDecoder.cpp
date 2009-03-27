@@ -26,6 +26,8 @@
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
 #include "TextCodec.h"
+#include "TextEncoding.h"
+#include "TextEncodingDetector.h"
 #include "TextEncodingRegistry.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/StringExtras.h>
@@ -321,15 +323,17 @@ const TextEncoding& TextResourceDecoder::defaultEncoding(ContentType contentType
     return specifiedDefaultEncoding;
 }
 
-TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding)
+TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding, bool usesEncodingDetector)
     : m_contentType(determineContentType(mimeType))
     , m_encoding(defaultEncoding(m_contentType, specifiedDefaultEncoding))
     , m_source(DefaultEncoding)
+    , m_hintEncoding(0)
     , m_checkedForBOM(false)
     , m_checkedForCSSCharset(false)
     , m_checkedForHeadCharset(false)
     , m_useLenientXMLDecoding(false)
     , m_sawError(false)
+    , m_usesEncodingDetector(usesEncodingDetector)
 {
 }
 
@@ -451,7 +455,7 @@ size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)
 
 bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
-    if (m_source != DefaultEncoding) {
+    if (m_source != DefaultEncoding && m_source != EncodingFromParentFrame) {
         m_checkedForCSSCharset = true;
         return true;
     }
@@ -532,7 +536,7 @@ const int bytesToCheckUnconditionally = 1024; // That many input bytes will be c
 
 bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
-    if (m_source != DefaultEncoding) {
+    if (m_source != DefaultEncoding && m_source != EncodingFromParentFrame) {
         m_checkedForHeadCharset = true;
         return true;
     }
@@ -759,6 +763,23 @@ void TextResourceDecoder::detectJapaneseEncoding(const char* data, size_t len)
     }
 }
 
+// We use the encoding detector in two cases:
+//   1. Encoding detector is turned ON and no other encoding source is
+//      available (that is, it's DefaultEncoding).
+//   2. Encoding detector is turned ON and the encoding is set to
+//      the encoding of the parent frame, which is also auto-detected.
+//   Note that condition #2 is NOT satisfied unless parent-child frame
+//   relationship is compliant to the same-origin policy. If they're from
+//   different domains, |m_source| would not be set to EncodingFromParentFrame
+//   in the first place. 
+bool TextResourceDecoder::shouldAutoDetect() const
+{
+    // Just checking m_hintEncoding suffices here because it's only set
+    // in setHintEncoding when the source is AutoDetectedEncoding.
+    return m_usesEncodingDetector
+        && (m_source == DefaultEncoding || (m_source == EncodingFromParentFrame && m_hintEncoding)); 
+}
+
 String TextResourceDecoder::decode(const char* data, size_t len)
 {
     size_t lengthOfBOM = 0;
@@ -775,10 +796,24 @@ String TextResourceDecoder::decode(const char* data, size_t len)
         if (!checkForHeadCharset(data, len, movedDataToBuffer))
             return "";
 
-    // Do the auto-detect if our default encoding is one of the Japanese ones.
-    // FIXME: It seems wrong to change our encoding downstream after we have already done some decoding.
+    // FIXME: It seems wrong to change our encoding downstream after
+    // we have already done some decoding. However, it's not possible
+    // to avoid in a sense in two cases below because triggering conditions
+    // for both cases depend on the information that won't be available
+    // until we do partial read. 
+    // The first case had better be removed altogether (see bug 21990)
+    // or at least be made to be invoked only when the encoding detection
+    // is turned on. 
+    // Do the auto-detect 1) using Japanese detector if our default encoding is
+    // one of the Japanese detector or 2) using detectTextEncoding if encoding
+    // detection is turned on.
     if (m_source != UserChosenEncoding && m_source != AutoDetectedEncoding && m_encoding.isJapanese())
         detectJapaneseEncoding(data, len);
+    else if (shouldAutoDetect()) {
+        TextEncoding detectedEncoding;
+        if (detectTextEncoding(data, len, m_hintEncoding, &detectedEncoding))
+            setEncoding(detectedEncoding, AutoDetectedEncoding);
+    }
 
     ASSERT(m_encoding.isValid());
 
@@ -801,6 +836,17 @@ String TextResourceDecoder::decode(const char* data, size_t len)
 
 String TextResourceDecoder::flush()
 {
+   // If we can not identify the encoding even after a document is completely
+   // loaded, we need to detect the encoding if other conditions for
+   // autodetection is satisfied.
+    if (m_buffer.size() && shouldAutoDetect()
+        && ((!m_checkedForHeadCharset && (m_contentType == HTML || m_contentType == XML)) || (!m_checkedForCSSCharset && (m_contentType == CSS)))) {
+         TextEncoding detectedEncoding;
+         if (detectTextEncoding(m_buffer.data(), m_buffer.size(),
+                                m_hintEncoding, &detectedEncoding))
+             setEncoding(detectedEncoding, AutoDetectedEncoding);
+    }
+
     if (!m_codec)
         m_codec.set(newTextCodec(m_encoding).release());
 

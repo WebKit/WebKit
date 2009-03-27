@@ -1,3 +1,57 @@
+2009-03-26  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add an encoding detector 'hook' to TextResourceDecoder.
+         - add |usesEncodingDetector| to Settings. It's off by default.
+         - add a new encoding source type |EncodingFromParent| 
+           to distinguish cases when the encoding is inherited from
+           the parent frame from cases when it's actually auto-detected.
+         - add TextEncodingDetector* to platform/text. Currently,
+           the only implementation uses ICU. Stub is added for 
+           ports that do not use ICU and a build on Tiger. Mac OS 
+           Tiger comes with ICU 3.2 that does not support encoding detector.
+         - add ucsdet.h to icu/unicode for ports using ICU.
+
+        Layout tests will be added once bug 20534 is fixed and a WebPreference
+        can be controlled in test_shell. With UsesEncodingDetector off, there
+        is no change to test. 
+
+        http://bugs.webkit.org/show_bug.cgi?id=16482
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore/GNUmakefile.am
+        * WebCore/WebCore.pro
+        * WebCore/WebCore.scons
+        * WebCore/WebCoreSources.bkl
+        * WebCore.base.exp
+        * icu/unicode/ucsdet.h
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write): turn on/off encoding detector depending on Settings and set hintEncoding of TextResourceDecoder to the parent frame encoding if necessary and the security policy allows refering to the parent frame encoding.
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::TextResourceDecoder):
+        (WebCore::TextResourceDecoder::checkForCSSCharset): add check for EncodingFromParentFrame
+        (WebCore::TextResourceDecoder::checkForHeadCharset): ditto
+        (WebCore::TextResourceDecoder::shouldAutoDetect):
+        (WebCore::TextResourceDecoder::decode): call encoding detector if shouldAutoDetect returns true.
+        (WebCore::TextResourceDecoder::flush): if encoding is not determined by now, call encoding detector if shouldAutoDetect returns true.
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::):
+        (WebCore::TextResourceDecoder::create):
+        (WebCore::TextResourceDecoder::setHintEncoding):
+        (WebCore::TextResourceDecoder::source):
+        * page/Settings.cpp: add m_usesEncodingDetector
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setUsesEncodingDetector):
+        * page/Settings.h:
+        (WebCore::Settings::usesEncodingDetector):
+        * platform/text/TextEncodingDetector.h: Added.
+        * platform/text/TextEncodingDetectorICU.cpp: Added.
+        (WebCore::detectTextEncoding):
+        * platform/text/TextEncodingDetectorNone.cpp: Added.
+        (WebCore::detectTextEncoding):
+
 2009-03-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

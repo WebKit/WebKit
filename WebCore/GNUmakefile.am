@@ -1496,6 +1496,8 @@ webcore_sources += \
 	WebCore/platform/text/TextDirection.h \
 	WebCore/platform/text/TextEncoding.cpp \
 	WebCore/platform/text/TextEncoding.h \
+	WebCore/platform/text/TextEncodingDetector.h \
+	WebCore/platform/text/TextEncodingDetectorNone.cpp \
 	WebCore/platform/text/TextEncodingRegistry.cpp \
 	WebCore/platform/text/TextEncodingRegistry.h \
 	WebCore/platform/text/TextStream.cpp \

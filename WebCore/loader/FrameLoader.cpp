@@ -253,6 +253,11 @@ static int numRequests(Document* document)
     return document->docLoader()->requestCount();
 }
 
+static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame* parentFrame) 
+{
+    return parentFrame && parentFrame->document()->securityOrigin()->canAccess(frame->document()->securityOrigin());
+}
+
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     : m_frame(frame)
     , m_client(client)
@@ -997,12 +1002,28 @@ void FrameLoader::write(const char* str, int len, bool flush)
     }
     
     if (!m_decoder) {
-        Settings* settings = m_frame->settings();
-        m_decoder = TextResourceDecoder::create(m_responseMIMEType, settings ? settings->defaultTextEncodingName() : String());
-        if (m_encoding.isEmpty()) {
+        if (Settings* settings = m_frame->settings()) {
+            m_decoder = TextResourceDecoder::create(m_responseMIMEType,
+                settings->defaultTextEncodingName(),
+                settings->usesEncodingDetector());
             Frame* parentFrame = m_frame->tree()->parent();
-            if (parentFrame && parentFrame->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin()))
-                m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::DefaultEncoding);
+            // Set the hint encoding to the parent frame encoding only if
+            // the parent and the current frames share the security origin.
+            // We impose this condition because somebody can make a child frame 
+            // containing a carefully crafted html/javascript in one encoding
+            // that can be mistaken for hintEncoding (or related encoding) by
+            // an auto detector. When interpreted in the latter, it could be
+            // an attack vector.
+            // FIXME: This might be too cautious for non-7bit-encodings and
+            // we may consider relaxing this later after testing.
+            if (canReferToParentFrameEncoding(m_frame, parentFrame))
+                m_decoder->setHintEncoding(parentFrame->document()->decoder());
+        } else
+            m_decoder = TextResourceDecoder::create(m_responseMIMEType, String());
+        Frame* parentFrame = m_frame->tree()->parent();
+        if (m_encoding.isEmpty()) {
+            if (canReferToParentFrameEncoding(m_frame, parentFrame))
+                m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::EncodingFromParentFrame);
         } else {
             m_decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);

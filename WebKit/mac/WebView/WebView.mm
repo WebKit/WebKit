@@ -1332,6 +1332,7 @@ static bool runningTigerMail()
     settings->setDefaultFixedFontSize([preferences defaultFixedFontSize]);
     settings->setDefaultFontSize([preferences defaultFontSize]);
     settings->setDefaultTextEncodingName([preferences defaultTextEncodingName]);
+    settings->setUsesEncodingDetector([preferences usesEncodingDetector]);
     settings->setFantasyFontFamily([preferences fantasyFontFamily]);
     settings->setFixedFontFamily([preferences fixedFontFamily]);
     settings->setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);

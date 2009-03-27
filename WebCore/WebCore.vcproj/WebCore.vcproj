@@ -6773,6 +6773,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\TextEncodingDetectorICU.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\TextEncodingDetector.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextEncodingRegistry.cpp"
 					>
 				</File>

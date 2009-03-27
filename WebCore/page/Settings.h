@@ -115,6 +115,9 @@ namespace WebCore {
         
         void setDefaultTextEncodingName(const String&);
         const String& defaultTextEncodingName() const { return m_defaultTextEncodingName; }
+        
+        void setUsesEncodingDetector(bool);
+        bool usesEncodingDetector() const { return m_usesEncodingDetector; }
 
         void setUserStyleSheetLocation(const KURL&);
         const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
@@ -264,6 +267,7 @@ namespace WebCore {
         bool m_shouldPaintCustomScrollbars : 1;
         bool m_zoomsTextOnly : 1;
         bool m_enforceCSSMIMETypeInStrictMode : 1;
+        bool m_usesEncodingDetector : 1;
         size_t m_maximumDecodedImageSize;
         bool m_allowScriptsToCloseWindows : 1;
 

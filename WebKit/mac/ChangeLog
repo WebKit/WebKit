@@ -1,3 +1,20 @@
+2009-03-26  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add WebPreferences for encoding autodetection on Mac.
+  
+        http://bugs.webkit.org/show_bug.cgi?id=16482
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences usesEncodingDetector]):
+        (-[WebPreferences setUsesEncodingDetector:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-03-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -780,6 +780,7 @@ This file contains the list of files needed to build WebCore.
         platform/text/TextCodecUTF16.cpp
         platform/text/TextCodecUserDefined.cpp
         platform/text/TextEncoding.cpp
+        platform/text/TextEncodingDetectorICU.cpp
         platform/text/TextEncodingRegistry.cpp
         platform/text/TextStream.cpp
         platform/ThreadGlobalData.cpp

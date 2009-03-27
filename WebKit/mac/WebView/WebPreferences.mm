@@ -306,6 +306,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitUsesEncodingDetectorPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
@@ -862,6 +863,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setAutomaticallyDetectsCacheModel:(BOOL)automaticallyDetectsCacheModel
 {
     _private->automaticallyDetectsCacheModel = automaticallyDetectsCacheModel;
+}
+
+- (BOOL)usesEncodingDetector
+{
+    return [self _boolValueForKey: WebKitUsesEncodingDetectorPreferenceKey];
+}
+
+- (void)setUsesEncodingDetector:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitUsesEncodingDetectorPreferenceKey];
 }
 
 - (BOOL)isWebSecurityEnabled

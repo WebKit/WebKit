@@ -41,6 +41,7 @@
 #define WebKitDefaultFontSizePreferenceKey @"WebKitDefaultFontSize"
 #define WebKitDefaultFixedFontSizePreferenceKey @"WebKitDefaultFixedFontSize"
 #define WebKitDefaultTextEncodingNamePreferenceKey @"WebKitDefaultTextEncodingName"
+#define WebKitUsesEncodingDetectorPreferenceKey @"WebKitUsesEncodingDetector"
 #define WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
 #define WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
 #define WebKitShouldPrintBackgroundsPreferenceKey @"WebKitShouldPrintBackgroundsPreferenceKey"
