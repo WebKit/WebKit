@@ -413,6 +413,9 @@ Could be worth adding to the API.
 // SPI for DumpRenderTree
 - (BOOL)_isUsingAcceleratedCompositing;
 
+// Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.
+- (NSPasteboard *)_insertionPasteboard;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

@@ -1,3 +1,24 @@
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan and Anders Carlsson.
+
+        <rdar://problem/5987442> Pasteboard not exposed to WebEditingDelegate for WebViewInsertActionPasted (needed for system services)
+
+        Added SPI to tell which pasteboard is currently being inserted.
+        I chose to put it on WebView to be forward-looking since we're migrating things
+        from WebHTMLView to WebView in the future.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): Add calls to _setInsertionPasteboard.
+        (-[WebHTMLView _pasteAsPlainTextWithPasteboard:]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]): Assert the pasteboard is nil.
+        (-[WebViewPrivate finalize]): Ditto.
+        (-[WebView _insertionPasteboard]): Return the pastebaord.
+        (-[WebView _setInsertionPasteboard:]): Set the pasteboard.
+        * WebView/WebViewInternal.h: Added _setInsertionPasteboard.
+        * WebView/WebViewPrivate.h: Added _insertionPasteboard.
+
 2009-03-25  Timothy Hatcher  <timothy@apple.com>
 
         Expose new DOM methods as public Objective-C API.

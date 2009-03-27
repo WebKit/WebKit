@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -780,20 +780,29 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
+    WebView *webView = [[self _webView] retain];
+    [webView _setInsertionPasteboard:pasteboard];
+
     DOMRange *range = [self _selectedRange];
-    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard
-        inContext:range allowPlainText:allowPlainText];
-    WebFrame *frame = [self _frame];
-    if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[self _selectedRange] givenAction:WebViewInsertActionPasted]) {
-        [frame _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
-    }
+    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
+    if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
+        [[self _frame] _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
+
+    [webView _setInsertionPasteboard:nil];
+    [webView release];
 }
 
 - (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard
 {
+    WebView *webView = [[self _webView] retain];
+    [webView _setInsertionPasteboard:pasteboard];
+
     NSString *text = [self _plainTextFromPasteboard:pasteboard];
     if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted])
         [[self _frame] _replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+
+    [webView _setInsertionPasteboard:nil];
+    [webView release];
 }
 
 - (void)_removeMouseMovedObserverUnconditionally

@@ -422,7 +422,9 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     BOOL needsOneShotDrawingSynchronization;
     // Number of WebHTMLViews using accelerated compositing. Used to implement _isUsingAcceleratedCompositing.
     int acceleratedFramesCount;
-#endif    
+#endif
+
+    NSPasteboard *insertionPasteboard;
 }
 @end
 
@@ -539,7 +541,8 @@ static BOOL grammarCheckingEnabled;
 {    
     ASSERT(applicationIsTerminating || !page);
     ASSERT(applicationIsTerminating || !preferences);
-    
+    ASSERT(!insertionPasteboard);
+
     [applicationNameForUserAgent release];
     [backgroundColor release];
     
@@ -554,13 +557,15 @@ static BOOL grammarCheckingEnabled;
     [editingDelegateForwarder release];
     
     [mediaStyle release];
-    
+
     [super dealloc];
 }
 
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
+
+    ASSERT(!insertionPasteboard);
 
     [super finalize];
 }
@@ -2147,6 +2152,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+
 - (BOOL)_needsOneShotDrawingSynchronization
 {
     return _private->needsOneShotDrawingSynchronization;
@@ -2178,6 +2184,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     if (leaving)
         [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
 }
+
 #endif    
 
 - (BOOL)_isUsingAcceleratedCompositing
@@ -2187,6 +2194,11 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 #else
     return NO;
 #endif
+}
+
+- (NSPasteboard *)_insertionPasteboard
+{
+    return _private ? _private->insertionPasteboard : nil;
 }
 
 @end
@@ -5005,6 +5017,11 @@ static WebFrameView *containingFrameView(NSView *view)
             name:WebPreferencesChangedNotification object:nil];
     }
     return _private->_keyboardUIMode;
+}
+
+- (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard
+{
+    _private->insertionPasteboard = pasteboard;
 }
 
 @end
