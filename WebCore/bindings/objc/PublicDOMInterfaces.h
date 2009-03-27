@@ -91,6 +91,18 @@
 @property(readonly, copy) NSString *URL;
 @property(retain) DOMHTMLElement *body;
 @property(copy) NSString *cookie;
+@property(readonly, copy) NSString *inputEncoding AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *xmlEncoding AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *xmlVersion AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property BOOL xmlStandalone AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *documentURI AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *charset AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *defaultCharset AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *readyState AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *characterSet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *preferredStylesheetSet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *selectedStylesheetSet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *lastModified AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMElement *)createElement:(NSString *)tagName;
 - (DOMDocumentFragment *)createDocumentFragment;
 - (DOMText *)createTextNode:(NSString *)data;
@@ -132,6 +144,18 @@
 - (DOMXPathResult *)evaluate:(NSString *)expression :(DOMNode *)contextNode :(id <DOMXPathNSResolver>)resolver :(unsigned short)type :(DOMXPathResult *)inResult AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
 - (DOMXPathResult *)evaluate:(NSString *)expression contextNode:(DOMNode *)contextNode resolver:(id <DOMXPathNSResolver>)resolver type:(unsigned short)type inResult:(DOMXPathResult *)inResult AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 #endif
+- (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface value:(NSString *)value AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)execCommand:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)queryCommandEnabled:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)queryCommandIndeterm:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)queryCommandState:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)queryCommandSupported:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (NSString *)queryCommandValue:(NSString *)command AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (DOMElement *)elementFromPoint:(int)x y:(int)y AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (DOMNodeList *)getElementsByClassName:(NSString *)tagname AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMElement *)querySelector:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMNodeList *)querySelectorAll:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMDocumentFragment : DOMNode WEBKIT_VERSION_1_3
@@ -160,6 +184,14 @@
 @property int scrollTop;
 @property(readonly) int scrollWidth;
 @property(readonly) int scrollHeight;
+@property(readonly) int clientLeft AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int clientTop AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *innerText AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMElement *firstElementChild AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly, retain) DOMElement *lastElementChild AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly, retain) DOMElement *previousElementSibling AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly, retain) DOMElement *nextElementSibling AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly) unsigned childElementCount AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (NSString *)getAttribute:(NSString *)name;
 - (void)setAttribute:(NSString *)name :(NSString *)value;
 - (void)setAttribute:(NSString *)name value:(NSString *)value AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
@@ -184,6 +216,14 @@
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)scrollIntoView:(BOOL)alignWithTop AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)contains:(DOMElement *)element AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)scrollByLines:(int)lines AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)scrollByPages:(int)pages AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)focus AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (void)blur AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMNodeList *)getElementsByClassName:(NSString *)name AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMElement *)querySelector:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMNodeList *)querySelectorAll:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMEntity : DOMNode WEBKIT_VERSION_1_3
@@ -193,6 +233,16 @@
 @end
 
 @interface DOMEntityReference : DOMNode WEBKIT_VERSION_1_3
+@end
+
+@interface DOMFile : DOMObject WEBKIT_VERSION_4_0
+@property(readonly, copy) NSString *fileName;
+@property(readonly) unsigned long long fileSize;
+@end
+
+@interface DOMFileList : DOMObject WEBKIT_VERSION_4_0
+@property(readonly) unsigned length;
+- (DOMFile *)item:(unsigned)index;
 @end
 
 @interface DOMNamedNodeMap : DOMObject WEBKIT_VERSION_1_3
@@ -224,6 +274,9 @@
 @property(copy) NSString *prefix;
 @property(readonly, copy) NSString *localName;
 @property(copy) NSString *textContent AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *baseURI AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMNode *parentElement AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) BOOL isContentEditable AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild;
 - (DOMNode *)insertBefore:(DOMNode *)newChild refChild:(DOMNode *)refChild AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild;
@@ -238,6 +291,10 @@
 - (BOOL)hasAttributes;
 - (BOOL)isSameNode:(DOMNode *)other AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (BOOL)isEqualNode:(DOMNode *)other AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (NSString *)lookupPrefix:(NSString *)namespaceURI AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)isDefaultNamespace:(NSString *)namespaceURI AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (NSString *)lookupNamespaceURI:(NSString *)prefix AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (unsigned short)compareDocumentPosition:(DOMNode *)other AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMNodeList : DOMObject WEBKIT_VERSION_1_3
@@ -253,10 +310,13 @@
 @interface DOMProcessingInstruction : DOMNode WEBKIT_VERSION_1_3
 @property(readonly, copy) NSString *target;
 @property(copy) NSString *data;
+@property(readonly, retain) DOMStyleSheet *sheet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMText : DOMCharacterData WEBKIT_VERSION_1_3
+@property(readonly, copy) NSString *wholeText AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMText *)splitText:(unsigned)offset;
+- (DOMText *)replaceWholeText:(NSString *)content AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMHTMLAnchorElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -272,6 +332,14 @@
 @property(copy) NSString *target;
 @property(copy) NSString *type;
 @property(readonly, copy) NSURL *absoluteLinkURL AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *hashName AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *host AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *hostname AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *pathname AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *port AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *protocol AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *search AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *text AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLAppletElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -297,6 +365,13 @@
 @property(copy) NSString *shape;
 @property(copy) NSString *target;
 @property(readonly, copy) NSURL *absoluteLinkURL AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *hashName AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *host AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *hostname AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *pathname AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *port AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *protocol AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, copy) NSString *search AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLBRElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -330,6 +405,9 @@
 @property(copy) NSString *name;
 @property(readonly, copy) NSString *type;
 @property(copy) NSString *value;
+@property BOOL autofocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly) BOOL willValidate AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (void)click AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLCanvasElement : DOMHTMLElement WEBKIT_VERSION_3_0
@@ -341,6 +419,7 @@
 @property(readonly) unsigned length;
 - (DOMNode *)item:(unsigned)index;
 - (DOMNode *)namedItem:(NSString *)name;
+- (DOMNodeList *)tags:(NSString *)name AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMHTMLDListElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -356,6 +435,24 @@
 @end
 
 @interface DOMHTMLDocument : DOMDocument WEBKIT_VERSION_1_3
+@property(readonly, retain) DOMHTMLCollection *embeds AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMHTMLCollection *plugins AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMHTMLCollection *scripts AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int width AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int height AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *dir AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *designMode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *bgColor AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *fgColor AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *alinkColor AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *linkColor AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *vlinkColor AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMElement *activeElement AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly, copy) NSString *compatMode AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (void)captureEvents AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)releaseEvents AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)clear AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (BOOL)hasFocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (void)open;
 - (void)close;
 - (void)write:(NSString *)text;
@@ -409,6 +506,7 @@
 @property(copy) NSString *enctype;
 @property(copy) NSString *method;
 @property(copy) NSString *target;
+@property(copy) NSString *encoding AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)submit;
 - (void)reset;
 @end
@@ -423,6 +521,10 @@
 @property(copy) NSString *scrolling;
 @property(copy) NSString *src;
 @property(readonly, retain) DOMDocument *contentDocument;
+@property(readonly, retain) DOMAbstractView *contentWindow AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *location AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int width AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int height AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLFrameSetElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -461,6 +563,7 @@
 @property(copy) NSString *src;
 @property(copy) NSString *width;
 @property(readonly, retain) DOMDocument *contentDocument;
+@property(readonly, retain) DOMAbstractView *contentWindow AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMHTMLImageElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -478,6 +581,12 @@
 @property int width;
 @property(readonly, copy) NSString *altDisplayString AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly, copy) NSURL *absoluteImageURL AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) BOOL complete AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(copy) NSString *lowsrc AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int naturalHeight AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int naturalWidth AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int x AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int y AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLInputElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -500,8 +609,16 @@
 @property(copy) NSString *value;
 @property(readonly, copy) NSString *altDisplayString AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly, copy) NSURL *absoluteImageURL AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property BOOL indeterminate AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property int selectionStart AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property int selectionEnd AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property BOOL autofocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property BOOL multiple AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly) BOOL willValidate AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly, retain) DOMFileList *files AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (void)select;
 - (void)click;
+- (void)setSelectionRange:(int)start end:(int)end AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLIsIndexElement : DOMHTMLInputElement WEBKIT_VERSION_1_3
@@ -537,6 +654,7 @@
 @property(copy) NSString *target;
 @property(copy) NSString *type;
 @property(readonly, copy) NSURL *absoluteLinkURL AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMStyleSheet *sheet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLMapElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -611,8 +729,11 @@
 
 @interface DOMHTMLOptionsCollection : DOMObject WEBKIT_VERSION_1_3
 @property unsigned length;
+@property int selectedIndex AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (DOMNode *)item:(unsigned)index;
 - (DOMNode *)namedItem:(NSString *)name;
+- (void)add:(DOMHTMLOptionElement *)option index:(unsigned)index AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)remove:(unsigned)index AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMHTMLParagraphElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -628,6 +749,7 @@
 
 @interface DOMHTMLPreElement : DOMHTMLElement WEBKIT_VERSION_1_3
 @property int width;
+@property BOOL wrap AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLQuoteElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -655,15 +777,20 @@
 @property BOOL multiple;
 @property(copy) NSString *name;
 @property int size;
+@property(readonly) BOOL willValidate AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property BOOL autofocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
 - (void)add:(DOMHTMLElement *)element before:(DOMHTMLElement *)before AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)remove:(int)index;
+- (DOMNode *)item:(unsigned)index AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (DOMNode *)namedItem:(NSString *)name AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMHTMLStyleElement : DOMHTMLElement WEBKIT_VERSION_1_3
 @property BOOL disabled;
 @property(copy) NSString *media;
 @property(copy) NSString *type;
+@property(readonly, retain) DOMStyleSheet *sheet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLTableCaptionElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -756,7 +883,12 @@
 @property int rows;
 @property(readonly, copy) NSString *type;
 @property(copy) NSString *value;
+@property int selectionStart AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property int selectionEnd AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property BOOL autofocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property(readonly) BOOL willValidate AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (void)select;
+- (void)setSelectionRange:(int)start end:(int)end AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMHTMLTitleElement : DOMHTMLElement WEBKIT_VERSION_1_3
@@ -866,9 +998,12 @@
 @interface DOMCSSStyleSheet : DOMStyleSheet WEBKIT_VERSION_1_3
 @property(readonly, retain) DOMCSSRule *ownerRule;
 @property(readonly, retain) DOMCSSRuleList *cssRules;
+@property(readonly, retain) DOMCSSRuleList *rules AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (unsigned)insertRule:(NSString *)rule :(unsigned)index;
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)deleteRule:(unsigned)index;
+- (int)addRule:(NSString *)selector style:(NSString *)style index:(unsigned)index AVAILABLE_IN_WEBKIT_VERSION_4_0;
+- (void)removeRule:(unsigned)index AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @end
 
 @interface DOMCSSValue : DOMObject WEBKIT_VERSION_1_3
@@ -905,6 +1040,9 @@
 @property(readonly) BOOL bubbles;
 @property(readonly) BOOL cancelable;
 @property(readonly) DOMTimeStamp timeStamp;
+@property(readonly, retain) id <DOMEventTarget> srcElement AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property BOOL returnValue AVAILABLE_IN_WEBKIT_VERSION_4_0;
+@property BOOL cancelBubble AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (void)stopPropagation;
 - (void)preventDefault;
 - (void)initEvent:(NSString *)eventTypeArg canBubbleArg:(BOOL)canBubbleArg cancelableArg:(BOOL)cancelableArg AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
@@ -914,6 +1052,13 @@
 @interface DOMUIEvent : DOMEvent WEBKIT_VERSION_1_3
 @property(readonly, retain) DOMAbstractView *view;
 @property(readonly) int detail;
+@property(readonly) int keyCode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int charCode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int layerX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int layerY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int pageX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int pageY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int which AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)initUIEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)initUIEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail;
 @end
@@ -946,6 +1091,13 @@
 @property(readonly) BOOL metaKey;
 @property(readonly) BOOL isHorizontal;
 @property(readonly) int wheelDelta;
+@property(readonly) int wheelDeltaX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int wheelDeltaY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int offsetX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int offsetY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int x AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int y AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)initWheelEvent:(int)wheelDeltaX wheelDeltaY:(int)wheelDeltaY view:(DOMAbstractView *)view screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMKeyboardEvent : DOMUIEvent WEBKIT_VERSION_3_0
@@ -957,7 +1109,10 @@
 @property(readonly) BOOL metaKey;
 @property(readonly) int keyCode;
 @property(readonly) int charCode;
+@property(readonly) BOOL altGraphKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey altGraphKey:(BOOL)altGraphKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMMouseEvent : DOMUIEvent WEBKIT_VERSION_1_3
@@ -971,6 +1126,12 @@
 @property(readonly) BOOL metaKey;
 @property(readonly) unsigned short button;
 @property(readonly, retain) id <DOMEventTarget> relatedTarget;
+@property(readonly) int offsetX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int offsetY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int x AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int y AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMNode *fromElement AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMNode *toElement AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)initMouseEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey button:(unsigned short)button relatedTarget:(id <DOMEventTarget>)relatedTarget AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)initMouseEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail :(int)screenX :(int)screenY :(int)clientX :(int)clientY :(BOOL)ctrlKey :(BOOL)altKey :(BOOL)shiftKey :(BOOL)metaKey :(unsigned short)button :(id <DOMEventTarget>)relatedTarget;
 @end
@@ -1004,6 +1165,11 @@
 - (DOMRange *)cloneRange;
 - (NSString *)toString;
 - (void)detach;
+- (DOMDocumentFragment *)createContextualFragment:(NSString *)html AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)intersectsNode:(DOMNode *)refNode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (short)compareNode:(DOMNode *)refNode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (short)comparePoint:(DOMNode *)refNode offset:(int)offset AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (BOOL)isPointInRange:(DOMNode *)refNode offset:(int)offset AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
 @interface DOMNodeIterator : DOMObject WEBKIT_VERSION_1_3
@@ -1011,6 +1177,8 @@
 @property(readonly) unsigned whatToShow;
 @property(readonly, retain) id <DOMNodeFilter> filter;
 @property(readonly) BOOL expandEntityReferences;
+@property(readonly, retain) DOMNode *referenceNode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) BOOL pointerBeforeReferenceNode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (DOMNode *)nextNode;
 - (DOMNode *)previousNode;
 - (void)detach;

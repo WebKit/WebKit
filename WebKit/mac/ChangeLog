@@ -1,3 +1,16 @@
+2009-03-25  Timothy Hatcher  <timothy@apple.com>
+
+        Expose new DOM methods as public Objective-C API.
+
+        <rdar://problem/5837350> Expose new DOM classes and methods
+        as public API (match the additions to the JavaScript DOM)
+
+        Reviewed by Mark Rowe and Darin Adler.
+
+        * MigrateHeaders.make:
+        * Misc/DOMDocumentPrivate.h: Added. Forwarding header for
+        <rdar://problem/6730996>.
+
 2009-03-26  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
