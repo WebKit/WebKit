@@ -49,7 +49,7 @@
 #import "WorkQueueItem.h"
 #import <Carbon/Carbon.h>
 #import <CoreFoundation/CoreFoundation.h>
-#import <WebKit/DOMElementPrivate.h>
+#import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
