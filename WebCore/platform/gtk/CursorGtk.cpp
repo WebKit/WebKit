@@ -63,7 +63,13 @@ Cursor::Cursor(const Cursor& other)
 
 Cursor::Cursor(Image*, const IntPoint&)
 {
-    notImplemented();
+    // FIXME: We don't support images for cursors yet.
+    // This is just a placeholder to avoid crashes.
+    Cursor other(crossCursor());
+    m_impl = other.m_impl;
+
+    if (m_impl)
+        gdk_cursor_ref(m_impl);
 }
 
 Cursor::~Cursor()

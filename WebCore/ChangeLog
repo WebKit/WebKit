@@ -1,3 +1,16 @@
+2009-03-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        We don't support images for GtkCursors yet. We need a  placeholder to avoid crashes.
+        I took crosshair to have a common behavior with firefox.
+
+        [GTK] SVG - Crash on setting the cursor icon
+        https://bugs.webkit.org/show_bug.cgi?id=24565
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::Cursor::Cursor):
+
 2009-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Remove redundant attributes and functions from IDL files that have the
