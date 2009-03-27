@@ -492,6 +492,11 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
             curr->setY(curr->y() + yPos + posAdjust);
         }
         
+        // FIXME: By only considering overflow as part of the root line box, we can't get an accurate picture regarding what the line
+        // actually needs to paint.  A line box that is part of a self-painting layer technically shouldn't contribute to the overflow
+        // of the line, but in order to not do this and paint accurately, we have to track the overflow somewhere else (either by storing overflow
+        // in each InlineFlowBox up the chain or in the layer itself).  Relative positioned objects on a line will cause scrollbars
+        // to appear when they shouldn't until we fix this issue.
         int newY = curr->y();
         int overflowTop = 0;
         int overflowBottom = 0;

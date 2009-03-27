@@ -1,3 +1,14 @@
+2009-03-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Test case for relative positioning bug.
+
+        * fast/block/positioning/negative-rel-position.html: Added.
+        * platform/mac/fast/block/positioning/negative-rel-position-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/negative-rel-position-expected.png: Added.
+        * platform/mac/fast/block/positioning/negative-rel-position-expected.txt: Added.
+
 2009-03-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt.

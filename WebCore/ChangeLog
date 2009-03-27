@@ -1,3 +1,21 @@
+2009-03-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
+        If an object has a self-painting layer, don't count it as part of a block's visual overflow.
+        This fix has only been made for block-level children.   The inline-level case is still broken
+        (and covered by an existing bug).
+
+        Added fast/block/positioning/negative-rel-position.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+
 2009-03-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
