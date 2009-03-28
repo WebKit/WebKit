@@ -370,7 +370,7 @@ static inline SVGInlineTextBoxQueryWalker executeTextQuery(const SVGTextContentE
     return walkerCallback;
 }
 
-long SVGTextContentElement::getNumberOfChars() const
+unsigned SVGTextContentElement::getNumberOfChars() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -384,12 +384,12 @@ float SVGTextContentElement::getComputedTextLength() const
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::TextLength).floatResult();
 }
 
-float SVGTextContentElement::getSubStringLength(long charnum, long nchars, ExceptionCode& ec) const
+float SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode& ec) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    long numberOfChars = getNumberOfChars();
-    if (charnum < 0 || nchars < 0 || charnum >= numberOfChars) {
+    unsigned numberOfChars = getNumberOfChars();
+    if (charnum >= numberOfChars) {
         ec = INDEX_SIZE_ERR;
         return 0.0f;
     }
@@ -397,11 +397,11 @@ float SVGTextContentElement::getSubStringLength(long charnum, long nchars, Excep
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::SubStringLength, charnum, nchars).floatResult();
 }
 
-FloatPoint SVGTextContentElement::getStartPositionOfChar(long charnum, ExceptionCode& ec) const
+FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned charnum, ExceptionCode& ec) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (charnum < 0 || charnum > getNumberOfChars()) {
+    if (charnum > getNumberOfChars()) {
         ec = INDEX_SIZE_ERR;
         return FloatPoint();
     }
@@ -409,11 +409,11 @@ FloatPoint SVGTextContentElement::getStartPositionOfChar(long charnum, Exception
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::StartPosition, charnum).pointResult();
 }
 
-FloatPoint SVGTextContentElement::getEndPositionOfChar(long charnum, ExceptionCode& ec) const
+FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned charnum, ExceptionCode& ec) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (charnum < 0 || charnum > getNumberOfChars()) {
+    if (charnum > getNumberOfChars()) {
         ec = INDEX_SIZE_ERR;
         return FloatPoint();
     }
@@ -421,11 +421,11 @@ FloatPoint SVGTextContentElement::getEndPositionOfChar(long charnum, ExceptionCo
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::EndPosition, charnum).pointResult();
 }
 
-FloatRect SVGTextContentElement::getExtentOfChar(long charnum, ExceptionCode& ec) const
+FloatRect SVGTextContentElement::getExtentOfChar(unsigned charnum, ExceptionCode& ec) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (charnum < 0 || charnum > getNumberOfChars()) {
+    if (charnum > getNumberOfChars()) {
         ec = INDEX_SIZE_ERR;
         return FloatRect();
     }
@@ -433,11 +433,11 @@ FloatRect SVGTextContentElement::getExtentOfChar(long charnum, ExceptionCode& ec
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::Extent, charnum).rectResult();
 }
 
-float SVGTextContentElement::getRotationOfChar(long charnum, ExceptionCode& ec) const
+float SVGTextContentElement::getRotationOfChar(unsigned charnum, ExceptionCode& ec) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (charnum < 0 || charnum > getNumberOfChars()) {
+    if (charnum > getNumberOfChars()) {
         ec = INDEX_SIZE_ERR;
         return 0.0f;
     }
@@ -445,17 +445,17 @@ float SVGTextContentElement::getRotationOfChar(long charnum, ExceptionCode& ec) 
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::Rotation, charnum).floatResult();
 }
 
-long SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
+int SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::CharacterNumberAtPosition, 0.0f, 0.0f, point).longResult();
 }
 
-void SVGTextContentElement::selectSubString(long charnum, long nchars, ExceptionCode& ec) const
+void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, ExceptionCode& ec) const
 {
-    long numberOfChars = getNumberOfChars();
-    if (charnum < 0 || nchars < 0 || charnum >= numberOfChars) {
+    unsigned numberOfChars = getNumberOfChars();
+    if (charnum >= numberOfChars) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -472,12 +472,12 @@ void SVGTextContentElement::selectSubString(long charnum, long nchars, Exception
 
     // Find selection start
     VisiblePosition start(const_cast<SVGTextContentElement*>(this), 0, SEL_DEFAULT_AFFINITY);
-    for (long i = 0; i < charnum; ++i)
+    for (unsigned i = 0; i < charnum; ++i)
         start = start.next();
 
     // Find selection end
     VisiblePosition end(start);
-    for (long i = 0; i < nchars; ++i)
+    for (unsigned i = 0; i < nchars; ++i)
         end = end.next();
 
     controller->setSelection(VisibleSelection(start, end));

@@ -52,15 +52,15 @@ namespace WebCore {
         virtual bool isValid() const { return SVGTests::isValid(); }
         virtual bool isTextContent() const { return true; }
 
-        long getNumberOfChars() const;
+        unsigned getNumberOfChars() const;
         float getComputedTextLength() const;
-        float getSubStringLength(long charnum, long nchars, ExceptionCode&) const;
-        FloatPoint getStartPositionOfChar(long charnum, ExceptionCode&) const;
-        FloatPoint getEndPositionOfChar(long charnum, ExceptionCode&) const;
-        FloatRect getExtentOfChar(long charnum, ExceptionCode&) const;
-        float getRotationOfChar(long charnum, ExceptionCode&) const;
-        long getCharNumAtPosition(const FloatPoint&) const;
-        void selectSubString(long charnum, long nchars, ExceptionCode&) const;
+        float getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode&) const;
+        FloatPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&) const;
+        FloatPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&) const;
+        FloatRect getExtentOfChar(unsigned charnum, ExceptionCode&) const;
+        float getRotationOfChar(unsigned charnum, ExceptionCode&) const;
+        int getCharNumAtPosition(const FloatPoint&) const;
+        void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&) const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
 

@@ -1,3 +1,29 @@
+2009-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix two SVG test failures in 64-bit.
+
+        getSubStringLength's arguments were declared as unsigned in the IDL and as signed long in the implementation.
+        This led to a value of -1 in JavaScript being converted to MAX_UINT in the bindings.  In 32-bit this was
+        identical to -1 when interpeted as signed long, but in 64-bit it was still equal to MAX_UINT.
+
+        The solution for this is to use the IsIndex attribute on arguments that the SVG spec declares as "unsigned long"
+        but requires an exception be thrown when a negative value is passed.  This results in the JS bindings handling the
+        check for a negative value and lets the implementation treat the arguments purely as unsigned values.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::getNumberOfChars):
+        (WebCore::SVGTextContentElement::getSubStringLength):
+        (WebCore::SVGTextContentElement::getStartPositionOfChar):
+        (WebCore::SVGTextContentElement::getEndPositionOfChar):
+        (WebCore::SVGTextContentElement::getExtentOfChar):
+        (WebCore::SVGTextContentElement::getRotationOfChar):
+        (WebCore::SVGTextContentElement::getCharNumAtPosition):
+        (WebCore::SVGTextContentElement::selectSubString):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextContentElement.idl:
+
 2009-03-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

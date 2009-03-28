@@ -40,20 +40,20 @@ module svg {
 
         long getNumberOfChars();
         float getComputedTextLength();
-        float getSubStringLength(in unsigned long offset, 
-                                 in unsigned long length)
+        float getSubStringLength(in [IsIndex] unsigned long offset, 
+                                 in [IsIndex] unsigned long length)
             raises(DOMException);
-        SVGPoint getStartPositionOfChar(in unsigned long offset)
+        SVGPoint getStartPositionOfChar(in [IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGPoint getEndPositionOfChar(in unsigned long offset)
+        SVGPoint getEndPositionOfChar(in [IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGRect getExtentOfChar(in unsigned long offset)
+        SVGRect getExtentOfChar(in [IsIndex] unsigned long offset)
             raises(DOMException);
-        float getRotationOfChar(in unsigned long offset)
+        float getRotationOfChar(in [IsIndex] unsigned long offset)
             raises(DOMException);
         long getCharNumAtPosition(in SVGPoint point);
-        void selectSubString(in unsigned long offset, 
-                             in unsigned long length)
+        void selectSubString(in [IsIndex] unsigned long offset, 
+                             in [IsIndex] unsigned long length)
             raises(DOMException);
     };
 
