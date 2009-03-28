@@ -1,3 +1,15 @@
+2009-03-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24790
+        [GTK] webkitsoupauthdialog.h lacks WEBKIT_API before function
+
+        Set the right visibility to the WebKitSoupAuthDialog get_type
+        function.
+
+        * webkit/webkitsoupauthdialog.h:
+
 2009-03-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.

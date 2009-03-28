@@ -20,6 +20,8 @@
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 
+#include <webkit/webkitdefines.h>
+
 #ifndef WEBKIT_SOUP_AUTH_DIALOG_H
 #define WEBKIT_SOUP_AUTH_DIALOG_H 1
 
@@ -42,7 +44,8 @@ typedef struct {
     GtkWidget* (*current_toplevel) (WebKitSoupAuthDialog* feature, SoupMessage* message);
 } WebKitSoupAuthDialogClass;
 
-GType webkit_soup_auth_dialog_get_type (void);
+WEBKIT_API GType
+webkit_soup_auth_dialog_get_type (void);
 
 G_END_DECLS
 
