@@ -1,3 +1,14 @@
+2009-03-28  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24910
+        Fixes for Chromium build.
+
+        * bindings/v8/V8LazyEventListener.h: renamed IsInline() into virtualIsInline()
+        * bindings/v8/custom/V8CustomEventListener.h: ditto.
+        * dom/EventListener.h: used #if USE(JSC) to fix the build on non-JSC platform.
+
 2009-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Not reviewed, correcting landing error.

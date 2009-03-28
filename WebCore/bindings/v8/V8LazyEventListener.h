@@ -50,8 +50,6 @@ namespace WebCore {
             return adoptRef(new V8LazyEventListener(frame, code, functionName));
         }
 
-        virtual bool isInline() const { return true; }
-
         // For lazy event listener, the listener object is the same as its listener
         // function without additional scope chains.
         virtual v8::Local<v8::Object> getListenerObject() { return getWrappedListenerFunction(); }
@@ -59,6 +57,8 @@ namespace WebCore {
     private:
         V8LazyEventListener(Frame*, const String& code, const String& functionName);
         virtual ~V8LazyEventListener();
+
+        virtual bool virtualIsInline() const { return true; }
 
         String m_code;
         String m_functionName;
