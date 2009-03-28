@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,11 +161,21 @@ struct nameTable {
 
 #pragma pack()
 
-static void appendBigEndianStringToEOTHeader(Vector<uint8_t, 512>& eotHeader, const BigEndianUShort* string, unsigned short length)
+EOTHeader::EOTHeader()
 {
-    size_t size = eotHeader.size();
-    eotHeader.resize(size + length + 2 * sizeof(unsigned short));
-    UChar* dst = reinterpret_cast<UChar*>(eotHeader.data() + size);
+    m_buffer.resize(sizeof(EOTPrefix));
+}
+
+void EOTHeader::updateEOTSize(size_t fontDataSize)
+{
+    prefix()->eotSize = m_buffer.size() + fontDataSize;
+}
+
+void EOTHeader::appendBigEndianString(const BigEndianUShort* string, unsigned short length)
+{
+    size_t oldSize = m_buffer.size();
+    m_buffer.resize(oldSize + length + 2 * sizeof(unsigned short));
+    UChar* dst = reinterpret_cast<UChar*>(m_buffer.data() + oldSize);
     unsigned i = 0;
     dst[i++] = length;
     unsigned numCharacters = length / 2;
@@ -174,7 +184,13 @@ static void appendBigEndianStringToEOTHeader(Vector<uint8_t, 512>& eotHeader, co
     dst[i] = 0;
 }
 
-bool getEOTHeader(SharedBuffer* fontData, Vector<uint8_t, 512>& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength)
+void EOTHeader::appendPaddingShort()
+{
+    unsigned short padding = 0;
+    m_buffer.append(reinterpret_cast<uint8_t*>(&padding), sizeof(padding));
+}
+
+bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength)
 {
     overlayDst = 0;
     overlaySrc = 0;
@@ -183,8 +199,7 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<uint8_t, 512>& eotHeader, size_
     size_t dataLength = fontData->size();
     const char* data = fontData->data();
 
-    eotHeader.resize(sizeof(EOTPrefix));
-    EOTPrefix* prefix = reinterpret_cast<EOTPrefix*>(eotHeader.data());
+    EOTPrefix* prefix = eotHeader.prefix();
 
     prefix->fontDataSize = dataLength;
     prefix->version = 0x00020001;
@@ -306,9 +321,9 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<uint8_t, 512>& eotHeader, size_
     prefix->reserved[3] = 0;
     prefix->padding1 = 0;
 
-    appendBigEndianStringToEOTHeader(eotHeader, familyName, familyNameLength);
-    appendBigEndianStringToEOTHeader(eotHeader, subfamilyName, subfamilyNameLength);
-    appendBigEndianStringToEOTHeader(eotHeader, versionString, versionStringLength);
+    eotHeader.appendBigEndianString(familyName, familyNameLength);
+    eotHeader.appendBigEndianString(subfamilyName, subfamilyNameLength);
+    eotHeader.appendBigEndianString(versionString, versionStringLength);
 
     // If possible, ensure that the family name is a prefix of the full name.
     if (fullNameLength >= familyNameLength && memcmp(familyName, fullName, familyNameLength)) {
@@ -316,13 +331,10 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<uint8_t, 512>& eotHeader, size_
         overlayDst = reinterpret_cast<const char*>(familyName) - data;
         overlayLength = familyNameLength;
     }
+    eotHeader.appendBigEndianString(fullName, fullNameLength);
 
-    appendBigEndianStringToEOTHeader(eotHeader, fullName, fullNameLength);
-
-    unsigned short padding = 0;
-    eotHeader.append(reinterpret_cast<uint8_t*>(&padding), sizeof(padding));
-
-    prefix->eotSize = eotHeader.size() + fontData->size();
+    eotHeader.appendPaddingShort();
+    eotHeader.updateEOTSize(fontData->size());
 
     return true;
 }

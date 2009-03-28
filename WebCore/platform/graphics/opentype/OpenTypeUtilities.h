@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,26 @@
 
 namespace WebCore {
 
+struct BigEndianUShort;
+struct EOTPrefix;
 class SharedBuffer;
 
-bool getEOTHeader(SharedBuffer* fontData, Vector<uint8_t, 512>& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
+struct EOTHeader {
+    EOTHeader();
+
+    size_t size() const { return m_buffer.size(); }
+    const uint8_t* data() const { return m_buffer.data(); }
+
+    EOTPrefix* prefix() { return reinterpret_cast<EOTPrefix*>(m_buffer.data()); }
+    void updateEOTSize(size_t);
+    void appendBigEndianString(const BigEndianUShort*, unsigned short length);
+    void appendPaddingShort();
+
+private:
+    Vector<uint8_t, 512> m_buffer;
+};
+
+bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
 HANDLE renameAndActivateFont(SharedBuffer*, const String&);
 
 } // namespace WebCore

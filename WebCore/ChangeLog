@@ -1,3 +1,29 @@
+2009-03-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/6724514> A bit of OpenTypeUtilities cleanup
+
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::EOTStream::EOTStream): Changed to use EOTHeader.
+        (WebCore::createFontCustomPlatformData): Ditto.
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        (WebCore::EOTHeader::EOTHeader): Added. Initializes the buffer size to
+        the size of an EOTPrefix.
+        (WebCore::EOTHeader::updateEOTSize): Added. Updates the size field in
+        the prefix.
+        (WebCore::EOTHeader::appendBigEndianString): Changed the static
+        appendBigEndianStringToEOTHeader() into this member function.
+        (WebCore::EOTHeader::appendPaddingShort): Added.
+        (WebCore::getEOTHeader): Changed to use EOTHeader.
+        * platform/graphics/opentype/OpenTypeUtilities.h:
+        (WebCore::EOTHeader::size):
+        (WebCore::EOTHeader::data):
+        (WebCore::EOTHeader::prefix):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::EOTStream::EOTStream): Changed to use EOTHeader.
+        (WebCore::createFontCustomPlatformData): Ditto.
+
 2009-03-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
