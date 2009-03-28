@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -58,19 +58,6 @@ NAMED_PROPERTY_DELETER(HTMLDocument)
     return v8::True();
 }
 
-NAMED_PROPERTY_SETTER(HTMLDocument)
-{
-    INC_STATS("DOM.HTMLDocument.NamedPropertySetter");
-    // Only handle document.all.  We insert the value into the shadow
-    // internal field from which the getter will retrieve it.
-    String key = toWebCoreString(name);
-    if (key == "all") {
-        ASSERT(info.Holder()->InternalFieldCount() == kHTMLDocumentInternalFieldCount);
-        info.Holder()->SetInternalField(kHTMLDocumentShadowIndex, value);
-    }
-    return notHandledByInterceptor();
-}
-
 NAMED_PROPERTY_GETTER(HTMLDocument)
 {
     INC_STATS("DOM.HTMLDocument.NamedPropertyGetter");
@@ -87,13 +74,13 @@ NAMED_PROPERTY_GETTER(HTMLDocument)
             return value;
     }
 
-    HTMLDocument* imp = V8Proxy::DOMWrapperToNode<HTMLDocument>(info.Holder());
+    HTMLDocument* htmlDocument = V8Proxy::DOMWrapperToNode<HTMLDocument>(info.Holder());
 
     // Fast case for named elements that are not there.
-    if (!imp->hasNamedItem(key.impl()) && !imp->hasExtraNamedItem(key.impl()))
+    if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
         return v8::Handle<v8::Value>();
 
-    RefPtr<HTMLCollection> items = imp->documentNamedItems(key);
+    RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
     if (!items->length())
         return notHandledByInterceptor();
 
@@ -107,6 +94,98 @@ NAMED_PROPERTY_GETTER(HTMLDocument)
     }
 
     return V8Proxy::ToV8Object(V8ClassIndex::HTMLCOLLECTION, items.get());
+}
+
+// HTMLDocument ----------------------------------------------------------------
+
+// Concatenates "args" to a string. If args is empty, returns empty string.
+// Firefox/Safari/IE support non-standard arguments to document.write, ex:
+//   document.write("a", "b", "c") --> document.write("abc")
+//   document.write() --> document.write("")
+static String writeHelperGetString(const v8::Arguments& args)
+{
+    String str = "";
+    for (int i = 0; i < args.Length(); ++i)
+        str += toWebCoreString(args[i]);
+    return str;
+}
+
+CALLBACK_FUNC_DECL(HTMLDocumentWrite)
+{
+    INC_STATS("DOM.HTMLDocument.write()");
+    HTMLDocument* htmlDocument = V8Proxy::DOMWrapperToNode<HTMLDocument>(args.Holder());
+    Frame* frame = V8Proxy::retrieveActiveFrame();
+    ASSERT(frame);
+    htmlDocument->write(writeHelperGetString(args), frame->document());
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(HTMLDocumentWriteln)
+{
+    INC_STATS("DOM.HTMLDocument.writeln()");
+    HTMLDocument* htmlDocument = V8Proxy::DOMWrapperToNode<HTMLDocument>(args.Holder());
+    Frame* frame = V8Proxy::retrieveActiveFrame();
+    ASSERT(frame);
+    htmlDocument->writeln(writeHelperGetString(args), frame->document());
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(HTMLDocumentOpen)
+{
+    INC_STATS("DOM.HTMLDocument.open()");
+    HTMLDocument* htmlDocument = V8Proxy::DOMWrapperToNode<HTMLDocument>(args.Holder());
+
+    if (args.Length() > 2) {
+        if (Frame* frame = htmlDocument->frame()) {
+            // Fetch the global object for the frame.
+            v8::Local<v8::Context> context = V8Proxy::GetContext(frame);
+            // Bail out if we cannot get the context.
+            if (context.IsEmpty())
+                return v8::Undefined();
+            v8::Local<v8::Object> global = context->Global();
+            // Get the open property of the global object.
+            v8::Local<v8::Value> function = global->Get(v8::String::New("open"));
+            // If the open property is not a function throw a type error.
+            if (!function->IsFunction()) {
+                throwError("open is not a function");
+                return v8::Undefined();
+            }
+            // Wrap up the arguments and call the function.
+            v8::Local<v8::Value>* params = new v8::Local<v8::Value>[args.Length()];
+            for (int i = 0; i < args.Length(); i++)
+                params[i] = args[i];
+
+            V8Proxy* proxy = V8Proxy::retrieve(frame);
+            ASSERT(proxy);
+
+            v8::Local<v8::Value> result = proxy->CallFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params);
+            delete[] params;
+            return result;
+        }
+    }
+
+    Frame* frame = V8Proxy::retrieveActiveFrame();
+    htmlDocument->open(frame->document());
+    // Return the document.
+    return args.Holder();
+}
+
+ACCESSOR_GETTER(HTMLDocumentAll)
+{
+    INC_STATS("DOM.HTMLDocument.all._get");
+    v8::HandleScope scope;
+    v8::Handle<v8::Object> holder = info.Holder();
+    HTMLDocument* htmlDocument = V8Proxy::DOMWrapperToNode<HTMLDocument>(holder);
+    RefPtr<HTMLCollection> collection = WTF::getPtr(htmlDocument->all());
+    return V8Proxy::ToV8Object(V8ClassIndex::HTMLCOLLECTION, WTF::getPtr(collection));
+}
+
+ACCESSOR_SETTER(HTMLDocumentAll)
+{
+    INC_STATS("DOM.HTMLDocument.all._set");
+    v8::Handle<v8::Object> holder = info.Holder();
+    ASSERT(info.Holder()->InternalFieldCount() == kHTMLDocumentInternalFieldCount);
+    info.Holder()->SetInternalField(kHTMLDocumentShadowIndex, value);
 }
 
 } // namespace WebCore

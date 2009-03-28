@@ -1,3 +1,13 @@
+2009-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Not reviewed, correcting landing error.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24812
+        Custom bindings should be in v8/custom, not v8.
+
+        * bindings/v8/V8HTMLDocumentCustom.cpp: Removed.
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp: Moved from parent dir.
+
 2009-03-28  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Dimitri Glazkov.
