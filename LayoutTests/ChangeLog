@@ -1,3 +1,16 @@
+2009-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update text-content-type-with-binary-extension.html to use a .sitx file of random data rather
+        than a .m4a to ensure that WebKit doesn't handle the resource as a full-frame media element if the network
+        layer sniffs it as audio/mp4 rather than application/octet-stream.
+
+        * http/tests/loading/resources/.htaccess:
+        * http/tests/loading/resources/binaryData.m4a: Removed.
+        * http/tests/loading/resources/binaryData.sitx: Added.
+        * http/tests/loading/text-content-type-with-binary-extension.html:
+
 2009-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

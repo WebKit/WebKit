@@ -16,7 +16,7 @@
                 document.getElementById("result").innerText = "Binary data not loaded as text. Maybe PASS.";
                 layoutTestController.notifyDone();
             } else
-                document.getElementById("result").innerText = "If Safari downloaded binaryData.m4a, then it passed the test.";
+                document.getElementById("result").innerText = "If Safari downloaded binaryData.sitx, then it passed the test.";
         }
 
         function bodyLoaded()
@@ -42,5 +42,5 @@
     <p id="result">
         Test running...
     </p>
-    <iframe id="iframe" src="resources/binaryData.m4a" onload="iframeLoaded()"></iframe>
+    <iframe id="iframe" src="resources/binaryData.sitx" onload="iframeLoaded()"></iframe>
 </body>
