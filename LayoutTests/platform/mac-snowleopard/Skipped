@@ -20,3 +20,7 @@ http/tests/misc/createElementNamespace1.xml
 tables/mozilla/bugs/bug3037-1.html
 webarchive/loading/cache-expired-subresource.html
 webarchive/test-xml-stylesheet.xml
+
+<rdar://problem/6733642> Mistimed NPP_SetWindow log messages
+plugins/netscape-plugin-setwindow-size.html
+plugins/netscape-plugin-setwindow-size-2.html

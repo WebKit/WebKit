@@ -1,5 +1,13 @@
 2009-03-27  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Skip two plug-in tests that are failing due to <rdar://problem/6733642>.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-03-27  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Land updated results for two SVG tests involving Geeza Pro.
