@@ -1,3 +1,21 @@
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get mailto code out of FrameLoader.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::transferMailtoPostFormDataToURL): Added. Factored out the mailto
+        logic so HTMLFormElement::submit isn't full of ugly bits. This includes the
+        part of the logic that involves transformeing the URL that was previously
+        inside FrameLoader.
+        (WebCore::HTMLFormElement::submit): Call transferMailtoPostFormDataToURL and
+        also release the data for slightly less refcount churn.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Removed all the special casing for mailto,
+        since HTMLFormElement now properly prepares both the URL and the form data.
+
 2009-03-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

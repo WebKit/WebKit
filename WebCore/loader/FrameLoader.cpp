@@ -557,23 +557,11 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
 
     frameRequest.setFrameName(target.isEmpty() ? m_frame->document()->baseTarget() : target);
 
-    // Handle mailto: forms
-    bool isMailtoForm = equalIgnoringCase(u.protocol(), "mailto");
-    if (isMailtoForm && strcmp(action, "GET") != 0) {
-        // Append body= for POST mailto, replace the whole query string for GET one.
-        String body = formData->flattenToString();
-        String query = u.query();
-        if (!query.isEmpty())
-            query.append('&');
-        u.setQuery(query + body);
-    }
-
-    if (strcmp(action, "GET") == 0) {
+    if (strcmp(action, "GET") == 0)
         u.setQuery(formData->flattenToString());
-    } else {
-        if (!isMailtoForm)
-            frameRequest.resourceRequest().setHTTPBody(formData.get());
+    else {
         frameRequest.resourceRequest().setHTTPMethod("POST");
+        frameRequest.resourceRequest().setHTTPBody(formData.get());
 
         // construct some user headers if necessary
         if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")

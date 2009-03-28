@@ -280,6 +280,28 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     return m_doingsubmit;
 }
 
+static void transferMailtoPostFormDataToURL(RefPtr<FormData>& data, KURL& url, const String& encodingType)
+{
+    String body = data->flattenToString();
+    data = FormData::create();
+
+    if (equalIgnoringCase(encodingType, "text/plain")) {
+        // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
+        body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
+    }
+
+    Vector<char> bodyData;
+    bodyData.append("body=", 5);
+    FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
+    body = String(bodyData.data(), bodyData.size()).replace('+', "%20");
+
+    String query = url.query();
+    if (!query.isEmpty())
+        query.append('&');
+    query.append(body);
+    url.setQuery(query);
+}
+
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory, bool lockBackForwardList)
 {
     FrameView* view = document()->view();
@@ -331,18 +353,15 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
 
         if (!m_formDataBuilder.isMultiPartForm()) {
             RefPtr<FormData> data = createFormData(CString());
+
             if (isMailtoForm()) {
-                String body = data->flattenToString();
-                if (equalIgnoringCase(m_formDataBuilder.encodingType(), "text/plain")) {
-                    // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-                    body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
-                }
-                Vector<char> bodyData;
-                bodyData.append("body=", 5);
-                FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-                data = FormData::create(String(bodyData.data(), bodyData.size()).replace('+', "%20").latin1());
+                // Convert the form data into a string that we put into the URL.
+                KURL url = document()->completeURL(m_url);
+                transferMailtoPostFormDataToURL(data, url, m_formDataBuilder.encodingType());
+                m_url = url.string();
             }
-            frame->loader()->submitForm("POST", m_url, data, m_target, m_formDataBuilder.encodingType(), String(), event, lockHistory, lockBackForwardList);
+
+            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), event, lockHistory, lockBackForwardList);
         } else {
             Vector<char> boundary = m_formDataBuilder.generateUniqueBoundaryString();
             frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), event, lockHistory, lockBackForwardList);
