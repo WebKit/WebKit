@@ -2,6 +2,15 @@
 
         Reviewed by Dimitri Glazkov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24616
+        Add V8 custom bindings for DOMWindow.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp: Added.
+
+2009-03-28  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Dimitri Glazkov.
+
         https://bugs.webkit.org/show_bug.cgi?id=24812
         Add V8 custom bindings for HTMLDocument.
 
