@@ -694,6 +694,38 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
+RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<Label> realCall = generator.newLabel();
+    RefPtr<Label> end = generator.newLabel();
+    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
+    generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
+    RefPtr<RegisterID> function = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
+    RefPtr<RegisterID> finalDestination = generator.finalDestination(dst, function.get());
+    generator.emitJumpIfNotFunctionCall(function.get(), realCall.get());
+    {
+        RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
+        RefPtr<RegisterID> thisRegister = generator.newTemporary();
+        RefPtr<ArgumentListNode> oldList = m_args->m_listNode;
+        if (m_args->m_listNode && m_args->m_listNode->m_expr) {
+            generator.emitNode(thisRegister.get(), m_args->m_listNode->m_expr.get());
+            m_args->m_listNode = m_args->m_listNode->m_next;
+        } else {
+            generator.emitLoad(thisRegister.get(), jsNull());
+        }
+        generator.emitCall(finalDestination.get(), realFunction.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
+        generator.emitJump(end.get());
+        m_args->m_listNode = oldList;
+    }
+    generator.emitLabel(realCall.get());
+    {
+        RefPtr<RegisterID> thisRegister = generator.emitMove(generator.newTemporary(), base.get());
+        generator.emitCall(finalDestination.get(), function.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
+    }
+    generator.emitLabel(end.get());
+    return finalDestination.get();
+}
+
 // ------------------------------ PostfixResolveNode ----------------------------------
 
 static RegisterID* emitPreIncOrDec(BytecodeGenerator& generator, RegisterID* srcDst, Operator oper)

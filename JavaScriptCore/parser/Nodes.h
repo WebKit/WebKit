@@ -763,10 +763,19 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
+    protected:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         RefPtr<ArgumentsNode> m_args;
+    };
+
+    class CallFunctionCallDotNode : public FunctionCallDotNode {
+    public:
+        CallFunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
+            : FunctionCallDotNode(globalData, base, ident, args, divot, startOffset, endOffset)
+        {
+        }
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class PrePostResolveNode : public ExpressionNode, public ThrowableExpressionData {

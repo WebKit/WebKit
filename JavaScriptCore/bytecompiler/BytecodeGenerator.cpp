@@ -695,6 +695,15 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
     return target;
 }
 
+PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label* target)
+{
+    emitOpcode(op_jneq_ptr);
+    instructions().append(cond->index());
+    instructions().append(m_scopeChain->globalObject()->d()->callFunction);
+    instructions().append(target->offsetFrom(instructions().size()));
+    return target;
+}
+
 unsigned BytecodeGenerator::addConstant(FuncDeclNode* n)
 {
     // No need to explicitly unique function body nodes -- they're unique already.

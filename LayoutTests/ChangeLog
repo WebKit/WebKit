@@ -1,3 +1,14 @@
+2009-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Tests to verify behaviour of Function.prototype.call
+
+        * fast/js/function-call-aliased-expected.txt: Added.
+        * fast/js/function-call-aliased.html: Added.
+        * fast/js/resources/function-call-aliased.js: Added.
+        * fast/profiler/call-expected.txt:
+
 2009-03-27  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.

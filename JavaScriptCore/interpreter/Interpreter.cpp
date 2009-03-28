@@ -2666,6 +2666,24 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         ++vPC;
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_jneq_ptr) {
+        /* jneq_ptr src(r) ptr(jsCell) target(offset)
+         
+           Jumps to offset target from the current instruction, if the value r is equal
+           to ptr, using pointer equality.
+         */
+        int src = (++vPC)->u.operand;
+        JSValuePtr ptr = JSValuePtr((++vPC)->u.jsCell);
+        int target = (++vPC)->u.operand;
+        JSValuePtr srcValue = callFrame[src].jsValue(callFrame);
+        if (srcValue != ptr) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+
+        ++vPC;
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_loop_if_less) {
         /* loop_if_less src1(r) src2(r) target(offset)
 

@@ -819,6 +819,17 @@ void JIT::privateCompileMainPass()
             RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jneq_null);
         }
+        case op_jneq_ptr: {
+            unsigned src = currentInstruction[1].u.operand;
+            JSCell* ptr = currentInstruction[2].u.jsCell;
+            unsigned target = currentInstruction[3].u.operand;
+            
+            emitGetVirtualRegister(src, regT0);
+            addJump(branchPtr(NotEqual, regT0, ImmPtr(JSValuePtr::encode(JSValuePtr(ptr)))), target + 3);            
+
+            RECORD_JUMP_TARGET(target + 3);
+            NEXT_OPCODE(op_jneq_ptr);
+        }
         case op_post_inc: {
             compileFastArith_op_post_inc(currentInstruction[1].u.operand, currentInstruction[2].u.operand);
             NEXT_OPCODE(op_post_inc);

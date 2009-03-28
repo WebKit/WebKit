@@ -40,6 +40,7 @@ namespace JSC {
     class GlobalEvalFunction;
     class NativeErrorConstructor;
     class ProgramCodeBlock;
+    class PrototypeFunction;
     class RegExpConstructor;
     class RegExpPrototype;
     class RegisterFile;
@@ -104,6 +105,7 @@ namespace JSC {
             NativeErrorConstructor* URIErrorConstructor;
 
             GlobalEvalFunction* evalFunction;
+            PrototypeFunction* callFunction;
 
             ObjectPrototype* objectPrototype;
             FunctionPrototype* functionPrototype;

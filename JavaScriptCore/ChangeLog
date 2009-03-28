@@ -1,3 +1,41 @@
+2009-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve performance of Function.prototype.call
+        <https://bugs.webkit.org/show_bug.cgi?id=24907>
+
+        Optimistically assume that expression.call(..) is going to be a call to
+        Function.prototype.call, and handle it specially to attempt to reduce the
+        degree of VM reentrancy.
+
+        When everything goes right this removes the vm reentry improving .call()
+        by around a factor of 10.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * parser/Grammar.y:
+        * parser/Nodes.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::CallFunctionCallDotNode::):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::mark):
+        * runtime/JSGlobalObject.h:
+
 2009-03-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
