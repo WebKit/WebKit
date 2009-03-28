@@ -1,3 +1,10 @@
+2009-03-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Remove call to now private method.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::prepareForDataSourceReplacement):
+
 2009-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for wxWidgets Mac trunk build.
