@@ -458,6 +458,7 @@
 "com.apple.quicktime.webplugin"
 "com.apple.universalaccess"
 "com.lizardtech.NPDjVu"
+"com.macromedia.Flash Player.plugin"
 "com.macromedia.fireworks"
 "com.microsoft.SilverlightPlugin"
 "com.microsoft.WMP.defaultplugin"
