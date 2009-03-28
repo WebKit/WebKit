@@ -1,5 +1,13 @@
 2009-03-27  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fix non-AllInOneFile builds.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+
+2009-03-27  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Improve performance of Function.prototype.call
