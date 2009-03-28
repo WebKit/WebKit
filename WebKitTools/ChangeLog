@@ -2,6 +2,12 @@
 
         Reviewed by Sam Weinig.
 
+        * Scripts/extract-localizable-strings: Fixed version check for perl 5.10 compatibility.
+
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Added waitForPolicyDelegate, a more-reliable way to make our mailto form submission
         tests work.
 
