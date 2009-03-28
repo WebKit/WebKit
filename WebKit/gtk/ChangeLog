@@ -1,3 +1,16 @@
+2009-03-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Not reviewed.
+
+        FrameLoader::loadURL and FrameLoader::detachChildren went private
+        per changes in http://trac.webkit.org/changeset/42055. Follow
+        Mac's behaviour and use FrameLoader::loadURLIntoChildFrame for
+        loadURL and FrameLoader::detachParent for detachChildrem.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+        * webkit/webkitwebview.cpp:
+
 2009-03-25  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.

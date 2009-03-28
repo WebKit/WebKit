@@ -863,7 +863,7 @@ static void webkit_web_view_dispose(GObject* object)
     if (priv->corePage) {
         webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
 
-        core(priv->mainFrame)->loader()->detachChildren();
+        core(priv->mainFrame)->loader()->detachFromParent();
         delete priv->corePage;
         priv->corePage = NULL;
     }
