@@ -1,3 +1,11 @@
+2009-03-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+        
+        Always use wxGraphicsContext on Mac to ensure path, matrix, etc. support.
+
+        * wx/build-wxwebkit:
+
 2009-03-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

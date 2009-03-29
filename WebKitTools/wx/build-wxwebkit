@@ -256,7 +256,16 @@ fi
 
 
 if [ $do_build == 1 -o $do_clean == 1 ]; then
-    # Build steps
+    if [ "${OSTYPE:0:6}" == "cygwin" ]; then
+        PLATFORM_OS="win"
+    elif [ "${OSTYPE:0:6}" == "darwin" ]; then
+        PLATFORM_OS="mac"
+        use_wxgc=1
+    else
+        PLATFORM_OS="linux"
+        use_wxgc=1
+    fi
+    
     WXGC_DEFINE=""
     if [ $use_wxgc == 1 ]; then
         WXGC_DEFINE="-DWTF_USE_WXGC=1"
@@ -269,15 +278,6 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         other_args=WX_PYTHON=1
         WX_EXT=h
         wxdebug=1
-    fi
-    
-    if [ "${OSTYPE:0:6}" == "cygwin" ]; then
-        PLATFORM_OS="win"
-    elif [ "${OSTYPE:0:6}" == "darwin" ]; then
-        PLATFORM_OS="mac"
-    else
-        PLATFORM_OS="linux"
-        use_wxgc=1 # Linux requires us to use wxgc to get proper drawing.
     fi
 
     WINDEPS="$WINDEPS $WXWIN/lib/vc_dll/wxmsw28u${WX_EXT}_core_vc.dll $WXWIN/lib/vc_dll/wxbase28u${WX_EXT}_vc.dll"
