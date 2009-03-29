@@ -323,40 +323,40 @@ CALLBACK_FUNC_DECL(DOMWindowShowModalDialog)
 
     FloatRect screenRect = screenAvailableRect(frame->view());
 
-    WindowFeatures features;
+    WindowFeatures windowFeatures;
     // default here came from frame size of dialog in MacIE.
-    features.width = WindowFeatures::floatFeature(features, "dialogwidth", 100, screenRect.width(), 620);
-    features.widthSet = true;
+    windowFeatures.width = WindowFeatures::floatFeature(features, "dialogwidth", 100, screenRect.width(), 620);
+    windowFeatures.widthSet = true;
     // default here came from frame size of dialog in MacIE.
-    features.height = WindowFeatures::floatFeature(features, "dialogheight", 100, screenRect.height(), 450);
-    features.heightSet = true;
+    windowFeatures.height = WindowFeatures::floatFeature(features, "dialogheight", 100, screenRect.height(), 450);
+    windowFeatures.heightSet = true;
   
-    features.x = WindowFeatures::floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - features.width, -1);
-    features.xSet = features.x > 0;
-    features.y = WindowFeatures::floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - features.height, -1);
-    features.ySet = features.y > 0;
+    windowFeatures.x = WindowFeatures::floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - windowFeatures.width, -1);
+    windowFeatures.xSet = windowFeatures.x > 0;
+    windowFeatures.y = WindowFeatures::floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - windowFeatures.height, -1);
+    windowFeatures.ySet = windowFeatures.y > 0;
 
     if (WindowFeatures::boolFeature(features, "center", true)) {
-        if (!features.xSet) {
-            features.x = screenRect.x() + (screenRect.width() - features.width) / 2;
-            features.xSet = true;
+        if (!windowFeatures.xSet) {
+            windowFeatures.x = screenRect.x() + (screenRect.width() - windowFeatures.width) / 2;
+            windowFeatures.xSet = true;
         }
-        if (!features.ySet) {
-            features.y = screenRect.y() + (screenRect.height() - features.height) / 2;
-            features.ySet = true;
+        if (!windowFeatures.ySet) {
+            windowFeatures.y = screenRect.y() + (screenRect.height() - windowFeatures.height) / 2;
+            windowFeatures.ySet = true;
         }
     }
 
-    features.dialog = true;
-    features.resizable = WindowFeatures::boolFeature(features, "resizable");
-    features.scrollbarsVisible = WindowFeatures::boolFeature(features, "scroll", true);
-    features.statusBarVisible = WindowFeatures::boolFeature(features, "status", !trusted);
-    features.menuBarVisible = false;
-    features.toolBarVisible = false;
-    features.locationBarVisible = false;
-    features.fullscreen = false;
+    windowFeatures.dialog = true;
+    windowFeatures.resizable = WindowFeatures::boolFeature(features, "resizable");
+    windowFeatures.scrollbarsVisible = WindowFeatures::boolFeature(features, "scroll", true);
+    windowFeatures.statusBarVisible = WindowFeatures::boolFeature(features, "status", !trusted);
+    windowFeatures.menuBarVisible = false;
+    windowFeatures.toolBarVisible = false;
+    windowFeatures.locationBarVisible = false;
+    windowFeatures.fullscreen = false;
 
-    Frame* dialogFrame = createWindow(frame, url, "", features, dialogArgs);
+    Frame* dialogFrame = createWindow(frame, url, "", windowFeatures, dialogArgs);
     if (!dialogFrame)
         return v8::Undefined();
 
