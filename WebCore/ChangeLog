@@ -10,6 +10,13 @@
 
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Try to fix the Windows build.
+
+        * loader/EmptyClients.h: Added include of FormState.h.
+        * loader/MainResourceLoader.cpp: Ditto.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Another attempt to fix the Qt build.
 
         * WebCore.pro: Added CheckedRadioButtons.cpp.
