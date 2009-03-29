@@ -2,6 +2,12 @@
 
         Reviewed by Cameron Zwarich.
 
+        * fast/forms/targeted-frame-submission.html: Fixes from review comments.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
         Bug 24922: change WorkQueue-based navigation tests to not depend on synchronous form submission
         https://bugs.webkit.org/show_bug.cgi?id=24922
 
