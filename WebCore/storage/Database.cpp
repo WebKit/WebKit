@@ -426,18 +426,23 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         }
     }
 
-
     String currentVersion;
     {
         MutexLocker locker(guidMutex());
-        currentVersion = guidToVersionMap().get(m_guid);
 
-        if (currentVersion.isNull())
-            LOG(StorageAPI, "Current cached version for guid %i is null", m_guid);
-        else
+        // Note: It is not safe to put an empty string into the guidToVersionMap() map.
+        // That's because the map is cross-thread, but empty strings are per-thread.
+        // The copy() function makes a version of the string you can use on the current
+        // thread, but we need a string we can keep in a cross-thread data structure.
+        // FIXME: This is a quite-awkward restriction to have to program with.
+
+        GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
+        if (entry != guidToVersionMap().end()) {
+            // Map null string to empty string (see comment above).
+            currentVersion = entry->second.isNull() ? String("") : entry->second;
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
-
-        if (currentVersion.isNull()) {
+        } else {
+            LOG(StorageAPI, "No cached version for guid %i", m_guid);
             if (!getVersionFromDatabase(currentVersion)) {
                 LOG_ERROR("Failed to get current version from database %s", databaseDebugName().ascii().data());
                 e = INVALID_STATE_ERR;
@@ -452,11 +457,11 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
                     e = INVALID_STATE_ERR;
                     return false;
                 }
-
                 currentVersion = m_expectedVersion;
             }
 
-            guidToVersionMap().set(m_guid, currentVersion.copy());
+            // Map empty string to null string (see comment above).
+            guidToVersionMap().set(m_guid, currentVersion.isEmpty() ? String() : currentVersion.copy());
         }
     }
 

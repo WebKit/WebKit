@@ -1,3 +1,14 @@
+2009-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 24914: empty-string assertion crash when running storage tests
+        https://bugs.webkit.org/show_bug.cgi?id=24914
+
+        * storage/Database.cpp:
+        (WebCore::Database::performOpenAndVerify): Don't store empty version strings
+        in the map, since empty strings are per-thread.
+
 2009-03-28  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.
