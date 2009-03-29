@@ -1,5 +1,14 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6015407> attr parsing should allow only identifiers
+
+        * fast/css/attr-parsing-expected.txt: Added.
+        * fast/css/attr-parsing.html: Added.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Bug 12104: Native Slider: When the thumb's height is specified as a percentage, it is not centered properly
         https://bugs.webkit.org/show_bug.cgi?id=12104
 

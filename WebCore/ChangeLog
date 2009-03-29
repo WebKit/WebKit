@@ -1,3 +1,18 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6015407> attr parsing should allow only identifiers
+
+        Test: fast/css/attr-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseContent): Allow only CSS_IDENT, and filter out
+        identifiers that start with "-".
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText): Added a case for CSS_ATTR so the test
+        case works. This has the pleasant side effect of fixing a bug too.
+
 2009-03-29  Alexey Proskuryakov  <ap@webkit.org>
 
         <rdar://problem/6492712> Cross-origin redirects are not handled correctly.

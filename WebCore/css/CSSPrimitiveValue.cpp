@@ -754,9 +754,18 @@ String CSSPrimitiveValue::cssText() const
         case CSS_IDENT:
             text = valueOrPropertyName(m_value.ident);
             break;
-        case CSS_ATTR:
-            // FIXME
-            break;
+        case CSS_ATTR: {
+            DEFINE_STATIC_LOCAL(const String, attrParen, ("attr("));
+
+            Vector<UChar> result;
+            result.reserveInitialCapacity(6 + m_value.string->length());
+
+            append(result, attrParen);
+            append(result, m_value.string);
+            result.uncheckedAppend(')');
+
+            return String::adopt(result);
+        }
         case CSS_COUNTER:
             text = "counter(";
             text += String::number(m_value.num);
