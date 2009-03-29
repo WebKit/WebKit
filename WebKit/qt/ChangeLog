@@ -1,3 +1,16 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Try to fix Qt build.
+
+        * WebCoreSupport/EditorClientQt.cpp: Added include of HTMLElement.h.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Added include of FormState.h.
+        (WebCore::FrameLoaderClientQt::prepareForDataSourceReplacement):
+        Removed unneeded call to detachChildren, which is called by FrameLoader
+        right after this.
+        (WebCore::FrameLoaderClientQt::createFrame): Use loadURLIntoChildFrame
+        as other platforms do in the corresponding functions.
+
 2009-03-27  Erik L. Bunce  <elbunce@xendom.com>
 
         Reviewed by Simon Hausmann.

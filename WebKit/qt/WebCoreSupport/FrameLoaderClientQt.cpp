@@ -32,6 +32,7 @@
 #include "config.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "FormState.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -565,7 +566,6 @@ void FrameLoaderClientQt::didFinishLoad()
 
 void FrameLoaderClientQt::prepareForDataSourceReplacement()
 {
-    m_frame->loader()->detachChildren();
 }
 
 void FrameLoaderClientQt::setTitle(const String&, const KURL&)
@@ -983,7 +983,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     FrameLoadType loadType = m_frame->loader()->loadType();
     FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
 
-    childFrame->loader()->loadURL(frameData.url, frameData.referrer, String(), false, childLoadType, 0, 0);
+    childFrame->loader()->loadURLIntoChildFrame(frameData.url, frameData.referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())

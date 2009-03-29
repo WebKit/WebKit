@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006, 2008 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * All rights reserved.
@@ -34,18 +34,19 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
+#include "CSSStyleDeclaration.h"
 #include "Document.h"
 #include "EditCommandQt.h"
-#include "Page.h"
 #include "Editor.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
+#include "NotImplemented.h"
+#include "Page.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
-#include "NotImplemented.h"
-#include "Node.h"
 #include "Range.h"
 
 #include <stdio.h>
