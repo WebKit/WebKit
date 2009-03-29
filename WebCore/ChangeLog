@@ -1,3 +1,10 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Try to fix the Windows build.
+
+        * loader/EmptyClients.h: Added include of FormState.h.
+        * loader/MainResourceLoader.cpp: Ditto.
+
 2009-03-29  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
@@ -7,13 +14,6 @@
 
         * bindings/v8/custom/V8DOMWindowCustom.cpp:
         (WebCore::CALLBACK_FUNC_DECL(DOMWindowShowModalDialog)): renamed 'features' into 'windowFeatures'.
-
-2009-03-29  Darin Adler  <darin@apple.com>
-
-        Try to fix the Windows build.
-
-        * loader/EmptyClients.h: Added include of FormState.h.
-        * loader/MainResourceLoader.cpp: Ditto.
 
 2009-03-29  Darin Adler  <darin@apple.com>
 
