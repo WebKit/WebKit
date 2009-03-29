@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 class WorkQueueItem {
 public:
     virtual ~WorkQueueItem() { }
-    virtual void invoke() const = 0;
+    virtual bool invoke() const = 0; // Returns true if this started a load.
 };
 
 class LoadItem : public WorkQueueItem {
@@ -46,45 +46,63 @@ public:
     {
     }
 
-    const JSStringRef url() const { return m_url.get(); }
-    const JSStringRef target() const { return m_target.get(); }
-
-    virtual void invoke() const;
-
 private:
+    virtual bool invoke() const;
+
     JSRetainPtr<JSStringRef> m_url;
     JSRetainPtr<JSStringRef> m_target;
 };
 
 class ReloadItem : public WorkQueueItem {
-public:
-    virtual void invoke() const;
+private:
+    virtual bool invoke() const;
 };
 
 class ScriptItem : public WorkQueueItem {
-public:
+protected:
     ScriptItem(const JSStringRef script)
         : m_script(script)
     {
     }
 
-    const JSStringRef script() const { return m_script.get(); }
-
-    virtual void invoke() const;
+protected:
+    virtual bool invoke() const;
 
 private:
     JSRetainPtr<JSStringRef> m_script;
 };
 
-class BackForwardItem : public WorkQueueItem {
+class LoadingScriptItem : public ScriptItem {
 public:
-    virtual void invoke() const;
+    LoadingScriptItem(const JSStringRef script)
+        : ScriptItem(script)
+    {
+    }
 
+private:
+    virtual bool invoke() const { return ScriptItem::invoke(); }
+};
+
+class NonLoadingScriptItem : public ScriptItem {
+public:
+    NonLoadingScriptItem(const JSStringRef script)
+        : ScriptItem(script)
+    {
+    }
+
+private:
+    virtual bool invoke() const { ScriptItem::invoke(); return false; }
+};
+
+class BackForwardItem : public WorkQueueItem {
 protected:
     BackForwardItem(int howFar)
         : m_howFar(howFar)
     {
     }
+
+private:
+    virtual bool invoke() const;
 
     int m_howFar;
 };

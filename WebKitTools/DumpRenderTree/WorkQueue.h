@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,8 @@ public:
     unsigned count();
 
     void setFrozen(bool b) { m_frozen = b; }
+
+    bool processWork(); // Returns true if all work is done, false if we started a load.
 
 private:
     WorkQueue();

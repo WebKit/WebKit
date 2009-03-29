@@ -1,5 +1,26 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Bug 24922: change WorkQueue-based navigation tests to not depend on synchronous form submission
+        https://bugs.webkit.org/show_bug.cgi?id=24922
+
+        * fast/forms/targeted-frame-submission.html: Changed test to wait until the subframe loads
+        before moving on to the next test, using an onload attribute.
+
+        * http/tests/navigation/fallback-anchor-reload.html: Removed use of queueScript here for a
+        script that can instead just be run immedidately.
+
+        * http/tests/navigation/onload-navigation-iframe-timeout.html: Changed test to wait until
+        the subframe loads before moving on to the next test, using an onload attribute.
+        * http/tests/navigation/onload-navigation-iframe.html: Ditto.
+
+        * http/tests/navigation/resources/testcode.js: Use queueNonLoadingScript instead of
+        queueScript for scripts that don't involve submitting a form. Use queueLoadingScript
+        for scripts that do involve submitting a form.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6015407> attr parsing should allow only identifiers

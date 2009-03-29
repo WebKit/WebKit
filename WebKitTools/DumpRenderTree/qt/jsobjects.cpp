@@ -132,16 +132,8 @@ void LayoutTestController::processWork()
 {
     qDebug() << ">>>processWork";
 
-    // quit doing work once a load is in progress
-    while (WorkQueue::shared()->count() > 0 && !m_topLoadingFrame) {
-        WorkQueueItem* item = WorkQueue::shared()->dequeue();
-        Q_ASSERT(item);
-        item->invoke();
-        delete item;
-    }
-
-    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!m_topLoadingFrame && !shouldWaitUntilDone()) {
+    // if we finish all the commands, we're ready to dump state
+    if (WorkQueue::shared()->processWork() && !shouldWaitUntilDone()) {
         emit done();
         m_isLoading = false;
     }
@@ -201,36 +193,12 @@ void LayoutTestController::dumpResourceLoadCallbacks()
     qt_dump_resource_load_callbacks(true);
 }
 
-void LayoutTestController::queueBackNavigation(int howFarBackward)
-{
-    //qDebug() << ">>>queueBackNavigation" << howFarBackward;
-    WorkQueue::shared()->queue(new BackItem(howFarBackward, m_drt->webPage()));
-}
-
-void LayoutTestController::queueForwardNavigation(int howFarForward)
-{
-    //qDebug() << ">>>queueForwardNavigation" << howFarForward;
-    WorkQueue::shared()->queue(new ForwardItem(howFarForward, m_drt->webPage()));
-}
-
 void LayoutTestController::queueLoad(const QString &url, const QString &target)
 {
     //qDebug() << ">>>queueLoad" << url << target;
     QUrl mainResourceUrl = m_drt->webPage()->mainFrame()->url();
     QString absoluteUrl = mainResourceUrl.resolved(QUrl(url)).toEncoded();
     WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
-}
-
-void LayoutTestController::queueReload()
-{
-    //qDebug() << ">>>queueReload";
-    WorkQueue::shared()->queue(new ReloadItem(m_drt->webPage()));
-}
-
-void LayoutTestController::queueScript(const QString &url)
-{
-    //qDebug() << ">>>queueScript" << url;
-    WorkQueue::shared()->queue(new ScriptItem(url, m_drt->webPage()));
 }
 
 void LayoutTestController::provisionalLoad()

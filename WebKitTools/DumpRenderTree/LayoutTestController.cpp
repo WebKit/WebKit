@@ -29,6 +29,8 @@
 #include "config.h"
 #include "LayoutTestController.h"
 
+#include "WorkQueue.h"
+#include "WorkQueueItem.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/Assertions.h>
@@ -432,7 +434,7 @@ static JSValueRef queueReloadCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef queueScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef queueLoadingScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
     // May be able to be made platform independant by using shared WorkQueue
@@ -443,7 +445,23 @@ static JSValueRef queueScriptCallback(JSContextRef context, JSObjectRef function
     ASSERT(!*exception);
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->queueScript(script.get());
+    controller->queueLoadingScript(script.get());
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef queueNonLoadingScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    // May be able to be made platform independant by using shared WorkQueue
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->queueNonLoadingScript(script.get());
 
     return JSValueMakeUndefined(context);
 }
@@ -846,8 +864,9 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "queueBackNavigation", queueBackNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "queueForwardNavigation", queueForwardNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "queueLoad", queueLoadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "queueLoadingScript", queueLoadingScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "queueNonLoadingScript", queueNonLoadingScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "queueReload", queueReloadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "queueScript", queueScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "repaintSweepHorizontally", repaintSweepHorizontallyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAcceptsEditing", setAcceptsEditingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthorAndUserStylesEnabled", setAuthorAndUserStylesEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -879,4 +898,29 @@ JSStaticFunction* LayoutTestController::staticFunctions()
     };
 
     return staticFunctions;
+}
+
+void LayoutTestController::queueBackNavigation(int howFarBack)
+{
+    WorkQueue::shared()->queue(new BackItem(howFarBack));
+}
+
+void LayoutTestController::queueForwardNavigation(int howFarForward)
+{
+    WorkQueue::shared()->queue(new ForwardItem(howFarForward));
+}
+
+void LayoutTestController::queueLoadingScript(JSStringRef script)
+{
+    WorkQueue::shared()->queue(new LoadingScriptItem(script));
+}
+
+void LayoutTestController::queueNonLoadingScript(JSStringRef script)
+{
+    WorkQueue::shared()->queue(new NonLoadingScriptItem(script));
+}
+
+void LayoutTestController::queueReload()
+{
+    WorkQueue::shared()->queue(new ReloadItem);
 }

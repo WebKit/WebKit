@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,4 +86,19 @@ void WorkQueue::clear()
 
     startOfQueue = 0;
     endOfQueue = 0;
+}
+
+bool WorkQueue::processWork()
+{
+    bool startedLoad = false;
+
+    while (!startedLoad && count()) {
+        WorkQueueItem* item = dequeue();
+        ASSERT(item);
+        startedLoad = item->invoke();
+        delete item;
+    }
+
+    // If we're done and we didn't start a load, then we're really done, so return true.
+    return !startedLoad;
 }

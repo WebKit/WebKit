@@ -1,13 +1,21 @@
 <html>
     <head>
         <script>
-            function runTest() {
-                // Not dumping as text since the DumpRenderTree does not currently traverse child frames.
-//                if (window.layoutTestController)
-//                    layoutTestController.dumpAsText();
-                
+            function runTest()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.waitUntilDone();
+
+                // Not dumping as text since the DumpRenderTree does not dump the text conetnt of child frames.                
                 var button = document.getElementById('blankButton');
                 button.click();
+            }
+            function subframeLoaded()
+            {
+                if (document.getElementsByTagName('iframe')[0].contentDocument.URL == "about:blank")
+                    return;
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
             }
         </script>
     </head>
@@ -16,6 +24,6 @@
             <input type="submit" value="form" id="blankButton">
         </form>
         <div>This tests Targetted frame submission works.  If the test is successful, the text "SUCCESS" should be shown in the iframe below.</div>
-        <iframe src="about:blank" name="blankFrame"></iframe>
+        <iframe src="about:blank" name="blankFrame" onload="subframeLoaded()"></iframe>
     </body>
 </html>

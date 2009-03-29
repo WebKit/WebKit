@@ -115,30 +115,10 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
     return JSStringRetain(url); // Do nothing on Unix.
 }
 
-void LayoutTestController::queueBackNavigation(int howFarBack)
-{
-    WorkQueue::shared()->queue(new BackItem(howFarBack));
-}
-
-void LayoutTestController::queueForwardNavigation(int howFarForward)
-{
-    WorkQueue::shared()->queue(new ForwardItem(howFarForward));
-}
-
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
     // FIXME: We need to resolve relative URLs here
     WorkQueue::shared()->queue(new LoadItem(url, target));
-}
-
-void LayoutTestController::queueReload()
-{
-    WorkQueue::shared()->queue(new ReloadItem);
-}
-
-void LayoutTestController::queueScript(JSStringRef script)
-{
-    WorkQueue::shared()->queue(new ScriptItem(script));
 }
 
 void LayoutTestController::setAcceptsEditing(bool acceptsEditing)

@@ -1,3 +1,72 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 24922: change WorkQueue-based navigation tests to not depend on synchronous form submission
+        https://bugs.webkit.org/show_bug.cgi?id=24922
+
+        Don't rely on delegate methods to guess whether a queued step starts a load or not, because
+        script-triggered loads can't be detected that way. Instead have the steps themselves indicate
+        whether or not a load was triggered.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (queueLoadingScriptCallback): Added. Version for scripts that perform loads.
+        (queueNonLoadingScriptCallback): Added. Version for scripts that do not perform loads.
+        (LayoutTestController::staticFunctions): Replaced queueScript with queueLoadingScript and
+        queueNonLoadingScript.
+        (LayoutTestController::queueBackNavigation): Moved here since it's platform-independent now.
+        (LayoutTestController::queueForwardNavigation): Ditto.
+        (LayoutTestController::queueLoadingScript): Replacement for queueScript. Here since it's
+        platform-independent.
+        (LayoutTestController::queueNonLoadingScript): Ditto.
+        (LayoutTestController::queueReload): Moved here since it's platform-independent now.
+        * DumpRenderTree/LayoutTestController.h: Ditto.
+
+        * DumpRenderTree/WorkQueue.cpp:
+        (WorkQueue::processWork): Added. Shared by the different platform's work queue implementations.
+        * DumpRenderTree/WorkQueue.h: Ditto.
+
+        * DumpRenderTree/WorkQueueItem.h: Changed the invoke function to return true if the item
+        started a load. Removed unused getter functions. Made invoke functions private.
+        Added LoadingScriptItem and NonLoadingScriptItem, making ScriptItem an abstract base.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (processWork): Use the new WorkQueue::processWork function to implement the new rule.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Removed queue functions that are now
+        platform-independent and in LayoutTestController.cpp.
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadItem::invoke): Return true.
+        (ReloadItem::invoke): Ditto.
+        (ScriptItem::invoke): Ditto.
+        (BackForwardItem::invoke): Ditto.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate processWork:]): Use the new WorkQueue::processWork function to implement
+        the new rule.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Removed queue functions that are now
+        platform-independent and in LayoutTestController.cpp.
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+        (LoadItem::invoke): Return true.
+        (ReloadItem::invoke): Ditto.
+        (ScriptItem::invoke): Ditto.
+        (BackForwardItem::invoke): Ditto.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::processWork): Use the new WorkQueue::processWork function to implement
+        the new rule. Removed queue functions that are now platform-independent and in
+        LayoutTestController.cpp.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::processWork): Use the new WorkQueue::processWork function to implement
+        the new rule.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Removed queue functions that are now
+        platform-independent and in LayoutTestController.cpp.
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+        (LoadItem::invoke): Return false when we fail, true when we succeed.
+        (ReloadItem::invoke): Ditto.
+        (ScriptItem::invoke): Ditto.
+        (BackForwardItem::invoke): Ditto.
+
 2009-03-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

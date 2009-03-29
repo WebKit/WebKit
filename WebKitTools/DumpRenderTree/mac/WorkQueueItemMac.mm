@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 #import <WebKit/WebView.h>
 #import <wtf/RetainPtr.h>
 
-void LoadItem::invoke() const
+bool LoadItem::invoke() const
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_url.get()));
     NSString *urlNS = (NSString *)urlCF.get();
@@ -50,21 +50,24 @@ void LoadItem::invoke() const
     else
         targetFrame = mainFrame;
     [targetFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlNS]]];
+    return true;
 }
 
-void ReloadItem::invoke() const
+bool ReloadItem::invoke() const
 {
     [[mainFrame webView] reload:nil];
+    return true;
 }
 
-void ScriptItem::invoke() const
+bool ScriptItem::invoke() const
 {
     RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_script.get()));
     NSString *scriptNS = (NSString *)scriptCF.get();
     [[mainFrame webView] stringByEvaluatingJavaScriptFromString:scriptNS];
+    return true;
 }
 
-void BackForwardItem::invoke() const
+bool BackForwardItem::invoke() const
 {
     if (m_howFar == 1)
         [[mainFrame webView] goForward];
@@ -74,4 +77,5 @@ void BackForwardItem::invoke() const
         WebBackForwardList *bfList = [[mainFrame webView] backForwardList];
         [[mainFrame webView] goToBackForwardItem:[bfList itemAtIndex:m_howFar]];
     }
+    return true;
 }

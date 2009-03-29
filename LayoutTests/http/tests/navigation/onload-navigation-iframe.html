@@ -1,25 +1,40 @@
 <html>
 <head>
 <script type="text/javascript">
-layoutTestController.dumpBackForwardList();
-layoutTestController.dumpAsText();
 
-function startIframeRequest() {
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpBackForwardList();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
     var form = document.getElementById("myForm");
     var divElm = document.createElement("div");
     
     var iframe = document.createElement("iframe");
     iframe.name = "myFrame";
     iframe.id = "myFrame";
+    iframe.onload = frameLoaded;
     divElm.appendChild(iframe);
 
     document.getElementsByTagName("body").item(0).appendChild(divElm);
     
     form.submit();
 }
+
+function frameLoaded()
+{
+    if (document.getElementById("myFrame").contentDocument.URL === "about:blank")
+        return;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
 </script>
 </head>
-<body onload="startIframeRequest();">
+<body onload="runTest();">
 <form id="myForm" target="myFrame" action="about:blank" method="get">
 </form>
 In this case, Safari and Firefox don't add a history item. 

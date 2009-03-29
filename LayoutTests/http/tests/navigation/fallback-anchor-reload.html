@@ -4,7 +4,7 @@
 function startTest()
 {
     layoutTestController.dumpAsText();
-    layoutTestController.queueScript("window.location.hash = 'anchor';");
+    location.hash = 'anchor';
     layoutTestController.queueReload();
 }
 </script>

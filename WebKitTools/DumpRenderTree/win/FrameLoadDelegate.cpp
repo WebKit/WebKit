@@ -183,15 +183,8 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle(
 
 void FrameLoadDelegate::processWork()
 {
-    // quit doing work once a load is in progress
-    while (!topLoadingFrame && WorkQueue::shared()->count()) {
-        WorkQueueItem* item = WorkQueue::shared()->dequeue();
-        ASSERT(item);
-        item->invoke();
-    }
-
-    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!topLoadingFrame && !::gLayoutTestController->waitToDump())
+    // if we finish all the commands, we're ready to dump state
+    if (WorkQueue::shared()->processWork() && !::gLayoutTestController->waitToDump())
         dump();
 }
 

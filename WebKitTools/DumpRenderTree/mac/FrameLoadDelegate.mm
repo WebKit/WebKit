@@ -111,16 +111,8 @@
 // Exec messages in the work queue until they're all done, or one of them starts a new load
 - (void)processWork:(id)dummy
 {
-    // quit doing work once a load is in progress
-    while (WorkQueue::shared()->count() > 0 && !topLoadingFrame) {
-        WorkQueueItem* item = WorkQueue::shared()->dequeue();
-        ASSERT(item);
-        item->invoke();
-        delete item;
-    }
-
-    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!topLoadingFrame && !gLayoutTestController->waitToDump())
+    // if we finish all the commands, we're ready to dump state
+    if (WorkQueue::shared()->processWork() && !gLayoutTestController->waitToDump())
         dump();
 }
 

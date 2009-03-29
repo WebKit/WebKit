@@ -60,13 +60,13 @@ function runBasicTest(testCase, extraStep) {
         layoutTestController.dumpBackForwardList();
         layoutTestController.queueLoad(testCase);
         if (extraStep == "post") {
-            layoutTestController.queueScript("fillTestForm()");
-            layoutTestController.queueScript("submitFormWithPost()");
+            layoutTestController.queueNonLoadingScript("fillTestForm()");
+            layoutTestController.queueLoadingScript("submitFormWithPost()");
         } else if (extraStep == "postredirect") {
-            layoutTestController.queueScript("fillTestForm()");
-            layoutTestController.queueScript("submitFormWithPostRedirect()");
+            layoutTestController.queueNonLoadingScript("fillTestForm()");
+            layoutTestController.queueLoadingScript("submitFormWithPostRedirect()");
         } else if (extraStep == "relativeanchor") {
-            layoutTestController.queueScript("jumpToAnchor()");
+            layoutTestController.queueNonLoadingScript("jumpToAnchor()");
         }
     }
 }
@@ -85,14 +85,14 @@ function runBackTest(testCase, howFarBack, extraStep) {
     if (window.layoutTestController) {
         layoutTestController.dumpBackForwardList();
         layoutTestController.queueLoad(testCase);
-        layoutTestController.queueScript("fillTestForm()");
-        layoutTestController.queueScript("scrollDocDown()");
+        layoutTestController.queueNonLoadingScript("fillTestForm()");
+        layoutTestController.queueNonLoadingScript("scrollDocDown()");
         if (extraStep == "post") {
-            layoutTestController.queueScript("submitFormWithPost()");
+            layoutTestController.queueLoadingScript("submitFormWithPost()");
         } else if (extraStep == "postredirect") {
-            layoutTestController.queueScript("submitFormWithPostRedirect()");
+            layoutTestController.queueLoadingScript("submitFormWithPostRedirect()");
         } else if (extraStep == "relativeanchor") {
-            layoutTestController.queueScript("jumpToAnchor()");
+            layoutTestController.queueNonLoadingScript("jumpToAnchor()");
         }
         layoutTestController.queueLoad("resources/otherpage.html");
         layoutTestController.queueBackNavigation(howFarBack);
@@ -118,8 +118,8 @@ function runLoadChildFrameBackTest(testCase) {
         layoutTestController.dumpBackForwardList();
         layoutTestController.queueLoad("resources/frameset.pl?frameURL=otherpage.html");
         layoutTestController.queueLoad(testCase, "main");
-        layoutTestController.queueScript("fillTestForm()");
-        layoutTestController.queueScript("scrollDocDown()");
+        layoutTestController.queueNonLoadingScript("fillTestForm()");
+        layoutTestController.queueNonLoadingScript("scrollDocDown()");
         layoutTestController.queueLoad("resources/otherpage.html");
         layoutTestController.queueBackNavigation(1);
     }
@@ -132,8 +132,8 @@ function runReloadTest(testCase) {
     if (window.layoutTestController) {
         layoutTestController.dumpBackForwardList();
         layoutTestController.queueLoad(testCase);
-        layoutTestController.queueScript("fillTestForm()");
-        layoutTestController.queueScript("scrollDocDown()");
+        layoutTestController.queueNonLoadingScript("fillTestForm()");
+        layoutTestController.queueNonLoadingScript("scrollDocDown()");
         layoutTestController.queueReload();
     }
 }
@@ -145,7 +145,7 @@ function runReloadTest(testCase) {
 function runLoadSameTest(testCase) {
     layoutTestController.dumpBackForwardList();
     layoutTestController.queueLoad(testCase);
-    layoutTestController.queueScript("fillTestForm()");
-    layoutTestController.queueScript("scrollDocDown()");
+    layoutTestController.queueNonLoadingScript("fillTestForm()");
+    layoutTestController.queueNonLoadingScript("scrollDocDown()");
     layoutTestController.queueLoad(testCase);
 }

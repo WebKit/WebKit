@@ -173,16 +173,6 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
     return JSStringRetain(url); // Do nothing on mac.
 }
 
-void LayoutTestController::queueBackNavigation(int howFarBack)
-{
-    WorkQueue::shared()->queue(new BackItem(howFarBack));
-}
-
-void LayoutTestController::queueForwardNavigation(int howFarForward)
-{
-    WorkQueue::shared()->queue(new ForwardItem(howFarForward));
-}
-
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
@@ -193,16 +183,6 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 
     JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString([nsurlString UTF8String]));
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
-}
-
-void LayoutTestController::queueReload()
-{
-    WorkQueue::shared()->queue(new ReloadItem);
-}
-
-void LayoutTestController::queueScript(JSStringRef script)
-{
-    WorkQueue::shared()->queue(new ScriptItem(script));
 }
 
 void LayoutTestController::setAcceptsEditing(bool newAcceptsEditing)
