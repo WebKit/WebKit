@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #ifndef HTMLFormElement_h
 #define HTMLFormElement_h
 
+#include "CheckedRadioButtons.h"
 #include "FormDataBuilder.h"
 #include "HTMLCollection.h" 
 #include "HTMLElement.h"
@@ -109,17 +110,6 @@ public:
     // FIXME: Change this to be private after getting rid of all the clients.
     Vector<HTMLFormControlElement*> formElements;
 
-    class CheckedRadioButtons {
-    public:
-        void addButton(HTMLFormControlElement*);
-        void removeButton(HTMLFormControlElement*);
-        HTMLInputElement* checkedButtonForGroup(const AtomicString& name) const;
-
-    private:
-        typedef HashMap<AtomicStringImpl*, HTMLInputElement*> NameToInputMap;
-        OwnPtr<NameToInputMap> m_nameToCheckedRadioButtonMap;
-    };
-    
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
     
     virtual void documentDidBecomeActive();

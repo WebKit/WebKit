@@ -37,6 +37,7 @@
 #include "CString.h"
 #include "Document.h"
 #include "DOMWindow.h"
+#include "HTMLElement.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "loader.h"

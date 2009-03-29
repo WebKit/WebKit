@@ -125,8 +125,8 @@ module core {
         DOMUserData        getUserData(in DOMString key);
 #endif /* 0 */
 
-        // IE extentions
-        readonly attribute Node             parentElement;
+        // IE extensions
+        readonly attribute Element          parentElement;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions

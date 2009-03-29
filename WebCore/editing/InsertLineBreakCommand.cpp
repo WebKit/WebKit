@@ -28,8 +28,8 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
-#include "Element.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"
 #include "RenderObject.h"

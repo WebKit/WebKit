@@ -27,8 +27,8 @@
 #include "ModifySelectionListLevel.h"
 
 #include "Document.h"
-#include "Element.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "RenderObject.h"
 #include "SelectionController.h"
 #include "htmlediting.h"

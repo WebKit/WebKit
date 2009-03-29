@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "HTMLElement.h"
 #include "LocalStorage.h"
 #include "LocalStorageTask.h"
 #include "LocalStorageThread.h"

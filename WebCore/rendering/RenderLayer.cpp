@@ -46,6 +46,7 @@
 
 #include "CString.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventHandler.h"

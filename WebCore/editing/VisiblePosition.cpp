@@ -28,8 +28,8 @@
 
 #include "CString.h"
 #include "Document.h"
-#include "Element.h"
 #include "FloatQuad.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"

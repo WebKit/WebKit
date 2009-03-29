@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"

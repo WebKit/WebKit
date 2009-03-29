@@ -27,6 +27,7 @@
 
 #include "CString.h"
 #include "DocumentFragment.h"
+#include "HTMLElement.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
 #include "Text.h"

@@ -1,5 +1,68 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Bug 24921: remove include of HTMLFormElement.h from Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=24921
+
+        * GNUmakefile.am: Added CheckedRadioButtons source files.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/objc/PublicDOMInterfaces.h: Changed type of parentElement to Element.
+
+        * dom/CheckedRadioButtons.cpp: Copied from WebCore/html/HTMLFormElement.cpp.
+        Removed all the code except for CheckedRadioButtons, and moved that out to be
+        a namespace-level class instead of a member of HTMLFormElement.
+
+        * dom/CheckedRadioButtons.h: Copied from WebCore/html/HTMLFormElement.h.
+        Removed all the code except for CheckedRadioButtons, and moved that out to be
+        a namespace-level class instead of a member of HTMLFormElement.
+
+        * dom/Document.h: Removed unneeded includes, including HTMLFormElement.h.
+        Added include of CheckedRadioButtons.h. Changed uses of CheckedRadioButtons
+        class to use a namespace-level class instead of a member of HTMLFormElement.
+
+        * dom/Node.idl: Changed the type of parentElement from Node to Element for
+        two reasons. 1) Node was incorrect, since parentElement returns an Element.
+        2) The bindings won't compile any more unless they know parentElement's
+        return value is an Element due to include changes.
+
+        * html/HTMLFormElement.cpp: Moved definitions of the functions in the
+        CheckedRadioButtons class to the new CheckedRadioButtons.cpp.
+
+        * html/HTMLFormElement.h: Moved definition of the CheckedRadioButtons
+        class to the new CheckedRadioButtons.h.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::checkedRadioButtons): Changed use of CheckedRadioButtons
+        class to use a namespace-level class instead of a member of HTMLFormElement.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow): Tweaked formatting.
+
+        * css/CSSGrammar.y: Added newly-needed include.
+        * dom/Range.cpp: Ditto.
+        * editing/BreakBlockquoteCommand.cpp: Ditto.
+        * editing/CompositeEditCommand.cpp: Ditto.
+        * editing/InsertLineBreakCommand.cpp: Ditto.
+        * editing/ModifySelectionListLevel.cpp: Ditto.
+        * editing/RemoveFormatCommand.cpp: Ditto.
+        * editing/TextIterator.cpp: Ditto.
+        * editing/VisiblePosition.cpp: Ditto.
+        * loader/DocLoader.cpp: Ditto.
+        * page/AccessibilityRenderObject.cpp: Ditto.
+        * page/Page.cpp: Ditto.
+        * rendering/RenderBlock.cpp: Ditto.
+        * rendering/RenderLayer.cpp: Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * storage/LocalStorageArea.cpp: Ditto.
+        * storage/SessionStorageArea.cpp: Ditto.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6015407> attr parsing should allow only identifiers

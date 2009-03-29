@@ -401,6 +401,7 @@ This file contains the list of files needed to build WebCore.
         dom/CDATASection.cpp
         dom/CSSMappedAttributeDeclaration.cpp
         dom/CharacterData.cpp
+        dom/CheckedRadioButtons.cpp
         dom/ChildNodeList.cpp
         dom/ClassNames.cpp
         dom/ClassNodeList.cpp

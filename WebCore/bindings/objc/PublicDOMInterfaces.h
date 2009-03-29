@@ -275,7 +275,7 @@
 @property(readonly, copy) NSString *localName;
 @property(copy) NSString *textContent AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly, copy) NSString *baseURI AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly, retain) DOMNode *parentElement AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly, retain) DOMElement *parentElement AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly) BOOL isContentEditable AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild;
 - (DOMNode *)insertBefore:(DOMNode *)newChild refChild:(DOMNode *)refChild AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;

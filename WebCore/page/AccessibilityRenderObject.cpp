@@ -39,6 +39,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLAreaElement.h"
+#include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"

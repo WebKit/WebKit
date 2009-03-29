@@ -26,6 +26,7 @@
 
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"

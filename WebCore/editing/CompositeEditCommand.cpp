@@ -36,7 +36,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "EditorInsertAction.h"
-#include "Element.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "InsertIntoTextNodeCommand.h"

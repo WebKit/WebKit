@@ -113,8 +113,7 @@ bool HTMLInputElement::autoComplete() const
     return true;
 }
 
-
-static inline HTMLFormElement::CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
+static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
     if (HTMLFormElement* form = element->form())
         return form->checkedRadioButtons();

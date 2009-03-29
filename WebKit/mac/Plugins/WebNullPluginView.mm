@@ -31,6 +31,7 @@
 #import "WebFrameInternal.h"
 #import "WebViewInternal.h"
 #import <WebCore/Document.h>
+#import <WebCore/Element.h>
 
 @implementation WebNullPluginView
 

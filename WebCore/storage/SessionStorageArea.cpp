@@ -29,6 +29,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "HTMLElement.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"

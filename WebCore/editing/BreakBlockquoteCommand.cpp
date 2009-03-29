@@ -26,12 +26,12 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
-#include "Element.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "RenderListItem.h"
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
-#include "RenderListItem.h"
 
 namespace WebCore {
 

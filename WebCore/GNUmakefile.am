@@ -560,6 +560,8 @@ webcore_sources += \
 	WebCore/dom/CSSMappedAttributeDeclaration.h \
 	WebCore/dom/CharacterData.cpp \
 	WebCore/dom/CharacterData.h \
+	WebCore/dom/CheckedRadioButtons.cpp \
+	WebCore/dom/CheckedRadioButtons.h \
 	WebCore/dom/ChildNodeList.cpp \
 	WebCore/dom/ChildNodeList.h \
 	WebCore/dom/ClassNames.cpp \

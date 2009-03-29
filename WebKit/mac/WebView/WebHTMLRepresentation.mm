@@ -47,6 +47,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/HTMLFormControlElement.h>
+#import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/MIMETypeRegistry.h>

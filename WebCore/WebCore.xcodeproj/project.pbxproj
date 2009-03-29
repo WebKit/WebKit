@@ -2087,6 +2087,8 @@
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
+		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */; };
 		93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */; settings = {ATTRIBUTES = (); }; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
 		93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */; };
@@ -6961,6 +6963,8 @@
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
 		93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLStructure.pm; path = scripts/IDLStructure.pm; sourceTree = "<group>"; };
+		93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedRadioButtons.h; sourceTree = "<group>"; };
+		93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedRadioButtons.cpp; sourceTree = "<group>"; };
 		93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
 		93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLCanvasElement.mm; sourceTree = "<group>"; };
 		93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElementInternal.h; sourceTree = "<group>"; };
@@ -14336,6 +14340,8 @@
 				6550B695099DF0270090D781 /* CharacterData.cpp */,
 				6550B696099DF0270090D781 /* CharacterData.h */,
 				93EEC1E609C2877700C515D1 /* CharacterData.idl */,
+				93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */,
+				93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */,
 				A818721A0977D3C0005826D9 /* ChildNodeList.cpp */,
 				A81872150977D3C0005826D9 /* ChildNodeList.h */,
 				BC4BF9E20D11E133007D247F /* ClassNames.cpp */,
@@ -16791,6 +16797,7 @@
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
+				93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18797,6 +18804,7 @@
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
+				93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

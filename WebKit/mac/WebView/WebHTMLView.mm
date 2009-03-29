@@ -32,7 +32,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
-#import "WebNetscapePluginView.h"
 #import "WebClipView.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSourceInternal.h"
@@ -50,7 +49,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
-#import "WebNodeHighlight.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSEventExtras.h"
 #import "WebNSFileManagerExtras.h"
@@ -60,6 +58,8 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSViewExtras.h"
+#import "WebNetscapePluginView.h"
+#import "WebNodeHighlight.h"
 #import "WebPluginController.h"
 #import "WebPreferences.h"
 #import "WebPreferencesPrivate.h"
@@ -70,7 +70,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
-#import <dlfcn.h>
+#import <WebCore/CSSMutableStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
 #import <WebCore/ColorMac.h>
@@ -78,19 +78,19 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
+#import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
-#import <WebCore/DragController.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -110,6 +110,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <dlfcn.h>
 #import <limits>
 #import <runtime/InitializeThreading.h>
 

@@ -27,6 +27,7 @@
 #include "RemoveFormatCommand.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLNames.h"
