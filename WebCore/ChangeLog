@@ -1,3 +1,9 @@
+2009-03-29  Greg Bolsinga  <bolsinga@apple.com>
+
+        Fix build break by removing references to deleted header files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-03-29  Darin Adler  <darin@apple.com>
 
         Try to fix the Windows build.
