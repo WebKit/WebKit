@@ -1,3 +1,15 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Bug 12104: Native Slider: When the thumb's height is specified as a percentage, it is not centered properly
+        https://bugs.webkit.org/show_bug.cgi?id=12104
+
+        Landed the test case from this bug. The bug was fixed by the fix for bug 24740 below.
+
+        * fast/forms/range-thumb-height-percentage.html: Added.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.checksum: Added.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.png: Added.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.txt: Added.
+
 2009-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
@@ -267,9 +279,6 @@
         Bug 24740: crash in RenderSlider::setPositionFromValue when calling pause() after setting <video> to display: none
         https://bugs.webkit.org/show_bug.cgi?id=24740
         rdar://problem/6679873
-
-        Bug 12104: Native Slider: When the thumb's height is specified as a percentage, it is not centered properly
-        https://bugs.webkit.org/show_bug.cgi?id=12104
 
         * media/video-display-none-crash-expected.txt: Added.
         * media/video-display-none-crash.html: Added.
