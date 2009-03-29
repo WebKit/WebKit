@@ -647,6 +647,7 @@
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; };
 		4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */; };
 		441B055C0CD77A2D007C1F18 /* DOMHTMLEmbedElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */; };
+		441B055E0CD77A48007C1F18 /* DOMHTMLIFrameElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */; };
 		441B05600CD77A65007C1F18 /* DOMHTMLObjectElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
@@ -3920,7 +3921,9 @@
 		BC5156E80C03B741008BB0EE /* DOMHTMLMarqueeElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC5156E50C03B741008BB0EE /* DOMHTMLMarqueeElement.h */; };
 		BC5156E90C03B741008BB0EE /* DOMHTMLMarqueeElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5156E60C03B741008BB0EE /* DOMHTMLMarqueeElement.mm */; };
 		BC5156EA0C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5156E70C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h */; };
+		BC5156F40C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC5156F30C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h */; };
 		BC51579F0C03BBD3008BB0EE /* DOMHTMLMarqueeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5156E50C03B741008BB0EE /* DOMHTMLMarqueeElement.h */; };
+		BC5157DD0C03BC22008BB0EE /* DOMHTMLFrameElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5156F30C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h */; };
 		BC51580B0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */; };
 		BC53C5F50DA56B920021EB5D /* Gradient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53C5F40DA56B920021EB5D /* Gradient.h */; };
 		BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53C6070DA56C570021EB5D /* Gradient.cpp */; };
@@ -4534,12 +4537,14 @@
 				85ECBF0A0AA7628900544F0B /* DOMHTMLFontElement.h in Copy Generated Headers */,
 				1C11CCBB0AA6093700DADB20 /* DOMHTMLFormElement.h in Copy Generated Headers */,
 				85DF819D0AA77E7E00486AD7 /* DOMHTMLFrameElement.h in Copy Generated Headers */,
+				BC5156F40C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h in Copy Generated Headers */,
 				85DF819E0AA77E7E00486AD7 /* DOMHTMLFrameSetElement.h in Copy Generated Headers */,
 				85ECBF0B0AA7628900544F0B /* DOMHTMLHRElement.h in Copy Generated Headers */,
 				8575DF840AA6130E00F5DBB5 /* DOMHTMLHeadElement.h in Copy Generated Headers */,
 				85183B5A0AA6928600F19FA3 /* DOMHTMLHeadingElement.h in Copy Generated Headers */,
 				8575DF850AA6130E00F5DBB5 /* DOMHTMLHtmlElement.h in Copy Generated Headers */,
 				85DF819F0AA77E7E00486AD7 /* DOMHTMLIFrameElement.h in Copy Generated Headers */,
+				441B055E0CD77A48007C1F18 /* DOMHTMLIFrameElementPrivate.h in Copy Generated Headers */,
 				85DF812E0AA778A300486AD7 /* DOMHTMLImageElement.h in Copy Generated Headers */,
 				85F32B400AA6401A00FF3184 /* DOMHTMLInputElement.h in Copy Generated Headers */,
 				6596F2B30B8731DF001326BD /* DOMHTMLInputElementInternal.h in Copy Generated Headers */,
@@ -5545,6 +5550,7 @@
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
 		4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElementPrivate.h; sourceTree = "<group>"; };
+		4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLIFrameElementPrivate.h; sourceTree = "<group>"; };
 		4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLObjectElementPrivate.h; sourceTree = "<group>"; };
 		4429AB070CB84F81007647C5 /* DOMTextEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTextEventInternal.h; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
@@ -8691,6 +8697,7 @@
 		BC5156E50C03B741008BB0EE /* DOMHTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLMarqueeElement.h; sourceTree = "<group>"; };
 		BC5156E60C03B741008BB0EE /* DOMHTMLMarqueeElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLMarqueeElement.mm; sourceTree = "<group>"; };
 		BC5156E70C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLMarqueeElementInternal.h; sourceTree = "<group>"; };
+		BC5156F30C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLFrameElementPrivate.h; sourceTree = "<group>"; };
 		BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDocumentCustom.cpp; sourceTree = "<group>"; };
 		BC53C5F40DA56B920021EB5D /* Gradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gradient.h; sourceTree = "<group>"; };
 		BC53C6070DA56C570021EB5D /* Gradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gradient.cpp; sourceTree = "<group>"; };
@@ -11009,6 +11016,7 @@
 				85DF2C110AA341F600AD64C5 /* DOMHTMLFormElement.mm */,
 				85DF818D0AA77E4B00486AD7 /* DOMHTMLFrameElement.h */,
 				85DF818E0AA77E4B00486AD7 /* DOMHTMLFrameElement.mm */,
+				BC5156F30C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h */,
 				85DF818F0AA77E4B00486AD7 /* DOMHTMLFrameSetElement.h */,
 				85DF81900AA77E4B00486AD7 /* DOMHTMLFrameSetElement.mm */,
 				85ECBEE30AA7626800544F0B /* DOMHTMLHRElement.h */,
@@ -11021,6 +11029,7 @@
 				85992EB50AA5069500AC0785 /* DOMHTMLHtmlElement.mm */,
 				85DF81910AA77E4B00486AD7 /* DOMHTMLIFrameElement.h */,
 				85DF81920AA77E4B00486AD7 /* DOMHTMLIFrameElement.mm */,
+				4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */,
 				85DF81230AA7787200486AD7 /* DOMHTMLImageElement.h */,
 				85DF81240AA7787200486AD7 /* DOMHTMLImageElement.mm */,
 				85F32AE40AA63B8700FF3184 /* DOMHTMLInputElement.h */,
@@ -14834,6 +14843,7 @@
 				85E711AA0AC5D5350053270F /* DOMHTMLFormElementInternal.h in Headers */,
 				85DF81950AA77E4B00486AD7 /* DOMHTMLFrameElement.h in Headers */,
 				85E711AB0AC5D5350053270F /* DOMHTMLFrameElementInternal.h in Headers */,
+				BC5157DD0C03BC22008BB0EE /* DOMHTMLFrameElementPrivate.h in Headers */,
 				85DF81970AA77E4B00486AD7 /* DOMHTMLFrameSetElement.h in Headers */,
 				85E711AC0AC5D5350053270F /* DOMHTMLFrameSetElementInternal.h in Headers */,
 				85ECBEF10AA7626900544F0B /* DOMHTMLHRElement.h in Headers */,
