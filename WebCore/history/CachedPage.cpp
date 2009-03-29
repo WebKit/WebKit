@@ -26,12 +26,9 @@
 #include "config.h"
 #include "CachedPage.h"
 
-#include "CachedFrame.h"
 #include "FocusController.h"
 #include "Frame.h"
-#ifndef NDEBUG
 #include "FrameView.h"
-#endif
 #include "Page.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>

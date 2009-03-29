@@ -1,3 +1,9 @@
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Try to fix the release build.
+
+        * history/CachedPage.cpp: Make include unconditional, not debug-only.
+
 2009-03-29  Greg Bolsinga  <bolsinga@apple.com>
 
         Undo that last build fix.
