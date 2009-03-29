@@ -576,6 +576,7 @@ SOURCES += \
     dom/BeforeUnloadEvent.cpp \
     dom/CDATASection.cpp \
     dom/CharacterData.cpp \
+    dom/CheckedRadioButtons.cpp \
     dom/ChildNodeList.cpp \
     dom/ClassNames.cpp \
     dom/ClassNodeList.cpp \

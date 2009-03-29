@@ -1,5 +1,11 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Another attempt to fix the Qt build.
+
+        * WebCore.pro: Added CheckedRadioButtons.cpp.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Bug 24921: remove include of HTMLFormElement.h from Document.h
