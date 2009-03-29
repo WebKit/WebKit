@@ -1,5 +1,10 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        * DumpRenderTree/qt/jsobjects.cpp: Rolled out changes to this file. Maybe this will fix
+        Qt building of DumpRenderTree.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Bug 24922: change WorkQueue-based navigation tests to not depend on synchronous form submission
