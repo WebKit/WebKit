@@ -1,3 +1,32 @@
+2009-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6492712> Cross-origin redirects are not handled correctly.
+
+        Test: http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::WebCoreSynchronousLoader::willSendRequest):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::didReceiveChallenge):
+        (WebCore::WebCoreSynchronousLoader::load):
+        Match Mac behavior more closely - we shouldn't rely on underlying library handling of
+        synchronous requests.
+
+        * loader/DocumentThreadableLoader.cpp: (WebCore::DocumentThreadableLoader::willSendRequest):
+        -[NSURLConnection cancel] doesn't fully cancel the connection if called from willSendRequest
+        delegate method for a redirect.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]):
+        Match async behavior more closely.
+
 2009-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

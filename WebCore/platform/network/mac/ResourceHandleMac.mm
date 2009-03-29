@@ -729,6 +729,13 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     UNUSED_PARAM(unusedConnection);
     UNUSED_PARAM(unusedRedirectResponse);
 
+    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
+    if (m_url && !protocolHostAndPortAreEqual(m_url, [newRequest URL])) {
+        m_error = [[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:nil];
+        m_isDone = YES;
+        return nil;
+    }
+
     NSURL *copy = [[newRequest URL] copy];
     [m_url release];
     m_url = copy;

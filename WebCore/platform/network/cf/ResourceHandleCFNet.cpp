@@ -53,6 +53,34 @@
 
 namespace WebCore {
 
+static CFStringRef WebCoreSynchronousLoaderRunLoopMode = CFSTR("WebCoreSynchronousLoaderRunLoopMode");
+
+class WebCoreSynchronousLoader {
+public:
+    static RetainPtr<CFDataRef> load(const ResourceRequest&, ResourceResponse&, ResourceError&);
+
+private:
+    WebCoreSynchronousLoader(ResourceResponse& response, ResourceError& error)
+        : m_isDone(false)
+        , m_response(response)
+        , m_error(error)
+    {
+    }
+
+    static CFURLRequestRef willSendRequest(CFURLConnectionRef, CFURLRequestRef, CFURLResponseRef, const void* clientInfo);
+    static void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef, const void* clientInfo);
+    static void didReceiveData(CFURLConnectionRef, CFDataRef, CFIndex, const void* clientInfo);
+    static void didFinishLoading(CFURLConnectionRef, const void* clientInfo);
+    static void didFail(CFURLConnectionRef, CFErrorRef, const void* clientInfo);
+    static void didReceiveChallenge(CFURLConnectionRef, CFURLAuthChallengeRef, const void* clientInfo);
+
+    bool m_isDone;
+    RetainPtr<CFURLRef> m_url;
+    ResourceResponse& m_response;
+    RetainPtr<CFMutableDataRef> m_data;
+    ResourceError& m_error;
+};
+
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
     static HashSet<String> hosts;
@@ -411,28 +439,18 @@ CFURLConnectionRef ResourceHandle::releaseConnectionForDownload()
 void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& vector, Frame*)
 {
     ASSERT(!request.isEmpty());
-    CFURLResponseRef cfResponse = 0;
-    CFErrorRef cfError = 0;
-    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(request, true));
 
-    CFDataRef data = CFURLConnectionSendSynchronousRequest(cfRequest.get(), &cfResponse, &cfError, request.timeoutInterval());
+    RetainPtr<CFDataRef> data = WebCoreSynchronousLoader::load(request, response, error);
 
-    if (cfError) {
-        error = cfError;
-        CFRelease(cfError);
-
+    if (!error.isNull()) {
+        // FIXME: Return the actual response for failed authentication.
         response = ResourceResponse(request.url(), String(), 0, String(), String());
         response.setHTTPStatusCode(404);
-    } else {
-        response = cfResponse;
-        if (cfResponse)
-            CFRelease(cfResponse);
     }
 
     if (data) {
         ASSERT(vector.isEmpty());
-        vector.append(CFDataGetBytePtr(data), CFDataGetLength(data));
-        CFRelease(data);
+        vector.append(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
 }
 
@@ -478,6 +496,92 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
         CFRelease(cfResponse);
 
     return cached;
+}
+
+CFURLRequestRef WebCoreSynchronousLoader::willSendRequest(CFURLConnectionRef, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
+    if (loader->m_url && !protocolHostAndPortAreEqual(loader->m_url.get(), CFURLRequestGetURL(cfRequest))) {
+        RetainPtr<CFErrorRef> cfError(AdoptCF, CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
+        loader->m_error = cfError.get();
+        loader->m_isDone = true;
+        return 0;
+    }
+
+    loader->m_url = CFURLRequestGetURL(cfRequest);
+
+    CFRetain(cfRequest);
+    return cfRequest;
+}
+
+void WebCoreSynchronousLoader::didReceiveResponse(CFURLConnectionRef, CFURLResponseRef cfResponse, const void* clientInfo) 
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    loader->m_response = cfResponse;
+}
+
+void WebCoreSynchronousLoader::didReceiveData(CFURLConnectionRef, CFDataRef data, CFIndex originalLength, const void* clientInfo)
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    if (!loader->m_data)
+        loader->m_data.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, originalLength));
+
+    const UInt8* bytes = CFDataGetBytePtr(data);
+    CFIndex length = CFDataGetLength(data);
+
+    CFDataAppendBytes(loader->m_data.get(), bytes, length);
+}
+
+void WebCoreSynchronousLoader::didFinishLoading(CFURLConnectionRef, const void* clientInfo)
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    loader->m_isDone = true;
+}
+
+void WebCoreSynchronousLoader::didFail(CFURLConnectionRef, CFErrorRef error, const void* clientInfo)
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    loader->m_error = error;
+    loader->m_isDone = true;
+}
+
+void WebCoreSynchronousLoader::didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challenge, const void* clientInfo)
+{
+    WebCoreSynchronousLoader* loader = (WebCoreSynchronousLoader*)clientInfo;
+
+    // FIXME: Mac uses credentials from URL here, should we do the same?
+    CFURLConnectionUseCredential(conn, 0, challenge);
+}
+
+RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& request, ResourceResponse& response, ResourceError& error)
+{
+    ASSERT(response.isNull());
+    ASSERT(error.isNull());
+
+    WebCoreSynchronousLoader loader(response, error);
+
+    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(request, true));
+
+    CFURLConnectionClient_V3 client = { 3, &loader, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, 0, didReceiveChallenge, 0, 0, 0 };
+
+    RetainPtr<CFURLConnectionRef> connection(AdoptCF, CFURLConnectionCreate(kCFAllocatorDefault, cfRequest.get(), reinterpret_cast<CFURLConnectionClient*>(&client)));
+
+    CFURLConnectionScheduleWithRunLoop(connection.get(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);
+    CFURLConnectionScheduleDownloadWithRunLoop(connection.get(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);
+    CFURLConnectionStart(connection.get());
+
+    while (!loader.m_isDone)
+        CFRunLoopRunInMode(WebCoreSynchronousLoaderRunLoopMode, UINT_MAX, true);
+
+    CFURLConnectionCancel(connection.get());
+
+    return loader.m_data;
 }
 
 } // namespace WebCore

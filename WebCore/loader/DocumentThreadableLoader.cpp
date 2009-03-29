@@ -120,7 +120,7 @@ void DocumentThreadableLoader::willSendRequest(SubresourceLoader*, ResourceReque
     if (!m_document->securityOrigin()->canRequest(request.url())) {
         RefPtr<DocumentThreadableLoader> protect(this);
         m_client->didFailRedirectCheck();
-        cancel();
+        request = ResourceRequest();
     }
 }
 
