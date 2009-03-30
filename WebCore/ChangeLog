@@ -1,3 +1,26 @@
+2009-03-30  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24938
+
+        Build fixes when building --no-svg
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Add missing CSS properties
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed): Handle unused param
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Add missing CSS properties
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Add missing CSS properties
+        * dom/Node.cpp:
+        (WebCore::updateSVGElementInstancesAfterEventListenerChange): Handle unused param
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth): Handle unused param
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData): Handle unused param
+
 2009-03-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.

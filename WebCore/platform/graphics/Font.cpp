@@ -32,6 +32,7 @@
 #include "GlyphBuffer.h"
 #include "WidthIterator.h"
 #include <wtf/MathExtras.h>
+#include <wtf/UnusedParam.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -215,7 +216,9 @@ float Font::floatWidth(const TextRun& run) const
 
 float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
-#if ENABLE(SVG_FONTS)
+#if !ENABLE(SVG_FONTS)
+    UNUSED_PARAM(extraCharsAvailable);
+#else
     if (primaryFont()->isSVGFont())
         return floatWidthUsingSVGFont(run, extraCharsAvailable, charsConsumed, glyphName);
 #endif

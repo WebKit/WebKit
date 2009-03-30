@@ -38,6 +38,7 @@
 #endif
 
 #include <wtf/MathExtras.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -52,7 +53,9 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
     , m_isLoading(loading)
     , m_smallCapsFontData(0)
 {
-#if ENABLE(SVG_FONTS)
+#if !ENABLE(SVG_FONTS)
+    UNUSED_PARAM(svgFontData);
+#else
     if (SVGFontFaceElement* svgFontFaceElement = svgFontData ? svgFontData->svgFontFaceElement() : 0) {
        m_unitsPerEm = svgFontFaceElement->unitsPerEm();
 

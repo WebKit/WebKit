@@ -98,14 +98,12 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHRElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadingElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHtmlElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLIFrameElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLIFrameElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLImageElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLInputElementInternal.h \
@@ -189,6 +187,8 @@ all : \
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
 all : \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElementPrivate.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLIFrameElementPrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVG.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAElementInternal.h \

@@ -5185,6 +5185,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitPaddingStart:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextStroke:
+    case CSSPropertyWebkitVariableDeclarationBlock:
         return;
 #if ENABLE(SVG)
     default:
