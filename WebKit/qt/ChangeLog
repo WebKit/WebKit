@@ -1,3 +1,12 @@
+2009-03-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Document that setHtml/setContent loads only the html/data immediately, not external objects.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebview.cpp:
+
 2009-03-29  Darin Adler  <darin@apple.com>
 
         Try to fix Qt build.

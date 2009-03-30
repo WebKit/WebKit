@@ -623,6 +623,8 @@ void QWebFrame::load(const QNetworkRequest &req,
   Sets the content of this frame to \a html. \a baseUrl is optional and used to resolve relative
   URLs in the document, such as referenced images or stylesheets.
 
+  The \a html is loaded immediately; external objects are loaded asynchronously.
+
   When using this method WebKit assumes that external resources such as JavaScript programs or style
   sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
   script can be specified through the charset attribute of the HTML script tag. It is also possible
@@ -646,6 +648,8 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
   auto-detection.
 
   External objects referenced in the content are located relative to \a baseUrl.
+
+  The \a data is loaded immediately; external objects are loaded asynchronously.
 
   \sa toHtml()
 */

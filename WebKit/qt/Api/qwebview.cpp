@@ -289,6 +289,8 @@ void QWebView::load(const QNetworkRequest &request,
     External objects such as stylesheets or images referenced in the HTML
     document are located relative to \a baseUrl.
 
+    The \a html is loaded immediately; external objects are loaded asynchronously.
+
     When using this method, WebKit assumes that external resources such as
     JavaScript programs or style sheets are encoded in UTF-8 unless otherwise
     specified. For example, the encoding of an external script can be specified
@@ -308,6 +310,8 @@ void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
     auto-detection.
 
     External objects referenced in the content are located relative to \a baseUrl.
+
+    The \a data is loaded immediately; external objects are loaded asynchronously.
 
     \sa load(), setHtml(), QWebFrame::toHtml()
 */
