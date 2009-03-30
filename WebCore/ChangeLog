@@ -1,6 +1,16 @@
 2009-03-30  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24938
+        
+        Build fixes for building --3d-rendering and --no-svg
+
+        * rendering/RenderLayerBacking.cpp:
+
+2009-03-30  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser.
         
         https://bugs.webkit.org/show_bug.cgi?id=24938
 
