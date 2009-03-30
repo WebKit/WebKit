@@ -1,3 +1,14 @@
+2009-03-30  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/5838871> CrashTracer: 1483 crashes Quicklooking
+        in Finder (painting without up to date layout)
+
+        Reviewed by Dan Bernstein.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents): Add an early return when
+        painting is attempted when layout is needed.
+
 2009-03-30  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.

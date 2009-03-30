@@ -1330,6 +1330,9 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     }
 
     ASSERT(!needsLayout());
+    if (needsLayout())
+        return;
+
     ASSERT(!m_isPainting);
         
     m_isPainting = true;
