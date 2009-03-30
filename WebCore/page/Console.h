@@ -75,6 +75,7 @@ namespace WebCore {
     public:
         static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
 
+        Frame* frame() const;
         void disconnectFrame();
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);

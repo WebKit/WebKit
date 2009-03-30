@@ -40,6 +40,8 @@ namespace WebCore {
     class Screen : public RefCounted<Screen> {
     public:
         static PassRefPtr<Screen> create(Frame *frame) { return adoptRef(new Screen(frame)); }
+
+        Frame* frame() const;
         void disconnectFrame();
 
         unsigned height() const;

@@ -1,3 +1,26 @@
+2009-03-30  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24879
+        Add frame accessor to Screen, Console, and BarInfo objects. Add type 
+        accessor to BarInfo objects.
+
+        In the V8 JavaScript bindings, we need access to the frame and
+        type for already created Screen, Console, and BarInfo objects in
+        order to keep their wrappers alive across GCs.
+
+        * page/BarInfo.cpp:
+        (WebCore::BarInfo::frame): Added.
+        (WebCore::BarInfo::type): Added.
+        * page/BarInfo.h:
+        * page/Console.cpp:
+        (WebCore::Console::frame): Added.
+        * page/Console.h:
+        * page/Screen.cpp:
+        (WebCore::Screen::frame): Added.
+        * page/Screen.h:
+
 2009-03-29  Darin Adler  <darin@apple.com>
 
         Requested by Antti Koivisto.

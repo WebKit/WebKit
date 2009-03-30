@@ -41,9 +41,19 @@ BarInfo::BarInfo(Frame* frame, Type type)
 {
 }
 
+Frame* BarInfo::frame() const
+{
+    return m_frame;
+}
+
 void BarInfo::disconnectFrame()
 {
     m_frame = 0;
+}
+
+BarInfo::Type BarInfo::type() const
+{
+    return m_type;
 }
 
 bool BarInfo::visible() const

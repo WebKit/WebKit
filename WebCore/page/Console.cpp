@@ -53,6 +53,11 @@ Console::Console(Frame* frame)
 {
 }
 
+Frame* Console::frame() const
+{
+    return m_frame;
+}
+
 void Console::disconnectFrame()
 {
     m_frame = 0;

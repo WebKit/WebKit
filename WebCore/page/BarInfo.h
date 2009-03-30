@@ -42,7 +42,10 @@ namespace WebCore {
 
         static PassRefPtr<BarInfo> create(Frame* frame, Type type) { return adoptRef(new BarInfo(frame, type)); }
 
+        Frame* frame() const;
         void disconnectFrame();
+
+        Type type() const;
 
         bool visible() const;
 
