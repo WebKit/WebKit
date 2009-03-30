@@ -1,5 +1,16 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 23445: Copying certain hidden text causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=23445
+        rdar://problem/6512520
+
+        * editing/pasteboard/copy-display-none-expected.txt: Added.
+        * editing/pasteboard/copy-display-none.html: Added.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         * fast/forms/targeted-frame-submission.html: Fixes from review comments.

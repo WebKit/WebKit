@@ -798,14 +798,20 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
         markups.append(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().node();
+
+        if (Range::compareBoundaryPoints(startNode, 0, pastEnd, 0) >= 0) {
+            if (deleteButton)
+                deleteButton->enable();
+            return interchangeNewlineString;
+        }
     }
 
     Node* next;
     for (Node* n = startNode; n != pastEnd; n = next) {
-    
-        // According to <rdar://problem/5730668>, it is possible for n to blow past pastEnd and become null here.  This 
-        // shouldn't be possible.  This null check will prevent crashes (but create too much markup) and the ASSERT will 
-        // hopefully lead us to understanding the problem.
+        // According to <rdar://problem/5730668>, it is possible for n to blow
+        // past pastEnd and become null here. This shouldn't be possible.
+        // This null check will prevent crashes (but create too much markup)
+        // and the ASSERT will hopefully lead us to understanding the problem.
         ASSERT(n);
         if (!n)
             break;

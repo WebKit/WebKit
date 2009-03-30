@@ -2,6 +2,21 @@
 
         Reviewed by Dan Bernstein.
 
+        Bug 23445: Copying certain hidden text causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=23445
+        rdar://problem/6512520
+
+        Test: editing/pasteboard/copy-display-none.html
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Added a check for the case where adjusting the start node moves
+        the start of the selection past the end of the range entirely. If we try to iterate we'll
+        never hit the end of the range and will probably crash iterating the rest of the document.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Bug 24672: ASSERTION FAILURE: !m_purgeableData in WebCore::CachedResource::data() saving a WebArchive
         https://bugs.webkit.org/show_bug.cgi?id=24672
         rdar://problem/6574263
