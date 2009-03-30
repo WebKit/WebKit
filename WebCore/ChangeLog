@@ -1,3 +1,16 @@
+2009-03-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24750
+        [GTK] requests download instead of displaying page
+
+        Use soup facilities to append parameters to the content type, to
+        make that more robust;
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+
 2009-03-30  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6735683> Move SECTORDER_FLAGS from Xcode project to WebCore.xcconfig

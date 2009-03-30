@@ -171,17 +171,19 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     contentType = contentTypes[0];
 
     if (contentTypeParameters) {
+        GString* parametersString = g_string_new(0);
         GHashTableIter hashTableIter;
         gpointer hashKey;
         gpointer hashValue;
 
         g_hash_table_iter_init(&hashTableIter, contentTypeParameters);
         while (g_hash_table_iter_next(&hashTableIter, &hashKey, &hashValue)) {
-            contentType += String("; ");
-            contentType += String(static_cast<char*>(hashKey));
-            contentType += String("=");
-            contentType += String(static_cast<char*>(hashValue));
+            g_string_append(parametersString, "; ");
+            soup_header_g_string_append_param(parametersString, static_cast<char*>(hashKey), static_cast<char*>(hashValue));
         }
+        contentType += String(parametersString->str);
+
+        g_string_free(parametersString, true);
         g_hash_table_destroy(contentTypeParameters);
     }
 
