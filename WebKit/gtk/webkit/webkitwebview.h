@@ -103,6 +103,9 @@ struct _WebKitWebViewClass {
     void                       (* cut_clipboard)          (WebKitWebView        *web_view);
     void                       (* copy_clipboard)         (WebKitWebView        *web_view);
     void                       (* paste_clipboard)        (WebKitWebView        *web_view);
+    gboolean                   (* move_cursor)            (WebKitWebView        *web_view,
+                                                           GtkMovementStep       step,
+                                                           gint                  count);
 
     /*
      * internal
@@ -118,7 +121,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
     void (*_webkit_reserved6) (void);
-    void (*_webkit_reserved7) (void);
 };
 
 WEBKIT_API GType
@@ -323,6 +325,11 @@ webkit_web_view_set_custom_encoding             (WebKitWebView        * webView,
 
 WEBKIT_API const char*
 webkit_web_view_get_custom_encoding             (WebKitWebView        * webView);
+
+WEBKIT_API void
+webkit_web_view_move_cursor                     (WebKitWebView        * webView,
+                                                 GtkMovementStep        step,
+                                                 gint                   count);
 
 G_END_DECLS
 

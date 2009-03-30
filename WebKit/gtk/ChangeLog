@@ -1,3 +1,19 @@
+2009-03-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24878
+        [GTK] Use GtkBinding system to handle key events in WebView
+
+        Use GtkBinding system for key events in WebKitWebView. Allows the
+        user to reconfigure the bindings and fixes a bunch of bugs along
+        the way (we were not checking modifier keys in most actions).
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_move_cursor):
+        * webkit/webkitwebview.h:
+        * webkitmarshal.list:
+
 2009-03-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.

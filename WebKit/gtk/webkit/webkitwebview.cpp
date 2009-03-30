@@ -137,6 +137,7 @@ enum {
     PASTE_CLIPBOARD,
     CUT_CLIPBOARD,
     DOWNLOAD_REQUESTED,
+    MOVE_CURSOR,
     LAST_SIGNAL
 };
 
@@ -436,48 +437,6 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
 
     if (frame->eventHandler()->keyEvent(keyboardEvent))
         return TRUE;
-
-    FrameView* view = frame->view();
-    SelectionController::EAlteration alteration;
-    if (event->state & GDK_SHIFT_MASK)
-        alteration = SelectionController::EXTEND;
-    else
-        alteration = SelectionController::MOVE;
-
-    // TODO: We probably want to use GTK+ key bindings here and perhaps take an
-    // approach more like the Win and Mac ports for key handling.
-    switch (event->keyval) {
-    case GDK_Down:
-        view->scrollBy(IntSize(0, cScrollbarPixelsPerLineStep));
-        return TRUE;
-    case GDK_Up:
-        view->scrollBy(IntSize(0, -cScrollbarPixelsPerLineStep));
-        return TRUE;
-    case GDK_Right:
-        view->scrollBy(IntSize(cScrollbarPixelsPerLineStep, 0));
-        return TRUE;
-    case GDK_Left:
-        view->scrollBy(IntSize(-cScrollbarPixelsPerLineStep, 0));
-        return TRUE;
-    case GDK_space:
-        if ((event->state & GDK_SHIFT_MASK) == GDK_SHIFT_MASK)
-            view->scrollBy(IntSize(0, -view->visibleHeight()));
-        else
-            view->scrollBy(IntSize(0, view->visibleHeight()));
-        return TRUE;
-    case GDK_Page_Up:
-        view->scrollBy(IntSize(0, -view->visibleHeight()));
-        return TRUE;
-    case GDK_Page_Down:
-        view->scrollBy(IntSize(0, view->visibleHeight()));
-        return TRUE;
-    case GDK_Home:
-        view->scrollBy(IntSize(0, -view->contentsHeight()));
-        return TRUE;
-    case GDK_End:
-        view->scrollBy(IntSize(0, view->contentsHeight()));
-        return TRUE;
-    }
 
     /* Chain up to our parent class for binding activation */
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->key_press_event(widget, event);
@@ -845,6 +804,50 @@ static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->command("Copy").execute();
+}
+
+static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMovementStep step, gint count)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW (webView), FALSE);
+    g_return_val_if_fail(step == GTK_MOVEMENT_VISUAL_POSITIONS ||
+                         step == GTK_MOVEMENT_DISPLAY_LINES ||
+                         step == GTK_MOVEMENT_PAGES ||
+                         step == GTK_MOVEMENT_BUFFER_ENDS, FALSE);
+    g_return_val_if_fail(count == 1 || count == -1, FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    FrameView* view = frame->view();
+
+    switch (step) {
+    case GTK_MOVEMENT_DISPLAY_LINES:
+        if (count == 1)
+            view->scrollBy(IntSize(0, cScrollbarPixelsPerLineStep));
+        else if (count == -1)
+            view->scrollBy(IntSize(0, -cScrollbarPixelsPerLineStep));
+        break;
+    case GTK_MOVEMENT_VISUAL_POSITIONS:
+        if (count == 1)
+            view->scrollBy(IntSize(cScrollbarPixelsPerLineStep, 0));
+        else if (count == -1)
+            view->scrollBy(IntSize(-cScrollbarPixelsPerLineStep, 0));
+        break;
+    case GTK_MOVEMENT_PAGES:
+        if (count == 1)
+            view->scrollBy(IntSize(0, view->visibleHeight()));
+        else if (count == -1)
+            view->scrollBy(IntSize(0, -view->visibleHeight()));
+        break;
+    case GTK_MOVEMENT_BUFFER_ENDS:
+        if (count == 1)
+            view->scrollBy(IntSize(0, view->contentsHeight()));
+        else if (count == -1)
+            view->scrollBy(IntSize(0, -view->contentsHeight()));
+        break;
+    default:
+        g_assert_not_reached();
+    }
+  
+    return TRUE;
 }
 
 static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
@@ -1501,6 +1504,28 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
+    /**
+     * WebKitWebView::move-cursor:
+     * @web_view: the object which received the signal
+     * @step: the type of movement, one of #GtkMovementStep
+     * @count: an integer indicating the subtype of movement. Currently
+     *         the permitted values are '1' = forward, '-1' = backwards.
+     *
+     * The #WebKitWebView::move-cursor will be emitted to apply the
+     * cursor movement described by its parameters to the @view.
+     * 
+     * Since: 1.1.4
+     */
+    webkit_web_view_signals[MOVE_CURSOR] = g_signal_new("move-cursor",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, move_cursor),
+            NULL, NULL,
+            webkit_marshal_BOOLEAN__ENUM_INT,
+            G_TYPE_BOOLEAN, 2,
+            GTK_TYPE_MOVEMENT_STEP,
+            G_TYPE_INT);
+
     /*
      * implementations of virtual methods
      */
@@ -1517,6 +1542,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->cut_clipboard = webkit_web_view_real_cut_clipboard;
     webViewClass->copy_clipboard = webkit_web_view_real_copy_clipboard;
     webViewClass->paste_clipboard = webkit_web_view_real_paste_clipboard;
+    webViewClass->move_cursor = webkit_web_view_real_move_cursor;
 
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
     objectClass->dispose = webkit_web_view_dispose;
@@ -1581,6 +1607,49 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                  "copy_clipboard", 0);
     gtk_binding_entry_add_signal(binding_set, GDK_Insert, GDK_SHIFT_MASK,
                                  "paste_clipboard", 0);
+
+    /* Movement */
+    
+    gtk_binding_entry_add_signal(binding_set, GDK_Down, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_DISPLAY_LINES,
+                                 G_TYPE_INT, 1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Up, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_DISPLAY_LINES,
+                                 G_TYPE_INT, -1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Right, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_VISUAL_POSITIONS,
+                                 G_TYPE_INT, 1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Left, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_VISUAL_POSITIONS,
+                                 G_TYPE_INT, -1);
+    gtk_binding_entry_add_signal(binding_set, GDK_space, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_PAGES,
+                                 G_TYPE_INT, 1);
+    gtk_binding_entry_add_signal(binding_set, GDK_space, GDK_SHIFT_MASK,
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_PAGES,
+                                 G_TYPE_INT, -1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Page_Down, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_PAGES,
+                                 G_TYPE_INT, 1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Page_Up, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_PAGES,
+                                 G_TYPE_INT, -1);
+    gtk_binding_entry_add_signal(binding_set, GDK_End, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_BUFFER_ENDS,
+                                 G_TYPE_INT, 1);
+    gtk_binding_entry_add_signal(binding_set, GDK_Home, static_cast<GdkModifierType>(0),
+                                 "move-cursor", 2,
+                                 G_TYPE_ENUM, GTK_MOVEMENT_BUFFER_ENDS,
+                                 G_TYPE_INT, -1);
 
     /*
      * properties
@@ -3049,4 +3118,26 @@ const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
         return priv->customEncoding;
     } else
       return NULL;
+}
+
+/**
+ * webkit_web_view_move_cursor:
+ * @web_view: a #WebKitWebView
+ * @step: a #GtkMovementStep
+ * @count: integer describing the direction of the movement. 1 for forward, -1 for backwards.
+ *
+ * Move the cursor in @view as described by @step and @count.
+ *
+ * Since: 1.1.4
+ */
+void webkit_web_view_move_cursor(WebKitWebView* webView, GtkMovementStep step, gint count)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(step == GTK_MOVEMENT_VISUAL_POSITIONS ||
+                     step == GTK_MOVEMENT_DISPLAY_LINES ||
+                     step == GTK_MOVEMENT_PAGES ||
+                     step == GTK_MOVEMENT_BUFFER_ENDS);
+    g_return_if_fail(count == 1 || count == -1);
+
+    g_signal_emit(webView, webkit_web_view_signals[MOVE_CURSOR], 0, step, count);
 }
