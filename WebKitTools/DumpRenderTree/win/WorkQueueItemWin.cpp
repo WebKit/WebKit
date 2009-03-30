@@ -52,7 +52,7 @@ static wstring jsStringRefToWString(JSStringRef jsStr)
 
 bool LoadItem::invoke() const
 {
-    wstring targetString = jsStringRefToWString(target());
+    wstring targetString = jsStringRefToWString(m_target.get());
 
     COMPtr<IWebFrame> targetFrame;
     if (targetString.empty())
@@ -69,7 +69,7 @@ bool LoadItem::invoke() const
     if (FAILED(CoCreateInstance(CLSID_WebURLRequest, 0, CLSCTX_ALL, IID_IWebURLRequest, (void**)&request)))
         return false;
 
-    wstring urlString = jsStringRefToWString(url());
+    wstring urlString = jsStringRefToWString(m_url.get());
     BSTR urlBSTR = SysAllocString(urlString.c_str());
     bool failed = FAILED(request->initWithURL(urlBSTR, WebURLRequestUseProtocolCachePolicy, 60));
     SysFreeString(urlBSTR);
@@ -100,7 +100,7 @@ bool ScriptItem::invoke() const
     if (FAILED(frame->webView(&webView)))
         return false;
 
-    wstring scriptString = jsStringRefToWString(script());
+    wstring scriptString = jsStringRefToWString(m_script.get());
 
     BSTR result;
     BSTR scriptBSTR = SysAllocString(scriptString.c_str());

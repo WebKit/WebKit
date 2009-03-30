@@ -1,3 +1,15 @@
+2009-03-30  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::waitForPolicyDelegate): Added this empty stub.
+
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+        (LoadItem::invoke):
+        (ScriptItem::invoke):
+        Changed to use data members instead of removed member functions.
+
 2009-03-30  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk DRT build fix per changeset

@@ -138,6 +138,11 @@ void LayoutTestController::keepWebHistory()
     history->setOptionalSharedHistory(sharedHistory.get());
 }
 
+void LayoutTestController::waitForPolicyDelegate()
+{
+    // FIXME: Implement this.
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
