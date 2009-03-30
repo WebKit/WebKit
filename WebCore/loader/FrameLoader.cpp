@@ -2208,13 +2208,16 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
 
     ASSERT(newLoadType != FrameLoadTypeSame);
 
+    Frame* targetFrame = findFrameForNavigation(frameName);
+    if (targetFrame && targetFrame != m_frame) {
+        targetFrame->loader()->loadURL(newURL, referrer, String(), lockHistory, newLoadType, event, formState.release());
+        return;
+    }
+
     NavigationAction action(newURL, newLoadType, isFormSubmission, event);
 
-    if (!frameName.isEmpty()) {
-        if (Frame* targetFrame = findFrameForNavigation(frameName))
-            targetFrame->loader()->loadURL(newURL, referrer, String(), lockHistory, newLoadType, event, formState);
-        else
-            checkNewWindowPolicy(action, request, formState, frameName);
+    if (!targetFrame && !frameName.isEmpty()) {
+        checkNewWindowPolicy(action, request, formState.release(), frameName);
         return;
     }
 
@@ -2228,12 +2231,12 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     if (shouldScrollToAnchor(isFormSubmission, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
         stopPolicyCheck();
-        checkNavigationPolicy(request, oldDocumentLoader.get(), formState,
+        checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
             callContinueFragmentScrollAfterNavigationPolicy, this);
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         bool isRedirect = m_quickRedirectComing;
-        loadWithNavigationAction(request, action, lockHistory, newLoadType, formState);
+        loadWithNavigationAction(request, action, lockHistory, newLoadType, formState.release());
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)

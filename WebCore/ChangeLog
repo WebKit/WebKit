@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Bug 24916: REGRESSION: NavigationAction policy dispatch broken
+        https://bugs.webkit.org/show_bug.cgi?id=24916
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL): Rearrange the code so that the "event" PassRefPtr
+        is not used twice. This also optimizes the case where a frame name is specified,
+        but it's the name of the frame being loaded. Also called release in all the final
+        uses of FormState.
+
+2009-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
         Bug 24937: NamedNodeMap and NamedAttrMap should not be separate classes
         https://bugs.webkit.org/show_bug.cgi?id=24937
 
