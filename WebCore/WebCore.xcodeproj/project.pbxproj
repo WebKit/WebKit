@@ -18855,12 +18855,6 @@
 					normal,
 					debug,
 				);
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					WebCore.order,
-				);
 			};
 			name = Production;
 		};

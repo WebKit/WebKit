@@ -1,3 +1,16 @@
+2009-03-30  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6735683> Move SECTORDER_FLAGS from Xcode project to WebCore.xcconfig
+
+        Reviewed by Timothy Hatcher, Mark Rowe and Darin Adler.
+
+        * Configurations/Base.xcconfig: Moved Production definition of
+        SECTORDER_FLAGS to here from Xcode project file.
+        * Configurations/DebugRelease.xcconfig: Override SECTORDER_FLAGS
+        in Base.xcconfig to the empty string since it is not used for
+        Debug and Release configurations.
+        * WebCore.xcodeproj/project.pbxproj: Removed SECTORDER_FLAGS.
+
 2009-03-30  Adam Roben  <aroben@apple.com>
 
         Windows build fix after recent Node.idl changes
