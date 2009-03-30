@@ -900,7 +900,7 @@ sub GenerateCPPHeader
                                                                                          "Forwarder" => $parentClassName });
                 push(@CPPHeaderContent, values(%attributes));
             }
-            
+
             # Add attribute names to attribute names set in case other ancestors 
             # also define them.
             $attributeNameSet{$_->signature->name} = 1 foreach @attributeList;

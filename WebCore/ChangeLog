@@ -1,5 +1,12 @@
 2009-03-30  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after recent Node.idl changes
+
+        * bindings/scripts/CodeGeneratorCOM.pm: Touched this to force sources
+        of classes that derive from Node to rebuild.
+
+2009-03-30  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * svg/graphics/SVGImage.cpp: Added a missing #include.
