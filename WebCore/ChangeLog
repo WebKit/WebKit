@@ -1,5 +1,21 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 24672: ASSERTION FAILURE: !m_purgeableData in WebCore::CachedResource::data() saving a WebArchive
+        https://bugs.webkit.org/show_bug.cgi?id=24672
+        rdar://problem/6574263
+
+        I couldn't create a test case for this. In fact, the case in the bug doesn't exist any more,
+        but there is an Apple-internal website I was able to use to reproduce and fix.
+
+        * loader/CachedResource.h: Made makePurgeable public.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource): Call makePurgeable to make the resource non-purgeable
+        so we can get its data if it hasn't yet been purged.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Fix build again.
 
         * loader/EmptyClients.h: Fix typo in name of FormState.h.
@@ -12,7 +28,7 @@
 
 2009-03-29  Greg Bolsinga  <bolsinga@apple.com>
 
-        Undo that last build fix.
+        Undo that last build fix, since it turned out the file wasn't deleted.
 
         * WebCore.xcodeproj/project.pbxproj:
 

@@ -549,13 +549,28 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
     if (!isCommitted())
         return 0;
     
-    Document* doc = m_frame->document();
-        
-    CachedResource* resource = doc->docLoader()->cachedResource(url);
+    CachedResource* resource = m_frame->document()->docLoader()->cachedResource(url);
     if (!resource || resource->preloadResult() == CachedResource::PreloadReferenced)
         return archiveResourceForURL(url);
-        
-    return ArchiveResource::create(resource->data(), url, resource->response());
+
+    bool wasPurgeable = resource->isPurgeable();
+    if (wasPurgeable) {
+        if (!resource->makePurgeable(false))
+            return 0;
+    }
+    RefPtr<SharedBuffer> data = resource->data();
+    if (wasPurgeable) {
+        // At the time of this writing, the following operation is a no-op, because
+        // makePurgeable has no effect if someone is holding a reference to the
+        // SharedBuffer. So we could just leave it out, but it seems that some day
+        // we might want to change the design so this does have an effect, and
+        // this call is otherwise harmless.
+        resource->makePurgeable(true);
+    }
+    if (!data)
+        return 0;
+
+    return ArchiveResource::create(data.release(), url, resource->response());
 }
 
 void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subresources) const

@@ -172,12 +172,16 @@ public:
     bool isPurgeable() const;
     bool wasPurged() const;
     
+    // This is used by the archive machinery to get at a purged resource without
+    // triggering a load. We should make it protected again if we can find a
+    // better way to handle the archive case.
+    bool makePurgeable(bool purgeable);
+
 protected:
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
 
-    bool makePurgeable(bool purgeable);
     bool isSafeToMakePurgeable() const;
     
     HashCountedSet<CachedResourceClient*> m_clients;
