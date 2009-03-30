@@ -40,7 +40,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -140,12 +140,12 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 }
 
 // Virtual function, defined in base class.
-NamedAttrMap* Element::attributes() const
+NamedNodeMap* Element::attributes() const
 {
     return attributes(false);
 }
 
-NamedAttrMap* Element::attributes(bool readonly) const
+NamedNodeMap* Element::attributes(bool readonly) const
 {
     if (!m_isStyleAttributeValid)
         updateStyleAttribute();
@@ -566,7 +566,7 @@ void Element::attributeChanged(Attribute* attr, bool)
     }
 }
 
-void Element::setAttributeMap(PassRefPtr<NamedAttrMap> list)
+void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list)
 {
     document()->incDOMTreeVersion();
 
@@ -644,7 +644,7 @@ KURL Element::baseURI() const
 
 void Element::createAttributeMap() const
 {
-    namedAttrMap = NamedAttrMap::create(const_cast<Element*>(this));
+    namedAttrMap = NamedNodeMap::create(const_cast<Element*>(this));
 }
 
 bool Element::isURLAttribute(Attribute*) const
@@ -677,7 +677,7 @@ void Element::insertedIntoDocument()
     ContainerNode::insertedIntoDocument();
 
     if (hasID()) {
-        if (NamedAttrMap* attrs = namedAttrMap.get()) {
+        if (NamedNodeMap* attrs = namedAttrMap.get()) {
             Attribute* idItem = attrs->getAttributeItem(idAttr);
             if (idItem && !idItem->isNull())
                 updateId(nullAtom, idItem->value());
@@ -688,7 +688,7 @@ void Element::insertedIntoDocument()
 void Element::removedFromDocument()
 {
     if (hasID()) {
-        if (NamedAttrMap* attrs = namedAttrMap.get()) {
+        if (NamedNodeMap* attrs = namedAttrMap.get()) {
             Attribute* idItem = attrs->getAttributeItem(idAttr);
             if (idItem && !idItem->isNull())
                 updateId(idItem->value(), nullAtom);
@@ -948,7 +948,7 @@ String Element::openTagStartToString() const
 {
     String result = "<" + nodeName();
 
-    NamedAttrMap *attrMap = attributes(true);
+    NamedNodeMap* attrMap = attributes(true);
 
     if (attrMap) {
         unsigned numAttrs = attrMap->length();
@@ -1048,7 +1048,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
         return 0;
     }
 
-    NamedAttrMap *attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return 0;
 
@@ -1083,7 +1083,7 @@ void Element::removeAttributeNS(const String& namespaceURI, const String& localN
 
 PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 {
-    NamedAttrMap* attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return 0;
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
@@ -1092,7 +1092,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 
 PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
 {
-    NamedAttrMap* attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return 0;
     return static_pointer_cast<Attr>(attrs->getNamedItem(QualifiedName(nullAtom, localName, namespaceURI)));
@@ -1100,7 +1100,7 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const S
 
 bool Element::hasAttribute(const String& name) const
 {
-    NamedAttrMap* attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return false;
 
@@ -1112,7 +1112,7 @@ bool Element::hasAttribute(const String& name) const
 
 bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const
 {
-    NamedAttrMap* attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return false;
     return attrs->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
@@ -1246,7 +1246,7 @@ void Element::cancelFocusAppearanceUpdate()
 void Element::normalizeAttributes()
 {
     // Normalize attributes.
-    NamedAttrMap* attrs = attributes(true);
+    NamedNodeMap* attrs = attributes(true);
     if (!attrs)
         return;
     unsigned numAttrs = attrs->length();

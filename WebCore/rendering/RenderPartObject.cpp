@@ -229,7 +229,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         }
         
         // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.
-        NamedAttrMap* attributes = embedOrObject->attributes();
+        NamedNodeMap* attributes = embedOrObject->attributes();
         if (attributes) {
             for (unsigned i = 0; i < attributes->length(); ++i) {
                 Attribute* it = attributes->attributeItem(i);
@@ -280,7 +280,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
             return;
 
         // add all attributes set on the embed object
-        NamedAttrMap* a = o->attributes();
+        NamedNodeMap* a = o->attributes();
         if (a) {
             for (unsigned i = 0; i < a->length(); ++i) {
                 Attribute* it = a->attributeItem(i);

@@ -1,3 +1,91 @@
+2009-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 24937: NamedNodeMap and NamedAttrMap should not be separate classes
+        https://bugs.webkit.org/show_bug.cgi?id=24937
+
+        Also should fix the Windows COM bindings build.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed special case for NamedNodeMap.
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+
+        * dom/NamedAttrMap.h: Renamed class from NamedAttrMap to
+        NamedNodeMap and removed NamedNodeMap base class. Made the NamedNodeMap
+        functions all public and non-virtual. Removed virtualLength.
+
+        * dom/NamedNodeMap.h: Replaced file with just an include
+        of NamedAttrMap.h. As a follow up we will rename the NamedAttrMap
+        files and remove this file.
+
+        * bindings/js/JSNamedNodesCollection.cpp: Renamed from NamedAttrMap to NamedNodeMap.
+        * dom/Attr.h: Ditto.
+        * dom/Attribute.h: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::importNode): Ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::attributes): Ditto.
+        (WebCore::Element::setAttributeMap): Ditto.
+        (WebCore::Element::createAttributeMap): Ditto.
+        (WebCore::Element::insertedIntoDocument): Ditto.
+        (WebCore::Element::removedFromDocument): Ditto.
+        (WebCore::Element::openTagStartToString): Ditto.
+        (WebCore::Element::removeAttributeNode): Ditto.
+        (WebCore::Element::getAttributeNode): Ditto.
+        (WebCore::Element::getAttributeNodeNS): Ditto.
+        (WebCore::Element::hasAttribute): Ditto.
+        (WebCore::Element::hasAttributeNS): Ditto.
+        (WebCore::Element::normalizeAttributes): Ditto.
+        * dom/Element.h: Ditto.
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedNodeMap::detachAttributesFromElement): Ditto.
+        (WebCore::NamedNodeMap::~NamedNodeMap): Ditto.
+        (WebCore::NamedNodeMap::isMappedAttributeMap): Ditto.
+        (WebCore::NamedNodeMap::getNamedItem): Ditto.
+        (WebCore::NamedNodeMap::getNamedItemNS): Ditto.
+        (WebCore::NamedNodeMap::removeNamedItem): Ditto.
+        (WebCore::NamedNodeMap::removeNamedItemNS): Ditto.
+        (WebCore::NamedNodeMap::setNamedItem): Ditto.
+        (WebCore::NamedNodeMap::item): Ditto.
+        (WebCore::NamedNodeMap::getAttributeItem): Ditto.
+        (WebCore::NamedNodeMap::clearAttributes): Ditto.
+        (WebCore::NamedNodeMap::detachFromElement): Ditto.
+        (WebCore::NamedNodeMap::setAttributes): Ditto.
+        (WebCore::NamedNodeMap::addAttribute): Ditto.
+        (WebCore::NamedNodeMap::removeAttribute): Ditto.
+        (WebCore::NamedNodeMap::mapsEquivalent): Ditto.
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::clearAttributes): Ditto.
+        * dom/NamedMappedAttrMap.h:
+        (WebCore::NamedMappedAttrMap::NamedMappedAttrMap): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics): Ditto.
+        (WebCore::Node::isEqualNode): Ditto.
+        (WebCore::Node::isDefaultNamespace): Ditto.
+        (WebCore::Node::lookupNamespaceURI): Ditto.
+        (WebCore::Node::lookupNamespacePrefix): Ditto.
+        (WebCore::Node::compareDocumentPosition): Ditto.
+        * dom/Node.h: Ditto.
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer): Ditto.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isSpanWithoutAttributesOrUnstyleStyleSpan): Ditto.
+        (WebCore::isEmptyFontTag): Ditto.
+        (WebCore::areIdenticalElements): Ditto.
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Ditto.
+        (WebCore::completeURLs): Ditto.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Ditto.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Ditto.
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::synchronizeProperty): Ditto.
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Ditto.
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Ditto.
+
 2009-03-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.

@@ -32,7 +32,7 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 #include "XMLNames.h"
 #include "XPathUtil.h"
 #include "XPathValue.h"
@@ -537,7 +537,7 @@ Value FunLang::evaluate() const
     Attribute* languageAttribute = 0;
     Node* node = evaluationContext().node.get();
     while (node) {
-        NamedAttrMap* attrs = node->attributes();
+        NamedNodeMap* attrs = node->attributes();
         if (attrs)
             languageAttribute = attrs->getAttributeItem(XMLNames::langAttr);
         if (languageAttribute)

@@ -37,7 +37,7 @@ namespace WebCore {
 // destruction. however, this is not yet implemented.
 
 class Attr : public ContainerNode {
-    friend class NamedAttrMap;
+    friend class NamedNodeMap;
 public:
     Attr(Element*, Document*, PassRefPtr<Attribute>);
     ~Attr();

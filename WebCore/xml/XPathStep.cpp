@@ -32,7 +32,7 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathUtil.h"
@@ -187,7 +187,7 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 return;
             }
             
-            NamedAttrMap* attrs = context->attributes();
+            NamedNodeMap* attrs = context->attributes();
             if (!attrs)
                 return;
 

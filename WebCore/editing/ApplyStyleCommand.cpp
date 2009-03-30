@@ -265,7 +265,7 @@ static bool isSpanWithoutAttributesOrUnstyleStyleSpan(const Node* node)
         return false;
 
     const HTMLElement* elem = static_cast<const HTMLElement*>(node);
-    NamedAttrMap* attributes = elem->attributes(true); // readonly
+    NamedNodeMap* attributes = elem->attributes(true); // readonly
     if (attributes->length() == 0)
         return true;
 
@@ -278,7 +278,7 @@ static bool isEmptyFontTag(const Node *node)
         return false;
 
     const Element *elem = static_cast<const Element *>(node);
-    NamedAttrMap *map = elem->attributes(true); // true for read-only
+    NamedNodeMap *map = elem->attributes(true); // true for read-only
     return (!map || map->length() == 1) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
@@ -1357,8 +1357,8 @@ static bool areIdenticalElements(Node *first, Node *second)
     if (!firstElement->tagQName().matches(secondElement->tagQName()))
         return false;
 
-    NamedAttrMap *firstMap = firstElement->attributes();
-    NamedAttrMap *secondMap = secondElement->attributes();
+    NamedNodeMap *firstMap = firstElement->attributes();
+    NamedNodeMap *secondMap = secondElement->attributes();
 
     unsigned firstLength = firstMap->length();
 

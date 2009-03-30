@@ -28,11 +28,11 @@
 
 #include "ClassNames.h"
 #include "MappedAttribute.h" // This header is not required for the NamedMappedAttrMap definition. Should remove it.
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 
 namespace WebCore {
 
-class NamedMappedAttrMap : public NamedAttrMap {
+class NamedMappedAttrMap : public NamedNodeMap {
 public:
     static PassRefPtr<NamedMappedAttrMap> create(Element* element = 0) { return adoptRef(new NamedMappedAttrMap(element)); }
 
@@ -47,7 +47,7 @@ public:
     bool mapsEquivalent(const NamedMappedAttrMap*) const;
 
 private:
-    NamedMappedAttrMap(Element* element) : NamedAttrMap(element), m_mappedAttributeCount(0) { }
+    NamedMappedAttrMap(Element* element) : NamedNodeMap(element), m_mappedAttributeCount(0) { }
 
     virtual void clearAttributes();
     virtual bool isMappedAttributeMap() const;

@@ -1687,10 +1687,6 @@ sub NativeToJSValue
         $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
     }
 
-    if ($type eq "NamedNodeMap") {
-        $implIncludes{"NamedAttrMap.h"} = 1;
-    }
-
     if ($type eq "NodeList") {
         $implIncludes{"NameNodeList.h"} = 1;
     }

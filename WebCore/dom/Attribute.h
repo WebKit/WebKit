@@ -32,14 +32,14 @@ namespace WebCore {
 class Attr;
 class CSSStyleDeclaration;
 class Element;
-class NamedAttrMap;
+class NamedNodeMap;
 
 // This has no counterpart in DOM.
 // It is an internal representation of the node value of an Attr.
 // The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute : public RefCounted<Attribute> {
     friend class Attr;
-    friend class NamedAttrMap;
+    friend class NamedNodeMap;
 public:
     static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
     {

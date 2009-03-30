@@ -54,7 +54,7 @@
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -152,7 +152,7 @@ void Node::dumpStatistics()
                     result.first->second++;
 
                 // AttributeMap stats
-                if (NamedAttrMap* attrMap = element->attributes(true)) {
+                if (NamedNodeMap* attrMap = element->attributes(true)) {
                     attributes += attrMap->length();
                     ++attrMaps;
                     if (attrMap->isMappedAttributeMap())
@@ -249,7 +249,7 @@ void Node::dumpStatistics()
     printf("  Number of MappedAttributes: %zu [%zu]\n", mappedAttributes, sizeof(MappedAttribute));
     printf("  Number of MappedAttributes with a StyleDeclaration: %zu\n", mappedAttributesWithStyleDecl);
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
-    printf("  Number of NamedAttrMaps: %zu\n", attrMaps);
+    printf("  Number of NamedNodeMaps: %zu\n", attrMaps);
     printf("  Number of NamedMappedAttrMap: %zu\n", mappedAttrMaps);
 #endif
 }
@@ -1613,8 +1613,8 @@ bool Node::isEqualNode(Node *other) const
     if (nodeValue() != other->nodeValue())
         return false;
     
-    NamedAttrMap *attrs = attributes();
-    NamedAttrMap *otherAttrs = other->attributes();
+    NamedNodeMap *attrs = attributes();
+    NamedNodeMap *otherAttrs = other->attributes();
     
     if (!attrs && otherAttrs)
         return false;
@@ -1655,7 +1655,7 @@ bool Node::isDefaultNamespace(const AtomicString &namespaceURI) const
                 return elem->namespaceURI() == namespaceURI;
 
             if (elem->hasAttributes()) {
-                NamedAttrMap *attrs = elem->attributes();
+                NamedNodeMap *attrs = elem->attributes();
                 
                 for (unsigned i = 0; i < attrs->length(); i++) {
                     Attribute *attr = attrs->attributeItem(i);
@@ -1741,7 +1741,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
                 return elem->namespaceURI();
             
             if (elem->hasAttributes()) {
-                NamedAttrMap *attrs = elem->attributes();
+                NamedNodeMap *attrs = elem->attributes();
                 
                 for (unsigned i = 0; i < attrs->length(); i++) {
                     Attribute *attr = attrs->attributeItem(i);
@@ -1796,7 +1796,7 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
         return prefix();
     
     if (hasAttributes()) {
-        NamedAttrMap *attrs = attributes();
+        NamedNodeMap *attrs = attributes();
         
         for (unsigned i = 0; i < attrs->length(); i++) {
             Attribute *attr = attrs->attributeItem(i);
@@ -1937,7 +1937,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (attr1 && attr2 && start1 == start2 && start1) {
         // We are comparing two attributes on the same node.  Crawl our attribute map
         // and see which one we hit first.
-        NamedAttrMap* map = attr1->ownerElement()->attributes(true);
+        NamedNodeMap* map = attr1->ownerElement()->attributes(true);
         unsigned length = map->length();
         for (unsigned i = 0; i < length; ++i) {
             // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 

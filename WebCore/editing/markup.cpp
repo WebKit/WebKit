@@ -439,7 +439,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
             const Element* el = static_cast<const Element*>(node);
             bool convert = convertBlocksToInlines && isBlock(const_cast<Node*>(node));
             append(result, el->nodeNamePreservingCase());
-            NamedAttrMap *attrs = el->attributes();
+            NamedNodeMap *attrs = el->attributes();
             unsigned length = attrs->length();
             if (!documentIsHTML && namespaces && shouldAddNamespaceElem(el))
                 appendNamespace(result, el->prefix(), el->namespaceURI(), *namespaces);
@@ -642,7 +642,7 @@ static void completeURLs(Node* node, const String& baseURL)
     for (Node* n = node; n != end; n = n->traverseNextNode()) {
         if (n->isElementNode()) {
             Element* e = static_cast<Element*>(n);
-            NamedAttrMap* attrs = e->attributes();
+            NamedNodeMap* attrs = e->attributes();
             unsigned length = attrs->length();
             for (unsigned i = 0; i < length; i++) {
                 Attribute* attr = attrs->attributeItem(i);

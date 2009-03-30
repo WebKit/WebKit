@@ -430,7 +430,7 @@ namespace WebCore {
     {
         AtomicString value(SVGAnimatedTypeValue<DecoratedType>::toString(baseValue));
 
-        NamedAttrMap* namedAttrMap = ownerElement->attributes(false); 
+        NamedNodeMap* namedAttrMap = ownerElement->attributes(false); 
         Attribute* old = namedAttrMap->getAttributeItem(attributeName);
         if (old && value.isNull()) 
             namedAttrMap->removeAttribute(old->name()); 

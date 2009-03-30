@@ -49,7 +49,7 @@ class Frame;
 class IntRect;
 class KeyboardEvent;
 class NSResolver;
-class NamedAttrMap;
+class NamedNodeMap;
 class NodeList;
 class NodeRareData;
 class PlatformKeyboardEvent;
@@ -126,7 +126,7 @@ public:
     Node* firstChild() const { return isContainerNode() ? containerFirstChild() : 0; }
     Node* lastChild() const { return isContainerNode() ? containerLastChild() : 0; }
     bool hasAttributes() const;
-    NamedAttrMap* attributes() const;
+    NamedNodeMap* attributes() const;
 
     virtual KURL baseURI() const;
     

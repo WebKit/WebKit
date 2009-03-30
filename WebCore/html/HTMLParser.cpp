@@ -417,9 +417,9 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     reportError(RedundantHTMLBodyError, &localName);
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
-                    NamedAttrMap* map = static_cast<Element*>(n)->attributes(true);
+                    NamedNodeMap* map = static_cast<Element*>(n)->attributes(true);
                     Element* existingHTML = static_cast<Element*>(m_document->documentElement());
-                    NamedAttrMap* bmap = existingHTML->attributes(false);
+                    NamedNodeMap* bmap = existingHTML->attributes(false);
                     for (unsigned l = 0; map && l < map->length(); ++l) {
                         Attribute* it = map->attributeItem(l);
                         if (!bmap->getAttributeItem(it->name()))
@@ -461,9 +461,9 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
                 reportError(RedundantHTMLBodyError, &localName);
-                NamedAttrMap* map = static_cast<Element*>(n)->attributes(true);
+                NamedNodeMap* map = static_cast<Element*>(n)->attributes(true);
                 Element* existingBody = m_document->body();
-                NamedAttrMap* bmap = existingBody->attributes(false);
+                NamedNodeMap* bmap = existingBody->attributes(false);
                 for (unsigned l = 0; map && l < map->length(); ++l) {
                     Attribute* it = map->attributeItem(l);
                     if (!bmap->getAttributeItem(it->name()))

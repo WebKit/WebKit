@@ -26,8 +26,6 @@
 #define NamedAttrMap_h
 
 #include "Attribute.h"
-#include "NamedNodeMap.h"
-#include <wtf/Vector.h>
 
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
@@ -35,27 +33,48 @@
 
 namespace WebCore {
 
-// the map of attributes of an element
-class NamedAttrMap : public NamedNodeMap {
+class Node;
+
+typedef int ExceptionCode;
+
+class NamedNodeMap : public RefCounted<NamedNodeMap> {
     friend class Element;
+
 protected:
-    NamedAttrMap(Element* element) : m_element(element) { }
+    NamedNodeMap(Element* element) : m_element(element) { }
+
 public:
-    static PassRefPtr<NamedAttrMap> create(Element* element) { return adoptRef(new NamedAttrMap(element)); }
+    static PassRefPtr<NamedNodeMap> create(Element* element) { return adoptRef(new NamedNodeMap(element)); }
 
-    virtual ~NamedAttrMap();
+    virtual ~NamedNodeMap();
 
-    void setAttributes(const NamedAttrMap&);
+    // Public DOM interface.
 
+    PassRefPtr<Node> getNamedItem(const String& name) const;
+    PassRefPtr<Node> removeNamedItem(const String& name, ExceptionCode&);
+
+    PassRefPtr<Node> getNamedItemNS(const String& namespaceURI, const String& localName) const;
+    PassRefPtr<Node> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&);
+
+    PassRefPtr<Node> getNamedItem(const QualifiedName& name) const;
+    PassRefPtr<Node> removeNamedItem(const QualifiedName& name, ExceptionCode&);
+    PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&);
+    PassRefPtr<Node> setNamedItemNS(Node* node, ExceptionCode& ec) { return setNamedItem(node, ec); }
+
+    PassRefPtr<Node> item(unsigned index) const;
     size_t length() const { return m_attributes.size(); }
+
+    // Internal interface.
+
+    void setAttributes(const NamedNodeMap&);
+
     Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
     Attribute* getAttributeItem(const QualifiedName&) const;
 
     void shrinkToLength() { m_attributes.shrinkCapacity(length()); }
     void reserveInitialCapacity(unsigned capacity) { m_attributes.reserveInitialCapacity(capacity); }
 
-    // used during parsing: only inserts if not already there
-    // no error checking!
+    // Used during parsing: only inserts if not already there. No error checking!
     void insertAttribute(PassRefPtr<Attribute> newAttribute, bool allowDuplicates)
     {
         ASSERT(!m_element);
@@ -64,11 +83,11 @@ public:
     }
 
     virtual bool isMappedAttributeMap() const;
-    
+
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& newId) { m_id = newId; }
 
-    bool mapsEquivalent(const NamedAttrMap* otherMap) const;
+    bool mapsEquivalent(const NamedNodeMap* otherMap) const;
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute>);
@@ -83,19 +102,6 @@ private:
     void detachAttributesFromElement();
     void detachFromElement();
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
-
-    virtual PassRefPtr<Node> getNamedItem(const String& name) const;
-    virtual PassRefPtr<Node> removeNamedItem(const String& name, ExceptionCode&);
-
-    virtual PassRefPtr<Node> getNamedItemNS(const String& namespaceURI, const String& localName) const;
-    virtual PassRefPtr<Node> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&);
-
-    virtual PassRefPtr<Node> getNamedItem(const QualifiedName& name) const;
-    virtual PassRefPtr<Node> removeNamedItem(const QualifiedName& name, ExceptionCode&);
-    virtual PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&);
-
-    virtual PassRefPtr<Node> item(unsigned index) const;
-    virtual size_t virtualLength() const;
 
     Element* m_element;
     Vector<RefPtr<Attribute> > m_attributes;

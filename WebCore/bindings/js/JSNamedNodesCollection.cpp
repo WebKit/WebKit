@@ -29,7 +29,7 @@
 #include "AtomicString.h"
 #include "Element.h"
 #include "JSNode.h"
-#include "NamedAttrMap.h"
+#include "NamedNodeMap.h"
 
 namespace WebCore {
 
