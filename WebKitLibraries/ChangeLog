@@ -1,3 +1,9 @@
+2009-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Bump version to 530.
+
+        * win/tools/scripts/VERSION:
+
 2009-03-26  Adam Roben  <aroben@apple.com>
 
         Remove SafariThemeConstants.h, which is now provided by
