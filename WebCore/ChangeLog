@@ -1,5 +1,13 @@
 2009-03-29  Darin Adler  <darin@apple.com>
 
+        Requested by Antti Koivisto.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource): Tweaked code to be a little clearer and added
+        a better comment.
+
+2009-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Bug 23445: Copying certain hidden text causes a crash

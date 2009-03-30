@@ -553,20 +553,12 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
     if (!resource || resource->preloadResult() == CachedResource::PreloadReferenced)
         return archiveResourceForURL(url);
 
-    bool wasPurgeable = resource->isPurgeable();
-    if (wasPurgeable) {
-        if (!resource->makePurgeable(false))
-            return 0;
-    }
+    // FIXME: This has the side effect of making the resource non-purgeable.
+    // It would be better if it didn't have this permanent affect.
+    if (!resource->makePurgeable(false))
+        return 0;
+
     RefPtr<SharedBuffer> data = resource->data();
-    if (wasPurgeable) {
-        // At the time of this writing, the following operation is a no-op, because
-        // makePurgeable has no effect if someone is holding a reference to the
-        // SharedBuffer. So we could just leave it out, but it seems that some day
-        // we might want to change the design so this does have an effect, and
-        // this call is otherwise harmless.
-        resource->makePurgeable(true);
-    }
     if (!data)
         return 0;
 
