@@ -1,3 +1,12 @@
+2009-03-30  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk DRT build fix per changeset
+        http://trac.webkit.org/changeset/42082. Not reviewed.
+
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadItem::invoke):
+        (ScriptItem::invoke):
+
 2009-03-29  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/qt/jsobjects.cpp: Rolled out changes to this file. Maybe this will fix

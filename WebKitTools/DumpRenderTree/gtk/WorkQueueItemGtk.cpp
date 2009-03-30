@@ -38,7 +38,7 @@ gchar* JSStringCopyUTF8CString(JSStringRef jsString)
 
 bool LoadItem::invoke() const
 {
-    gchar* targetString = JSStringCopyUTF8CString(target());
+    gchar* targetString = JSStringCopyUTF8CString(m_target.get());
 
     WebKitWebFrame* targetFrame;
     if (!strlen(targetString))
@@ -47,7 +47,7 @@ bool LoadItem::invoke() const
         targetFrame = webkit_web_frame_find_frame(mainFrame, targetString);
     g_free(targetString);
 
-    gchar* urlString = JSStringCopyUTF8CString(url());
+    gchar* urlString = JSStringCopyUTF8CString(m_url.get());
     WebKitNetworkRequest* request = webkit_network_request_new(urlString);
     g_free(urlString);
     webkit_web_frame_load_request(targetFrame, request);
@@ -65,7 +65,7 @@ bool ReloadItem::invoke() const
 bool ScriptItem::invoke() const
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    gchar* scriptString = JSStringCopyUTF8CString(script());
+    gchar* scriptString = JSStringCopyUTF8CString(m_script.get());
     webkit_web_view_execute_script(webView, scriptString);
     g_free(scriptString);
     return true;
