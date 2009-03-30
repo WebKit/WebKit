@@ -1,4 +1,28 @@
 ================
+WebKitGTK+ 1.1.4
+================
+
+What's new in WebKitGTK+ 1.1.4?
+
+  - WebKitWebView gained uri and title properties, deprecating the
+    usage of the title-changed signal.
+  - Basic functionality for HTML5 media tags has been achieved; there
+    are many unimplented methods, and rough edges still, though.
+  - Font rendering received quite some love, with layouting, and
+    memory handling fixes, and at least one less crash.
+  - A new signal, new-window-policy-decision-requested, has been added
+    to WebKitWebView, that makes it possible for the application to
+    correctly decide what to do when new windows are requested.
+  - A bug that made tooltips for consecutive links not update their
+    location was fixed.
+  - Several improvements were made to the HTTP backend, including
+    making it more robust when talking to servers which send bad
+    Content-Type headers.
+  - WebKitWebView now uses the GtkBinding system to handle key events,
+    which means that the user is now able to customize the keys used
+    for various operations, and that many subtle bugs have been fixed.
+
+================
 WebKitGTK+ 1.1.3
 ================
 

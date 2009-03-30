@@ -1,5 +1,12 @@
 2009-03-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Documenting what changed since the 1.1.3 release, in
+        the GTK+ port.
+
+        * NEWS:
+
+2009-03-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Add information on the bug-fix-only 1.1.3 release.
 
         * NEWS:
