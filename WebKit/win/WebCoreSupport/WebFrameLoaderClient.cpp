@@ -606,53 +606,13 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
     childFrame->tree()->setName(name);
     childFrame->init();
 
-    loadURLIntoChild(URL, referrer, webFrame.get());
+    coreFrame->loader()->loadURLIntoChildFrame(URL, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
         return 0;
 
     return childFrame.release();
-}
-
-void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const String& referrer, WebFrame* childFrame)
-{
-    ASSERT(childFrame);
-    ASSERT(core(childFrame));
-
-    Frame* coreFrame = core(m_webFrame);
-    ASSERT(coreFrame);
-
-    HistoryItem* parentItem = coreFrame->loader()->currentHistoryItem();
-    FrameLoadType loadType = coreFrame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
-
-    KURL url = originalURL;
-
-    // If we're moving in the backforward list, we might want to replace the content
-    // of this child frame with whatever was there at that point.
-    // Reload will maintain the frame contents, LoadSame will not.
-    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType)) {
-        if (HistoryItem* childItem = parentItem->childItemWithName(core(childFrame)->tree()->name())) {
-            // Use the original URL to ensure we get all the side-effects, such as
-            // onLoad handlers, of any redirects that happened. An example of where
-            // this is needed is Radar 3213556.
-            url = childItem->originalURL();
-            // These behaviors implied by these loadTypes should apply to the child frames
-            childLoadType = loadType;
-
-            if (isBackForwardLoadType(loadType))
-                // For back/forward, remember this item so we can traverse any child items as child frames load
-                core(childFrame)->loader()->setProvisionalHistoryItem(childItem);
-            else
-                // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
-                core(childFrame)->loader()->setCurrentHistoryItem(childItem);
-        }
-    }
-
-    // FIXME: Handle loading WebArchives here
-    String frameName = core(childFrame)->tree()->name();
-    core(childFrame)->loader()->loadURL(url, referrer, frameName, false, childLoadType, 0, 0);
 }
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)

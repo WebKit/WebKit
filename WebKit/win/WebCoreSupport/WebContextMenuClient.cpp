@@ -33,6 +33,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/ContextMenu.h>
+#include <WebCore/Event.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/Page.h>
@@ -160,7 +161,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 
     ResourceRequest request = ResourceRequest(url);
     if (Page* page = frame->page())
-        page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), 0, false, false);
+        page->mainFrame()->loader()->urlSelected(request, String(), 0, false, false, true);
 }
 
 void WebContextMenuClient::lookUpInDictionary(Frame*)

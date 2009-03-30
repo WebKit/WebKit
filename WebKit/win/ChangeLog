@@ -1,3 +1,22 @@
+2009-03-30  Adam Roben  <aroben@apple.com>
+
+        Build fixes after recent FrameLoader changes
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle): Updated to match
+        urlSelected's current signature. We pass true for the userGesture
+        parameter, since the user must have selected this item from the
+        context menu.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Removed
+        loadURLIntoChildFrame.
+        (WebFrameLoaderClient::createFrame): Changed to call
+        FrameLoader::loadURLIntoChildFrame. This probably should have been
+        done way back around r31281 when that function was added.
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Removed
+        loadURLIntoChildFrame.
+
 2009-03-27  Adam Roben  <aroben@apple.com>
 
         Don't include substitute data URLs in global history redirect chains
