@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
-    <title>webkitgtk Reference Manual</title>
-    <releaseinfo>
-      for webkitgtk [VERSION]
-      The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://[SERVER]/webkitgtk/index.html">http://[SERVER]/webkitgtk/</ulink>.
-    </releaseinfo>
+    <title>WebKit/Gtk+ Reference Manual</title>
+    <releaseinfo>for WebKit/Gtk+ &version;</releaseinfo>
   </bookinfo>
 
   <chapter>

@@ -1,3 +1,26 @@
+2009-03-30  Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        Integrate gtk-doc into the Gtk+ buildsystem.
+
+        Based on original work by Holger Freyther.
+
+        Integrate gtk-doc into our buildsystem. We are forced to
+        use recursive make for gtk-doc itself as the to be installed
+        gtk-doc.make (done by gtkdocize) is not working in a non
+        recursive environment.
+
+        The documentation can only be generated when srcdir == builddir.
+        In all other cases the generated files will not be found. This
+        limitation can be found in pango and gtk+ as well. There is no
+        easy way around. The resulting html documentation will be saved
+        in the srcdir as well.
+
+        * docs/GNUmakefile.am: Added.
+        * docs/version.xml.in: Added.
+        * docs/webkitgtk-docs.sgml:
+
 2009-03-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Documenting what changed since the 1.1.3 release, in

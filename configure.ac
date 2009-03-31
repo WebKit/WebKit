@@ -598,6 +598,8 @@ if test "$enable_video" = "yes"; then
     html_flags=yes
 fi
 
+GTK_DOC_CHECK([1.10])
+
 # OS conditionals
 AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
 AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
@@ -649,6 +651,8 @@ AC_CONFIG_FILES([
 GNUmakefile
 WebKit/gtk/webkit-1.0.pc:WebKit/gtk/webkit.pc.in
 WebKit/gtk/webkit/webkitversion.h
+WebKit/gtk/docs/GNUmakefile
+WebKit/gtk/docs/version.xml
 ]
 )
 

@@ -1,3 +1,12 @@
+2009-03-30  Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        Integrate gtk-doc into the Gtk+ buildsystem.
+
+        * autogen.sh:
+        * configure.ac:
+
 2009-03-30  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed: bump version to 1.1.4 for release.
