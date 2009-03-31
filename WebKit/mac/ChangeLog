@@ -1,3 +1,22 @@
+2009-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit side of <rdar://problem/6500266>.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::wheelEvent):
+        Send the event.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView scrollWheel:]):
+        Call NetscapePluginInstanceProxy::wheelEvent. If the plug-in processed the event, don't
+        call super.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add definition.
+
 2009-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

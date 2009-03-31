@@ -254,6 +254,17 @@ extern "C" {
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
 }
 
+- (void)scrollWheel:(NSEvent *)event
+{
+    bool processedEvent = false;
+    
+    if (_isStarted && _proxy)
+        processedEvent = _proxy->wheelEvent(self, event);
+    
+    if (!processedEvent)
+        [super scrollWheel:event];
+}
+
 - (NSTextInputContext *)inputContext
 {
     return [[WebTextInputWindowController sharedTextInputWindowController] inputContext];

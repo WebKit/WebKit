@@ -266,6 +266,23 @@ void NetscapePluginInstanceProxy::insertText(NSString *text)
                                   const_cast<char*>(reinterpret_cast<const char*>([textData bytes])), [textData length]);
 }
 
+bool NetscapePluginInstanceProxy::wheelEvent(NSView *pluginView, NSEvent *event)
+{
+    NSPoint pluginPoint = [pluginView convertPoint:[event locationInWindow] fromView:nil];
+
+    uint32_t requestID = nextRequestID();
+    _WKPHPluginInstanceWheelEvent(m_pluginHostProxy->port(), m_pluginID, requestID,
+                                  [event timestamp], [event modifierFlags], 
+                                  pluginPoint.x, pluginPoint.y, [event buttonNumber], 
+                                  [event deltaX], [event deltaY], [event deltaZ]);
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    if (!reply.get() || !reply->m_result)
+        return false;
+    
+    return true;
+}
+
 void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, unsigned height)
 {
     uint32_t requestID = nextRequestID();
