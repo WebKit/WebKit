@@ -32,6 +32,10 @@
 #import "LayoutTestController.h"
 #import <WebKit/WebPolicyDelegate.h>
 
+@interface NSURL (DRTExtras)
+- (NSString *)_drt_descriptionSuitableForTestResult;
+@end
+
 @implementation PolicyDelegate
 
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation
@@ -65,7 +69,7 @@
             typeDescription = "illegal value";
     }
     
-    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", [[[request URL] absoluteString] UTF8String], typeDescription);
+    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", [[[request URL] _drt_descriptionSuitableForTestResult] UTF8String], typeDescription);
     
     if (permissiveDelegate)
         [listener use];

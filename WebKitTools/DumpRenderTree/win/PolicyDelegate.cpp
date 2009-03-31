@@ -80,6 +80,7 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
 {
     BSTR url;
     request->URL(&url);
+    wstring wurl = urlSuitableForTestResult(wstring(url, SysStringLen(url)));
 
     int navType = 0;
     VARIANT var;
@@ -112,7 +113,7 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
             typeDescription = "illegal value";
     }
     
-    printf("Policy delegate: attempt to load %S with navigation type '%s'\n", url ? url : TEXT(""), typeDescription);
+    printf("Policy delegate: attempt to load %S with navigation type '%s'\n", wurl.c_str(), typeDescription);
 
     SysFreeString(url);
 

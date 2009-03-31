@@ -1,3 +1,17 @@
+2009-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make policy-delegate logging work even for local files by processing the URLs as we
+        do for other delegates.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        Use _drt_descriptionSuitableForTestResult on the URL.
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::decidePolicyForNavigationAction): Use urlSuitableForTestResult on the URL.
+
 2009-03-30  Adam Roben  <aroben@apple.com>
 
         Windows build fix
