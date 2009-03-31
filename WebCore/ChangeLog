@@ -1,3 +1,14 @@
+2009-03-31  Craig Schlenter  <craig.schlenter@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24550
+        Check return value of vasprintf. This should keep gcc 4.3.3
+        happy rather than have it complain about attribute warn_unused_result.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::error):
+
 2009-03-31  Dean Jackson  <dino@apple.com>
 
         Style guide violation!

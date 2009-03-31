@@ -845,7 +845,8 @@ void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
     vsnprintf(m, sizeof(m) - 1, message, args);
 #else
     char* m;
-    vasprintf(&m, message, args);
+    if (vasprintf(&m, message, args) == -1)
+        return;
 #endif
     
     if (m_parserPaused)
