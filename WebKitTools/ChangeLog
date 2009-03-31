@@ -1,3 +1,11 @@
+2009-03-30  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Stephanie Lewis.
+
+        Add a script in support of the new build.webkit.org configuration.
+
+        * BuildSlaveSupport/built-product-archive: Added.
+
 2009-03-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
