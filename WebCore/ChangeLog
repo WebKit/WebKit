@@ -1,3 +1,18 @@
+2009-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 24594: PolicyDelegate NavigationAction is WebNavigationTypeOther instead of WebNavigationTypeReload
+        https://bugs.webkit.org/show_bug.cgi?id=24594
+        rdar://problem/6682110
+
+        Test: fast/loader/reload-policy-delegate.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader): Set the triggering action here where we know it's
+        the policy loader and can use m_policyLoadType rather than letting it get set inside
+        checkNavigationPolicy.
+
 2009-03-30  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/5838871> CrashTracer: 1483 crashes Quicklooking

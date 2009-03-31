@@ -2355,6 +2355,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
         stopPolicyCheck();
         setPolicyDocumentLoader(loader);
+        if (loader->triggeringAction().isEmpty())
+            loader->setTriggeringAction(NavigationAction(newURL, m_policyLoadType, isFormSubmission));
 
         checkNavigationPolicy(loader->request(), loader, formState,
             callContinueLoadAfterNavigationPolicy, this);

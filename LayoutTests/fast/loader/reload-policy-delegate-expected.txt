@@ -1,0 +1,2 @@
+Policy delegate: attempt to load reload-policy-delegate.html with navigation type 'reload'
+Test to make sure that reloads get reload policy.

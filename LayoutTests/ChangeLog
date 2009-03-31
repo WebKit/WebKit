@@ -1,3 +1,17 @@
+2009-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 24594: PolicyDelegate NavigationAction is WebNavigationTypeOther instead of WebNavigationTypeReload
+        https://bugs.webkit.org/show_bug.cgi?id=24594
+        rdar://problem/6682110
+
+        * fast/frames/resources/iframe-focus.html: Removed bogus but harmless "layoutTestController.loadCount"
+        code.
+
+        * fast/loader/reload-policy-delegate-expected.txt: Added.
+        * fast/loader/reload-policy-delegate.html: Added.
+
 2009-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -4,10 +4,6 @@
             function test()
             {
                 window.focus();
-                if (layoutTestController.loadCount > 0)
-                    return;
-
-                layoutTestController.loadCount = 1;
                 layoutTestController.queueReload();
             }
         </script>
