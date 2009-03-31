@@ -16,8 +16,12 @@
     <xi:include href="xml/webkitwebsettings.xml"/>
     <xi:include href="xml/webkitwebbackforwardlist.xml"/>
     <xi:include href="xml/webkitwebhistoryitem.xml"/>
+    <xi:include href="xml/webkitwebnavigationaction.xml"/>
+    <xi:include href="xml/webkitwebpolicydecision.xml"/>
     <xi:include href="xml/webkitnetworkrequest.xml"/>
     <xi:include href="xml/webkitwebinspector.xml"/>
+    <xi:include href="xml/webkitdownload.xml"/>
+    <xi:include href="xml/webkitsoupauthdialog.xml"/>
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>
   </chapter>
 
@@ -30,7 +34,7 @@
     <title>Index</title>
   </index>
   <index id="index-deprecated" role="deprecated">
-    <title>Index of deprectaed symbols</title>
+    <title>Index of deprecated symbols</title>
   </index>
   <index id="index-1.0.1" role="1.0.1">
     <title>Index of new symbols in 1.0.1</title>
@@ -40,5 +44,17 @@
   </index>
   <index id="index-1.0.3" role="1.0.3">
     <title>Index of new symbols in 1.0.3</title>
+  </index>
+  <index id="index-1.1.1" role="1.1.1">
+    <title>Index of new symbols in 1.1.1</title>
+  </index>
+  <index id="index-1.1.2" role="1.1.2">
+    <title>Index of new symbols in 1.1.2</title>
+  </index>
+  <index id="index-1.1.3" role="1.1.3">
+    <title>Index of new symbols in 1.1.3</title>
+  </index>
+  <index id="index-1.1.4" role="1.1.4">
+    <title>Index of new symbols in 1.1.4</title>
   </index>
 </book>

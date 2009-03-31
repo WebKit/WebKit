@@ -22,6 +22,7 @@ WebKitWebSettingsClass
 <FILE>webkitwebbackforwardlist</FILE>
 <TITLE>WebKitWebBackForwardList</TITLE>
 WebKitWebBackForwardList
+webkit_web_back_forward_list_add_item
 webkit_web_back_forward_list_contains_item
 webkit_web_back_forward_list_get_back_item
 webkit_web_back_forward_list_get_back_length
@@ -89,6 +90,8 @@ webkit_web_frame_get_title
 webkit_web_frame_get_uri
 webkit_web_frame_get_web_view
 webkit_web_frame_load_request
+webkit_web_frame_load_string
+webkit_web_frame_load_uri
 webkit_web_frame_new
 webkit_web_frame_reload
 webkit_web_frame_stop_loading
@@ -105,6 +108,60 @@ WebKitWebFramePrivate
 webkit_web_frame_get_type
 WebKitWebFrame
 WebKitWebFrameClass
+</SECTION>
+
+<SECTION>
+<FILE>webkitdownload</FILE>
+<TITLE>WebKitDownload</TITLE>
+WebKitDownload
+webkit_download_cancel
+webkit_download_error_get_type
+webkit_download_get_current_size
+webkit_download_get_destination_uri
+webkit_download_get_elapsed_time
+webkit_download_get_network_request
+webkit_download_get_progress
+webkit_download_get_status
+webkit_download_get_suggested_filename
+webkit_download_get_total_size
+webkit_download_get_uri
+webkit_download_new
+webkit_download_set_destination_uri
+webkit_download_start
+webkit_download_status_get_type
+<SUBSECTION Standard>
+WEBKIT_DOWNLOAD
+WEBKIT_DOWNLOAD_CLASS
+WEBKIT_DOWNLOAD_GET_CLASS
+WEBKIT_IS_DOWNLOAD
+WEBKIT_IS_DOWNLOAD_CLASS
+WEBKIT_TYPE_DOWNLOAD
+WEBKIT_TYPE_DOWNLOAD_ERROR
+WEBKIT_TYPE_DOWNLOAD_STATUS
+<SUBSECTION Private>
+webkit_download_get_type
+WebKitDownload
+WebKitDownloadClass
+WebKitDownloadError
+WebKitDownloadPrivate
+WebKitDownloadStatus
+</SECTION>
+
+<SECTION>
+<FILE>webkitsoupauthdialog</FILE>
+<TITLE>WebKitSoupAuthDialog</TITLE>
+WebKitSoupAuthDialog
+<SUBSECTION Standard>
+WEBKIT_IS_SOUP_AUTH_DIALOG
+WEBKIT_IS_SOUP_AUTH_DIALOG_CLASS
+WEBKIT_SOUP_AUTH_DIALOG
+WEBKIT_SOUP_AUTH_DIALOG_CLASS
+WEBKIT_SOUP_AUTH_DIALOG_GET_CLASS
+WEBKIT_TYPE_SOUP_AUTH_DIALOG
+<SUBSECTION Private>
+webkit_soup_auth_dialog_get_type
+WebKitSoupAuthDialog
+WebKitSoupAuthDialogClass
 </SECTION>
 
 <SECTION>
@@ -125,6 +182,54 @@ webkit_web_inspector_get_type
 WebKitWebInspectorPrivate
 WebKitWebInspector
 WebKitWebInspectorClass
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebnavigationaction</FILE>
+<TITLE>WebKitWebNavigationAction</TITLE>
+WebKitWebNavigationAction
+WebKitWebNavigationReason
+webkit_web_navigation_action_get_button
+webkit_web_navigation_action_get_modifier_state
+webkit_web_navigation_action_get_original_uri
+webkit_web_navigation_action_get_reason
+webkit_web_navigation_action_get_type
+webkit_web_navigation_action_set_original_uri
+webkit_web_navigation_action_set_reason
+webkit_web_navigation_reason_get_type
+<SUBSECTION Standard>
+WEBKIT_IS_WEB_NAVIGATION_ACTION
+WEBKIT_IS_WEB_NAVIGATION_ACTION_CLASS
+WEBKIT_TYPE_WEB_NAVIGATION_ACTION
+WEBKIT_TYPE_WEB_NAVIGATION_REASON
+WEBKIT_WEB_NAVIGATION_ACTION
+WEBKIT_WEB_NAVIGATION_ACTION_CLASS
+WEBKIT_WEB_NAVIGATION_ACTION_GET_CLASS
+<SUBSECTION Private>
+WebKitWebNavigationAction
+WebKitWebNavigationActionClass
+WebKitWebNavigationActionPrivate
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebpolicydecision</FILE>
+<TITLE>WebKitWebPolicyDecision</TITLE>
+WebKitWebPolicyDecision
+webkit_web_policy_decision_download
+webkit_web_policy_decision_get_type
+webkit_web_policy_decision_ignore
+webkit_web_policy_decision_use
+<SUBSECTION Standard>
+WEBKIT_IS_WEB_POLICY_DECISION
+WEBKIT_IS_WEB_POLICY_DECISION_CLASS
+WEBKIT_TYPE_WEB_POLICY_DECISION
+WEBKIT_WEB_POLICY_DECISION
+WEBKIT_WEB_POLICY_DECISION_CLASS
+WEBKIT_WEB_POLICY_DECISION_GET_CLASS
+<SUBSECTION Private>
+WebKitWebPolicyDecision
+WebKitWebPolicyDecisionClass
+WebKitWebPolicyDecisionPrivate
 </SECTION>
 
 <SECTION>
@@ -160,20 +265,25 @@ webkit_web_view_can_go_back
 webkit_web_view_can_go_back_or_forward
 webkit_web_view_can_go_forward
 webkit_web_view_can_paste_clipboard
+webkit_web_view_can_show_mime_type
 webkit_web_view_copy_clipboard
 webkit_web_view_cut_clipboard
 webkit_web_view_delete_selection
 webkit_web_view_execute_script
 webkit_web_view_get_back_forward_list
 webkit_web_view_get_copy_target_list
+webkit_web_view_get_custom_encoding
 webkit_web_view_get_editable
+webkit_web_view_get_encoding
 webkit_web_view_get_focused_frame
 webkit_web_view_get_full_content_zoom
 webkit_web_view_get_inspector
 webkit_web_view_get_main_frame
 webkit_web_view_get_paste_target_list
 webkit_web_view_get_settings
+webkit_web_view_get_title
 webkit_web_view_get_transparent
+webkit_web_view_get_uri
 webkit_web_view_get_zoom_level
 webkit_web_view_go_back
 webkit_web_view_go_back_or_forward
@@ -181,14 +291,19 @@ webkit_web_view_go_forward
 webkit_web_view_go_to_back_forward_item
 webkit_web_view_has_selection
 webkit_web_view_load_html_string
+webkit_web_view_load_request
 webkit_web_view_load_string
+webkit_web_view_load_uri
 webkit_web_view_mark_text_matches
+webkit_web_view_move_cursor
 webkit_web_view_new
 webkit_web_view_open
 webkit_web_view_paste_clipboard
 webkit_web_view_reload
+webkit_web_view_reload_bypass_cache
 webkit_web_view_search_text
 webkit_web_view_select_all
+webkit_web_view_set_custom_encoding
 webkit_web_view_set_editable
 webkit_web_view_set_full_content_zoom
 webkit_web_view_set_highlight_text_matches
@@ -241,6 +356,7 @@ WebKitWebWindowFeaturesPrivate
 <SECTION>
 <FILE>webkit</FILE>
 webkit_init
+webkit_get_default_session
 </SECTION>
 
 <SECTION>
