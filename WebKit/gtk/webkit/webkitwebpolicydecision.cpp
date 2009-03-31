@@ -27,6 +27,16 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION:webkitwebpolicydecision
+ * @short_description: Liason between WebKit and the application regarding asynchronous policy decisions
+ *
+ * #WebKitWebPolicyDecision objects are given to the application on
+ * signal emissions that deal with policy decisions, such as if a new
+ * window should be opened, or if a given navigation should be
+ * allowed. The application uses it to tell the engine what to do.
+ */
+
 extern "C" {
 
 G_DEFINE_TYPE(WebKitWebPolicyDecision, webkit_web_policy_decision, G_TYPE_OBJECT);

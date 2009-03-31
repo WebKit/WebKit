@@ -28,6 +28,15 @@
 
 #include <string.h>
 
+/**
+ * SECTION:webkitwebnavigationaction
+ * @short_description: Object used to report details of navigation actions
+ *
+ * #WebKitWebNavigationAction is used in signals to provide details about
+ * what led the navigation to happen. This includes, for instance, if the user
+ * clicked a link to start that navigation, and what mouse button was used.
+ */
+
 extern "C" {
 
 struct _WebKitWebNavigationActionPrivate {

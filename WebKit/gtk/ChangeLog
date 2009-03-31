@@ -1,3 +1,26 @@
+2009-03-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17045
+        [GTK] Documentation
+
+        Added header documentation for WebKitWebNavigationAction and
+        WebKitWebPolicyDecision.
+
+        Added missing documentation pieces for WebKitSoupAuthDialog,
+        WebKitDownload and WebKitWebPolicyDecision.
+
+        Wrote a section about using the WEBKIT_DEBUG environment variable.
+
+        * docs/GNUmakefile.am:
+        * docs/webkitenvironment.xml: Added.
+        * docs/webkitgtk-docs.sgml:
+        * webkit/webkitdownload.cpp:
+        * webkit/webkitsoupauthdialog.c:
+        * webkit/webkitwebnavigationaction.cpp:
+        * webkit/webkitwebpolicydecision.cpp:
+
 2009-03-30  Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.

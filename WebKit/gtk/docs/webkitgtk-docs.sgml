@@ -5,8 +5,8 @@
 ]>
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
-    <title>WebKit/Gtk+ Reference Manual</title>
-    <releaseinfo>for WebKit/Gtk+ &version;</releaseinfo>
+    <title>WebKitGTK+ Reference Manual</title>
+    <releaseinfo>for WebKitGTK+ &version;</releaseinfo>
   </bookinfo>
 
   <chapter>
@@ -19,6 +19,11 @@
     <xi:include href="xml/webkitnetworkrequest.xml"/>
     <xi:include href="xml/webkitwebinspector.xml"/>
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>
+  </chapter>
+
+  <chapter>
+    <title>Running WebKitGTK+-based programs</title>
+    <xi:include href="webkitenvironment.xml"/>
   </chapter>
 
   <index id="index-all">

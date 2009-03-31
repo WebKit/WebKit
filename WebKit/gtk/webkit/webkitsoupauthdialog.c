@@ -28,6 +28,17 @@
 #include "webkitmarshal.h"
 #include "webkitsoupauthdialog.h"
 
+/**
+ * SECTION:webkitsoupauthdialog
+ * @short_description: A #SoupFeature to provide a simple
+ * authentication dialog for HTTP basic auth support.
+ *
+ * #WebKitSoupAuthDialog is a #SoupFeature that you can attach to your
+ * #SoupSession to provide a simple authentication dialog, with
+ * optional GNOME Keyring support, while handling HTTP basic auth. It
+ * is built as a simple C-only module to ease reuse.
+ */
+
 static void webkit_soup_auth_dialog_session_feature_init(SoupSessionFeatureInterface* feature_interface, gpointer interface_data);
 static void attach(SoupSessionFeature* manager, SoupSession* session);
 static void detach(SoupSessionFeature* manager, SoupSession* session);

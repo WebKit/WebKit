@@ -36,6 +36,16 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION:webkitdownload
+ * @short_description: Object used to communicate with the application when downloading.
+ *
+ * #WebKitDownload carries information about a download request,
+ * including a #WebKitNetworkRequest object. The application may use
+ * this object to control the download process, or to simply figure
+ * out what is to be downloaded, and do it itself.
+ */
+
 class DownloadClient : Noncopyable, public ResourceHandleClient {
     public:
         DownloadClient(WebKitDownload*);
