@@ -1,3 +1,19 @@
+2009-03-31  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24901
+        Added the following methods to MediaPlayerPrivate for Chromium port.
+        void sizeChanged();
+        void rateChanged();
+        void durationChanged();
+
+        The above changes are to reflect changes in MediaPlayer.cpp.
+        More details can be found in the original changeset.
+        http://trac.webkit.org/changeset/41907
+
+        * platform/graphics/chromium/MediaPlayerPrivateChromium.h:
+
 2009-03-31  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Eric Seidel.
