@@ -1,3 +1,13 @@
+2009-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Don't create CFDataRef with a fixed size.
+        Fixes synchronous XMLHTTPRequests on Windows.
+        
+        Reviewed by Ada Chan.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+
 2009-03-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

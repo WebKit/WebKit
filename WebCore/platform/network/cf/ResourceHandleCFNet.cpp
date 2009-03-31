@@ -528,7 +528,7 @@ void WebCoreSynchronousLoader::didReceiveData(CFURLConnectionRef, CFDataRef data
     WebCoreSynchronousLoader* loader = static_cast<WebCoreSynchronousLoader*>(const_cast<void*>(clientInfo));
 
     if (!loader->m_data)
-        loader->m_data.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, originalLength));
+        loader->m_data.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
 
     const UInt8* bytes = CFDataGetBytePtr(data);
     CFIndex length = CFDataGetLength(data);
