@@ -1,3 +1,14 @@
+2009-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6740581> REGRESSION (r41793): Page Down and Page Up don’t work in Leopard Mail
+
+        * WebView/WebHTMLView.mm:
+        (-[WebResponderChainSink tryToPerform:with:]): Added. Without this we would think we had
+        handled an event when we actually hadn't. Specifically, when -[WebFrameView scrollPageDown:]
+        calls tryToPerform on the next responder.
+
 2009-03-30  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser.

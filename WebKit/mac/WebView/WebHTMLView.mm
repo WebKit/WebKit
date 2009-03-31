@@ -6098,4 +6098,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _receivedUnhandledCommand = YES;
 }
 
+- (BOOL)tryToPerform:(SEL)action with:(id)object
+{
+    _receivedUnhandledCommand = YES;
+    return YES;
+}
+
 @end
