@@ -1,3 +1,14 @@
+2009-03-31  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24955
+
+        Spacebar didn't play/pause in standalone MediaDocument
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
 2009-03-31  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Seidel.

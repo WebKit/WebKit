@@ -38,7 +38,9 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "KeyboardEvent.h"
 #include "MainResourceLoader.h"
+#include "NodeList.h"
 #include "Page.h"
 #include "SegmentedString.h"
 #include "Settings.h"
@@ -157,6 +159,30 @@ void MediaDocument::defaultEventHandler(Event* event)
         } else if (event->type() == eventNames().dblclickEvent) {
             if (video->canPlay()) {
                 video->play();
+                event->setDefaultHandled();
+            }
+        }
+    }
+
+    if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
+        HTMLVideoElement* video;
+        if (targetNode) {
+            if (targetNode->hasTagName(videoTag))
+                video = static_cast<HTMLVideoElement*>(targetNode);
+            else {
+                RefPtr<NodeList> nodeList = targetNode->getElementsByTagName("video");
+                if (nodeList.get()->length() > 0)
+                    video = static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
+            }
+        }
+        if (video) {
+            KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
+            if (keyboardEvent->keyIdentifier() == "U+0020") { // space
+                if (video->paused()) {
+                    if (video->canPlay())
+                        video->play();
+                } else
+                    video->pause();
                 event->setDefaultHandled();
             }
         }
