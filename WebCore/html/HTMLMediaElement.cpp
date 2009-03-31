@@ -685,11 +685,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     }
 
     bool isPotentiallyPlaying = potentiallyPlaying();
-    if (m_readyState <= HAVE_CURRENT_DATA && oldState >= HAVE_FUTURE_DATA) {
-        if (isPotentiallyPlaying)
-            scheduleEvent(eventNames().waitingEvent);
-    }
-
     if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA) {
         scheduleEvent(eventNames().canplayEvent);
         if (isPotentiallyPlaying)

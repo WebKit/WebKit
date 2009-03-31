@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24964
+        Bug 24964: HTMLMediaElement: 'waiting' event may fire twice
+
+        * http/tests/media/video-play-stall.html: Fail if 'waiting' fires more than once.
+        * media/video-test.js: Fix a typo.
+        (failTest):
+
+2009-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=24846
         Bug 24846: HTMLMediaElement should implement 'autobuffer' attribute
 

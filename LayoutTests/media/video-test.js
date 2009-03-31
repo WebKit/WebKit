@@ -160,7 +160,7 @@ function failTestIn(ms)
 
 function failTest(text)
 {
-    logResult(fasle, text);
+    logResult(false, text);
     endTest();
 }
 

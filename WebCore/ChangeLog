@@ -1,6 +1,17 @@
 2009-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24964
+        Bug 24964: HTMLMediaElement: 'waiting' event may fire twice
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Only fire 'waiting' event once when ready state
+        drops below HAVE_FUTURE_DATA.
+
+2009-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=24846
         Bug 24846: HTMLMediaElement should implement 'autobuffer' attribute
