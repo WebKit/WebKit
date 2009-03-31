@@ -249,9 +249,27 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
     // to subtract off the font ascent to get it.
     int x = lroundf(m_point.x() + startAdvance);
     int y = lroundf(m_point.y() - m_font->ascent());
+
+    // If there is a non-blur shadow and both the fill color and shadow color 
+    // are opaque, handle without skia. 
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (m_graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor)) {
+        // If there is a shadow and this code is reached, windowsCanHandleDrawTextShadow()
+        // will have already returned true during the ctor initiatization of m_useGDI
+        ASSERT(shadowColor.alpha() == 255);
+        ASSERT(m_graphicsContext->fillColor().alpha() == 255);
+        ASSERT(shadowBlur == 0);
+        COLORREF textColor = skia::SkColorToCOLORREF(SkColorSetARGB(255, shadowColor.red(), shadowColor.green(), shadowColor.blue()));
+        COLORREF savedTextColor = GetTextColor(m_hdc);
+        SetTextColor(m_hdc, textColor);
+        ExtTextOut(m_hdc, x + shadowSize.width(), y + shadowSize.height(), ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
+        SetTextColor(m_hdc, savedTextColor); 
+    }
+    
     return !!ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
 }
-
 
 class TransparencyAwareUniscribePainter : public TransparencyAwareFontPainter {
  public:
@@ -415,6 +433,20 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     color = SkColorSetRGB(SkColorGetR(color), SkColorGetG(color), SkColorGetB(color));
     SetTextColor(hdc, skia::SkColorToCOLORREF(color));
     SetBkMode(hdc, TRANSPARENT);
+
+    // If there is a non-blur shadow and both the fill color and shadow color 
+    // are opaque, handle without skia. 
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor) && windowsCanHandleDrawTextShadow(graphicsContext)) {
+        COLORREF textColor = skia::SkColorToCOLORREF(SkColorSetARGB(255, shadowColor.red(), shadowColor.green(), shadowColor.blue()));
+        COLORREF savedTextColor = GetTextColor(hdc);
+        SetTextColor(hdc, textColor);
+        state.draw(graphicsContext, hdc, static_cast<int>(point.x()) + shadowSize.width(),
+                   static_cast<int>(point.y() - ascent()) + shadowSize.height(), from, to);
+        SetTextColor(hdc, savedTextColor); 
+    }
 
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.

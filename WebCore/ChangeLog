@@ -1,3 +1,20 @@
+2009-03-31  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24947
+
+        Special-case drawing text-shadow on win32, to let GDI draw in cases
+        when both fill & shadow color are opaque and the shadow has no blur.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        (WebCore::windowsCanHandleTextDrawing):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2009-03-31  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Fisher.

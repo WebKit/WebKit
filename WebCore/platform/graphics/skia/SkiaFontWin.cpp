@@ -220,6 +220,16 @@ void SkiaWinOutlineCache::removePathsForFont(HFONT hfont)
         deleteOutline(outlineCache.find(*i));
 }
 
+bool windowsCanHandleDrawTextShadow(WebCore::GraphicsContext *context)
+{
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+
+    bool hasShadow = context->getShadow(shadowSize, shadowBlur, shadowColor);
+    return (hasShadow && (shadowBlur == 0) && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
+}
+
 bool windowsCanHandleTextDrawing(GraphicsContext* context)
 {
     // Check for non-translation transforms. Sometimes zooms will look better in
@@ -244,7 +254,7 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
         return false;
 
     // Check for shadow effects.
-    if (context->platformContext()->getDrawLooper())
+    if (context->platformContext()->getDrawLooper() && (!windowsCanHandleDrawTextShadow(context)))
         return false;
 
     return true;

@@ -68,8 +68,12 @@ private:
 // Remember that Skia's text drawing origin is the baseline, like WebKit, not
 // the top, like Windows.
 
+// Returns true if the fillColor and shadowColor are opaque and the text-shadow
+// is not blurred.
+bool windowsCanHandleDrawTextShadow(GraphicsContext*);
+
 // Returns true if advanced font rendering is recommended.
-bool windowsCanHandleTextDrawing(GraphicsContext* context);
+bool windowsCanHandleTextDrawing(GraphicsContext*);
 
 // Note that the offsets parameter is optional.  If not NULL it represents a
 // per glyph offset (such as returned by ScriptPlace Windows API function).
