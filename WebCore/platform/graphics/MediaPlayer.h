@@ -88,7 +88,7 @@ public:
     static MediaPlayer::SupportsType supportsType(ContentType contentType);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
-    
+
     IntSize naturalSize();
     bool hasVideo();
     
@@ -131,7 +131,10 @@ public:
     void setVolume(float);
     
     int dataRate() const;
-    
+
+    bool autobuffer() const;    
+    void setAutobuffer(bool);
+
     void paint(GraphicsContext*, const IntRect&);
     
     enum NetworkState { Empty, Idle, Loading, Loaded, FormatError, NetworkError, DecodeError };
@@ -169,6 +172,7 @@ private:
     bool m_visible;
     float m_rate;
     float m_volume;
+    bool m_autobuffer;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
 #endif

@@ -81,6 +81,8 @@ public:
 
     virtual void paint(GraphicsContext*, const IntRect&) = 0 ;
 
+    virtual void setAutobuffer(bool) { };
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual void setPoster(const String& url) = 0;
     virtual void deliverNotification(MediaPlayerProxyNotificationType) = 0;

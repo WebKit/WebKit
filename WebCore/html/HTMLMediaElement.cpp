@@ -140,7 +140,16 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
     }
 #endif
 }
-    
+
+void HTMLMediaElement::parseMappedAttribute(MappedAttribute *attr)
+{
+    if (attr->name() == autobufferAttr) {
+        if (m_player)
+            m_player->setAutobuffer(!attr->isNull());
+    } else
+        HTMLElement::parseMappedAttribute(attr);
+}
+
 bool HTMLMediaElement::rendererIsNeeded(RenderStyle* style)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -857,6 +866,16 @@ bool HTMLMediaElement::autoplay() const
 void HTMLMediaElement::setAutoplay(bool b)
 {
     setBooleanAttribute(autoplayAttr, b);
+}
+
+bool HTMLMediaElement::autobuffer() const
+{
+    return hasAttribute(autobufferAttr);
+}
+
+void HTMLMediaElement::setAutobuffer(bool b)
+{
+    setBooleanAttribute(autobufferAttr, b);
 }
 
 void HTMLMediaElement::play()

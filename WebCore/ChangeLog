@@ -1,3 +1,36 @@
+2009-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24846
+        Bug 24846: HTMLMediaElement should implement 'autobuffer' attribute
+
+        Add 'autobuffer' attrubute to media element. 'autobuffer' is a hint that
+        the author recommends downloading the entire resource optimistically, so the
+        attribute is made available to the media engine to use if it is able.
+
+        Test: media/video-dom-autobuffer.html
+
+        * html/HTMLAttributeNames.in: Add autobuffer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseMappedAttribute): New.
+        (WebCore::HTMLMediaElement::autobuffer): Ditto.
+        (WebCore::HTMLMediaElement::setAutobuffer): Ditto.
+
+        * html/HTMLMediaElement.h: Declare autobuffer and setAutobuffer.
+
+        * html/HTMLMediaElement.idl: Add autobuffer.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Initialize m_autobuffer.
+        (WebCore::MediaPlayer::autobuffer): New.
+        (WebCore::MediaPlayer::setAutobuffer): Ditto.
+        * platform/graphics/MediaPlayer.h: Declare m_autobuffer, autobuffer and setAutobuffer
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setAutobuffer): Declare setAutobuffer.
+
 2009-03-31  Craig Schlenter  <craig.schlenter@gmail.com>
 
         Reviewed by Dimitri Glazkov.

@@ -1,0 +1,43 @@
+<html>
+    <body>
+
+    <video controls autobuffer></video>
+
+    <script src=video-test.js></script>
+    <script>
+        consoleWrite("");
+
+        consoleWrite("++ Test initial attribute value");
+        testExpected("video.autobuffer", true);
+        testExpected("video.getAttribute('autobuffer')", null, "!=");
+        consoleWrite("");
+
+        consoleWrite("++ Set to false via DOM");
+        run("video.autobuffer = false;");
+        testExpected("video.getAttribute('autobuffer')", null);
+        testExpected("video.autobuffer", false);
+        consoleWrite("");
+
+        consoleWrite("++ Set to true via DOM");
+        run("video.autobuffer = true;");
+        testExpected("video.autobuffer", true);
+        testExpected("video.getAttribute('autobuffer')", null, "!=");
+        consoleWrite("");
+
+        consoleWrite("++ Remove attribute");
+        run("video.removeAttribute('autobuffer')");
+        testExpected("video.autobuffer", false);
+        consoleWrite("");
+
+        consoleWrite("++ Set to true via attribute");
+        run("video.setAttribute('autobuffer', true);");
+        testExpected("video.autobuffer", true);
+        testExpected("video.getAttribute('autobuffer')", null, "!=");
+        consoleWrite("");
+
+        endTest();
+    </script>
+    
+    </body>
+</html>
+

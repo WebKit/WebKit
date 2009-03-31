@@ -1,0 +1,26 @@
+
+++ Test initial attribute value
+EXPECTED (video.autobuffer == 'true') OK
+EXPECTED (video.getAttribute('autobuffer') != 'null') OK
+
+++ Set to false via DOM
+RUN(video.autobuffer = false;)
+EXPECTED (video.getAttribute('autobuffer') == 'null') OK
+EXPECTED (video.autobuffer == 'false') OK
+
+++ Set to true via DOM
+RUN(video.autobuffer = true;)
+EXPECTED (video.autobuffer == 'true') OK
+EXPECTED (video.getAttribute('autobuffer') != 'null') OK
+
+++ Remove attribute
+RUN(video.removeAttribute('autobuffer'))
+EXPECTED (video.autobuffer == 'false') OK
+
+++ Set to true via attribute
+RUN(video.setAttribute('autobuffer', true);)
+EXPECTED (video.autobuffer == 'true') OK
+EXPECTED (video.getAttribute('autobuffer') != 'null') OK
+
+END OF TEST
+

@@ -183,6 +183,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_visible(false)
     , m_rate(1.0f)
     , m_volume(1.0f)
+    , m_autobuffer(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_playerProxy(0)
 #endif
@@ -380,6 +381,19 @@ void MediaPlayer::setVisible(bool b)
 {
     m_visible = b;
     m_private->setVisible(b);
+}
+
+bool MediaPlayer::autobuffer() const
+{
+    return m_autobuffer;
+}
+
+void MediaPlayer::setAutobuffer(bool b)
+{
+    if (m_autobuffer != b) {
+        m_autobuffer = b;
+        m_private->setAutobuffer(b);
+    }
 }
 
 void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)

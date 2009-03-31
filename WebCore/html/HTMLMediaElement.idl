@@ -39,6 +39,7 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     const unsigned short NETWORK_LOADED = 3;
     const unsigned short NETWORK_NO_SOURCE = 4;
     readonly attribute unsigned short networkState;
+    attribute boolean autobuffer;
 
     readonly attribute TimeRanges buffered;
     void load() 

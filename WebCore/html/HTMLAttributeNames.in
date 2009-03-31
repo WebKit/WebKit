@@ -22,6 +22,7 @@ aria-pressed
 aria-valuemax
 aria-valuemin
 aria-valuenow
+autobuffer
 autocomplete
 autofocus
 autoplay
