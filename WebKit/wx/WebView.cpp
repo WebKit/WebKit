@@ -147,6 +147,42 @@ wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewAlertEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_ALERT)
+
+wxWebViewAlertEvent::wxWebViewAlertEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_JS_ALERT);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewConfirmEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_CONFIRM)
+
+wxWebViewConfirmEvent::wxWebViewConfirmEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_JS_CONFIRM);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewPromptEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_JS_PROMPT)
+
+wxWebViewPromptEvent::wxWebViewPromptEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_JS_PROMPT);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
 IMPLEMENT_DYNAMIC_CLASS(wxWebViewReceivedTitleEvent, wxCommandEvent)
 
 DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_RECEIVED_TITLE)
@@ -158,6 +194,19 @@ wxWebViewReceivedTitleEvent::wxWebViewReceivedTitleEvent(wxWindow* win)
     if (win)
         SetId(win->GetId());
 }
+
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewWindowObjectClearedEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED)
+
+wxWebViewWindowObjectClearedEvent::wxWebViewWindowObjectClearedEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
 
 //---------------------------------------------------------
 // DOM Element info data type

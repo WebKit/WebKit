@@ -239,25 +239,50 @@ void ChromeClientWx::closeWindowSoon()
 
 void ChromeClientWx::runJavaScriptAlert(Frame* frame, const String& string)
 {
-    wxMessageBox(string, wxT("JavaScript Alert"), wxOK);
+    if (m_webView) {
+        wxWebViewAlertEvent wkEvent(m_webView);
+        wkEvent.SetMessage(string);
+        if (!m_webView->GetEventHandler()->ProcessEvent(wkEvent))
+            wxMessageBox(string, wxT("JavaScript Alert"), wxOK);
+    }
 }
 
 bool ChromeClientWx::runJavaScriptConfirm(Frame* frame, const String& string)
 {
-    wxMessageDialog dialog(NULL, string, wxT("JavaScript Confirm"), wxYES_NO);
-    dialog.Centre();
-    return (dialog.ShowModal() == wxID_YES);
+    bool result = false;
+    if (m_webView) {
+        wxWebViewConfirmEvent wkEvent(m_webView);
+        wkEvent.SetMessage(string);
+        if (m_webView->GetEventHandler()->ProcessEvent(wkEvent))
+            result = wkEvent.GetReturnCode() == wxID_YES;
+        else {
+            wxMessageDialog dialog(NULL, string, wxT("JavaScript Confirm"), wxYES_NO);
+            dialog.Centre();
+            result = (dialog.ShowModal() == wxID_YES);
+        }
+    }
+    return result;
 }
 
 bool ChromeClientWx::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    wxTextEntryDialog dialog(NULL, message, wxT("JavaScript Prompt"), wxEmptyString, wxOK | wxCANCEL);
-    dialog.Centre();
-    if (dialog.ShowModal() == wxID_OK) {
-        result = dialog.GetValue();
-        return true;
+    if (m_webView) {
+        wxWebViewPromptEvent wkEvent(m_webView);
+        wkEvent.SetMessage(message);
+        wkEvent.SetResponse(defaultValue);
+        if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
+            result = wkEvent.GetResponse();
+            return true;
+        }
+        else {
+            wxTextEntryDialog dialog(NULL, message, wxT("JavaScript Prompt"), wxEmptyString, wxOK | wxCANCEL);
+            dialog.Centre();
+            if (dialog.ShowModal() == wxID_OK) {
+                result = dialog.GetValue();
+                return true;
+            }
+        }
     }
-    
     return false;
 }
 

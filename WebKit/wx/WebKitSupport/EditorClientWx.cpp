@@ -61,7 +61,7 @@ void EditorClientWx::setPage(Page* page)
 
 void EditorClientWx::pageDestroyed()
 {
-    notImplemented();
+    delete this;
 }
 
 bool EditorClientWx::shouldDeleteRange(Range*)

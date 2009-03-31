@@ -1,3 +1,29 @@
+2009-03-30  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Add events to allow apps to override handling for JS prompts and 
+        window object cleared events.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24948
+
+        * WebFrame.h:
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::runJavaScriptAlert):
+        (WebCore::ChromeClientWx::runJavaScriptConfirm):
+        (WebCore::ChromeClientWx::runJavaScriptPrompt):
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::pageDestroyed):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::hasWebView):
+        (WebCore::FrameLoaderClientWx::windowObjectCleared):
+        * WebView.cpp:
+        (wxWebViewAlertEvent::wxWebViewAlertEvent):
+        (wxWebViewConfirmEvent::wxWebViewConfirmEvent):
+        (wxWebViewPromptEvent::wxWebViewPromptEvent):
+        (wxWebViewWindowObjectClearedEvent::wxWebViewWindowObjectClearedEvent):
+        * WebView.h:
+
 2009-03-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Remove call to now private method.

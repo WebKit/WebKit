@@ -28,6 +28,9 @@
 #include "config.h"
 #include "FrameLoaderClientWx.h"
 
+#include <JavaScriptCore/JavaScript.h>
+#include <JavaScriptCore/APICast.h>
+
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
@@ -42,9 +45,11 @@
 #include "RenderPart.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
+#include "ScriptController.h"
 
 #include <stdio.h>
 
+#include "WebFrame.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
 
@@ -96,8 +101,7 @@ void FrameLoaderClientWx::detachFrameLoader()
 
 bool FrameLoaderClientWx::hasWebView() const
 {
-    notImplemented();
-    return true;
+    return m_webView != NULL;
 }
 
 bool FrameLoaderClientWx::hasBackForwardList() const
@@ -817,7 +821,15 @@ String FrameLoaderClientWx::overrideMediaType() const
 
 void FrameLoaderClientWx::windowObjectCleared()
 {
-    notImplemented();
+    if (m_webView) {
+        wxWebViewWindowObjectClearedEvent wkEvent(m_webView);
+        Frame* coreFrame = m_webView->GetMainFrame()->GetFrame();
+        JSGlobalContextRef context = toGlobalRef(coreFrame->script()->globalObject()->globalExec());
+        JSObjectRef windowObject = toRef(coreFrame->script()->globalObject());
+        wkEvent.SetJSContext(context);
+        wkEvent.SetWindowObject(windowObject);
+        m_webView->GetEventHandler()->ProcessEvent(wkEvent);
+    }
 }
 
 void FrameLoaderClientWx::documentElementAvailable()
