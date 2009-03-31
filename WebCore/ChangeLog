@@ -1,3 +1,10 @@
+2009-03-31  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer): Use NamedNodeMap instead of NamedAttrMap.
+
 2009-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Don't create CFDataRef with a fixed size.
