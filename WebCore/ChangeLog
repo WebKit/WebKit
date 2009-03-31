@@ -1,5 +1,12 @@
 2009-03-31  Dean Jackson  <dino@apple.com>
 
+        Style guide violation!
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
+2009-03-31  Dean Jackson  <dino@apple.com>
+
         Fix Tiger build.
 
         * loader/MediaDocument.cpp:
