@@ -262,6 +262,7 @@ namespace WebCore {
 
         void stop();
         void stopLoading(bool sendUnload);
+        bool closeURL();
 
         void didExplicitOpen();
 
@@ -356,6 +357,7 @@ namespace WebCore {
         void saveDocumentAndScrollState();
 
         HistoryItem* currentHistoryItem();
+        void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
 
         enum LocalLoadPolicy {
             AllowLocalLoadsForAll,  // No restriction on local loads.
@@ -527,8 +529,6 @@ namespace WebCore {
 
         void submitFormAgain();
         void submitForm(const FrameLoadRequest&, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList);
-
-        bool closeURL();
 
         KURL historyURL(int distance);
 

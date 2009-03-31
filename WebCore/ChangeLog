@@ -1,5 +1,18 @@
 2009-03-31  Jeremy Moskovich  <jeremy@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        r42055 removed some functions in FrameLoader used by Chrome,
+        this CL backs out some of those changes to unbreak the Chrome build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24949
+
+        * WebCore.base.exp:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+
+2009-03-31  Jeremy Moskovich  <jeremy@chromium.org>
+
         Reviewed by Darin Adler.
 
         Build fixes for Chromium.

@@ -4868,6 +4868,11 @@ HistoryItem* FrameLoader::currentHistoryItem()
     return m_currentHistoryItem.get();
 }
 
+void FrameLoader::setCurrentHistoryItem(PassRefPtr<HistoryItem> item)
+{
+    m_currentHistoryItem = item;
+}
+
 void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
 {
     m_client->setMainDocumentError(loader, error);
