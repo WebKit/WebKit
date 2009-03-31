@@ -33,6 +33,7 @@
 #include "HTMLCollection.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <wtf/HashCountedSet.h>
 
 // FIXME: We should move Mac off of the old Frame-based user stylesheet loading
 // code and onto the new code in Page. We can't do that until the code in Page

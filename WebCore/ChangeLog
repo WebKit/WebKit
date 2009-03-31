@@ -1,3 +1,15 @@
+2009-03-31  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Build fixes for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24945
+
+        * dom/Document.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::imageToMarkup):
+
 2009-03-31  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.
