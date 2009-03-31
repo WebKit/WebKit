@@ -1,3 +1,10 @@
+2009-03-31  Dean Jackson  <dino@apple.com>
+
+        Fix Tiger build.
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
 2009-03-31  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

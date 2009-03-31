@@ -165,7 +165,7 @@ void MediaDocument::defaultEventHandler(Event* event)
     }
 
     if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
-        HTMLVideoElement* video;
+        HTMLVideoElement* video = NULL;
         if (targetNode) {
             if (targetNode->hasTagName(videoTag))
                 video = static_cast<HTMLVideoElement*>(targetNode);
