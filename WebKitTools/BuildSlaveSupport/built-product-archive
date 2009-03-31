@@ -56,7 +56,7 @@ def archiveBuiltProduct(configuration, platform):
     try:
         os.unlink(archiveFile)
     except OSError, e:
-        if e.errno != 17:
+        if e.errno != 2:
             raise
 
     subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
