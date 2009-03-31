@@ -595,31 +595,38 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         return;
     }
 
-    if (state == MediaPlayer::Idle && m_networkState > NETWORK_IDLE) {
+    if (state == MediaPlayer::Idle) {
         ASSERT(static_cast<ReadyState>(m_player->readyState()) < HAVE_ENOUGH_DATA);
+        if (m_networkState > NETWORK_IDLE) {
+            stopPeriodicTimers();
+            scheduleProgressEvent(eventNames().suspendEvent);
+        }
         m_networkState = NETWORK_IDLE;
-        stopPeriodicTimers();
-        scheduleProgressEvent(eventNames().suspendEvent);
     }
 
-    if (state == MediaPlayer::Loading && (m_networkState < NETWORK_LOADING || m_networkState == NETWORK_NO_SOURCE)) {
+    if (state == MediaPlayer::Loading) {
         ASSERT(static_cast<ReadyState>(m_player->readyState()) < HAVE_ENOUGH_DATA);
+        if (m_networkState < NETWORK_LOADING || m_networkState == NETWORK_NO_SOURCE)
+            startProgressEventTimer();
         m_networkState = NETWORK_LOADING;
-        startProgressEventTimer();
     }
 
-    if (state == MediaPlayer::Loaded && (m_networkState < NETWORK_LOADED || m_networkState == NETWORK_NO_SOURCE)) {
+    if (state == MediaPlayer::Loaded) {
+        NetworkState oldState = m_networkState;
+
         m_networkState = NETWORK_LOADED;
-        m_progressEventTimer.stop();
+        if (oldState < NETWORK_LOADED || oldState == NETWORK_NO_SOURCE) {
+            m_progressEventTimer.stop();
 
-        // Check to see if readyState changes need to be dealt with before sending the 
-        // 'load' event so we report 'canplaythrough' first. This is necessary because a
-        //  media engine reports readyState and networkState changes separately
-        MediaPlayer::ReadyState currentState = m_player->readyState();
-        if (static_cast<ReadyState>(currentState) != m_readyState)
-            setReadyState(currentState);
+            // Check to see if readyState changes need to be dealt with before sending the 
+            // 'load' event so we report 'canplaythrough' first. This is necessary because a
+            //  media engine reports readyState and networkState changes separately
+            MediaPlayer::ReadyState currentState = m_player->readyState();
+            if (static_cast<ReadyState>(currentState) != m_readyState)
+                setReadyState(currentState);
 
-         scheduleProgressEvent(eventNames().loadEvent); 
+             scheduleProgressEvent(eventNames().loadEvent); 
+        }
     }
 }
 
