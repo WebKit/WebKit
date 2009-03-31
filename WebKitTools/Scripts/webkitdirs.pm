@@ -1222,7 +1222,7 @@ sub runSafari
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        if (architecture()) {
+        if (!isTiger() && architecture()) {
             return system "arch", "-" . architecture(), safariPath(), @ARGV;
         } else {
             return system safariPath(), @ARGV;
