@@ -68,6 +68,12 @@ void ScriptFunctionCall::appendArgument(const String& argument)
     m_arguments.append(jsString(m_exec, argument));
 }
 
+void ScriptFunctionCall::appendArgument(long long argument)
+{
+    JSLock lock(false);
+    m_arguments.append(jsNumber(m_exec, argument));
+}
+
 void ScriptFunctionCall::appendArgument(unsigned int argument)
 {
     JSLock lock(false);

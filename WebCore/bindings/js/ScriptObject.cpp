@@ -31,6 +31,10 @@
 #include "config.h"
 #include "ScriptObject.h"
 
+#include "JSDOMBinding.h"
+
+#include <runtime/JSLock.h>
+
 using namespace JSC;
 
 namespace WebCore {
@@ -38,6 +42,73 @@ namespace WebCore {
 ScriptObject::ScriptObject(JSObject* object)
     : ScriptValue(object)
 {
+}
+
+static JSValuePtr createEmptyObject(ScriptState* scriptState)
+{
+    JSLock lock(false);
+    return constructEmptyObject(scriptState);
+}
+
+ScriptObject::ScriptObject(ScriptState* scriptState)
+    : ScriptValue(createEmptyObject(scriptState))
+{
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const String& name, const String& value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsString(scriptState, value), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), value.jsObject(), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, const String& value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsString(scriptState, value), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, double value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, long long value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, int value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
+    return !scriptState->hadException();
+}
+
+bool ScriptObject::set(ScriptState* scriptState, const char* name, bool value)
+{
+    JSLock lock(false);
+    PutPropertySlot slot;
+    jsObject()->put(scriptState, Identifier(scriptState, name), jsBoolean(value), slot);
+    return !scriptState->hadException();
 }
 
 } // namespace WebCore

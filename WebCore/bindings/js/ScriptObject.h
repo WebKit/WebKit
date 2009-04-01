@@ -31,6 +31,7 @@
 #ifndef ScriptObject_h
 #define ScriptObject_h
 
+#include "ScriptState.h"
 #include "ScriptValue.h"
 
 #include <runtime/JSObject.h>
@@ -41,8 +42,17 @@ namespace WebCore {
     class ScriptObject : public ScriptValue {
     public:
         ScriptObject(JSC::JSObject*);
+        ScriptObject(ScriptState*);
         ScriptObject() {}
         JSC::JSObject* jsObject() const { return asObject(jsValue()); }
+
+        bool set(ScriptState*, const String& name, const String&);
+        bool set(ScriptState*, const char* name, const ScriptObject&);
+        bool set(ScriptState*, const char* name, const String&);
+        bool set(ScriptState*, const char* name, double);
+        bool set(ScriptState*, const char* name, long long);
+        bool set(ScriptState*, const char* name, int);
+        bool set(ScriptState*, const char* name, bool);
     };
 
 }

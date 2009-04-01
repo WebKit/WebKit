@@ -65,6 +65,7 @@ struct ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;
+class ScriptString;
 class SharedBuffer;
 
 class ConsoleMessage;
@@ -214,8 +215,8 @@ public:
     void didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived);
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const JSC::UString& sourceString);
-    void scriptImported(unsigned long identifier, const JSC::UString& sourceString);
+    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
+    void scriptImported(unsigned long identifier, const String& sourceString);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
@@ -270,17 +271,6 @@ private:
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
-
-    JSObjectRef addScriptResource(InspectorResource*);
-    void removeScriptResource(InspectorResource*);
-
-    JSObjectRef addAndUpdateScriptResource(InspectorResource*);
-    void updateScriptResourceRequest(InspectorResource*);
-    void updateScriptResourceResponse(InspectorResource*);
-    void updateScriptResourceType(InspectorResource*);
-    void updateScriptResource(InspectorResource*, int length);
-    void updateScriptResource(InspectorResource*, bool finished, bool failed = false);
-    void updateScriptResource(InspectorResource*, double startTime, double responseReceivedTime, double endTime);
 
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }

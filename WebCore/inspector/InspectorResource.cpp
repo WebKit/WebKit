@@ -35,66 +35,238 @@
 #include "DocLoader.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
+#include "ScriptFunctionCall.h"
+#include "ScriptObject.h"
 #include "TextEncoding.h"
-
-#include <runtime/JSLock.h>
 
 namespace WebCore {
 
-// XMLHttpRequestResource Class
-
-struct XMLHttpRequestResource {
-    XMLHttpRequestResource(const JSC::UString& sourceString)
-    {
-        JSC::JSLock lock(false);
-        this->sourceString = sourceString.rep();
-    }
-
-    ~XMLHttpRequestResource()
-    {
-        JSC::JSLock lock(false);
-        sourceString.clear();
-    }
-
-    RefPtr<JSC::UString::Rep> sourceString;
-};
-
-    InspectorResource::InspectorResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
-    : identifier(identifier)
-    , loader(documentLoader)
-    , frame(frame)
-    , scriptContext(0)
-    , scriptObject(0)
-    , expectedContentLength(0)
-    , cached(false)
-    , finished(false)
-    , failed(false)
-    , length(0)
-    , responseStatusCode(0)
-    , startTime(-1.0)
-    , responseReceivedTime(-1.0)
-    , endTime(-1.0)
-    , xmlHttpRequestResource(0)
-    {
-    }
+InspectorResource::InspectorResource(long long identifier, DocumentLoader* loader)
+    : m_identifier(identifier)
+    , m_loader(loader)
+    , m_frame(loader->frame())
+    , m_expectedContentLength(0)
+    , m_cached(false)
+    , m_finished(false)
+    , m_failed(false)
+    , m_length(0)
+    , m_responseStatusCode(0)
+    , m_startTime(-1.0)
+    , m_responseReceivedTime(-1.0)
+    , m_endTime(-1.0)
+    , m_isMainResource(false)
+{
+}
 
 InspectorResource::~InspectorResource()
 {
-    setScriptObject(0, 0);
+}
+
+PassRefPtr<InspectorResource> InspectorResource::createCached(long long identifier, DocumentLoader* loader, const CachedResource* cachedResource)
+{
+    PassRefPtr<InspectorResource> resource = create(identifier, loader);
+
+    resource->m_finished = true;
+
+    resource->m_requestURL = KURL(cachedResource->url());
+    resource->updateResponse(cachedResource->response());
+
+    resource->m_length = cachedResource->encodedSize();
+    resource->m_cached = true;
+    resource->m_startTime = currentTime();
+    resource->m_responseReceivedTime = resource->m_startTime;
+    resource->m_endTime = resource->m_startTime;
+
+    resource->m_changes.setAll();
+
+    return resource;
+}
+
+void InspectorResource::updateRequest(const ResourceRequest& request)
+{
+    m_requestHeaderFields = request.httpHeaderFields();
+    m_requestURL = request.url();
+
+    m_changes.set(RequestChange);
+}
+
+void InspectorResource::updateResponse(const ResourceResponse& response)
+{
+    m_expectedContentLength = response.expectedContentLength();
+    m_mimeType = response.mimeType();
+    m_responseHeaderFields = response.httpHeaderFields();
+    m_responseStatusCode = response.httpStatusCode();
+    m_suggestedFilename = response.suggestedFilename();
+
+    m_changes.set(ResponseChange);
+    m_changes.set(TypeChange);
+}
+
+static ScriptObject createHeadersObject(ScriptState* scriptState, const HTTPHeaderMap& headers, bool hadException)
+{
+    ScriptObject object(scriptState);
+    HTTPHeaderMap::const_iterator end = headers.end();
+    for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
+        if (!object.set(scriptState, it->first.string(), it->second)) {
+            hadException = true;
+            break;
+        }
+    }
+
+    return object;
+}
+
+void InspectorResource::createScriptObject(ScriptState* scriptState, const ScriptObject& webInspector)
+{
+    if (m_scriptObject.hasNoValue()) {
+        bool hadException = false;
+
+        ScriptFunctionCall resourceConstructor(scriptState, webInspector, "Resource");
+        ScriptObject requestHeaders = createHeadersObject(scriptState, m_requestHeaderFields, hadException);
+        if (hadException)
+            return;
+
+        resourceConstructor.appendArgument(requestHeaders);
+        resourceConstructor.appendArgument(requestURL());
+        resourceConstructor.appendArgument(m_requestURL.host());
+        resourceConstructor.appendArgument(m_requestURL.path());
+        resourceConstructor.appendArgument(m_requestURL.lastPathComponent());
+        resourceConstructor.appendArgument(m_identifier);
+        resourceConstructor.appendArgument(m_isMainResource);
+        resourceConstructor.appendArgument(m_cached);
+
+        m_scriptObject = resourceConstructor.construct(hadException);
+        if (hadException)
+            return;
+
+        ScriptFunctionCall addResource(scriptState, webInspector, "addResource");
+        addResource.appendArgument(m_scriptObject);
+        addResource.call(hadException);
+        if (hadException)
+            return;
+
+        m_changes.clear(RequestChange);
+    }
+
+    updateScriptObject(scriptState);
+}
+
+void InspectorResource::updateScriptObject(ScriptState* scriptState)
+{
+    if (m_scriptObject.hasNoValue())
+        return;
+
+    if (m_changes.hasChange(NoChange))
+        return;
+
+    bool hadException = false;
+
+    if (m_changes.hasChange(RequestChange)) {
+        if (!m_scriptObject.set(scriptState, "url", requestURL()))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "domain", m_requestURL.host()))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "path", m_requestURL.path()))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "lasPathComponent", m_requestURL.lastPathComponent()))
+            return;
+
+        ScriptObject requestHeaders = createHeadersObject(scriptState, m_requestHeaderFields, hadException);
+        if (hadException)
+            return;
+
+        if (!m_scriptObject.set(scriptState, "requestHeaders", requestHeaders))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "mainResource", m_isMainResource))
+            return;
+    }
+
+    if (m_changes.hasChange(ResponseChange)) {
+        if (!m_scriptObject.set(scriptState, "mimeType", m_mimeType))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "expectedContentLength", m_expectedContentLength))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "statusCode", m_responseStatusCode))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename))
+            return;
+
+        ScriptObject responseHeaders = createHeadersObject(scriptState, m_responseHeaderFields, hadException);
+        if (hadException)
+            return;
+
+        if (!m_scriptObject.set(scriptState, "responseHeaders", responseHeaders))
+            return;
+    }
+
+    if (m_changes.hasChange(TypeChange) && !m_scriptObject.set(scriptState, "type", static_cast<int>(type())))
+        return;
+
+    if (m_changes.hasChange(LengthChange) && !m_scriptObject.set(scriptState, "contentLength", m_length))
+        return;
+
+    if (m_changes.hasChange(CompletionChange)) {
+        if (!m_scriptObject.set(scriptState, "failed", m_failed))
+            return;
+
+        if (!m_scriptObject.set(scriptState, "finished", m_finished))
+            return;
+    }
+
+    if (m_changes.hasChange(TimingChange)) {
+        if (m_startTime > 0 && !m_scriptObject.set(scriptState, "startTime", m_startTime))
+            return;
+        if (m_responseReceivedTime > 0 && !m_scriptObject.set(scriptState, "responseReceivedTime", m_responseReceivedTime))
+            return;
+        if (m_endTime > 0 &&  !m_scriptObject.set(scriptState, "endTime", m_endTime))
+            return;
+    }
+
+    m_changes.clearAll();
+}
+
+void InspectorResource::releaseScriptObject(ScriptState* scriptState, const ScriptObject& webInspector, bool callRemoveResource)
+{
+    if (m_scriptObject.hasNoValue())
+        return;
+
+    ScriptObject scriptObject = m_scriptObject;
+    m_scriptObject = ScriptObject();
+    m_changes.setAll();
+
+    if (!callRemoveResource)
+        return;
+
+    ScriptFunctionCall removeResource(scriptState, webInspector, "removeResource");
+    removeResource.appendArgument(scriptObject);
+    bool hadException;
+    removeResource.call(hadException);
 }
 
 InspectorResource::Type InspectorResource::type() const
 {
-    if (xmlHttpRequestResource)
+    if (!m_xmlHttpResponseText.isNull())
         return XHR;
 
-    if (requestURL == loader->requestURL())
+    if (m_requestURL == m_loader->requestURL())
         return Doc;
 
-    if (loader->frameLoader() && requestURL == loader->frameLoader()->iconURL())
+    if (m_loader->frameLoader() && m_requestURL == m_loader->frameLoader()->iconURL())
         return Image;
 
-    CachedResource* cachedResource = frame->document()->docLoader()->cachedResource(requestURL.string());
+    CachedResource* cachedResource = m_frame->document()->docLoader()->cachedResource(requestURL());
     if (!cachedResource)
         return Other;
 
@@ -115,42 +287,25 @@ InspectorResource::Type InspectorResource::type() const
     }
 }
 
-void InspectorResource::setScriptObject(JSContextRef context, JSObjectRef newScriptObject)
+void InspectorResource::setXMLHttpResponseText(const ScriptString& data)
 {
-    if (scriptContext && scriptObject)
-        JSValueUnprotect(scriptContext, scriptObject);
-
-    scriptObject = newScriptObject;
-    scriptContext = context;
-
-    ASSERT((context && newScriptObject) || (!context && !newScriptObject));
-    if (context && newScriptObject)
-        JSValueProtect(context, newScriptObject);
-}
-
-void InspectorResource::setXMLHttpRequestProperties(const JSC::UString& data)
-{
-    xmlHttpRequestResource.set(new XMLHttpRequestResource(data));
-}
-
-void InspectorResource::setScriptProperties(const JSC::UString& data)
-{
-    xmlHttpRequestResource.set(new XMLHttpRequestResource(data));
+    m_xmlHttpResponseText = data;
+    m_changes.set(TypeChange);
 }
 
 String InspectorResource::sourceString() const
 {
-    if (xmlHttpRequestResource)
-        return JSC::UString(xmlHttpRequestResource->sourceString);
+    if (!m_xmlHttpResponseText.isNull())
+        return String(m_xmlHttpResponseText);
 
     RefPtr<SharedBuffer> buffer;
     String textEncodingName;
 
-    if (requestURL == loader->requestURL()) {
-        buffer = loader->mainResourceData();
-        textEncodingName = frame->document()->inputEncoding();
+    if (m_requestURL == m_loader->requestURL()) {
+        buffer = m_loader->mainResourceData();
+        textEncodingName = m_frame->document()->inputEncoding();
     } else {
-        CachedResource* cachedResource = frame->document()->docLoader()->cachedResource(requestURL.string());
+        CachedResource* cachedResource = m_frame->document()->docLoader()->cachedResource(requestURL());
         if (!cachedResource)
             return String();
 
@@ -176,6 +331,38 @@ String InspectorResource::sourceString() const
     if (!encoding.isValid())
         encoding = WindowsLatin1Encoding();
     return encoding.decode(buffer->data(), buffer->size());
+}
+
+void InspectorResource::startTiming()
+{
+    m_startTime = currentTime();
+    m_changes.set(TimingChange);
+}
+
+void InspectorResource::markResponseReceivedTime()
+{
+    m_responseReceivedTime = currentTime();
+    m_changes.set(TimingChange);
+}
+
+void InspectorResource::endTiming()
+{
+    m_endTime = currentTime();
+    m_finished = true;
+    m_changes.set(TimingChange);
+    m_changes.set(CompletionChange);
+}
+
+void InspectorResource::markFailed()
+{
+    m_failed = true;
+    m_changes.set(CompletionChange);
+}
+
+void InspectorResource::addLength(int lengthReceived)
+{
+    m_length += lengthReceived;
+    m_changes.set(LengthChange);
 }
 
 } // namespace WebCore

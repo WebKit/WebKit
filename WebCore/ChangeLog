@@ -1,3 +1,79 @@
+2009-04-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24989
+        Refactor InspectorResource to use ScriptObject/FunctionCall.
+
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        (WebCore::JSInspectorController::addResourceSourceToFrame): Tweaked to use
+            a more appropriate type conversion.
+        (WebCore::JSInspectorController::getResourceDocumentNode): Tweaked to
+            accommodate for InspectorResource refactoring.
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument): Added long long type to match
+            existing jsNumber call signature.
+        * bindings/js/ScriptFunctionCall.h: Declaration for above.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::createEmptyObject): Added.
+        (WebCore::ScriptObject::ScriptObject):
+        (WebCore::ScriptObject::set): Added a bunch of property setters.
+        * bindings/js/ScriptObject.h: Declarations for above.
+        * inspector/InspectorController.cpp: Moved all InspectorResource-managing code
+            to InspectorResource.cpp
+        (WebCore::InspectorController::populateScriptObjects): Changed to use
+            refactored InspectorResource.
+        (WebCore::InspectorController::resetScriptObjects): Ditto.
+        (WebCore::InspectorController::pruneResources): Ditto.
+        (WebCore::InspectorController::didCommitLoad): Ditto.
+        (WebCore::InspectorController::addResource): Ditto.
+        (WebCore::InspectorController::removeResource): Ditto.
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache): Ditto.
+        (WebCore::InspectorController::identifierForInitialRequest): Ditto.
+        (WebCore::InspectorController::willSendRequest): Ditto.
+        (WebCore::InspectorController::didReceiveResponse): Ditto.
+        (WebCore::InspectorController::didReceiveContentLength): Ditto.
+        (WebCore::InspectorController::didFinishLoading): Ditto.
+        (WebCore::InspectorController::didFailLoading): Ditto,
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest): Ditto.
+        (WebCore::InspectorController::scriptImported): Ditto.
+        * inspector/InspectorController.h: Removed InspectorResource-managing code decls
+            and tweaked some signatures to use ScriptString and long long for identifier.
+        * inspector/InspectorController.idl: Changed to use long long for identifier.
+        * inspector/InspectorResource.cpp: Refactored to use ScriptObject/FunctionCall.
+        (WebCore::InspectorResource::InspectorResource): Ditto.
+        (WebCore::InspectorResource::~InspectorResource): Ditto.
+        (WebCore::InspectorResource::createCached): Added.
+        (WebCore::InspectorResource::updateRequest): Added.
+        (WebCore::InspectorResource::updateResponse): Added.
+        (WebCore::createHeadersObject): Added.
+        (WebCore::InspectorResource::createScriptObject): Added.
+        (WebCore::InspectorResource::updateScriptObject): Added.
+        (WebCore::InspectorResource::releaseScriptObject): Added.
+        (WebCore::InspectorResource::type): Tweaked to use ScriptString.
+        (WebCore::InspectorResource::setXMLHttpResponseText): Added.
+        (WebCore::InspectorResource::sourceString): Tweaked to use ScriptString.
+        (WebCore::InspectorResource::startTiming): Added.
+        (WebCore::InspectorResource::markResponseReceivedTime): Added.
+        (WebCore::InspectorResource::endTiming): Added.
+        (WebCore::InspectorResource::markFailed): Added.
+        (WebCore::InspectorResource::addLength): Added.
+        * inspector/InspectorResource.h: Added decls for newly refactored-in methods.
+        (WebCore::InspectorResource::create): Added.
+        (WebCore::InspectorResource::isSameLoader): Added.
+        (WebCore::InspectorResource::markMainResource): Added.
+        (WebCore::InspectorResource::identifier): Added.
+        (WebCore::InspectorResource::requestURL): Added.
+        (WebCore::InspectorResource::frame): Added.
+        (WebCore::InspectorResource::mimeType): Added.
+        (WebCore::InspectorResource::Changes::Changes): Added new class to track
+            resource changes.
+        (WebCore::InspectorResource::Changes::hasChange): Added.
+        (WebCore::InspectorResource::Changes::set): Added.
+        (WebCore::InspectorResource::Changes::clear): Added.
+        (WebCore::InspectorResource::Changes::setAll): Added.
+        (WebCore::InspectorResource::Changes::clearAll): Added.
+
 2009-04-01  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.

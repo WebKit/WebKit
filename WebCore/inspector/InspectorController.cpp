@@ -67,6 +67,7 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
+#include "ScriptString.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -872,301 +873,6 @@ void InspectorController::disableProfiler()
         callSimpleFunction(m_scriptContext, m_scriptObject, "profilerWasDisabled");
 }
 
-static void addHeaders(JSContextRef context, JSObjectRef object, const HTTPHeaderMap& headers, JSValueRef* exception)
-{
-    ASSERT_ARG(context, context);
-    ASSERT_ARG(object, object);
-
-    HTTPHeaderMap::const_iterator end = headers.end();
-    for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
-        JSValueRef value = JSValueMakeString(context, jsStringRef(it->second).get());
-        JSObjectSetProperty(context, object, jsStringRef((it->first).string()).get(), value, kJSPropertyAttributeNone, exception);
-        if (exception && *exception)
-            return;
-    }
-}
-
-static JSObjectRef scriptObjectForRequest(JSContextRef context, const InspectorResource* resource, JSValueRef* exception)
-{
-    ASSERT_ARG(context, context);
-
-    JSObjectRef object = JSObjectMake(context, 0, 0);
-    addHeaders(context, object, resource->requestHeaderFields, exception);
-
-    return object;
-}
-
-static JSObjectRef scriptObjectForResponse(JSContextRef context, const InspectorResource* resource, JSValueRef* exception)
-{
-    ASSERT_ARG(context, context);
-
-    JSObjectRef object = JSObjectMake(context, 0, 0);
-    addHeaders(context, object, resource->responseHeaderFields, exception);
-
-    return object;
-}
-
-JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
-{
-    ASSERT_ARG(resource, resource);
-
-    ASSERT(m_scriptContext);
-    ASSERT(m_scriptObject);
-    if (!m_scriptContext || !m_scriptObject)
-        return 0;
-
-    if (!resource->scriptObject) {
-        JSValueRef exception = 0;
-
-        JSValueRef resourceProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("Resource").get(), &exception);
-        if (HANDLE_EXCEPTION(m_scriptContext, exception))
-            return 0;
-
-        JSObjectRef resourceConstructor = JSValueToObject(m_scriptContext, resourceProperty, &exception);
-        if (HANDLE_EXCEPTION(m_scriptContext, exception))
-            return 0;
-
-        JSValueRef urlValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.string()).get());
-        JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.host()).get());
-        JSValueRef pathValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.path()).get());
-        JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.lastPathComponent()).get());
-
-        JSValueRef identifier = JSValueMakeNumber(m_scriptContext, resource->identifier);
-        JSValueRef mainResource = JSValueMakeBoolean(m_scriptContext, m_mainResource == resource);
-        JSValueRef cached = JSValueMakeBoolean(m_scriptContext, resource->cached);
-
-        JSObjectRef scriptObject = scriptObjectForRequest(m_scriptContext, resource, &exception);
-        if (HANDLE_EXCEPTION(m_scriptContext, exception))
-            return 0;
-
-        JSValueRef arguments[] = { scriptObject, urlValue, domainValue, pathValue, lastPathComponentValue, identifier, mainResource, cached };
-        JSObjectRef result = JSObjectCallAsConstructor(m_scriptContext, resourceConstructor, 8, arguments, &exception);
-        if (HANDLE_EXCEPTION(m_scriptContext, exception))
-            return 0;
-
-        ASSERT(result);
-
-        resource->setScriptObject(m_scriptContext, result);
-    }
-
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "addResource", 1, &resource->scriptObject, exception);
-
-    if (exception)
-        return 0;
-
-    return resource->scriptObject;
-}
-
-JSObjectRef InspectorController::addAndUpdateScriptResource(InspectorResource* resource)
-{
-    ASSERT_ARG(resource, resource);
-
-    JSObjectRef scriptResource = addScriptResource(resource);
-    if (!scriptResource)
-        return 0;
-
-    updateScriptResourceResponse(resource);
-    updateScriptResource(resource, resource->length);
-    updateScriptResource(resource, resource->startTime, resource->responseReceivedTime, resource->endTime);
-    updateScriptResource(resource, resource->finished, resource->failed);
-    return scriptResource;
-}
-
-void InspectorController::removeScriptResource(InspectorResource* resource)
-{
-    ASSERT(m_scriptContext);
-    ASSERT(m_scriptObject);
-    if (!m_scriptContext || !m_scriptObject)
-        return;
-
-    ASSERT(resource);
-    ASSERT(resource->scriptObject);
-    if (!resource || !resource->scriptObject)
-        return;
-
-    JSObjectRef scriptObject = resource->scriptObject;
-    resource->setScriptObject(0, 0);
-
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "removeResource", 1, &scriptObject, exception);
-}
-
-static void updateResourceRequest(InspectorResource* resource, const ResourceRequest& request)
-{
-    resource->requestHeaderFields = request.httpHeaderFields();
-    resource->requestURL = request.url();
-}
-
-static void updateResourceResponse(InspectorResource* resource, const ResourceResponse& response)
-{
-    resource->expectedContentLength = response.expectedContentLength();
-    resource->mimeType = response.mimeType();
-    resource->responseHeaderFields = response.httpHeaderFields();
-    resource->responseStatusCode = response.httpStatusCode();
-    resource->suggestedFilename = response.suggestedFilename();
-}
-
-void InspectorController::updateScriptResourceRequest(InspectorResource* resource)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef urlValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.string()).get());
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.host()).get());
-    JSValueRef pathValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.path()).get());
-    JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->requestURL.lastPathComponent()).get());
-
-    JSValueRef mainResourceValue = JSValueMakeBoolean(m_scriptContext, m_mainResource == resource);
-
-    JSValueRef exception = 0;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("url").get(), urlValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("domain").get(), domainValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("path").get(), pathValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("lastPathComponent").get(), lastPathComponentValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectRef scriptObject = scriptObjectForRequest(m_scriptContext, resource, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("requestHeaders").get(), scriptObject, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("mainResource").get(), mainResourceValue, kJSPropertyAttributeNone, &exception);
-    HANDLE_EXCEPTION(m_scriptContext, exception);
-}
-
-void InspectorController::updateScriptResourceResponse(InspectorResource* resource)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef mimeTypeValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->mimeType).get());
-
-    JSValueRef suggestedFilenameValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->suggestedFilename).get());
-
-    JSValueRef expectedContentLengthValue = JSValueMakeNumber(m_scriptContext, static_cast<double>(resource->expectedContentLength));
-    JSValueRef statusCodeValue = JSValueMakeNumber(m_scriptContext, resource->responseStatusCode);
-
-    JSValueRef exception = 0;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("mimeType").get(), mimeTypeValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("suggestedFilename").get(), suggestedFilenameValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("expectedContentLength").get(), expectedContentLengthValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("statusCode").get(), statusCodeValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectRef scriptObject = scriptObjectForResponse(m_scriptContext, resource, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("responseHeaders").get(), scriptObject, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    updateScriptResourceType(resource);
-}
-
-void InspectorController::updateScriptResourceType(InspectorResource* resource)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef exception = 0;
-
-    JSValueRef typeValue = JSValueMakeNumber(m_scriptContext, resource->type());
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("type").get(), typeValue, kJSPropertyAttributeNone, &exception);
-    HANDLE_EXCEPTION(m_scriptContext, exception);
-}
-
-void InspectorController::updateScriptResource(InspectorResource* resource, int length)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef lengthValue = JSValueMakeNumber(m_scriptContext, length);
-
-    JSValueRef exception = 0;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("contentLength").get(), lengthValue, kJSPropertyAttributeNone, &exception);
-    HANDLE_EXCEPTION(m_scriptContext, exception);
-}
-
-void InspectorController::updateScriptResource(InspectorResource* resource, bool finished, bool failed)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef failedValue = JSValueMakeBoolean(m_scriptContext, failed);
-    JSValueRef finishedValue = JSValueMakeBoolean(m_scriptContext, finished);
-
-    JSValueRef exception = 0;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("failed").get(), failedValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("finished").get(), finishedValue, kJSPropertyAttributeNone, &exception);
-    HANDLE_EXCEPTION(m_scriptContext, exception);
-}
-
-void InspectorController::updateScriptResource(InspectorResource* resource, double startTime, double responseReceivedTime, double endTime)
-{
-    ASSERT(resource->scriptObject);
-    ASSERT(m_scriptContext);
-    if (!resource->scriptObject || !m_scriptContext)
-        return;
-
-    JSValueRef startTimeValue = JSValueMakeNumber(m_scriptContext, startTime);
-    JSValueRef responseReceivedTimeValue = JSValueMakeNumber(m_scriptContext, responseReceivedTime);
-    JSValueRef endTimeValue = JSValueMakeNumber(m_scriptContext, endTime);
-
-    JSValueRef exception = 0;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("startTime").get(), startTimeValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("responseReceivedTime").get(), responseReceivedTimeValue, kJSPropertyAttributeNone, &exception);
-    if (HANDLE_EXCEPTION(m_scriptContext, exception))
-        return;
-
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("endTime").get(), endTimeValue, kJSPropertyAttributeNone, &exception);
-    HANDLE_EXCEPTION(m_scriptContext, exception);
-}
 
 void InspectorController::populateScriptObjects()
 {
@@ -1176,7 +882,7 @@ void InspectorController::populateScriptObjects()
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
-        addAndUpdateScriptResource(it->second.get());
+        it->second->createScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
@@ -1210,10 +916,8 @@ void InspectorController::resetScriptObjects()
         return;
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
-    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
-        InspectorResource* resource = it->second.get();
-        resource->setScriptObject(0, 0);
-    }
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
+        it->second->releaseScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)), false);
 
 #if ENABLE(DATABASE)
     DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
@@ -1240,10 +944,10 @@ void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoad
         if (resource == m_mainResource)
             continue;
 
-        if (!loaderToKeep || resource->loader != loaderToKeep) {
+        if (!loaderToKeep || !resource->isSameLoader(loaderToKeep)) {
             removeResource(resource);
-            if (windowVisible() && resource->scriptObject)
-                removeScriptResource(resource);
+            if (windowVisible())
+                resource->releaseScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)), true);
         }
     }
 }
@@ -1275,11 +979,11 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
             resetScriptObjects();
 
             if (!loader->isLoadingFromCachedPage()) {
-                ASSERT(m_mainResource && m_mainResource->loader == loader);
+                ASSERT(m_mainResource && m_mainResource->isSameLoader(loader));
                 // We don't add the main resource until its load is committed. This is
                 // needed to keep the load for a user-entered URL from showing up in the
                 // list of resources for the page they are navigating away from.
-                addAndUpdateScriptResource(m_mainResource.get());
+                m_mainResource->createScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
             } else {
                 // Pages loaded from the page cache are committed before
                 // m_mainResource is the right resource for this load, so we
@@ -1305,33 +1009,33 @@ void InspectorController::frameDetachedFromParent(Frame* frame)
 
 void InspectorController::addResource(InspectorResource* resource)
 {
-    m_resources.set(resource->identifier, resource);
-    m_knownResources.add(resource->requestURL.string());
+    m_resources.set(resource->identifier(), resource);
+    m_knownResources.add(resource->requestURL());
 
-    Frame* frame = resource->frame.get();
+    Frame* frame = resource->frame();
     ResourcesMap* resourceMap = m_frameResources.get(frame);
     if (resourceMap)
-        resourceMap->set(resource->identifier, resource);
+        resourceMap->set(resource->identifier(), resource);
     else {
         resourceMap = new ResourcesMap;
-        resourceMap->set(resource->identifier, resource);
+        resourceMap->set(resource->identifier(), resource);
         m_frameResources.set(frame, resourceMap);
     }
 }
 
 void InspectorController::removeResource(InspectorResource* resource)
 {
-    m_resources.remove(resource->identifier);
-    m_knownResources.remove(resource->requestURL.string());
+    m_resources.remove(resource->identifier());
+    m_knownResources.remove(resource->requestURL());
 
-    Frame* frame = resource->frame.get();
+    Frame* frame = resource->frame();
     ResourcesMap* resourceMap = m_frameResources.get(frame);
     if (!resourceMap) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    resourceMap->remove(resource->identifier);
+    resourceMap->remove(resource->identifier());
     if (resourceMap->isEmpty()) {
         m_frameResources.remove(frame);
         delete resourceMap;
@@ -1347,27 +1051,19 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     if (m_knownResources.contains(cachedResource->url()))
         return;
 
-    RefPtr<InspectorResource> resource = InspectorResource::create(m_nextIdentifier--, loader, loader->frame());
-    resource->finished = true;
-
-    resource->requestURL = KURL(cachedResource->url());
-    updateResourceResponse(resource.get(), cachedResource->response());
-
-    resource->length = cachedResource->encodedSize();
-    resource->cached = true;
-    resource->startTime = currentTime();
-    resource->responseReceivedTime = resource->startTime;
-    resource->endTime = resource->startTime;
+    RefPtr<InspectorResource> resource = InspectorResource::createCached(m_nextIdentifier--, loader, cachedResource);
 
     ASSERT(m_inspectedPage);
 
-    if (loader->frame() == m_inspectedPage->mainFrame() && cachedResource->url() == loader->requestURL())
+    if (loader->frame() == m_inspectedPage->mainFrame() && cachedResource->url() == loader->requestURL()) {
         m_mainResource = resource;
+        resource->markMainResource();
+    }
 
     addResource(resource.get());
 
     if (windowVisible())
-        addAndUpdateScriptResource(resource.get());
+        resource->createScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 }
 
 void InspectorController::identifierForInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
@@ -1375,19 +1071,21 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
     if (!enabled())
         return;
 
-    RefPtr<InspectorResource> resource = InspectorResource::create(identifier, loader, loader->frame());
+    RefPtr<InspectorResource> resource = InspectorResource::create(identifier, loader);
 
-    updateResourceRequest(resource.get(), request);
+    resource->updateRequest(request);
 
     ASSERT(m_inspectedPage);
 
-    if (loader->frame() == m_inspectedPage->mainFrame() && request.url() == loader->requestURL())
+    if (loader->frame() == m_inspectedPage->mainFrame() && request.url() == loader->requestURL()) {
         m_mainResource = resource;
+        resource->markMainResource();
+    }
 
     addResource(resource.get());
 
     if (windowVisible() && loader->isLoadingFromCachedPage() && resource == m_mainResource)
-        addAndUpdateScriptResource(resource.get());
+        resource->createScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 }
 
 void InspectorController::willSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -1399,24 +1097,15 @@ void InspectorController::willSendRequest(DocumentLoader*, unsigned long identif
     if (!resource)
         return;
 
-    resource->startTime = currentTime();
+    resource->startTiming();
 
     if (!redirectResponse.isNull()) {
-        updateResourceRequest(resource, request);
-        updateResourceResponse(resource, redirectResponse);
+        resource->updateRequest(request);
+        resource->updateResponse(redirectResponse);
     }
 
-    if (resource != m_mainResource && windowVisible()) {
-        if (!resource->scriptObject)
-            addScriptResource(resource);
-        else
-            updateScriptResourceRequest(resource);
-
-        updateScriptResource(resource, resource->startTime, resource->responseReceivedTime, resource->endTime);
-
-        if (!redirectResponse.isNull())
-            updateScriptResourceResponse(resource);
-    }
+    if (resource != m_mainResource && windowVisible())
+        resource->createScriptObject(toJS(m_scriptContext), ScriptObject(toJS(m_scriptObject)));
 }
 
 void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse& response)
@@ -1428,14 +1117,11 @@ void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long iden
     if (!resource)
         return;
 
-    updateResourceResponse(resource, response);
+    resource->updateResponse(response);
+    resource->markResponseReceivedTime();
 
-    resource->responseReceivedTime = currentTime();
-
-    if (windowVisible() && resource->scriptObject) {
-        updateScriptResourceResponse(resource);
-        updateScriptResource(resource, resource->startTime, resource->responseReceivedTime, resource->endTime);
-    }
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
 void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)
@@ -1447,10 +1133,10 @@ void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long
     if (!resource)
         return;
 
-    resource->length += lengthReceived;
+    resource->addLength(lengthReceived);
 
-    if (windowVisible() && resource->scriptObject)
-        updateScriptResource(resource, resource->length);
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
 void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identifier)
@@ -1464,15 +1150,12 @@ void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identi
 
     removeResource(resource.get());
 
-    resource->finished = true;
-    resource->endTime = currentTime();
+    resource->endTiming();
 
     addResource(resource.get());
 
-    if (windowVisible() && resource->scriptObject) {
-        updateScriptResource(resource.get(), resource->startTime, resource->responseReceivedTime, resource->endTime);
-        updateScriptResource(resource.get(), resource->finished);
-    }
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
 void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& /*error*/)
@@ -1486,19 +1169,16 @@ void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifi
 
     removeResource(resource.get());
 
-    resource->finished = true;
-    resource->failed = true;
-    resource->endTime = currentTime();
+    resource->markFailed();
+    resource->endTiming();
 
     addResource(resource.get());
 
-    if (windowVisible() && resource->scriptObject) {
-        updateScriptResource(resource.get(), resource->startTime, resource->responseReceivedTime, resource->endTime);
-        updateScriptResource(resource.get(), resource->finished, resource->failed);
-    }
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
-void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const JSC::UString& sourceString)
+void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
 {
     if (!enabled())
         return;
@@ -1507,13 +1187,13 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
     if (!resource)
         return;
 
-    resource->setXMLHttpRequestProperties(sourceString);
+    resource->setXMLHttpResponseText(sourceString);
 
-    if (windowVisible() && resource->scriptObject)
-        updateScriptResourceType(resource);
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
-void InspectorController::scriptImported(unsigned long identifier, const JSC::UString& sourceString)
+void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
 {
     if (!enabled())
         return;
@@ -1522,10 +1202,12 @@ void InspectorController::scriptImported(unsigned long identifier, const JSC::US
     if (!resource)
         return;
     
-    resource->setXMLHttpRequestProperties(sourceString);
+    // FIXME: imported script and XHR response are currently viewed as the same
+    // thing by the Inspector. They should be made into distinct types.
+    resource->setXMLHttpResponseText(ScriptString(sourceString));
     
-    if (windowVisible() && resource->scriptObject)
-        updateScriptResourceType(resource);
+    if (windowVisible())
+        resource->updateScriptObject(toJS(m_scriptContext));
 }
 
 
