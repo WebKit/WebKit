@@ -549,12 +549,14 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
   
     bool handled = false;
 
-    // Clear the selection if the mouse didn't move after the last mouse press.
-    // We do this so when clicking on the selection, the selection goes away.
-    // However, if we are editing, place the caret.
+    // Clear the selection if the mouse didn't move after the last mouse
+    // press and it's not a context menu click.  We do this so when clicking
+    // on the selection, the selection goes away.  However, if we are
+    // editing, place the caret.
     if (m_mouseDownWasSingleClickInSelection && !m_beganSelectingText
             && m_dragStartPos == event.event().pos()
-            && m_frame->selection()->isRange()) {
+            && m_frame->selection()->isRange()
+            && event.event().button() != RightButton) {
         VisibleSelection newSelection;
         Node *node = event.targetNode();
         if (node && node->isContentEditable() && node->renderer()) {

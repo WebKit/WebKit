@@ -1,3 +1,20 @@
+2009-04-01  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Ensure the right click doesn't deselect text under it.  This was
+        happening in the Chromium and GTK+ ports because they don't select
+        the text under the cursor on right click.
+        
+        This was regressed in r41715, https://bugs.webkit.org/show_bug.cgi?id=19737
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24946
+
+        Test: fast/events/context-no-deselect.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2009-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
