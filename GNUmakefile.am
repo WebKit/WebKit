@@ -453,12 +453,17 @@ EXTRA_DIST = \
 	$(srcdir)/autotools/symbols.filter \
 	$(srcdir)/WebKit/gtk/ChangeLog \
 	$(srcdir)/WebKit/gtk/NEWS \
-	$(srcdir)/WebKit/gtk/webkitmarshal.list
+	$(srcdir)/WebKit/gtk/webkitmarshal.list \
+	$(srcdir)/WebKit/gtk/docs/GNUmakefile.* \
+	$(srcdir)/WebKit/gtk/docs/webkitenvironment.xml \
+	$(srcdir)/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
+	$(srcdir)/WebKit/gtk/docs/version.xml.in
 
 # Files that will be cleaned
-MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
-DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
-CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
+MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile
+DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile
+CLEANFILES := $(stamp_files) $(BUILT_SOURCES) WebKit/gtk/docs/GNUmakefile
 
 # Include module makefiles
 include JavaScriptCore/GNUmakefile.am
