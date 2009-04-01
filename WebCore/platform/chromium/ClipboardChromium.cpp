@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "NamedAttrMap.h"
 #include "MIMETypeRegistry.h"
 #include "markup.h"
 #include "NamedNodeMap.h"

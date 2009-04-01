@@ -31,6 +31,7 @@
 #ifndef V8Collection_h
 #define V8Collection_h
 
+#include "HTMLFormElement.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include <v8.h>

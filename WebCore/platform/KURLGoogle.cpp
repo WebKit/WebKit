@@ -235,6 +235,7 @@ void KURLGooglePrivate::init(const KURL& base, const UChar* rel, int relLength,
                                           charsetConverter,
                                           &output, &m_parsed);
 
+
     if (m_isValid || output.length()) {
         if (m_parsed.ref.is_nonempty())
             setUtf8(CString(output.data(), output.length()));
@@ -519,6 +520,12 @@ bool KURL::hasRef() const
     // Note: KURL.cpp unescapes here.
     // FIXME determine if KURL.cpp agrees about an empty ref
     return m_url.m_parsed.ref.len >= 0;
+}
+
+String KURL::baseAsString() const
+{
+    // FIXME: There is probably a more efficient way to do this?
+    return string().left(pathAfterLastSlash());
 }
 
 String KURL::query() const

@@ -1,5 +1,17 @@
 2009-04-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24994
+        Fix miscellaneous merge/upstreaming divergencies in Chromium port.
+
+        * bindings/v8/V8Collection.h: Added an include.
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::baseAsString): Added to match KURL.cpp.
+        * platform/chromium/ClipboardChromium.cpp: Added an include.
+
+2009-04-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         https://bugs.webkit.org/show_bug.cgi?id=24989
