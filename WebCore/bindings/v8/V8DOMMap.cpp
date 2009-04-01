@@ -47,7 +47,7 @@ namespace WebCore {
 //
 // There are two kinds of DOM objects:
 // 1. DOM tree nodes, such as Document, HTMLElement, ...
-//    there classes implements TreeShared<T> interface;
+//    there classes implement TreeShared<T> interface;
 // 2. Non-node DOM objects, such as CSSRule, Location, etc.
 //    these classes implement a ref-counted scheme.
 //
@@ -254,7 +254,8 @@ public:
 };
 
 // This encapsulates thread-specific DOM data for the main thread. All the maps in it are static.
-// This is because we are unable to rely on WTF::ThreadSpecificThreadExit to do the cleanup since the place that tears down the main thread can not call any WTF functions.
+// This is because we are unable to rely on WTF::ThreadSpecificThreadExit to do the cleanup since
+// the place that tears down the main thread can not call any WTF functions.
 class MainThreadSpecificDOMData : public ThreadSpecificDOMData {
 public:
     MainThreadSpecificDOMData()
