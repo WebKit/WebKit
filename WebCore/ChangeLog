@@ -1,5 +1,15 @@
 2009-03-31  Darin Adler  <darin@apple.com>
 
+        Rolled out that last change until I can investigate the regression test failures it seems
+        to have caused.
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::decrement):
+        * dom/PositionIterator.h:
+        (WebCore::PositionIterator::PositionIterator):
+
+2009-03-31  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric Seidel.
 
         Bug 24621: PositionIterator doesn't iterate "after last child" positions when going backwards
