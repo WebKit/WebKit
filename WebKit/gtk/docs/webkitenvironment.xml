@@ -22,7 +22,8 @@ using the <literal>WEBKIT_DEBUG</literal> environment variable. It
 takes a space-separated list of names, representing the various
 aspects of the work the library performs. Notice that most of the
 logging is only done in debug builds (that you get when you pass
-<literal>--debug</literal> to the <literal>configure</literal> script.
+<literal>--enable-debug</literal> to the <literal>configure</literal>
+script).
 </para>
 
 <para>

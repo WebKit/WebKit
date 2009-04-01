@@ -71,10 +71,10 @@
 
 /**
  * SECTION:webkitwebview
- * @short_description: The central class of the WebKit/Gtk+ API
+ * @short_description: The central class of the WebKitGTK+ API
  * @see_also: #WebKitWebSettings, #WebKitWebFrame
  *
- * #WebKitWebView is the central class of the WebKit/Gtk+ API. It is a
+ * #WebKitWebView is the central class of the WebKitGTK+ API. It is a
  * #GtkWidget implementing the scrolling interface which means you can
  * embed in a #GtkScrolledWindow. It is responsible for managing the
  * drawing of the content, forwarding of events. You can load any URI
