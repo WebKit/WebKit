@@ -1,3 +1,11 @@
+2009-04-01  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        * tests/testdownload.c: Added.
+        (test_webkit_download_create):
+        (main): Add an initial unit test for downloading.
+
 2009-04-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed typo fixes, and naming normalization in the
