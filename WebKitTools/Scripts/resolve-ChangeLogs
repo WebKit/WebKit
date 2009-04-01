@@ -307,7 +307,7 @@ sub fixMergedChangeLogs($;@)
     my @changeLogs = grep { defined $_ } map { findChangeLog($_) } @changedFiles;
     die "No changed ChangeLog files in $revisionRange" if scalar(@changeLogs) < 1;
 
-    system("$GIT filter-branch --tree-filter 'PREVIOUS_COMMIT=\`$GIT rev-parse \$GIT_COMMIT^\` && MAPPED_PREVIOUS_COMMIT=\`map \$PREVIOUS_COMMIT\` $0 -f \"" . join('" "', @changeLogs) . "\"' $revisionRange");
+    system("$GIT filter-branch --tree-filter 'PREVIOUS_COMMIT=\`$GIT rev-parse \$GIT_COMMIT^\` && MAPPED_PREVIOUS_COMMIT=\`map \$PREVIOUS_COMMIT\` \"$0\" -f \"" . join('" "', @changeLogs) . "\"' $revisionRange");
 
     # On success, remove the backup refs directory
     if (WEXITSTATUS($?) == 0) {

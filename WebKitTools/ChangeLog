@@ -1,3 +1,14 @@
+2009-03-31  Adam Roben  <aroben@apple.com>
+
+        Make resolve-ChangeLogs -f work when the working tree has spaces in
+        its path
+
+        Reviewed by Mark Rowe and David Kilzer.
+
+        * Scripts/resolve-ChangeLogs:
+        (sub fixMergedChangeLogs): Quote the path to resolve-ChangeLogs in
+        case it contains spaces.
+
 2009-03-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
