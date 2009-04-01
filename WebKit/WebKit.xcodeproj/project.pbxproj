@@ -1800,12 +1800,6 @@
 					"$(OTHER_LDFLAGS)",
 					"-lWebKitSystemInterface",
 				);
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					mac/WebKit.order,
-				);
 			};
 			name = Production;
 		};

@@ -1,3 +1,14 @@
+2009-04-01  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24990
+        Put SECTORDER_FLAGS into xcconfig files.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2009-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

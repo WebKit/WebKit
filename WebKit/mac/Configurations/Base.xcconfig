@@ -48,6 +48,7 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
 DEAD_CODE_STRIPPING = YES;
 
+SECTORDER_FLAGS = -sectorder __TEXT __text mac/WebKit.order;
 
 GCC_VERSION = $(GCC_VERSION_$(XCODE_VERSION_ACTUAL));
 GCC_VERSION_0310 = 4.2;
