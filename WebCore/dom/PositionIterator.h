@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,18 +42,17 @@ public:
         , m_offset(0)
     {
     }
-
-    PositionIterator(const Position& pos)
-        : m_parent(pos.node())
-        , m_child(m_parent->childNode(pos.m_offset))
-        , m_offset(m_child ? 0 : pos.m_offset)
+    PositionIterator(const Position& position)
+        : m_parent(position.node())
+        , m_child(m_parent->childNode(position.m_offset))
+        , m_offset(m_parent->hasChildNodes() ? 0 : position.m_offset)
     {
     }
-    operator Position() const;
 
     void increment();
     void decrement();
 
+    operator Position() const;
     Node* node() const { return m_parent; }
     int offsetInLeafNode() const { return m_offset; }
 

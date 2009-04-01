@@ -1,3 +1,20 @@
+2009-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24621: PositionIterator doesn't iterate "after last child" positions when going backwards
+        https://bugs.webkit.org/show_bug.cgi?id=24621
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::decrement): Make sure that when the parent has no children, we
+        don't ever use Position::uncheckedPreviousOffset. This is consistent with the forward
+        iterator, but also should never arise because of the fix below.
+        * dom/PositionIterator.h:
+        (WebCore::PositionIterator::PositionIterator): Fixed so m_offset will always be 0 when
+        the passed-in node has no children. Like the change above, this is consistent with the rest
+        of the class, although in the long run I think it's a bit strange to treat a <p> element
+        with no children differently than a <p> element with children.
+
 2009-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

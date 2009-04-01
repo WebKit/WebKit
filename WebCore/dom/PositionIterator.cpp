@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,13 +85,14 @@ void PositionIterator::decrement()
         return;
     }
 
-    if (m_offset) {
-        m_offset = Position::uncheckedPreviousOffset(m_parent, m_offset);
+    if (m_parent->hasChildNodes()) {
+        ASSERT(!m_offset);
+        m_parent = m_parent->lastChild();
+        if (!m_parent->hasChildNodes())
+            m_offset = lastOffsetForEditing(m_parent);
     } else {
-        if (m_parent->hasChildNodes()) {
-            m_parent = m_parent->lastChild();
-            if (!m_parent->hasChildNodes())
-                m_offset = lastOffsetForEditing(m_parent);
+        if (m_offset) {
+            m_offset = Position::uncheckedPreviousOffset(m_parent, m_offset);
         } else {
             m_child = m_parent;
             m_parent = m_parent->parentNode();
