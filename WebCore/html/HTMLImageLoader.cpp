@@ -50,10 +50,8 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
     return parseURL(attr);
 }
 
-void HTMLImageLoader::notifyFinished(CachedResource* resource)
-{
-    ASSERT(resource == image());
-    
+void HTMLImageLoader::notifyFinished(CachedResource*)
+{    
     CachedImage* cachedImage = image();
 
     Element* elem = element();
