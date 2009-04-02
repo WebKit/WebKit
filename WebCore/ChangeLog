@@ -1,3 +1,19 @@
+2009-04-01  Ben Murdoch  <benm@google.com>
+
+        Fix Bug 19743: Release build fails on 32-bit Windows
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19743>
+
+        Combines all the HTML element cpp files into one to help reduce the
+        size of WebCore.lib so we can build in release mode on 32bit Windows.
+
+        Reviewed by Adam Roben.
+
+        * WebCore.vcproj/WebCore.vcproj: Excluded all the separate
+        HTML*Element.cpp files from the build. Added HTMLElementsAllInOne.cpp
+        to the build.
+        * html/HTMLElementsAllInOne.cpp: Added.
+
 2009-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
