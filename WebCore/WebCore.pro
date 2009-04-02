@@ -108,6 +108,7 @@ CONFIG(QTDIR_build) {
 !contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
 !contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
 !contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
+!contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
 
 # HTML5 media support
 !contains(DEFINES, ENABLE_VIDEO=.) {
@@ -1365,6 +1366,25 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 } else {
     SOURCES += \
         loader/icon/IconDatabaseNone.cpp
+}
+
+contains(DEFINES, ENABLE_WORKERS=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
+
+    SOURCES += \
+        bindings/js/JSWorkerConstructor.cpp \
+        bindings/js/JSWorkerContextBase.cpp \
+        bindings/js/JSWorkerContextCustom.cpp \
+        bindings/js/JSWorkerCustom.cpp \
+        bindings/js/WorkerScriptController.cpp \
+        page/WorkerNavigator.cpp \
+        workers/Worker.cpp \
+        workers/WorkerContext.cpp \
+        workers/WorkerLocation.cpp \
+        workers/WorkerMessagingProxy.cpp \
+        workers/WorkerRunLoop.cpp \
+        workers/WorkerThread.cpp \
+        workers/WorkerImportScriptsClient.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {

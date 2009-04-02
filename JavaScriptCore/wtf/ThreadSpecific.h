@@ -45,13 +45,15 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
+#elif PLATFORM(QT)
+#include <QThreadStorage>
 #elif PLATFORM(WIN_OS)
 #include <windows.h>
 #endif
 
 namespace WTF {
 
-#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+#if !USE(PTHREADS) && !PLATFORM(QT) && PLATFORM(WIN_OS)
 // ThreadSpecificThreadExit should be called each time when a thread is detached.
 // This is done automatically for threads created with WTF::createThread.
 void ThreadSpecificThreadExit();
@@ -66,7 +68,7 @@ public:
     ~ThreadSpecific();
 
 private:
-#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+#if !USE(PTHREADS) && !PLATFORM(QT) && PLATFORM(WIN_OS)
     friend void ThreadSpecificThreadExit();
 #endif
     
@@ -74,7 +76,7 @@ private:
     void set(T*);
     void static destroy(void* ptr);
 
-#if USE(PTHREADS) || PLATFORM(WIN_OS)
+#if USE(PTHREADS) || PLATFORM(QT) || PLATFORM(WIN_OS)
     struct Data : Noncopyable {
         Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
 
@@ -88,6 +90,8 @@ private:
 
 #if USE(PTHREADS)
     pthread_key_t m_key;
+#elif PLATFORM(QT)
+    QThreadStorage<Data*> m_key;
 #elif PLATFORM(WIN_OS)
     int m_index;
 #endif
@@ -120,6 +124,37 @@ inline void ThreadSpecific<T>::set(T* ptr)
 {
     ASSERT(!get());
     pthread_setspecific(m_key, new Data(ptr, this));
+}
+
+#elif PLATFORM(QT)
+
+template<typename T>
+inline ThreadSpecific<T>::ThreadSpecific()
+{
+}
+
+template<typename T>
+inline ThreadSpecific<T>::~ThreadSpecific()
+{
+    Data* data = static_cast<Data*>(m_key.localData());
+    if (data)
+        data->destructor(data);
+}
+
+template<typename T>
+inline T* ThreadSpecific<T>::get()
+{
+    Data* data = static_cast<Data*>(m_key.localData());
+    return data ? data->value : 0;
+}
+
+template<typename T>
+inline void ThreadSpecific<T>::set(T* ptr)
+{
+    ASSERT(!get());
+    Data* data = new Data(ptr, this);
+    data->destructor = &ThreadSpecific<T>::destroy;
+    m_key.setLocalData(data);
 }
 
 #elif PLATFORM(WIN_OS)
@@ -189,6 +224,8 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 
 #if USE(PTHREADS)
     pthread_setspecific(data->owner->m_key, 0);
+#elif PLATFORM(QT)
+    data->owner->m_key.setLocalData(0);
 #elif PLATFORM(WIN_OS)
     TlsSetValue(tlsKeys()[data->owner->m_index], 0);
 #else

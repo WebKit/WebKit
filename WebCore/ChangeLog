@@ -1,3 +1,13 @@
+2009-04-02  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24490
+
+        Enable web workers in Qt.
+
+        * WebCore.pro:
+
 2009-04-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler. Based on work of Julien Chaffraix.
