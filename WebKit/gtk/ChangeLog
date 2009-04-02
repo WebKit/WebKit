@@ -1,3 +1,18 @@
+2009-04-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Alexey  Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24844
+        Unit test WebKitDownload
+
+        Extra checks to avoid crashing and a critical message when
+        property accessor functions are called before the download is
+        started.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_get_progress):
+        (_WebKitDownloadPrivate::webkit_download_get_elapsed_time):
+
 2009-04-01  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
