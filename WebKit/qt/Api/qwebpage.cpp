@@ -936,14 +936,14 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         return;
     }
 
-    if (!ev->preeditString().isEmpty()) {
+    if (!ev->commitString().isEmpty())
+        editor->confirmComposition(ev->commitString());
+    else {
         QString preedit = ev->preeditString();
         // ### FIXME: use the provided QTextCharFormat (use color at least)
         Vector<CompositionUnderline> underlines;
         underlines.append(CompositionUnderline(0, preedit.length(), Color(0,0,0), false));
         editor->setComposition(preedit, underlines, preedit.length(), 0);
-    } else if (!ev->commitString().isEmpty()) {
-        editor->confirmComposition(ev->commitString());
     }
     ev->accept();
 }

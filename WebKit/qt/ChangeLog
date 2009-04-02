@@ -1,3 +1,16 @@
+2009-04-02  Takumi Asaki <takumi.asaki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix pre-edit handling of text fields with input methods.
+
+        The input method sends an empty preeditString() if all characters of
+        the preedit should be deleted. So inputMethodEvent() has to use
+        preeditString() if it's empty.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+
 2009-03-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.
