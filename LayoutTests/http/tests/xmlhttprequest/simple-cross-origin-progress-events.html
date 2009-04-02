@@ -52,7 +52,7 @@ function test1()
     xhr.upload.onprogress = uploadProgress;
     xhr.upload.onload = function() { log("FAIL: upload.onload") }
     xhr.upload.onerror = function() { log("FAIL: upload.onerror") }
-    xhr.onerror = function() { report(xhr); log("onerror") }
+    xhr.onerror = function() { log("onerror") }
     xhr.onload = function() {
         log("onload");
         log("Response length: " + xhr.responseText.length);
@@ -83,7 +83,7 @@ function test2()
             layoutTestController.notifyDone();
     }
     xhr.onload = function() {
-        report(xhr);
+        log("onload");
     }
 }
 

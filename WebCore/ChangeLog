@@ -1,3 +1,26 @@
+2009-04-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler. Based on work of Julien Chaffraix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22475
+        REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
+
+        https://bugs.webkit.org/show_bug.cgi?id=24886
+        XHR requests opened when offline never return
+
+        Tests: fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
+               http/tests/xmlhttprequest/state-after-network-error.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): Only dispatch load event if this
+        wasn't an error.
+        (WebCore::XMLHttpRequest::abort): Fixed formatting.
+        (WebCore::XMLHttpRequest::genericError): Change state to DONE and dispatch readystatechange.
+        The comment saying that this doesn't match Firefox was added in r33559 without explanation
+        or tests, and I don't think that it's accurate. Also, Firefox and Safari 3 both change state
+        to HEADERS_RECEIVED before DONE on error - this doesn't match the spec, and I doubt
+        that any code depends on this, so I went with the spec here.
+
 2009-04-01  Steve Falkenburg  <sfalken@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=24997

@@ -40,7 +40,7 @@ pre {
 var p = new XMLHttpRequest();
 
 if (window.layoutTestController)
-	layoutTestController.dumpAsText();
+  layoutTestController.dumpAsText();
 
 function myfunc(e)
 {
@@ -65,7 +65,7 @@ function myfunc(e)
   var eventProperties = "";
   for (i in propNames) {
         var prop = propNames[i];
-    	eventProperties += prop + " : '" + e[prop] + "'\n";
+        eventProperties += prop + " : '" + e[prop] + "'\n";
   }
   
   document.getElementById("id7").firstChild.nodeValue = 

@@ -36,7 +36,6 @@ fast/dom/exception-no-frame-timeout-crash.html
 fast/dom/frame-loading-via-document-write.html
 fast/dom/gc-8.html
 fast/dom/location-hash.html
-fast/dom/null-document-xmlhttprequest-open.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/onerror-img.html
@@ -253,7 +252,6 @@ fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
 fast/loader/opaque-base-url.html
 fast/loader/stop-provisional-loads.html
-fast/loader/xmlhttprequest-missing-file-exception.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/plain-text-document.html
 fast/overflow/scroll-vertical-not-horizontal.html
@@ -280,6 +278,8 @@ fast/text/plain-text-line-breaks.html
 fast/text/zero-width-characters.html
 fast/tokenizer/ignore-tags-in-iframe.html
 fast/workers/worker-location.html
+fast/xmlhttprequest/null-document-xmlhttprequest-open.html
+fast/xmlhttprequest/xmlhttprequest-missing-file-exception.html
 fast/xpath/id-simple.html
 fast/xsl/mozilla-tests.xml
 fast/xsl/xslt-text.html

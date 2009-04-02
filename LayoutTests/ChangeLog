@@ -1,3 +1,72 @@
+2009-04-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler. Based on work of Julien Chaffraix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22475
+        REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
+
+        https://bugs.webkit.org/show_bug.cgi?id=24886
+        XHR requests opened when offline never return
+
+        * fast/loader/xmlhttprequest-missing-file-exception-expected.txt: Removed.
+        * fast/loader/xmlhttprequest-missing-file-exception.html: Removed.
+        * http/tests/xmlhttprequest/state-after-network-error-expected.txt: Added.
+        * http/tests/xmlhttprequest/state-after-network-error.html: Added.
+        Added tests for these issues.
+
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort-expected.txt: As with other errors,
+        the request now reaches DONE state now. This makes the results closer to Firefox again
+        (they changed multiple times recently).
+        * http/tests/xmlhttprequest/resources/frame-load-to-cancel.html: Firefox dispatches
+        cancellation events at a later point, when window.parent is already undefined. Changed
+        the test to log all events, making the difference with Firefox less confusing.
+
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events.html: Fixed a mistake in
+        the test, which could call a non-existent function in some code paths.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt: State now reaches
+        DONE on cross-origin check failure, as it should per the spec. This matches Firefox in async
+        case (and in sync case, it simply doesn't dispatch any onreadystatechange events, not sure why).
+
+        * fast/dom/null-document-xmlhttprequest-open-expected.txt: Removed.
+        * fast/dom/null-document-xmlhttprequest-open.html: Removed.
+        * fast/dom/resources/1251.html: Removed.
+        * fast/dom/resources/xmlhttprequest-get-data.xml: Removed.
+        * fast/dom/xmlhttprequest-gc-expected.txt: Removed.
+        * fast/dom/xmlhttprequest-gc.html: Removed.
+        * fast/dom/xmlhttprequest-get-expected.txt: Removed.
+        * fast/dom/xmlhttprequest-get.xhtml: Removed.
+        * fast/dom/xmlhttprequest-html-response-encoding-expected.txt: Removed.
+        * fast/dom/xmlhttprequest-html-response-encoding.html: Removed.
+        * fast/dom/xmlhttprequest-invalid-values-expected.txt: Removed.
+        * fast/dom/xmlhttprequest-invalid-values.html: Removed.
+        * fast/loader/resources/plist.app: Removed.
+        * fast/loader/xmlhttprequest-bad-mimetype-expected.txt: Removed.
+        * fast/loader/xmlhttprequest-bad-mimetype.html: Removed.
+        * fast/xmlhttprequest: Added.
+        * fast/xmlhttprequest/null-document-xmlhttprequest-open-expected.txt: Copied from LayoutTests/fast/dom/null-document-xmlhttprequest-open-expected.txt.
+        * fast/xmlhttprequest/null-document-xmlhttprequest-open.html: Copied from LayoutTests/fast/dom/null-document-xmlhttprequest-open.html.
+        * fast/xmlhttprequest/resources: Added.
+        * fast/xmlhttprequest/resources/1251.html: Copied from LayoutTests/fast/dom/resources/1251.html.
+        * fast/xmlhttprequest/resources/plist.app: Copied from LayoutTests/fast/loader/resources/plist.app.
+        * fast/xmlhttprequest/resources/xmlhttprequest-get-data.xml: Copied from LayoutTests/fast/dom/resources/xmlhttprequest-get-data.xml.
+        * fast/xmlhttprequest/xmlhttprequest-bad-mimetype-expected.txt: Copied from LayoutTests/fast/loader/xmlhttprequest-bad-mimetype-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-bad-mimetype.html: Copied from LayoutTests/fast/loader/xmlhttprequest-bad-mimetype.html.
+        * fast/xmlhttprequest/xmlhttprequest-gc-expected.txt: Copied from LayoutTests/fast/dom/xmlhttprequest-gc-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-gc.html: Copied from LayoutTests/fast/dom/xmlhttprequest-gc.html.
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt: Copied from LayoutTests/fast/dom/xmlhttprequest-get-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-get.xhtml: Copied from LayoutTests/fast/dom/xmlhttprequest-get.xhtml.
+        * fast/xmlhttprequest/xmlhttprequest-html-response-encoding-expected.txt: Copied from LayoutTests/fast/dom/xmlhttprequest-html-response-encoding-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-html-response-encoding.html: Copied from LayoutTests/fast/dom/xmlhttprequest-html-response-encoding.html.
+        * fast/xmlhttprequest/xmlhttprequest-invalid-values-expected.txt: Copied from LayoutTests/fast/dom/xmlhttprequest-invalid-values-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-invalid-values.html: Copied from LayoutTests/fast/dom/xmlhttprequest-invalid-values.html.
+        * fast/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Copied from LayoutTests/fast/loader/xmlhttprequest-missing-file-exception-expected.txt.
+        * fast/xmlhttprequest/xmlhttprequest-missing-file-exception.html: Copied from LayoutTests/fast/loader/xmlhttprequest-missing-file-exception.html.
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html: Added.
+        * platform/gtk/Skipped:
+        Moved non-HTTP XMLHttpRequest tests to fast/xmlhttprequest.
+
 2009-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

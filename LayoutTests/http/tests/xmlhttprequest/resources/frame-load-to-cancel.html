@@ -1,8 +1,6 @@
     <html>
 <head>
 <script>
-var rq;
-
 function loadXMLDoc()
 {
     url = 'endlessxml.php';
@@ -13,7 +11,8 @@ function loadXMLDoc()
       if (window.XMLHttpRequest) {
         rq = new XMLHttpRequest();
         rq.overrideMimeType('text/xml');
-        rq.onreadystatechange = readyStateChanged
+        rq.onreadystatechange = readyStateChanged;
+        rq.parent = window.parent;
         rq.open('GET', url, true);
         rq.send(null);
       }
@@ -23,9 +22,9 @@ function loadXMLDoc()
     }
 }
 
-function readyStateChanged()
+function readyStateChanged(evt)
 {
-    window.parent.dumpRequestStatus(rq);
+    evt.target.parent.dumpRequestStatus(evt.target);
 }
 
 </script>
