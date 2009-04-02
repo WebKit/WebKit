@@ -1,3 +1,10 @@
+2009-04-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction): Adapted code to renamed loadFrameRequest function.
+
 2009-04-02  Takumi Asaki <takumi.asaki@nokia.com>
 
         Reviewed by Simon Hausmann.
