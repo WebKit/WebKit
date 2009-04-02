@@ -291,7 +291,7 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
         || (msg->status_code == SOUP_STATUS_UNAUTHORIZED))
         return;
 
-    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     if (!handle)
         return;
     ResourceHandleInternal* d = handle->getInternal();
@@ -308,11 +308,15 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
         g_free(contentType);
 
         fillResponseFromMessage(msg, &d->m_response);
-        client->didReceiveResponse(handle, d->m_response);
+        client->didReceiveResponse(handle.get(), d->m_response);
         d->m_reportedHeaders = true;
+
+        // the didReceiveResponse call above may have cancelled the request
+        if (d->m_cancelled)
+            return;
     }
 
-    client->didReceiveData(handle, chunk->data, chunk->length, false);
+    client->didReceiveData(handle.get(), chunk->data, chunk->length, false);
 }
 
 // Called at the end of the message, with all the necessary about the last informations.
