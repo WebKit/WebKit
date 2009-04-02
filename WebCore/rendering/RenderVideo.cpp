@@ -41,9 +41,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+const int cDefaultWidth = 300;
+const int cDefaultHeight = 150;
+
 RenderVideo::RenderVideo(HTMLMediaElement* video)
-    : RenderMedia(video, video->player() ? video->player()->naturalSize() : IntSize(300, 150))
+    : RenderMedia(video)
 {
+    if (video->player())
+        setIntrinsicSize(video->player()->naturalSize());
+    else {
+        // Video in standalone media documents should not use the default 300x150
+        // size since they also have audio thrown at them. By setting the intrinsic
+        // size to 300x1 the video will resize itself in these cases, and audio will
+        // have the correct height (it needs to be > 0 for controls to render properly).
+        if (video->ownerDocument() && video->ownerDocument()->isMediaDocument())
+            setIntrinsicSize(IntSize(cDefaultWidth, 1));
+        else
+            setIntrinsicSize(IntSize(cDefaultWidth, cDefaultHeight));
+    }
 }
 
 RenderVideo::~RenderVideo()

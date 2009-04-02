@@ -1,3 +1,15 @@
+2009-04-01  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=24993
+
+        Standalone media should have a smaller instrinsic
+        height.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+
 2009-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
