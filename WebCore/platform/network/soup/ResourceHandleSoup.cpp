@@ -173,13 +173,18 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     if (contentTypeParameters) {
         GString* parametersString = g_string_new(0);
         GHashTableIter hashTableIter;
-        gpointer hashKey;
-        gpointer hashValue;
+        const char* hashKey;
+        const char* hashValue;
 
         g_hash_table_iter_init(&hashTableIter, contentTypeParameters);
-        while (g_hash_table_iter_next(&hashTableIter, &hashKey, &hashValue)) {
+        while (g_hash_table_iter_next(&hashTableIter, reinterpret_cast<void**>(const_cast<char**>(&hashKey)), reinterpret_cast<void**>(const_cast<char**>(&hashValue)))) {
+            // Work-around bug in soup which causes a crash;
+            // See http://bugzilla.gnome.org/show_bug.cgi?id=577728
+            if (!hashValue)
+                hashValue = "";
+
             g_string_append(parametersString, "; ");
-            soup_header_g_string_append_param(parametersString, static_cast<char*>(hashKey), static_cast<char*>(hashValue));
+            soup_header_g_string_append_param(parametersString, hashKey, hashValue);
         }
         contentType += String(parametersString->str);
 

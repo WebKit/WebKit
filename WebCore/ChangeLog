@@ -1,3 +1,16 @@
+2009-04-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25001
+        Crash when content type parameters have no value
+
+        Handle the case where a Content-Type header parameter has no
+        value (i.e. no = character), to work-around a bug in libsoup.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+
 2009-04-02  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
