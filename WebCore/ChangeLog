@@ -1,3 +1,13 @@
+2009-04-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix regression in <object> layout test.  Make sure that even though a 404 image loads, that <object>
+        still considers it an error for the purposes of firing onerror.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+
 2009-04-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
