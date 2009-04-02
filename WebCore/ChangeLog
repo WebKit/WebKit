@@ -2,6 +2,20 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24930
+        [Gtk] ISO files content is displayed inside the webview instead of being downloaded
+
+        Also sniff content of types declared as text/plain. This is
+        justified by the fact that it is common to have Apache HTTP
+        servers configured to send text/plain as Content-Type by default.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+
+2009-04-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Alexey Proskuryakov.
+
         Protect the handle when notifying the client that the response was
         received also in gotChunkCallback, or we crash in didReceiveData
         when the load is cancelled in didReceiveResponse.

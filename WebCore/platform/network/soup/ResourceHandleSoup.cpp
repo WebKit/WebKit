@@ -265,8 +265,9 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     // sniffing the contents of the file, and then report that we got
     // headers; we will not do content sniffing for 304 responses,
     // though, since they do not have a body.
+    const char* contentType = soup_message_headers_get_content_type(msg->response_headers, NULL);
     if ((msg->status_code != SOUP_STATUS_NOT_MODIFIED)
-        && !soup_message_headers_get_content_type(msg->response_headers, NULL))
+        && (!contentType || !g_ascii_strcasecmp(contentType, "text/plain")))
         return;
 
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
