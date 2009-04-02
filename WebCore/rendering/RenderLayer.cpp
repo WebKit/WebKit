@@ -486,6 +486,8 @@ bool RenderLayer::update3DTransformedDescendantStatus()
             for (unsigned i = 0; i < m_negZOrderList->size(); ++i)
                 m_has3DTransformedDescendant |= m_negZOrderList->at(i)->update3DTransformedDescendantStatus();
         }
+        
+        m_3DTransformedDescendantStatusDirty = false;
     }
     
     // If we live in a 3d hierarchy, then the layer at the root of that hierarchy needs
@@ -2185,8 +2187,14 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
         convertToLayerCoords(rootLayer, offsetX, offsetY);
     }
     
-    TransformationMatrix containerTransform = renderer()->transformFromContainer(containerLayer ? containerLayer->renderer() : 0, IntSize(offsetX, offsetY));
-    transformState->applyTransform(containerTransform, true);
+    if (transform()) {
+        TransformationMatrix containerTransform;
+        renderer()->getTransformFromContainer(containerLayer ? containerLayer->renderer() : 0, IntSize(offsetX, offsetY), containerTransform);
+        transformState->applyTransform(containerTransform, HitTestingTransformState::AccumulateTransform);
+    } else {
+        transformState->translate(offsetX, offsetY, HitTestingTransformState::AccumulateTransform);
+    }
+    
     return transformState;
 }
 

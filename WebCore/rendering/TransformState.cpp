@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-void TransformState::move(int x, int y, bool accumulateTransform)
+void TransformState::move(int x, int y, TransformAccumulation accumulate)
 {
     if (m_accumulatingTransform && m_accumulatedTransform) {
         // If we're accumulating into an existing transform, apply the translation.
@@ -38,7 +38,7 @@ void TransformState::move(int x, int y, bool accumulateTransform)
             m_accumulatedTransform->translate(-x, -y);  // We're unapplying, so negate
         
         // Then flatten if necessary.
-        if (!accumulateTransform)
+        if (accumulate == FlattenTransform)
             flatten();
     } else {
         // Just move the point and, optionally, the quad.
@@ -46,10 +46,10 @@ void TransformState::move(int x, int y, bool accumulateTransform)
         if (m_mapQuad)
             m_lastPlanarQuad.move(x, y);
     }
-    m_accumulatingTransform = accumulateTransform;
+    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
-void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform)
+void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
 {
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
@@ -57,16 +57,16 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
             m_accumulatedTransform->multiply(transformFromContainer);
         else
             m_accumulatedTransform->multLeft(transformFromContainer);
-    } else if (accumulateTransform) {
+    } else if (accumulate == AccumulateTransform) {
         // Make one if we started to accumulate
         m_accumulatedTransform.set(new TransformationMatrix(transformFromContainer));
     }
     
-    if (!accumulateTransform) {
+    if (accumulate == FlattenTransform) {
         const TransformationMatrix* finalTransform = m_accumulatedTransform ? m_accumulatedTransform.get() : &transformFromContainer;
         flattenWithTransform(*finalTransform);
     }
-    m_accumulatingTransform = accumulateTransform;
+    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
 void TransformState::flatten()
@@ -123,28 +123,35 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t)
 }
 
 // HitTestingTransformState methods
-void HitTestingTransformState::move(int x, int y)
+void HitTestingTransformState::translate(int x, int y, TransformAccumulation accumulate)
 {
-    if (m_accumulatingTransform)
-        flatten();
+    m_accumulatedTransform.translate(x, y);    
+    if (accumulate == FlattenTransform)
+        flattenWithTransform(m_accumulatedTransform);
 
-    m_lastPlanarPoint.move(x, y);
-    m_lastPlanarQuad.move(x, y);
+    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
-void HitTestingTransformState::applyTransform(const TransformationMatrix& transformFromContainer, bool accumulateTransform)
+void HitTestingTransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
 {
     m_accumulatedTransform.multLeft(transformFromContainer);    
-    if (!accumulateTransform)
-        flatten();
+    if (accumulate == FlattenTransform)
+        flattenWithTransform(m_accumulatedTransform);
 
-    m_accumulatingTransform = accumulateTransform;
+    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
 void HitTestingTransformState::flatten()
 {
-    m_lastPlanarPoint = mappedPoint();
-    m_lastPlanarQuad = mappedQuad();
+    flattenWithTransform(m_accumulatedTransform);
+}
+
+void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& t)
+{
+    TransformationMatrix inverseTransform = t.inverse();
+    m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
+    m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
+
     m_accumulatedTransform.makeIdentity();
     m_accumulatingTransform = false;
 }

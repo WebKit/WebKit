@@ -1697,13 +1697,13 @@ void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Trans
     }
 }
 
-TransformationMatrix RenderObject::transformFromContainer(const RenderObject* containerObject, const IntSize& offsetInContainer) const
+void RenderObject::getTransformFromContainer(const RenderObject* containerObject, const IntSize& offsetInContainer, TransformationMatrix& transform) const
 {
-    TransformationMatrix containerTransform;
-    containerTransform.translate(offsetInContainer.width(), offsetInContainer.height());
+    transform.makeIdentity();
+    transform.translate(offsetInContainer.width(), offsetInContainer.height());
     RenderLayer* layer;
     if (hasLayer() && (layer = toRenderBoxModelObject(this)->layer()) && layer->transform())
-        containerTransform.multLeft(layer->currentTransform());
+        transform.multLeft(layer->currentTransform());
     
 #if ENABLE(3D_RENDERING)
     if (containerObject && containerObject->style()->hasPerspective()) {
@@ -1714,15 +1714,13 @@ TransformationMatrix RenderObject::transformFromContainer(const RenderObject* co
         TransformationMatrix perspectiveMatrix;
         perspectiveMatrix.applyPerspective(containerObject->style()->perspective());
         
-        containerTransform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
-        containerTransform.multiply(perspectiveMatrix);
-        containerTransform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
+        transform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
+        transform.multiply(perspectiveMatrix);
+        transform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
     }
 #else
     UNUSED_PARAM(containerObject);
 #endif
-
-    return containerTransform;
 }
 
 FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
