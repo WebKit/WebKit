@@ -32,7 +32,10 @@ for (var i = 0; i < 18; ++i)
     complexInput += "a";
 
 shouldBe('new RegExp(complexPattern).exec(complexInput)[0]', 'complexInput'); // Big but OK
-shouldBe('new RegExp(complexPattern + complexPattern).exec(complexInput + complexInput)', 'null'); // Too big
+// The analogous "too big" case is tested separately in
+// regexp-overflow-too-big.html so engines that don't limit regexp execution
+// time don't time out in this test. See
+// https://bugs.webkit.org/show_bug.cgi?id=18327 .
 
 var s = "a";
 for (var i = 0; i < 21; i++)

@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
 
+        Split long-running regexp out of the main regexp-overflow test file
+        so VMs (such as V8) that don't limit execution time can still run
+        the rest of the test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=18327
+
+        * fast/js/regexp-overflow-expected.txt: updated
+        * fast/js/regexp-overflow-too-big-expected.txt: Added.
+        * fast/js/regexp-overflow-too-big.html: Added.
+        * fast/js/resources/regexp-overflow-too-big.js: Added.
+        * fast/js/resources/regexp-overflow.js: removed one test case
+
+2009-04-02  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Minor cleanup: remove unneeded "toLower" on typeof.
 
         * fast/dom/Window/window-lookup-precedence.html:

@@ -13,7 +13,6 @@ PASS /[¡]{1,100}[¡]{1,100}[¡]{1,100}[¡]{1,100}[¡]{1,100}[¡]{1,100}[¡]{1,1
 PASS /{([\D-\ca]]â€žÂ£Âµ+?)}|[[\B-\u00d4]âˆšÏ€- ]]]{0,3}/i.exec("BâˆšÏ€- ]]").toString() is "BâˆšÏ€- ]],"
 PASS /|[x\B-\u00b5]/i.exec("").toString() is ""
 PASS new RegExp(complexPattern).exec(complexInput)[0] is complexInput
-PASS new RegExp(complexPattern + complexPattern).exec(complexInput + complexInput) is null
 PASS new RegExp(s); threw exception SyntaxError: Invalid regular expression: regular expression too large.
 PASS /(([ab]){30}){3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
 PASS /(([ab]){30}){0,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
