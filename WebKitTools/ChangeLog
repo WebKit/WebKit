@@ -1,3 +1,9 @@
+2009-04-01  Mark Rowe  <mrowe@apple.com>
+
+        Windows support for built-product-archive.
+
+        * BuildSlaveSupport/built-product-archive:
+
 2009-03-31  Adam Roben  <aroben@apple.com>
 
         Make resolve-ChangeLogs -f work when the working tree has spaces in

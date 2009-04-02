@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import optparse, os, shutil, subprocess
+import optparse, os, shutil, subprocess, sys
 
 buildDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
 
@@ -48,9 +48,8 @@ def main():
 
 
 def archiveBuiltProduct(configuration, platform):
-    assert platform == 'mac'
+    assert platform in ('mac', 'win')
 
-    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
 
     try:
@@ -59,21 +58,61 @@ def archiveBuiltProduct(configuration, platform):
         if e.errno != 2:
             raise
 
-    subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
+    if platform == 'mac':
+        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
+    elif platform == 'win':
+        binDirectory = os.path.join(buildDirectory, "bin")
+        thinDirectory = os.path.join(buildDirectory, "thin")
+        thinBinDirectory = os.path.join(thinDirectory, "bin")
 
+        if os.path.isdir(thinDirectory):
+            shutil.rmtree(thinDirectory)
+        os.mkdir(thinDirectory)
+
+        if subprocess.call(["cp", "-R", binDirectory, thinBinDirectory]):
+            return 1
+
+        if subprocess.call("rm -f %s" % os.path.join(thinBinDirectory, "*.ilk"), shell=True):
+            return 1
+
+        if subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=thinDirectory):
+            return 1
+
+        shutil.rmtree(thinDirectory)
 
 def extractBuiltProduct(configuration, platform):
-    assert platform == 'mac'
+    assert platform in ('mac', 'win')
 
-    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
 
-    if os.path.isdir(configurationBuildDirectory):
-        shutil.rmtree(configurationBuildDirectory)
+    if platform == 'mac':
+        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
 
-    subprocess.call(["ditto", "-x", "-k", archiveFile, buildDirectory])
-    os.unlink(archiveFile)
+        if os.path.isdir(configurationBuildDirectory):
+            shutil.rmtree(configurationBuildDirectory)
 
+        if subprocess.call(["ditto", "-x", "-k", archiveFile, buildDirectory]):
+            return 1
+        os.unlink(archiveFile)
+
+    elif platform == 'win':
+        binDirectory = os.path.join(buildDirectory, "bin")
+        if os.path.isdir(binDirectory):
+            shutil.rmtree(binDirectory)
+
+        os.mkdir(binDirectory)
+
+        safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
+                                      shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
+
+        if subprocess.call('cp -R "%s"/*.dll "%s"/*.resources %s' % (safariPath, safariPath, binDirectory), shell=True):
+            return 1
+
+        if subprocess.call(["unzip", "-o", archiveFile], cwd=buildDirectory):
+            return 1
+
+        
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
