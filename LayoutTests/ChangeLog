@@ -1,3 +1,11 @@
+2009-04-02  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Minor cleanup: remove unneeded "toLower" on typeof.
+
+        * fast/dom/Window/window-lookup-precedence.html:
+
 2009-04-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler. Based on work of Julien Chaffraix.

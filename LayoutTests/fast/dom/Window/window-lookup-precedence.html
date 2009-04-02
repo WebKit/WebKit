@@ -28,7 +28,7 @@ function checkValue(name, original) {
     // Handle a correct Location, as well as any numerical values (screenX and
     // so on), separately to avoid depending on the test file or window
     // location.
-    if ((name.toLowerCase() == "location" || (typeof original).toLowerCase() == "number")
+    if ((name.toLowerCase() == "location" || typeof original == "number")
         && win[name] == original)
         testPassed("win['" + name + "'] matched original");
     else
