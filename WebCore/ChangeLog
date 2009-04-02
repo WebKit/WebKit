@@ -1,3 +1,23 @@
+2009-04-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6748609> Use ActiveDOMObject to suspend marquees
+        
+        Make marquees ActiveDOMObjects, get rid of the special suspension code.
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+        (WebCore::HTMLMarqueeElement::canSuspend):
+        (WebCore::HTMLMarqueeElement::suspend):
+        (WebCore::HTMLMarqueeElement::resume):
+        * html/HTMLMarqueeElement.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::marquee):
+
 2009-04-01  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler

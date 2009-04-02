@@ -193,7 +193,6 @@ public:
     void styleChanged(StyleDifference, const RenderStyle*);
 
     RenderMarquee* marquee() const { return m_marquee; }
-    void suspendMarquees();
 
     bool isNormalFlowOnly() const { return m_isNormalFlowOnly; }
     bool isSelfPaintingLayer() const;

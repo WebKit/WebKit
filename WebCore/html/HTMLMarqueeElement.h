@@ -23,11 +23,12 @@
 #ifndef HTMLMarqueeElement_h
 #define HTMLMarqueeElement_h
 
+#include "ActiveDOMObject.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
 
-class HTMLMarqueeElement : public HTMLElement {
+class HTMLMarqueeElement : public HTMLElement, private ActiveDOMObject {
 public:
     HTMLMarqueeElement(const QualifiedName&, Document*);
     
@@ -45,6 +46,11 @@ public:
     void stop();
     
 private:
+    // ActiveDOMObject
+    virtual bool canSuspend() const;
+    virtual void suspend();
+    virtual void resume();
+
     int m_minimumDelay;
 };
 

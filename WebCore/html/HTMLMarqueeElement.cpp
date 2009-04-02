@@ -37,6 +37,7 @@ const int defaultMinimumDelay = 60;
 
 HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
+    , ActiveDOMObject(doc, this)
     , m_minimumDelay(defaultMinimumDelay)
 {
     ASSERT(hasTagName(marqueeTag));
@@ -117,6 +118,23 @@ void HTMLMarqueeElement::stop()
 {
     if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
         renderBox()->layer()->marquee()->stop();
+}
+
+bool HTMLMarqueeElement::canSuspend() const
+{
+    return true;
+}
+
+void HTMLMarqueeElement::suspend()
+{
+    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
+        renderBox()->layer()->marquee()->suspend();
+}
+    
+void HTMLMarqueeElement::resume()
+{
+    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
+        renderBox()->layer()->marquee()->updateMarqueePosition();
 }
 
 } // namespace WebCore

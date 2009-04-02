@@ -1285,8 +1285,6 @@ void Frame::clearTimers(FrameView *view, Document *document)
     if (view) {
         view->unscheduleRelayout();
         if (view->frame()) {
-            if (document && document->renderer() && document->renderer()->hasLayer())
-                document->renderView()->layer()->suspendMarquees();
             view->frame()->animation()->suspendAnimations(document);
             view->frame()->eventHandler()->stopAutoscrollTimer();
         }
