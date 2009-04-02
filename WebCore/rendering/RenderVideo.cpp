@@ -41,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const int cDefaultWidth = 300;
-const int cDefaultHeight = 150;
+static const int cDefaultWidth = 300;
+static const int cDefaultHeight = 150;
 
 RenderVideo::RenderVideo(HTMLMediaElement* video)
     : RenderMedia(video)
