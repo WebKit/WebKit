@@ -438,8 +438,9 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
     ProcessingResource processingResource(this);
     
     if (resource->response().httpStatusCode() / 100 == 4) {
-        // Treat a 4xx response like a network error.
-        resource->error();
+        // Treat a 4xx response like a network error for all resources but images (which will ignore the error and continue to load for 
+        // legacy compatibility).
+        resource->httpStatusCodeError();
         return;
     }
 

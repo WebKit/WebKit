@@ -50,12 +50,16 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
     return parseURL(attr);
 }
 
-void HTMLImageLoader::notifyFinished(CachedResource* image)
+void HTMLImageLoader::notifyFinished(CachedResource* resource)
 {
-    Element* elem = element();
-    ImageLoader::notifyFinished(image);
+    ASSERT(resource == image());
+    
+    CachedImage* cachedImage = image();
 
-    if (image->errorOccurred() && elem->hasTagName(HTMLNames::objectTag))
+    Element* elem = element();
+    ImageLoader::notifyFinished(cachedImage);
+
+    if ((cachedImage->errorOccurred() || cachedImage->httpStatusCodeErrorOccurred()) && elem->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();
 }
 

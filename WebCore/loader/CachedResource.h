@@ -82,6 +82,7 @@ public:
     virtual String encoding() const { return String(); }
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived) = 0;
     virtual void error() = 0;
+    virtual void httpStatusCodeError() { error(); } // Images keep loading in spite of HTTP errors (for legacy compat with <img>, etc.).
 
     const String &url() const { return m_url; }
     Type type() const { return m_type; }
