@@ -40,7 +40,7 @@
 namespace WebCore {
 
 V8WorkerContextEventListener::V8WorkerContextEventListener(WorkerContextExecutionProxy* proxy, v8::Local<v8::Object> listener, bool isInline)
-    : V8ObjectEventListener(0, listener, isInline)
+    : V8EventListener(0, listener, isInline)
     , m_proxy(proxy)
 {
 }
@@ -54,7 +54,7 @@ V8WorkerContextEventListener::~V8WorkerContextEventListener()
 
 void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
-    // Is the EventListener disconnected from the frame?
+    // Is the EventListener disconnected?
     if (disconnected())
         return;
 
@@ -81,10 +81,10 @@ void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
 v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event, bool isWindowEvent)
 {
     v8::Local<v8::Function> handlerFunction = getListenerFunction();
-    if (handlerFunction.IsEmpty())
+    v8::Local<v8::Object> receiver = getReceiverObject(event, isWindowEvent);
+    if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
-    v8::Local<v8::Object> receiver = getReceiverObject(event, isWindowEvent);
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
     v8::Local<v8::Value> result = handlerFunction->Call(receiver, 1, parameters);
 

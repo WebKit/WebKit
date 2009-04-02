@@ -47,7 +47,7 @@ namespace WebCore {
             return adoptRef(new V8ObjectEventListener(frame, listener, isInline));
         }
 
-    protected:
+    private:
         V8ObjectEventListener(Frame*, v8::Local<v8::Object> listener, bool isInline);
         virtual ~V8ObjectEventListener();
     };

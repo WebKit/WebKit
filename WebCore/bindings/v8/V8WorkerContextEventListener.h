@@ -33,7 +33,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "V8ObjectEventListener.h"
+#include "V8CustomEventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 
@@ -42,7 +42,7 @@ namespace WebCore {
     class Event;
     class WorkerContextExecutionProxy;
 
-    class V8WorkerContextEventListener : public V8ObjectEventListener {
+    class V8WorkerContextEventListener : public V8EventListener {
     public:
         static PassRefPtr<V8WorkerContextEventListener> create(WorkerContextExecutionProxy* proxy, v8::Local<v8::Object> listener, bool isInline)
         {
@@ -54,6 +54,7 @@ namespace WebCore {
         virtual void handleEvent(Event*, bool isWindowEvent);
         virtual bool disconnected() const { return !m_proxy; }
 
+        WorkerContextExecutionProxy* proxy() const { return m_proxy; }
         void disconnect() { m_proxy = 0; }
 
     private:
