@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,16 @@
 
 namespace WebCore {
 
-PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
-{
-    return adoptRef(new FormState(form, values, sourceFrame));
-}
-
-FormState::FormState(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
+inline FormState::FormState(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame)
     : m_form(form)
-    , m_values(values)
     , m_sourceFrame(sourceFrame)
 {
+    m_textFieldValues.swap(textFieldValuesToAdopt);
+}
+
+PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame)
+{
+    return adoptRef(new FormState(form, textFieldValuesToAdopt, sourceFrame));
 }
 
 }

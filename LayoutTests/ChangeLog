@@ -1,3 +1,35 @@
+2009-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 22378: Crash submitting a form when parsing an XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=22378
+        rdar://problem/6388377
+
+        * fast/loader/onunload-form-submit-crash-2-expected.txt: Updated for change to the test.
+        * fast/loader/onunload-form-submit-crash-2.html: Updated test to expect the form submission
+        during the onunload handler to be ineffective.
+        * fast/loader/onunload-form-submit-crash-expected.txt: Updated for change to the test.
+        * fast/loader/onunload-form-submit-crash.html: Updated test to expect the form submission
+        during the onunload handler to be ineffective.
+
+        * fast/loader/resources/onunload-form-submit-crash2.html: Removed.
+        * fast/loader/resources/onunload-form-submit-failure.html: Copied from
+        LayoutTests/fast/loader/resources/onunload-form-submit-crash2.html.
+        * fast/loader/resources/onunload-form-submit-success.html: Copied from
+        LayoutTests/fast/loader/resources/onunload-form-submit-crash2.html.
+
+        * fast/loader/resources/submit-form-while-parsing-subframe.html: Added.
+        * fast/loader/resources/submit-form-while-parsing-success.html: Added.
+        * fast/loader/submit-form-while-parsing-1-expected.txt: Added.
+        * fast/loader/submit-form-while-parsing-1.xhtml: Added.
+        * fast/loader/submit-form-while-parsing-2-expected.txt: Added.
+        * fast/loader/submit-form-while-parsing-2.html: Added.
+
+        * platform/mac/http/tests/navigation/success200-frames-loadsame-expected.txt: Updated
+        to expect proper results, without the duplicate history items for the same frame name
+        that were present before.
+
 2009-04-01  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.

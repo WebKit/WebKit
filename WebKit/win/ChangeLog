@@ -1,3 +1,15 @@
+2009-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 22378: Crash submitting a form when parsing an XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=22378
+        rdar://problem/6388377
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchWillSubmitForm): Updated for the new
+        textFieldValues function in FormState.
+
 2009-03-30  Adam Roben  <aroben@apple.com>
 
         Build fixes after recent FrameLoader changes

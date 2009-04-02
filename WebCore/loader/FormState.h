@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,28 +29,28 @@
 #ifndef FormState_h
 #define FormState_h
 
-#include <wtf/RefCounted.h>
-#include "StringHash.h"
-#include <wtf/HashMap.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
     class Frame;
     class HTMLFormElement;
 
+    typedef Vector<std::pair<String, String> > StringPairVector;
+
     class FormState : public RefCounted<FormState> {
     public:
-        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame>);
 
         HTMLFormElement* form() const { return m_form.get(); }
-        const HashMap<String, String>& values() const { return m_values; }
+        const StringPairVector& textFieldValues() const { return m_textFieldValues; }
         Frame* sourceFrame() const { return m_sourceFrame.get(); }
 
     private:
-        FormState(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+        FormState(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame>);
 
         RefPtr<HTMLFormElement> m_form;
-        HashMap<String, String> m_values;
+        StringPairVector m_textFieldValues;
         RefPtr<Frame> m_sourceFrame;
     };
 

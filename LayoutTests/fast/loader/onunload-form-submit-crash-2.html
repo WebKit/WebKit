@@ -9,9 +9,9 @@
                     layoutTestController.dumpAsText();
                     layoutTestController.waitUntilDone();
                 }
-                location.href = "about:blank";
+                location.href = "resources/onunload-form-submit-success.html";
             } else {
-                document.getElementById("result").innerText = "SUCCESS";
+                document.getElementById("result").innerText = "FAIL";
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
             }

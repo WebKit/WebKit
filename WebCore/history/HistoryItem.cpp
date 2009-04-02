@@ -123,10 +123,10 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     if (item.m_formData)
         m_formData = item.m_formData->copy();
         
-    unsigned size = item.m_subItems.size();
-    m_subItems.reserveInitialCapacity(size);
+    unsigned size = item.m_children.size();
+    m_children.reserveInitialCapacity(size);
     for (unsigned i = 0; i < size; ++i)
-        m_subItems.append(item.m_subItems[i]->copy());
+        m_children.uncheckedAppend(item.m_children[i]->copy());
 
     if (item.m_redirectURLs)
         m_redirectURLs.set(new Vector<String>(*item.m_redirectURLs));
@@ -378,52 +378,61 @@ void HistoryItem::setIsTargetItem(bool flag)
 
 void HistoryItem::addChildItem(PassRefPtr<HistoryItem> child)
 {
-    m_subItems.append(child);
+    ASSERT(!childItemWithTarget(child->target()));
+    m_children.append(child);
 }
 
-HistoryItem* HistoryItem::childItemWithName(const String& name) const
+void HistoryItem::setChildItem(PassRefPtr<HistoryItem> child)
 {
-    unsigned size = m_subItems.size();
-    for (unsigned i = 0; i < size; ++i) 
-        if (m_subItems[i]->target() == name)
-            return m_subItems[i].get();
+    ASSERT(!child->isTargetItem());
+    unsigned size = m_children.size();
+    for (unsigned i = 0; i < size; ++i)  {
+        if (m_children[i]->target() == child->target()) {
+            child->setIsTargetItem(m_children[i]->isTargetItem());
+            m_children[i] = child;
+            return;
+        }
+    }
+    m_children.append(child);
+}
+
+HistoryItem* HistoryItem::childItemWithTarget(const String& target) const
+{
+    unsigned size = m_children.size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (m_children[i]->target() == target)
+            return m_children[i].get();
+    }
     return 0;
 }
 
-// <rdar://problem/4895849> HistoryItem::recurseToFindTargetItem() should be replace with a non-recursive method
-HistoryItem* HistoryItem::recurseToFindTargetItem()
+// <rdar://problem/4895849> HistoryItem::findTargetItem() should be replaced with a non-recursive method.
+HistoryItem* HistoryItem::findTargetItem()
 {
     if (m_isTargetItem)
         return this;
-    if (!m_subItems.size())
-        return 0;
-    
-    HistoryItem* match;
-    unsigned size = m_subItems.size();
+    unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
-        match = m_subItems[i]->recurseToFindTargetItem();
-        if (match)
+        if (HistoryItem* match = m_children[i]->targetItem())
             return match;
     }
-    
     return 0;
 }
 
 HistoryItem* HistoryItem::targetItem()
 {
-    if (!m_subItems.size())
-        return this;
-    return recurseToFindTargetItem();
+    HistoryItem* foundItem = findTargetItem();
+    return foundItem ? foundItem : this;
 }
 
 const HistoryItemVector& HistoryItem::children() const
 {
-    return m_subItems;
+    return m_children;
 }
 
 bool HistoryItem::hasChildren() const
 {
-    return m_subItems.size();
+    return !m_children.isEmpty();
 }
 
 String HistoryItem::formContentType() const
@@ -505,8 +514,8 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
     fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
     
     int totalSubItems = 0;
-    for (unsigned i = 0; i < m_subItems.size(); ++i)
-        totalSubItems += m_subItems[i]->showTreeWithIndent(indentLevel + 1);
+    for (unsigned i = 0; i < m_children.size(); ++i)
+        totalSubItems += m_children[i]->showTreeWithIndent(indentLevel + 1);
     return totalSubItems + 1;
 }
 

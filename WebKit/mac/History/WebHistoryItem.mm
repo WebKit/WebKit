@@ -218,7 +218,8 @@ void WKNotifyHistoryItemChanged()
     HistoryItem* coreItem = core(_private);
     NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], (NSString*)coreItem->urlString()];
     if (coreItem->target()) {
-        [result appendFormat:@" in \"%@\"", (NSString*)coreItem->target()];
+        NSString *target = coreItem->target();
+        [result appendFormat:@" in \"%@\"", target];
     }
     if (coreItem->isTargetItem()) {
         [result appendString:@" *target*"];
@@ -577,10 +578,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (WebHistoryItem *)targetItem
 {    
     ASSERT_MAIN_THREAD();
-    HistoryItem* coreItem = core(_private);
-    if (coreItem->isTargetItem() || !coreItem->hasChildren())
-        return self;
-    return kit(coreItem->recurseToFindTargetItem());
+    return kit(core(_private)->targetItem());
 }
 
 + (void)_releaseAllPendingPageCaches

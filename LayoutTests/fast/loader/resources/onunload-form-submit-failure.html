@@ -1,12 +1,6 @@
 <html>
     <head>
         <script>
-            function print(message) {
-                var paragraph = document.createElement("p");
-                paragraph.appendChild(document.createTextNode(message));
-                document.getElementById("console").appendChild(paragraph);
-            }
-
             function continueTestAfterNavigation()
             {
                 if (window.layoutTestController)
@@ -19,6 +13,6 @@
         <p>Bug: rdar://problem/4268278 Submitting a form in onUnload event handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]</p> 
         <p>If this test passes, you'll see a PASS message below.</p>
         <hr>
-        <p>PASS: Safari didn't crash.</p>
+        <p>FAIL: You should not reach this page any more, since a form submission in an onunload handler has no effect.</p>
     </body>
 <html>

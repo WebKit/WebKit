@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,7 @@
 #include "FileSystem.h"
 #include "FormData.h"
 #include "FormDataList.h"
+#include "FormState.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -44,10 +45,9 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderTextControl.h"
+#include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/RandomNumber.h>
-
-#include <limits>
 
 #if PLATFORM(WX)
 #include <wx/defs.h>
@@ -57,6 +57,8 @@
 #if PLATFORM(WIN_OS)
 #include <shlwapi.h>
 #endif
+
+using namespace std;
 
 namespace WebCore {
 
@@ -319,14 +321,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     HTMLFormControlElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
-    frame->loader()->clearRecordedFormValues();
-    frame->loader()->setFormAboutToBeSubmitted(this);
+    Vector<pair<String, String> > formValues;
+
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLFormControlElement* control = formElements[i];
         if (control->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
-                frame->loader()->recordFormValue(input->name(), input->value());
+                formValues.append(pair<String, String>(input->name(), input->value()));
                 if (input->isSearchField())
                     input->addSearchResult();
             }
@@ -338,6 +340,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
                 firstSuccessfulSubmitButton = control;
         }
     }
+
+    RefPtr<FormState> formState = FormState::create(this, formValues, frame);
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
@@ -361,14 +365,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
                 m_url = url.string();
             }
 
-            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), event, lockHistory, lockBackForwardList);
+            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), lockHistory, lockBackForwardList, event, formState.release());
         } else {
             Vector<char> boundary = m_formDataBuilder.generateUniqueBoundaryString();
-            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), event, lockHistory, lockBackForwardList);
+            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), lockHistory, lockBackForwardList, event, formState.release());
         }
     } else {
         m_formDataBuilder.setIsMultiPartForm(false);
-        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), event, lockHistory, lockBackForwardList);
+        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), lockHistory, lockBackForwardList, event, formState.release());
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

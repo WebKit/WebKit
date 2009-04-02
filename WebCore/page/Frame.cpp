@@ -173,7 +173,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 Frame::~Frame()
 {
     setView(0);
-    loader()->clearRecordedFormValues();
     loader()->cancelAndClear();
     
     // FIXME: We should not be doing all this work inside the destructor

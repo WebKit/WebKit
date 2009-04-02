@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,11 @@
 #import "WebViewInternal.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/EventNames.h>
+#import <WebCore/FormState.h>
 #import <WebCore/Frame.h>
-#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/HTMLFormElement.h>
 #import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
@@ -941,16 +943,17 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         default:
             break;
     }
-    if (button != noButton)
+    if (button != noButton) {
         event = MouseEvent::create(eventNames().clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
             [nsEvent modifierFlags] & NSControlKeyMask,
             [nsEvent modifierFlags] & NSAlternateKeyMask,
             [nsEvent modifierFlags] & NSShiftKeyMask,
             [nsEvent modifierFlags] & NSCommandKeyMask,
             button, 0, 0, true);
+    }
 
     // Call to the frame loader because this is where our security checks are made.
-    core([dataSource webFrame])->loader()->loadFrameRequestWithFormAndValues(ResourceRequest(URL), false, false, event.get(), 0, HashMap<String, String>());
+    core([dataSource webFrame])->loader()->loadFrameRequest(ResourceRequest(URL), false, false, event.get(), 0);
 }
 
 - (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender

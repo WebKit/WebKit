@@ -126,7 +126,5 @@ layer at (0,0) size 800x600
         http://127.0.0.1:8000/navigation/success200-frames-loadsame.html  **nav target**
 curr->  http://127.0.0.1:8000/navigation/resources/frameset.pl?frameURL=success200.html  **nav target**
             http://127.0.0.1:8000/navigation/resources/otherpage.html (in frame "footer")
-            http://127.0.0.1:8000/navigation/resources/otherpage.html (in frame "footer")
-            http://127.0.0.1:8000/navigation/resources/success200.html (in frame "main")
             http://127.0.0.1:8000/navigation/resources/success200.html (in frame "main")
 ===============================================

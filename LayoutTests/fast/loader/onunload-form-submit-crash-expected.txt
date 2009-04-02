@@ -1,6 +1,2 @@
 main frame - has 1 onunload handler(s)
-Bug: rdar://problem/4268278 Submitting a form in onUnload event handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]
-
-If this test passes, you'll see a PASS message below.
-
-PASS: Safari didn't crash.
+SUCCESS. If you see this page the test has successfully loaded a new page without crashing or submitting a form from an onunload handler.

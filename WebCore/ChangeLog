@@ -1,3 +1,138 @@
+2009-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 22378: Crash submitting a form when parsing an XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=22378
+        rdar://problem/6388377
+
+        Tests: fast/loader/submit-form-while-parsing-1.xhtml
+               fast/loader/submit-form-while-parsing-2.html
+
+        * WebCore.base.exp: Updated.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem): Renamed m_subItems to m_children.
+        Used uncheckedAppend because we reserveInitialCapacity.
+        (WebCore::HistoryItem::addChildItem): Renamed m_subItems to m_children.
+        Added an assertion that this is only used to add items that don't have
+        duplicate frame names.
+        (WebCore::HistoryItem::setChildItem): Added. Replaces an existing item
+        if any, preserving the isTargetItem flag.
+        (WebCore::HistoryItem::childItemWithTarget): Renamed from childItemWithName
+        for consistency with the other functions here that all call the frame name the
+        "target". Also updated for rename of m_subItems to m_children.
+        (WebCore::HistoryItem::findTargetItem): Renamed from recurseToFindTargetItem.
+        Removed unneeded size check.
+        (WebCore::HistoryItem::targetItem): Changed to always return the top item
+        if no item has the isTargetItem flag set. The old version would instead return
+        0 in some cases, but return the top item if it had no children.
+        (WebCore::HistoryItem::children): Renamed m_subItems to m_children.
+        (WebCore::HistoryItem::hasChildren): Ditto.
+        (WebCore::HistoryItem::showTreeWithIndent): Ditto.
+
+        * history/HistoryItem.h: Name changes.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Create and pass a FormState instead of
+        attaching "recorded form values" and "form about to be submitted" to the frame
+        loader. Parameter work fine for this; there's no need to store state on the
+        FrameLoader.
+
+        * loader/FormState.cpp:
+        (WebCore::FormState::FormState): Adopt a vector instead of copying a hash map.
+        (WebCore::FormState::create): Ditto.
+        * loader/FormState.h: Update to use a vector that we adopt instead of hash map
+        that we copy for auto-fill text field values.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection): Added a new case for
+        form submissions and turned the "wasDuringLoad" state into a separate boolean
+        instead of using a special redirection type to track it.
+        (WebCore::FrameLoader::createWindow): Updated for name and argument change of
+        loadFrameRequest.
+        (WebCore::FrameLoader::urlSelected): Ditto.
+        (WebCore::FrameLoader::submitForm): Removed the "deferred form submission"
+        machinery, replacing it with the "scheduled redirection" mechanism, shared
+        with other kinds of redirection and navigation. Moved frame targeting here
+        so we can schedule the redirection on the right frame. Moved the multiple
+        form submission protection here. Moved the code to implement the rule that
+        m_navigationDuringLoad was used for here too.
+        (WebCore::FrameLoader::didOpenURL): Use the new wasDuringLoad flag instead
+        of the locationChangeDuringLoad type to detect location change during a load.
+        (WebCore::FrameLoader::executeScript): Removed call to now-obsolete function,
+        submitFormAgain.
+        (WebCore::FrameLoader::scheduleLocationChange): Moved the code to stop loading
+        out of this function into scheduleRedirection, so it can be shared with the
+        new scheduleFormSubmission function.
+        (WebCore::FrameLoader::scheduleFormSubmission): Added. Almost the same as
+        scheduleLocationChange, but with the arguments for a form submission.
+        (WebCore::FrameLoader::scheduleRefresh): Updated for the change to the
+        duringLoad flag.
+        (WebCore::FrameLoader::isLocationChange): Added case for formSubmission
+        and removed case for locationChangeDuringLoad.
+        (WebCore::FrameLoader::redirectionTimerFired): Ditto. Also removed unneeded
+        completeURL call and just use KURL constructor to match the other cases.
+        (WebCore::FrameLoader::provisionalLoadStarted): Removed the code to set up
+        the m_navigationDuringLoad, which is no longer needed. The new version of
+        this is in the submitForm function and sets the lockHistory boolean.
+        (WebCore::FrameLoader::scheduleRedirection): Moved the code to stop a load
+        in here that used to be in scheduleLocationChange.
+        (WebCore::FrameLoader::startRedirectionTimer): Added case for formSubmission
+        and removed case for locationChangeDuringLoad.
+        (WebCore::FrameLoader::stopRedirectionTimer): Ditto.
+        (WebCore::FrameLoader::completed): Removed call to now-obsolete function,
+        submitFormAgain.
+        (WebCore::FrameLoader::loadFrameRequest): Renamed from
+        loadFrameRequestWithFormAndValues. Replaced form element and form values
+        argument with a single FormState argument. Changed frame targeting code
+        to use the source frame in the case of a form submission to better match
+        the actual target frame.
+        (WebCore::FrameLoader::loadURL): Don't search for existing frames in the
+        form submission case since we already did that in the submitForm function.
+        (WebCore::FrameLoader::clientRedirected): Changed to work with the
+        m_isExecutingJavaScriptFormAction data member directly instead of taking
+        it as a function parameter.
+        (WebCore::FrameLoader::loadPostRequest): Don't search for existing frames
+        in the form submission case since we already did that in the submitForm
+        function.
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget): Moved comment
+        in here that was misplaced elsewhere in the file.
+        (WebCore::FrameLoader::findFrameForNavigation): Changed to use the early
+        return idiom.
+        (WebCore::FrameLoader::recursiveGoToItem): Updated for HistoryItem changes.
+        (WebCore::FrameLoader::childFramesMatchItem): Ditto.
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Removed the
+        m_navigationDuringLoad logic; that's now handled by setting lockHistory
+        to true in the submitForm function.
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedBackForwardList):
+        Use the new setChildItem function so we don't get multiple items for the
+        same frame name in the history item tree in the back/forward list.
+
+        * loader/FrameLoader.h: Renamed loadFrameRequestWithFormAndValues to
+        loadFrameRequest and made it take a form state object instead of the
+        form element and form values. Removed the unused functions
+        loadEmptyDocumentSynchronously, provisionalDocumentLoader,
+        notifyIconChnaged, and updateBaseURLForEmptyDocument. Changed the
+        submitForm function to take a form state argument. Eliminated the
+        clearRecordedFormValues, setFormAboutToBeSubmitted, and recordFormValue
+        functions, which are replaced by the form state arguments to submitForm
+        and loadFrameRequest. Removed the isJavaScriptFormAction argument from
+        the clientRedirected function; instead it looks at a data member directly.
+        Eliminated the submitFormAgain and overload of the submitForm function;
+        these are now subsumed into the remaining submitForm function and the
+        scheduleFormSubmission function. Removed unused and obsolete data
+        members m_navigationDuringLoad, m_deferredFormSubmission,
+        m_formAboutToBeSubmitted and m_formValuesAboutToBeSubmitted.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Updated for name and argument change of loadFrameRequest.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Removed call to the now-unneeded
+        clearRecordedFormValues function.
+
 2009-04-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, fixing previous commit.

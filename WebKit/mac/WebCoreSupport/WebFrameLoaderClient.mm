@@ -699,10 +699,11 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
         return;
     }
 
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:formState->values().size()];
-    HashMap<String, String>::const_iterator end = formState->values().end();
-    for (HashMap<String, String>::const_iterator it = formState->values().begin(); it != end; ++it)
-        [dictionary setObject:it->second forKey:it->first];
+    const StringPairVector& textFieldValues = formState->textFieldValues();
+    size_t size = textFieldValues.size();
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [dictionary setObject:textFieldValues[i].second forKey:textFieldValues[i].first];
 
     CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceFrame()), kit(formState->form()), dictionary, setUpPolicyListener(function).get());
 

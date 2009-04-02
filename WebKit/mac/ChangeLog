@@ -1,3 +1,23 @@
+2009-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 22378: Crash submitting a form when parsing an XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=22378
+        rdar://problem/6388377
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem targetItem]): Call targetItem directly instead of callling
+        isTargetItem, hasChildren, and recurseToFindTargetItem.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Updated for the new
+        textFieldValues function in FormState.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]): Updated for name and
+        argument change of loadFrameRequest.
+
 2009-04-01  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Mark Rowe.
