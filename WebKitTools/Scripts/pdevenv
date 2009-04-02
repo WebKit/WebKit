@@ -9,10 +9,11 @@ use FindBin;
 my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
 
 chomp(my $vcBin = `cygpath -w "$FindBin::Bin/../vcbin"`);
+chomp(my $scriptsPath = `cygpath -w "$FindBin::Bin"`);
 
 print $fh "\@echo off\n\n";
 print $fh "call \"\%VS80COMNTOOLS\%\\vsvars32.bat\"\n\n";
-print $fh "set PATH=$vcBin;\%PATH\%\n\n";
+print $fh "set PATH=$vcBin;$scriptsPath;\%PATH\%\n\n";
 print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com /useenv " . join(" ", @ARGV) . ") ELSE ";
 print $fh "VCExpress.exe /useenv " . join(" ", @ARGV) . "\n";
 
