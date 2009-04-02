@@ -1,3 +1,13 @@
+2009-04-02  Adam Roben  <aroben@apple.com>
+
+        Use pdevenv when building .vcproj files via our scripts
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitdirs.pm:
+        (sub buildVisualStudioProject): Use pdevenv instead of invoking Visual
+        Studio/VC++ Express directly.
+
 2009-04-01  Mark Rowe  <mrowe@apple.com>
 
         Windows support for built-product-archive.

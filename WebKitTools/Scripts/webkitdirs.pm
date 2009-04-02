@@ -960,13 +960,17 @@ sub buildVisualStudioProject
 
     chomp(my $winProjectPath = `cygpath -w "$project"`);
     
-    my $command = "/build";
+    my $action = "/build";
     if ($clean) {
-        $command = "/clean";
+        $action = "/clean";
     }
 
-    print "$vcBuildPath $winProjectPath /build $config\n";
-    return system $vcBuildPath, $winProjectPath, $command, $config;
+    my $pdevenvPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv));
+
+    my @command = ($pdevenvPath, $winProjectPath, $action, $config);
+
+    print join(" ", @command), "\n";
+    return system @command;
 }
 
 sub buildSconsProject
