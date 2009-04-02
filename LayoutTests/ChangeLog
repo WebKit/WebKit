@@ -1,3 +1,18 @@
+2009-04-02  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Split no-port test case into separate file, since its result may
+        depend on the behavior of a DNS proxy on some systems.
+        https://bugs.webkit.org/show_bug.cgi?id=21530
+
+        * platform/mac-tiger/security/block-test-expected.txt: updated
+        * platform/mac-tiger/security/block-test-no-port-expected.txt: Added.
+        * platform/mac/security/block-test-expected.txt: updated
+        * platform/mac/security/block-test-no-port-expected.txt: Added.
+        * security/block-test-no-port.html: Added.
+        * security/block-test.html: removed no-port test case
+
 2009-04-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler

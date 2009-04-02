@@ -1,9 +1,7 @@
-http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html> redirectResponse (null)
-<unknown> - didFinishLoading
 http://255.255.255.255:1/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:1/test.jpg, main document URL block-test.html> redirectResponse (null)
-http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSPOSIXErrorDomain, code 13, failing URL "http://255.255.255.255/test.jpg">
-http://255.255.255.255:1/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:1/test.jpg">
+<unknown> - didFinishLoading
 http://255.255.255.255:7/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:7/test.jpg, main document URL block-test.html> redirectResponse (null)
+http://255.255.255.255:1/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:1/test.jpg">
 http://255.255.255.255:7/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:7/test.jpg">
 http://255.255.255.255:9/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:9/test.jpg, main document URL block-test.html> redirectResponse (null)
 http://255.255.255.255:9/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:9/test.jpg">
