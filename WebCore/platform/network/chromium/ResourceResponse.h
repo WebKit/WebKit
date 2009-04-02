@@ -37,12 +37,14 @@ namespace WebCore {
     public:
         ResourceResponse()
             : m_isContentFiltered(false)
+            , m_appCacheID(0)
         {
         }
 
         ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-            : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-              m_isContentFiltered(false)
+            : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
+            , m_isContentFiltered(false)
+            , m_appCacheID(0)
         {
         }
 
@@ -56,6 +58,12 @@ namespace WebCore {
         void setIsContentFiltered(bool isContentFiltered)
         {
             m_isContentFiltered = isContentFiltered;
+        }
+
+        int64 getAppCacheID() const { return m_appCacheID; }
+        void setAppCacheID(int64 id)
+        {
+            m_appCacheID = id;
         }
 
     private:
@@ -74,6 +82,10 @@ namespace WebCore {
         // Whether the contents for this response has been altered/blocked (usually
         // for security reasons.
         bool m_isContentFiltered;
+
+        // The id of the appcache this response was retrieved from, or zero if
+        // the response was not retrieved from an appcache.
+        int64 m_appCacheID;
     };
 
 } // namespace WebCore
