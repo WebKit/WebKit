@@ -67,6 +67,9 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
+#include "ScriptFunctionCall.h"
+#include "ScriptObject.h"
+#include "ScriptObjectQuarantine.h"
 #include "ScriptString.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -115,21 +118,6 @@ static JSRetainPtr<JSStringRef> jsStringRef(const char* str)
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(str));
 }
 
-static JSRetainPtr<JSStringRef> jsStringRef(const SourceCode& str)
-{
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCharacters(str.data(), str.length()));
-}
-
-static JSRetainPtr<JSStringRef> jsStringRef(const String& str)
-{
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCharacters(str.characters(), str.length()));
-}
-
-static JSRetainPtr<JSStringRef> jsStringRef(const UString& str)
-{
-    return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(str).releaseRef());
-}
-
 static String toString(JSContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT_ARG(value, value);
@@ -143,33 +131,10 @@ static String toString(JSContextRef context, JSValueRef value, JSValueRef* excep
 
 #define HANDLE_EXCEPTION(context, exception) handleException((context), (exception), __LINE__)
 
-JSValueRef InspectorController::callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName) const
+static void callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName)
 {
-    JSValueRef exception = 0;
-    return callFunction(context, thisObject, functionName, 0, 0, exception);
-}
-
-JSValueRef InspectorController::callFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName, size_t argumentCount, const JSValueRef arguments[], JSValueRef& exception) const
-{
-    ASSERT_ARG(context, context);
-    ASSERT_ARG(thisObject, thisObject);
-
-    if (exception)
-        return JSValueMakeUndefined(context);
-
-    JSValueRef functionProperty = JSObjectGetProperty(context, thisObject, jsStringRef(functionName).get(), &exception);
-    if (HANDLE_EXCEPTION(context, exception))
-        return JSValueMakeUndefined(context);
-
-    JSObjectRef function = JSValueToObject(context, functionProperty, &exception);
-    if (HANDLE_EXCEPTION(context, exception))
-        return JSValueMakeUndefined(context);
-
-    JSValueRef result = JSObjectCallAsFunction(context, function, thisObject, argumentCount, arguments, &exception);
-    if (HANDLE_EXCEPTION(context, exception))
-        return JSValueMakeUndefined(context);
-
-    return result;
+    ScriptFunctionCall function(toJS(context), toJS(thisObject), functionName);
+    function.call();
 }
 
 bool InspectorController::addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
@@ -409,23 +374,16 @@ void InspectorController::focusNode()
     ASSERT(m_scriptObject);
     ASSERT(m_nodeToFocus);
 
-    Frame* frame = m_nodeToFocus->document()->frame();
-    if (!frame)
+    ScriptObject quarantinedNode;
+    if (!getQuarantinedScriptObject(m_nodeToFocus.get(), quarantinedNode))
         return;
 
-    ExecState* exec = toJSDOMWindow(frame)->globalExec();
-
-    JSValueRef arg0;
-
-    {
-        JSC::JSLock lock(false);
-        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, m_nodeToFocus.get())));
-    }
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "updateFocusedNode");
+    function.appendArgument(quarantinedNode);
 
     m_nodeToFocus = 0;
 
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "updateFocusedNode", 1, &arg0, exception);
+    function.call();
 }
 
 void InspectorController::highlight(Node* node)
@@ -527,13 +485,13 @@ void InspectorController::toggleRecordButton(bool isProfiling)
     if (!m_scriptContext)
         return;
 
-    JSValueRef exception = 0;
-    JSValueRef isProvingValue = JSValueMakeBoolean(m_scriptContext, isProfiling);
-    callFunction(m_scriptContext, m_scriptObject, "setRecordingProfile", 1, &isProvingValue, exception);
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "setRecordingProfile");
+    function.appendArgument(isProfiling);
+    function.call();
 }
 
 void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack)
-{    
+{
     ++m_groupLevel;
 
     addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageLevel, callStack, m_groupLevel));
@@ -594,10 +552,9 @@ void InspectorController::setAttachedWindow(bool attached)
     if (!enabled() || !m_scriptContext || !m_scriptObject)
         return;
 
-    JSValueRef attachedValue = JSValueMakeBoolean(m_scriptContext, attached);
-
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "setAttachedWindow", 1, &attachedValue, exception);
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "setAttachedWindow");
+    function.appendArgument(attached);
+    function.call();
 }
 
 void InspectorController::setAttachedWindowHeight(unsigned height)
@@ -646,18 +603,13 @@ void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
     if (!enabled() || !m_scriptContext || !m_scriptObject)
         return;
 
-    JSDOMWindow* win = toJSDOMWindow(frame);
-    ExecState* exec = win->globalExec();
+    ScriptObject domWindow;
+    if (!getQuarantinedScriptObject(frame->domWindow(), domWindow))
+        return;
 
-    JSValueRef arg0;
-
-    {
-        JSC::JSLock lock(false);
-        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, win));
-    }
-
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "inspectedWindowCleared", 1, &arg0, exception);
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "inspectedWindowCleared");
+    function.appendArgument(domWindow);
+    function.call();
 }
 
 void InspectorController::windowScriptObjectAvailable()
@@ -904,10 +856,10 @@ void InspectorController::populateScriptObjects()
 
 void InspectorController::addScriptProfile(Profile* profile)
 {
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "addProfile");
     JSLock lock(false);
-    JSValueRef exception = 0;
-    JSValueRef profileObject = toRef(toJS(toJS(m_scriptContext), profile));
-    callFunction(m_scriptContext, m_scriptObject, "addProfile", 1, &profileObject, exception);
+    function.appendArgument(toJS(toJS(m_scriptContext), profile));
+    function.call();
 }
 
 void InspectorController::resetScriptObjects()
@@ -1564,33 +1516,28 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
 
 void InspectorController::didParseSource(ExecState*, const SourceCode& source)
 {
-    JSValueRef sourceIDValue = JSValueMakeNumber(m_scriptContext, source.provider()->asID());
-    JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(source.provider()->url()).get());
-    JSValueRef sourceValue = JSValueMakeString(m_scriptContext, jsStringRef(source).get());
-    JSValueRef firstLineValue = JSValueMakeNumber(m_scriptContext, source.firstLine());
-
-    JSValueRef exception = 0;
-    JSValueRef arguments[] = { sourceIDValue, sourceURLValue, sourceValue, firstLineValue };
-    callFunction(m_scriptContext, m_scriptObject, "parsedScriptSource", 4, arguments, exception);
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "parsedScriptSource");
+    function.appendArgument(static_cast<long long>(source.provider()->asID()));
+    function.appendArgument(source.provider()->url());
+    function.appendArgument(source.data());
+    function.appendArgument(source.firstLine());
+    function.call();
 }
 
 void InspectorController::failedToParseSource(ExecState*, const SourceCode& source, int errorLine, const UString& errorMessage)
 {
-    JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(source.provider()->url()).get());
-    JSValueRef sourceValue = JSValueMakeString(m_scriptContext, jsStringRef(source.data()).get());
-    JSValueRef firstLineValue = JSValueMakeNumber(m_scriptContext, source.firstLine());
-    JSValueRef errorLineValue = JSValueMakeNumber(m_scriptContext, errorLine);
-    JSValueRef errorMessageValue = JSValueMakeString(m_scriptContext, jsStringRef(errorMessage).get());
-
-    JSValueRef exception = 0;
-    JSValueRef arguments[] = { sourceURLValue, sourceValue, firstLineValue, errorLineValue, errorMessageValue };
-    callFunction(m_scriptContext, m_scriptObject, "failedToParseScriptSource", 5, arguments, exception);
+    ScriptFunctionCall function(toJS(m_scriptContext), toJS(m_scriptObject), "failedToParseScriptSource");
+    function.appendArgument(source.provider()->url());
+    function.appendArgument(source.data());
+    function.appendArgument(source.firstLine());
+    function.appendArgument(errorLine);
+    function.appendArgument(errorMessage);
+    function.call();
 }
 
 void InspectorController::didPause()
 {
-    JSValueRef exception = 0;
-    callFunction(m_scriptContext, m_scriptObject, "pausedScript", 0, 0, exception);
+    callSimpleFunction(m_scriptContext, m_scriptObject, "pausedScript");
 }
 
 #endif

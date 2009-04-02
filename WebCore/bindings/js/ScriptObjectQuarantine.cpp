@@ -38,6 +38,7 @@
 #include "JSStorage.h"
 #include "JSDOMBinding.h"
 #include "JSInspectedObjectWrapper.h"
+#include "JSNode.h"
 #include "ScriptObject.h"
 #include "ScriptValue.h"
 
@@ -81,5 +82,31 @@ bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& qu
 
     return true;
 }
+
+bool getQuarantinedScriptObject(Node* node, ScriptObject& quarantinedObject)
+{
+    ExecState* exec = scriptStateFromNode(node);
+    if (!exec)
+        return false;
+
+    JSLock lock(false);
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, node))));
+
+    return true;
+}
+
+bool getQuarantinedScriptObject(DOMWindow* domWindow, ScriptObject& quarantinedObject)
+{
+    ASSERT(domWindow);
+
+    JSDOMWindow* window = toJSDOMWindow(domWindow->frame());
+    ExecState* exec = window->globalExec();
+
+    JSLock lock(false);
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, window)));
+
+    return true;
+}
+
 
 } // namespace WebCore

@@ -34,7 +34,9 @@
 #include "JSDOMBinding.h"
 #include "ScriptString.h"
 #include "ScriptValue.h"
+
 #include <runtime/JSLock.h>
+#include <runtime/UString.h>
 
 using namespace JSC;
 
@@ -68,6 +70,16 @@ void ScriptFunctionCall::appendArgument(const String& argument)
     m_arguments.append(jsString(m_exec, argument));
 }
 
+void ScriptFunctionCall::appendArgument(const JSC::UString& argument)
+{
+    m_arguments.append(jsString(m_exec, argument));
+}
+
+void ScriptFunctionCall::appendArgument(JSC::JSValuePtr argument)
+{
+    m_arguments.append(argument);
+}
+
 void ScriptFunctionCall::appendArgument(long long argument)
 {
     JSLock lock(false);
@@ -75,6 +87,12 @@ void ScriptFunctionCall::appendArgument(long long argument)
 }
 
 void ScriptFunctionCall::appendArgument(unsigned int argument)
+{
+    JSLock lock(false);
+    m_arguments.append(jsNumber(m_exec, argument));
+}
+
+void ScriptFunctionCall::appendArgument(int argument)
 {
     JSLock lock(false);
     m_arguments.append(jsNumber(m_exec, argument));
@@ -111,6 +129,12 @@ ScriptValue ScriptFunctionCall::call(bool& hadException)
     }
 
     return ScriptValue(result);
+}
+
+ScriptValue ScriptFunctionCall::call()
+{
+    bool hadException = false;
+    return call(hadException);
 }
 
 ScriptObject ScriptFunctionCall::construct(bool& hadException)

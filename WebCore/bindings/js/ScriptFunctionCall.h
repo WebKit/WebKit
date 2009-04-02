@@ -37,6 +37,11 @@
 
 #include <runtime/ArgList.h>
 
+namespace JSC {
+    class UString;
+    class JSValuePtr;
+}
+
 namespace WebCore {
     class ScriptValue;
     class ScriptString;
@@ -50,10 +55,14 @@ namespace WebCore {
         void appendArgument(const ScriptString&);
         void appendArgument(const ScriptValue&);
         void appendArgument(const String&);
+        void appendArgument(const JSC::UString&);
+        void appendArgument(JSC::JSValuePtr);
         void appendArgument(long long);
         void appendArgument(unsigned int);
+        void appendArgument(int);
         void appendArgument(bool);
         ScriptValue call(bool& hadException);
+        ScriptValue call();
         ScriptObject construct(bool& hadException);
 
     protected:
