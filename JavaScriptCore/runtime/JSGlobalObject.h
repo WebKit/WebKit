@@ -68,6 +68,7 @@ namespace JSC {
                 , typeErrorConstructor(0)
                 , URIErrorConstructor(0)
                 , evalFunction(0)
+                , callFunction(0)
                 , objectPrototype(0)
                 , functionPrototype(0)
                 , arrayPrototype(0)
