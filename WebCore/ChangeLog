@@ -1,3 +1,16 @@
+2009-04-01  Steve Falkenburg  <sfalken@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=24997
+        Race conditions in icon database threading code
+        
+        m_syncThreadRunning set was mistakenly eliminated in r27717.
+        This reintroduces it.
+
+        Reviewed by Oliver Hunt.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): Set m_syncThreadRunning.
+
 2009-04-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
