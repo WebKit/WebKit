@@ -1,3 +1,27 @@
+2009-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24648
+        
+        Optimize common code paths in TransformationMatrix.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::translate):
+        (WebCore::TransformationMatrix::translate3d):
+        Optimize to avoid matrix copy.
+        
+        (WebCore::TransformationMatrix::isInvertible):
+        Test for identity and translation matrices before computing
+        the determinant.
+        
+        (WebCore::TransformationMatrix::inverse):
+        Optimize for identity matrix and translations.
+        
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::isIdentityOrTranslation):
+        Utility method.
+
 2009-04-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Alexey Proskuryakov.

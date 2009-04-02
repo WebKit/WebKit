@@ -781,24 +781,19 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
 TransformationMatrix& TransformationMatrix::translate(double tx, double ty)
 {
-    // FIXME: optimize to avoid matrix copy
-    TransformationMatrix mat;
-    mat.m_matrix[3][0] = tx;
-    mat.m_matrix[3][1] = ty;
-
-    multLeft(mat);
+    m_matrix[3][0] += tx * m_matrix[0][0] + ty * m_matrix[1][0];
+    m_matrix[3][1] += tx * m_matrix[0][1] + ty * m_matrix[1][1];
+    m_matrix[3][2] += tx * m_matrix[0][2] + ty * m_matrix[1][2];
+    m_matrix[3][3] += tx * m_matrix[0][3] + ty * m_matrix[1][3];
     return *this;
 }
 
 TransformationMatrix& TransformationMatrix::translate3d(double tx, double ty, double tz)
 {
-    // FIXME: optimize to avoid matrix copy
-    TransformationMatrix mat;
-    mat.m_matrix[3][0] = tx;
-    mat.m_matrix[3][1] = ty;
-    mat.m_matrix[3][2] = tz;
-
-    multLeft(mat);
+    m_matrix[3][0] += tx * m_matrix[0][0] + ty * m_matrix[1][0] + tz * m_matrix[2][0];
+    m_matrix[3][1] += tx * m_matrix[0][1] + ty * m_matrix[1][1] + tz * m_matrix[2][1];
+    m_matrix[3][2] += tx * m_matrix[0][2] + ty * m_matrix[1][2] + tz * m_matrix[2][2];
+    m_matrix[3][3] += tx * m_matrix[0][3] + ty * m_matrix[1][3] + tz * m_matrix[2][3];
     return *this;
 }
 
@@ -931,6 +926,9 @@ void TransformationMatrix::multVecMatrix(double x, double y, double z, double& r
 
 bool TransformationMatrix::isInvertible() const
 {
+    if (isIdentityOrTranslation())
+        return true;
+
     double det = WebCore::determinant4x4(m_matrix);
 
     if (fabs(det) < SMALL_NUMBER)
@@ -941,8 +939,19 @@ bool TransformationMatrix::isInvertible() const
 
 TransformationMatrix TransformationMatrix::inverse() const 
 {
-    TransformationMatrix invMat;
+    if (isIdentityOrTranslation()) {
+        // identity matrix
+        if (m_matrix[3][0] == 0 && m_matrix[3][1] == 0 && m_matrix[3][2] == 0)
+            return TransformationMatrix();
+        
+        // translation
+        return TransformationMatrix(1, 0, 0, 0,
+                                    0, 1, 0, 0,
+                                    0, 0, 1, 0,
+                                    -m_matrix[3][0], -m_matrix[3][1], -m_matrix[3][2], 1);
+    }
     
+    TransformationMatrix invMat;
     bool inverted = WebCore::inverse(m_matrix, invMat.m_matrix);
     if (!inverted)
         return TransformationMatrix();
