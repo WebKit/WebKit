@@ -99,7 +99,7 @@ JSValuePtr JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
 {
-    RefPtr<JSEventListener> listener = findOrCreateJSEventListener(args.at(exec, 1));
+    RefPtr<JSEventListener> listener = findOrCreateJSEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
@@ -108,7 +108,7 @@ JSValuePtr JSWorkerContext::addEventListener(ExecState* exec, const ArgList& arg
 
 JSValuePtr JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& args)
 {
-    JSEventListener* listener = findJSEventListener(args.at(exec, 1));
+    JSEventListener* listener = findJSEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
