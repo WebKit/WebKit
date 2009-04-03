@@ -1,3 +1,9 @@
+2009-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Update expected result due to rounding difference after r42207.
+
+        * platform/mac/svg/hixie/perf/007-expected.txt:
+
 2009-04-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
