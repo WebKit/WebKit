@@ -1,3 +1,42 @@
+2009-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6654255> crash due to null FrameView in EventHandler
+
+        Lots of code was added to EventHandler that used view() and page() without
+        null checking, but both of those can become null due to the frame lifetime.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::handleAutoscroll):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::setPanScrollCursor):
+        (WebCore::EventHandler::allowDHTMLDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::prepareMouseEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::shouldDragAutoNode):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleTextInputEvent):
+        (WebCore::EventHandler::addPendingFrameUnloadEventCount):
+        (WebCore::EventHandler::removePendingFrameUnloadEventCount):
+        (WebCore::EventHandler::clearPendingFrameUnloadEventCount):
+        (WebCore::EventHandler::addPendingFrameBeforeUnloadEventCount):
+        (WebCore::EventHandler::removePendingFrameBeforeUnloadEventCount):
+        (WebCore::EventHandler::clearPendingFrameBeforeUnloadEventCount):
+        Added null checks for view() and page(). Made minor code cleanups.
+
 2009-04-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
