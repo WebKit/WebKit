@@ -81,6 +81,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieIsActiveAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieNaturalSizeAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieCurrentSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMoviePreventExternalURLLinksAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieSizeDidChangeNotification, NSString *)
@@ -108,6 +109,7 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 #define QTMovieLoadStateAttribute getQTMovieLoadStateAttribute()
 #define QTMovieLoadStateDidChangeNotification getQTMovieLoadStateDidChangeNotification()
 #define QTMovieNaturalSizeAttribute getQTMovieNaturalSizeAttribute()
+#define QTMovieCurrentSizeAttribute getQTMovieCurrentSizeAttribute()
 #define QTMoviePreventExternalURLLinksAttribute getQTMoviePreventExternalURLLinksAttribute()
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
 #define QTMovieSizeDidChangeNotification getQTMovieSizeDidChangeNotification()
@@ -545,7 +547,15 @@ IntSize MediaPlayerPrivate::naturalSize() const
 {
     if (!metaDataAvailable())
         return IntSize();
-    return IntSize([[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue]);
+
+    // In spite of the name of this method, return QTMovieCurrentSizeAttribute rather than
+    // QTMovieNaturalSizeAttribute because we need to return:
+    //
+    //    ... the dimensions of the resource in CSS pixels after taking into account the resource's 
+    //    dimensions, aspect ratio, clean aperture, resolution, and so forth, as defined for the 
+    //    format used by the resource
+
+    return IntSize([[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue]);
 }
 
 bool MediaPlayerPrivate::hasVideo() const
@@ -729,22 +739,15 @@ void MediaPlayerPrivate::didEnd()
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::setSize(const IntSize& size) 
+void MediaPlayerPrivate::setSize(const IntSize&) 
 { 
-    if (!m_qtMovieView) 
-        return;
-
-    m_rect.setSize(size);
-    if (m_player->inMediaDocument())
-        // We need the QTMovieView to be placed in the proper location for document mode.
-        [m_qtMovieView.get() setFrame:m_rect];
-    else {
-        // We don't really need the QTMovieView in any specific location so let's just get it out of the way
-        // where it won't intercept events or try to bring up the context menu.
-        IntRect farAwayButCorrectSize(m_rect);
-        farAwayButCorrectSize.move(-1000000, -1000000);
-        [m_qtMovieView.get() setFrame:farAwayButCorrectSize];
-    }   
+    // Don't resize the view now because [view setFrame] also resizes the movie itself, and because
+    // the renderer calls this function immediately when we report a size change (QTMovieSizeDidChangeNotification)
+    // we can get into a feedback loop observing the size change and resetting the size, and this can cause
+    // QuickTime to miss resetting a movie's size when the media size changes (as happens with an rtsp movie
+    // once the rtsp server sends the track sizes). Instead we remember the size passed to paint() and resize
+    // the view when it changes.
+    // <rdar://problem/6336092> REGRESSION: rtsp movie does not resize correctly
 }
 
 void MediaPlayerPrivate::setVisible(bool b)
@@ -802,11 +805,20 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
         [(id<WebKitVideoRenderingDetails>)qtVideoRenderer drawInRect:paintRect];
         [NSGraphicsContext restoreGraphicsState];
     } else {
-        if (m_player->inMediaDocument() && r != m_rect) {
-            // the QTMovieView needs to be placed in the proper location for document mode
-            m_rect = r;
-            [view setFrame:m_rect];
+        if (m_rect != r) {
+             m_rect = r;
+            if (m_player->inMediaDocument())
+                // the QTMovieView needs to be placed in the proper location for document mode
+                [view setFrame:m_rect];
+            else {
+                // We don't really need the QTMovieView in any specific location so let's just get it out of the way
+                // where it won't intercept events or try to bring up the context menu.
+                IntRect farAwayButCorrectSize(m_rect);
+                farAwayButCorrectSize.move(-1000000, -1000000);
+                [view setFrame:farAwayButCorrectSize];
+            }
         }
+
         [view displayRectIgnoringOpacity:paintRect inContext:newContext];
     }
 

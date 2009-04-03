@@ -1,13 +1,25 @@
 
+var video = null;
+var media = null;
+var console = null;
+
+findMediaElement();
+logConsole();
+setTimeout(hanged, 10000);
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
-var video;
-var media;
-var console = document.createElement('div');
-document.body.appendChild(console);
-findMediaElement();
+
+function logConsole()
+{
+    if (!console && document.body) {
+        console = document.createElement('div');
+        document.body.appendChild(console);
+    }
+    return console;
+}
 
 function findMediaElement()
 {
@@ -24,7 +36,6 @@ function hanged()
     if (window.layoutTestController)
         layoutTestController.notifyDone();  
 }
-setTimeout(hanged, 10000);
 
 function testAndEnd(testFuncString)
 {
@@ -177,7 +188,7 @@ function consoleWrite(text)
 {
     if (testEnded)
         return;
-    console.innerHTML += text + "<br>";
+    logConsole().innerHTML += text + "<br>";
 }
 
 function relativeURL(url)

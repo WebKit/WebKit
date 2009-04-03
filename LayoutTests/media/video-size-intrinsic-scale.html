@@ -1,0 +1,52 @@
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>&lt;video&gt; element intrinsic size test</title>
+        <script src=video-test.js></script>
+
+        <script>
+            function start()
+            {
+                findMediaElement();
+        
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("ratechange");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("loadeddata");
+                waitForEvent("canplay");
+                waitForEvent("canplaythrough");
+                waitForEvent("pause");
+                waitForEvent("play");
+                waitForEvent("playing");
+        
+                waitForEvent('loadedmetadata', function () { 
+                    consoleWrite("");
+                    consoleWrite("<b>Test size after movie is open:</b>");
+                    testExpected("video.videoWidth", 640);
+                    testExpected("video.videoHeight", 480);
+                    endTest();
+                } );
+        
+                consoleWrite("<b>Test size before movie is open:</b>");
+                testExpected("video.videoWidth", 0, "==");
+                testExpected("video.videoHeight", 0, "==");
+            
+                consoleWrite("");
+            
+                video.src = "content/scaled-matrix.mov";
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+
+        <video controls></video>
+
+        <p>Test that a movie saved with a non identity matrix is sized correctly
+        when opened</p>
+
+    </body>
+</html>

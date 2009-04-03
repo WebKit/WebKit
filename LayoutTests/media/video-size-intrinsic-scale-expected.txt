@@ -1,0 +1,15 @@
+Test that a movie saved with a non identity matrix is sized correctly when opened
+
+Test size before movie is open:
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+
+Test size after movie is open:
+EXPECTED (video.videoWidth == '640') OK
+EXPECTED (video.videoHeight == '480') OK
+END OF TEST
+

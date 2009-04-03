@@ -1,3 +1,30 @@
+2009-04-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6336092> REGRESSION: movie does not resize correctly
+
+        Test: media/video-size-intrinsic-scale.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::naturalSize): Use QTMovieCurrentSizeAttribute instead 
+        of QTMovieNaturalSizeAttribute so we return the correct size for movies saved
+        with a non-default matrix.
+        (WebCore::MediaPlayerPrivate::setSize): Don't resize the QTMovieView
+        because [QTMovieView setFrame] also resizes the movie itself, and as
+        the renderer calls setSize immediately when a movie reports a size change
+        (QTMovieSizeDidChangeNotification) we can get into a feedback loop
+        observing the size change and resetting the size, and this can cause
+        QuickTime to miss correctly setting a movie's size when the media size
+        changes after opening (as happens with an rtsp movie once the server sends
+        the track sizes). Instead, remember the size passed to paint() and 
+        resize the view when it changes.
+        (WebCore::MediaPlayerPrivate::paint): Resize the view when passed a new size.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::getNaturalSize): Use GetMovieBox instead of GetMovieNaturalBoundsRect
+        so we return the correct size for movies saved with non-default matrix.
+
 2009-04-03  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

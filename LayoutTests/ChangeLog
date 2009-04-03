@@ -1,3 +1,17 @@
+2009-04-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6336092> REGRESSION: movie does not resize correctly
+
+        * media/content/scaled-matrix.mov: Added. QuickTime movie saved with 2x scale.
+        * media/video-size-intrinsic-scale-expected.txt: Added.
+        * media/video-size-intrinsic-scale.html: Added, test that element with a scaled movie is 
+        sized correctly.
+        * media/video-test.js: Modify so it can be included in <head> element.
+        (logConsole): New, wraps creating console <div>, doesn't assume document.body exists.
+        (consoleWrite): Call logConsole().
+
 2009-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
