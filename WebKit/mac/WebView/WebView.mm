@@ -2561,7 +2561,9 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)removeSizeObservers
 {
-    if (!_private->useDocumentViews && [self window]) {
+    // -removeSizeObservers can be called from -viewWillMoveToSuperview: below -[NSView initWithCoder:], before
+    // we've had a chance to initialize _private
+    if (_private && !_private->useDocumentViews && [self window]) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSViewFrameDidChangeNotification object:self];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -2571,7 +2573,9 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)addSizeObservers
 {
-    if (!_private->useDocumentViews && [self window]) {
+    // -addSizeObservers can be called from -viewDidMoveToSuperview: below -[NSView initWithCoder:], before
+    // we've had a chance to initialize _private
+    if (_private && !_private->useDocumentViews && [self window]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
             name:NSViewFrameDidChangeNotification object:self];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 

@@ -1,3 +1,17 @@
+2009-04-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein and Timothy Hatcher.
+
+        <rdar://problem/6684745> Crash in -[WebView removeSizeObservers] when loading NIB file
+
+        The implementation of -[NSView initWithCoder:] can result in -viewWillMoveToSuperview:/-viewDidMoveToSuperview: being sent to
+        our view before we've had a chance to initialize _private, so we need to ensure it is non-nil before dereferencing it in those
+        methods.
+
+        * WebView/WebView.mm:
+        (-[WebView removeSizeObservers]): Nil-check _private before dereferencing it.
+        (-[WebView addSizeObservers]): Ditto.
+
 2009-04-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
