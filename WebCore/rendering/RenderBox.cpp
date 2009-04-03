@@ -944,7 +944,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
         return;
 
     if (RenderView* v = view()) {
-        if (v->layoutStateEnabled()) {
+        if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
             IntSize offset = layoutState->m_offset;
             offset.expand(x(), y());
@@ -1127,6 +1127,10 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         // LayoutState is only valid for root-relative repainting
         if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
+
+            if (layer() && layer()->transform())
+                rect = layer()->transform()->mapRect(rect);
+
             if (style()->position() == RelativePosition && layer())
                 rect.move(layer()->relativePositionOffset());
 

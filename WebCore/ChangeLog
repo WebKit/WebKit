@@ -1,3 +1,22 @@
+2009-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23307
+        
+        When repainting during layout (when LayoutState is enabled), we need
+        to apply the transform to the dirty rect, before applying x(), y() and
+        the offset storted in the LayoutState.
+        
+        Also bypass LayoutState in mapLocalToContainer() if we have a repaintContainer,
+        since LayoutState is always root-relative.
+
+        Test: fast/repaint/transform-layout-repaint.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+
 2009-04-02  Mark Rowe  <mrowe@apple.com>
 
         Fix the Mac build after r42191.
