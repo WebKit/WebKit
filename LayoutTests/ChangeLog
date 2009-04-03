@@ -1,3 +1,20 @@
+2009-04-03  Adam Roben  <aroben@apple.com>
+
+        Skip tests that rely on layoutTestController.waitForPolicyDelegate on
+        platforms that don't implement that functionality
+
+        Implementing is covered by the following bugs:
+        <https://bugs.webkit.org/show_bug.cgi?id=25036>
+        <https://bugs.webkit.org/show_bug.cgi?id=25037>
+        <https://bugs.webkit.org/show_bug.cgi?id=25038>
+
+        Rubber-stamped by Mark Rowe.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Skip tests that use layoutTestController.waitForPolicyDelegate.
+
 2009-04-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
