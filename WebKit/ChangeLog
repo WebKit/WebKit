@@ -1,3 +1,10 @@
+2009-04-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: 
+        Add WebDOMOperationsInternal.h and make WebDOMOperationsPrivate.h private. 
+
 2009-04-01  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Mark Rowe.

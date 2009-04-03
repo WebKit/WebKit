@@ -208,7 +208,7 @@
 		9398109A0824BF01008DF038 /* WebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373435A0624EE0D00F3B289 /* WebArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 930D02BB06275F640076701E /* WebViewInternal.h */; };
 		9398109C0824BF01008DF038 /* WebFrameInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 930D02BD06275F710076701E /* WebFrameInternal.h */; };
-		9398109D0824BF01008DF038 /* WebDOMOperationsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84AE905F062DE6A80075BBF9 /* WebDOMOperationsPrivate.h */; };
+		9398109D0824BF01008DF038 /* WebDOMOperationsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84AE905F062DE6A80075BBF9 /* WebDOMOperationsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398109E0824BF01008DF038 /* WebEditingDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810A00824BF01008DF038 /* WebJavaPlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 51863EFC065419EB00E9E8DD /* WebJavaPlugIn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810A10824BF01008DF038 /* WebHTMLViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93185DB506679F42005D5E7E /* WebHTMLViewInternal.h */; };
@@ -302,6 +302,7 @@
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
 		A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */; };
 		A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */; };
+		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
@@ -547,6 +548,7 @@
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
 		A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardHelper.h; sourceTree = "<group>"; };
 		A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardHelper.mm; sourceTree = "<group>"; };
+		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1086,6 +1088,7 @@
 			children = (
 				846171F90624AE5B0071A4A3 /* WebDOMOperations.h */,
 				846171FA0624AE5B0071A4A3 /* WebDOMOperations.mm */,
+				AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */,
 				84AE905F062DE6A80075BBF9 /* WebDOMOperationsPrivate.h */,
 			);
 			name = DOM;
@@ -1400,6 +1403,7 @@
 				FEF52DFB0F6748F200FF70EE /* WebGeolocationInternal.h in Headers */,
 				FEF52DFC0F6748F200FF70EE /* WebGeolocationPrivate.h in Headers */,
 				1C0456480F7D416F00BA7AA3 /* DOMDocumentPrivate.h in Headers */,
+				AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

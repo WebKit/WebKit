@@ -1,3 +1,16 @@
+2009-04-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add a way to get a list of focusable nodes.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMDocument _focusableNodes]):
+        * DOM/WebDOMOperationsInternal.h: Added.
+        * DOM/WebDOMOperationsPrivate.h: Make this a private header.
+        Move old methods to WebDOMOperationsInternal.h
+        * WebView/WebHTMLView.mm: Use methods from WebDOMOperationsInternal.h
+
 2009-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

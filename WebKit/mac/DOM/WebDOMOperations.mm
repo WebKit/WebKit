@@ -63,7 +63,8 @@ using namespace WebCore;
 
 @end
 
-@implementation DOMNode (WebDOMNodeOperationsPrivate)
+/* This doesn't appear to be used by anyone.  We should consider removing this. */
+@implementation DOMNode (WebDOMNodeOperationsInternal)
 
 - (NSArray *)_subresourceURLs
 {
@@ -101,8 +102,9 @@ using namespace WebCore;
 
 @end
 
-@implementation DOMDocument (WebDOMDocumentOperationsPrivate)
+@implementation DOMDocument (WebDOMDocumentOperationsInternal)
 
+/* This doesn't appear to be used by anyone.  We should consider removing this. */
 - (DOMRange *)_createRangeWithNode:(DOMNode *)node
 {
     DOMRange *range = [self createRange];
@@ -113,6 +115,20 @@ using namespace WebCore;
 - (DOMRange *)_documentRange
 {
     return [self _createRangeWithNode:[self documentElement]];
+}
+
+@end
+
+@implementation DOMDocument (WebDOMDocumentOperationsPrivate)
+
+- (NSArray *)_focusableNodes
+{
+    Vector<RefPtr<Node> > nodes;
+    core(self)->getFocusableNodes(nodes);
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:nodes.size()];
+    for (unsigned i = 0; i < nodes.size(); ++i)
+        [array addObject:[DOMNode _wrapNode:nodes[i].get()]];
+    return array;
 }
 
 @end

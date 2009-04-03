@@ -33,7 +33,7 @@
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebClipView.h"
-#import "WebDOMOperationsPrivate.h"
+#import "WebDOMOperationsInternal.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
