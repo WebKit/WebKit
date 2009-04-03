@@ -1,3 +1,12 @@
+2009-04-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6756512>
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost): Tweaked the visibleName property.
+
 2009-04-03  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6355573> [WebView _setCacheModel:] leaks the result of _CFURLCacheCopyCacheDirectory
