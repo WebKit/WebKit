@@ -35,7 +35,10 @@ module window {
         CustomGetOwnPropertySlot,
         CustomPutFunction,
         CustomDeleteProperty,
-        CustomGetPropertyNames
+        CustomGetPropertyNames,
+        CustomDefineGetter,
+        CustomPrototypePutFunction,
+        CustomPrototypeDefineGetter
     ] Location {
                  attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;
 

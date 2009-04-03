@@ -1,0 +1,2 @@
+PASS result is 'pass.html'
+

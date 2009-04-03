@@ -101,6 +101,11 @@ void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, 
     // Only allow defining getters by frames in the same origin.
     if (!allowsAccessFrom(exec))
         return;
+
+    // Don't allow shadowing location using defineGetter.
+    if (propertyName == "location")
+        return;
+
     Base::defineGetter(exec, propertyName, getterFunction);
 }
 

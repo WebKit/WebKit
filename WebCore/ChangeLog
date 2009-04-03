@@ -1,3 +1,39 @@
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22081
+        <rdar://problem/6346030>
+        Don't allow overriding the return value of window.location.
+
+        Tests: fast/dom/Window/Location/location-override-toString-on-proto-using-defineGetter.html
+               fast/dom/Window/Location/location-override-toString-on-proto-using-with.html
+               fast/dom/Window/Location/location-override-toString-on-proto.html
+               fast/dom/Window/Location/location-override-toString-using-defineGetter.html
+               fast/dom/Window/Location/location-override-toString-using-with.html
+               fast/dom/Window/Location/location-override-toString.html
+               fast/dom/Window/Location/location-override-valueOf-on-proto-using-defineGetter.html
+               fast/dom/Window/Location/location-override-valueOf-on-proto-using-with.html
+               fast/dom/Window/Location/location-override-valueOf-on-proto.html
+               fast/dom/Window/Location/location-override-valueOf-using-defineGetter.html
+               fast/dom/Window/Location/location-override-valueOf-using-with.html
+               fast/dom/Window/Location/location-override-valueOf.html
+               fast/dom/Window/Location/window-override-location-using-defineGetter.html
+               fast/dom/Window/Location/window-override-window-using-defineGetter.html
+               fast/dom/Window/Location/window-shadow-location-using-js-object-with-toString.html
+               fast/dom/Window/Location/window-shadow-location-using-string.html
+               fast/dom/Window/Location/window-shadow-window-using-js-object-with-location-field.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::defineGetter):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::customPut):
+        (WebCore::JSLocation::defineGetter):
+        (WebCore::JSLocationPrototype::customPut):
+        (WebCore::JSLocationPrototype::defineGetter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/Location.idl:
+
 2009-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out r42214 since it seems to have caused crashes on the buildbot.

@@ -1,5 +1,56 @@
 2009-04-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=22081
+        <rdar://problem/6346030>
+        Don't allow overriding the return value of window.location.
+
+        * fast/dom/Window/Location: Added.
+        * fast/dom/Window/Location/location-override-toString-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto-using-with-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto-using-with.html: Added.
+        * fast/dom/Window/Location/location-override-toString-on-proto.html: Added.
+        * fast/dom/Window/Location/location-override-toString-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/location-override-toString-using-with-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-toString-using-with.html: Added.
+        * fast/dom/Window/Location/location-override-toString.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto-using-with-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto-using-with.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf-on-proto.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf-using-with-expected.txt: Added.
+        * fast/dom/Window/Location/location-override-valueOf-using-with.html: Added.
+        * fast/dom/Window/Location/location-override-valueOf.html: Added.
+        * fast/dom/Window/Location/resources: Added.
+        * fast/dom/Window/Location/resources/location-tests-functions.js: Added.
+        (normalizeURL):
+        * fast/dom/Window/Location/resources/pass.html: Added.
+        * fast/dom/Window/Location/resources/window-shadow-location-using-js-object-with-toString-iframe.html: Added.
+        * fast/dom/Window/Location/resources/window-shadow-location-using-string-iframe.html: Added.
+        * fast/dom/Window/Location/window-override-location-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/window-override-location-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/window-override-window-using-defineGetter-expected.txt: Added.
+        * fast/dom/Window/Location/window-override-window-using-defineGetter.html: Added.
+        * fast/dom/Window/Location/window-shadow-location-using-js-object-with-toString-expected.txt: Added.
+        * fast/dom/Window/Location/window-shadow-location-using-js-object-with-toString.html: Added.
+        * fast/dom/Window/Location/window-shadow-location-using-string-expected.txt: Added.
+        * fast/dom/Window/Location/window-shadow-location-using-string.html: Added.
+        * fast/dom/Window/Location/window-shadow-window-using-js-object-with-location-field-expected.txt: Added.
+        * fast/dom/Window/Location/window-shadow-window-using-js-object-with-location-field.html: Added.
+        * http/tests/security/cross-frame-access-location-put-expected.txt:
+
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Tests for <rdar://problem/6476356>

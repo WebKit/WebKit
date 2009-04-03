@@ -1,0 +1,28 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+    <script src="../../../js/resources/js-test-pre.js"></script>
+    <script src="resources/location-tests-functions.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    var result;
+    function frameLoaded()
+    {
+        result = normalizeURL(String(window.frames[0].location));
+        shouldBe("result", "'pass.html'");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    successfullyParsed = true;
+</script>
+<iframe onload="frameLoaded()" src="resources/window-shadow-location-using-string-iframe.html">
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>
