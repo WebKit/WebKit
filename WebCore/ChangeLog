@@ -1,3 +1,13 @@
+2009-04-03  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Restore FrameLoader::policyDocumentLoader to fix the Chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=25028
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::policyDocumentLoader):
+
 2009-04-02  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.
