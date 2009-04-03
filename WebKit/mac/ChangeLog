@@ -1,3 +1,15 @@
+2009-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        WebKit side of <rdar://problem/6752953>.
+        
+        Pass the clip rect to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::resize):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2009-04-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein and Timothy Hatcher.

@@ -123,7 +123,9 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
 
 void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
 {
-    _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, size.origin.x, size.origin.y, size.size.width, size.size.height);
+    _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, 
+                              size.origin.x, size.origin.y, size.size.width, size.size.height,
+                              clipRect.origin.x, clipRect.origin.y, clipRect.size.width, clipRect.size.height);
 }
 
 void NetscapePluginInstanceProxy::stopAllStreams()
