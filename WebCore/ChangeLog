@@ -1,3 +1,10 @@
+2009-04-02  Mark Rowe  <mrowe@apple.com>
+
+        Fix Windows build after r42190.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):  Update to use the new name of the constant.
+
 2009-04-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
