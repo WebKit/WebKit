@@ -144,8 +144,6 @@ inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& 
     return false;
 }
 
-
-
 inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
 {
     if (allowsAccessFromPrivate(other))
@@ -154,7 +152,7 @@ inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
     return false;
 }
 
-    inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec) const
+inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec) const
 {
     if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
         return true;

@@ -110,7 +110,7 @@
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::submitForm): Removed unneeded check of the createdByParser flag.
         The original change that introduced this, http://trac.webkit.org/changeset/25410, does
-        not make it clear why this check was needed. And it seems it is needed.
+        not make it clear why this check was needed. And it seems it is not needed.
 
 2009-04-02  Adele Peterson  <adele@apple.com>
 
