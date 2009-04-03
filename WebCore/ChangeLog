@@ -1,3 +1,18 @@
+2009-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=25018
+        
+        Add containsPoint() and containsQuad() methods to FloatQuad.
+
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::dot):
+        (WebCore::isPointInTriangle):
+        (WebCore::FloatQuad::containsPoint):
+        (WebCore::FloatQuad::containsQuad):
+        * platform/graphics/FloatQuad.h:
+
 2009-04-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

@@ -74,6 +74,14 @@ public:
     // "slanted" empty quads.
     bool isEmpty() const { return boundingBox().isEmpty(); }
 
+    // Tests whether the given point is inside, or on an edge or corner of this quad.
+    bool containsPoint(const FloatPoint&) const;
+
+    // Tests whether the four corners of other are inside, or coincident with the sides of this quad.
+    // Note that this only works for convex quads, but that includes all quads that originate
+    // from transformed rects.
+    bool containsQuad(const FloatQuad&) const;
+
     FloatRect boundingBox() const;
     IntRect enclosingBoundingBox() const
     {
