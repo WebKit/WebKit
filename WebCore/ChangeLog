@@ -1,14 +1,3 @@
-2009-04-02  Adele Peterson  <adele@apple.com>
-
-        Reviewed by Darin Adler.
-
-        Add a way to get a list of focusable nodes.
-
-        * dom/Document.cpp:
-        (WebCore::Document::setFocusedNode):
-        (WebCore::Document::getFocusableNodes):
-        * dom/Document.h:
-
 2009-04-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
@@ -36,6 +25,17 @@
         (WebCore::FrameLoader::submitForm): Removed unneeded check of the createdByParser flag.
         The original change that introduced this, http://trac.webkit.org/changeset/25410, does
         not make it clear why this check was needed. And it seems it is needed.
+
+2009-04-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add a way to get a list of focusable nodes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        (WebCore::Document::getFocusableNodes):
+        * dom/Document.h:
 
 2009-04-02  Darin Adler  <darin@apple.com>
 
