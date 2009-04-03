@@ -872,7 +872,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         if (!repaintRect.isEmpty()) {
             repaintRectangle(repaintRect); // We need to do a partial repaint of our content.
             if (hasReflection())
-                layer()->reflection()->repaintRectangle(repaintRect);
+                repaintRectangle(reflectedRect(repaintRect));
         }
     }
     setNeedsLayout(false);

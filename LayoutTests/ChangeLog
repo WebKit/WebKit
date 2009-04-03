@@ -2,6 +2,19 @@
 
         Reviewed by Dan Bernstein
         
+        https://bugs.webkit.org/show_bug.cgi?id=25021
+        
+        Test for repainting a reflected element with a transform after layout.
+
+        * fast/repaint/reflection-repaint-test.html: Added.
+        * platform/mac/fast/repaint/reflection-repaint-test-expected.checksum: Added.
+        * platform/mac/fast/repaint/reflection-repaint-test-expected.png: Added.
+        * platform/mac/fast/repaint/reflection-repaint-test-expected.txt: Added.
+
+2009-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
         https://bugs.webkit.org/show_bug.cgi?id=23307
         
         Test for repainting due to layout, with a transform on the leaf.
