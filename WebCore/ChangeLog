@@ -1,3 +1,11 @@
+2009-04-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        *  loader/ProgressTracker.cpp: Included DocumentLoader.h
+        (WebCore::ProgressTracker::incrementProgress): Limit the 50%-clamp rule to 
+        documents that use WebCore's layout system.
+
 2009-04-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

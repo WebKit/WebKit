@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProgressTracker.h"
 
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -196,8 +197,11 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     else
         percentOfRemainingBytes = 1.0;
     
-    // Treat the first layout as the half-way point.
-    double maxProgressValue = m_originatingProgressFrame->loader()->firstLayoutDone() ? finalProgressValue : .5;
+    // For documents that use WebCore's layout system, treat first layout as the half-way point.
+    // FIXME: The hasHTMLView function is a sort of roundabout way of asking "do you use WebCore's layout system".
+    bool useClampedMaxProgress = m_originatingProgressFrame->loader()->client()->hasHTMLView()
+        && !m_originatingProgressFrame->loader()->firstLayoutDone();
+    double maxProgressValue = useClampedMaxProgress ? 0.5 : finalProgressValue;
     increment = (maxProgressValue - m_progressValue) * percentOfRemainingBytes;
     m_progressValue += increment;
     m_progressValue = min(m_progressValue, maxProgressValue);
