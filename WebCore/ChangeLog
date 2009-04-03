@@ -1,3 +1,17 @@
+2009-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix <rdar://problem/6634771> Under full-page zoom, cannot scroll
+          MobileMe contact list
+
+        Test: fast/css/zoom-in-length-round-trip.html
+
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom): For zoom factors greater than 1, ensure
+        that the returned value is equal to the original unscaled value.
+        (WebCore::adjustForAbsoluteZoom): Ditto.
+
 2009-04-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

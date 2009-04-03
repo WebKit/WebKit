@@ -1,3 +1,13 @@
+2009-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for <rdar://problem/6634771> Under full-page zoom, cannot scroll
+          MobileMe contact list
+
+        * fast/css/zoom-in-length-round-trip-expected.txt: Added.
+        * fast/css/zoom-in-length-round-trip.html: Added.
+
 2009-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Update expected result due to rounding difference after r42207.

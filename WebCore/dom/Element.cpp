@@ -268,16 +268,22 @@ static float localZoomForRenderer(RenderObject* renderer)
 static int adjustForLocalZoom(int value, RenderObject* renderer)
 {
     float zoomFactor = localZoomForRenderer(renderer);
-    if (zoomFactor == 1.0f)
+    if (zoomFactor == 1)
         return value;
+    // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
+    if (zoomFactor > 1)
+        value++;
     return static_cast<int>(value / zoomFactor);
 }
 
 static int adjustForAbsoluteZoom(int value, RenderObject* renderer)
 {
     float zoomFactor = renderer->style()->effectiveZoom();
-    if (zoomFactor == 1.0f)
+    if (zoomFactor == 1)
         return value;
+    // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
+    if (zoomFactor > 1)
+        value++;
     return static_cast<int>(value / zoomFactor);
 }
 
