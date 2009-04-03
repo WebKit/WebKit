@@ -1,3 +1,16 @@
+2009-04-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        Remove pre-processor checks for GTK+ >= 2.10, since we now require
+        at least that version.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::clipboard_clear_contents_cb):
+        (WebKit::EditorClient::respondToChangedSelection):
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebview.cpp:
+
 2009-04-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Alexey  Proskuryakov.

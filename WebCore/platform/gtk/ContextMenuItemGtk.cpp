@@ -56,10 +56,8 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
         return GTK_STOCK_PASTE;
     case ContextMenuItemTagDelete:
         return GTK_STOCK_DELETE;
-#if GTK_CHECK_VERSION(2, 10, 0)
     case ContextMenuItemTagSelectAll:
         return GTK_STOCK_SELECT_ALL;
-#endif
     case ContextMenuItemTagSpellingGuess:
         return GTK_STOCK_INFO;
     case ContextMenuItemTagIgnoreSpelling:

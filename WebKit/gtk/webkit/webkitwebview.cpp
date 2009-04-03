@@ -291,14 +291,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_URI:
         g_value_set_string(value, webkit_web_view_get_uri(webView));
         break;
-#if GTK_CHECK_VERSION(2,10,0)
     case PROP_COPY_TARGET_LIST:
         g_value_set_boxed(value, webkit_web_view_get_copy_target_list(webView));
         break;
     case PROP_PASTE_TARGET_LIST:
         g_value_set_boxed(value, webkit_web_view_get_paste_target_list(webView));
         break;
-#endif
     case PROP_EDITABLE:
         g_value_set_boolean(value, webkit_web_view_get_editable(webView));
         break;
@@ -1683,7 +1681,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         NULL,
                                                         WEBKIT_PARAM_READABLE));
 
-#if GTK_CHECK_VERSION(2,10,0)
     /**
     * WebKitWebView:copy-target-list:
     *
@@ -1711,7 +1708,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                        "The list of targets this web view supports for clipboard pasting",
                                                        GTK_TYPE_TARGET_LIST,
                                                        WEBKIT_PARAM_READABLE));
-#endif
 
     g_object_class_install_property(objectClass, PROP_SETTINGS,
                                     g_param_spec_object("settings",
@@ -1833,7 +1829,6 @@ static gdouble webViewGetDPI(WebKitWebView* webView)
         return 96.0;
 
     gdouble DPI = defaultDPI;
-#if GTK_CHECK_VERSION(2,10,0)
     GdkScreen* screen = gtk_widget_has_screen(GTK_WIDGET(webView)) ? gtk_widget_get_screen(GTK_WIDGET(webView)) : gdk_screen_get_default();
     if (screen) {
         DPI = gdk_screen_get_resolution(screen);
@@ -1841,7 +1836,6 @@ static gdouble webViewGetDPI(WebKitWebView* webView)
         if (DPI == -1)
             DPI = defaultDPI;
     }
-#endif
     ASSERT(DPI > 0);
     return DPI;
 }
@@ -2019,11 +2013,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->zoomFullContent = FALSE;
 
-#if GTK_CHECK_VERSION(2,10,0)
     GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
-#else
-    GdkAtom textHtml = gdk_atom_intern("text/html", false);
-#endif
     /* Targets for copy */
     priv->copy_target_list = gtk_target_list_new(NULL, 0);
     gtk_target_list_add(priv->copy_target_list, textHtml, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
