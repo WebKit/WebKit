@@ -26,6 +26,10 @@
 #ifndef TransformationMatrix_h
 #define TransformationMatrix_h
 
+#include "FloatPoint.h"
+#include "IntPoint.h"
+#include <string.h> //for memcpy
+
 #if PLATFORM(CG)
 #include <CoreGraphics/CGAffineTransform.h>
 #elif PLATFORM(CAIRO)
@@ -38,13 +42,9 @@
 #include <wx/graphics.h>
 #endif
 
-#include <string.h> //for memcpy
-
 namespace WebCore {
 
-class IntPoint;
 class IntRect;
-class FloatPoint;
 class FloatPoint3D;
 class FloatRect;
 class FloatQuad;
@@ -114,7 +114,10 @@ public:
     FloatPoint mapPoint(const FloatPoint&) const;
 
     // Like the version above, except that it rounds the mapped point to the nearest integer value.
-    IntPoint mapPoint(const IntPoint&) const;
+    IntPoint mapPoint(const IntPoint& p) const
+    {
+        return roundedIntPoint(mapPoint(p));
+    }
 
     // If the matrix has 3D components, the z component of the result is
     // dropped, effectively projecting the rect into the z=0 plane

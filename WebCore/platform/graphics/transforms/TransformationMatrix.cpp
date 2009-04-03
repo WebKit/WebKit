@@ -31,6 +31,7 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 
+#include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -556,6 +557,9 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
 
 FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
 {
+    if (isIdentityOrTranslation())
+        return FloatPoint(p.x() + static_cast<float>(m_matrix[3][0]), p.y() + static_cast<float>(m_matrix[3][1]));
+
     double x, y;
     multVecMatrix(p.x(), p.y(), x, y);
     return FloatPoint(static_cast<float>(x), static_cast<float>(y));
@@ -563,18 +567,14 @@ FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
 
 FloatPoint3D TransformationMatrix::mapPoint(const FloatPoint3D& p) const
 {
+    if (isIdentityOrTranslation())
+        return FloatPoint3D(p.x() + static_cast<float>(m_matrix[3][0]),
+                            p.y() + static_cast<float>(m_matrix[3][1]),
+                            p.z() + static_cast<float>(m_matrix[3][2]));
+
     double x, y, z;
     multVecMatrix(p.x(), p.y(), p.z(), x, y, z);
     return FloatPoint3D(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
-}
-
-IntPoint TransformationMatrix::mapPoint(const IntPoint& point) const
-{
-    double x, y;
-    multVecMatrix(point.x(), point.y(), x, y);
-
-    // Round the point.
-    return IntPoint(lround(x), lround(y));
 }
 
 IntRect TransformationMatrix::mapRect(const IntRect &rect) const
@@ -584,12 +584,24 @@ IntRect TransformationMatrix::mapRect(const IntRect &rect) const
 
 FloatRect TransformationMatrix::mapRect(const FloatRect& r) const
 {
+    if (isIdentityOrTranslation()) {
+        FloatRect mappedRect(r);
+        mappedRect.move(static_cast<float>(m_matrix[3][0]), static_cast<float>(m_matrix[3][1]));
+        return mappedRect;
+    }
+
     FloatQuad resultQuad = mapQuad(FloatQuad(r));
     return resultQuad.boundingBox();
 }
 
 FloatQuad TransformationMatrix::mapQuad(const FloatQuad& q) const
 {
+    if (isIdentityOrTranslation()) {
+        FloatQuad mappedQuad(q);
+        mappedQuad.move(static_cast<float>(m_matrix[3][0]), static_cast<float>(m_matrix[3][1]));
+        return mappedQuad;
+    }
+
     FloatQuad result;
     result.setP1(mapPoint(q.p1()));
     result.setP2(mapPoint(q.p2()));

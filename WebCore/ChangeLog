@@ -2,6 +2,21 @@
 
         Reviewed by Dan Bernstein
 
+        https://bugs.webkit.org/show_bug.cgi?id=24648
+
+        Optimize mapPoint(), mapRect() and mapQuad() for identity matrix and translations.
+        
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::mapPoint):
+        (WebCore::TransformationMatrix::mapRect):
+        (WebCore::TransformationMatrix::mapQuad):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::mapPoint):
+
+2009-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
         https://bugs.webkit.org/show_bug.cgi?id=25018
         
         Add containsPoint() and containsQuad() methods to FloatQuad.
