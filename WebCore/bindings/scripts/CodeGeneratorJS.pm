@@ -1211,6 +1211,7 @@ sub GenerateImplementation
                             push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
+                            push(@implContent, "    UNUSED_PARAM(exec);\n");
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
                             my $listenerType;
                             if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
@@ -1227,7 +1228,7 @@ sub GenerateImplementation
                                 push(@implContent, "    if (!globalObject)\n");
                                 push(@implContent, "        return;\n");
                             }
-                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->findOrCreate${listenerType}(exec, value, true));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->findOrCreate${listenerType}(value, true));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;
