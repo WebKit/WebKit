@@ -4561,7 +4561,7 @@ static WebFrameView *containingFrameView(NSView *view)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-    NSString *nsurlCacheDirectory = [(NSString *)WKCopyFoundationCacheDirectory() autorelease];
+    NSString *nsurlCacheDirectory = (NSString *)WebCFAutorelease(WKCopyFoundationCacheDirectory());
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 
