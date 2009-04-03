@@ -1,3 +1,28 @@
+2009-04-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=24941
+
+        This fix essentially does a -viewWillDraw call for layout. It adds 
+        a CFRunLoopObserver which performs layout just before drawing on the 
+        Mac platform. This makes sure layout is complete before rendering and 
+        avoids a flash.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::setNeedsOneShotDrawingSynchronization):
+        (WebChromeClient::scheduleViewUpdate):
+        * WebView/WebView.mm:
+        (-[WebViewPrivate _clearViewUpdateRunLoopObserver]):
+        (-[WebView _viewWillDrawInternal]):
+        (-[WebView viewWillDraw]):
+        (-[WebView close]):
+        (viewUpdateRunLoopObserverCallBack):
+        (-[WebView _scheduleViewUpdate]):
+        * WebView/WebViewInternal.h:
+
 2009-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

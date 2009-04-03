@@ -422,6 +422,8 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     BOOL needsOneShotDrawingSynchronization;
     // Number of WebHTMLViews using accelerated compositing. Used to implement _isUsingAcceleratedCompositing.
     int acceleratedFramesCount;
+    // Run loop observer used to implement the compositing equivalent of -viewWillDraw
+    CFRunLoopObserverRef viewUpdateRunLoopObserver;
 #endif
 
     NSPasteboard *insertionPasteboard;
@@ -569,6 +571,17 @@ static BOOL grammarCheckingEnabled;
 
     [super finalize];
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+- (void)_clearViewUpdateRunLoopObserver
+{
+    if (viewUpdateRunLoopObserver) {
+        CFRunLoopObserverInvalidate(viewUpdateRunLoopObserver);
+        CFRelease(viewUpdateRunLoopObserver);
+        viewUpdateRunLoopObserver = 0;
+    }
+}
+#endif
 
 @end
 
@@ -888,15 +901,21 @@ static bool runningTigerMail()
     return _private && !_private->useDocumentViews;
 }
 
+#if USE(ACCELERATED_COMPOSITING) || !defined(BUILDING_ON_TIGER)
+- (void)_viewWillDrawInternal
+{
+    Frame* frame = core([self mainFrame]);
+    if (frame && frame->view())
+        frame->view()->layoutIfNeededRecursive();
+}
+#endif
+
 #ifndef BUILDING_ON_TIGER
 
 - (void)viewWillDraw
 {
-    if (!_private->useDocumentViews) {
-        Frame* frame = core([self mainFrame]);
-        if (frame && frame->view())
-            frame->view()->layoutIfNeededRecursive();
-    }
+    if (!_private->useDocumentViews)
+        [self _viewWillDrawInternal];
     [super viewWillDraw];
 }
 
@@ -2547,6 +2566,10 @@ static bool needsWebViewInitThreadWorkaround()
 {
     // _close existed first, and some clients might be calling or overriding it, so call through.
     [self _close];
+
+#if USE(ACCELERATED_COMPOSITING)
+    [_private _clearViewUpdateRunLoopObserver];
+#endif
 }
 
 - (void)setShouldCloseWithWindow:(BOOL)close
@@ -5558,6 +5581,37 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
     }
     return result;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
+{
+    WebView* webView = reinterpret_cast<WebView*>(info);
+    [webView _viewWillDrawInternal];
+    [webView->_private _clearViewUpdateRunLoopObserver];
+}
+
+- (void)_scheduleViewUpdate
+{
+    // This is the compositing equivalent of -viewWillDraw. When we know that compositing layers
+    // have been set as needing display, we have to make an eager layout happen before the
+    // layers get committed by CA.
+    if (!_private->viewUpdateRunLoopObserver) {
+        const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering-1; // Run before AppKit does its window update
+        CFRunLoopObserverContext context = {
+            0,
+            reinterpret_cast<void*>(self),
+            NULL,   // The WebView always outlives the observer, so no need to retain/release.
+            NULL,
+            NULL
+        };
+        _private->viewUpdateRunLoopObserver = CFRunLoopObserverCreate(NULL, kCFRunLoopBeforeWaiting | kCFRunLoopExit, false /* one shot */,
+                                                        runLoopOrder, viewUpdateRunLoopObserverCallBack, &context);
+
+        CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->viewUpdateRunLoopObserver, kCFRunLoopCommonModes);
+    }
+    
+}
+#endif
 
 @end
 

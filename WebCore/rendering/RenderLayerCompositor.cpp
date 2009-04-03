@@ -113,8 +113,22 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
 
 void RenderLayerCompositor::setCompositingLayersNeedUpdate(bool needUpdate)
 {
-    if (inCompositingMode())
+    if (inCompositingMode()) {
+        if (!m_compositingLayersNeedUpdate && needUpdate)
+            scheduleViewUpdate();
+
         m_compositingLayersNeedUpdate = needUpdate;
+    }
+}
+
+void RenderLayerCompositor::scheduleViewUpdate()
+{
+    Frame* frame = m_renderView->frameView()->frame();
+    Page* page = frame ? frame->page() : 0;
+    if (!page)
+        return;
+
+    page->chrome()->client()->scheduleViewUpdate();
 }
 
 void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)

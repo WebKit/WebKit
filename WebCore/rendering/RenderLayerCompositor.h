@@ -57,6 +57,8 @@ public:
     void setCompositingLayersNeedUpdate(bool needUpdate = true);
     bool compositingLayersNeedUpdate() const { return m_compositingLayersNeedUpdate; }
 
+    void scheduleViewUpdate();
+    
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(RenderLayer* updateRoot = 0);
 

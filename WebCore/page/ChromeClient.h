@@ -169,6 +169,9 @@ namespace WebCore {
         // Sets a flag to specify that the next time content is drawn to the window,
         // the changes appear on the screen in synchrony with updates to GraphicsLayers.
         virtual void setNeedsOneShotDrawingSynchronization() { }
+        // Sets a flag to specify that the view needs to be updated, so we need
+        // to do an eager layout before the drawing.
+        virtual void scheduleViewUpdate() { }
 #endif
 
 #if PLATFORM(MAC)

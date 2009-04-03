@@ -149,6 +149,7 @@ typedef WebCore::Page WebCorePage;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
 - (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
 - (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
+- (void)_scheduleViewUpdate;
 #endif
 
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;

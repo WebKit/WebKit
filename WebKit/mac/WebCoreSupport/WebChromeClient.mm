@@ -652,17 +652,28 @@ void WebChromeClient::enableSuddenTermination()
 #if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebFrameView *frameView = [kit(frame) frameView];
     WebHTMLView *docView = (WebHTMLView *)[frameView documentView];
     if (graphicsLayer)
         [docView attachRootLayer:graphicsLayer->nativeLayer()];
     else
         [docView detachRootLayer];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_webView _setNeedsOneShotDrawingSynchronization:YES];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void WebChromeClient::scheduleViewUpdate()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _scheduleViewUpdate];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
 
