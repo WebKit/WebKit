@@ -33,10 +33,9 @@ class RenderObject;
 class RenderArena;
 class RenderStyle;
 
-class HTMLFrameElement : public HTMLFrameElementBase
-{
+class HTMLFrameElement : public HTMLFrameElementBase {
 public:
-    HTMLFrameElement(const QualifiedName&, Document*, bool createdByParser);
+    HTMLFrameElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }

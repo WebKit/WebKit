@@ -1,0 +1,32 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpBackForwardList();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    document.getElementById("myForm").submit();
+}
+
+function frameLoaded()
+{
+    if (document.getElementById("myFrame").contentDocument.URL === "about:blank")
+        return;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTest();">
+<form id="myForm" target="myFrame" action="about:blank" method="get">
+</form>
+In this case, Safari and Firefox don't add a history item. 
+<iframe name="myFrame" id="myFrame" onload="frameLoaded()"></iframe>
+</body>
+</html>

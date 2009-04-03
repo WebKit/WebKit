@@ -39,7 +39,7 @@ embed
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
 font
 form
-frame constructorNeedsCreatedByParser
+frame
 frameset interfaceName=HTMLFrameSetElement
 head
 h1 interfaceName=HTMLHeadingElement
@@ -51,7 +51,7 @@ h6 interfaceName=HTMLHeadingElement
 hr interfaceName=HTMLHRElement
 html
 i interfaceName=HTMLElement
-iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser
+iframe interfaceName=HTMLIFrameElement
 image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement

@@ -1,3 +1,17 @@
+2009-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6625840> Previous Page isn't loaded after hitting back button at http://www.breakingnews.ie/
+
+        * http/tests/navigation/onload-navigation-iframe-2-expected.txt: Copied from
+        LayoutTests/http/tests/navigation/onload-navigation-iframe-expected.txt.
+        Updated for slight difference in the new test.
+
+        * http/tests/navigation/onload-navigation-iframe-2.html: Copied from
+        LayoutTests/http/tests/navigation/onload-navigation-iframe.html.
+        Changed test to use an iframe element already in the HTML.
+
 2009-04-02  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.

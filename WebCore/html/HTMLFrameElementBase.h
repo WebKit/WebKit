@@ -82,7 +82,7 @@ public:
     bool viewSourceMode() const { return m_viewSource; }
 
 protected:
-    HTMLFrameElementBase(const QualifiedName&, Document*, bool createdByParser);
+    HTMLFrameElementBase(const QualifiedName&, Document*);
 
     bool isURLAllowed(const AtomicString&) const;
     void setNameAndOpenURL();

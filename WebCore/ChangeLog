@@ -11,6 +11,34 @@
 
 2009-04-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6625840> Previous Page isn't loaded after hitting back button at http://www.breakingnews.ie/
+
+        Test: http/tests/navigation/onload-navigation-iframe-2.html
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement): Removed unneeded createdByParser flag.
+        * html/HTMLFrameElement.h: Ditto.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase): Ditto.
+        * html/HTMLFrameElementBase.h: Ditto.
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement): Ditto.
+        * html/HTMLFrameOwnerElement.h: Ditto.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement): Ditto.
+        * html/HTMLIFrameElement.h: Ditto.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Removed unneeded check of the createdByParser flag.
+        The original change that introduced this, http://trac.webkit.org/changeset/25410, does
+        not make it clear why this check was needed. And it seems it is needed.
+
+2009-04-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/6654255> crash due to null FrameView in EventHandler

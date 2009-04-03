@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLIFrameElement : public HTMLFrameElementBase {
 public:
-    HTMLIFrameElement(const QualifiedName&, Document*, bool createdByParser);
+    HTMLIFrameElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
