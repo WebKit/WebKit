@@ -40,7 +40,7 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, ScriptExecutionContext* 
 {
     ASSERT(context->isDocument());
 
-    putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec), None);
+    putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, exec->lexicalGlobalObject()), None);
 }
 
 Document* JSImageConstructor::document() const

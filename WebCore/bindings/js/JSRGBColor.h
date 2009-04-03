@@ -38,9 +38,9 @@ namespace WebCore {
 
         unsigned impl() const { return m_color; }
 
-        static JSC::ObjectPrototype* createPrototype(JSC::ExecState* exec)
+        static JSC::ObjectPrototype* createPrototype(JSC::ExecState*, JSC::JSGlobalObject* globalObject)
         {
-            return exec->lexicalGlobalObject()->objectPrototype();
+            return globalObject->objectPrototype();
         }
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValuePtr prototype)

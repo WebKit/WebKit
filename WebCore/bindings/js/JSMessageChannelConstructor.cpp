@@ -42,7 +42,7 @@ JSMessageChannelConstructor::JSMessageChannelConstructor(ExecState* exec, Script
     : DOMObject(JSMessageChannelConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     , m_globalObject(toJSDOMGlobalObject(scriptExecutionContext))
 {
-    putDirect(exec->propertyNames().prototype, JSMessageChannelPrototype::self(exec), None);
+    putDirect(exec->propertyNames().prototype, JSMessageChannelPrototype::self(exec, exec->lexicalGlobalObject()), None);
 }
 
 JSMessageChannelConstructor::~JSMessageChannelConstructor()

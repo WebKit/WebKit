@@ -509,17 +509,27 @@ ScriptState* scriptStateFromNode(Node* node)
     return frame->script()->globalObject()->globalExec();
 }
 
+Structure* getCachedDOMStructure(JSDOMGlobalObject* globalObject, const ClassInfo* classInfo)
+{
+    JSDOMStructureMap& structures = globalObject->structures();
+    return structures.get(classInfo).get();
+}
+
+Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, PassRefPtr<Structure> structure, const ClassInfo* classInfo)
+{
+    JSDOMStructureMap& structures = globalObject->structures();
+    ASSERT(!structures.contains(classInfo));
+    return structures.set(classInfo, structure).first->second.get();
+}
+
 Structure* getCachedDOMStructure(ExecState* exec, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->structures();
-    return structures.get(classInfo).get();
+    return getCachedDOMStructure(static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), classInfo);
 }
 
 Structure* cacheDOMStructure(ExecState* exec, PassRefPtr<Structure> structure, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->structures();
-    ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, structure).first->second.get();
+    return cacheDOMStructure(static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), structure, classInfo);
 }
 
 JSObject* getCachedDOMConstructor(ExecState* exec, const ClassInfo* classInfo)

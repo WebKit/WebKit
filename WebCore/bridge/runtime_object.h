@@ -53,9 +53,9 @@ public:
 
     static const ClassInfo s_info;
 
-    static ObjectPrototype* createPrototype(ExecState* exec)
+    static ObjectPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
     {
-        return exec->lexicalGlobalObject()->objectPrototype();
+        return globalObject->objectPrototype();
     }
 
     static PassRefPtr<Structure> createStructure(JSValuePtr prototype)

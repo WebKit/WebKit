@@ -1,3 +1,20 @@
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for <rdar://problem/6476356>
+        https://bugs.webkit.org/show_bug.cgi?id=23148
+
+        Test for using the correct global object for location and history object
+        prototype chain creation.
+
+        * http/tests/security/cross-frame-access-history-prototype-expected.txt: Added.
+        * http/tests/security/cross-frame-access-history-prototype.html: Added.
+        * http/tests/security/cross-frame-access-location-prototype-expected.txt: Added.
+        * http/tests/security/cross-frame-access-location-prototype.html: Added.
+        * http/tests/security/resources/cross-frame-history-prototype-iframe.html: Added.
+        * http/tests/security/resources/cross-frame-location-prototype-iframe.html: Added.
+
 2009-04-03  Adam Roben  <aroben@apple.com>
 
         Skip tests that rely on layoutTestController.waitForPolicyDelegate on

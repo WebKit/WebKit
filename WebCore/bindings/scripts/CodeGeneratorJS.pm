@@ -437,7 +437,7 @@ sub GenerateHeader
     push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
     $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"};
 
@@ -659,7 +659,7 @@ sub GenerateHeader
     } elsif ($interfaceName eq "WorkerContext") {
         push(@headerContent, "    void* operator new(size_t, JSC::JSGlobalData*);\n");
     } else {
-        push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*);\n");
+        push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
     push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
@@ -901,9 +901,9 @@ sub GenerateImplementation
         push(@implContent, "    return globalData->heap.allocate(size);\n");
         push(@implContent, "}\n\n");
     } else {
-        push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
+        push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getDOMPrototype<${className}>(exec);\n");
+        push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
         push(@implContent, "}\n\n");
     }
     if ($numConstants > 0 || $numFunctions > 0) {
@@ -1009,12 +1009,12 @@ sub GenerateImplementation
     }
 
     if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
-        push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
+        push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(${parentClassName}Prototype::self(exec)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(exec->lexicalGlobalObject()->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(globalObject->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1960,7 +1960,7 @@ public:
     ${className}Constructor(ExecState* exec)
         : DOMObject(${className}Constructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     {
-        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
+        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, exec->lexicalGlobalObject()), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual const ClassInfo* classInfo() const { return &s_info; }

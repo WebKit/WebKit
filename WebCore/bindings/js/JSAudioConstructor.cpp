@@ -47,7 +47,7 @@ JSAudioConstructor::JSAudioConstructor(ExecState* exec, ScriptExecutionContext* 
 {
     ASSERT(context->isDocument());
 
-    putDirect(exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec), None);
+    putDirect(exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, exec->lexicalGlobalObject()), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 

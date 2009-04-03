@@ -36,7 +36,7 @@ JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Script
     : DOMObject(JSXMLHttpRequestConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     , m_globalObject(toJSDOMGlobalObject(scriptExecutionContext))
 {
-    putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
+    putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec, exec->lexicalGlobalObject()), None);
 }
 
 ScriptExecutionContext* JSXMLHttpRequestConstructor::scriptExecutionContext() const

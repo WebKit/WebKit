@@ -1,3 +1,63 @@
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/6476356>
+        https://bugs.webkit.org/show_bug.cgi?id=23148
+
+        - Use the window object the Location and History objects are directly associated with
+          instead of the lexical global object to pick the object prototype to serve as the
+          base of the their respective prototype chains.
+        - Re-factor as necessary to allow passing the correct global object to the createPrototype
+          functions.
+
+        Tests: http/tests/security/cross-frame-access-history-prototype.html
+               http/tests/security/cross-frame-access-location-prototype.html
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMStructure):
+        (WebCore::cacheDOMStructure):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMStructure):
+        (WebCore::getDOMPrototype):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::history):
+        (WebCore::JSDOMWindow::location):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        * bindings/js/JSNamedNodesCollection.h:
+        (WebCore::JSNamedNodesCollection::createPrototype):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSRGBColor.h:
+        (WebCore::JSRGBColor::createPrototype):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor):
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::JSWebKitPointConstructor::JSWebKitPointConstructor):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::JSWorkerConstructor::JSWorkerConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createPrototype):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createPrototype):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createPrototype):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createPrototype):
+        * page/DOMWindow.idl:
+
 2009-04-03  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

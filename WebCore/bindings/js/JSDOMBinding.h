@@ -73,21 +73,27 @@ namespace WebCore {
     void markActiveObjectsForContext(JSC::JSGlobalData&, ScriptExecutionContext*);
     void markDOMObjectWrapper(JSC::JSGlobalData& globalData, void* object);
 
+    JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
+    JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, PassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
     JSC::Structure* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSC::ExecState*, PassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
 
     JSC::JSObject* getCachedDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*);
     void cacheDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* constructor);
 
+    template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
+    {
+        if (JSC::Structure* structure = getCachedDOMStructure(globalObject, &WrapperClass::s_info))
+            return structure;
+        return cacheDOMStructure(globalObject, WrapperClass::createStructure(WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
+    }
     template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec)
     {
-        if (JSC::Structure* structure = getCachedDOMStructure(exec, &WrapperClass::s_info))
-            return structure;
-        return cacheDOMStructure(exec, WrapperClass::createStructure(WrapperClass::createPrototype(exec)), &WrapperClass::s_info);
+        return getDOMStructure<WrapperClass>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()));
     }
-    template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec)
+    template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
     {
-        return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec)->storedPrototype()));
+        return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, static_cast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
     #define CREATE_DOM_OBJECT_WRAPPER(exec, className, object) createDOMObjectWrapper<JS##className>(exec, static_cast<className*>(object))
     template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object)

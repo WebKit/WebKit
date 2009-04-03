@@ -28,9 +28,13 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "History.h"
 #include "JSDOMWindowShell.h"
 #include "JSEventListener.h"
+#include "JSHistory.h"
+#include "JSLocation.h"
 #include "JSMessagePort.h"
+#include "Location.h"
 #include "MessagePort.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -122,6 +126,28 @@ JSValuePtr JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& property
     if (!allowsAccessFrom(exec))
         return jsUndefined();
     return Base::lookupSetter(exec, propertyName);
+}
+
+JSValuePtr JSDOMWindow::history(ExecState* exec) const
+{
+    History* history = impl()->history();
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), history))
+        return wrapper;
+
+    JSHistory* jsHistory = new (exec) JSHistory(getDOMStructure<JSHistory>(exec, const_cast<JSDOMWindow*>(this)), history);
+    cacheDOMObjectWrapper(exec->globalData(), history, jsHistory);
+    return jsHistory;
+}
+
+JSValuePtr JSDOMWindow::location(ExecState* exec) const
+{
+    Location* location = impl()->location();
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), location))
+        return wrapper;
+
+    JSLocation* jsLocation = new (exec) JSLocation(getDOMStructure<JSLocation>(exec, const_cast<JSDOMWindow*>(this)), location);
+    cacheDOMObjectWrapper(exec->globalData(), location, jsLocation);
+    return jsLocation;
 }
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)

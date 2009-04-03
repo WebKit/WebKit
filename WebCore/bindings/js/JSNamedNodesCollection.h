@@ -44,9 +44,9 @@ namespace WebCore {
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
-        static JSC::ObjectPrototype* createPrototype(JSC::ExecState* exec)
+        static JSC::ObjectPrototype* createPrototype(JSC::ExecState*, JSC::JSGlobalObject* globalObject)
         {
-            return exec->lexicalGlobalObject()->objectPrototype();
+            return globalObject->objectPrototype();
         }
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValuePtr prototype)
