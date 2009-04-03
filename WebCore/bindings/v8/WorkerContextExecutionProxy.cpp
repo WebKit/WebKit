@@ -62,6 +62,9 @@ WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerCo
     : m_workerContext(workerContext)
     , m_recursion(0)
 {
+    // Need to use lock since V8EventListenerList constructor creates HandleScope.
+    v8::Locker locker;
+    m_listeners.set(new V8EventListenerList("m_listeners"));
 }
 
 WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
@@ -72,10 +75,14 @@ WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
 void WorkerContextExecutionProxy::dispose()
 {
     // Disconnect all event listeners.
-    for (size_t listenerIndex = 0; listenerIndex < m_listeners.size(); ++listenerIndex)
-       m_listeners[listenerIndex]->disconnect();
+    for (V8EventListenerList::iterator iterator(m_listeners->begin()); iterator != m_listeners->end(); ++iterator)
+       static_cast<V8WorkerContextEventListener*>(*iterator)->disconnect();
 
-    m_listeners.clear();
+    {
+        // Need to use lock since V8EventListenerList::clear() creates HandleScope.
+        v8::Locker locker;
+        m_listeners->clear();
+    }
 
     // Detach all events from their JS wrappers.
     for (size_t eventIndex = 0; eventIndex < m_events.size(); ++eventIndex) {
@@ -324,29 +331,26 @@ PassRefPtr<V8EventListener> WorkerContextExecutionProxy::FindOrCreateEventListen
     if (!object->IsObject())
         return 0;
 
-    for (size_t index = 0; index < m_listeners.size(); ++index) {
-        V8EventListener* el = m_listeners[index];
-        if (el->isInline() == isInline && el->getListenerObject() == object)
-            return el;
-    }
+    V8EventListener* listener = m_listeners->find(object->ToObject(), isInline);
     if (findOnly)
-        return NULL;
+        return listener;
 
     // Create a new one, and add to cache.
-    RefPtr<V8WorkerContextEventListener> listener = V8WorkerContextEventListener::create(this, v8::Local<v8::Object>::Cast(object), isInline);
-    m_listeners.append(listener.get());
+    RefPtr<V8WorkerContextEventListener> newListener = V8WorkerContextEventListener::create(this, v8::Local<v8::Object>::Cast(object), isInline);
+    {
+        // Need to use lock since V8EventListenerList::add() creates HandleScope.
+        v8::Locker locker;
+        m_listeners->add(newListener.get());
+    }
 
-    return listener.release();
+    return newListener.release();
 }
 
 void WorkerContextExecutionProxy::RemoveEventListener(V8EventListener* listener)
 {
-    for (size_t index = 0; index < m_listeners.size(); ++index) {
-        if (m_listeners[index] == listener) {
-            m_listeners.remove(index);
-            return;
-        }
-    }
+    // Need to use lock since V8EventListenerList::remove() creates HandleScope.
+    v8::Locker locker;
+    m_listeners->remove(listener);
 }
 
 void WorkerContextExecutionProxy::trackEvent(Event* event)
