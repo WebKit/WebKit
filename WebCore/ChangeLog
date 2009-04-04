@@ -1,3 +1,15 @@
+2009-04-03  Brian Weinstein  <bweinstein@gmail.com>
+
+        Allows 16 HTML/CSS standard colors to be shown as swatch backgrounds
+        when the names are given.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25044
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle):
+
 2009-04-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

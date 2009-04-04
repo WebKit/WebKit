@@ -586,8 +586,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.listItemElement.appendChild(document.createTextNode(";"));
 
         if (value) {
-            // FIXME: this dosen't catch keyword based colors like black and white
-            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})/g);
+            // FIXME: this only covers W3C and CSS 16 valid color names
+            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow/g);
             if (colors) {
                 var colorsLength = colors.length;
                 for (var i = 0; i < colorsLength; ++i) {
