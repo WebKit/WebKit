@@ -1,3 +1,17 @@
+2009-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix an assertion failure when clicking at the beginning of a
+          glyph cluster at the beginning of a text run
+
+        Test: fast/text/offsetForPosition-cluster-at-zero.html
+
+        * platform/graphics/mac/CoreTextController.cpp:
+        (WebCore::CoreTextController::offsetForPosition): Corrected the bound
+        check on firstGlyphBeforeCluster, letting it be 0 or -1, but not less
+        than -1.
+
 2009-04-03  Brian Weinstein  <bweinstein@gmail.com>
 
         Allows 16 HTML/CSS standard colors to be shown as swatch backgrounds

@@ -179,7 +179,7 @@ int CoreTextController::offsetForPosition(int h, bool includePartialGlyphs)
                 // reordering and on font fallback should occur within a CTLine.
                 if (clusterEnd - clusterStart > 1) {
                     int firstGlyphBeforeCluster = j - 1;
-                    while (firstGlyphBeforeCluster && coreTextRun.indexAt(firstGlyphBeforeCluster) >= clusterStart && coreTextRun.indexAt(firstGlyphBeforeCluster) < clusterEnd) {
+                    while (firstGlyphBeforeCluster >= 0 && coreTextRun.indexAt(firstGlyphBeforeCluster) >= clusterStart && coreTextRun.indexAt(firstGlyphBeforeCluster) < clusterEnd) {
                         CGFloat width = m_adjustedAdvances[offsetIntoAdjustedGlyphs + firstGlyphBeforeCluster].width;
                         clusterWidth += width;
                         x += width;

@@ -1,3 +1,14 @@
+2009-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test for a bug where computing the text offset for a position at the
+          beginning of a glyph cluster at the beginning of a Core Text run resulted
+          in an attempt to read past the end of a vector
+
+        * fast/text/offsetForPosition-cluster-at-zero-expected.txt: Added.
+        * fast/text/offsetForPosition-cluster-at-zero.html: Added.
+
 2009-04-04  Sam Weinig  <sam@webkit.org>
 
         Update test result.
