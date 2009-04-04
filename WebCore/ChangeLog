@@ -2,6 +2,21 @@
 
         Reviewed by Mark Rowe.
 
+        - fix <rdar://problem/6757862> REGRESSION: Cannot use the mouse to place
+          the insertion point inside a Thai character
+
+        Test: fast/text/international/thai-offsetForPosition-inside-character.html
+
+        * platform/graphics/mac/CoreTextController.cpp:
+        (WebCore::CoreTextController::offsetForPosition): Changed to use
+        cursorMovementIterator instead of characterBreakIterator, allowing this
+        function to return a valid cursor position even if it is not at
+        a character boundary.
+
+2009-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
         - fix an assertion failure when clicking at the beginning of a
           glyph cluster at the beginning of a text run
 

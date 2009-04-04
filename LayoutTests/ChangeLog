@@ -2,6 +2,16 @@
 
         Reviewed by Mark Rowe.
 
+        - test for  <rdar://problem/6757862> REGRESSION: Cannot use the mouse to
+          place the insertion point inside a Thai character
+
+        * fast/text/international/thai-offsetForPosition-inside-character-expected.txt: Added.
+        * fast/text/international/thai-offsetForPosition-inside-character.html: Added.
+
+2009-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
         - test for a bug where computing the text offset for a position at the
           beginning of a glyph cluster at the beginning of a Core Text run resulted
           in an attempt to read past the end of a vector
