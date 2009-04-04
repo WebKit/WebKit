@@ -1,3 +1,17 @@
+2009-04-03  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where you could not type any more in the Web Inspector's
+        search field after the first match is selected in the Resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23982
+        rdar://problem/6592367
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._jumpToSearchResult): Use the
+        window object of the frame to set the selection, not the main window.
+
 2009-04-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

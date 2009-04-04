@@ -274,7 +274,7 @@ WebInspector.SourceView.prototype = {
         if (!foundRange)
             return;
 
-        var selection = window.getSelection();
+        var selection = this.sourceFrame.element.contentWindow.getSelection();
         selection.removeAllRanges();
         selection.addRange(foundRange);
 
