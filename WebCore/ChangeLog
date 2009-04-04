@@ -1,3 +1,18 @@
+2009-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Cameron Zwarich
+
+        https://bugs.webkit.org/show_bug.cgi?id=24648
+        
+        Ensure that mapPoint(const IntPoint&) calls the FloatPoint
+        version to avoid infinite recursion.
+        
+        No test because mapPoint(const IntPoint&) isn't ever called
+        on Mac, so I can't reproduce.
+        
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::mapPoint):
+
 2009-04-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

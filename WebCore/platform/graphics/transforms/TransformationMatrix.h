@@ -116,7 +116,7 @@ public:
     // Like the version above, except that it rounds the mapped point to the nearest integer value.
     IntPoint mapPoint(const IntPoint& p) const
     {
-        return roundedIntPoint(mapPoint(p));
+        return roundedIntPoint(mapPoint(FloatPoint(p)));
     }
 
     // If the matrix has 3D components, the z component of the result is
