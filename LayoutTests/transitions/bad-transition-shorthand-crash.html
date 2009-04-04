@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test For Crash When Transition Properties Overridden</title>
+  <style type="text/css" media="screen">
+    #box {
+      position: relative;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transform: rotate(0);
+      -webkit-transition: -webkit-transform, 2s;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+    
+    function finish()
+    {
+        layoutTestController.notifyDone();
+    }
+    
+    function returnToStart()
+    {
+        var box = document.getElementById('box');
+        box.style.webkitTransform = 'rotate(0)';
+        setTimeout(finish, 100);
+    }
+    
+    function start()
+    {
+        var box = document.getElementById('box');
+        box.style.webkitTransform = 'rotate(180deg)';
+        setTimeout(returnToStart, 100);
+    }
+    
+    window.addEventListener('load', start, false);
+    
+  </script>
+</head>
+<body>
+
+<p>
+This tests a crash that was occuring when you have both an explicit property and 'all' in the -webkit-transition-property
+    CSS property. The crash would occur when you retarget the transition. This test should not crash.
+</p>
+<div id="box">
+</div>
+</body>
+</html>

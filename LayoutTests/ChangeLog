@@ -1,3 +1,12 @@
+2009-04-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=24787.
+
+        * transitions/bad-transition-shorthand-crash-expected.txt: Added.
+        * transitions/bad-transition-shorthand-crash.html: Added.
+
 2009-04-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

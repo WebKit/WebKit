@@ -1,3 +1,23 @@
+2009-04-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Test: transitions/bad-transition-shorthand-crash.html
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=24787.
+
+        We were starting transitions with 0 duration and delay, which is 
+        useless. With accelerated compositing on, this went through a code
+        path that tried to use m_toStyle, which never got set because the 
+        transitions was short circuited before it had a chance to. So I
+        both protect against using that null pointer and avoid starting
+        the transition in the first place.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::blendPropertyValueInStyle):
+
 2009-04-03  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where you could not type any more in the Web Inspector's

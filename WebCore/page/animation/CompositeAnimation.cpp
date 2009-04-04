@@ -198,7 +198,11 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, Render
                 equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
             }
 
-            if (!equal) {
+            // We can be in this loop with an inactive transition (!isActiveTransition). We need
+            // to do that to check to see if we are canceling a transition. But we don't want to
+            // start one of the inactive transitions. So short circuit that here. (See
+            // <https://bugs.webkit.org/show_bug.cgi?id=24787>
+            if (!equal && isActiveTransition) {
                 // Add the new transition
                 m_transitions.set(prop, ImplicitAnimation::create(const_cast<Animation*>(anim), prop, renderer, m_compositeAnimation, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle));
             }
