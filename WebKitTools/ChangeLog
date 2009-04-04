@@ -1,3 +1,11 @@
+2009-04-03  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix running DumpRenderTree with a root.
+
+        * Scripts/run-webkit-tests:
+
 2009-04-02  Adam Roben  <aroben@apple.com>
 
         Build fix for Windows machines that don't have WebKitTools/Scipts in

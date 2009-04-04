@@ -1239,6 +1239,9 @@ sub openDumpTool()
     }
 
     my @args = ($dumpTool, @toolArgs);
+    if (isAppleMacWebKit() and !isTiger()) { 
+        unshift @args, "arch", "-" . architecture();             
+    }
 
     if ($useValgrind) {
         unshift @args, "valgrind";
