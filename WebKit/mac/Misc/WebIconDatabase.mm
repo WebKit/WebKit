@@ -584,6 +584,8 @@ bool importToWebCoreFormat()
     // here because this code is only executed once for each icon database instance. We could 
     // make this configurable on a per-client basis someday if that seemed useful. 
     // See <rdar://problem/5320208>.
+    // FIXME: This has nothing to do with importing from the old to the new database format and should be moved elsewhere,
+    // especially because we might eventually delete all of this legacy importing code and we shouldn't delete this.
     CFStringRef databasePath = iconDatabase()->databasePath().createCFString();
     if (databasePath) {
         CFURLRef databasePathURL = CFURLCreateWithFileSystemPath(0, databasePath, kCFURLPOSIXPathStyle, FALSE); 
@@ -613,6 +615,13 @@ bool importToWebCoreFormat()
     // icons to import
     if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]])
         pageURLToIconURL = nil;
+    
+    if (!pageURLToIconURL) {
+        // We found no Safari-2-style icon database. Bail out immediately and do not delete everything
+        // in whatever directory we ended up looking in! Return true so we won't bother to check again.
+        // FIXME: We can probably delete all of the code to convert Safari-2-style icon databases now.
+        return true;
+    }
     
     NSEnumerator *enumerator = [pageURLToIconURL keyEnumerator];
     NSString *url, *iconURL;
