@@ -1,0 +1,20 @@
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    addEventListener("message", function() {
+        // Call injected function.
+        attack();
+
+        // Post message to victim to check if it was accessed.
+        document.getElementById('theFrame').contentWindow.postMessage("test", "*");
+    }, false);
+</script>
+<body>
+    <p>Test cross-origin direct document access.</p>
+    <iframe id="theFrame" src="resources/cross-frame-iframe-for-document-direct-test.html"></iframe>
+</body>
+</html>

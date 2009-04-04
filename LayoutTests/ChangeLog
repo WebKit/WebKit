@@ -1,3 +1,18 @@
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update tests for <rdar://problem/6330929>
+        https://bugs.webkit.org/show_bug.cgi?id=21456
+
+        * dom/xhtml/level2/html/HTMLFormElement10-expected.txt:
+        * fast/dom/Window/dom-access-from-closure-iframe-expected.txt:
+        * fast/dom/Window/dom-access-from-closure-window-expected.txt:
+        * http/tests/security/cross-frame-access-document-direct-expected.txt: Added.
+        * http/tests/security/cross-frame-access-document-direct.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-document-direct-test-victim.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-document-direct-test.html: Added.
+
 2009-04-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

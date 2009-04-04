@@ -1,3 +1,25 @@
+2009-04-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6330929>
+        https://bugs.webkit.org/show_bug.cgi?id=21456
+
+        Don't update the document pointer for all inactive windows on navigations.
+        This change causes us to differ slightly from Firefox when accessing the
+        document from within a closure tied to a navigated context, but as all
+        browsers differ on this edge case, I don't foresee compatibility issues.
+
+        Test: http/tests/security/cross-frame-access-document-direct.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/js/ScriptController.h:
+
 2009-04-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

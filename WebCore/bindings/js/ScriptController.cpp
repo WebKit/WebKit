@@ -123,7 +123,6 @@ void ScriptController::clearWindowShell()
 
     JSLock lock(false);
     m_windowShell->window()->clear();
-    m_liveFormerWindows.add(m_windowShell->window());
     m_windowShell->setWindow(m_frame->domWindow());
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
@@ -160,7 +159,7 @@ void ScriptController::initScript()
     JSLock lock(false);
 
     m_windowShell = new JSDOMWindowShell(m_frame->domWindow());
-    updateDocument();
+    m_windowShell->window()->updateDocument();
 
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
@@ -252,9 +251,6 @@ void ScriptController::updateDocument()
     JSLock lock(false);
     if (m_windowShell)
         m_windowShell->window()->updateDocument();
-    HashSet<JSDOMWindow*>::iterator end = m_liveFormerWindows.end();
-    for (HashSet<JSDOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)
-        (*it)->updateDocument();
 }
 
 void ScriptController::updateSecurityOrigin()
