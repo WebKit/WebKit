@@ -1,3 +1,11 @@
+2009-04-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createPrototype): Take the JSGlobalObject
+        as second argument.
+
 2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for wxMac/Tiger.
