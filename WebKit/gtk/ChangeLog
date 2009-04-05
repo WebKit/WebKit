@@ -1,3 +1,16 @@
+2009-04-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Implement LayoutTestControllerGtk::setPrivateBrowsingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=24487
+
+        Updated documentation and put more information about the
+        private-browsing setting for WebKitGtk.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+
 2009-04-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.

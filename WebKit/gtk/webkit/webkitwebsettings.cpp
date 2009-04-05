@@ -340,7 +340,12 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     /**
     * WebKitWebSettings:enable-private-browsing:
     *
-    * Whether to enable private browsing mode.
+    * Whether to enable private browsing mode. Private browsing mode prevents
+    * WebKit from updating the global history and storing any session
+    * information e.g., on-disk cache, as well as suppressing any messages
+    * from being printed into the (javascript) console.
+    *
+    * This is currently experimental for WebKitGtk.
     *
     * Since 1.1.2
     */
