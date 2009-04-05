@@ -1,6 +1,5 @@
 {
 local:
-_ZSt*;
-_ZNSt*;
+_Z*;
 cti*;
 };
