@@ -1,3 +1,44 @@
+2009-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        [Originally] Reviewed by Sam Weinig.
+
+        Rolled back in r42214 with crashes fixed.
+
+        [Removed irrelevant ExecState* parameter from event handler registration code.]
+        
+        [No change in behavior.]
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::findOrCreateJSProtectedEventListener):
+        (WebCore::JSDOMGlobalObject::findJSEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSEventListener):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::addEventListener):
+        (WebCore::JSWorker::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-04-05  Erik L. Bunce  <elbunce@xendom.com>
 
         Reviewed by Simon Hausmann.

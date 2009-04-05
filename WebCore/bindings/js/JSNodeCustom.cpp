@@ -113,7 +113,7 @@ JSValuePtr JSNode::addEventListener(ExecState* exec, const ArgList& args)
     if (!globalObject)
         return jsUndefined();
 
-    if (RefPtr<JSProtectedEventListener> listener = globalObject->findOrCreateJSProtectedEventListener(exec, args.at(exec, 1)))
+    if (RefPtr<JSProtectedEventListener> listener = globalObject->findOrCreateJSProtectedEventListener(args.at(exec, 1)))
         impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
