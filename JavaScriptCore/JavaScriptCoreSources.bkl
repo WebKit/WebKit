@@ -157,6 +157,13 @@ Source files for JSCore.
         bytecode/Opcode.cpp
         bytecode/SamplingTool.cpp
         interpreter/RegisterFile.cpp
+        jit/ExecutableAllocator.cpp
+    </set>
+    <set append="1" var="JSCORE_VM_SOURCES_WIN">
+       jit/ExecutableAllocatorWin.cpp
+    </set>
+   <set append="1" var="JSCORE_VM_SOURCES_POSIX">
+       jit/ExecutableAllocatorPosix.cpp
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp

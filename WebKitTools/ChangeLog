@@ -1,3 +1,9 @@
+2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Update the version of ICU dlls.
+
+        * wx/build-wxwebkit:
+
 2009-04-03  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe.

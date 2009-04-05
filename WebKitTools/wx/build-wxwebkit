@@ -43,7 +43,7 @@ fi
 
 WKWINLIBS=WebKitLibraries/win
 WINDEPS="         $WKWINLIBS/lib/pthreadVC2.dll"
-WINDEPS="$WINDEPS $WKWINLIBS/bin/icuuc34.dll $WKWINLIBS/bin/icudt34.dll $WKWINLIBS/bin/icuin34.dll"
+WINDEPS="$WINDEPS $WKWINLIBS/bin/icuuc40.dll $WKWINLIBS/bin/icudt40.dll $WKWINLIBS/bin/icuin40.dll"
 WINDEPS="$WINDEPS $WKWINLIBS/bin/libcurl.dll $WKWINLIBS/bin/libeay32.dll $WKWINLIBS/bin/ssleay32.dll $WKWINLIBS/bin/zlib1.dll"
 WINDEPS="$WINDEPS $WKWINLIBS/lib/sqlite3.dll"
 WINDEPS="$WINDEPS $WKWINLIBS/bin/libxml2.dll $WKWINLIBS/bin/libxslt.dll" 

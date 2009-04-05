@@ -48,6 +48,22 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_VM_SOURCES)
             $(JSCORE_WTF_SOURCES)
         </sources>
+
+        <set var="ASSEMBLER_SOURCES">
+            <if cond="WX_PORT=='gtk2'">
+                $(JSCORE_VM_SOURCES_POSIX)
+            </if>
+            <if cond="PLATFORM_OS=='mac'">
+                $(JSCORE_VM_SOURCES_POSIX)
+            </if>
+            <if cond="WX_PORT=='msw'">
+                $(JSCORE_VM_SOURCES_WIN)
+            </if>
+        </set>
+
+        <sources>
+            $(ASSEMBLER_SOURCES)
+        </sources>
         <install-to>$(WKOUTPUTDIR)</install-to>
         <pic>on</pic>
         <threading>multi</threading>

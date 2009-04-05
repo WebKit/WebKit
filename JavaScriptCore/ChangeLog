@@ -1,3 +1,11 @@
+2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for Win port. Build the assembler sources to get missing functions.
+
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+        * wtf/Platform.h:
+
 2009-04-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

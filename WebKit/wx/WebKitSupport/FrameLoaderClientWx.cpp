@@ -32,6 +32,7 @@
 #include <JavaScriptCore/APICast.h>
 
 #include "DocumentLoader.h"
+#include "FormState.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
