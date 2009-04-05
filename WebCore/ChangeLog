@@ -1,3 +1,14 @@
+2009-04-05  Erik L. Bunce  <elbunce@xendom.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25050
+
+        Fix an assert failure when dropping an 'empty' text/uri-list on a QWebView. 
+
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asURL):
+
 2009-04-05  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,6 +126,10 @@ String DragData::asURL(String* title) const
     if (!m_platformDragData)
         return String();
     QList<QUrl> urls = m_platformDragData->urls();
+
+    if (urls.isEmpty())
+        return String();
+
     return urls.first().toString();
 }
     
