@@ -68,7 +68,7 @@ static inline bool needsLineBreakIterator(UChar ch)
     return ch > 0x7F && ch != noBreakSpace;
 }
 
-#ifdef BUILDING_ON_TIGER
+#if PLATFORM(MAC) && defined(BUILDING_ON_TIGER)
 static inline TextBreakLocatorRef lineBreakLocator()
 {
     TextBreakLocatorRef locator = 0;
@@ -79,7 +79,7 @@ static inline TextBreakLocatorRef lineBreakLocator()
 
 int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakSpaceAsBreak)
 {
-#ifndef BUILDING_ON_TIGER
+#if !PLATFORM(MAC) || !defined(BUILDING_ON_TIGER)
     TextBreakIterator* breakIterator = 0;
 #endif
     int nextBreak = -1;
@@ -93,7 +93,7 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakS
 
         if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
             if (nextBreak < i && i) {
-#ifndef BUILDING_ON_TIGER
+#if !PLATFORM(MAC) || !defined(BUILDING_ON_TIGER)
                 if (!breakIterator)
                     breakIterator = lineBreakIterator(str, len);
                 if (breakIterator)

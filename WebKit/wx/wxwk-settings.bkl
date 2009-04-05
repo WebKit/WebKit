@@ -76,6 +76,7 @@ JavaScriptCore Bakefile project file.
         <if cond="FORMAT=='gnu'">
             <include>$(WK_ROOT)/WebKitLibraries/unix/include</include>
             <lib-path>$(WK_ROOT)/WebKitLibraries/unix/lib</lib-path>
+            <lib-path>$(WK_ROOT)/WebKitLibraries</lib-path>
         </if>
         <if cond="FORMAT in ['msvc', 'msvs2005prj']">
             <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
@@ -91,6 +92,13 @@ JavaScriptCore Bakefile project file.
         <if cond="FORMAT=='gnu'">
             <ldflags>-ljpeg -lpng</ldflags>
         </if>
+        
+        <set var="WEBCORE_LIBS">
+        	<if cond="PLATFORM_OS=='mac'">
+                WebKitSystemInterfaceTiger
+            </if>
+        </set>
+        <sys-lib>$(WEBCORE_LIBS)</sys-lib>
         <wx-lib>core</wx-lib>
         <wx-lib>base</wx-lib>
         <if cond="PLATFORM_WIN32=='1'">

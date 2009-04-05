@@ -44,12 +44,14 @@ and WebCore. Include this file to use these settings.
     </option>
 
     <template id="sqlite3">
-        <sys-lib>sqlite3</sys-lib>
         <if cond="FORMAT=='gnu'">
-            <ldflags>$(SQLITE3_LIBS)</ldflags>
-            <cxxflags>$(SQLITE3_CFLAGS)</cxxflags>
+        	<set var="SQLITE_LDFLAGS"><if cond="PLATFORM_OS=='mac'">-lWebCoreSQLite3</if><if cond="PLATFORM_OS=='linux'">$(SQLITE3_LIBS)</if></set>
+        	<set var="SQLITE_CFLAGS"><if cond="PLATFORM_OS=='mac'">-I$(WK_ROOT)/WebKitLibraries/WebCoreSQLite3</if><if cond="PLATFORM_OS=='linux'">$(SQLITE3_CFLAGS)</if></set>
+            <ldflags>$(SQLITE_LDFLAGS)</ldflags>
+            <cxxflags>$(SQLITE_CFLAGS)</cxxflags>
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
+            <sys-lib>sqlite3</sys-lib>
             <include>$(WK_ROOT)/WebKitLibraries/win/include/SQLite</include>
         </if>
     </template>

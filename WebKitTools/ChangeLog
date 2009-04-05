@@ -1,5 +1,11 @@
 2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Build fixes for wxMac/Tiger and PPC builds.
+
+        * wx/build-wxwebkit:
+
+2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Update the version of ICU dlls.
 
         * wx/build-wxwebkit:

@@ -42,6 +42,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/platform/wx</include>
         <include>$(SRCDIR)/platform/wx/wxcode</include>
         <include>$(SRCDIR)/page/wx</include>
+        <include>$(WK_ROOT)/WebKitLibraries</include>
         
         <sources>
             bindings/js/ScriptControllerWx.cpp
@@ -128,7 +129,7 @@ wxWebCore port Bakefile project file.
         <sources>
             $(EXT_SOURCES)
         </sources>
-
+        
     </template>
 
     <lib id="wx-webcore-static" template="webcore-wx,wx-lib">

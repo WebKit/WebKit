@@ -1,3 +1,13 @@
+2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fixes for wxMac/Tiger.
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition):
+        * webcore-wx.bkl:
+
 2009-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Cameron Zwarich

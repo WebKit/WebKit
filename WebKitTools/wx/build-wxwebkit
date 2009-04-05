@@ -255,18 +255,21 @@ if [ $do_clean != 1 ]; then
 fi
 
 
-if [ $do_build == 1 -o $do_clean == 1 ]; then
+if [ $do_build == 1 -o $do_clean == 1 ]; then   
+    WXGC_DEFINE=""
+    EXTRA_CPPFLAGS=""
+    
     if [ "${OSTYPE:0:6}" == "cygwin" ]; then
         PLATFORM_OS="win"
     elif [ "${OSTYPE:0:6}" == "darwin" ]; then
         PLATFORM_OS="mac"
+        EXTRA_CPPFLAGS="-DMAC_OS_X_VERSION_MIN_REQUIRED=1040"
         use_wxgc=1
     else
         PLATFORM_OS="linux"
         use_wxgc=1
     fi
-    
-    WXGC_DEFINE=""
+
     if [ $use_wxgc == 1 ]; then
         WXGC_DEFINE="-DWTF_USE_WXGC=1"
     fi
@@ -282,14 +285,14 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
 
     WINDEPS="$WINDEPS $WXWIN/lib/vc_dll/wxmsw28u${WX_EXT}_core_vc.dll $WXWIN/lib/vc_dll/wxbase28u${WX_EXT}_vc.dll"
     
-    do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
 
     mkdir -p $WEBKITOUTPUTDIR/JavaScriptCore
     cp -p $WK_ROOT/JavaScriptCore/API/*.h $WEBKITOUTPUTDIR/JavaScriptCore/
 
-    do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
-    do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-    do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
+    do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
 
     if [ $do_clean == 1 ]; then
         rm -rf $WK_ROOT/JavaScriptCore/DerivedSources
@@ -358,7 +361,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
                 PY_LIBDIR="$PY_LIBDIR/lib"
             fi
             
-            do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE" \
+            do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE $EXTRA_CPPFLAGS" \
                 WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 if [ -f $WEBKITOUTPUTDIR/_webview.pyd -a -f $WEBKITOUTPUTDIR/_webview.dll ]; then

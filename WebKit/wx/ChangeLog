@@ -1,5 +1,12 @@
 2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Build fixes for wxMac/Tiger.
+
+        * dependencies.bkl:
+        * wxwk-settings.bkl:
+
+2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Add missing header.
 
         * WebKitSupport/FrameLoaderClientWx.cpp:
