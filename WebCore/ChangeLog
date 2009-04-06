@@ -1,3 +1,14 @@
+2009-04-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Don't show and hide the platformPluginWidget, as it's our QWebView
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::setParentVisible):
+
 2009-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
