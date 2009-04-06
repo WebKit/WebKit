@@ -1,3 +1,12 @@
+2009-04-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Not reviewed because it's stupidly obvious.
+
+        Correct the expected result by adding an extra line break.
+
+        * fast/dom/HTMLSelectElement/length-not-overridden-expected.txt: Added
+            an extra line.
+
 2009-04-06  Dave Moore  <davemoore@google.com>
 
         Reviewed by Dimitri Glazkov.
