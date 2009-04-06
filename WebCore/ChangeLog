@@ -1,3 +1,17 @@
+2009-04-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unchecked bool return values for some dispatch event functions.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchUIEvent):
+        (WebCore::Node::dispatchWebKitAnimationEvent):
+        (WebCore::Node::dispatchWebKitTransitionEvent):
+        (WebCore::Node::dispatchProgressEvent):
+        * dom/Node.h:
+
 2009-04-06  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

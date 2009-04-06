@@ -527,10 +527,10 @@ public:
     bool dispatchEventForType(const AtomicString& eventType, bool canBubble, bool cancelable);
     EventListener* inlineEventListenerForType(const AtomicString& eventType) const;
 
-    bool dispatchSubtreeModifiedEvent();
+    void dispatchSubtreeModifiedEvent();
     void dispatchWindowEvent(PassRefPtr<Event>);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchUIEvent(const AtomicString& eventType, int detail = 0, PassRefPtr<Event> underlyingEvent = 0);
+    void dispatchUIEvent(const AtomicString& eventType, int detail = 0, PassRefPtr<Event> underlyingEvent = 0);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchWheelEvent(PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType,
@@ -541,10 +541,10 @@ public:
         bool isSimulated = false, Node* relatedTarget = 0, PassRefPtr<Event> underlyingEvent = 0);
     void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent = 0);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
-    bool dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg);
-    void dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
-    bool dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
-    bool dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
+    void dispatchProgressEvent(const AtomicString& eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg);
+    void dispatchStorageEvent(const AtomicString& eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
+    void dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
+    void dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
     bool dispatchGenericEvent(PassRefPtr<Event>);
 
     virtual void handleLocalEvents(Event*, bool useCapture);

@@ -2492,7 +2492,7 @@ doneWithDefault:
     return !event->defaultPrevented();
 }
 
-bool Node::dispatchSubtreeModifiedEvent()
+void Node::dispatchSubtreeModifiedEvent()
 {
     ASSERT(!eventDispatchForbidden());
     
@@ -2501,9 +2501,10 @@ bool Node::dispatchSubtreeModifiedEvent()
     notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
     
     if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
-        return false;
+        return;
+
     ExceptionCode ec = 0;
-    return dispatchEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true, false, 0, String(), String(), String(), 0), ec);
+    dispatchEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true, false, 0, String(), String(), String(), 0), ec);
 }
 
 void Node::dispatchWindowEvent(PassRefPtr<Event> e)
@@ -2535,7 +2536,7 @@ void Node::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg,
     }
 }
 
-bool Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
+void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());
     ASSERT(eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
@@ -2545,7 +2546,7 @@ bool Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
     ExceptionCode ec = 0;
     RefPtr<UIEvent> evt = UIEvent::create(eventType, true, cancelable, document()->defaultView(), detail);
     evt->setUnderlyingEvent(underlyingEvent);
-    return dispatchEvent(evt.release(), ec);
+    dispatchEvent(evt.release(), ec);
 }
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& key)
@@ -2733,20 +2734,20 @@ void Node::dispatchWheelEvent(PlatformWheelEvent& e)
         e.accept();
 }
 
-bool Node::dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime)
+void Node::dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime)
 {
     ASSERT(!eventDispatchForbidden());
     
     ExceptionCode ec = 0;
-    return dispatchEvent(WebKitAnimationEvent::create(eventType, animationName, elapsedTime), ec);
+    dispatchEvent(WebKitAnimationEvent::create(eventType, animationName, elapsedTime), ec);
 }
 
-bool Node::dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime)
+void Node::dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime)
 {
     ASSERT(!eventDispatchForbidden());
     
     ExceptionCode ec = 0;
-    return dispatchEvent(WebKitTransitionEvent::create(eventType, propertyName, elapsedTime), ec);
+    dispatchEvent(WebKitTransitionEvent::create(eventType, propertyName, elapsedTime), ec);
 }
 
 void Node::dispatchFocusEvent()
@@ -2766,11 +2767,11 @@ bool Node::dispatchEventForType(const AtomicString& eventType, bool canBubbleArg
     return dispatchEvent(Event::create(eventType, canBubbleArg, cancelableArg), ec);
 }
 
-bool Node::dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg)
+void Node::dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg)
 {
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
-    return dispatchEvent(ProgressEvent::create(eventType, lengthComputableArg, loadedArg, totalArg), ec);
+    dispatchEvent(ProgressEvent::create(eventType, lengthComputableArg, loadedArg, totalArg), ec);
 }
 
 void Node::dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source)
