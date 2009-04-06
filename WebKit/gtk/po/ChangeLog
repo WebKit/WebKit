@@ -2,6 +2,12 @@
 
         Rubber-stamped by Sam Weinig.
 
+        * pt_BR.po: Added Brazilian Portuguese translation for WebKitGTK+.
+
+2009-04-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Sam Weinig.
+
         * GNUmakefile.am, POTFILES, webkit.pot: Initial setup of the
         localization infra-structure.
 

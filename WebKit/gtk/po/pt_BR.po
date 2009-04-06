@@ -1,0 +1,321 @@
+# Brazilian Portuguese translations for WebKit package.
+# Copyright (C) 2009 Collabora Ltd.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit 1.1.4\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2009-04-06 14:42-0300\n"
+"PO-Revision-Date: 2009-04-06 15:58-0300\n"
+"Last-Translator: Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>\n"
+"Language-Team: Brazilian Portuguese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:425
+msgid "Upload File"
+msgstr "Enviar Arquivo"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:139
+msgid "Input _Methods"
+msgstr "_Métodos de entrada"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "LRM Marca da _esquerda para a direita"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "RLM Marca da _direita para a esquerda"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE _Embutido da esquerda para a direita"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE E_mbutido da direita para a esquerda"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "LRO _Sobrepor da esquerda para a direita"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO S_obrepor da direita para a esquerda"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "PDF _Pop directional formatting"
+msgstr "_PDF Mostrar formatação direcional"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "_ZWS Espaço de largura zero"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ _União de largura zero"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ _Não-união de largura zero"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:134
+msgid "_Insert Unicode Control Character"
+msgstr "_Inserir caractere de controle Unicode"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:250
+msgid "Network Request"
+msgstr "Requisição de Rede"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:251
+msgid "The network request for the URI that should be downloaded"
+msgstr "A requisição de rede para a URI que deve ser baixada"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:265
+msgid "Destination URI"
+msgstr "URI de Destino"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
+msgid "The destination URI where to save the file"
+msgstr "A URI de destino, onde deve ser salvo o arquivo"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:280
+msgid "Suggested Filename"
+msgstr "Nome de Arquivo Sugerido"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
+msgid "The filename suggested as default when saving"
+msgstr "O nome de arquivo que deve ser usado como padrão ao salvar"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:294
+msgid "Progress"
+msgstr "Progresso"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:295
+msgid "Determines the current progress of the download"
+msgstr "Determina o progresso atual do download"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:308
+msgid "Status"
+msgstr "Estado"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:309
+msgid "Determines the current status of the download"
+msgstr "Determina o estado atual do download"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:324
+msgid "Current Size"
+msgstr "Tamanho Atual"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "The length of the data already downloaded"
+msgstr "A quantidade de dados já baixados"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:339
+msgid "Total Size"
+msgstr "Tamanho total"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:340
+msgid "The total size of the file"
+msgstr "O tamanho total do arquivo"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:211
+msgid "Name"
+msgstr "Nome"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:212
+msgid "The name of the frame"
+msgstr "O nome do quadro"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:218
+msgid "Title"
+msgstr "Título"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:219
+msgid "The document title of the frame"
+msgstr "O título do documento do quadro"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:225
+msgid "URI"
+msgstr "URI"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:226
+msgid "The current URI of the contents displayed by the frame"
+msgstr "A URI atual do conteúdo que está sendo exibido pelo quadro"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:51
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
+msgid "Submit"
+msgstr "Enviar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
+msgid "Reset"
+msgstr "Limpar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "_Searchable Index"
+msgstr "Índice de bu_sca"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
+msgid "Choose File"
+msgstr "Escolher arquivo"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
+msgid "(None)"
+msgstr "(Nenhum)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
+msgid "Open Link in New _Window"
+msgstr "Abrir Link em Nova _Janela"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
+msgid "_Download Linked File"
+msgstr "_Baixar Arquivo"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
+msgid "Copy Link Loc_ation"
+msgstr "Copiar _Endereço do Link"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
+msgid "Open _Image in New Window"
+msgstr "Abrir _Imagem em Nova Janela"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
+msgid "Sa_ve Image As"
+msgstr "Sal_var Imagem Como"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
+msgid "Cop_y Image"
+msgstr "Co_piar Imagem"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
+msgid "Open _Frame in New Window"
+msgstr "Abrir _Quadro em Nova Janela"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:162
+msgid "_Reload"
+msgstr "_Recarregar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:179
+msgid "No Guesses Found"
+msgstr "Nenhuma Sugestão Encontrada"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:184
+msgid "_Ignore Spelling"
+msgstr "_Ignorar Palavra"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:189
+msgid "_Learn Spelling"
+msgstr "_Aprender Palavra"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:194
+msgid "_Search the Web"
+msgstr "_Procurar na Web"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:199
+msgid "_Look Up in Dictionary"
+msgstr "Procurar no _Dicionário"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:204
+msgid "_Open Link"
+msgstr "_Abrir Link"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:209
+msgid "Ignore _Grammar"
+msgstr "Ignorar _Gramática"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:214
+msgid "Spelling and _Grammar"
+msgstr "Ortografia e Gramática"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Show Spelling and Grammar"
+msgstr "E_xibir Ortografia e Gramática"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Hide Spelling and Grammar"
+msgstr "E_sconder Ortografia e Gramática"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:224
+msgid "_Check Document Now"
+msgstr "_Verificar Documento Agora"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:229
+msgid "Check Spelling While _Typing"
+msgstr "Verifiação _Ortográfica ao Digitar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:234
+msgid "Check _Grammar With Spelling"
+msgstr "Verificação _Gramatical ao Digitar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:239
+msgid "_Font"
+msgstr "_Fonte"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:262
+msgid "_Outline"
+msgstr "_Outline"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:267
+msgid "Inspect _Element"
+msgstr "Inspecionar _Elemento"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:272
+msgid "No recent searches"
+msgstr "Não há buscas recentes"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:277
+msgid "Recent searches"
+msgstr "Buscas recentes"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:282
+msgid "_Clear recent searches"
+msgstr "_Limpar buscas recentes"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:287
+msgid "term"
+msgstr "termo"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:292
+msgid "definition"
+msgstr "definição"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:297
+msgid "press"
+msgstr "pressionar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:302
+msgid "select"
+msgstr "selecionar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:307
+msgid "activate"
+msgstr "ativar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:312
+msgid "uncheck"
+msgstr "desmarcar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:317
+msgid "check"
+msgstr "marcar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:322
+msgid "jump"
+msgstr "pular"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:328
+msgid " files"
+msgstr "arquivos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:333
+msgid "Unknown"
+msgstr "Desconhecido"
+
+#~ msgid "Select _All"
+#~ msgstr "Selecionar _Tudo"
