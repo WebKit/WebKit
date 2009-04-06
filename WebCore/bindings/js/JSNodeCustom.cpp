@@ -52,6 +52,7 @@
 #include "Node.h"
 #include "Notation.h"
 #include "ProcessingInstruction.h"
+#include "RegisteredEventListener.h"
 #include "Text.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -66,6 +67,12 @@ using namespace JSC;
 namespace WebCore {
 
 typedef int ExpectionCode;
+
+static inline void markEventListeners(const RegisteredEventListenerVector& listeners)
+{
+    for (size_t i = 0; i < listeners.size(); ++i)
+        listeners[i]->listener()->mark();
+}
 
 JSValuePtr JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
@@ -113,7 +120,7 @@ JSValuePtr JSNode::addEventListener(ExecState* exec, const ArgList& args)
     if (!globalObject)
         return jsUndefined();
 
-    if (RefPtr<JSProtectedEventListener> listener = globalObject->findOrCreateJSProtectedEventListener(args.at(exec, 1)))
+    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(exec, 1)))
         impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
@@ -125,7 +132,7 @@ JSValuePtr JSNode::removeEventListener(ExecState* exec, const ArgList& args)
     if (!globalObject)
         return jsUndefined();
 
-    if (JSProtectedEventListener* listener = globalObject->findJSProtectedEventListener(args.at(exec, 1)))
+    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(exec, 1)))
         impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
@@ -141,16 +148,16 @@ void JSNode::mark()
 
     Node* node = m_impl.get();
 
-    // Nodes in the document are kept alive by JSDocument::mark,
-    // so we have no special responsibilities and can just call the base class here.
+    // Nodes in the document are kept alive by JSDocument::mark, so, if we're in
+    // the document, we need to mark the document, but we don't need to explicitly
+    // mark any other nodes.
     if (node->inDocument()) {
-        // But if the document isn't marked we have to mark it to ensure that
-        // nodes reachable from this one are also marked
+        DOMObject::mark();
+        markEventListeners(node->eventListeners());
         if (Document* doc = node->ownerDocument())
             if (DOMObject* docWrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), doc))
                 if (!docWrapper->marked())
                     docWrapper->mark();
-        DOMObject::mark();
         return;
     }
 
@@ -160,14 +167,15 @@ void JSNode::mark()
     for (Node* current = m_impl.get(); current; current = current->parentNode())
         root = current;
 
-    // If we're already marking this tree, then we can simply mark this wrapper
-    // by calling the base class; our caller is iterating the tree.
+    // Nodes in a subtree are marked by the tree's root, so, if the root is already
+    // marking the tree, we don't need to explicitly mark any other nodes.
     if (root->inSubtreeMark()) {
         DOMObject::mark();
+        markEventListeners(node->eventListeners());
         return;
     }
 
-    // Mark the whole tree; use the global set of roots to avoid reentering.
+    // Mark the whole tree subtree.
     root->setInSubtreeMark(true);
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
         JSNode* wrapper = getCachedDOMNodeWrapper(m_impl->document(), nodeToMark);

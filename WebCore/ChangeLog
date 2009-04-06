@@ -1,3 +1,34 @@
+2009-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+
+        The problem was that a protected event listener's scope chain would end
+        up with a reference to the Node protecting it, causing a cycle. The
+        solution is to stop protecting event listeners and rely on marking instead.
+
+        This patch converts most Node event listeners to use marking instead of
+        GC protection.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::isObservableThroughDOM):
+        (WebCore::markDOMNodesForDocument): Refactored the test for whether a Node
+        needs marking, and added a case for marking the node in order to mark its
+        event listeners.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::markEventListeners):
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        (WebCore::JSNode::mark): Added code to mark a Node's event listeners when
+        marking the Node. Changed code using protected event listeners to use event
+        listeners.
+
+        * dom/Node.idl: Changed code using protected event listeners to use event
+        listeners.
+
 2009-04-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

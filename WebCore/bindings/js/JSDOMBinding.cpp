@@ -259,32 +259,45 @@ void forgetAllDOMNodesForDocument(Document* document)
     removeWrappers(document->wrapperCache());
 }
 
+static inline bool isObservableThroughDOM(JSNode* jsNode)
+{
+    // Certain conditions implicitly make a JS DOM node wrapper observable
+    // through the DOM, even if no explicit reference to it remains.
+
+    Node* node = jsNode->impl();
+
+    if (node->inDocument()) {
+        // 1. If a node is in the document, and its wrapper has custom properties,
+        // the wrapper is observable because future access to the node through the
+        // DOM must reflect those properties.
+        if (jsNode->hasCustomProperties())
+            return true;
+
+        // 2. If a node is in the document, and has event listeners, its wrapper is
+        // observable because its wrapper is responsible for marking those event listeners.
+        if (node->eventListeners().size())
+            return true; // Technically, we may overzealously mark a wrapper for a node that has only non-JS event listeners. Oh well.
+    } else {
+        // 3. If a wrapper is the last reference to an image element that is loading
+        // but not in the document -- which happens in the case of "new Image" -- the
+        // wrapper is observable because it is the only thing keeping the image element
+        // alive, and if the image element is destroyed, its load event will not fire.
+        // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
+        if (node->hasTagName(imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
+            return true;
+    }
+
+    return false;
+}
+
 void markDOMNodesForDocument(Document* doc)
 {
-    // If a node's JS wrapper holds custom properties, those properties must
-    // persist every time the node is fetched from the DOM. So, we keep JS
-    // wrappers like that from being garbage collected.
-
     JSWrapperCache& nodeDict = doc->wrapperCache();
     JSWrapperCache::iterator nodeEnd = nodeDict.end();
     for (JSWrapperCache::iterator nodeIt = nodeDict.begin(); nodeIt != nodeEnd; ++nodeIt) {
         JSNode* jsNode = nodeIt->second;
-        Node* node = jsNode->impl();
-
-        if (jsNode->marked())
-            continue;
-
-        // No need to preserve a wrapper that has no custom properties or is no
-        // longer fetchable through the DOM.
-        if (!jsNode->hasCustomProperties() || !node->inDocument()) {
-            //... unless the wrapper wraps a loading image, since the "new Image"
-            // syntax allows an orphan image wrapper to be the last reference
-            // to a loading image, whose load event might have important side-effects.
-            if (!node->hasTagName(imgTag) || static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
-                continue;
-        }
-
-        jsNode->mark();
+        if (!jsNode->marked() && isObservableThroughDOM(jsNode))
+            jsNode->mark();
     }
 }
 
