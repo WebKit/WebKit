@@ -3068,6 +3068,8 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
 
     if (compositor()->updateLayerCompositingState(this, diff))
         compositor()->setCompositingLayersNeedUpdate();
+    else if (m_backing)
+        m_backing->updateGraphicsLayerGeometry();
 #else
     UNUSED_PARAM(diff);
 #endif

@@ -1,3 +1,14 @@
+2009-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=25052
+        
+        Testcase for creating certain compositing layer configurations on the fly.
+
+        * compositing/overflow/overflow-positioning.html: Added.
+        * platform/mac/compositing/overflow/overflow-positioning-expected.txt: Added.
+
 2009-04-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

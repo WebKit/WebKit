@@ -167,8 +167,8 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
     
 #if PROFILE_LAYER_REBUILD
     double endTime = WTF::currentTime();
-    if (!updateRoot)
-        fprintf(stderr, "Update %d: computeCompositingRequirements for the world took %fms\n"
+    if (updateRoot == rootRenderLayer())
+        fprintf(stderr, "Update %d: computeCompositingRequirements for the world took %fms\n",
                     m_rootLayerUpdateCount, 1000.0 * (endTime - startTime));
 #endif
     ASSERT(updateRoot || !m_compositingLayersNeedUpdate);
@@ -527,6 +527,9 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
             }
         }
     }
+    
+    if (layerBacking)
+        layerBacking->updateGraphicsLayerGeometry();
 }
 
 void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const IntRect& absRect)

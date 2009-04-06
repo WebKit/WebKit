@@ -126,7 +126,8 @@ void RenderLayerBacking::updateAfterLayout()
     invalidateDrawingOptimizations();
     detectDrawingOptimizations();
 
-    updateGraphicsLayerGeometry();
+    if (!compositor()->compositingLayersNeedUpdate())
+        updateGraphicsLayerGeometry();
 }
 
 bool RenderLayerBacking::updateGraphicsLayers(bool needsContentsLayer, bool needsUpperClippingLayer, bool needsLowerClippingLayer, bool needsRepaint)
@@ -152,10 +153,6 @@ bool RenderLayerBacking::updateGraphicsLayers(bool needsContentsLayer, bool need
     RenderStyle* style = renderer()->style();
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D);
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
-
-    updateGraphicsLayerGeometry();
-    
-    m_graphicsLayer->updateContentsRect();
     
     if (needsRepaint) {
         m_graphicsLayer->setNeedsDisplay();
@@ -244,11 +241,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (m_owningLayer->hasTransform()) {
         const IntRect borderBox = toRenderBox(renderer())->borderBoxRect();
 
-        IntRect layerBounds = IntRect(m_owningLayer->x(), m_owningLayer->y(), borderBox.width(), borderBox.height());
-        // Convert to absolute coords to match bbox.
-        int x = 0, y = 0;
-        m_owningLayer->convertToLayerCoords(compAncestor, x, y);
-        layerBounds.move(x - m_owningLayer->x(), y - m_owningLayer->y());
+        // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
+        IntRect layerBounds = IntRect(deltaX, deltaY, borderBox.width(), borderBox.height());
 
         // Update properties that depend on layer dimensions
         FloatPoint3D transformOrigin = computeTransformOrigin(borderBox);

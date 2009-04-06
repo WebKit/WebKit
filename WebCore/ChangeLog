@@ -1,3 +1,29 @@
+2009-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=25052
+        
+        Pull the call to updateGraphicsLayerGeometry() out of updateGraphicsLayers(),
+        because we need to call it at the end of rebuildCompositingLayerTree() once
+        we've determined which descendant layers are composited, otherwise
+        calculateCompositedBounds() can give the wrong answer.
+        
+        Now that updateLayerCompositingState() doesn't end up calling updateGraphicsLayerGeometry(),
+        call that explicitly from styleChanged(), if we know a layer update is not pending,
+        and similarly from updateAfterLayout().
+
+        Test: compositing/overflow/overflow-positioning.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+
 2009-04-06  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Alexey Proskuryakov.
