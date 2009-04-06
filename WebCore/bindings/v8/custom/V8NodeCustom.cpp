@@ -37,6 +37,7 @@
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -81,6 +82,79 @@ CALLBACK_FUNC_DECL(NodeRemoveEventListener)
     }
 
     return v8::Undefined();
+}
+
+// This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
+CALLBACK_FUNC_DECL(NodeInsertBefore)
+{
+    INC_STATS("DOM.Node.insertBefore");
+    v8::Handle<v8::Value> holder = args.Holder();
+    Node* imp = V8Proxy::DOMWrapperToNode<Node>(holder);
+    ExceptionCode ec = 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Proxy::DOMWrapperToNode<Node>(args[0]) : 0;
+    Node* refChild = V8Node::HasInstance(args[1]) ? V8Proxy::DOMWrapperToNode<Node>(args[1]) : 0;
+    bool success = imp->insertBefore(newChild, refChild, ec, true);
+    if (ec) {
+        V8Proxy::SetDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    if (success)
+        return args[0];
+    return v8::Null();
+}
+
+// This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
+CALLBACK_FUNC_DECL(NodeReplaceChild)
+{
+    INC_STATS("DOM.Node.replaceChild");
+    v8::Handle<v8::Value> holder = args.Holder();
+    Node* imp = V8Proxy::DOMWrapperToNode<Node>(holder);
+    ExceptionCode ec = 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Proxy::DOMWrapperToNode<Node>(args[0]) : 0;
+    Node* oldChild = V8Node::HasInstance(args[1]) ? V8Proxy::DOMWrapperToNode<Node>(args[1]) : 0;
+    bool success = imp->replaceChild(newChild, oldChild, ec, true);
+    if (ec) {
+        V8Proxy::SetDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    if (success)
+        return args[1];
+    return v8::Null();
+}
+
+CALLBACK_FUNC_DECL(NodeRemoveChild)
+{
+    INC_STATS("DOM.Node.removeChild");
+    v8::Handle<v8::Value> holder = args.Holder();
+    Node* imp = V8Proxy::DOMWrapperToNode<Node>(holder);
+    ExceptionCode ec = 0;
+    Node* oldChild = V8Node::HasInstance(args[0]) ? V8Proxy::DOMWrapperToNode<Node>(args[0]) : 0;
+    bool success = imp->removeChild(oldChild, ec);
+    if (ec) {
+        V8Proxy::SetDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    if (success)
+        return args[0];
+    return v8::Null();
+}
+
+// This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
+CALLBACK_FUNC_DECL(NodeAppendChild)
+{
+    INC_STATS("DOM.Node.appendChild");
+    v8::Handle<v8::Value> holder = args.Holder();
+    Node* imp = V8Proxy::DOMWrapperToNode<Node>(holder);
+    ExceptionCode ec = 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Proxy::DOMWrapperToNode<Node>(args[0]) : 0;
+    bool success = imp->appendChild(newChild, ec, true );
+    if (ec) {
+        V8Proxy::SetDOMException(ec);
+        return v8::Handle<v8::Value>();
+    }
+    if (success)
+        return args[0];
+    return v8::Null();
 }
 
 } // namespace WebCore

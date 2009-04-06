@@ -1,3 +1,14 @@
+2009-04-06  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24978
+        Use custom implementations of a few Node methods so that
+        we don't over-aggressively create JS wrappers here.
+
+        * bindings/v8/custom/V8NodeCustom.cpp: Added custom implementations.
+        * dom/Node.idl: Removed JSC-specifier, making impl custom for V8 as well.
+
 2009-04-06  Dave Moore  <davemoore@google.com>
 
         Reviewed by Dimitri Glazkov.
