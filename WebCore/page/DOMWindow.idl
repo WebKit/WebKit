@@ -44,7 +44,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         readonly attribute Screen screen;
-        readonly attribute [DoNotCheckDomainSecurity, JSCCustomGetter] History history;
+        readonly attribute [DoNotCheckDomainSecurity, CustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;
@@ -53,7 +53,7 @@ module window {
         attribute [Replaceable] BarInfo toolbar;
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
-        attribute [DoNotCheckDomainSecurity, CustomSetter, JSCCustomGetter, V8DisallowShadowing] Location location;
+        attribute [DoNotCheckDomainSecurity, Custom, V8DisallowShadowing] Location location;
 
         DOMSelection getSelection();
 
