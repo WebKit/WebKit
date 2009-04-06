@@ -138,7 +138,7 @@ void tst_QWebElement::simpleSelection()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection paras = body.select("p");
+    QWebElementSelection paras = body.findAll("p");
     QCOMPARE(paras.count(), 2);
 
     QList<QWebElement> list = paras.toList();
@@ -179,7 +179,7 @@ void tst_QWebElement::attributesNS()
 
     m_mainFrame->setContent(content.toUtf8(), "application/xhtml+xml");
 
-    QWebElement svg = m_mainFrame->selectElement("svg");
+    QWebElement svg = m_mainFrame->findFirstElement("svg");
     QVERIFY(!svg.isNull());
 
     QVERIFY(!svg.hasAttributeNS("http://www.w3.org/2000/svg", "foobar"));
@@ -196,7 +196,7 @@ void tst_QWebElement::classes()
     QWebElement body = m_mainFrame->documentElement();
     QCOMPARE(body.classes().count(), 0);
 
-    QWebElement p = m_mainFrame->documentElement().select("p").at(0);
+    QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
     QStringList classes = p.classes();
     QCOMPARE(classes.count(), 4);
     QCOMPARE(classes[0], QLatin1String("a"));
@@ -280,7 +280,7 @@ void tst_QWebElement::namespaceURI()
     QWebElement body = m_mainFrame->documentElement();
     QCOMPARE(body.namespaceURI(), QLatin1String("http://www.w3.org/1999/xhtml"));
 
-    QWebElement svg = body.select("*#foobar").toList().at(0);
+    QWebElement svg = body.findAll("*#foobar").toList().at(0);
     QCOMPARE(svg.prefix(), QLatin1String("svg"));
     QCOMPARE(svg.localName(), QLatin1String("svg"));
     QCOMPARE(svg.tagName(), QLatin1String("svg:svg"));
@@ -294,7 +294,7 @@ void tst_QWebElement::iteration()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection paras = body.select("p");
+    QWebElementSelection paras = body.findAll("p");
     QList<QWebElement> referenceList = paras.toList();
 
     QList<QWebElement> foreachList;
@@ -329,11 +329,11 @@ void tst_QWebElement::foreachManipulation()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    foreach(QWebElement p, body.select("p")) {
+    foreach(QWebElement p, body.findAll("p")) {
         p.setHtml("<div>foo</div><div>bar</div>");
     }
 
-    QCOMPARE(body.select("div").count(), 4);
+    QCOMPARE(body.findAll("div").count(), 4);
 }
 
 void tst_QWebElement::callFunction()
@@ -355,7 +355,7 @@ void tst_QWebElement::callFunctionSubmitForm()
     m_mainFrame->setHtml(QString("<html><body><form name='tstform' action='data:text/html,foo'method='get'>"
                                  "<input type='text'><input type='submit'></form></body></html>"), QUrl());
 
-    QWebElement form = m_mainFrame->documentElement().select("form").at(0);
+    QWebElement form = m_mainFrame->documentElement().findAll("form").at(0);
     QVERIFY(form.scriptFunctions().contains("submit"));
     QVERIFY(!form.isNull());
     form.callScriptFunction("submit");
@@ -377,7 +377,7 @@ void tst_QWebElement::documentElement()
 {
     m_mainFrame->setHtml("<body><p>Test");
 
-    QWebElement para = m_mainFrame->documentElement().select("p").at(0);
+    QWebElement para = m_mainFrame->documentElement().findAll("p").at(0);
     QVERIFY(para.parent().parent() == m_mainFrame->documentElement());
     QVERIFY(para.document() == m_mainFrame->documentElement());
 }
@@ -403,8 +403,8 @@ void tst_QWebElement::frame()
     QCOMPARE(firstFrame->toPlainText(), QString("frame1"));
     QCOMPARE(secondFrame->toPlainText(), QString("frame2"));
 
-    QWebElement firstPara = firstFrame->documentElement().select("p").at(0);
-    QWebElement secondPara = secondFrame->documentElement().select("p").at(0);
+    QWebElement firstPara = firstFrame->documentElement().findAll("p").at(0);
+    QWebElement secondPara = secondFrame->documentElement().findAll("p").at(0);
 
     QVERIFY(firstPara.webFrame() == firstFrame);
     QVERIFY(secondPara.webFrame() == secondFrame);
@@ -421,7 +421,7 @@ void tst_QWebElement::style()
     QString html = "<body><p style=\"color: blue;\">some text</p></body>";
     m_mainFrame->setHtml(html);
 
-    QWebElement p = m_mainFrame->documentElement().select("p").at(0);
+    QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
     QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
     QVERIFY(p.styleProperty("cursor").isEmpty());
 
@@ -439,16 +439,16 @@ void tst_QWebElement::extendSelection()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection selection = body.select("p");
+    QWebElementSelection selection = body.findAll("p");
     QCOMPARE(selection.count(), 2);
 
-    selection.extend(body.select("div"));
+    selection.extend(body.findAll("div"));
     QCOMPARE(selection.count(), 4);
 
-    selection += body.select("span.a");
+    selection += body.findAll("span.a");
     QCOMPARE(selection.count(), 5);
 
-    QWebElementSelection all = selection + body.select("span.b");
+    QWebElementSelection all = selection + body.findAll("span.b");
     QCOMPARE(all.count(), 6);
     QCOMPARE(selection.count(), 5);
 
@@ -467,7 +467,7 @@ void tst_QWebElement::properties()
 {
     m_mainFrame->setHtml("<body><form><input type=checkbox id=ourcheckbox checked=true>");
 
-    QWebElement checkBox = m_mainFrame->selectElement("#ourcheckbox");
+    QWebElement checkBox = m_mainFrame->findFirstElement("#ourcheckbox");
     QVERIFY(!checkBox.isNull());
 
     QVERIFY(checkBox.scriptProperties().contains("checked"));
@@ -506,30 +506,30 @@ void tst_QWebElement::appendAndPrepend()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
-    QCOMPARE(body.select("p").count(), 2);
-    body.append(body.select("p").first());
-    QCOMPARE(body.select("p").count(), 2);
-    QCOMPARE(body.select("p").first().text(), QString("bar"));
-    QCOMPARE(body.select("p").last().text(), QString("foo"));
+    QCOMPARE(body.findAll("p").count(), 2);
+    body.append(body.findFirst("p"));
+    QCOMPARE(body.findAll("p").count(), 2);
+    QCOMPARE(body.findFirst("p").text(), QString("bar"));
+    QCOMPARE(body.findAll("p").last().text(), QString("foo"));
 
-    body.append(body.select("p").first().clone());
-    QCOMPARE(body.select("p").count(), 3);
-    QCOMPARE(body.select("p").first().text(), QString("bar"));
-    QCOMPARE(body.select("p").last().text(), QString("bar"));
+    body.append(body.findFirst("p").clone());
+    QCOMPARE(body.findAll("p").count(), 3);
+    QCOMPARE(body.findFirst("p").text(), QString("bar"));
+    QCOMPARE(body.findAll("p").last().text(), QString("bar"));
 
-    body.prepend(body.select("p").at(1).clone());
-    QCOMPARE(body.select("p").count(), 4);
-    QCOMPARE(body.select("p").first().text(), QString("foo"));
+    body.prepend(body.findAll("p").at(1).clone());
+    QCOMPARE(body.findAll("p").count(), 4);
+    QCOMPARE(body.findFirst("p").text(), QString("foo"));
 
-    body.select("p").first().append("<div>booyakasha</div>");
-    QCOMPARE(body.select("p div").count(), 1);
-    QCOMPARE(body.select("p div").first().text(), QString("booyakasha"));
+    body.findFirst("p").append("<div>booyakasha</div>");
+    QCOMPARE(body.findAll("p div").count(), 1);
+    QCOMPARE(body.findFirst("p div").text(), QString("booyakasha"));
 
-    body.select("div").first().prepend("<code>yepp</code>");
-    QCOMPARE(body.select("p div code").count(), 1);
-    QCOMPARE(body.select("p div code").first().text(), QString("yepp"));
+    body.findFirst("div").prepend("<code>yepp</code>");
+    QCOMPARE(body.findAll("p div code").count(), 1);
+    QCOMPARE(body.findFirst("p div code").text(), QString("yepp"));
 }
 
 void tst_QWebElement::insertBeforeAndAfter()
@@ -547,32 +547,32 @@ void tst_QWebElement::insertBeforeAndAfter()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
-    QWebElement div = body.select("div").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
+    QWebElement div = body.findFirst("div");
 
-    QCOMPARE(body.select("p").count(), 2);
-    QCOMPARE(body.select("div").count(), 1);
+    QCOMPARE(body.findAll("p").count(), 2);
+    QCOMPARE(body.findAll("div").count(), 1);
 
-    div.insertBefore(body.select("p").last().clone());
-    QCOMPARE(body.select("p").count(), 3);
-    QCOMPARE(body.select("p").at(0).text(), QString("foo"));
-    QCOMPARE(body.select("p").at(1).text(), QString("bar"));
-    QCOMPARE(body.select("p").at(2).text(), QString("bar"));
+    div.insertBefore(body.findAll("p").last().clone());
+    QCOMPARE(body.findAll("p").count(), 3);
+    QCOMPARE(body.findAll("p").at(0).text(), QString("foo"));
+    QCOMPARE(body.findAll("p").at(1).text(), QString("bar"));
+    QCOMPARE(body.findAll("p").at(2).text(), QString("bar"));
 
-    div.insertAfter(body.select("p").first().clone());
-    QCOMPARE(body.select("p").count(), 4);
-    QCOMPARE(body.select("p").at(0).text(), QString("foo"));
-    QCOMPARE(body.select("p").at(1).text(), QString("bar"));
-    QCOMPARE(body.select("p").at(2).text(), QString("foo"));
-    QCOMPARE(body.select("p").at(3).text(), QString("bar"));
+    div.insertAfter(body.findFirst("p").clone());
+    QCOMPARE(body.findAll("p").count(), 4);
+    QCOMPARE(body.findAll("p").at(0).text(), QString("foo"));
+    QCOMPARE(body.findAll("p").at(1).text(), QString("bar"));
+    QCOMPARE(body.findAll("p").at(2).text(), QString("foo"));
+    QCOMPARE(body.findAll("p").at(3).text(), QString("bar"));
 
     div.insertBefore("<span>hey</span>");
-    QCOMPARE(body.select("span").count(), 1);
+    QCOMPARE(body.findAll("span").count(), 1);
 
     div.insertAfter("<span>there</span>");
-    QCOMPARE(body.select("span").count(), 2);
-    QCOMPARE(body.select("span").at(0).text(), QString("hey"));
-    QCOMPARE(body.select("span").at(1).text(), QString("there"));
+    QCOMPARE(body.findAll("span").count(), 2);
+    QCOMPARE(body.findAll("span").at(0).text(), QString("hey"));
+    QCOMPARE(body.findAll("span").at(1).text(), QString("there"));
 }
 
 void tst_QWebElement::remove()
@@ -590,22 +590,22 @@ void tst_QWebElement::remove()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("p").count(), 3);
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("p").count(), 3);
 
-    QWebElement div = body.select("div").first();
+    QWebElement div = body.findFirst("div");
     div.remove();
 
     QCOMPARE(div.isNull(), false);
-    QCOMPARE(body.select("div").count(), 0);
-    QCOMPARE(body.select("p").count(), 2);
+    QCOMPARE(body.findAll("div").count(), 0);
+    QCOMPARE(body.findAll("p").count(), 2);
 
     body.append(div);
 
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("p").count(), 3);
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("p").count(), 3);
 }
 
 void tst_QWebElement::clear()
@@ -623,13 +623,13 @@ void tst_QWebElement::clear()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("p").count(), 3);
-    body.select("div").first().clear();
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("p").count(), 2);
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("p").count(), 3);
+    body.findFirst("div").clear();
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("p").count(), 2);
 }
 
 
@@ -648,19 +648,19 @@ void tst_QWebElement::replaceWith()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("span").count(), 1);
-    body.select("div").first().replaceWith(body.select("span").first().clone());
-    QCOMPARE(body.select("div").count(), 0);
-    QCOMPARE(body.select("span").count(), 2);
-    QCOMPARE(body.select("p").count(), 2);
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("span").count(), 1);
+    body.findFirst("div").replaceWith(body.findFirst("span").clone());
+    QCOMPARE(body.findAll("div").count(), 0);
+    QCOMPARE(body.findAll("span").count(), 2);
+    QCOMPARE(body.findAll("p").count(), 2);
 
-    body.select("span").first().replaceWith("<p><code>wow</code></p>");
-    QCOMPARE(body.select("p").count(), 3);
-    QCOMPARE(body.select("p code").count(), 1);
-    QCOMPARE(body.select("p code").first().text(), QString("wow"));
+    body.findFirst("span").replaceWith("<p><code>wow</code></p>");
+    QCOMPARE(body.findAll("p").count(), 3);
+    QCOMPARE(body.findAll("p code").count(), 1);
+    QCOMPARE(body.findFirst("p code").text(), QString("wow"));
 }
 
 void tst_QWebElement::wrap()
@@ -678,25 +678,25 @@ void tst_QWebElement::wrap()
     "</body>";
 
     m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement().select("body").first();
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
-    QCOMPARE(body.select("div").count(), 1);
-    body.select("div").first().wrap(body.select("span").first().clone());
-    QCOMPARE(body.select("div").count(), 1);
-    QCOMPARE(body.select("span").count(), 2);
-    QCOMPARE(body.select("p").count(), 2);
+    QCOMPARE(body.findAll("div").count(), 1);
+    body.findFirst("div").wrap(body.findFirst("span").clone());
+    QCOMPARE(body.findAll("div").count(), 1);
+    QCOMPARE(body.findAll("span").count(), 2);
+    QCOMPARE(body.findAll("p").count(), 2);
 
-    body.select("div").first().wrap("<code></code>");
-    QCOMPARE(body.select("code").count(), 1);
-    QCOMPARE(body.select("code div").count(), 1);
-    QCOMPARE(body.select("code div").first().text(), QString("yeah"));
+    body.findFirst("div").wrap("<code></code>");
+    QCOMPARE(body.findAll("code").count(), 1);
+    QCOMPARE(body.findAll("code div").count(), 1);
+    QCOMPARE(body.findFirst("code div").text(), QString("yeah"));
 }
 
 void tst_QWebElement::nullSelect()
 {
     m_mainFrame->setHtml("<body><p>Test");
 
-    QWebElementSelection selection = m_mainFrame->selectElements("invalid{syn(tax;;%#$f223e>>");
+    QWebElementSelection selection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
     QVERIFY(selection.count() == 0);
 }
 
@@ -704,7 +704,7 @@ void tst_QWebElement::firstChildNextSibling()
 {
     m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another commend><table>");
 
-    QWebElement body = m_mainFrame->selectElement("body");
+    QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());
     QWebElement p = body.firstChild();
     QVERIFY(!p.isNull());
@@ -719,7 +719,7 @@ void tst_QWebElement::firstChildNextSiblingWithTag()
 {
     m_mainFrame->setHtml("<body><!--comment--><p><span>Test</span></p><div>test</div><p><span>test2</span></p><div>last</div>");
 
-    QWebElement body = m_mainFrame->selectElement("body");
+    QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());
     QWebElement div = body.firstChild("div");
     QVERIFY(!div.isNull());
@@ -736,7 +736,7 @@ void tst_QWebElement::lastChildPreviousSibling()
 {
     m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another commend><table>");
 
-    QWebElement body = m_mainFrame->selectElement("body");
+    QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());
     QWebElement table = body.lastChild();
     QVERIFY(!table.isNull());
@@ -751,7 +751,7 @@ void tst_QWebElement::lastChildPreviousSiblingWithTag()
 {
     m_mainFrame->setHtml("<body><!--comment--><p><span>Test</span></p><div>test</div><p><span>test2</span></p><div>last</div>");
 
-    QWebElement body = m_mainFrame->selectElement("body");
+    QWebElement body = m_mainFrame->findFirstElement("body");
     QVERIFY(!body.isNull());
     QWebElement div = body.lastChild("div");
     QVERIFY(!div.isNull());

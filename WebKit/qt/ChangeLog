@@ -1,3 +1,44 @@
+2009-04-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Rename DOM API select function to findFirst, findAll, etc.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::findAll):
+        (QWebElement::findFirst):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::findAllElements):
+        (QWebFrame::findFirstElement):
+        * Api/qwebframe.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::selectElements):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::simpleSelection):
+        (tst_QWebElement::attributesNS):
+        (tst_QWebElement::classes):
+        (tst_QWebElement::namespaceURI):
+        (tst_QWebElement::iteration):
+        (tst_QWebElement::foreachManipulation):
+        (tst_QWebElement::callFunctionSubmitForm):
+        (tst_QWebElement::documentElement):
+        (tst_QWebElement::frame):
+        (tst_QWebElement::style):
+        (tst_QWebElement::extendSelection):
+        (tst_QWebElement::properties):
+        (tst_QWebElement::appendAndPrepend):
+        (tst_QWebElement::insertBeforeAndAfter):
+        (tst_QWebElement::remove):
+        (tst_QWebElement::clear):
+        (tst_QWebElement::replaceWith):
+        (tst_QWebElement::wrap):
+        (tst_QWebElement::nullSelect):
+        (tst_QWebElement::firstChildNextSibling):
+        (tst_QWebElement::firstChildNextSiblingWithTag):
+        (tst_QWebElement::lastChildPreviousSibling):
+        (tst_QWebElement::lastChildPreviousSiblingWithTag):
+
 2009-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
             Ariya Hidayat <ariya.hidayat@nokia.com>
             Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>

@@ -134,7 +134,7 @@ bool QWebElement::isNull() const
     Returns a new selection of elements that are children of this element
     and that match the given CSS selector \a query.
 */
-QWebElementSelection QWebElement::select(const QString &query) const
+QWebElementSelection QWebElement::findAll(const QString &query) const
 {
     return QWebElementSelection(*this, query);
 }
@@ -142,7 +142,7 @@ QWebElementSelection QWebElement::select(const QString &query) const
 /*!
     Returns the first child element that matches the given CSS selector \a query.
 */
-QWebElement QWebElement::selectFirst(const QString &query) const
+QWebElement QWebElement::findFirst(const QString &query) const
 {
     if (!m_element)
         return QWebElement();
@@ -1227,7 +1227,7 @@ QWebElementSelectionPrivate* QWebElementSelectionPrivate::create(const PassRefPt
     \brief The QWebElementSelection class represents a selection of web elements.
     \preliminary
 
-    Elements in a document can be selected using QWebElement::select() or using the
+    Elements in a document can be selected using QWebElement::findAll() or using the
     QWebElement constructor. The selection is composed by choosing all elements in the
     document that match a specified CSS selector expression.
 
@@ -1238,7 +1238,7 @@ QWebElementSelectionPrivate* QWebElementSelectionPrivate::create(const PassRefPt
     macro:
 
     \code
-        QWebElementSelection selection = document.select("p");
+        QWebElementSelection selection = document.findAll("p");
         foreach (QWebElement paraElement, selection) {
             ...
         }

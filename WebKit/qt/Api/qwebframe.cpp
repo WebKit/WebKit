@@ -985,9 +985,9 @@ QWebElement QWebFrame::documentElement() const
     Returns a new selection of elements that are children of the frame's
     document element and that match the given CSS selector \a query.
 */
-QWebElementSelection QWebFrame::selectElements(const QString &query) const
+QWebElementSelection QWebFrame::findAllElements(const QString &query) const
 {
-    return documentElement().select(query);
+    return documentElement().findAll(query);
 }
 
 /*!
@@ -996,9 +996,9 @@ QWebElementSelection QWebFrame::selectElements(const QString &query) const
     given CSS selector \a query. Returns a null element if there is no
     match.
 */
-QWebElement QWebFrame::selectElement(const QString &query) const
+QWebElement QWebFrame::findFirstElement(const QString &query) const
 {
-    return documentElement().selectFirst(query);
+    return documentElement().findFirst(query);
 }
 
 /*!
