@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "CString.h"
+#include <glib/gi18n-lib.h>
 #include "Noncopyable.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
@@ -246,8 +247,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_object_class_install_property(objectClass,
                                     PROP_NETWORK_REQUEST,
                                     g_param_spec_object("network-request",
-                                                        "Network Request",
-                                                        "The network request for the URI that should be downloaded",
+                                                        _("Network Request"),
+                                                        _("The network request for the URI that should be downloaded"),
                                                         WEBKIT_TYPE_NETWORK_REQUEST,
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -261,8 +262,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_object_class_install_property(objectClass,
                                     PROP_DESTINATION_URI,
                                     g_param_spec_string("destination-uri",
-                                                        "Destination URI",
-                                                        "The destination URI where to save the file",
+                                                        _("Destination URI"),
+                                                        _("The destination URI where to save the file"),
                                                         "",
                                                         WEBKIT_PARAM_READWRITE));
 
@@ -276,8 +277,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_object_class_install_property(objectClass,
                                     PROP_SUGGESTED_FILENAME,
                                     g_param_spec_string("suggested-filename",
-                                                        "Suggested Filename",
-                                                        "The filename suggested as default when saving",
+                                                        _("Suggested Filename"),
+                                                        _("The filename suggested as default when saving"),
                                                         "",
                                                         WEBKIT_PARAM_READABLE));
 
@@ -290,8 +291,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      */
     g_object_class_install_property(objectClass, PROP_PROGRESS,
                                     g_param_spec_double("progress",
-                                                        "Progress",
-                                                        "Determines the current progress of the download",
+                                                        _("Progress"),
+                                                        _("Determines the current progress of the download"),
                                                         0.0, 1.0, 1.0,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -304,8 +305,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      */
     g_object_class_install_property(objectClass, PROP_STATUS,
                                     g_param_spec_enum("status",
-                                                      "Status",
-                                                      "Determines the current status of the download",
+                                                      _("Status"),
+                                                      _("Determines the current status of the download"),
                                                       WEBKIT_TYPE_DOWNLOAD_STATUS,
                                                       WEBKIT_DOWNLOAD_STATUS_CREATED,
                                                       WEBKIT_PARAM_READABLE));
@@ -320,8 +321,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_object_class_install_property(objectClass,
                                     PROP_CURRENT_SIZE,
                                     g_param_spec_uint64("current-size",
-                                                        "Current Size",
-                                                        "The length of the data already downloaded",
+                                                        _("Current Size"),
+                                                        _("The length of the data already downloaded"),
                                                         0, G_MAXUINT64, 0,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -335,8 +336,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_object_class_install_property(objectClass,
                                     PROP_CURRENT_SIZE,
                                     g_param_spec_uint64("total-size",
-                                                        "Total Size",
-                                                        "The total size of the file",
+                                                        _("Total Size"),
+                                                        _("The total size of the file"),
                                                         0, G_MAXUINT64, 0,
                                                         WEBKIT_PARAM_READABLE));
 

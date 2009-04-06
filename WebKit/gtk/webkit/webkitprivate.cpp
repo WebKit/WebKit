@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
+#include <libintl.h>
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "PageCache.h"
@@ -132,6 +133,9 @@ void webkit_init()
     if (isInitialized)
         return;
     isInitialized = true;
+
+    bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
     JSC::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();

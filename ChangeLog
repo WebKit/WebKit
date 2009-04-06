@@ -1,3 +1,14 @@
+2009-04-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Sam Weinig.
+
+        Added rules to maintain the localization support. We cannot simply
+        use whatever gettextize gives us because our build system is
+        non-recursive.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-04-05  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Holger Freyther.

@@ -37,6 +37,7 @@
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include <glib/gi18n-lib.h>
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMWindow.h"
@@ -207,22 +208,22 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
      */
     g_object_class_install_property(objectClass, PROP_NAME,
                                     g_param_spec_string("name",
-                                                        "Name",
-                                                        "The name of the frame",
+                                                        _("Name"),
+                                                        _("The name of the frame"),
                                                         NULL,
                                                         WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(objectClass, PROP_TITLE,
                                     g_param_spec_string("title",
-                                                        "Title",
-                                                        "The document title of the frame",
+                                                        _("Title"),
+                                                        _("The document title of the frame"),
                                                         NULL,
                                                         WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(objectClass, PROP_URI,
                                     g_param_spec_string("uri",
-                                                        "URI",
-                                                        "The current URI of the contents displayed by the frame",
+                                                        _("URI"),
+                                                        _("The current URI of the contents displayed by the frame"),
                                                         NULL,
                                                         WEBKIT_PARAM_READABLE));
 

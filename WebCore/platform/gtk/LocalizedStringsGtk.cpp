@@ -33,8 +33,8 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 
+#include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 
 namespace WebCore {
 

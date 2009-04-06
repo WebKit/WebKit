@@ -26,8 +26,8 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 
+#include <glib/gi18n-lib.h>
 #include <glib-object.h>
-#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include "webkitprivate.h"
 

@@ -49,6 +49,11 @@ IDL_BINDINGS :=
 
 TEST_PROGS :=
 
+# Gettext stuff
+POFILES :=
+
+MOFILES :=
+
 # Global flags to CPP
 global_cppflags :=
 
@@ -259,7 +264,8 @@ libwebkit_1_0_la_LIBADD = \
 global_cppflags += \
 	-DBUILDING_CAIRO__=1 \
 	-DBUILDING_GTK__=1 \
-	-DWTF_CHANGES
+	-DWTF_CHANGES \
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"
 
 if !ENABLE_FAST_MALLOC
 global_cppflags += \
@@ -458,7 +464,8 @@ EXTRA_DIST = \
 	$(srcdir)/WebKit/gtk/docs/webkitenvironment.xml \
 	$(srcdir)/WebKit/gtk/docs/webkitgtk-docs.sgml \
 	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
-	$(srcdir)/WebKit/gtk/docs/version.xml.in
+	$(srcdir)/WebKit/gtk/docs/version.xml.in \
+	$(srcdir)/WebKit/gtk/po/*
 
 # Files that will be cleaned
 MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile
@@ -469,6 +476,7 @@ CLEANFILES := $(stamp_files) $(BUILT_SOURCES) WebKit/gtk/docs/GNUmakefile
 include JavaScriptCore/GNUmakefile.am
 include WebCore/GNUmakefile.am
 include WebKitTools/GNUmakefile.am
+include WebKit/gtk/po/GNUmakefile.am
 
 # Build unit tests
 noinst_PROGRAMS += $(TEST_PROGS)
@@ -540,8 +548,8 @@ MAINTAINERCLEANFILES += \
 
 # Older automake versions (1.7) place Plo files in a different place so we need
 # to create the output directory manually.
-all-local:
-	mkdir -p $(top_builddir)/$(DEPDIR)/DerivedSources
+all-local: stamp-po
+	$(mkdir_p) $(top_builddir)/$(DEPDIR)/DerivedSources
 
 # remove built sources and program directories
 clean-local:
@@ -551,3 +559,9 @@ maintainer-clean-local: distclean-local
 
 distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
+
+install-data-local: po-install-data-local
+
+installdirs-data-local: po-installdirs-data-local
+
+uninstall-local: po-uninstall-local
