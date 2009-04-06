@@ -257,6 +257,10 @@ void HTMLCanvasElement::createImageBuffer() const
         return;
 
     m_imageBuffer.set(ImageBuffer::create(size, false).release());
+    // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
+    // where ImageBuffer::create() returns NULL, however we could still be low on memory.
+    if (!m_imageBuffer)
+        return;
     m_imageBuffer->context()->scale(FloatSize(size.width() / unscaledSize.width(), size.height() / unscaledSize.height()));
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
 }
