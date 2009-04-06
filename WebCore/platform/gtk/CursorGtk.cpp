@@ -210,13 +210,13 @@ const Cursor& northWestSouthEastResizeCursor()
 
 const Cursor& columnResizeCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_DOUBLE_ARROW);
+    static Cursor c = gdk_cursor_new(GDK_SB_H_DOUBLE_ARROW);
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_DOUBLE_ARROW);
+    static Cursor c = gdk_cursor_new(GDK_SB_V_DOUBLE_ARROW);
     return c;
 }
     

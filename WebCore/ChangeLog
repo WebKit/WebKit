@@ -1,3 +1,14 @@
+2009-04-03  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make col and row work in WebCore/manual-tests/cursor.html. The issue
+        was spotted in the WebKit inspector.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+
 2009-04-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
