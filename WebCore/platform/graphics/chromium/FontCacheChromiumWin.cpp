@@ -414,14 +414,6 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& description)
 {
     FontDescription::GenericFamilyType generic = description.genericFamily();
-    // FIXME: Mapping webkit generic to GenericFamilyType needs to
-    // be more intelligent. 
-    // This spot rarely gets reached. GetFontDataForCharacters() gets hit a lot
-    // more often (see FIXME comment there). 
-    const wchar_t* family = getFontFamilyForScript(description.dominantScript(), generic);
-
-    if (family)
-        return getCachedFontPlatformData(description, AtomicString(family, wcslen(family)));
 
     // FIXME: Would be even better to somehow get the user's default font here.
     // For now we'll pick the default that the user would get without changing
@@ -453,13 +445,6 @@ static LONG toGDIFontWeight(FontWeight fontWeight)
         FW_HEAVY        // FontWeight900
     };
     return gdiFontWeights[fontWeight];
-}
-
-// FIXME: This may not be the best place to put this function
-AtomicString FontCache::getGenericFontForScript(UScriptCode script, const FontDescription& description)
-{
-    const wchar_t* scriptFont = getFontFamilyForScript( script, description.genericFamily());
-    return scriptFont ? AtomicString(scriptFont, wcslen(scriptFont)) : emptyAtom;
 }
 
 static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont)

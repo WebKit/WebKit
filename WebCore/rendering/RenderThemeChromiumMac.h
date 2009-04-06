@@ -67,7 +67,7 @@ namespace WebCore {
         virtual void platformColorsDidChange();
 
         // System fonts.
-        virtual void systemFont(int cssValueId, Document*, FontDescription&) const;
+        virtual void systemFont(int cssValueId, FontDescription&) const;
 
         virtual int minimumMenuListSize(RenderStyle*) const;
 

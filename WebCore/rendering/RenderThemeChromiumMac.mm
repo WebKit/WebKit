@@ -33,7 +33,6 @@
 #import "BitmapImage.h"
 #import "CSSStyleSelector.h"
 #import "CSSValueKeywords.h"
-#import "Document.h"
 #import "Element.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
@@ -192,7 +191,7 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
     return fontWeights[appKitFontWeight - 1];
 }
 
-void RenderThemeChromiumMac::systemFont(int cssValueId, Document* document, FontDescription& fontDescription) const
+void RenderThemeChromiumMac::systemFont(int cssValueId, FontDescription& fontDescription) const
 {
     static FontDescription systemFont;
     static FontDescription smallSystemFont;

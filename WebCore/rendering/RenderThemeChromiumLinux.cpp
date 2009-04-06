@@ -88,7 +88,7 @@ static void setSizeIfAuto(RenderStyle* style, const IntSize& size)
 // FIXME: The only case where we know we don't match IE is for ANSI encodings.
 // IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
 // sizes (e.g. 15px). So, for now we just use Arial.
-static const char* defaultGUIFont(Document* document)
+static const char* defaultGUIFont()
 {
     return "Arial";
 }
@@ -155,7 +155,7 @@ double RenderThemeChromiumLinux::caretBlinkInterval() const
     return 0.5;
 }
 
-void RenderThemeChromiumLinux::systemFont(int propId, Document* document, FontDescription& fontDescription) const
+void RenderThemeChromiumLinux::systemFont(int propId, FontDescription& fontDescription) const
 {
     float fontSize = DefaultFontSize;
 
@@ -172,7 +172,7 @@ void RenderThemeChromiumLinux::systemFont(int propId, Document* document, FontDe
         break;
     }
 
-    fontDescription.firstFamily().setFamily(defaultGUIFont(NULL));
+    fontDescription.firstFamily().setFamily(defaultGUIFont());
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setGenericFamily(FontDescription::NoFamily);
