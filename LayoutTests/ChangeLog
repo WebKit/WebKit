@@ -1,3 +1,13 @@
+2009-04-06  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25031
+        Test for ensuring that named elements don't override properties on collections
+
+        * fast/dom/HTMLSelectElement/length-not-overridden-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/length-not-overridden.html: Added.
+
 2009-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -1,3 +1,21 @@
+2009-04-06  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25031
+        Make the V8 element collections check for named properties *before*
+        checking if there are any elements with the same name. Otherwise
+        it is both incorrect and slow.
+
+        Test: fast/dom/HTMLSelectElement/length-not-overridden.html
+
+        Both of these interceptors were attempting to find an element in the
+        collection that had a name or id of the property name before checking
+        for a JS property with that name.
+        * bindings/v8/V8Collection.h:
+        (WebCore::collectionNamedPropertyGetter):
+        (WebCore::nodeCollectionNamedPropertyGetter):
+
 2009-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
