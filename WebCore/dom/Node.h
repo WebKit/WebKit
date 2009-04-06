@@ -545,6 +545,8 @@ public:
     void dispatchStorageEvent(const AtomicString& eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
     void dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
     void dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
+    void dispatchMutationEvent(const AtomicString& type, bool canBubble, PassRefPtr<Node> relatedNode, const String& prevValue, const String& newValue, ExceptionCode&);
+
     bool dispatchGenericEvent(PassRefPtr<Event>);
 
     virtual void handleLocalEvents(Event*, bool useCapture);

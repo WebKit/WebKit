@@ -2504,7 +2504,7 @@ void Node::dispatchSubtreeModifiedEvent()
         return;
 
     ExceptionCode ec = 0;
-    dispatchEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true, false, 0, String(), String(), String(), 0), ec);
+    dispatchMutationEvent(eventNames().DOMSubtreeModifiedEvent, true, 0, String(), String(), ec); 
 }
 
 void Node::dispatchWindowEvent(PassRefPtr<Event> e)
@@ -2748,6 +2748,13 @@ void Node::dispatchWebKitTransitionEvent(const AtomicString& eventType, const St
     
     ExceptionCode ec = 0;
     dispatchEvent(WebKitTransitionEvent::create(eventType, propertyName, elapsedTime), ec);
+}
+
+void Node::dispatchMutationEvent(const AtomicString& eventType, bool canBubble, PassRefPtr<Node> relatedNode, const String& prevValue, const String& newValue, ExceptionCode& ec)
+{
+    ASSERT(!eventDispatchForbidden());
+
+    dispatchEvent(MutationEvent::create(eventType, canBubble, false, relatedNode, prevValue, newValue, String(), 0), ec);
 }
 
 void Node::dispatchFocusEvent()

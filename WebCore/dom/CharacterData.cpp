@@ -198,7 +198,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl* prevValue)
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER)) {
         ExceptionCode ec;
-        dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, false, 0, prevValue, m_data, String(), 0), ec);
+        dispatchMutationEvent(eventNames().DOMCharacterDataModifiedEvent, true, 0, prevValue, m_data, ec); 
     }
     dispatchSubtreeModifiedEvent();
 }

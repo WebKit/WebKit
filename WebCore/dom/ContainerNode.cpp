@@ -882,8 +882,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
 
     if (c->parentNode() && doc->hasListenerType(Document::DOMNODEINSERTED_LISTENER)) {
         ec = 0;
-        c->dispatchEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, false,
-            c->parentNode(), String(), String(), String(), 0), ec);
+        c->dispatchMutationEvent(eventNames().DOMNodeInsertedEvent, true, c->parentNode(), String(), String(), ec); 
         if (ec)
             return;
     }
@@ -892,8 +891,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
     if (c->inDocument() && doc->hasListenerType(Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER))
         for (; c; c = c->traverseNextNode(child)) {
             ec = 0;
-            c->dispatchEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, false, false,
-                0, String(), String(), String(), 0), ec);
+            c->dispatchMutationEvent(eventNames().DOMNodeInsertedIntoDocumentEvent, false, 0, String(), String(), ec); 
             if (ec)
                 return;
         }
@@ -912,8 +910,7 @@ static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
     // dispatch pre-removal mutation events
     if (c->parentNode() && doc->hasListenerType(Document::DOMNODEREMOVED_LISTENER)) {
         ec = 0;
-        c->dispatchEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, true, false,
-            c->parentNode(), String(), String(), String(), 0), ec);
+        c->dispatchMutationEvent(eventNames().DOMNodeRemovedEvent, true, c->parentNode(), String(), String(), ec); 
         if (ec)
             return;
     }
@@ -922,8 +919,7 @@ static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
     if (c->inDocument() && doc->hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER))
         for (; c; c = c->traverseNextNode(child)) {
             ec = 0;
-            c->dispatchEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false, false,
-                0, String(), String(), String(), 0), ec);
+            c->dispatchMutationEvent(eventNames().DOMNodeRemovedFromDocumentEvent, false, 0, String(), String(), ec); 
             if (ec)
                 return;
         }

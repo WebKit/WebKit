@@ -1,3 +1,20 @@
+2009-04-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Bottleneck dispatching mutation events in a new dispatchMutationEvent
+        function.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchMutationEvent):
+        * dom/Node.h:
+
 2009-04-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.
