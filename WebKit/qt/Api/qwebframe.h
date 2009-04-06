@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008,2009 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
 
     This library is free software; you can redistribute it and/or
@@ -49,6 +49,8 @@ class QWebPage;
 class QWebHitTestResult;
 class QWebHistoryItem;
 class QWebSecurityOrigin;
+class QWebElement;
+class QWebElementSelection;
 
 namespace WebCore {
     class WidgetPrivate;
@@ -87,6 +89,8 @@ public:
 
     bool isContentEditable() const;
     bool isContentSelected() const;
+
+    QWebElement element() const;
 
     QWebFrame *frame() const;
 
@@ -173,6 +177,10 @@ public:
     QPoint pos() const;
     QRect geometry() const;
     QSize contentsSize() const;
+
+    QWebElement documentElement() const;
+    QWebElementSelection selectElements(const QString &query) const;
+    QWebElement selectElement(const QString &query) const;
 
     QWebHitTestResult hitTestContent(const QPoint &pos) const;
 

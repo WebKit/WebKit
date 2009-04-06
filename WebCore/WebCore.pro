@@ -1192,6 +1192,7 @@ SOURCES += \
     ../WebKit/qt/Api/qwebframe.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \
     ../WebKit/qt/Api/qwebview.cpp \
+    ../WebKit/qt/Api/qwebelement.cpp \
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \

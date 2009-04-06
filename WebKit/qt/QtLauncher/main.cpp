@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
@@ -33,6 +33,7 @@
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebsettings.h>
+#include <qwebelement.h>
 
 #include <QtGui>
 #include <QDebug>
@@ -181,6 +182,19 @@ protected slots:
     void dumpHtml() {
         qDebug() << "HTML: " << view->page()->mainFrame()->toHtml();
     }
+
+    void selectElements() {
+        bool ok;
+        QString str = QInputDialog::getText(this, "Select elements", "Choose elements",
+                                            QLineEdit::Normal, "a", &ok);
+        if (ok && !str.isEmpty()) {
+            QWebElementSelection result =  view->page()->mainFrame()->selectElements(str);
+            foreach (QWebElement e, result)
+                e.setStyleProperty("background-color", "yellow");
+            statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);
+        }
+    }
+
 private:
 
     QVector<int> zoomLevels;
@@ -272,6 +286,10 @@ private:
         view->pageAction(QWebPage::ToggleBold)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_B));
         view->pageAction(QWebPage::ToggleItalic)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
         view->pageAction(QWebPage::ToggleUnderline)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
+
+        QMenu *toolsMenu = menuBar()->addMenu("&Tools");
+        toolsMenu->addAction("Select elements...", this, SLOT(selectElements()));
+
     }
 
     QUrl guessUrlFromString(const QString &string) {

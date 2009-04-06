@@ -25,6 +25,7 @@
 #include "qwebframe_p.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
+#include "qwebelement.h"
 
 #include "DocumentLoader.h"
 #include "FocusController.h"
@@ -964,6 +965,43 @@ QSize QWebFrame::contentsSize() const
 }
 
 /*!
+    \since 4.6
+
+    Returns the document element of this frame.
+
+    The document element provides access to the entire structured
+    content of the frame.
+*/
+QWebElement QWebFrame::documentElement() const
+{
+    WebCore::Document *doc = d->frame->document();
+    if (!doc)
+        return QWebElement();
+    return QWebElement(doc->documentElement());
+}
+
+/*!
+    \since 4.6
+    Returns a new selection of elements that are children of the frame's
+    document element and that match the given CSS selector \a query.
+*/
+QWebElementSelection QWebFrame::selectElements(const QString &query) const
+{
+    return documentElement().select(query);
+}
+
+/*!
+    \since 4.6
+    Returns the first element in the frame's document that matches the
+    given CSS selector \a query. Returns a null element if there is no
+    match.
+*/
+QWebElement QWebFrame::selectElement(const QString &query) const
+{
+    return documentElement().selectFirst(query);
+}
+
+/*!
     Performs a hit test on the frame contents at the given position \a pos and returns the hit test result.
 */
 QWebHitTestResult QWebFrame::hitTestContent(const QPoint &pos) const
@@ -1444,6 +1482,18 @@ bool QWebHitTestResult::isContentSelected() const
     if (!d)
         return false;
     return d->isContentSelected;
+}
+
+/*!
+    \since 4.6
+    Returns the underlying DOM element as QWebElement.
+*/
+QWebElement QWebHitTestResult::element() const
+{
+    if (!d || !d->innerNonSharedNode || !d->innerNonSharedNode->isElementNode())
+        return QWebElement();
+
+    return QWebElement(static_cast<WebCore::Element*>(d->innerNonSharedNode.get()));
 }
 
 /*!

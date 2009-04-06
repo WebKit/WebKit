@@ -2,6 +2,16 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Add new files to the Qt build.
+        Export helper function from the Qt JSC binding, needed in WebKit/qt.
+
+        * WebCore.pro: Add new files.
+        * bridge/qt/qt_runtime.h: Declare convertQVariantToValue.
+
+2009-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         Changed ScriptFunctionCall's last argument from a const char* as the function name to a String.
 
         Internally the function name is stored as a WebCore::String and the Qt port wants to use this

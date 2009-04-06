@@ -1,3 +1,3 @@
 
 TEMPLATE = subdirs
-SUBDIRS = qwebframe qwebpage
+SUBDIRS = qwebframe qwebpage qwebelement

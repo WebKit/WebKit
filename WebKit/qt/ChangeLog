@@ -1,3 +1,26 @@
+2009-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
+            Ariya Hidayat <ariya.hidayat@nokia.com>
+            Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+            Genevieve Mak <gen@staikos.net>
+
+        Reviewed by Tor Arne Vestbø, Simon Hausmann
+
+        First revision of new API in the Qt port to access the DOM.
+
+        * Api/headers.pri: Added qwebelement.h to the API headers.
+        * Api/qwebelement.cpp: Added.
+        * Api/qwebelement.h: Added.
+        * Api/qwebframe.cpp:
+        (QWebFrame::documentElement): Added accessor for the document element.
+        (QWebFrame::selectElements): Added convenienc query method.
+        (QWebFrame::selectElement): Ditto.
+        (QWebHitTestResult::element): Added accessor for underlying DOM element.
+        * Api/qwebframe.h:
+        * QtLauncher/main.cpp: Simple test gui for element selections.
+        * tests/qwebelement/qwebelement.pro: Added.
+        * tests/qwebelement/tst_qwebelement.cpp: Added.
+        * tests/tests.pro: Added QWebElement & QWebElementSelection unit tests.
+
 2009-04-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.
