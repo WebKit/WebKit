@@ -1,3 +1,14 @@
+2009-04-06  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add accessors to AtomicString which take String/const char* arguments
+        so that we don't accidentally thrash the AtomicString table.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24979
+
+        * platform/text/AtomicString.h:
+
 2009-04-03  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
