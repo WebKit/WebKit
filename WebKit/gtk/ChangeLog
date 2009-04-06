@@ -5,6 +5,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=25042
         destroying webview widget directly causes crash.
 
+        Do not connect the WebView to its own screen-changed signal, set a
+        default handler instead.
+
+        * webkit/webkitwebview.cpp:
+
+2009-04-05  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25042
+        destroying webview widget directly causes crash.
+
         GtkWidget::screen-changed can be emitted when a widget is being
         destroyed, protect against it.
 
