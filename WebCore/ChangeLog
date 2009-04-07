@@ -1,3 +1,17 @@
+2009-04-07  Adam Roben  <aroben@apple.com>
+
+        Move isRunningOnVistaOrLater to a shared location
+
+        Rubber-stamped in advance by Dave Hyatt.
+
+        * WebCore.vcproj/WebCore.vcproj: Added SystemInfo.{cpp,h}, and let VS
+        have its way with the rest of the file.
+        * platform/win/ScrollbarThemeWin.cpp: Moved isRunningOnVistaOrLater
+        from here...
+        * platform/win/SystemInfo.cpp: Added.
+        (WebCore::isRunningOnVistaOrLater): ...to here.
+        * platform/win/SystemInfo.h: Added.
+
 2009-04-07  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Darin Fisher.

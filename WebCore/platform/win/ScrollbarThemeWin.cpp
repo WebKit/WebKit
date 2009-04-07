@@ -30,6 +30,7 @@
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
 #include "SoftLinking.h"
+#include "SystemInfo.h"
 
 // Generic state constants
 #define TS_NORMAL    1
@@ -70,22 +71,6 @@ SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
 SOFT_LINK(uxtheme, DrawThemeBackground, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, const RECT* pRect, const RECT* pClipRect), (hTheme, hdc, iPartId, iStateId, pRect, pClipRect))
 SOFT_LINK(uxtheme, IsThemeActive, BOOL, WINAPI, (), ())
 SOFT_LINK(uxtheme, IsThemeBackgroundPartiallyTransparent, BOOL, WINAPI, (HANDLE hTheme, int iPartId, int iStateId), (hTheme, iPartId, iStateId))
-
-static bool isRunningOnVistaOrLater()
-{
-    static bool os = false;
-    static bool initialized = false;
-    if (!initialized) {
-        OSVERSIONINFOEX vi = {sizeof(vi), 0};
-        GetVersionEx((OSVERSIONINFO*)&vi);
-
-        // NOTE: This does not work under a debugger - Vista shims Visual Studio, 
-        // making it believe it is xpsp2, which is inherited by debugged applications
-        os = vi.dwMajorVersion >= 6;
-        initialized = true;
-    }
-    return os;
-}
 
 static void checkAndInitScrollbarTheme()
 {

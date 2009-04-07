@@ -3739,6 +3739,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\SystemInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\SystemInfo.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\SystemTimeWin.cpp"
 					>
 				</File>
@@ -13702,41 +13710,6 @@
 			<File
 				RelativePath="..\html\HTMLFormCollection.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
 					>
