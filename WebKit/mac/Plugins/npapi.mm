@@ -201,7 +201,7 @@ NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* ur
     return [pluginViewForInstance(instance) setVariable:variable forURL:url value:value length:len];
 }
 
-NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, const char *realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
+NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32 port, const char* scheme, const char *realm, char** username, uint32* ulen, char** password, uint32* plen)
 {
     return [pluginViewForInstance(instance) getAuthenticationInfoWithProtocol:protocol 
                                                                          host:host 

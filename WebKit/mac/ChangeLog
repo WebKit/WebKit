@@ -1,5 +1,12 @@
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
+        ...and try to fix the Leopard build.
+        
+        * Plugins/npapi.mm:
+        (NPN_GetAuthenticationInfo):
+
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Tiger build.
 
         * Plugins/WebBaseNetscapePluginView.mm:
