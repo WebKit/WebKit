@@ -1,3 +1,20 @@
+2009-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test that when -webkit-line-break: after-white-space is combined with
+          white-space: nowrap, the trailing space is not shrunk to fit the in
+          the available width
+
+        - updates results for that and for not shrinking trailing space to less
+          than zero
+
+        * fast/text/whitespace/nowrap-line-break-after-white-space-expected.txt: Added.
+        * fast/text/whitespace/nowrap-line-break-after-white-space.html: Added.
+        * platform/mac/fast/block/float/editable-text-overlapping-float-expected.txt:
+        * platform/mac/fast/inline/long-wrapped-line-expected.txt:
+        * platform/mac/fast/text/whitespace/tab-character-basics-expected.txt:
+
 2009-04-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Not reviewed because it's stupidly obvious.

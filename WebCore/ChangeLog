@@ -1,3 +1,21 @@
+2009-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - when -webkit-line-break: after-white-space is specified but the text
+          does not auto-wrap, do not shrink the trailing space to fit in the
+          available width
+
+        Test: fast/text/whitespace/nowrap-line-break-after-white-space.html
+
+        - when shrinking such trailing space, do not shrink below zero
+
+        Covered by existing tests
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

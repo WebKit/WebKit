@@ -46,8 +46,7 @@ layer at (0,0) size 800x502
           text run at (0,0) width 510: "012345678901234567890123456789012345678901234567890"
         RenderBR {BR} at (510,0) size 0x20
         RenderText {#text} at (0,21) size 640x41
-          text run at (0,21) width 520: "X\x{9}\x{9}XX\x{9}\x{9}XXX\x{9}\x{9}XXXX"
-          text run at (520,21) width 120: "\x{9}\x{9}"
+          text run at (0,21) width 640: "X\x{9}\x{9}XX\x{9}\x{9}XXX\x{9}\x{9}XXXX\x{9}\x{9}"
           text run at (0,42) width 50: "XXXXX"
       RenderBlock {P} at (3,388) size 640x21 [color=#0000FF]
         RenderText {#text} at (0,0) size 600x20
