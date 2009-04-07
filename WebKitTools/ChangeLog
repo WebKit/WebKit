@@ -1,3 +1,13 @@
+2009-04-11  Brian Weinstein  <bweinstein@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24908
+
+        Allows timeout to be set in run-webkit-tests as a command line argument.
+
+        * Scripts/run-webkit-tests:
+
 2009-04-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Tor Arne Vestbø.

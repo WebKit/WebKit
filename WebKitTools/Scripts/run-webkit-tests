@@ -133,6 +133,7 @@ my $root;
 my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
+my $timeoutSeconds = 15;
 my @leaksFilenames;
 
 # Default to --no-http for Qt, Gtk and wx for now.
@@ -207,6 +208,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
+  --timeout t                     Sets the number of seconds before a test times out (default: $timeoutSeconds)
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
@@ -245,6 +247,7 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
     'merge-leak-depth|m:5' => \$mergeDepth,
+    'timeout=i' => \$timeoutSeconds,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -1812,7 +1815,7 @@ sub readFromDumpToolWithTimer(*;$)
 
     setFileHandleNonBlocking($fh, 1);
 
-    my $maximumSecondsWithoutOutput = 15;
+    my $maximumSecondsWithoutOutput = $timeoutSeconds;
     $maximumSecondsWithoutOutput *= 10 if $guardMalloc;
     my $microsecondsToWaitBeforeReadingAgain = 1000;
 
