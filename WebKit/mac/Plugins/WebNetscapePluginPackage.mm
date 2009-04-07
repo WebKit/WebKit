@@ -455,6 +455,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.pushpopupsenabledstate = (NPN_PushPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PushPopupsEnabledState);
         browserFuncs.poppopupsenabledstate = (NPN_PopPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopPopupsEnabledState);
         browserFuncs.pluginthreadasynccall = (NPN_PluginThreadAsyncCallProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PluginThreadAsyncCall);
+        browserFuncs.getvalueforurl = (NPN_GetValueForURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetValueForURL);
+        browserFuncs.setvalueforurl = (NPN_SetValueForURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetValueForURL);
+        browserFuncs.getauthenticationinfo = (NPN_GetAuthenticationInfoProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetAuthenticationInfo);
         browserFuncs.scheduletimer = (NPN_ScheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ScheduleTimer);
         browserFuncs.unscheduletimer = (NPN_UnscheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UnscheduleTimer);
         browserFuncs.popupcontextmenu = (NPN_PopUpContextMenuProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopUpContextMenu);
@@ -564,10 +567,13 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
         browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
         browserFuncs.pluginthreadasynccall = NPN_PluginThreadAsyncCall;
+        browserFuncs.getvalueforurl = NPN_GetValueForURL;
+        browserFuncs.setvalueforurl = NPN_SetValueForURL;
+        browserFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
         browserFuncs.scheduletimer = NPN_ScheduleTimer;
         browserFuncs.unscheduletimer = NPN_UnscheduleTimer;
         browserFuncs.popupcontextmenu = NPN_PopUpContextMenu;
-        
+
         browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
         browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
         browserFuncs.getstringidentifiers = _NPN_GetStringIdentifiers;

@@ -56,6 +56,8 @@
 #import <Carbon/Carbon.h>
 #import <runtime/JSLock.h>
 #import <WebCore/npruntime_impl.h>
+#import <WebCore/CookieJar.h>
+#import <WebCore/CString.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 
@@ -80,6 +82,7 @@ using std::max;
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 using namespace WebCore;
+using namespace WebKit;
 
 static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 {
@@ -2041,6 +2044,107 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NPERR_GENERIC_ERROR;
     
     [NSMenu popUpContextMenu:(NSMenu *)menu withEvent:currentEvent forView:self];
+    return NPERR_NO_ERROR;
+}
+
+- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length
+{
+    switch (variable) {
+        case NPNURLVCookie: {
+            if (!value)
+                break;
+            
+            NSURL *URL = [self URLWithCString:url];
+            if (!URL)
+                break;
+            
+            if (Frame* frame = core([self webFrame])) {
+                String cookieString = cookies(frame->document(), URL); 
+                CString cookieStringUTF8 = cookieString.utf8();
+                if (cookieStringUTF8.isNull())
+                    return NPERR_GENERIC_ERROR;
+
+                *value = static_cast<char*>(NPN_MemAlloc(cookieStringUTF8.length()));
+                memcpy(*value, cookieStringUTF8.data(), cookieStringUTF8.length());
+                
+                if (length)
+                    *length = cookieStringUTF8.length();
+                return NPERR_NO_ERROR;
+            }
+            break;
+        }
+        case NPNURLVProxy: {
+#ifndef BUILDING_ON_TIGER
+            if (!value)
+                break;
+            
+            NSURL *URL = [self URLWithCString:url];
+            if (!URL)
+                break;
+
+            CString proxiesUTF8 = proxiesForURL(URL);
+            
+            *value = static_cast<char*>(NPN_MemAlloc(proxiesUTF8.length()));
+            memcpy(*value, proxiesUTF8.data(), proxiesUTF8.length());
+            
+           if (length)
+               *length = proxiesUTF8.length();
+            
+            return NPERR_NO_ERROR;
+#else
+            break;
+#endif
+        }
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length
+{
+    switch (variable) {
+        case NPNURLVCookie: {
+            NSURL *URL = [self URLWithCString:url];
+            if (!URL)
+                break;
+            
+            String cookieString = String::fromUTF8(value, length);
+            if (!cookieString)
+                break;
+            
+            if (Frame* frame = core([self webFrame])) {
+                setCookies(frame->document(), URL, URL, cookieString);
+                return NPERR_NO_ERROR;
+            }
+            
+            break;
+        }
+        case NPNURLVProxy:
+            // Can't set the proxy for a URL.
+            break;
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+- (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32_t)port scheme:(const char*)schemeStr realm:(const char*)realmStr
+                                    username:(char**)usernameStr usernameLength:(uint32_t*)usernameLength 
+                                    password:(char**)passwordStr passwordLength:(uint32_t*)passwordLength
+{
+    if (!protocolStr || !hostStr || !schemeStr || !realmStr || !usernameStr || !usernameLength || !passwordStr || !passwordLength)
+        return NPERR_GENERIC_ERROR;
+  
+    CString username;
+    CString password;
+    if (!getAuthenticationInfo(protocolStr, hostStr, port, schemeStr, realmStr, username, password))
+        return NPERR_GENERIC_ERROR;
+    
+    *usernameLength = username.length();
+    *usernameStr = static_cast<char*>(NPN_MemAlloc(username.length()));
+    memcpy(*usernameStr, username.data(), username.length());
+    
+    *passwordLength = password.length();
+    *passwordStr = static_cast<char*>(NPN_MemAlloc(password.length()));
+    memcpy(*passwordStr, password.data(), password.length());
+    
     return NPERR_NO_ERROR;
 }
 

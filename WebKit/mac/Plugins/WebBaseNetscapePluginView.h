@@ -78,6 +78,7 @@ namespace WebCore {
 
 - (WebNetscapePluginPackage *)pluginPackage;
 
+- (NSURL *)URLWithCString:(const char *)URLCString;
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString;
 
 // Subclasses must override these.
@@ -102,7 +103,21 @@ namespace WebCore {
 
 - (void)addWindowObservers;
 - (void)removeWindowObservers;
+
 @end
+
+namespace WebCore {
+class CString;
+}
+
+namespace WebKit {
+#ifndef BUILDING_ON_TIGER
+WebCore::CString proxiesForURL(NSURL *);
+#endif
+    
+bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
+                           WebCore::CString& username, WebCore::CString& password);
+} 
 
 #endif
 

@@ -40,6 +40,7 @@
 #import "WebViewInternal.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/CString.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h>
@@ -123,7 +124,7 @@ using namespace WebCore;
     return YES;
 }
 
-- (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString
+- (NSURL *)URLWithCString:(const char *)URLCString
 {
     if (!URLCString)
         return nil;
@@ -134,6 +135,15 @@ using namespace WebCore;
     NSString *URLString = [(NSString *)string _web_stringByStrippingReturnCharacters];
     NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:_baseURL.get()];
     CFRelease(string);
+    if (!URL)
+        return nil;
+    
+    return URL;
+}
+
+- (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString
+{
+    NSURL *URL = [self URLWithCString:URLCString];
     if (!URL)
         return nil;
     
@@ -631,6 +641,113 @@ using namespace WebCore;
 }
 
 @end
+
+
+#ifndef BUILDING_ON_TIGER
+namespace WebKit {
+
+CString proxiesForURL(NSURL *url)
+{
+    RetainPtr<CFDictionaryRef> systemProxies(AdoptCF, CFNetworkCopySystemProxySettings());
+    if (!systemProxies)
+        return "DIRECT";
+    
+    RetainPtr<CFArrayRef> proxiesForURL(AdoptCF, CFNetworkCopyProxiesForURL((CFURLRef)url, systemProxies.get()));
+    CFIndex proxyCount = proxiesForURL ? CFArrayGetCount(proxiesForURL.get()) : 0;
+    if (!proxyCount)
+        return "DIRECT";
+ 
+    // proxiesForURL is a CFArray of CFDictionaries. Each dictionary represents a proxy.
+    // The format of the result should be:
+    // "PROXY host[:port]" (for HTTP proxy) or
+    // "SOCKS host[:port]" (for SOCKS proxy) or
+    // A combination of the above, separated by semicolon, in the order that they should be tried.
+    String proxies;
+    for (CFIndex i = 0; i < proxyCount; ++i) {
+        CFDictionaryRef proxy = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(proxiesForURL.get(), i));
+        if (!proxy)
+            continue;
+
+        CFStringRef type = static_cast<CFStringRef>(CFDictionaryGetValue(proxy, kCFProxyTypeKey));
+        bool isHTTP = type == kCFProxyTypeHTTP || type == kCFProxyTypeHTTPS;
+        bool isSOCKS = type == kCFProxyTypeSOCKS;
+        
+        // We can only report HTTP and SOCKS proxies.
+        if (!isHTTP && !isSOCKS)
+            continue;
+        
+        CFStringRef host = static_cast<CFStringRef>(CFDictionaryGetValue(proxy, kCFProxyHostNameKey));
+        CFNumberRef port = static_cast<CFNumberRef>(CFDictionaryGetValue(proxy, kCFProxyPortNumberKey));
+        
+        // If we are inserting multiple entries, add a separator
+        if (!proxies.isEmpty())
+            proxies += ";";
+        
+        if (isHTTP)
+            proxies += "PROXY ";
+        else if (isSOCKS)
+            proxies += "SOCKS ";
+        
+        proxies += host;
+
+        if (port) {
+            SInt32 intPort;
+            CFNumberGetValue(port, kCFNumberSInt32Type, &intPort);
+            
+            proxies += ":" + String::number(intPort);
+        }
+    }
+    
+    if (proxies.isEmpty())
+        return "DIRECT";
+    
+    return proxies.utf8();
+}
+
+bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
+                           CString& username, CString& password)
+{
+    if (strcasecmp(protocolStr, "http") != 0 && 
+        strcasecmp(protocolStr, "https") != 0)
+        return false;
+
+    NSString *host = [NSString stringWithUTF8String:hostStr];
+    if (!hostStr)
+        return false;
+    
+    NSString *protocol = [NSString stringWithUTF8String:protocolStr];
+    if (!protocol)
+        return false;
+    
+    NSString *realm = [NSString stringWithUTF8String:realmStr];
+    if (!realm)
+        return NPERR_GENERIC_ERROR;
+    
+    NSString *authenticationMethod = NSURLAuthenticationMethodDefault;
+    if (!strcasecmp(protocolStr, "http")) {
+        if (!strcasecmp(schemeStr, "basic"))
+            authenticationMethod = NSURLAuthenticationMethodHTTPBasic;
+        else if (!strcasecmp(schemeStr, "digest"))
+            authenticationMethod = NSURLAuthenticationMethodHTTPDigest;
+    }
+    
+    RetainPtr<NSURLProtectionSpace> protectionSpace(AdoptNS, [[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
+    
+    NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
+    if (!credential)
+        return false;
+  
+    if (![credential hasPassword])
+        return false;
+    
+    username = [[credential user] UTF8String];
+    password = [[credential password] UTF8String];
+    
+    return true;
+}
+
+} // namespace WebKit
+#endif
 
 #endif //  ENABLE(NETSCAPE_PLUGIN_API)
 

@@ -191,4 +191,25 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
     return [pluginViewForInstance(instance) popUpContextMenu:menu];
 }
 
+NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)
+{
+    return [pluginViewForInstance(instance) getVariable:variable forURL:url value:value length:len];
+}
+
+NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32_t len)
+{
+    return [pluginViewForInstance(instance) setVariable:variable forURL:url value:value length:len];
+}
+
+NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, const char *realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
+{
+    return [pluginViewForInstance(instance) getAuthenticationInfoWithProtocol:protocol 
+                                                                         host:host 
+                                                                         port:port
+                                                                       scheme:scheme
+                                                                        realm:realm
+                                                                     username:username usernameLength:ulen
+                                                                     password:password passwordLength:plen];
+}
+
 #endif

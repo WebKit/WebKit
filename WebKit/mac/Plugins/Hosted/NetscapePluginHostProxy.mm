@@ -844,4 +844,101 @@ kern_return_t WKPCSetModal(mach_port_t clientPort, boolean_t modal)
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCGetCookies(mach_port_t clientPort, uint32_t pluginID,
+                             data_t urlData, mach_msg_type_number_t urlLength,
+                             boolean_t* returnValue, data_t* cookiesData, mach_msg_type_number_t* cookiesLength)
+{
+    *cookiesData = 0;
+    *cookiesLength = 0;
+    
+    DataDeallocator deallocator(urlData, urlLength);
+    
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    *returnValue = instanceProxy->getCookies(urlData, urlLength, *cookiesData, *cookiesLength);
+    
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCGetProxy(mach_port_t clientPort, uint32_t pluginID,
+                           data_t urlData, mach_msg_type_number_t urlLength,
+                           boolean_t* returnValue, data_t* proxyData, mach_msg_type_number_t* proxyLength)
+{
+    *proxyData = 0;
+    *proxyLength = 0;
+    
+    DataDeallocator deallocator(urlData, urlLength);
+    
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    *returnValue = instanceProxy->getProxy(urlData, urlLength, *proxyData, *proxyLength);
+    
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCSetCookies(mach_port_t clientPort, uint32_t pluginID,
+                             data_t urlData, mach_msg_type_number_t urlLength,
+                             data_t cookiesData, mach_msg_type_number_t cookiesLength,
+                             boolean_t* returnValue)
+{
+    DataDeallocator urlDeallocator(urlData, urlLength);
+    DataDeallocator cookiesDeallocator(cookiesData, cookiesLength);
+ 
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    *returnValue = instanceProxy->setCookies(urlData, urlLength, cookiesData, cookiesLength);
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCGetAuthenticationInfo(mach_port_t clientPort, uint32_t pluginID,
+                                        data_t protocolData, mach_msg_type_number_t protocolLength,
+                                        data_t hostData, mach_msg_type_number_t hostLength,
+                                        uint32_t port,
+                                        data_t schemeData, mach_msg_type_number_t schemeLength,
+                                        data_t realmData, mach_msg_type_number_t realmLength,
+                                        boolean_t* returnValue,
+                                        data_t* usernameData, mach_msg_type_number_t *usernameLength,
+                                        data_t* passwordData, mach_msg_type_number_t *passwordLength)
+{
+    DataDeallocator protocolDeallocator(protocolData, protocolLength);
+    DataDeallocator hostDeallocator(hostData, hostLength);
+    DataDeallocator schemeDeallocator(schemeData, schemeLength);
+    DataDeallocator realmDeallocator(realmData, realmLength);
+
+    *usernameData = 0;
+    *usernameLength = 0;
+    *passwordData = 0;
+    *passwordLength = 0;
+    
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    *returnValue = instanceProxy->getAuthenticationInfo(protocolData, hostData, port, schemeData, realmData, *usernameData, *usernameLength, *passwordData, *passwordLength);
+    
+    return KERN_SUCCESS;
+}
+
 #endif // USE(PLUGIN_HOST_PROCESS)

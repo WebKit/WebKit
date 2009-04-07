@@ -42,10 +42,13 @@
 #import "WebUIDelegatePrivate.h"
 
 #import <mach/mach.h>
+#import <WebCore/CookieJar.h>
+#import <WebCore/CString.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/KURL.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
 #import <WebCore/ScriptController.h>
@@ -1166,7 +1169,87 @@ void NetscapePluginInstanceProxy::invalidateRect(double x, double y, double widt
     
     [m_pluginView setNeedsDisplayInRect:NSMakeRect(x, y, width, height)];
 }
+
+bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_number_t urlLength, data_t& cookiesData, mach_msg_type_number_t& cookiesLength)
+{
+    ASSERT(m_pluginView);
     
+    NSURL *url = [m_pluginView URLWithCString:urlData];
+    if (!url)
+        return false;
+    
+    if (Frame* frame = core([m_pluginView webFrame])) {
+        String cookieString = cookies(frame->document(), url); 
+        WebCore::CString cookieStringUTF8 = cookieString.utf8();
+        if (cookieStringUTF8.isNull())
+            return false;
+        
+        cookiesLength = cookieStringUTF8.length();
+        mig_allocate(reinterpret_cast<vm_address_t*>(&cookiesData), cookiesLength);
+        memcpy(cookiesData, cookieStringUTF8.data(), cookiesLength);
+        
+        return true;
+    }
+
+    return false;
+}
+    
+bool NetscapePluginInstanceProxy::setCookies(data_t urlData, mach_msg_type_number_t urlLength, data_t cookiesData, mach_msg_type_number_t cookiesLength)
+{
+    ASSERT(m_pluginView);
+    
+    NSURL *url = [m_pluginView URLWithCString:urlData];
+    if (!url)
+        return false;
+
+    if (Frame* frame = core([m_pluginView webFrame])) {
+        String cookieString = String::fromUTF8(cookiesData, cookiesLength);
+        if (!cookieString)
+            return false;
+        
+        WebCore::setCookies(frame->document(), url, url, cookieString);
+        return true;
+    }
+
+    return false;
+}
+
+bool NetscapePluginInstanceProxy::getProxy(data_t urlData, mach_msg_type_number_t urlLength, data_t& proxyData, mach_msg_type_number_t& proxyLength)
+{
+    ASSERT(m_pluginView);
+    
+    NSURL *url = [m_pluginView URLWithCString:urlData];
+    if (!url)
+        return false;
+
+    WebCore::CString proxyStringUTF8 = proxiesForURL(url);
+
+    proxyLength = proxyStringUTF8.length();
+    mig_allocate(reinterpret_cast<vm_address_t*>(&proxyData), proxyLength);
+    memcpy(proxyData, proxyStringUTF8.data(), proxyLength);
+    
+    return true;
+}
+    
+bool NetscapePluginInstanceProxy::getAuthenticationInfo(data_t protocolData, data_t hostData, uint32_t port, data_t schemeData, data_t realmData, 
+                                                        data_t& usernameData, mach_msg_type_number_t& usernameLength, data_t& passwordData, mach_msg_type_number_t& passwordLength)
+{
+    WebCore::CString username;
+    WebCore::CString password;
+    
+    if (!WebKit::getAuthenticationInfo(protocolData, hostData, port, schemeData, realmData, username, password))
+        return false;
+    
+    usernameLength = username.length();
+    mig_allocate(reinterpret_cast<vm_address_t*>(&usernameData), usernameLength);
+    memcpy(usernameData, username.data(), usernameLength);
+    
+    passwordLength = password.length();
+    mig_allocate(reinterpret_cast<vm_address_t*>(&passwordData), passwordLength);
+    memcpy(passwordData, password.data(), passwordLength);
+    
+    return true;
+}
 
 } // namespace WebKit
 

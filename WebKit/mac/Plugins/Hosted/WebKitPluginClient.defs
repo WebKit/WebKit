@@ -56,6 +56,34 @@ simpleroutine PCInvalidateRect(clientPort :mach_port_t;
                              width :double;
                              height :double);
 
+routine PCGetCookies(clientPort :mach_port_t;
+                     pluginID :uint32_t;
+                     url :data_t;
+                     out returnValue :boolean_t;
+                     out cookies :data_t, dealloc);
+
+routine PCSetCookies(clientPort :mach_port_t;
+                     pluginID :uint32_t;
+                     url :data_t;
+                     cookies :data_t;
+                     out returnValue :boolean_t);
+
+routine PCGetProxy(clientPort :mach_port_t;
+                   pluginID :uint32_t;
+                   url :data_t;
+                   out returnValue :boolean_t;
+                   out proxy :data_t, dealloc);
+
+routine PCGetAuthenticationInfo(clientPort :mach_port_t;
+                                pluginID :uint32_t;
+                                protocol :data_t;
+                                host :data_t;
+                                port :uint32_t;
+                                scheme :data_t;
+                                realm :data_t;
+                                out returnValue :boolean_t;
+                                out username :data_t, dealloc;
+                                out password :data_t, dealloc);
 // NPRuntime
 
 routine PCGetStringIdentifier(clientPort :mach_port_t;

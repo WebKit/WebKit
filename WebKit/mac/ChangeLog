@@ -1,3 +1,59 @@
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6667001>
+        NPAPI: need NPN_Get/SetValueForURL() and NPN_GetAuthenticationInfo()
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetCookies):
+        (WKPCGetProxy):
+        (WKPCSetCookies):
+        (WKPCGetAuthenticationInfo):
+        New MIG functions to be used by the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getCookies):
+        (WebKit::NetscapePluginInstanceProxy::setCookies):
+        (WebKit::NetscapePluginInstanceProxy::getProxy):
+        (WebKit::NetscapePluginInstanceProxy::getAuthenticationInfo):
+        Implement these.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add callbacks.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView URLWithCString:]):
+        Factor this out of URLWithCString.
+        
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        Call URLWithCString.
+        
+        (WebKit::proxiesForURL):
+        Return a string representation of proxies for a given URL.
+        
+        (WebKit::getAuthenticationInfo):
+        Get the authentication info for a given host/protocol/scheme/realm/port combination.
+        
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+        Initialize the new vtable functions.
+        
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:forURL:value:length:]):
+        (-[WebNetscapePluginView setVariable:forURL:value:length:]):
+        (-[WebNetscapePluginView getAuthenticationInfoWithProtocol:host:port:scheme:realm:username:usernameLength:password:passwordLength:]):
+        Implement these.
+        
+        * Plugins/npapi.mm:
+        (NPN_GetValueForURL):
+        (NPN_SetValueForURL):
+        (NPN_GetAuthenticationInfo):
+        Call the plug-in view functions.
+
 2009-04-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.
