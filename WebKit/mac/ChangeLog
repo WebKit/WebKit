@@ -1,3 +1,13 @@
+2009-04-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Anders Carlsson.
+
+        Trying to fix Tiger build.
+
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getAuthenticationInfoWithProtocol:host:port:scheme:realm:username:usernameLength:password:passwordLength:]):
+
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Leopard build once more.

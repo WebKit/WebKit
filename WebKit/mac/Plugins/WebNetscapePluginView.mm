@@ -2126,8 +2126,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 }
 
 - (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32_t)port scheme:(const char*)schemeStr realm:(const char*)realmStr
-                                    username:(char**)usernameStr usernameLength:(uint32_t*)usernameLength 
-                                    password:(char**)passwordStr passwordLength:(uint32_t*)passwordLength
+                                    username:(char**)usernameStr usernameLength:(uint32*)usernameLength 
+                                    password:(char**)passwordStr passwordLength:(uint32*)passwordLength
 {
     if (!protocolStr || !hostStr || !schemeStr || !realmStr || !usernameStr || !usernameLength || !passwordStr || !passwordLength)
         return NPERR_GENERIC_ERROR;

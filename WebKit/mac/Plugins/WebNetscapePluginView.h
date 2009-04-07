@@ -167,8 +167,8 @@ typedef union PluginPort {
 - (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length;
 - (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length;
 - (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32_t)port scheme:(const char*)scheme realm:(const char*)realm
-                                    username:(char**)username usernameLength:(uint32_t*)usernameLength 
-                                    password:(char**)password passwordLength:(uint32_t*)passwordLength;
+                                    username:(char**)username usernameLength:(uint32*)usernameLength 
+                                    password:(char**)password passwordLength:(uint32*)passwordLength;
 @end
 
 #endif
