@@ -1,5 +1,11 @@
 2009-04-07  Darin Adler  <darin@apple.com>
 
+        Roll out incorrect build fix.
+
+        * WebCore.NPAPI.exp: Reverted.
+
+2009-04-07  Darin Adler  <darin@apple.com>
+
         Another build fix.
 
         * WebCore.NPAPI.exp: Added new functions.
