@@ -225,12 +225,12 @@ RenderLayerCompositor* RenderLayer::compositor() const
     ASSERT(renderer()->view());
     return renderer()->view()->compositor();
 }
-    
+
 void RenderLayer::rendererContentChanged()
 {
     if (m_backing)
         m_backing->rendererContentChanged();
-}    
+}
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void RenderLayer::setStaticY(int staticY)
@@ -3007,6 +3007,17 @@ void RenderLayer::setBackingNeedsRepaintInRect(const IntRect& r)
             view->repaintViewRectangle(absRect);
     } else
         backing()->setContentsNeedDisplayInRect(r);
+}
+
+// Since we're only painting non-composited layers, we know that they all share the same repaintContainer.
+void RenderLayer::repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer)
+{
+    renderer()->repaintUsingContainer(repaintContainer, renderer()->clippedOverflowRectForRepaint(repaintContainer));
+
+    for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (!curr->isComposited())
+            curr->repaintIncludingNonCompositingDescendants(repaintContainer);
+    }
 }
 #endif
 

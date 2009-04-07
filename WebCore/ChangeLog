@@ -226,6 +226,41 @@
 
 2009-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=25082
+        
+        Clean up repaint logic when RenderLayers become and stop being composited.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rendererContentChanged):
+        (WebCore::RenderLayer::repaintIncludingNonCompositingDescendants):
+        New compositing-only method that repaints a layer and all its non-composited descendants.
+        Takes a repaintContainer for performance; all the repaints necessarily share the same
+        repaintContainer.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        Rather than use calculateCompositedBounds() to compute the repaint rect (which gave
+        the wrong answer when the composited layer tree was in flux), use the new
+        repaintOnCompositingChange() method.
+        
+        (WebCore::RenderLayerCompositor::repaintOnCompositingChange):
+        Call repaintIncludingNonCompositingDescendants(), and if necessary make sure
+        that the view/layer drawing synchronization happens.
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Do a repaintOnCompositingChange() when a layer is going to be composited. This is
+        a good place because we haven't started to change the compositing tree.
+        
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        After we've finished updating all the descendant layers, we can do a repaint for
+        layers that ceased compositing.
+
+2009-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
         
         https://bugs.webkit.org/show_bug.cgi?id=25069

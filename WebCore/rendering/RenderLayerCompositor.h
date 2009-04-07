@@ -62,8 +62,9 @@ public:
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(RenderLayer* updateRoot = 0);
 
-    // Update the compositing state of the given layer. Returns true if that state changed
-    bool updateLayerCompositingState(RenderLayer*);
+    // Update the compositing state of the given layer. Returns true if that state changed.
+    enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };
+    bool updateLayerCompositingState(RenderLayer*, CompositingChangeRepaint = CompositingChangeRepaintNow);
 
     // Whether layer's backing needs a graphics layer to do clipping by an ancestor (non-stacking-context parent with overflow).
     bool clippedByAncestor(RenderLayer*) const;
@@ -75,6 +76,9 @@ public:
     // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
     // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
     IntRect calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer, IntRect* layerBoundingBox = 0);
+
+    // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
+    void repaintOnCompositingChange(RenderLayer*);
     
     // Notify us that a layer has been added or removed
     void layerWasAdded(RenderLayer* parent, RenderLayer* child);

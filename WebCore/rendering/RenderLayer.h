@@ -188,6 +188,7 @@ public:
     // if layer compositing is being used,
     void setBackingNeedsRepaint();
     void setBackingNeedsRepaintInRect(const IntRect& r); // r is in the coordinate space of the layer's render object
+    void repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer);
 #endif
 
     void styleChanged(StyleDifference, const RenderStyle*);
