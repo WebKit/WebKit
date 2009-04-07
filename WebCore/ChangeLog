@@ -1,5 +1,20 @@
 2009-04-07  Adam Roben  <aroben@apple.com>
 
+        Make the look of <select>s match the system look on Vista
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderThemeWin.cpp: Added new constants.
+        (WebCore::RenderThemeWin::getThemeData): On Vista, use the
+        CP_DROPDOWNBUTTONRIGHT part for drop down buttons.
+        (WebCore::RenderThemeWin::paintMenuList): On Vista, use the CP_BORDER
+        part to draw the border of <select>s.
+        (WebCore::RenderThemeWin::paintMenuListButton): On Vista, outset the
+        drop down button to make its border coincide with the <select>'s
+        border.
+
+2009-04-07  Adam Roben  <aroben@apple.com>
+
         Move isRunningOnVistaOrLater to a shared location
 
         Rubber-stamped in advance by Dave Hyatt.

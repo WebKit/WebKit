@@ -30,6 +30,7 @@
 #include "Icon.h"
 #include "RenderSlider.h"
 #include "SoftLinking.h"
+#include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
 
 #include <tchar.h>
@@ -56,8 +57,10 @@
 #define TFP_TEXTFIELD 1
 #define TFS_READONLY  6
 
-// ComboBox constants (from tmschema.h)
+// ComboBox constants (from vsstyle.h)
 #define CP_DROPDOWNBUTTON 1
+#define CP_BORDER 4
+#define CP_DROPDOWNBUTTONRIGHT 6
 
 // TrackBar (slider) parts
 #define TKP_TRACK       1
@@ -91,6 +94,8 @@ SOFT_LINK(uxtheme, IsThemeActive, BOOL, WINAPI, (), ())
 SOFT_LINK(uxtheme, IsThemeBackgroundPartiallyTransparent, BOOL, WINAPI, (HANDLE hTheme, int iPartId, int iStateId), (hTheme, iPartId, iStateId))
 
 static bool haveTheme;
+
+static const unsigned vistaMenuListButtonOutset = 1;
 
 using namespace std;
 
@@ -493,7 +498,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
             break;
         case MenulistPart:
         case MenulistButtonPart:
-            result.m_part = CP_DROPDOWNBUTTON;
+            result.m_part = isRunningOnVistaOrLater() ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
             result.m_state = determineState(o);
             break;
         case RadioPart:
@@ -615,8 +620,17 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintIn
 
 bool RenderThemeWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    // The outer box of a menu list is just a text field.  Paint it first.
-    drawControl(i.context,  o, textFieldTheme(), ThemeData(TFP_TEXTFIELD, determineState(o)), r);
+    HANDLE theme;
+    int part;
+    if (isRunningOnVistaOrLater()) {
+        theme = menuListTheme();
+        part = CP_BORDER;
+    } else {
+        theme = textFieldTheme();
+        part = TFP_TEXTFIELD;
+    }
+
+    drawControl(i.context,  o, theme, ThemeData(part, determineState(o)), r);
     
     return paintMenuListButton(o, i, r);
 }
@@ -668,6 +682,13 @@ bool RenderThemeWin::paintMenuListButton(RenderObject* o, const RenderObject::Pa
     if (o->style()->direction() == LTR)
         buttonRect.setX(buttonRect.right() - dropDownButtonWidth);
     buttonRect.setWidth(dropDownButtonWidth);
+
+    if (isRunningOnVistaOrLater()) {
+        // Outset the top, right, and bottom borders of the button so that they coincide with the <select>'s border.
+        buttonRect.setY(buttonRect.y() - vistaMenuListButtonOutset);
+        buttonRect.setHeight(buttonRect.height() + 2 * vistaMenuListButtonOutset);
+        buttonRect.setWidth(buttonRect.width() + vistaMenuListButtonOutset);
+    }
 
     drawControl(i.context, o, menuListTheme(), getThemeData(o), buttonRect);
 
