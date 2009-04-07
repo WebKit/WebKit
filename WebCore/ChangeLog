@@ -2,6 +2,39 @@
 
         Reviewed by Darin Adler.
 
+        Move RangeBoundaryPoint off of Position, per Darin's suggestion
+        https://bugs.webkit.org/show_bug.cgi?id=24966
+
+        Rename setToChild to setToBeforeChild (since that's what the method does)
+
+        * dom/Position.h:
+        (WebCore::Position::offsetInContainerNode):
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::Range::selectNodeContents):
+        (WebCore::boundaryNodeWillBeRemoved):
+        * dom/Range.h:
+        (WebCore::Range::startPosition):
+        (WebCore::Range::endPosition):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::RangeBoundaryPoint):
+        (WebCore::RangeBoundaryPoint::container):
+        (WebCore::RangeBoundaryPoint::childBefore):
+        (WebCore::RangeBoundaryPoint::position):
+        (WebCore::RangeBoundaryPoint::offset):
+        (WebCore::RangeBoundaryPoint::clear):
+        (WebCore::RangeBoundaryPoint::set):
+        (WebCore::RangeBoundaryPoint::setOffset):
+        (WebCore::RangeBoundaryPoint::setToBeforeChild):
+        (WebCore::RangeBoundaryPoint::setToStartOfNode):
+        (WebCore::RangeBoundaryPoint::setToEndOfNode):
+        (WebCore::RangeBoundaryPoint::childBeforeWillBeRemoved):
+        (WebCore::RangeBoundaryPoint::invalidateOffset):
+
+2009-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Add containerNode(), computeOffsetInContainerNode(),
         computeNodeBeforePosition() and computeNodeAfterPosition().
         https://bugs.webkit.org/show_bug.cgi?id=24763

@@ -36,7 +36,8 @@ public:
     RangeBoundaryPoint();
     explicit RangeBoundaryPoint(PassRefPtr<Node> container);
 
-    const Position& position() const;
+    const Position toPosition() const;
+
     Node* container() const;
     int offset() const;
     Node* childBefore() const;
@@ -45,122 +46,135 @@ public:
 
     void set(PassRefPtr<Node> container, int offset, Node* childBefore);
     void setOffset(int offset);
-    void setToChild(Node* child);
-    void setToStart(PassRefPtr<Node> container);
-    void setToEnd(PassRefPtr<Node> container);
+
+    void setToBeforeChild(Node*);
+    void setToStartOfNode(PassRefPtr<Node>);
+    void setToEndOfNode(PassRefPtr<Node>);
 
     void childBeforeWillBeRemoved();
     void invalidateOffset() const;
+    void ensureOffsetIsValid() const;
 
 private:
     static const int invalidOffset = -1;
-
-    // FIXME: RangeBoundaryPoint is the only file to ever use -1 as am expected offset for Position
-    // RangeBoundaryPoint currently needs to store a Position object to make the
-    // position() function be able to return a const& (and thus avoid ref-churn).
     
-    mutable Position m_position;
-    Node* m_childBefore;
+    RefPtr<Node> m_containerNode;
+    mutable int m_offsetInContainer;
+    Node* m_childBeforeBoundary;
 };
 
 inline RangeBoundaryPoint::RangeBoundaryPoint()
-    : m_childBefore(0)
+    : m_offsetInContainer(0)
+    , m_childBeforeBoundary(0)
 {
 }
 
 inline RangeBoundaryPoint::RangeBoundaryPoint(PassRefPtr<Node> container)
-    : m_position(container, 0)
-    , m_childBefore(0)
+    : m_containerNode(container)
+    , m_offsetInContainer(0)
+    , m_childBeforeBoundary(0)
 {
 }
 
 inline Node* RangeBoundaryPoint::container() const
 {
-    return m_position.node();
+    return m_containerNode.get();
 }
 
 inline Node* RangeBoundaryPoint::childBefore() const
 {
-    return m_childBefore;
+    return m_childBeforeBoundary;
 }
 
-inline const Position& RangeBoundaryPoint::position() const
+inline void RangeBoundaryPoint::ensureOffsetIsValid() const
 {
-    if (m_position.m_offset >= 0)
-        return m_position;
-    ASSERT(m_childBefore);
-    m_position.m_offset = m_childBefore->nodeIndex() + 1;
-    return m_position;
+    if (m_offsetInContainer >= 0)
+        return;
+
+    ASSERT(m_childBeforeBoundary);
+    m_offsetInContainer = m_childBeforeBoundary->nodeIndex() + 1;
+}
+
+inline const Position RangeBoundaryPoint::toPosition() const
+{
+    ensureOffsetIsValid();
+    return Position(m_containerNode.get(), m_offsetInContainer);
 }
 
 inline int RangeBoundaryPoint::offset() const
 {
-    return position().m_offset;
+    ensureOffsetIsValid();
+    return m_offsetInContainer;
 }
 
 inline void RangeBoundaryPoint::clear()
 {
-    m_position.clear();
-    m_childBefore = 0;
+    m_containerNode.clear();
+    m_offsetInContainer = 0;
+    m_childBeforeBoundary = 0;
 }
 
 inline void RangeBoundaryPoint::set(PassRefPtr<Node> container, int offset, Node* childBefore)
 {
     ASSERT(offset >= 0);
     ASSERT(childBefore == (offset ? container->childNode(offset - 1) : 0));
-    m_position.moveToPosition(container, offset);
-    m_childBefore = childBefore;
+    m_containerNode = container;
+    m_offsetInContainer = offset;
+    m_childBeforeBoundary = childBefore;
 }
 
 inline void RangeBoundaryPoint::setOffset(int offset)
 {
-    ASSERT(m_position.node());
-    ASSERT(m_position.node()->offsetInCharacters());
-    ASSERT(m_position.m_offset >= 0);
-    ASSERT(!m_childBefore);
-    m_position.moveToOffset(offset);
+    ASSERT(m_containerNode);
+    ASSERT(m_containerNode->offsetInCharacters());
+    ASSERT(m_offsetInContainer >= 0);
+    ASSERT(!m_childBeforeBoundary);
+    m_offsetInContainer = offset;
 }
 
-inline void RangeBoundaryPoint::setToChild(Node* child)
+inline void RangeBoundaryPoint::setToBeforeChild(Node* child)
 {
     ASSERT(child);
     ASSERT(child->parentNode());
-    m_childBefore = child->previousSibling();
-    m_position.moveToPosition(child->parentNode(), m_childBefore ? invalidOffset : 0);
+    m_childBeforeBoundary = child->previousSibling();
+    m_containerNode = child->parentNode();
+    m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
 }
 
-inline void RangeBoundaryPoint::setToStart(PassRefPtr<Node> container)
+inline void RangeBoundaryPoint::setToStartOfNode(PassRefPtr<Node> container)
 {
     ASSERT(container);
-    m_position.moveToPosition(container, 0);
-    m_childBefore = 0;
+    m_containerNode = container;
+    m_offsetInContainer = 0;
+    m_childBeforeBoundary = 0;
 }
 
-inline void RangeBoundaryPoint::setToEnd(PassRefPtr<Node> container)
+inline void RangeBoundaryPoint::setToEndOfNode(PassRefPtr<Node> container)
 {
     ASSERT(container);
-    if (container->offsetInCharacters()) {
-        m_position.moveToPosition(container, container->maxCharacterOffset());
-        m_childBefore = 0;
+    m_containerNode = container;
+    if (m_containerNode->offsetInCharacters()) {
+        m_offsetInContainer = m_containerNode->maxCharacterOffset();
+        m_childBeforeBoundary = 0;
     } else {
-        m_childBefore = container->lastChild();
-        m_position.moveToPosition(container, m_childBefore ? invalidOffset : 0);
+        m_childBeforeBoundary = m_containerNode->lastChild();
+        m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
     }
 }
 
 inline void RangeBoundaryPoint::childBeforeWillBeRemoved()
 {
-    ASSERT(m_position.m_offset);
-    m_childBefore = m_childBefore->previousSibling();
-    if (!m_childBefore)
-        m_position.m_offset = 0;
-    else if (m_position.m_offset > 0)
-        --m_position.m_offset;
+    ASSERT(m_offsetInContainer);
+    m_childBeforeBoundary = m_childBeforeBoundary->previousSibling();
+    if (!m_childBeforeBoundary)
+        m_offsetInContainer = 0;
+    else if (m_offsetInContainer > 0)
+        --m_offsetInContainer;
 }
 
 inline void RangeBoundaryPoint::invalidateOffset() const
 {
-    m_position.m_offset = invalidOffset;
+    m_offsetInContainer = invalidOffset;
 }
 
 inline bool operator==(const RangeBoundaryPoint& a, const RangeBoundaryPoint& b)

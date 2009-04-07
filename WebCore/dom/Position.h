@@ -28,6 +28,7 @@
 
 #include "TextAffinity.h"
 #include "TextDirection.h"
+#include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -46,10 +47,6 @@ enum PositionMoveType {
     BackwardDeletion // Subject to platform conventions.
 };
 
-// FIXME: Reduce the number of operations we have on a Position.
-// This should be more like a humble struct, without so many different
-// member functions. We should find better homes for these functions.
-
 class Position {
 public:
     Position() : m_offset(0) { }
@@ -64,8 +61,15 @@ public:
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->nodeIndex() from these functions.
-    Node* containerNode() const;
-    int computeOffsetInContainerNode() const;
+    Node* containerNode() const; // NULL for a before/after position anchored to a node with no parent
+    int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
+
+    // Inline O(1) access for Positions which callers know to be parent-anchored
+    int offsetInContainerNode() const
+    {
+        ASSERT(anchorType() == PositionIsOffsetInAnchor);
+        return m_offset;
+    }
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
     Node* computeNodeBeforePosition() const;
