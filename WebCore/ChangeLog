@@ -1,3 +1,12 @@
+2009-04-07  David Levin  <levin@chromium.org>
+
+        Build fix.
+
+        r44280 undid the change in r42268 that made CookieJar.h private.
+        This redoes the change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-04-07  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.
