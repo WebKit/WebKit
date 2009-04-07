@@ -1,5 +1,11 @@
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Tiger build.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/6667001>

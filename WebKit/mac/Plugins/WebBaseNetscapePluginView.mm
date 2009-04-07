@@ -643,9 +643,9 @@ using namespace WebCore;
 @end
 
 
-#ifndef BUILDING_ON_TIGER
 namespace WebKit {
 
+#ifndef BUILDING_ON_TIGER
 CString proxiesForURL(NSURL *url)
 {
     RetainPtr<CFDictionaryRef> systemProxies(AdoptCF, CFNetworkCopySystemProxySettings());
@@ -703,6 +703,7 @@ CString proxiesForURL(NSURL *url)
     
     return proxies.utf8();
 }
+#endif
 
 bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
                            CString& username, CString& password)
@@ -747,7 +748,6 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
 }
 
 } // namespace WebKit
-#endif
 
 #endif //  ENABLE(NETSCAPE_PLUGIN_API)
 
