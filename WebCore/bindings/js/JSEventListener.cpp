@@ -35,8 +35,8 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
     JSLock lock(false);
 
-    JSObject* listener = function();
-    if (!listener)
+    JSObject* jsFunction = this->jsFunction();
+    if (!jsFunction)
         return;
 
     JSDOMGlobalObject* globalObject = this->globalObject();
@@ -67,12 +67,12 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     ExecState* exec = globalObject->globalExec();
 
-    JSValuePtr handleEventFunction = listener->get(exec, Identifier(exec, "handleEvent"));
+    JSValuePtr handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
     CallType callType = handleEventFunction.getCallData(callData);
     if (callType == CallTypeNone) {
         handleEventFunction = noValue();
-        callType = listener->getCallData(callData);
+        callType = jsFunction->getCallData(callData);
     }
 
     if (callType != CallTypeNone) {
@@ -93,7 +93,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         JSValuePtr retval;
         if (handleEventFunction) {
             globalObject->globalData()->timeoutChecker.start();
-            retval = call(exec, handleEventFunction, callType, callData, listener, args);
+            retval = call(exec, handleEventFunction, callType, callData, jsFunction, args);
         } else {
             JSValuePtr thisValue;
             if (isWindowEvent)
@@ -101,7 +101,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
             else
                 thisValue = toJS(exec, event->currentTarget());
             globalObject->globalData()->timeoutChecker.start();
-            retval = call(exec, listener, callType, callData, thisValue, args);
+            retval = call(exec, jsFunction, callType, callData, thisValue, args);
         }
         globalObject->globalData()->timeoutChecker.stop();
 
@@ -132,30 +132,30 @@ bool JSAbstractEventListener::virtualIsInline() const
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
+JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isInline)
     : JSAbstractEventListener(isInline)
-    , m_listener(listener)
+    , m_jsFunction(function)
     , m_globalObject(globalObject)
 {
-    if (m_listener) {
+    if (m_jsFunction) {
         JSDOMWindow::JSListenersMap& listeners = isInline
             ? globalObject->jsInlineEventListeners() : globalObject->jsEventListeners();
-        listeners.set(m_listener, this);
+        listeners.set(m_jsFunction, this);
     }
 }
 
 JSEventListener::~JSEventListener()
 {
-    if (m_listener && m_globalObject) {
+    if (m_jsFunction && m_globalObject) {
         JSDOMWindow::JSListenersMap& listeners = isInline()
             ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
-        listeners.remove(m_listener);
+        listeners.remove(m_jsFunction);
     }
 }
 
-JSObject* JSEventListener::function() const
+JSObject* JSEventListener::jsFunction() const
 {
-    return m_listener;
+    return m_jsFunction;
 }
 
 JSDOMGlobalObject* JSEventListener::globalObject() const
@@ -170,8 +170,8 @@ void JSEventListener::clearGlobalObject()
 
 void JSEventListener::mark()
 {
-    if (m_listener && !m_listener->marked())
-        m_listener->mark();
+    if (m_jsFunction && !m_jsFunction->marked())
+        m_jsFunction->mark();
 }
 
 #ifndef NDEBUG
@@ -182,13 +182,13 @@ static WTF::RefCountedLeakCounter eventListenerCounter("EventListener");
 
 JSProtectedEventListener::JSProtectedEventListener(JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
     : JSAbstractEventListener(isInline)
-    , m_listener(listener)
+    , m_jsFunction(listener)
     , m_globalObject(globalObject)
 {
-    if (m_listener) {
+    if (m_jsFunction) {
         JSDOMWindow::ProtectedListenersMap& listeners = isInline
             ? m_globalObject->jsProtectedInlineEventListeners() : m_globalObject->jsProtectedEventListeners();
-        listeners.set(m_listener, this);
+        listeners.set(m_jsFunction, this);
     }
 #ifndef NDEBUG
     eventListenerCounter.increment();
@@ -197,19 +197,19 @@ JSProtectedEventListener::JSProtectedEventListener(JSObject* listener, JSDOMGlob
 
 JSProtectedEventListener::~JSProtectedEventListener()
 {
-    if (m_listener && m_globalObject) {
+    if (m_jsFunction && m_globalObject) {
         JSDOMWindow::ProtectedListenersMap& listeners = isInline()
             ? m_globalObject->jsProtectedInlineEventListeners() : m_globalObject->jsProtectedEventListeners();
-        listeners.remove(m_listener);
+        listeners.remove(m_jsFunction);
     }
 #ifndef NDEBUG
     eventListenerCounter.decrement();
 #endif
 }
 
-JSObject* JSProtectedEventListener::function() const
+JSObject* JSProtectedEventListener::jsFunction() const
 {
-    return m_listener;
+    return m_jsFunction;
 }
 
 JSDOMGlobalObject* JSProtectedEventListener::globalObject() const

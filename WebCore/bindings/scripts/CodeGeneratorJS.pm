@@ -1118,8 +1118,8 @@ sub GenerateImplementation
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                     push(@implContent, "    if (EventListener* listener = imp->$implGetterFunctionName()) {\n");
-                    push(@implContent, "        if (JSObject* function = listener->function())\n");
-                    push(@implContent, "            return function;\n");
+                    push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction())\n");
+                    push(@implContent, "            return jsFunction;\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    return jsNull();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {

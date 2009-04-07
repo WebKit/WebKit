@@ -49,10 +49,10 @@ JSLazyEventListener::JSLazyEventListener(LazyEventListenerType type, const Strin
         m_lineNumber = 1;
 }
 
-JSObject* JSLazyEventListener::function() const
+JSObject* JSLazyEventListener::jsFunction() const
 {
     parseCode();
-    return m_listener;
+    return m_jsFunction;
 }
 
 static inline JSValuePtr eventParameterName(JSLazyEventListener::LazyEventListenerType type, ExecState* exec)
@@ -96,15 +96,15 @@ void JSLazyEventListener::parseCode() const
 
     // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
     // have been added with setAttribute from a script, and we should pass String() in that case.
-    m_listener = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
+    m_jsFunction = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
 
-    JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
+    JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_jsFunction.get());
 
     if (exec->hadException()) {
         exec->clearException();
 
         // failed to parse, so let's just make this listener a no-op
-        m_listener = 0;
+        m_jsFunction = 0;
     } else if (m_originalNode) {
         // Add the event's home element to the scope
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
@@ -121,10 +121,10 @@ void JSLazyEventListener::parseCode() const
     m_functionName = String();
     m_code = String();
 
-    if (m_listener) {
+    if (m_jsFunction) {
         ASSERT(isInline());
         JSDOMWindow::ProtectedListenersMap& listeners = m_globalObject->jsProtectedInlineEventListeners();
-        listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
+        listeners.set(m_jsFunction, const_cast<JSLazyEventListener*>(this));
     }
 }
 

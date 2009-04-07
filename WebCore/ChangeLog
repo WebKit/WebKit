@@ -1,3 +1,29 @@
+2009-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Sam Weinig.
+        
+        A little renaming:
+        
+        function => jsFunction
+        listener => jsFunction
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::jsFunction):
+        (WebCore::JSEventListener::mark):
+        (WebCore::JSProtectedEventListener::JSProtectedEventListener):
+        (WebCore::JSProtectedEventListener::~JSProtectedEventListener):
+        (WebCore::JSProtectedEventListener::jsFunction):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSProtectedEventListener::create):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::jsFunction):
+        (WebCore::JSLazyEventListener::parseCode):
+        * dom/EventListener.h:
+        (WebCore::EventListener::jsFunction):
+
 2009-04-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
