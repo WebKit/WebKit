@@ -111,7 +111,7 @@ class CString;
 }
 
 namespace WebKit {
-#ifndef BUILDING_ON_TIGER
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 WebCore::CString proxiesForURL(NSURL *);
 #endif
     

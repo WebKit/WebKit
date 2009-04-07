@@ -645,7 +645,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#ifndef BUILDING_ON_TIGER
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 CString proxiesForURL(NSURL *url)
 {
     RetainPtr<CFDictionaryRef> systemProxies(AdoptCF, CFNetworkCopySystemProxySettings());
