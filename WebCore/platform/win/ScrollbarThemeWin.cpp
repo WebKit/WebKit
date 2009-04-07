@@ -125,8 +125,11 @@ int ScrollbarThemeWin::scrollbarThickness(ScrollbarControlSize)
 
 void ScrollbarThemeWin::themeChanged()
 {
-    if (scrollbarTheme)
-        CloseThemeData(scrollbarTheme);
+    if (!scrollbarTheme)
+        return;
+
+    CloseThemeData(scrollbarTheme);
+    scrollbarTheme = 0;
 }
 
 bool ScrollbarThemeWin::invalidateOnMouseEnterExit()

@@ -1,5 +1,17 @@
 2009-04-07  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://6520933> REGRESSION (3.2.1-ToT): Scroll bar disappears in
+        WebView and Bookmarks view after switching theme or turning on High
+        Contrast mode
+
+        Reviewed by Dave Hyatt.
+
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::themeChanged): Null out scrollbarTheme
+        after closing it so that we'll re-open the theme next time we paint.
+
+2009-04-07  Adam Roben  <aroben@apple.com>
+
         Small cleanup/correctness fix in ScrollbarThemeWin
 
         Reviewed by Dave Hyatt.
