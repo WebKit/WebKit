@@ -1,3 +1,32 @@
+2009-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben
+
+        Fix ScrollView's algorithm that determines whether or not to show scrollbars.  There was a bug
+        with the method mainly because RenderView will size itself to the viewport's size, making it
+        impossible to really know the document's "true" size.
+
+        In order to solve this problem ScrollView now has a minimumContentsSize method.  This method
+        returns the document size excluding the RenderView from the calculation.  This width/height
+        is now cached on RenderView in m_docWidth/m_docHeight member variables.
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustPageHeight):
+        (WebCore::FrameView::minimumContentsSize):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::minimumContentsSize):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::calcDocHeight):
+        (WebCore::RenderView::calcDocWidth):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::docWidth):
+        (WebCore::RenderView::docHeight):
+
 2009-04-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Build fix, not reviewed.

@@ -1,3 +1,13 @@
+2009-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben
+
+        Mac portion of fix to make DumpRenderTree always produce accurate scrollbar results.  Change
+        updateScrollers to call minimumContentsSize when a WebHTMLView is inside the WebDynamicScrollbarsView.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2009-04-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Anders Carlsson.

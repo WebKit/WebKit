@@ -29,7 +29,11 @@
 #import "WebDynamicScrollBarsViewInternal.h"
 
 #import "WebDocument.h"
+#import "WebFrameInternal.h"
 #import "WebFrameView.h"
+#import "WebHTMLViewInternal.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -118,6 +122,14 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
                 }
 
                 NSSize documentSize = [documentView frame].size;
+                if ([documentView isKindOfClass:[WebHTMLView class]]) {
+                    WebHTMLView *htmlView = (WebHTMLView*)documentView;
+                    if (Frame* coreFrame = core([htmlView _frame])) {
+                        if (FrameView* coreView = coreFrame->view())
+                            documentSize = coreView->minimumContentsSize();
+                    }
+                }
+
                 NSSize frameSize = [self frame].size;
 
                 scrollsVertically = (vScroll == ScrollbarAlwaysOn) ||

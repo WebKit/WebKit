@@ -73,6 +73,8 @@ public:
     void setMarginWidth(int);
     void setMarginHeight(int);
 
+    virtual IntSize minimumContentsSize() const;
+
     virtual void setCanHaveScrollbars(bool);
 
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);

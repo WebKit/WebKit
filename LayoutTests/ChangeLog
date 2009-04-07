@@ -1,3 +1,20 @@
+2009-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben
+
+        Land updated layout test results now that DRT is doing the right thing
+        with scrollbar results.
+
+        * platform/mac/css2.1/t0803-c5502-mrgn-r-02-c-expected.checksum:
+        * platform/mac/css2.1/t0803-c5502-mrgn-r-02-c-expected.png:
+        * platform/mac/css2.1/t0803-c5502-mrgn-r-02-c-expected.txt:
+        * platform/mac/css2.1/t0803-c5505-mrgn-02-c-expected.checksum:
+        * platform/mac/css2.1/t0803-c5505-mrgn-02-c-expected.png:
+        * platform/mac/css2.1/t0803-c5505-mrgn-02-c-expected.txt:
+        * platform/mac/fast/block/float/013-expected.checksum:
+        * platform/mac/fast/block/float/013-expected.png:
+        * platform/mac/fast/block/float/013-expected.txt:
+
 2009-04-07  Brian Weinstein  <bweinstein@gmail.com>
 
         Reviewed by Darin Adler.
