@@ -491,16 +491,10 @@ http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/extra-parameters.html
 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html
 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html
 http/tests/xmlhttprequest/redirect-cross-origin-sync.html
-http/tests/xmlhttprequest/status-after-abort.html
 http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
-http/tests/xmlhttprequest/zero-length-response-sync.html
-http/tests/xmlhttprequest/zero-length-response.html
-http/tests/xmlhttprequest/web-apps/012.html
-http/tests/xmlhttprequest/web-apps/013.html
 media/video-timeupdate-during-playback.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/netscape-plugin-setwindow-size-2.html

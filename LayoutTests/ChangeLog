@@ -1,3 +1,22 @@
+2009-04-07  Brian Weinstein  <bweinstein@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24851
+
+        Tests in http/tests/xmlhttprequest/web-apps were taking results from 
+        platform/mac instead of LayoutTests, so added the values from LayoutTests 
+        into platform/win, and removed a few tests from the skip list that are fixed 
+        by the fix to platform/network/cf/ResourceResponseCFNet.cpp
+
+        * platform/win/Skipped:
+        * platform/win/http: Added.
+        * platform/win/http/tests: Added.
+        * platform/win/http/tests/xmlhttprequest: Added.
+        * platform/win/http/tests/xmlhttprequest/web-apps: Added.
+        * platform/win/http/tests/xmlhttprequest/web-apps/012-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/web-apps/012-expected.txt.
+        * platform/win/http/tests/xmlhttprequest/web-apps/013-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/web-apps/013-expected.txt.
+
 2009-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
