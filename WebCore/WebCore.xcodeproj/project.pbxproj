@@ -1956,7 +1956,7 @@
 		935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935207BF09BD412000F2038D /* LocalizedStringsMac.mm */; };
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
-		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; };
 		9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */; };
 		935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */; };
 		935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };

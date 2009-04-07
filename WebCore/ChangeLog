@@ -1,3 +1,34 @@
+2009-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6764359> Thai word selection misbehaves for the
+          last sentence in the document
+
+        Test: editing/selection/thai-word-at-document-end.html
+
+        * editing/visible_units.cpp:
+            - Added a BoundarySearchContextAvailability enum used to indicate
+            whether the caller to a boundary search function may be able to provide
+            additional text in the search direction and call again.
+            - Added a named type for the boundary search function signature. Changed
+            the signature to take a context availability parameter and a boolean
+            out parameter indicating whether more context is needed to perform
+            the search.
+        (WebCore::previousBoundary): If the beginning of the range was reached
+            but the last search wanted more context, perform the search again, this
+            time indicating that there is no earlier text.
+        (WebCore::nextBoundary): Similarly, in the other direction.
+        (WebCore::startWordBoundary): Check whether more context may be available
+            and ask for more context if needed.
+        (WebCore::endWordBoundary): Ditto.
+        (WebCore::previousWordPositionBoundary): Ditto.
+        (WebCore::nextWordPositionBoundary): Ditto.
+        (WebCore::startSentenceBoundary):  Updated signature.
+        (WebCore::endSentenceBoundary): Ditto.
+        (WebCore::previousSentencePositionBoundary): Ditto.
+        (WebCore::nextSentencePositionBoundary): Ditto.
+
 2009-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Sam Weinig.
