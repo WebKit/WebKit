@@ -1,3 +1,9 @@
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Another attempt at fixing the build.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-04-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
