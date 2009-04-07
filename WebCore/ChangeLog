@@ -1,3 +1,9 @@
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Another build fix.
+        
+        * plugins/npfunctions.h:
+
 2009-04-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Fix non-Mac builds.

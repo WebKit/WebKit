@@ -63,9 +63,9 @@ typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
 typedef void  (*NPN_PushPopupsEnabledStateProcPtr)(NPP instance, NPBool enabled);
 typedef void  (*NPN_PopPopupsEnabledStateProcPtr)(NPP instance);
 typedef void (*NPN_PluginThreadAsyncCallProcPtr)(NPP npp, void (*func)(void *), void *userData);
-typedef NPError (*NPN_GetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, char** value, uint32_t* len);
-typedef NPError (*NPN_SetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, const char* value, uint32_t len);
-typedef NPError (*NPN_GetAuthenticationInfoPtr)(NPP npp, const char* protocol, const char* host, int32_t port, const char* scheme, const char *realm, char** username, uint32_t* ulen, char** password, uint32_t* plen);
+typedef NPError (*NPN_GetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, char** value, uint32* len);
+typedef NPError (*NPN_SetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, const char* value, uint32 len);
+typedef NPError (*NPN_GetAuthenticationInfoPtr)(NPP npp, const char* protocol, const char* host, int32 port, const char* scheme, const char *realm, char** username, uint32* ulen, char** password, uint32* plen);
 
 typedef uint32 (*NPN_ScheduleTimerProcPtr)(NPP npp, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID));
 typedef void (*NPN_UnscheduleTimerProcPtr)(NPP npp, uint32 timerID);
