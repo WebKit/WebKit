@@ -1160,8 +1160,10 @@ void Document::recalcStyle(StyleChange change)
             view()->layout();
 #if USE(ACCELERATED_COMPOSITING)
         else {
+            bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
             // If we didn't update compositing layers because of layout(), we need to do so here.
-            view()->updateCompositingLayers();
+            if (!layoutPending)
+                view()->updateCompositingLayers();
         }
 #endif
     }

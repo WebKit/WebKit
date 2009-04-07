@@ -56,7 +56,7 @@ public:
     void updateAfterLayout();
     
     // Returns true if layer configuration changed.
-    bool updateGraphicsLayers(bool needsContentsLayer, bool needsUpperClippingLayer, bool needsLowerClippingLayer, bool needsRepaint);
+    bool updateGraphicsLayerConfiguration();
     void updateGraphicsLayerGeometry();
     void updateInternalHierarchy();
     
@@ -103,9 +103,6 @@ public:
     FloatPoint graphicsLayerToContentsCoordinates(const GraphicsLayer*, const FloatPoint&);
     FloatPoint contentsToGraphicsLayerCoordinates(const GraphicsLayer*, const FloatPoint&);
 
-    void detectDrawingOptimizations();
-    void invalidateDrawingOptimizations();
-
     // GraphicsLayerClient interface
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
 
@@ -137,7 +134,7 @@ private:
     
     // Returns true if this RenderLayer only has content that can be rendered directly
     // by the compositing layer, without drawing (e.g. solid background color).
-    bool isSimpleContainerCompositingLayer();
+    bool isSimpleContainerCompositingLayer() const;
     // Returns true if we can optimize the RenderLayer to draw the replaced content
     // directly into a compositing buffer
     bool canUseDirectCompositing() const;
@@ -146,7 +143,6 @@ private:
     bool rendererHasBackground() const;
     const Color& rendererBackgroundColor() const;
 
-    bool canBeSimpleContainerCompositingLayer() const;
     bool hasNonCompositingContent() const;
     
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
@@ -165,9 +161,7 @@ private:
 
     IntSize m_compositingContentOffset;
 
-    bool m_isSimpleContainerCompositingLayer : 1;  // is this compositing layer able to be simplified
-    bool m_simpleCompositingLayerStatusDirty : 1; // set if the test for simple layers needs to be redone
-
+    bool m_hasDirectlyCompositedContent: 1;
     bool m_compositingContentOffsetDirty: 1;
 };
 

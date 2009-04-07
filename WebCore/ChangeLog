@@ -1,3 +1,67 @@
+2009-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25069
+        
+        Clean up the accelerated compositing code that determines the format of
+        the GraphicsLayer hierarchy, being more explicit about which parts have
+        to happen before and after descendant layers have been updated. Also remove
+        some unhelpful caching of state.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        Only call updateCompositingLayers() if we know we're not going to be
+        doing a layout soon.
+        
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setDrawsContent):
+        Toggling drawsContent from false to true should do a setNeedsDisplay().
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        updateLayerCompositingState() no longer updates the layer geometry, so
+        do that here if we're not going to rebuild layers anyway.
+        Also, updateLayerCompositingState() no longer does a setContentsNeedDisplay,
+        so do that if the style change indicates that a repaint is required.
+        
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        The 'drawing optimizations' logic has been rolled into updateGraphicsLayerConfiguration()
+        and updateGraphicsLayerGeometry().
+        
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        Group that code that decides what GraphicsLayers are needed into this method,
+        which deals with clipping layers and 'direct compositing': images that can be
+        rendered via the compositor.
+        
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        Call setDrawsContent() if updateGraphicsLayerConfiguration() didn't already
+        figure it out for image layers.
+        
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        Remove the m_simpleCompositingLayerStatusDirty cache indicator, since we just
+        computed it every time anyway.
+        
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        updateGraphicsLayers() was renamed to updateGraphicsLayerConfiguration(),
+        which calls clippedByAncestor() etc. itself rather than having everything passed in.
+        Repaints are taken care of by styleChanged() and setDrawsContent().
+        
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        !layer->isComposited() && layer->transform() is a synonym for paintsWithTransform().
+        
+        (WebCore::RenderLayerCompositor::setCompositingParent):
+        No need to call updateGraphicsLayerGeometry() here, because we're going to
+        rebuild layers anyway.
+        
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        Add comments, and test layerBacking instead of layer->isComposited().
+
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

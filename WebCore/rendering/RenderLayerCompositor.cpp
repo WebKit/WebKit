@@ -174,7 +174,7 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
     ASSERT(updateRoot || !m_compositingLayersNeedUpdate);
 }
 
-bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, StyleDifference diff)
+bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer)
 {
     bool needsLayer = needsToBeComposited(layer);
     bool layerChanged = false;
@@ -214,13 +214,9 @@ bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, Styl
         }
     }
 
-    if (!needsLayer)
-        return layerChanged;
-
-    if (layer->backing()->updateGraphicsLayers(needsContentsCompositingLayer(layer),
-                                               clippedByAncestor(layer),
-                                               clipsCompositingDescendants(layer),
-                                               diff >= StyleDifferenceRepaint))
+    // See if we need content or clipping layers. Methods called here should assume
+    // that the compositing state of descendant layers has not been updated yet.
+    if (layer->backing() && layer->backing()->updateGraphicsLayerConfiguration())
         layerChanged = true;
 
     return layerChanged;
@@ -268,7 +264,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         }
     }
 
-    if (!layer->isComposited() && layer->transform()) {
+    if (layer->paintsWithTransform()) {
         TransformationMatrix* affineTrans = layer->transform();
         boundingBoxRect = affineTrans->mapRect(boundingBoxRect);
         unionBounds = affineTrans->mapRect(unionBounds);
@@ -426,12 +422,6 @@ void RenderLayerCompositor::setCompositingParent(RenderLayer* childLayer, Render
         hostingLayer->addChild(hostedLayer);
     } else
         childLayer->backing()->childForSuperlayers()->removeFromParent();
-    
-    // FIXME: setCompositingParent() is only called at present by rebuildCompositingLayerTree(),
-    // which calls updateGraphicsLayerGeometry via updateLayerCompositingState(), so this should
-    // be optimized.
-    if (parentLayer)
-        childLayer->backing()->updateGraphicsLayerGeometry();
 }
 
 void RenderLayerCompositor::removeCompositedChildren(RenderLayer* layer)
@@ -457,7 +447,10 @@ void RenderLayerCompositor::parentInRootLayer(RenderLayer* layer)
 
 void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, struct CompositingState& ioCompState)
 {
-    updateLayerCompositingState(layer, StyleDifferenceEqual);
+    // Make the layer compositing if necessary, and set up clipping and content layers.
+    // Note that we can only do work here that is independent of whether the descendant layers
+    // have been processed.
+    updateLayerCompositingState(layer);
 
     // host the document layer in the RenderView's root layer
     if (layer->isRootLayer())
@@ -474,7 +467,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
     RenderLayerBacking* layerBacking = layer->backing();
     
     // FIXME: make this more incremental
-    if (layer->isComposited()) {
+    if (layerBacking) {
         layerBacking->parentForSublayers()->removeAllChildren();
         layerBacking->updateInternalHierarchy();
     }
@@ -528,8 +521,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
         }
     }
     
-    if (layerBacking)
+    if (layerBacking) {
+        // Do work here that requires that we've processed all of the descendant layers
         layerBacking->updateGraphicsLayerGeometry();
+    }
 }
 
 void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const IntRect& absRect)

@@ -3066,10 +3066,13 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
 #if USE(ACCELERATED_COMPOSITING)
     updateTransform();
 
-    if (compositor()->updateLayerCompositingState(this, diff))
+    if (compositor()->updateLayerCompositingState(this))
         compositor()->setCompositingLayersNeedUpdate();
     else if (m_backing)
         m_backing->updateGraphicsLayerGeometry();
+
+    if (m_backing && diff >= StyleDifferenceRepaint)
+        m_backing->setContentsNeedDisplay();
 #else
     UNUSED_PARAM(diff);
 #endif

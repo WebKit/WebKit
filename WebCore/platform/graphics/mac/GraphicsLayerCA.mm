@@ -746,8 +746,10 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
             swapFromOrToTiledLayer(needTiledLayer);
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        // Clobber any existing content. If necessary, CA will create backing store on the next display.
-        [m_layer.get() setContents:nil];
+        if (m_drawsContent)
+            [m_layer.get() setNeedsDisplay];
+        else
+            [m_layer.get() setContents:nil];
         
 #ifndef NDEBUG
         updateDebugIndicators();
