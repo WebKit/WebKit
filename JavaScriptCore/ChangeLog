@@ -1,3 +1,37 @@
+2009-04-07  David Levin  <levin@chromium.org>
+
+        Reviewed by Sam Weinig and Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25039
+        UString refactoring to support UChar* sharing.
+
+        No change in sunspider perf.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * runtime/UString.cpp:
+        (JSC::initializeStaticBaseString):
+        (JSC::initializeUString):
+        (JSC::UString::BaseString::isShared):
+        Encapsulate the meaning behind the refcount == 1 checks because
+        this needs to do slightly more when sharing is added.
+        (JSC::concatenate):
+        (JSC::UString::append):
+        (JSC::UString::operator=):
+        * runtime/UString.h:
+        Make m_baseString part of a union to get rid of casts, but make it protected because
+        it is tricky to use it correctly since it is only valid when the Rep is not a BaseString.
+        The void* will be filled in when sharing is added.
+
+        Add constructors due to the making members protected and it make ensuring proper
+        initialization work better (like in SmallStringsStorage).
+        (JSC::UString::Rep::create):
+        (JSC::UString::Rep::Rep):
+        (JSC::UString::Rep::):
+        (JSC::UString::BaseString::BaseString):
+        (JSC::UString::Rep::setBaseString):
+        (JSC::UString::Rep::baseString):
+
 2009-04-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.
