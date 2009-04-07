@@ -270,7 +270,7 @@ namespace WebCore {
         Location* optionalLocation() const { return m_location.get(); }
 #if ENABLE(DOM_STORAGE)
         Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
-        Storage* optionalLocalStorage() const { return m_sessionStorage.get(); }
+        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }

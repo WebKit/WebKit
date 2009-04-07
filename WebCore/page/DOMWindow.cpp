@@ -335,6 +335,9 @@ Storage* DOMWindow::sessionStorage() const
 
 Storage* DOMWindow::localStorage() const
 {
+    if (m_localStorage)
+        return m_localStorage.get();
+    
     Document* document = this->document();
     if (!document)
         return 0;

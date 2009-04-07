@@ -1,3 +1,15 @@
+2009-04-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        While working on <rdar://problem/5968249>, noticed some glaring problems with LocalStorage.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage): Return the cached m_localStorage object if it exists to 
+          avoid creating multiple representations for the same underlying StorageArea.
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalLocalStorage): Return m_localStorage, not m_sessionStorage.
+
 2009-04-07  Darin Adler  <darin@apple.com>
 
         Roll out incorrect build fix.
