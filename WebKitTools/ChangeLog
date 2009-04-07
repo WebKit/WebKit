@@ -1,3 +1,9 @@
+2009-04-07  Mark Rowe  <mrowe@apple.com>
+
+        Helper script for uploading layout test results for display on build.webkit.org.
+
+        * BuildSlaveSupport/test-result-archive: Copied from WebKitTools/BuildSlaveSupport/built-product-archive.
+
 2009-04-11  Brian Weinstein  <bweinstein@gmail.com>
 
         Reviewed by Darin Adler.
