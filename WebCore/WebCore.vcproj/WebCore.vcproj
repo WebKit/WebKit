@@ -17392,6 +17392,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptState.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptState.h"
 					>
 				</File>

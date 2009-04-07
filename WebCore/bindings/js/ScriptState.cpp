@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2008, Google Inc.
- * All rights reserved.
- * 
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,24 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+#include "config.h"
+#include "ScriptState.h"
 
-namespace JSC {
-    class ExecState;
-}
+#include "Frame.h"
+#include "Page.h"
 
 namespace WebCore {
-    class Page;
 
-    // The idea is to expose "state-like" methods (hadException, and any other
-    // methods where ExecState just dips into globalData) of JSC::ExecState as a
-    // separate abstraction.
-    // For now, the separation is purely by convention.
-    typedef JSC::ExecState ScriptState;
+ScriptState* scriptStateFromPage(Page* page)
+{
+    return page->mainFrame()->script()->globalObject()->globalExec();
+}
 
-    ScriptState* scriptStateFromPage(Page* page);
-
-} // namespace WebCore
-
-#endif // ScriptState_h
+}

@@ -103,7 +103,7 @@ void ScriptFunctionCall::appendArgument(bool argument)
     m_arguments.append(jsBoolean(argument));
 }
 
-ScriptValue ScriptFunctionCall::call(bool& hadException)
+ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -111,7 +111,9 @@ ScriptValue ScriptFunctionCall::call(bool& hadException)
 
     JSValuePtr function = thisObject->get(m_exec, Identifier(m_exec, m_name));
     if (m_exec->hadException()) {
-        reportException(m_exec, m_exec->exception());
+        if (reportExceptions)
+            reportException(m_exec, m_exec->exception());
+
         hadException = true;
         return ScriptValue();
     }
@@ -123,7 +125,9 @@ ScriptValue ScriptFunctionCall::call(bool& hadException)
 
     JSValuePtr result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments);
     if (m_exec->hadException()) {
-        reportException(m_exec, m_exec->exception());
+        if (reportExceptions)
+            reportException(m_exec, m_exec->exception());
+
         hadException = true;
         return ScriptValue();
     }
@@ -137,7 +141,7 @@ ScriptValue ScriptFunctionCall::call()
     return call(hadException);
 }
 
-ScriptObject ScriptFunctionCall::construct(bool& hadException)
+ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExceptions)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -145,7 +149,9 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException)
 
     JSObject* constructor = asObject(thisObject->get(m_exec, Identifier(m_exec, m_name)));
     if (m_exec->hadException()) {
-        reportException(m_exec, m_exec->exception());
+        if (reportExceptions)
+            reportException(m_exec, m_exec->exception());
+
         hadException = true;
         return ScriptObject();
     }
@@ -157,7 +163,9 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException)
 
     JSValuePtr result = JSC::construct(m_exec, constructor, constructType, constructData, m_arguments);
     if (m_exec->hadException()) {
-        reportException(m_exec, m_exec->exception());
+        if (reportExceptions)
+            reportException(m_exec, m_exec->exception());
+
         hadException = true;
         return ScriptObject();
     }

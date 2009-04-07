@@ -126,6 +126,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/ScriptFunctionCall.cpp
         bindings/js/ScriptObject.cpp
         bindings/js/ScriptObjectQuarantine.cpp
+        bindings/js/ScriptState.cpp
         bindings/js/ScriptValue.cpp
         bindings/js/ScheduledAction.cpp
         bindings/js/JSWebKitCSSMatrixConstructor.cpp

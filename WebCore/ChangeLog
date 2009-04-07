@@ -1,3 +1,38 @@
+2009-04-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25063
+        Refactor InspectorController to use ScriptObject/State.
+
+        * GNUmakefile.am: Added ScriptState.cpp.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        (WebCore::JSInspectorController::addSourceToFrame): Fixed argument index typo.
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call): Added reportExceptions parameter.
+        (WebCore::ScriptFunctionCall::construct): Ditto.
+        * bindings/js/ScriptFunctionCall.h: Ditto.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::handleException): Added exception-reporting heloper.
+        (WebCore::ScriptObject::set): Changed to use handleException.
+        (WebCore::ScriptGlobalObject::set): Ditto,
+        * bindings/js/ScriptObject.cpp: Added ScriptGlobalObject.
+        (WebCore::ScriptGlobalObject::set): Added.
+        (WebCore::ScriptGlobalObject::getObject): Added.
+        * bindings/js/ScriptObject.h: Added ScriptGlobalObject decls.
+        (WebCore::ScriptGlobalObject::ScriptGlobalObject): Added.
+        * bindings/js/ScriptState.cpp: Added.
+        * bindings/js/ScriptState.h: Added scriptStateFromPage decl.
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole): Changed to not report exceptions
+            to avoid re-entrancy.
+        * inspector/InspectorController.cpp: Refactored to use ScriptState/Object.
+        * inspector/InspectorController.h: Ditto.
+
 2009-04-07  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.

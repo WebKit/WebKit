@@ -31,9 +31,11 @@
 
 #include "Console.h"
 #include "PlatformString.h"
+#include "ScriptObject.h"
+#include "ScriptState.h"
 #include "StringHash.h"
 #include "Timer.h"
-#include <JavaScriptCore/JSContextRef.h>
+
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -193,9 +195,6 @@ public:
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void handleMousePressOnNode(Node*);
 
-    JSContextRef scriptContext() const { return m_scriptContext; };
-    void setScriptContext(JSContextRef context) { m_scriptContext = context; };
-
     void inspectedWindowScriptObjectCleared(Frame*);
     void windowScriptObjectAvailable();
 
@@ -265,17 +264,16 @@ public:
 
 private:
     InspectorController(Page*, InspectorClient*);
+    bool hasWebInspector() const { return m_scriptState && !m_webInspector.hasNoValue(); }
     void focusNode();
 
-    void addConsoleMessage(JSC::ExecState*, ConsoleMessage*);
+    void addConsoleMessage(ScriptState*, ConsoleMessage*);
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
 
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
-
-    bool handleException(JSContextRef, JSValueRef exception, unsigned lineNumber) const;
 
     void showWindow();
 
@@ -303,9 +301,8 @@ private:
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesSet m_domStorageResources;
 #endif
-    JSObjectRef m_scriptObject;
-    JSObjectRef m_controllerScriptObject;
-    JSContextRef m_scriptContext;
+    ScriptObject m_webInspector;
+    ScriptState* m_scriptState;
     bool m_windowVisible;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_debuggerEnabled;

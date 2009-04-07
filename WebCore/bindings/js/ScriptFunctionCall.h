@@ -61,16 +61,15 @@ namespace WebCore {
         void appendArgument(unsigned int);
         void appendArgument(int);
         void appendArgument(bool);
-        ScriptValue call(bool& hadException);
+        ScriptValue call(bool& hadException, bool reportExceptions = true);
         ScriptValue call();
-        ScriptObject construct(bool& hadException);
+        ScriptObject construct(bool& hadException, bool reportExceptions = true);
 
     protected:
         ScriptState* m_exec;
         ScriptObject m_thisObject;
         String m_name;
         JSC::ArgList m_arguments;
-        bool m_quarantineObjects;
     };
 
 } // namespace WebCore
