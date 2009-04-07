@@ -1,3 +1,24 @@
+2009-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6767428> Resurrect
+          +[WebFontCache fontWithFamily:traits:size:] for clients that call it
+          directly
+
+        WebFontCache is a class in the WebCore framework and is not WebKit API,
+        but apparently (perhaps mistakenly) some clients call this private
+        interface.
+
+        This change resurrects the interface and gives it reasonable behavior
+        (however, note that WebCore will not call the old interface, so hacks that
+        override it will have no effect on WebKit clients).
+
+        * platform/mac/WebFontCache.h:
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache fontWithFamily:traits:size:]): Added. Call through to
+        +fontWithFamily:traits:weight:size:.
+
 2009-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben
