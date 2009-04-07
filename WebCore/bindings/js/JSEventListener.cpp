@@ -146,16 +146,17 @@ JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalOb
 
 JSEventListener::~JSEventListener()
 {
-    if (m_jsFunction && m_globalObject) {
-        JSDOMWindow::JSListenersMap& listeners = isInline()
-            ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
-        listeners.remove(m_jsFunction);
-    }
+    clearJSFunctionInline();
 }
 
 JSObject* JSEventListener::jsFunction() const
 {
     return m_jsFunction;
+}
+
+void JSEventListener::clearJSFunction()
+{
+    clearJSFunctionInline();
 }
 
 JSDOMGlobalObject* JSEventListener::globalObject() const
@@ -168,7 +169,7 @@ void JSEventListener::clearGlobalObject()
     m_globalObject = 0;
 }
 
-void JSEventListener::mark()
+void JSEventListener::markJSFunction()
 {
     if (m_jsFunction && !m_jsFunction->marked())
         m_jsFunction->mark();

@@ -1,3 +1,41 @@
+2009-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added some double-checking to event handler marking. Now, when the
+        wrapper that's responsible for marking an event handler's JavaScript
+        function gets collected, it clears the event handler's JavaScript function
+        so we won't dereference it after it's collected.
+        
+        In theory, we would never dereference a JavaScript event handler after
+        its node's wrapper was collected anyway, but it's nice to be safe.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::mark):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::jsFunction):
+        (WebCore::JSEventListener::invalidateJSFunction):
+        (WebCore::JSEventListener::markJSFunction):
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::markEventListeners):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::mark):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::mark):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventListener.h:
+        (WebCore::EventListener::invalidateJSFunction):
+        (WebCore::EventListener::markJSFunction):
+        (WebCore::markIfNotNull):
+
 2009-04-07  David Levin  <levin@chromium.org>
 
         Build fix.

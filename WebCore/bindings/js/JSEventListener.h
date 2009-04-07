@@ -21,6 +21,7 @@
 #define JSEventListener_h
 
 #include "EventListener.h"
+#include "JSDOMWindow.h"
 #include <runtime/Protect.h>
 
 namespace WebCore {
@@ -59,8 +60,18 @@ namespace WebCore {
         JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
 
         virtual JSC::JSObject* jsFunction() const;
-        virtual void mark();
+        virtual void clearJSFunction();
+        virtual void markJSFunction();
         virtual JSDOMGlobalObject* globalObject() const;
+
+        void clearJSFunctionInline()
+        {
+            if (m_jsFunction && m_globalObject) {
+                JSDOMWindow::JSListenersMap& listeners = isInline()
+                    ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
+                listeners.remove(m_jsFunction);
+            }
+        }
 
         JSC::JSObject* m_jsFunction;
         JSDOMGlobalObject* m_globalObject;

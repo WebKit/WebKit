@@ -1011,8 +1011,12 @@ sub GenerateImplementation
         push(@implContent, "${className}::~$className()\n");
         push(@implContent, "{\n");
 
-        if ($interfaceName eq "Node") {
-            push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
+         if ($interfaceName eq "Node") {
+             $implIncludes{"RegisteredEventListener.h"} = 1;
+             push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
+             push(@implContent, "    const RegisteredEventListenerVector& eventListeners = m_impl->eventListeners();\n");
+             push(@implContent, "    for (size_t i = 0; i < eventListeners.size(); ++i)\n");
+             push(@implContent, "        eventListeners[i]->listener()->clearJSFunction();\n");
         } else {
             if ($podType) {
                 my $animatedType = $implClassName;
@@ -1026,7 +1030,7 @@ sub GenerateImplementation
             push(@implContent, "    forgetDOMObject(*Heap::heap(this)->globalData(), m_impl.get());\n");
         }
 
-        push(@implContent, "\n}\n\n");
+        push(@implContent, "}\n\n");
     }
 
     # Document needs a special destructor because it's a special case for caching. It needs

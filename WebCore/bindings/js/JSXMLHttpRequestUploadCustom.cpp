@@ -62,7 +62,7 @@ void JSXMLHttpRequestUpload::mark()
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->mark();
+            (*vecIter)->markJSFunction();
     }
 }
 
