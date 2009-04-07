@@ -1,3 +1,18 @@
+2009-04-07  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25083
+
+        Skia was previously calculating the leading value incorrectly, leading
+        us to add fHeight to get the height of a line of text. Now that Skia
+        is calculating fLeading correctly, we can remove fHeight.
+
+        This doesn't affect any layout tests.
+
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2009-04-07  Brian Weinstein  <bweinstein@gmail.com>
 
         Reviewed by Darin Adler.

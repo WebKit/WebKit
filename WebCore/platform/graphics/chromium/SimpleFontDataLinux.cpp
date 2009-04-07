@@ -61,8 +61,9 @@ void SimpleFontData::platformInit()
         m_ascent = metrics.fVDMXAscent;
         m_descent = metrics.fVDMXDescent;
     } else {
+        SkScalar height = metrics.fAscent + metrics.fDescent + metrics.fLeading;
         m_ascent = SkScalarRound(-metrics.fAscent);
-        m_descent = SkScalarRound(metrics.fHeight) - m_ascent;
+        m_descent = SkScalarRound(height) - m_ascent;
     }
 
     if (metrics.fXHeight)
