@@ -73,6 +73,91 @@ static Node* previousRenderedEditable(Node* node)
     return 0;
 }
 
+Node* Position::containerNode() const
+{
+    if (!m_anchorNode)
+        return 0;
+
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+        return m_anchorNode.get();
+    case PositionIsBeforeAnchor:
+    case PositionIsAfterAnchor:
+        return m_anchorNode->parentNode();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+int Position::computeOffsetInContainerNode() const
+{
+    if (!m_anchorNode)
+        return 0;
+
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+    {
+        int maximumValidOffset = m_anchorNode->offsetInCharacters() ? m_anchorNode->maxCharacterOffset() : m_anchorNode->childNodeCount();
+        return std::min(maximumValidOffset, m_offset);
+    }
+    case PositionIsBeforeAnchor:
+        return m_anchorNode->nodeIndex();
+    case PositionIsAfterAnchor:
+        return m_anchorNode->nodeIndex() + 1;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+Node* Position::computeNodeBeforePosition() const
+{
+    if (!m_anchorNode)
+        return 0;
+
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+        return m_anchorNode->childNode(m_offset - 1); // -1 converts to childNode((unsigned)-1) and returns null.
+    case PositionIsBeforeAnchor:
+        return m_anchorNode->previousSibling();
+    case PositionIsAfterAnchor:
+        return m_anchorNode.get();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+Node* Position::computeNodeAfterPosition() const
+{
+    if (!m_anchorNode)
+        return 0;
+
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+        return m_anchorNode->childNode(m_offset);
+    case PositionIsBeforeAnchor:
+        return m_anchorNode.get();
+    case PositionIsAfterAnchor:
+        return m_anchorNode->nextSibling();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+// FIXME: Position should store an AnchorType up-front, instead of lazily
+// determining it via editingIgnoresContent(anchorNode())
+// That would require fixing moveToOffset to know how to recompute the AnchorType
+// for positions which need historical editing-compatible behavior
+// (and for explicitly anchored positions to ASSERT_NOT_REACHED())
+Position::AnchorType Position::anchorType() const
+{
+    if (m_anchorNode && editingIgnoresContent(m_anchorNode.get())) {
+        if (m_offset == 0)
+            return PositionIsBeforeAnchor;
+        return PositionIsAfterAnchor;
+    }
+    return PositionIsOffsetInAnchor;
+}
+
 Element* Position::documentElement() const
 {
     if (Node* n = node())

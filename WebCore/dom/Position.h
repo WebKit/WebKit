@@ -62,6 +62,15 @@ public:
 
     void clear() { m_anchorNode.clear(); m_offset = 0; }
 
+    // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
+    // will return img->parentNode() and img->nodeIndex() from these functions.
+    Node* containerNode() const;
+    int computeOffsetInContainerNode() const;
+
+    // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
+    Node* computeNodeBeforePosition() const;
+    Node* computeNodeAfterPosition() const;
+
     Node* anchorNode() const { return m_anchorNode.get(); }
 
     // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
@@ -132,6 +141,14 @@ public:
     
 private:
     int renderedOffset() const;
+
+    enum AnchorType {
+        PositionIsOffsetInAnchor,
+        PositionIsAfterAnchor,
+        PositionIsBeforeAnchor
+    };
+
+    AnchorType anchorType() const;
 
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;
