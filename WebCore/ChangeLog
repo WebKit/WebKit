@@ -1,5 +1,11 @@
 2009-04-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Build fix, not reviewed.
+
+        * WebCore.xcodeproj/project.pbxproj: Made ScriptObject.h private.
+
+2009-04-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         https://bugs.webkit.org/show_bug.cgi?id=25063
