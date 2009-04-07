@@ -286,6 +286,10 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::evaluate(const String& script,
     v8::Locker locker;
     v8::HandleScope hs;
 
+    // Enable preemption so that one worker will not be blocked by another long-running worker.
+    const int workerThreadPreemptionIntervalMs = 100;
+    v8::Locker::StartPreemption(workerThreadPreemptionIntervalMs);
+
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
 
