@@ -1,5 +1,11 @@
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+        
+        * WebCore.base.exp:
+
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/6667001> NPAPI: need NPN_Get/SetValueForURL() and NPN_GetAuthenticationInfo()
