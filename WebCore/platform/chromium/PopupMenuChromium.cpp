@@ -136,25 +136,18 @@ public:
     // Returns whether the popup wants to process events for the passed key.
     bool isInterestedInEventForKey(int keyCode);
 
+    // Gets the height of a row.
+    int getRowHeight(int index);
+
+    // Returns true if the selection can be changed to index.
+    // Disabled items, or labels cannot be selected.
+    bool isSelectableItem(int index);
+
+    const Vector<PopupItem*>& items() const { return m_items; }
+
 private:
     friend class PopupContainer;
     friend class RefCounted<PopupListBox>;
-
-    // A type of List Item
-    enum ListItemType {
-        TypeOption,
-        TypeGroup,
-        TypeSeparator
-    };
-
-    // A item (represented by <option> or <optgroup>) in the <select> widget. 
-    struct ListItem {
-        ListItem(const String& label, ListItemType type)
-            : label(label.copy()), type(type), y(0) {}
-        String label;
-        ListItemType type;
-        int y;  // y offset of this item, relative to the top of the popup.
-    };
 
     PopupListBox(PopupMenuClient* client, const PopupContainerSettings& settings)
         : m_settings(settings)
@@ -184,10 +177,6 @@ private:
     // the web page, and closes the popup.
     void acceptIndex(int index);
 
-    // Returns true if the selection can be changed to index.
-    // Disabled items, or labels cannot be selected.
-    bool isSelectableItem(int index);
-
     // Clears the selection (so no row appears selected).
     void clearSelection();
 
@@ -198,8 +187,6 @@ private:
     // Invalidates the row at the given index. 
     void invalidateRow(int index);
 
-    // Gets the height of a row.
-    int getRowHeight(int index);
     // Get the bounds of a row. 
     IntRect getRowBounds(int index);
 
@@ -250,7 +237,7 @@ private:
     int m_baseWidth;
 
     // A list of the options contained within the <select>
-    Vector<ListItem*> m_items;
+    Vector<PopupItem*> m_items;
 
     // The <select> PopupMenuClient that opened us.
     PopupMenuClient* m_popupClient;
@@ -310,7 +297,8 @@ PassRefPtr<PopupContainer> PopupContainer::create(PopupMenuClient* client,
     return adoptRef(new PopupContainer(client, settings));
 }
 
-PopupContainer::PopupContainer(PopupMenuClient* client, const PopupContainerSettings& settings)
+PopupContainer::PopupContainer(PopupMenuClient* client,
+                               const PopupContainerSettings& settings)
     : m_listBox(PopupListBox::create(client, settings))
     , m_settings(settings)
 {
@@ -319,7 +307,7 @@ PopupContainer::PopupContainer(PopupMenuClient* client, const PopupContainerSett
 
 PopupContainer::~PopupContainer()
 {
-    if (m_listBox)
+    if (m_listBox && m_listBox->parent())
         removeChild(m_listBox.get());
 }
 
@@ -342,7 +330,7 @@ void PopupContainer::showPopup(FrameView* view)
         if (widgetRect.bottom() > static_cast<int>(screen.bottom()))
             widgetRect.move(0, -(widgetRect.height() + selectHeight));
 
-        chromeClient->popupOpened(this, widgetRect, m_settings.focusOnShow);
+        chromeClient->popupOpened(this, widgetRect, m_settings.focusOnShow, false);
     }
 
     if (!m_listBox->parent())
@@ -355,6 +343,19 @@ void PopupContainer::showPopup(FrameView* view)
     m_listBox->scrollToRevealSelection();
 
     invalidate();
+}
+
+void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
+{
+     if (!listBox())
+        return;
+
+     listBox()->updateFromElement();
+
+     // Get the ChromeClient and pass it the popup menu's listbox data.
+     ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
+          v->frame()->page()->chrome()->client());
+     client->popupOpened(this, rect, true, true);
 }
 
 void PopupContainer::hidePopup()
@@ -483,6 +484,16 @@ void PopupContainer::refresh()
 int PopupContainer::selectedIndex() const
 {
     return m_listBox->selectedIndex();
+}
+
+int PopupContainer::menuItemHeight() const
+{
+    return m_listBox->getRowHeight(0);
+}
+
+const WTF::Vector<PopupItem*>& PopupContainer:: popupData() const
+{
+    return m_listBox->items();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -828,7 +839,7 @@ int PopupListBox::pointToRowIndex(const IntPoint& point)
 
     // FIXME: binary search if perf matters.
     for (int i = 0; i < numItems(); ++i) {
-        if (y < m_items[i]->y)
+        if (y < m_items[i]->yOffset)
             return i-1;
     }
 
@@ -890,7 +901,7 @@ IntRect PopupListBox::getRowBounds(int index)
     if (index < 0)
         return IntRect(0, 0, visibleWidth(), getRowHeight(index));
 
-    return IntRect(0, m_items[index]->y, visibleWidth(), getRowHeight(index));
+    return IntRect(0, m_items[index]->yOffset, visibleWidth(), getRowHeight(index));
 }
 
 void PopupListBox::invalidateRow(int index)
@@ -921,7 +932,7 @@ void PopupListBox::scrollToRevealRow(int index)
 
 bool PopupListBox::isSelectableItem(int index)
 {
-    return m_items[index]->type == TypeOption && m_popupClient->itemIsEnabled(index);
+    return m_items[index]->type == PopupItem::TypeOption && m_popupClient->itemIsEnabled(index);
 }
 
 void PopupListBox::clearSelection()
@@ -1010,14 +1021,15 @@ void PopupListBox::updateFromElement()
 
     int size = m_popupClient->listSize();
     for (int i = 0; i < size; ++i) {
-        ListItemType type;
+        PopupItem::Type type;
         if (m_popupClient->itemIsSeparator(i))
-            type = PopupListBox::TypeSeparator;
+            type = PopupItem::TypeSeparator;
         else if (m_popupClient->itemIsLabel(i))
-            type = PopupListBox::TypeGroup;
+            type = PopupItem::TypeGroup;
         else
-            type = PopupListBox::TypeOption;
-        m_items.append(new ListItem(m_popupClient->itemText(i), type));
+            type = PopupItem::TypeOption;
+        m_items.append(new PopupItem(m_popupClient->itemText(i), type));
+        m_items[i]->enabled = isSelectableItem(i);
     }
 
     m_selectedIndex = m_popupClient->selectedIndex();
@@ -1036,7 +1048,7 @@ void PopupListBox::layout()
         Font itemFont = getRowFont(i);
 
         // Place the item vertically.
-        m_items[i]->y = y;
+        m_items[i]->yOffset = y;
         y += itemFont.height();
 
         // Ensure the popup is wide enough to fit this item.
@@ -1088,7 +1100,7 @@ void PopupListBox::layout()
 
 void PopupListBox::clear()
 {
-    for (Vector<ListItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+    for (Vector<PopupItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
         delete *it;
     m_items.clear();
 }
@@ -1115,11 +1127,19 @@ PopupMenu::~PopupMenu()
     hide();
 }
 
-void PopupMenu::show(const IntRect& r, FrameView* v, int index) 
+// The Mac Chromium implementation relies on external control (a Cocoa control)
+// to display, handle the input tracking and menu item selection for the popup.
+// Windows and Linux Chromium let our WebKit port handle the display, while
+// another process manages the popup window and input handling.
+void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
         p.popup = PopupContainer::create(client(), dropDownSettings);
+#if PLATFORM(DARWIN)
+    p.popup->showExternal(r, v, index);
+#else
     p.popup->show(r, v, index);
+#endif
 }
 
 void PopupMenu::hide()

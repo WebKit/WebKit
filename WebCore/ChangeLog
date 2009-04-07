@@ -1,3 +1,35 @@
+2009-04-07  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24692
+        Enable PopupMenuChromium to handle HTML select popups using native
+        cocoa controls on the Mac, all other platforms are unchanged.
+
+        We also split out the storage container for the popup menu items
+        so that ChromeClientChromium can access them for forwarding to
+        the embedding host (Chromium.app or test_shell).
+
+        * page/chromium/ChromeClientChromium.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::items):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::~PopupContainer):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupContainer::showExternal):
+        (WebCore::PopupContainer::menuItemHeight):
+        (WebCore::popupData):
+        (WebCore::PopupListBox::pointToRowIndex):
+        (WebCore::PopupListBox::getRowBounds):
+        (WebCore::PopupListBox::isSelectableItem):
+        (WebCore::PopupListBox::updateFromElement):
+        (WebCore::PopupListBox::layout):
+        (WebCore::PopupListBox::clear):
+        (WebCore::PopupMenu::show):
+        * platform/chromium/PopupMenuChromium.h:
+        (WebCore::PopupItem::):
+        (WebCore::PopupItem::PopupItem):
+
 2009-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

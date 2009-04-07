@@ -42,6 +42,23 @@ namespace WebCore {
     class FrameView;
     class PopupListBox;
 
+    // A container for the data for each menu item (e.g. represented by <option>
+    // or <optgroup> in a <select> widget) and is used by PopupListBox.
+    struct PopupItem {
+        enum Type {
+            TypeOption,
+            TypeGroup,
+            TypeSeparator
+        };
+
+        PopupItem(const String& label, Type type)
+            : label(label), type(type), yOffset(0) { }
+        String label;
+        Type type;
+        int yOffset;  // y offset of this item, relative to the top of the popup.
+        bool enabled;
+    };
+
     // FIXME: Our FramelessScrollView classes should probably implement HostWindow!
 
     // The PopupContainer class holds a PopupListBox (see cpp file).  Its sole purpose is to be
@@ -94,9 +111,14 @@ namespace WebCore {
         // Show the popup
         void showPopup(FrameView*);
 
+        // Used on Mac Chromium for HTML select popup menus.
+        void showExternal(const IntRect&, FrameView*, int index);
+
         // Show the popup in the specified rect for the specified frame.
         // Note: this code was somehow arbitrarily factored-out of the Popup class
-        // so WebViewImpl can create a PopupContainer.
+        // so WebViewImpl can create a PopupContainer. This method is used for
+        // displaying auto complete popup menus on Mac Chromium, and for all
+        // popups on other platforms.
         void show(const IntRect&, FrameView*, int index);
 
         // Hide the popup.  Do not call this directly: use client->hidePopup().
@@ -113,6 +135,12 @@ namespace WebCore {
 
         // Refresh the popup values from the PopupMenuClient.
         void refresh();
+
+        // The menu per-item data.
+        const WTF::Vector<PopupItem*>& popupData() const;
+
+        // The height of a row in the menu.
+        int menuItemHeight() const;
 
     private:
         friend class WTF::RefCounted<PopupContainer>;
