@@ -1,3 +1,29 @@
+2009-04-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25033
+        dtoa.cpp segfaults with g++ 4.4.0
+
+        g++ 4.4.0 seems to be more strict about aliasing rules, so it
+        produces incorrect code if dtoa.cpp is compiled with
+        -fstrict-aliasing (it also emits a ton of warnings, so fair enough
+        I guess). The problem was that we were only casting variables to
+        union types in order to do type punning, but GCC and the C
+        standard require that we actually use a union to store the value.
+
+        This patch does just that, the code is mostly copied from the dtoa
+        version in GCC:
+        http://gcc.gnu.org/viewcvs/trunk/libjava/classpath/native/fdlibm/dtoa.c?view=markup.
+
+        * wtf/dtoa.cpp:
+        (WTF::ulp):
+        (WTF::b2d):
+        (WTF::ratio):
+        (WTF::hexnan):
+        (WTF::strtod):
+        (WTF::dtoa):
+
 2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for Win port. Build the assembler sources to get missing functions.
