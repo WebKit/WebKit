@@ -1,3 +1,17 @@
+2009-04-07  Adam Roben  <aroben@apple.com>
+
+        Small cleanup/correctness fix in ScrollbarThemeWin
+
+        Reviewed by Dave Hyatt.
+
+        * platform/win/ScrollbarThemeWin.cpp: Removed the now-unused
+        haveTheme boolean.
+        (WebCore::checkAndInitScrollbarTheme): Check IsThemeActive() before
+        calling OpenThemeData. This seems to be what MSDN recommends.
+        (WebCore::ScrollbarThemeWin::themeChanged): Null-check scrollbarTheme
+        before closing it, rather than indirectly null-checking it via
+        checking haveTheme.
+
 2009-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

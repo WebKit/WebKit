@@ -61,7 +61,6 @@ using namespace std;
 namespace WebCore {
 
 static HANDLE scrollbarTheme;
-static bool haveTheme;
 static bool runningVista;
 
 // FIXME:  Refactor the soft-linking code so that it can be shared with RenderThemeWin
@@ -90,9 +89,8 @@ static bool isRunningOnVistaOrLater()
 
 static void checkAndInitScrollbarTheme()
 {
-    if (uxthemeLibrary() && !scrollbarTheme)
+    if (uxthemeLibrary() && !scrollbarTheme && IsThemeActive())
         scrollbarTheme = OpenThemeData(0, L"Scrollbar");
-    haveTheme = scrollbarTheme && IsThemeActive();
 }
 
 #if !USE(SAFARI_THEME)
@@ -127,7 +125,7 @@ int ScrollbarThemeWin::scrollbarThickness(ScrollbarControlSize)
 
 void ScrollbarThemeWin::themeChanged()
 {
-    if (haveTheme)
+    if (scrollbarTheme)
         CloseThemeData(scrollbarTheme);
 }
 
