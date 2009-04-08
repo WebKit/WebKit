@@ -1,3 +1,14 @@
+2009-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben and Darin Adler
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=12440, fixed positioned elements end up in
+        inconsistent positions.  Rewrite updateScrollers to improve the correctness.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build for real this time.

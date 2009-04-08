@@ -1,9 +1,9 @@
-layer at (0,0) size 812x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 812x600
-  RenderBlock {HTML} at (0,0) size 800x600 [bgcolor=#FFFFFF]
-    RenderBody {BODY} at (0,0) size 800x600
-      RenderFlexibleBox {DIV} at (0,0) size 800x600
+layer at (0,0) size 812x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 812x585
+  RenderBlock {HTML} at (0,0) size 800x585 [bgcolor=#FFFFFF]
+    RenderBody {BODY} at (0,0) size 800x585
+      RenderFlexibleBox {DIV} at (0,0) size 800x585
         RenderBlock {DIV} at (0,0) size 800x54
           RenderText {#text} at (0,0) size 800x54
             text run at (0,0) width 485: "This header should remain at the top of the browser window as you resize it. "
@@ -12,13 +12,13 @@ layer at (0,0) size 812x600
             text run at (0,18) width 254: "filled with an olive-bordered green box. "
             text run at (254,18) width 499: "It should start beneath the header, end above the footer, and fill the width of the"
             text run at (0,36) width 111: "browser window."
-        RenderPartObject {IFRAME} at (0,54) size 812x528 [bgcolor=#008000] [border: (10px solid #808000)]
-          layer at (0,0) size 792x508
-            RenderView at (0,0) size 792x508
-          layer at (0,0) size 792x508
-            RenderBlock {HTML} at (0,0) size 792x508
-              RenderBody {BODY} at (8,8) size 776x492
-        RenderBlock {DIV} at (0,582) size 800x18
+        RenderPartObject {IFRAME} at (0,54) size 812x513 [bgcolor=#008000] [border: (10px solid #808000)]
+          layer at (0,0) size 792x493
+            RenderView at (0,0) size 792x493
+          layer at (0,0) size 792x493
+            RenderBlock {HTML} at (0,0) size 792x493
+              RenderBody {BODY} at (8,8) size 776x477
+        RenderBlock {DIV} at (0,567) size 800x18
           RenderText {#text} at (0,0) size 664x18
             text run at (0,0) width 407: "This footer should remain at the bottom of the browser window. "
             text run at (407,0) width 257: "It can wrap to multiple lines if necessary."

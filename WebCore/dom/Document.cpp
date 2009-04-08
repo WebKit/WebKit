@@ -1155,18 +1155,14 @@ void Document::recalcStyle(StyleChange change)
         if (change >= Inherit || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
 
-    if (view()) {
-        if (changed())
-            view()->layout();
 #if USE(ACCELERATED_COMPOSITING)
-        else {
-            bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
-            // If we didn't update compositing layers because of layout(), we need to do so here.
-            if (!layoutPending)
-                view()->updateCompositingLayers();
-        }
-#endif
+    if (view()) {
+        bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
+        // If we didn't update compositing layers because of layout(), we need to do so here.
+        if (!layoutPending)
+            view()->updateCompositingLayers();
     }
+#endif
 
 bail_out:
     setChanged(NoStyleChange);
@@ -1613,25 +1609,16 @@ void Document::implicitClose()
 
     frame()->loader()->checkCallImplicitClose();
 
-    // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
-    // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 
-    // layout/painting now would be pointless.
+    // We used to force a synchronous display and flush here.  This really isn't
+    // necessary and can in fact be actively harmful if pages are loading at a rate of > 60fps
+    // (if your platform is syncing flushes and limiting them to 60fps).
+    m_overMinimumLayoutThreshold = true;
     if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
         updateRendering();
         
         // Always do a layout after loading if needed.
         if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
             view()->layout();
-            
-        // Paint immediately after the document is ready.  We do this to ensure that any timers set by the
-        // onload don't have a chance to fire before we would have painted.  To avoid over-flushing we only
-        // worry about this for the top-level document.  For platforms that use native widgets for ScrollViews, this
-        // call does nothing (Mac, wx).
-        // FIXME: This causes a timing issue with the dispatchDidFinishLoad delegate callback on Mac, so think
-        // before enabling it, even if Mac becomes viewless later.
-        // See <rdar://problem/5092361>
-        if (view() && !ownerElement())
-            view()->hostWindow()->paint();
     }
 
 #if PLATFORM(MAC)

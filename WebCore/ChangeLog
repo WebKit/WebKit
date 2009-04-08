@@ -1,3 +1,34 @@
+2009-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben and Darin Adler
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=12440, repaints inconsistent for
+        fixed positioned elements.
+
+        Rewrite the updateScrollers method to be more correct in its results.
+
+        Test: fast/block/positioning/fixed-positioning-scrollbar-bug.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::implicitClose):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::adjustPageHeight):
+        * page/FrameView.h:
+        * page/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/ScrollView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::docHeight):
+        (WebCore::RenderView::docWidth):
+        * rendering/RenderView.h:
+
 2009-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

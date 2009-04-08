@@ -1,3 +1,23 @@
+2009-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben and Darin Adler
+
+        Updated results and new tests for https://bugs.webkit.org/show_bug.cgi?id=12440.
+
+        * fast/block/positioning/fixed-positioning-scrollbar-bug.html: Added.
+        * platform/mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.png: Added.
+        * platform/mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.txt: Added.
+        * platform/mac/fast/flexbox/016-expected.checksum:
+        * platform/mac/fast/flexbox/016-expected.png:
+        * platform/mac/fast/flexbox/016-expected.txt:
+        * platform/mac/fast/flexbox/flex-hang-expected.checksum:
+        * platform/mac/fast/flexbox/flex-hang-expected.png:
+        * platform/mac/fast/flexbox/flex-hang-expected.txt:
+        * platform/mac/fast/lists/001-expected.checksum:
+        * platform/mac/fast/lists/001-expected.png:
+        * platform/mac/fast/lists/001-expected.txt:
+
 2009-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

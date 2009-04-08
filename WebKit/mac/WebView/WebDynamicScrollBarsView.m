@@ -85,88 +85,87 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
 #endif
 }
 
+static const unsigned cMaxUpdateScrollbarsPass = 2;
+
 - (void)updateScrollers
 {
-    // We need to do the work below twice in the case where a scroll bar disappears,
-    // making the second layout have a wider width than the first. Doing it more than
-    // twice would indicate some kind of infinite loop, so we do it at most twice.
-    // It's quite efficient to do this work twice in the normal case, so we don't bother
-    // trying to figure out of the second pass is needed or not.
-    if (inUpdateScrollers)
-        return;
-    
-    inUpdateScrollers = true;
-
-    int pass;
     BOOL hasVerticalScroller = [self hasVerticalScroller];
     BOOL hasHorizontalScroller = [self hasHorizontalScroller];
-    BOOL oldHasVertical = hasVerticalScroller;
-    BOOL oldHasHorizontal = hasHorizontalScroller;
+    
+    BOOL newHasHorizontalScroller = hasHorizontalScroller;
+    BOOL newHasVerticalScroller = hasVerticalScroller;
+    
+    BOOL needsLayout = NO;
 
-    for (pass = 0; pass < 2; pass++) {
-        BOOL scrollsVertically;
-        BOOL scrollsHorizontally;
-
-        if (!suppressLayout && !suppressScrollers && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
-            // Do a layout if pending, before checking if scrollbars are needed.
-            // This fixes 2969367, although may introduce a slowdown in live resize performance.
-            NSView *documentView = [self documentView];
-            if (!documentView) {
-                scrollsHorizontally = NO;
-                scrollsVertically = NO;
-            } else {
-                if ((hasVerticalScroller != oldHasVertical ||
-                    hasHorizontalScroller != oldHasHorizontal || [documentView inLiveResize]) && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
-                    [(id <WebDocumentView>)documentView setNeedsLayout: YES];
-                    [(id <WebDocumentView>)documentView layout];
-                }
-
-                NSSize documentSize = [documentView frame].size;
-                if ([documentView isKindOfClass:[WebHTMLView class]]) {
-                    WebHTMLView *htmlView = (WebHTMLView*)documentView;
-                    if (Frame* coreFrame = core([htmlView _frame])) {
-                        if (FrameView* coreView = coreFrame->view())
-                            documentSize = coreView->minimumContentsSize();
-                    }
-                }
-
-                NSSize frameSize = [self frame].size;
-
-                scrollsVertically = (vScroll == ScrollbarAlwaysOn) ||
-                    (vScroll == ScrollbarAuto && documentSize.height > frameSize.height);
-                if (scrollsVertically)
-                    scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) ||
-                        (hScroll == ScrollbarAuto && documentSize.width + [NSScroller scrollerWidth] > frameSize.width);
-                else {
-                    scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) ||
-                        (hScroll == ScrollbarAuto && documentSize.width > frameSize.width);
-                    if (scrollsHorizontally)
-                        scrollsVertically = (vScroll == ScrollbarAlwaysOn) ||
-                            (vScroll == ScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
-                }
-            }
-        } else {
-            scrollsHorizontally = (hScroll == ScrollbarAuto) ? hasHorizontalScroller : (hScroll == ScrollbarAlwaysOn);
-            scrollsVertically = (vScroll == ScrollbarAuto) ? hasVerticalScroller : (vScroll == ScrollbarAlwaysOn);
+    NSView *documentView = [self documentView];
+    if (!documentView) {
+        newHasHorizontalScroller = NO;
+        newHasVerticalScroller = NO;
+    } 
+    
+    if (!documentView || suppressLayout || suppressScrollers || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
+        inUpdateScrollers = YES;
+        if (hScroll != ScrollbarAuto)
+            newHasHorizontalScroller = (hScroll == ScrollbarAlwaysOn);
+        if (vScroll != ScrollbarAuto)
+            newHasVerticalScroller = (vScroll == ScrollbarAlwaysOn);
+        if (hasHorizontalScroller != newHasHorizontalScroller)
+            [self setHasHorizontalScroller:newHasHorizontalScroller];
+        if (hasVerticalScroller != newHasVerticalScroller)
+            [self setHasVerticalScroller:newHasVerticalScroller];
+        if (suppressScrollers) {
+            [[self verticalScroller] setNeedsDisplay:NO];
+            [[self horizontalScroller] setNeedsDisplay:NO];
         }
-
-        if (hasVerticalScroller != scrollsVertically) {
-            [self setHasVerticalScroller:scrollsVertically];
-            hasVerticalScroller = scrollsVertically;
-        }
-
-        if (hasHorizontalScroller != scrollsHorizontally) {
-            [self setHasHorizontalScroller:scrollsHorizontally];
-            hasHorizontalScroller = scrollsHorizontally;
-        }
+        inUpdateScrollers = NO;
+        return;
     }
 
-    if (suppressScrollers) {
-        [[self verticalScroller] setNeedsDisplay: NO];
-        [[self horizontalScroller] setNeedsDisplay: NO];
+    needsLayout = NO;
+
+    NSSize documentSize = [documentView frame].size;
+    NSSize visibleSize = [self documentVisibleRect].size;
+    
+    if (hScroll == ScrollbarAuto)
+        newHasHorizontalScroller = documentSize.width > visibleSize.width;
+    if (vScroll == ScrollbarAuto)
+        newHasVerticalScroller = documentSize.height > visibleSize.height;
+    
+    // If we ever turn one scrollbar off, always turn the other one off too.  Never ever
+    // try to both gain/lose a scrollbar in the same pass.
+    if (!newHasHorizontalScroller && hasHorizontalScroller)
+        newHasVerticalScroller = NO;
+    if (!newHasVerticalScroller && hasVerticalScroller)
+        newHasHorizontalScroller = NO;
+
+    if (hasHorizontalScroller != newHasHorizontalScroller) {
+        inUpdateScrollers = YES;
+        [self setHasHorizontalScroller:newHasHorizontalScroller];
+        inUpdateScrollers = NO;
+        needsLayout = YES;
     }
 
-    inUpdateScrollers = false;
+    if (hasVerticalScroller != newHasVerticalScroller) {
+        inUpdateScrollers = YES;
+        [self setHasVerticalScroller:newHasVerticalScroller];
+        inUpdateScrollers = NO;
+        needsLayout = YES;
+    }
+
+    if (needsLayout && inUpdateScrollersLayoutPass < cMaxUpdateScrollbarsPass && 
+        [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+        inUpdateScrollersLayoutPass++;
+        [(id <WebDocumentView>)documentView setNeedsLayout: YES];
+        [(id <WebDocumentView>)documentView layout];
+        NSSize newDocumentSize = [documentView frame].size;
+        if (NSEqualSizes(documentSize, newDocumentSize)) {
+            // The layout with the new scroll state had no impact on
+            // the document's overall size, so updateScrollers didn't get called.
+            // Recur manually.
+            [self updateScrollers];
+        }
+        inUpdateScrollersLayoutPass--;
+    }
 }
 
 // Make the horizontal and vertical scroll bars come and go as needed.
