@@ -1,3 +1,9 @@
+2009-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the PPC build.
+        
+        * plugins/npfunctions.h:
+
 2009-04-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
