@@ -1,3 +1,10 @@
+2009-04-07  Adam Roben  <aroben@apple.com>
+
+        Check in files that were forgotten in r42293
+
+        * platform/win/http/tests/xmlhttprequest/web-apps/012-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/web-apps/013-expected.txt:
+
 2009-04-07  Brady Eidson  <beidson@apple.com>
 
         Update layout test results for new exceptions.
