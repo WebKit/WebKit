@@ -79,28 +79,10 @@ void setSharedTimerFireTime(double fireTime)
         wkTimer = new WebKitTimer();
         
     unsigned int intervalInMS = interval * 1000;
-    if (interval < 0) {
-#ifndef NDEBUG
-        // TODO: We may eventually want to assert here, to track 
-        // what calls are leading to this condition. It seems to happen
-        // mostly with repeating timers.
-        fprintf(stderr, "WARNING: setSharedTimerFireTime: fire time is < 0 ms\n");
-#endif
-        intervalInMS = 0;
-    }
 
-    // FIXME: We should mimic the Windows port's behavior and add the timer fired
-    // event to the event queue directly rather than making an artifical delay.
-    // However, wx won't allow us to assign a simple callback function - we'd have
-    // to create a fake wxEvtHandler-derived class with a timer event handler
-    // function. Until there's a better way, this way is at least far less
-    // hacky.
-    if (intervalInMS < 10)
-#if __WXMSW__
-        intervalInMS = 10;
-#else
+    // sanity check
+    if (intervalInMS < 1)
         intervalInMS = 1;
-#endif
 
     wkTimer->Start(intervalInMS, wxTIMER_ONE_SHOT);
 }

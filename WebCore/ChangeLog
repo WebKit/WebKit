@@ -1,3 +1,16 @@
+2009-04-07  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Remove no longer needed debug warning and Windows-specific codepaths
+        (as we now use the Safari/Win port's timer there)
+
+        https://bugs.webkit.org/show_bug.cgi?id=25070
+
+        * platform/wx/SharedTimerWx.cpp:
+        (WebCore::setSharedTimerFireTime):
+
+
 2009-04-07  Adam Roben  <aroben@apple.com>
 
         Fix many <video> regression tests on Windows
