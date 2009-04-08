@@ -1,3 +1,20 @@
+2009-04-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25041
+        <rdar://problem/6697754>
+        Bug 25041: HTMLMediaElement: OSX autoplay broken by r41907
+        
+        OSX media player should set readyState to HAVE_ENOUGH_DATA when the movie's load state
+        reaches QTMovieLoadStatePlaythroughOK, not when the entire file has been downloaded,
+        so autoplay can begin when it should.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates): Set readState to 
+        HAVE_ENOUGH_DATA when QTMovie load state reaches QTMovieLoadStatePlaythroughOK.
+        (WebCore::MediaPlayerPrivate::paint): Add braces missed in r42203.
+
 2009-04-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by David Kilzer. Based on a patch by Grace Kloba.
@@ -1367,6 +1384,7 @@
 
         Reviewed by Simon Fraser.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25029
         <rdar://problem/6336092> REGRESSION: movie does not resize correctly
 
         Test: media/video-size-intrinsic-scale.html

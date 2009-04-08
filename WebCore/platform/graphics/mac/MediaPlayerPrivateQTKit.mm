@@ -668,7 +668,7 @@ void MediaPlayerPrivate::updateStates()
         m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::HaveEnoughData;
     } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
-        m_readyState = MediaPlayer::HaveFutureData;
+        m_readyState = MediaPlayer::HaveEnoughData;
         m_networkState = MediaPlayer::Loading;
     } else if (loadState >= QTMovieLoadStatePlayable) {
         // FIXME: This might not work correctly in streaming case, <rdar://problem/5693967>
@@ -829,9 +829,10 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     } else {
         if (m_rect != r) {
              m_rect = r;
-            if (m_player->inMediaDocument())
+            if (m_player->inMediaDocument()) {
                 // the QTMovieView needs to be placed in the proper location for document mode
                 [view setFrame:m_rect];
+            }
             else {
                 // We don't really need the QTMovieView in any specific location so let's just get it out of the way
                 // where it won't intercept events or try to bring up the context menu.
