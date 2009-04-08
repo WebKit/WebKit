@@ -61,8 +61,17 @@ def archiveTestResults(configuration, platform):
         if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
 
-    os.chdir("/")
-    shutil.rmtree(layoutTestResultsDir)
+    try:
+        shutil.rmtree(layoutTestResultsDir)
+    except OSError, e:
+
+        # Python in Cygwin throws a mysterious exception with errno of 90
+        # when removing the layout test result directory after successfully
+        # deleting its contents, claiming "Directory not empty".
+        # We can safely ignore this since it was the directory contents that
+        # we are most interested in deleting.
+        if e.errno != 90:
+            raise
 
 if __name__ == '__main__':
     sys.exit(main())

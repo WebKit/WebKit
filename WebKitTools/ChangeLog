@@ -1,5 +1,12 @@
 2009-04-07  Mark Rowe  <mrowe@apple.com>
 
+        Ignore the mysterious exception that Cygwin's Python is throwing when attempting
+        to remove the layout-test-results directory.
+
+        * BuildSlaveSupport/test-result-archive:
+
+2009-04-07  Mark Rowe  <mrowe@apple.com>
+
         Change the working directory before removing the test result directory
         in the hopes of making the Windows build slaves happier.
 
