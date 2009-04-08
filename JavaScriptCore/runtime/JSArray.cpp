@@ -910,6 +910,19 @@ void JSArray::fillArgList(ExecState* exec, ArgList& args)
         args.append(get(exec, i));
 }
 
+void JSArray::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
+{
+    ASSERT(m_storage->m_length == maxSize);
+    UNUSED_PARAM(maxSize);
+    unsigned fastAccessLength = min(m_storage->m_length, m_fastAccessCutoff);
+    unsigned i = 0;
+    for (; i < fastAccessLength; ++i)
+        buffer[i] = getIndex(i);
+    uint32_t size = m_storage->m_length;
+    for (; i < size; ++i)
+        buffer[i] = get(exec, i);
+}
+
 unsigned JSArray::compactForSorting()
 {
     checkConsistency();

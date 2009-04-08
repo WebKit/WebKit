@@ -1,3 +1,14 @@
+2009-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add a bunch of tests for function.apply
+
+        * fast/js/function-apply-aliased-expected.txt: Added.
+        * fast/js/function-apply-aliased.html: Added.
+        * fast/js/resources/function-apply-aliased.js: Added.
+        * fast/profiler/apply-expected.txt:
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Skip fast/cookies/local-file-can-set-cookies.html on Windows

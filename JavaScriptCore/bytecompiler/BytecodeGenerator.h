@@ -288,6 +288,8 @@ namespace JSC {
 
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* argCount, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitLoadVarargs(RegisterID* argCountDst, RegisterID* args);
 
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
@@ -299,6 +301,7 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfTrue(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfFalse(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionCall(RegisterID* cond, Label* target);
+        PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpScopes(Label* target, int targetScopeDepth);
 
         PassRefPtr<Label> emitJumpSubroutine(RegisterID* retAddrDst, Label*);
@@ -365,7 +368,7 @@ namespace JSC {
         typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
         typedef HashMap<double, JSValuePtr> NumberMap;
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
-
+        
         RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         
         RegisterID* newRegister();

@@ -43,10 +43,11 @@ FunctionPrototype::FunctionPrototype(ExecState* exec, PassRefPtr<Structure> stru
     putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 }
 
-void FunctionPrototype::addFunctionProperties(ExecState* exec, Structure* prototypeFunctionStructure, PrototypeFunction** callFunction)
+void FunctionPrototype::addFunctionProperties(ExecState* exec, Structure* prototypeFunctionStructure, PrototypeFunction** callFunction, PrototypeFunction** applyFunction)
 {
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    *applyFunction = new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
+    putDirectFunctionWithoutTransition(exec, *applyFunction, DontEnum);
     *callFunction = new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
     putDirectFunctionWithoutTransition(exec, *callFunction, DontEnum);
 }

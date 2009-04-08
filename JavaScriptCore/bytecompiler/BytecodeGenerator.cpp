@@ -705,6 +705,15 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond,
     return target;
 }
 
+PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label* target)
+{
+    emitOpcode(op_jneq_ptr);
+    instructions().append(cond->index());
+    instructions().append(m_scopeChain->globalObject()->d()->applyFunction);
+    instructions().append(target->offsetFrom(instructions().size()));
+    return target;
+}
+
 unsigned BytecodeGenerator::addConstant(FuncDeclNode* n)
 {
     // No need to explicitly unique function body nodes -- they're unique already.
@@ -1334,6 +1343,44 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         }
     }
 
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitLoadVarargs(RegisterID* argCountDst, RegisterID* arguments)
+{
+    ASSERT(argCountDst->index() < arguments->index());
+    emitOpcode(op_load_varargs);
+    instructions().append(argCountDst->index());
+    instructions().append(arguments->index());
+    return argCountDst;
+}
+
+RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* argCountRegister, unsigned divot, unsigned startOffset, unsigned endOffset)
+{
+    ASSERT(func->refCount());
+    ASSERT(thisRegister->refCount());
+    ASSERT(dst != func);
+    if (m_shouldEmitProfileHooks) {
+        emitOpcode(op_profile_will_call);
+        instructions().append(func->index());
+        
+#if ENABLE(JIT)
+        m_codeBlock->addFunctionRegisterInfo(instructions().size(), func->index());
+#endif
+    }
+    
+    emitExpressionInfo(divot, startOffset, endOffset);
+    
+    // Emit call.
+    emitOpcode(op_call_varargs);
+    instructions().append(dst->index()); // dst
+    instructions().append(func->index()); // func
+    instructions().append(argCountRegister->index()); // arg count
+    instructions().append(thisRegister->index() + RegisterFile::CallFrameHeaderSize); // initial registerOffset
+    if (m_shouldEmitProfileHooks) {
+        emitOpcode(op_profile_did_call);
+        instructions().append(func->index());
+    }
     return dst;
 }
 

@@ -1374,6 +1374,66 @@ int JITStubs::cti_op_loop_if_true(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
+    
+int JITStubs::cti_op_load_varargs(STUB_ARGS)
+{
+    BEGIN_STUB_FUNCTION();
+    CallFrame* callFrame = ARG_callFrame;
+    RegisterFile* registerFile = ARG_registerFile;
+    int argsOffset = ARG_int1;
+    JSValuePtr arguments = callFrame[argsOffset].jsValue(callFrame);
+    uint32_t argCount = 0;
+    if (!arguments.isUndefinedOrNull()) {
+        if (!arguments.isObject()) {
+            CodeBlock* codeBlock = callFrame->codeBlock();
+            unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+            ARG_globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
+            VM_THROW_EXCEPTION();
+        }
+        if (asObject(arguments)->classInfo() == &Arguments::info) {
+            Arguments* argsObject = asArguments(arguments);
+            argCount = argsObject->numProvidedArguments(callFrame);
+            int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
+            Register* newEnd = callFrame->registers() + sizeDelta;
+            if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
+                ARG_globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
+            argsObject->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
+        } else if (isJSArray(&callFrame->globalData(), arguments)) {
+            JSArray* array = asArray(arguments);
+            argCount = array->length();
+            int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
+            Register* newEnd = callFrame->registers() + sizeDelta;
+            if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
+                ARG_globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
+            array->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
+        } else if (asObject(arguments)->inherits(&JSArray::info)) {
+            JSObject* argObject = asObject(arguments);
+            argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+            int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
+            Register* newEnd = callFrame->registers() + sizeDelta;
+            if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
+                ARG_globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
+            Register* argsBuffer = callFrame->registers() + argsOffset;
+            for (unsigned i = 0; i < argCount; ++i) {
+                argsBuffer[i] = asObject(arguments)->get(callFrame, i);
+                CHECK_FOR_EXCEPTION();
+            }
+        } else {
+            CodeBlock* codeBlock = callFrame->codeBlock();
+            unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+            ARG_globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
+            VM_THROW_EXCEPTION();
+        }
+    }
+    CHECK_FOR_EXCEPTION_AT_END();
+    return argCount + 1;
+}
 
 JSValueEncodedAsPointer* JITStubs::cti_op_negate(STUB_ARGS)
 {

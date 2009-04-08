@@ -87,8 +87,19 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
 
     // ecx holds func
     emitPutJITStubArg(regT2, 1);
-    emitPutJITStubArgConstant(registerOffset, 2);
     emitPutJITStubArgConstant(argCount, 3);
+    emitPutJITStubArgConstant(registerOffset, 2);
+}
+          
+void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
+{
+    int registerOffset = instruction[4].u.operand;
+    
+    // ecx holds func
+    emitPutJITStubArg(regT2, 1);
+    emitPutJITStubArg(regT1, 3);
+    addPtr(Imm32(registerOffset), regT1, regT0);
+    emitPutJITStubArg(regT0, 2);
 }
 
 void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)
@@ -334,6 +345,50 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
 #endif
 
+void JIT::compileOpCallVarargs(Instruction* instruction)
+{
+    int dst = instruction[1].u.operand;
+    int callee = instruction[2].u.operand;
+    int argCountRegister = instruction[3].u.operand;
+
+    emitGetVirtualRegister(argCountRegister, regT1);
+    emitGetVirtualRegister(callee, regT2);
+    compileOpCallVarargsSetupArgs(instruction);
+
+    // Check for JSFunctions.
+    emitJumpSlowCaseIfNotJSCell(regT2);
+    addSlowCase(branchPtr(NotEqual, Address(regT2), ImmPtr(m_globalData->jsFunctionVPtr)));
+    
+    // Speculatively roll the callframe, assuming argCount will match the arity.
+    mul32(Imm32(sizeof(Register)), regT0, regT0);
+    intptr_t offset = (intptr_t)sizeof(Register) * (intptr_t)RegisterFile::CallerFrame;
+    addPtr(Imm32((int32_t)offset), regT0, regT3);
+    addPtr(callFrameRegister, regT3);
+    storePtr(callFrameRegister, regT3);
+    addPtr(regT0, callFrameRegister);
+    emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
+
+    // Put the return value in dst. In the interpreter, op_ret does this.
+    emitPutVirtualRegister(dst);
+    
+    sampleCodeBlock(m_codeBlock);
+}
+
+void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    int dst = instruction[1].u.operand;
+    
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    
+    // This handles host functions
+    emitCTICall(JITStubs::cti_op_call_NotJSFunction);
+    // Put the return value in dst. In the interpreter, op_ret does this.
+    emitPutVirtualRegister(dst);
+    
+    sampleCodeBlock(m_codeBlock);
+}
+    
 } // namespace JSC
 
 #endif // ENABLE(JIT)

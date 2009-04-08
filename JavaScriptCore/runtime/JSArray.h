@@ -76,6 +76,7 @@ namespace JSC {
         }
 
         void fillArgList(ExecState*, ArgList&);
+        void copyToRegisters(ExecState*, Register*, uint32_t);
 
         static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
         {

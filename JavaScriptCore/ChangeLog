@@ -1,3 +1,64 @@
+2009-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Improve function.apply performance
+
+        Jump through a few hoops to improve performance of function.apply in the general case.
+
+        In the case of zero or one arguments, or if there are only two arguments and the
+        second is an array literal we treat function.apply as function.call.
+
+        Otherwise we use the new opcodes op_load_varargs and op_call_varargs to do the .apply call
+        without re-entering the virtual machine.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::emitLoadVarargs):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_load_varargs):
+        * jit/JITStubs.h:
+        * parser/Grammar.y:
+        * parser/Nodes.cpp:
+        (JSC::ArrayNode::isSimpleArray):
+        (JSC::ArrayNode::toArgumentList):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::):
+        (JSC::ApplyFunctionCallDotNode::):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToRegisters):
+        (JSC::Arguments::fillArgList):
+        * runtime/Arguments.h:
+        (JSC::Arguments::numProvidedArguments):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::copyToRegisters):
+        * runtime/JSArray.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::mark):
+        * runtime/JSGlobalObject.h:
+
 2009-04-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

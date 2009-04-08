@@ -965,6 +965,18 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] call_eval\t %s, %s, %d, %d\n", location, registerName(dst).c_str(), registerName(func).c_str(), argCount, registerOffset);
             break;
         }
+        case op_call_varargs: {
+            int dst = (++it)->u.operand;
+            int func = (++it)->u.operand;
+            int argCount = (++it)->u.operand;
+            int registerOffset = (++it)->u.operand;
+            printf("[%4d] call_varargs\t %s, %s, %s, %d\n", location, registerName(dst).c_str(), registerName(func).c_str(), registerName(argCount).c_str(), registerOffset);
+            break;
+        }
+        case op_load_varargs: {
+            printUnaryOp(location, it, "load_varargs");
+            break;
+        }
         case op_tear_off_activation: {
             int r0 = (++it)->u.operand;
             printf("[%4d] tear_off_activation\t %s\n", location, registerName(r0).c_str());

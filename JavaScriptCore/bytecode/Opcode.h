@@ -140,6 +140,8 @@ namespace JSC {
         macro(op_new_func_exp, 3) \
         macro(op_call, 5) \
         macro(op_call_eval, 5) \
+        macro(op_call_varargs, 5) \
+        macro(op_load_varargs, 3) \
         macro(op_tear_off_activation, 2) \
         macro(op_tear_off_arguments, 1) \
         macro(op_ret, 2) \

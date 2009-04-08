@@ -170,6 +170,7 @@ namespace JSC {
         static int JIT_STUB cti_op_loop_if_less(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_true(STUB_ARGS);
+        static int JIT_STUB cti_op_load_varargs(STUB_ARGS);
         static int JIT_STUB cti_timeout_check(STUB_ARGS);
         static void JIT_STUB cti_op_create_arguments(STUB_ARGS);
         static void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS);

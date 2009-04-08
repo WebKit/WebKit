@@ -30,7 +30,7 @@ namespace JSC {
     class FunctionPrototype : public InternalFunction {
     public:
         FunctionPrototype(ExecState*, PassRefPtr<Structure>);
-        void addFunctionProperties(ExecState*, Structure* prototypeFunctionStructure, PrototypeFunction** callFunction);
+        void addFunctionProperties(ExecState*, Structure* prototypeFunctionStructure, PrototypeFunction** callFunction, PrototypeFunction** applyFunction);
 
         static PassRefPtr<Structure> createStructure(JSValuePtr proto)
         {

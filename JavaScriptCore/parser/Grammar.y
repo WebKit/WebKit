@@ -1928,6 +1928,8 @@ static ExpressionNodeInfo makeFunctionCallNode(void* globalPtr, ExpressionNodeIn
     FunctionCallDotNode* node;
     if (dot->identifier() == GLOBAL_DATA->propertyNames->call)
         node = new CallFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+    else if (dot->identifier() == GLOBAL_DATA->propertyNames->apply)
+        node = new ApplyFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     else
         node = new FunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());

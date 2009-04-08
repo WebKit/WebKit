@@ -69,6 +69,41 @@ void Arguments::mark()
         d->activation->mark();
 }
 
+void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
+{
+    if (UNLIKELY(d->overrodeLength)) {
+        unsigned length = min(get(exec, exec->propertyNames().length).toUInt32(exec), maxSize);
+        for (unsigned i = 0; i < length; i++)
+            buffer[i] = get(exec, i);
+        return;
+    }
+
+    if (LIKELY(!d->deletedArguments)) {
+        unsigned parametersLength = min(min(d->numParameters, d->numArguments), maxSize);
+        unsigned i = 0;
+        for (; i < parametersLength; ++i)
+            buffer[i] = d->registers[d->firstParameterIndex + i].jsValue(exec);
+        for (; i < d->numArguments; ++i)
+            buffer[i] = d->extraArguments[i - d->numParameters].jsValue(exec);
+        return;
+    }
+    
+    unsigned parametersLength = min(min(d->numParameters, d->numArguments), maxSize);
+    unsigned i = 0;
+    for (; i < parametersLength; ++i) {
+        if (!d->deletedArguments[i])
+            buffer[i] = d->registers[d->firstParameterIndex + i].jsValue(exec);
+        else
+            buffer[i] = get(exec, i);
+    }
+    for (; i < d->numArguments; ++i) {
+        if (!d->deletedArguments[i])
+            buffer[i] = d->extraArguments[i - d->numParameters].jsValue(exec);
+        else
+            buffer[i] = get(exec, i);
+    }
+}
+
 void Arguments::fillArgList(ExecState* exec, ArgList& args)
 {
     if (UNLIKELY(d->overrodeLength)) {
@@ -76,7 +111,7 @@ void Arguments::fillArgList(ExecState* exec, ArgList& args)
         for (unsigned i = 0; i < length; i++) 
             args.append(get(exec, i)); 
         return;
-   }
+    }
 
     if (LIKELY(!d->deletedArguments)) {
         if (LIKELY(!d->numParameters)) {
