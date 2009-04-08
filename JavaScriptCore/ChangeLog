@@ -1,3 +1,15 @@
+2009-04-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25073
+        JavaScriptCore tests don't run if time zone is not PST
+
+        * API/tests/testapi.c:
+        (timeZoneIsPST): Added a function that checks whether the time zone is PST, using the same
+        method as functions in DateMath.cpp do for formatting the result.
+        (main): Skip date string format test if the time zone is not PST.
+
 2009-04-07  David Levin  <levin@chromium.org>
 
         Reviewed by Sam Weinig and Geoff Garen.

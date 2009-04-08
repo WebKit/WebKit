@@ -118,6 +118,16 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     JSStringRelease(valueAsString);
 }
 
+static bool timeZoneIsPST()
+{
+    char timeZoneName[70];
+    struct tm gtm;
+    memset(&gtm, 0, sizeof(gtm));
+    strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
+
+    return 0 == strcmp("PST", timeZoneName);
+}
+
 static JSValueRef jsGlobalValue; // non-stack value for testing JSValueProtect()
 
 /* MyObject pseudo-class */
@@ -1058,7 +1068,8 @@ int main(int argc, char* argv[])
 
     JSValueRef argumentsDateValues[] = { JSValueMakeNumber(context, 0) };
     o = JSObjectMakeDate(context, 1, argumentsDateValues, NULL);
-    assertEqualsAsUTF8String(o, "Wed Dec 31 1969 16:00:00 GMT-0800 (PST)");
+    if (timeZoneIsPST())
+        assertEqualsAsUTF8String(o, "Wed Dec 31 1969 16:00:00 GMT-0800 (PST)");
 
     string = JSStringCreateWithUTF8CString("an error message");
     JSValueRef argumentsErrorValues[] = { JSValueMakeString(context, string) };
