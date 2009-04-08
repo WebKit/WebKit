@@ -1,3 +1,14 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Fix http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html on Windows
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Mimic the
+        ResourceHandleMac code by propagating the CFError's error code for
+        kCFErrorDomainCFNetwork errors to the ResourceResponse.
+
 2009-04-08  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the PPC build.

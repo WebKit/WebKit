@@ -443,9 +443,15 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     RetainPtr<CFDataRef> data = WebCoreSynchronousLoader::load(request, response, error);
 
     if (!error.isNull()) {
-        // FIXME: Return the actual response for failed authentication.
         response = ResourceResponse(request.url(), String(), 0, String(), String());
-        response.setHTTPStatusCode(404);
+
+        CFErrorRef cfError = error;
+        CFStringRef domain = CFErrorGetDomain(cfError);
+        // FIXME: Return the actual response for failed authentication.
+        if (domain == kCFErrorDomainCFNetwork)
+            response.setHTTPStatusCode(CFErrorGetCode(cfError));
+        else
+            response.setHTTPStatusCode(404);
     }
 
     if (data) {
