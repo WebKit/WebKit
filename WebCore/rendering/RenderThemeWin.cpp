@@ -55,6 +55,7 @@
 
 // Textfield constants
 #define TFP_TEXTFIELD 1
+#define EP_EDITBORDER_NOSCROLL 6
 #define TFS_READONLY  6
 
 // ComboBox constants (from vsstyle.h)
@@ -508,7 +509,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
         case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
-            result.m_part = TFP_TEXTFIELD;
+            result.m_part = isRunningOnVistaOrLater() ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
             result.m_state = determineState(o);
             break;
         case SliderHorizontalPart:

@@ -1,3 +1,13 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Make text fields match the system look on Vista
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::getThemeData): Use the new-to-Vista
+        EP_EDITBORDER_NOSCROLL part for text fields.
+
 2009-04-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
