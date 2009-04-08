@@ -1,5 +1,12 @@
 2009-04-07  Brady Eidson  <beidson@apple.com>
 
+        Update layout test results for new exceptions.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
+2009-04-07  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler
 
         Tests for <rdar://problem/5968249> "Private Browsing" doesn't affect HTML 5 LocalStorage
