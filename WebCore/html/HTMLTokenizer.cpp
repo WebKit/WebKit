@@ -1909,7 +1909,16 @@ HTMLTokenizer::~HTMLTokenizer()
 
 void HTMLTokenizer::enlargeBuffer(int len)
 {
-    int newSize = max(m_bufferSize * 2, m_bufferSize + len);
+    // Resize policy: Always at least double the size of the buffer each time.
+    int delta = max(len, m_bufferSize);
+
+    // Check for overflow.
+    // For now, handle overflow the same way we handle fastRealloc failure, with CRASH.
+    static const int maxSize = INT_MAX / sizeof(UChar);
+    if (delta > maxSize - m_bufferSize)
+        CRASH();
+
+    int newSize = m_bufferSize + delta;
     int oldOffset = m_dest - m_buffer;
     m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
     m_dest = m_buffer + oldOffset;
@@ -1918,7 +1927,16 @@ void HTMLTokenizer::enlargeBuffer(int len)
 
 void HTMLTokenizer::enlargeScriptBuffer(int len)
 {
-    int newSize = max(m_scriptCodeCapacity * 2, m_scriptCodeCapacity + len);
+    // Resize policy: Always at least double the size of the buffer each time.
+    int delta = max(len, m_scriptCodeCapacity);
+
+    // Check for overflow.
+    // For now, handle overflow the same way we handle fastRealloc failure, with CRASH.
+    static const int maxSize = INT_MAX / sizeof(UChar);
+    if (delta > maxSize - m_scriptCodeCapacity)
+        CRASH();
+
+    int newSize = m_scriptCodeCapacity + delta;
     m_scriptCode = static_cast<UChar*>(fastRealloc(m_scriptCode, newSize * sizeof(UChar)));
     m_scriptCodeCapacity = newSize;
 }

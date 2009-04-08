@@ -1,3 +1,13 @@
+2009-04-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5908616> tokenizer resizer should handle edge cases consistently
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::enlargeBuffer): Handle edge cases the same way as a failed fastMalloc.
+        (WebCore::HTMLTokenizer::enlargeScriptBuffer): Ditto.
+
 2009-04-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler
