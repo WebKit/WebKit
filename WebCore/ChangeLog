@@ -1,3 +1,17 @@
+2009-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler
+
+        Make sure that cloneNode works with SVG attributes that require synchronization.  This fixes
+        issues with <use> element shadow tree cloning where the clones can end up not obtaining the
+        correct attribute values.
+
+        A subsequent patch of mine will expose this problem and cause it to be covered by existing
+        layout tests, so no test is required at this time for this problem.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneElementWithoutChildren):
+
 2009-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.

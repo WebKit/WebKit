@@ -107,7 +107,7 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
 
     // Clone attributes.
     if (namedAttrMap)
-        clone->attributes()->setAttributes(*namedAttrMap);
+        clone->attributes()->setAttributes(*attributes(true)); // Call attributes(true) to force attribute synchronization to occur (for svg and style) before cloning happens.
 
     clone->copyNonAttributeProperties(this);
     
