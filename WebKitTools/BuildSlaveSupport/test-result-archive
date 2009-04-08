@@ -55,9 +55,13 @@ def archiveTestResults(configuration, platform):
             raise
 
     if platform == 'mac':
-        return subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile])
+        if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile]):
+            return 1
     elif platform == 'win':
-        return subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir)
+        if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
+            return 1
+
+    shutil.rmtree(layoutTestResultsDir)
 
 if __name__ == '__main__':
     sys.exit(main())
