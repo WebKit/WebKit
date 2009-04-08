@@ -1,3 +1,18 @@
+2009-04-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24904
+
+        Verify the MIME type of stylesheets (in standards mode) by looking
+        at the Content-Type header directly.  This bypasses any content
+        sniffing that might be confusing the issue.
+
+        Test: http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header.html
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+
 2009-04-07  Anantanarayanan Iyengar  <ananta@chromium.org>
 
         Reviewed by Darin Fisher.

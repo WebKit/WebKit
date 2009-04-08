@@ -1,3 +1,16 @@
+2009-04-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24904
+
+        Test that we apply style sheets in standards mode even if
+        those style sheets have an empty Content-Type header.
+
+        * http/tests/mime/resources/style.cgi: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header-expected.txt: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header.html: Added.
+
 2009-04-03  Anantanarayanan Iyengar  <ananta@chromium.org>
 
         Reviewed by Darin Fisher.

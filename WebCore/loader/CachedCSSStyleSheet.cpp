@@ -29,6 +29,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "HTTPParsers.h"
 #include "TextResourceDecoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
@@ -131,8 +132,14 @@ bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType) const
     if (!enforceMIMEType)
         return true;
 
-    // This check exactly matches Firefox.
-    String mimeType = response().mimeType();
+    // This check exactly matches Firefox.  Note that we grab the Content-Type
+    // header directly because we want to see what the value is BEFORE content
+    // sniffing.  Firefox does this by setting a "type hint" on the channel.
+    // This implementation should be observationally equivalent.
+    //
+    // This code defaults to allowing the stylesheet for non-HTTP protocols so
+    // folks can use standards mode for local HTML documents.
+    String mimeType = extractMIMETypeFromMediaType(response().httpHeaderField("Content-Type"));
     return mimeType.isEmpty() || equalIgnoringCase(mimeType, "text/css") || equalIgnoringCase(mimeType, "application/x-unknown-content-type");
 }
  
