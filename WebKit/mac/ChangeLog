@@ -1,3 +1,16 @@
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Fix Tiger build for real this time.
+
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:forURL:value:length:]):
+        (-[WebNetscapePluginView setVariable:forURL:value:length:]):
+        (-[WebNetscapePluginView getAuthenticationInfoWithProtocol:host:port:scheme:realm:username:usernameLength:password:passwordLength:]):
+        * Plugins/npapi.mm:
+        (NPN_GetValueForURL):
+        (NPN_SetValueForURL):
+
 2009-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben

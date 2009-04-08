@@ -2047,7 +2047,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_NO_ERROR;
 }
 
-- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length
+- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32*)length
 {
     switch (variable) {
         case NPNURLVCookie: {
@@ -2099,7 +2099,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_GENERIC_ERROR;
 }
 
-- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length
+- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32)length
 {
     switch (variable) {
         case NPNURLVCookie: {
@@ -2125,7 +2125,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_GENERIC_ERROR;
 }
 
-- (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32_t)port scheme:(const char*)schemeStr realm:(const char*)realmStr
+- (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32)port scheme:(const char*)schemeStr realm:(const char*)realmStr
                                     username:(char**)usernameStr usernameLength:(uint32*)usernameLength 
                                     password:(char**)passwordStr passwordLength:(uint32*)passwordLength
 {

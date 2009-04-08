@@ -191,12 +191,12 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
     return [pluginViewForInstance(instance) popUpContextMenu:menu];
 }
 
-NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)
+NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32* len)
 {
     return [pluginViewForInstance(instance) getVariable:variable forURL:url value:value length:len];
 }
 
-NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32_t len)
+NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32 len)
 {
     return [pluginViewForInstance(instance) setVariable:variable forURL:url value:value length:len];
 }

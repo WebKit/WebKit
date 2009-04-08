@@ -164,9 +164,9 @@ typedef union PluginPort {
 - (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc;
 - (void)unscheduleTimer:(uint32)timerID;
 - (NPError)popUpContextMenu:(NPMenu *)menu;
-- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length;
-- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length;
-- (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32_t)port scheme:(const char*)scheme realm:(const char*)realm
+- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32*)length;
+- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32)length;
+- (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32)port scheme:(const char*)scheme realm:(const char*)realm
                                     username:(char**)username usernameLength:(uint32*)usernameLength 
                                     password:(char**)password passwordLength:(uint32*)passwordLength;
 @end
