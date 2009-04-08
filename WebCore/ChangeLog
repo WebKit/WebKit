@@ -1,3 +1,14 @@
+2009-04-07  Adam Roben  <aroben@apple.com>
+
+        Fix many <video> regression tests on Windows
+
+        Reviewed by Dave Hyatt.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::getNaturalSize): Call GetMovieNaturalBoundsRect, which
+        returns the movie's natural bounds (duh), rather than GetMovieBox,
+        which returns the movie's current displayed size/position.
+
 2009-04-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig
