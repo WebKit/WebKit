@@ -323,6 +323,10 @@ IntRect TransparencyAwareUniscribePainter::estimateTextBounds()
     UniscribeHelperTextRun state(m_run, *m_font);
     int left = lroundf(m_point.x()) + state.characterToX(m_from);
     int right = lroundf(m_point.x()) + state.characterToX(m_to);
+    
+    // Adjust for RTL script since we just want to know the text bounds.
+    if (left > right)
+        std::swap(left, right);
 
     // This algorithm for estimating how much extra space we need (the text may
     // go outside the selection rect) is based roughly on
