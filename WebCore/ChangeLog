@@ -1,3 +1,15 @@
+2009-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25093
+        REGRESSION: some scripts are showing in the Inspector with only "true"
+        as the source.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didParseSource): Fixed conversion issue.
+        (WebCore::InspectorController::failedToParseSource): Ditto.
+
 2009-04-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
