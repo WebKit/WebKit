@@ -203,7 +203,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::initWithURL(
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mainDocumentURL( 
     /* [retval][out] */ BSTR* result)
 {
-    *result = MarshallingHelpers::KURLToBSTR(m_request.url());
+    *result = MarshallingHelpers::KURLToBSTR(m_request.mainDocumentURL());
     return S_OK;
 }
 

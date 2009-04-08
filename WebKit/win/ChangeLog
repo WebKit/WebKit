@@ -1,3 +1,13 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Fix security/block-test-no-port.html on Windows
+
+        Reviewed by Beth Dakin.
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::mainDocumentURL): Return the ResourceRequest's
+        mainDocumentURL, not its URL.
+
 2009-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
