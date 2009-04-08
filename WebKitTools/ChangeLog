@@ -1,5 +1,12 @@
 2009-04-07  Mark Rowe  <mrowe@apple.com>
 
+        Change the working directory before removing the test result directory
+        in the hopes of making the Windows build slaves happier.
+
+        * BuildSlaveSupport/test-result-archive:
+
+2009-04-07  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Adam Roben.
 
         Make the links to tests in the uploaded results.html files on build.webkit.org point to the test files.

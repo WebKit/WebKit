@@ -61,6 +61,7 @@ def archiveTestResults(configuration, platform):
         if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
 
+    os.chdir("/")
     shutil.rmtree(layoutTestResultsDir)
 
 if __name__ == '__main__':
