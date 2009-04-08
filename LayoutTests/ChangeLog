@@ -1,3 +1,9 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Add a failing test to the Windows Skipped file
+
+        * platform/win/Skipped: Added media/video-size-intrinsic-scale.html.
+
 2009-04-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
