@@ -1,3 +1,18 @@
+2009-04-03  Anantanarayanan Iyengar  <ananta@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added support for returning plugins which support the wildcard mime type (*).
+        This is on the same lines as Firefox, which uses a wildcard plugin (npnul32.dll) for
+        plugin installation. The changes to support wildcard mime type matching are in
+        PluginDatabase.cpp which is used by Webkit's plugin implementation, and
+        PluginData.cpp/.h which is used by Chromium. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=24988
+
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+
 2009-04-07  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build for real this time.

@@ -1,3 +1,21 @@
+2009-04-03  Anantanarayanan Iyengar  <ananta@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added the wildcard mime type (*) to the list of mime types supported by the
+        layout test plugin. The plugin emits a trace in its NPP_New implementation
+        on receiving the application/x-webkit-test-netscape-wildcard-plugin mime type,
+        indicating that the wildcard plugin mime type match succeeded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24988
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/Info.plist:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc:
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New):
+
 2009-04-07  Adam Roben  <aroben@apple.com>
 
         Print the number of files being compiled when using pdevenv

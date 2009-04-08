@@ -81,9 +81,14 @@ bool PluginPackage::isPluginBlacklisted()
 
         if (compareFileVersion(slPluginMinRequired) < 0)
             return true;
-    } else if (fileName() == "npmozax.dll")
+    } else if (fileName() == "npmozax.dll") {
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
         return true;
+    } else if (fileName() == "npnul32.dll") {
+        // We don't want to load the Mozilla null plugin, which is used to install
+        // NPAPI plugins.
+        return true;
+    }
 
     return false;
 }

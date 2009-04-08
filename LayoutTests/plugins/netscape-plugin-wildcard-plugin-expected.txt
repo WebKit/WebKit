@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: PLUGIN: NPAPI Wildcard plugin instance loaded
+
+This tests that a plugin which supports the wildcard mime type * is loaded correctly.

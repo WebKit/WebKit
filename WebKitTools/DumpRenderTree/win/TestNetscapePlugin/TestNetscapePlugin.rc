@@ -73,7 +73,7 @@ BEGIN
             VALUE "FileDescription", "TestNetscapePlugIn"
             VALUE "FileOpenName", "test netscape content"
             VALUE "LegalCopyright", "Copyright Apple Inc. 2007-2009"
-            VALUE "MIMEType", "application/x-webkit-test-netscape"
+            VALUE "MIMEType", "application/x-webkit-test-netscape|*"
             VALUE "OriginalFilename", "npTestNetscapePlugin.dll"
             VALUE "ProductName", "TestNetscapePlugIn"
         END
