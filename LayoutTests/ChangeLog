@@ -1,3 +1,14 @@
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
+        Add Tiger specific results.
+
+        * platform/mac-tiger/http/tests/security: Added.
+        * platform/mac-tiger/http/tests/security/XFrameOptions: Added.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Added.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Added.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Added.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Added.
+
 2009-04-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
