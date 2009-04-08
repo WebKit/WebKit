@@ -1,5 +1,26 @@
 2009-04-07  Mark Rowe  <mrowe@apple.com>
 
+        Land the current build.webkit.org configuration for safekeeping.
+
+        * BuildSlaveSupport/build.webkit.org-config/README: Added.
+        * BuildSlaveSupport/build.webkit.org-config/Makefile:
+        * BuildSlaveSupport/build.webkit.org-config/buildbot.tac:
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/buildbot.css: Renamed from BuildSlaveSupport/build.webkit.org-config/buildbot.css.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/index.html: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/robots.txt: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/__init__.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/auth.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/basesteps.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/schedulers.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/status.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Removed.
+
+2009-04-07  Mark Rowe  <mrowe@apple.com>
+
         Ignore the mysterious exception that Cygwin's Python is throwing when attempting
         to remove the layout-test-results directory.
 

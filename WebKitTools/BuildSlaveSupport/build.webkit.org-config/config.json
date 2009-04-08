@@ -1,0 +1,82 @@
+{
+    "slaves":     [ { "name": "test-slave", "platform": "*" },
+
+                    { "name": "apple-xserve-1", "platform": "mac-leopard" },
+                    { "name": "apple-xserve-2", "platform": "mac-leopard" },
+                    { "name": "apple-xserve-3", "platform": "mac-leopard" },
+
+                    { "name": "bdash-slave-2", "platform": "mac-tiger" },
+
+                    { "name": "apple-windows-1", "platform": "win"},
+                    { "name": "apple-windows-2", "platform": "win"},
+                    { "name": "apple-windows-3", "platform": "win"},
+                    { "name": "apple-windows-4", "platform": "win"}
+
+                  ],
+
+    "builders":   [ { "name": "Tiger Intel Release", "type": "BuildAndTest", "builddir": "tiger-intel-release",
+                    "platform": "mac-tiger", "configuration": "release", "architectures": ["i386"],
+                    "slavenames": ["bdash-slave-2", "test-slave"]
+                    },
+
+                    { "name": "Leopard Intel Release (Build)", "type": "Build", "builddir": "leopard-intel-release",
+                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
+                      "triggers": ["leopard-intel-release-tests"],
+                      "slavenames": ["apple-xserve-1", "apple-xserve-2", "test-slave"]
+                    },
+                    { "name": "Leopard Intel Release (Tests)", "type": "Test", "builddir": "leopard-intel-release-tests",
+                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["apple-xserve-3", "test-slave"]
+                    },
+
+                    { "name": "Leopard Intel Debug (Build)", "type": "Build", "builddir": "leopard-intel-debug",
+                      "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
+                      "triggers": ["leopard-intel-debug-tests"],
+                      "slavenames": ["apple-xserve-1", "apple-xserve-2", "test-slave"]
+                    },
+                    { "name": "Leopard Intel Debug (Tests)", "type": "Test", "builddir": "leopard-intel-debug-tests",
+                      "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
+                      "slavenames": ["apple-xserve-3", "test-slave"]
+                    },
+                    {
+                      "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
+                      "platform": "win", "configuration": "release", "architectures": ["i386"],
+                      "triggers": ["win-release-tests"],
+                      "slavenames": ["apple-windows-2", "test-slave"]
+                    },
+                    {
+                      "name": "Windows Release (Tests)", "type": "Test", "builddir": "win-release-tests",
+                      "platform": "win", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["apple-windows-4", "apple-windows-3", "test-slave"]
+                    },
+                    {
+                      "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
+                      "platform": "win", "configuration": "debug", "architectures": ["i386"],
+                      "triggers": ["win-debug-tests"],
+                      "slavenames": ["apple-windows-1", "test-slave"]
+                    },
+                    {
+                      "name": "Windows Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "platform": "win", "configuration": "debug", "architectures": ["i386"],
+                      "slavenames": ["apple-windows-4", "apple-windows-3", "test-slave"]
+                    }
+                  ],
+
+    "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 90.0,
+                      "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
+                                       "Windows Release (Build)", "Windows Debug (Build)"]
+                    },
+                    { "type": "Triggerable", "name": "leopard-intel-release-tests",
+                      "builderNames": ["Leopard Intel Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "leopard-intel-debug-tests",
+                      "builderNames": ["Leopard Intel Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "win-release-tests",
+                      "builderNames": ["Windows Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "win-debug-tests",
+                      "builderNames": ["Windows Debug (Tests)"]
+                    }
+                  ]
+}
