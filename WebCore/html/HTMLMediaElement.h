@@ -157,6 +157,7 @@ private: // MediaPlayerObserver
     virtual void mediaPlayerDurationChanged(MediaPlayer*);
     virtual void mediaPlayerRateChanged(MediaPlayer*);
     virtual void mediaPlayerSizeChanged(MediaPlayer*);
+    virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*);
 
 private:
     void loadTimerFired(Timer<HTMLMediaElement>*);

@@ -1,3 +1,43 @@
+2009-04-07  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6148255>
+
+        Standalone media documents can not always handle everything
+        using a <video> element. In these cases switch to an <embed>
+        element that uses the QuickTime plugin, in the hope that it
+        will have more luck. Typical media types that trigger this
+        are streamed media and QTVR.
+
+        Equivalent Windows fix to come once reviewed. Note also that
+        this area of code needs a cleanup:
+        https://bugs.webkit.org/show_bug.cgi?id=25085
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerSawUnsupportedTracks):
+        * html/HTMLMediaElement.h:
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::mediaElementSawUnsupportedTracks):
+        (WebCore::MediaDocument::replaceVideoWithEmbed):
+        * loader/MediaDocument.h:
+            - removes the <video> element and puts in an <embed>
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerSawUnsupportedTracks):
+            - new internal method for flagging a problem
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::updateStates):
+            - looks for the types of content we don't handle
+        (WebCore::MediaPlayerPrivate::rateChanged):
+        (WebCore::MediaPlayerPrivate::sizeChanged):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+        (WebCore::MediaPlayerPrivate::sawUnsupportedTracks):
+            - inform the MediaClient that we have a potential problem
+
 2009-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

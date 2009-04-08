@@ -76,6 +76,11 @@ public:
 
     // the movie size has changed
     virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
+
+    // The MediaPlayer has found potentially problematic media content.
+    // This is used internally to trigger swapping from a <video>
+    // element to an <embed> in standalone documents
+    virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*) { }
 };
 
 class MediaPlayer : Noncopyable {

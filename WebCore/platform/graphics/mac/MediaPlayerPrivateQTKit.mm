@@ -187,6 +187,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_visible(false)
     , m_rect()
     , m_enabledTrackCount(0)
+    , m_totalTrackCount(0)
+    , m_hasUnsupportedTracks(false)
     , m_duration(-1.0f)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
@@ -646,10 +648,19 @@ void MediaPlayerPrivate::updateStates()
     
     long loadState = m_qtMovie ? [[m_qtMovie.get() attributeForKey:QTMovieLoadStateAttribute] longValue] : static_cast<long>(QTMovieLoadStateError);
 
-    if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata && !m_player->inMediaDocument()) {
+    if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata) {
         disableUnsupportedTracks();
-        if (!m_enabledTrackCount)
+        if (m_player->inMediaDocument()) {
+            if (!m_enabledTrackCount || m_enabledTrackCount != m_totalTrackCount) {
+                // This is a type of media that we do not handle directly with a <video> 
+                // element, likely streamed media or QuickTime VR. Tell the MediaPlayerClient
+                // that we noticed.
+                sawUnsupportedTracks();
+                return;
+            }
+        } else if (!m_enabledTrackCount) {
             loadState = QTMovieLoadStateError;
+        }
     }
 
     if (loadState >= QTMovieLoadStateComplete && !m_isStreaming) {
@@ -667,8 +678,15 @@ void MediaPlayerPrivate::updateStates()
         m_readyState = MediaPlayer::HaveMetadata;
         m_networkState = MediaPlayer::Loading;
     } else if (loadState > QTMovieLoadStateError) {
-        m_readyState = MediaPlayer::HaveNothing;        
-        m_networkState = MediaPlayer::Loading;
+        if (m_player->inMediaDocument()) {
+            // Something went wrong in the loading of media within a standalone file. 
+            // This can occur with chained refmovies pointing to streamed media.
+            sawUnsupportedTracks();
+            return;
+        } else {
+            m_readyState = MediaPlayer::HaveNothing;
+            m_networkState = MediaPlayer::Loading;
+        }
     } else {
         float loaded = maxTimeLoaded();
 
@@ -715,18 +733,21 @@ void MediaPlayerPrivate::loadStateChanged()
 void MediaPlayerPrivate::rateChanged()
 {
     updateStates();
-    m_player->rateChanged();
+    if (!m_hasUnsupportedTracks)
+        m_player->rateChanged();
 }
 
 void MediaPlayerPrivate::sizeChanged()
 {
-    m_player->sizeChanged();
+    if (!m_hasUnsupportedTracks)
+        m_player->sizeChanged();
 }
 
 void MediaPlayerPrivate::timeChanged()
 {
     updateStates();
-    m_player->timeChanged();
+    if (!m_hasUnsupportedTracks)
+        m_player->timeChanged();
 }
 
 void MediaPlayerPrivate::didEnd()
@@ -736,7 +757,8 @@ void MediaPlayerPrivate::didEnd()
     m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
 #endif
     updateStates();
-    m_player->timeChanged();
+    if (!m_hasUnsupportedTracks)
+        m_player->timeChanged();
 }
 
 void MediaPlayerPrivate::setSize(const IntSize&) 
@@ -912,6 +934,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
 {
     if (!m_qtMovie) {
         m_enabledTrackCount = 0;
+        m_totalTrackCount = 0;
         return;
     }
     
@@ -929,9 +952,9 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
     
     NSArray *tracks = [m_qtMovie.get() tracks];
     
-    unsigned trackCount = [tracks count];
-    m_enabledTrackCount = trackCount;
-    for (unsigned trackIndex = 0; trackIndex < trackCount; trackIndex++) {
+    m_totalTrackCount = [tracks count];
+    m_enabledTrackCount = m_totalTrackCount;
+    for (unsigned trackIndex = 0; trackIndex < m_totalTrackCount; trackIndex++) {
         // Grab the track at the current index. If there isn't one there, then
         // we can move onto the next one.
         QTTrack *track = [tracks objectAtIndex:trackIndex];
@@ -992,6 +1015,12 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         [chapterTrack setEnabled:NO];
         --m_enabledTrackCount;
     }
+}
+
+void MediaPlayerPrivate::sawUnsupportedTracks()
+{
+    m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
+    m_hasUnsupportedTracks = true;
 }
 
 }

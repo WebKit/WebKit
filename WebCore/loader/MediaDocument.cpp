@@ -189,5 +189,38 @@ void MediaDocument::defaultEventHandler(Event* event)
     }
 }
 
+void MediaDocument::mediaElementSawUnsupportedTracks()
+{
+    // The HTMLMediaElement was told it has something that
+    // the underlying MediaPlayer cannot handle. We should switch
+    // from <video> to <embed> and let the plugin handle this.
+    replaceVideoWithEmbed();
+}
+
+void MediaDocument::replaceVideoWithEmbed()
+{
+    HTMLElement* htmlBody = body();
+    if (!htmlBody)
+        return;
+
+    RefPtr<NodeList> nodeList = htmlBody->getElementsByTagName("video");
+
+    if (nodeList.get()->length() > 0) {
+        HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
+
+        RefPtr<Element> element = Document::createElement(embedTag, false);
+        HTMLEmbedElement* embedElement = static_cast<HTMLEmbedElement*>(element.get());
+
+        embedElement->setAttribute(widthAttr, "100%");
+        embedElement->setAttribute(heightAttr, "100%");
+        embedElement->setAttribute(nameAttr, "plugin");
+        embedElement->setSrc(url().string());
+        embedElement->setType(frame()->loader()->responseMIMEType());
+
+        ExceptionCode ec;
+        videoElement->parent()->replaceChild(embedElement, videoElement, ec);
+    }
+}
+
 }
 #endif
