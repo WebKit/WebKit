@@ -1,3 +1,16 @@
+2009-04-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24957
+        REGRESSION: Google calendar widget no longer shows upcoming events
+
+        Test: http/tests/xmlhttprequest/authorization-header.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequestStaticData::XMLHttpRequestStaticData): Removed Authorization from
+        the list of forbidden headers.
+
 2009-04-07  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.
