@@ -1,5 +1,17 @@
 2009-04-08  Sam Weinig  <sam@webkit.org>
 
+        Add Windows specific results.
+
+        * platform/win/http/tests/security: Added.
+        * platform/win/http/tests/security/XFrameOptions: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt: Added.
+
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
         Add Tiger specific results.
 
         * platform/mac-tiger/http/tests/security: Added.
