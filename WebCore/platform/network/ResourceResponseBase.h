@@ -88,7 +88,7 @@ public:
     {
         if (!m_haveParsedCacheControl)
             parseCacheControlDirectives();
-        return m_cacheControlContainsMustRevalidate;
+        return m_cacheControlContainsNoCache;
     }
     bool cacheControlContainsMustRevalidate() const
     {

@@ -1,3 +1,18 @@
+2009-04-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Kilzer. Based on a patch by Grace Kloba.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24656
+        cacheControlContainsNoCache() in ResourceResponseBase.h is wrong
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives): Removed misused code for
+        parsing directive values, fixing parsing of directives that we care about.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::cacheControlContainsNoCache): Fixed a copy/paste mistake,
+        m_cacheControlContainsMustRevalidate was returned instead of m_cacheControlContainsNoCache.
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Make text fields match the system look on Vista
