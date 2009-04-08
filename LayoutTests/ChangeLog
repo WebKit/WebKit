@@ -1,3 +1,12 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Skip fast/cookies/local-file-can-set-cookies.html on Windows
+
+        Reviewed by John Sullivan.
+
+        * platform/win/Skipped: Skip local-file-can-set-cookies.html, which is
+        failing due to a bug in one of our dependencies.
+
 2009-04-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben and Darin Adler

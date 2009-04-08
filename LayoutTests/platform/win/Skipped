@@ -558,3 +558,6 @@ fast/forms/mailto/post-text-plain.html
 
 # Bug 25094: media/video-size-intrinsic-scale.html fails on Windows <https://bugs.webkit.org/show_bug.cgi?id=25094>
 media/video-size-intrinsic-scale.html
+
+# <rdar://6772112> Cookies expire 1 hour too early
+fast/cookies/local-file-can-set-cookies.html
