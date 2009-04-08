@@ -1,3 +1,33 @@
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Tests for <rdar://problem/6226200> Implement Microsoft's X-FRAME-OPTIONS anti-framing defense
+
+        * http/tests/security/XFrameOptions: Added.
+        * http/tests/security/XFrameOptions/resources: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-allow.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny.cgi: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-parent-same-origin-deny.cgi: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html: Added.
+
 2009-04-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

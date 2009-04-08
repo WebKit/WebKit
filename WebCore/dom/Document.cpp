@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Document.h"
 
-#include "AnimationController.h"
 #include "AXObjectCache.h"
+#include "AnimationController.h"
 #include "CDATASection.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
@@ -77,6 +77,7 @@
 #include "HitTestResult.h"
 #include "ImageLoader.h"
 #include "InspectorController.h"
+#include "JSDOMBinding.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MessageEvent.h"
@@ -98,6 +99,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
@@ -106,8 +108,8 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
-#include "TreeWalker.h"
 #include "Timer.h"
+#include "TreeWalker.h"
 #include "UIEvent.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
@@ -115,13 +117,11 @@
 #include "XMLHttpRequest.h"
 #include "XMLNames.h"
 #include "XMLTokenizer.h"
-#include "JSDOMBinding.h"
-#include "ScriptController.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(DATABASE)
 #include "Database.h"
@@ -1976,11 +1976,11 @@ Node *Document::nodeWithAbsIndex(int absIndex)
     return n;
 }
 
-void Document::processHttpEquiv(const String &equiv, const String &content)
+void Document::processHttpEquiv(const String& equiv, const String& content)
 {
     ASSERT(!equiv.isNull() && !content.isNull());
 
-    Frame *frame = this->frame();
+    Frame* frame = this->frame();
 
     if (equalIgnoringCase(equiv, "default-style")) {
         // The preferred style set has been overridden as per section 
@@ -2010,6 +2010,13 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         setContentLanguage(content);
     else if (equalIgnoringCase(equiv, "x-dns-prefetch-control"))
         parseDNSPrefetchControlHeader(content);
+    else if (equalIgnoringCase(equiv, "x-frame-options")) {
+        FrameLoader* frameLoader = frame->loader();
+        if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url())) {
+            frameLoader->stopAllLoaders();
+            frameLoader->scheduleHTTPRedirection(0, blankURL());
+        }
+    }
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)

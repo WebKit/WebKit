@@ -1,0 +1,10 @@
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - willSendRequest <NSURLRequest URL http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html> redirectResponse (null)
+<unknown> - didFinishLoading
+There should be no content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

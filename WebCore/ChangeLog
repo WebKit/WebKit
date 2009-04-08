@@ -1,3 +1,28 @@
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/6226200> Implement Microsoft's X-FRAME-OPTIONS anti-framing defense
+
+        Tests: http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+               http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
+               http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+               http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+               http/tests/security/XFrameOptions/x-frame-options-deny.html
+               http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
+               http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Stop the current load and redirect to about:blank
+        if an X-FRAME-OPTIONS <meta> tag http-equiq dictates we should.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions): Add logic to parse
+        the X-FRAME-OPTIONS parameter.
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse): Stop the current load if framed and
+        a X-FRAME-OPTIONS header and its parameter dictate that we should.
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Fix http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html on Windows

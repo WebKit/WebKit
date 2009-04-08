@@ -293,6 +293,15 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     }
 #endif
 
+    HTTPHeaderMap::const_iterator it = r.httpHeaderFields().find(AtomicString("x-frame-options"));
+    if (it != r.httpHeaderFields().end()) {
+        String content = it->second;
+        if (m_frame->loader()->shouldInterruptLoadForXFrameOptions(content, r.url())) {
+            cancel();
+            return;
+        }
+    }
+
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !PLATFORM(CF)
