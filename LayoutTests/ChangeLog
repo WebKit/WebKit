@@ -1,3 +1,24 @@
+2009-04-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        More tests for our handling of MIME types and style sheets.
+
+        * http/tests/mime/resources/style-with-charset.php: Added.
+        * http/tests/mime/resources/style-with-empty-content-type.cgi: Renamed from LayoutTests/http/tests/mime/resources/style.cgi.
+        * http/tests/mime/resources/style-with-text-plain.php: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension-expected.txt: Copied from LayoutTests/http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header-expected.txt.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension.html: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-expected.txt: Copied from LayoutTests/http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header-expected.txt.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset.html: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type-expected.txt: Renamed from LayoutTests/http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header-expected.txt.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header.html: Removed.
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Check in Windows-specific results for an SVG test that was failing due
