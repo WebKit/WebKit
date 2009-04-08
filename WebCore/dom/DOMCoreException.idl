@@ -66,6 +66,13 @@ module core {
         const unsigned short      VALIDATION_ERR                 = 16;
         // Introduced in DOM Level 3:
         const unsigned short      TYPE_MISMATCH_ERR              = 17;
+        // Introduced as an XHR extension:
+        const unsigned short      SECURITY_ERR                   = 18;
+        // Introduced in HTML5:
+        const unsigned short      NETWORK_ERR                    = 19;
+        const unsigned short      ABORT_ERR                      = 20;
+        const unsigned short      URL_MISMATCH_ERR               = 21;
+        const unsigned short      QUOTA_EXCEEDED_ERR             = 22;
     };
 
 }

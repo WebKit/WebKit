@@ -1,3 +1,29 @@
+2009-04-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig
+
+        <rdar://problem/5968249> "Private Browsing" doesn't affect HTML 5 LocalStorage
+
+        The expected behavior for persistent storage when private browsing mode is undefined by the spec.
+        For now we're going with a "read-only when in private browsing" policy until we can get feedback
+        and/or get the behavior specified in the spec.
+
+        Note that I purposefully made the change to restrict SessionStorage to read-only, also, with the
+        understanding that the spec allows for SessionStorage to persist across relaunches, even though
+        our implementation currently doesn't do this.
+
+        * dom/DOMCoreException.idl: Add some new ExceptionCodes defined in HTML5, one of which is needed
+          for LocalStorage changes (QUOTA_EXCEEDED_ERR)
+        * dom/ExceptionCode.cpp: 
+        * dom/ExceptionCode.h:
+
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::internalSetItem): If private browsing is enabled, throw the QUOTA_EXCEEDED_ERR
+          exception as the spec allows.
+        (WebCore::StorageArea::internalRemoveItem): If private browsing is enabled, silently fail to remove
+          the item.
+        (WebCore::StorageArea::internalClear): If private browsing is enabled, silently fail to clear the area.
+
 2009-04-07  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
