@@ -47,14 +47,6 @@ PluginData::~PluginData()
 bool PluginData::supportsMimeType(const String& mimeType) const
 {
     for (unsigned i = 0; i < m_mimes.size(); ++i)
-        if (m_mimes[i]->type == mimeType || m_mimes[i]->type == "*")
-            return true;
-    return false;
-}
-
-bool PluginData::supportsMimeTypeIgnoringWildCards(const String& mimeType) const
-{
-    for (unsigned i = 0; i < m_mimes.size(); ++i)
         if (m_mimes[i]->type == mimeType)
             return true;
     return false;

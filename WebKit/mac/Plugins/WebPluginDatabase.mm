@@ -99,9 +99,7 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
     key = [key lowercaseString];
 
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        NSArray *pluginMimeTypes = [[plugin performSelector:enumeratorSelector] allObjects];
-    
-        if ([pluginMimeTypes containsObject:key] || [pluginMimeTypes containsObject:@"*"]) {
+        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
             if ([plugin isKindOfClass:[WebPluginPackage class]]) 
                 checkCandidate(&webPlugin, &plugin);
 #if ENABLE(NETSCAPE_PLUGIN_API)

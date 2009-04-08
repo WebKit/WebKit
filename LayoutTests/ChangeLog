@@ -17,21 +17,6 @@
         * http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header-expected.txt: Added.
         * http/tests/mime/standard-mode-loads-stylesheet-without-content-type-header.html: Added.
 
-2009-04-03  Anantanarayanan Iyengar  <ananta@chromium.org>
-
-        Reviewed by Darin Fisher.
-
-        Added a layout test which verifies whether the wildcard plugin mime type match
-        succeeded. The plugins/plugin-javascript-access.html layout test had to be
-        re-baselined to account for the wildcard mime type supported by the layout test
-        plugin.
-        
-        https://bugs.webkit.org/show_bug.cgi?id=24988
-
-        * plugins/netscape-plugin-wildcard-plugin-expected.txt: Added.
-        * plugins/netscape-plugin-wildcard-plugin.html: Added.
-        * plugins/plugin-javascript-access-expected.txt:
-
 2009-04-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

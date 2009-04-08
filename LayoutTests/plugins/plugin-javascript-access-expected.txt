@@ -17,17 +17,6 @@ Plugin.item() works.
 
 Plugin.namedItem() works.
 
-Type: *
-
-Description: test netscape wildcard plugin
-
-Suffixes: wildcardplugin
-
-
-Plugin.item() works.
-
-Plugin.namedItem() works.
-
 PluginArray.item() works.
 
 PluginArray.namedItem() works.

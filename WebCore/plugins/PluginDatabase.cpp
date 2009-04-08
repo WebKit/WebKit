@@ -162,17 +162,8 @@ PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
     Vector<PluginPackage*, 2> pluginChoices;
 
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
-        PluginPackage* package = (*it).get();
-
-        const MIMEToDescriptionsMap& mimeToDescriptions = package->mimeToDescriptions();
-
-        MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
-        
-        for (MIMEToDescriptionsMap::const_iterator mimeIter = mimeToDescriptions.begin(); mimeIter != end; ++mimeIter) {
-            // We check for exact mime type matches and wildcard (*) matches. 
-            if (mimeIter->first == key || mimeIter->first == "*")
-                pluginChoices.append(package);
-        }
+        if ((*it)->mimeToDescriptions().contains(key))
+            pluginChoices.append((*it).get());
     }
 
     if (pluginChoices.isEmpty())

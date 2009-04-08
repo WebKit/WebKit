@@ -53,15 +53,6 @@
 			<key>WebPluginTypeDescription</key>
 			<string>test netscape content</string>
 		</dict>
-		<key>*</key>
-		<dict>
-			<key>WebPluginExtensions</key>
-			<array>
-				<string>wildcardplugin</string>
-			</array>
-			<key>WebPluginTypeDescription</key>
-			<string>test netscape wildcard plugin</string>
-		</dict>
 	</dict>
 	<key>WebPluginName</key>
 	<string>WebKit Test PlugIn</string>
