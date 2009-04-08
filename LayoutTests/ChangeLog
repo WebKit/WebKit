@@ -1,5 +1,14 @@
 2009-04-08  Adam Roben  <aroben@apple.com>
 
+        Check in Windows-specific results for an SVG test that was failing due
+        to rounding issues
+
+        Rubber-stamped by Dave Hyatt.
+
+        * platform/win/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt: Added.
+
+2009-04-08  Adam Roben  <aroben@apple.com>
+
         Add a failing test to the Windows Skipped file
 
         * platform/win/Skipped: Added media/video-size-intrinsic-scale.html.
