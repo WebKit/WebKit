@@ -835,6 +835,11 @@ void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset,
         RootInlineBox* prev = firstRootBox->prevRootBox();
         if (prev)
             firstRootBox = prev;
+    } else if (lastTextBox()) {
+        ASSERT(!lastRootBox);
+        firstRootBox = lastTextBox()->root();
+        firstRootBox->markDirty();
+        dirtiedLines = true;
     }
     for (RootInlineBox* curr = firstRootBox; curr && curr != lastRootBox; curr = curr->nextRootBox()) {
         if (curr->lineBreakObj() == this && curr->lineBreakPos() > end)

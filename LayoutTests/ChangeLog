@@ -1,3 +1,15 @@
+2009-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/6771547> Appending to a RenderText causes all its
+          lines to be dirtied
+
+        * fast/repaint/text-append-dirty-lines.html: Added.
+        * platform/mac/fast/repaint/text-append-dirty-lines-expected.checksum: Added.
+        * platform/mac/fast/repaint/text-append-dirty-lines-expected.png: Added.
+        * platform/mac/fast/repaint/text-append-dirty-lines-expected.txt: Added.
+
 2009-04-08  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

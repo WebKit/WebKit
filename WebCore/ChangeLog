@@ -1,3 +1,18 @@
+2009-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6771547> Appending to a RenderText causes all its
+          lines to be dirtied
+
+        Test: fast/repaint/text-append-dirty-lines.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextWithOffset): If no text boxes intersected
+        with or came after the new text, dirty the last root box, since the new
+        text may begin there. Having at least one dirty line prevents the
+        incorrect dirtying of all lines later during layoutInlineChildren().
+
 2009-04-08  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
