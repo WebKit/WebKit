@@ -65,6 +65,7 @@ use List::Util 'shuffle';
 
 use lib $FindBin::Bin;
 use webkitdirs;
+use VCSUtils;
 use POSIX;
 
 sub openDumpTool();
@@ -134,6 +135,7 @@ my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
 my $timeoutSeconds = 15;
+my $useRemoteLinksToTests = 0;
 my @leaksFilenames;
 
 # Default to --no-http for Qt, Gtk and wx for now.
@@ -212,6 +214,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
+  --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
 EOF
 
 setConfiguration();
@@ -248,6 +251,7 @@ my $getOptionsResult = GetOptions(
     'add-platform-exceptions' => \$addPlatformExceptions,
     'merge-leak-depth|m:5' => \$mergeDepth,
     'timeout=i' => \$timeoutSeconds,
+    'use-remote-links-to-tests' => \$useRemoteLinksToTests,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -1574,8 +1578,20 @@ sub toWindowsPath($)
 sub toURL($)
 {
     my ($path) = @_;
+
+    if ($useRemoteLinksToTests) {
+        my $relativePath = File::Spec->abs2rel($path, $testDirectory);
+
+        # If the file is below the test directory then convert it into a link to the file in SVN
+        if ($relativePath !~ /^\.\.\//) {
+            my $revision = svnRevisionForDirectory($testDirectory);
+            my $svnPath = pathRelativeToSVNRepositoryRootForPath($path);
+            return "http://trac.webkit.org/export/$revision/$svnPath";
+        }
+    }
+
     return $path unless isCygwin();
-    
+
     return "file:///" . convertPathUsingCygpath($path, "-m");
 }
 

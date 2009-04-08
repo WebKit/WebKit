@@ -120,6 +120,29 @@ sub svnRevisionForDirectory($)
     return $revision;
 }
 
+sub pathRelativeToSVNRepositoryRootForPath($)
+{
+    my ($file) = @_;
+    my $relativePath = File::Spec->abs2rel($file);
+
+    my $svnInfo;
+    if (isSVN()) {
+        $svnInfo = `LC_ALL=C svn info $relativePath`;
+    } elsif (isGit()) {
+        $svnInfo = `LC_ALL=C git svn info $relativePath`;
+    }
+
+    $svnInfo =~ /.*^URL: (.*?)$/m;
+    my $svnURL = $1;
+
+    $svnInfo =~ /.*^Repository Root: (.*?)$/m;
+    my $repositoryRoot = $1;
+
+    $svnURL =~ s/$repositoryRoot\///;
+    return $svnURL;
+}
+
+
 my $gitRoot;
 sub makeFilePathRelative($)
 {

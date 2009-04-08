@@ -1,5 +1,14 @@
 2009-04-07  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Make the links to tests in the uploaded results.html files on build.webkit.org point to the test files.
+
+        * Scripts/VCSUtils.pm: Add a function that will return the location of a file relative to the root of the working copy.
+        * Scripts/run-webkit-tests: Convert the path in to a remote URL if the path is below the layout tests directory.
+
+2009-04-07  Mark Rowe  <mrowe@apple.com>
+
         Remove the layout-test-results directory after we have archived it so that
         log files and results are reset between runs of the tests.
 
