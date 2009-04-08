@@ -1,3 +1,15 @@
+2009-04-08  Alejandro Piñeiro  <apinheiro@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
+        Use getOrCreate instead of just get, as we need to actually create
+        the wrapper object the first time this function is called.
+
+        * webkit/webkitwebview.cpp:
+
 2009-04-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Sam Weinig.

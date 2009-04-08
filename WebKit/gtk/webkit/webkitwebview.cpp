@@ -956,7 +956,7 @@ static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
     if (!doc)
         return NULL;
 
-    AccessibilityObject* coreAccessible = doc->axObjectCache()->get(doc->renderer());
+    AccessibilityObject* coreAccessible = doc->axObjectCache()->getOrCreate(doc->renderer());
     if (!coreAccessible || !coreAccessible->wrapper())
         return NULL;
 
