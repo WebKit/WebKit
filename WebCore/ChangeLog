@@ -1,5 +1,15 @@
 2009-04-08  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - limit the workaround for <rdar://problem/5781372> to Mac OS X versions
+          that need it
+
+        * platform/mac/WebFontCache.mm:
+        (fixUpWeight): Changed this function to be a no-op post-Leopard.
+
+2009-04-08  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fix <rdar://problem/6771547> Appending to a RenderText causes all its
