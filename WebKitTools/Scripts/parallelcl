@@ -88,7 +88,7 @@ if ($options =~ s/-j\s*([0-9]+)//) {
     chomp($numJobs = `num-cpus`);
 }
 
-print STDERR "\n\n####### RUNNING AT MOST $numJobs PARALLEL INSTANCES OF cl.exe ###########\n\n";# if $debug;
+print STDERR "\n\n####### COMPILING $numSources FILES USING AT MOST $numJobs PARALLEL INSTANCES OF cl.exe ###########\n\n";# if $debug;
 
 # Magic determination of job size
 # The hope is that by splitting the source files up into 2*$numJobs pieces, we

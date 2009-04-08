@@ -1,3 +1,9 @@
+2009-04-07  Adam Roben  <aroben@apple.com>
+
+        Print the number of files being compiled when using pdevenv
+
+        * Scripts/parallelcl:
+
 2009-04-07  Mark Rowe  <mrowe@apple.com>
 
         Land the current build.webkit.org configuration for safekeeping.
