@@ -1,5 +1,14 @@
 2009-04-08  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Beth Dakin
+
+        Fix a porting error in my previous patch.  A != was supposed to be an ==.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
+2009-04-08  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Adam Roben and Darin Adler
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=12440, repaints inconsistent for

@@ -370,7 +370,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_updateScrollbarsPass++;
             visibleContentsResized();
             IntSize newDocSize = contentsSize();
-            if (newDocSize != docSize) {
+            if (newDocSize == docSize) {
                 // The layout with the new scroll state had no impact on
                 // the document's overall size, so updateScrollbars didn't get called.
                 // Recur manually.
