@@ -180,6 +180,13 @@ IntRect RenderButton::controlClipRect(int tx, int ty) const
 
 void RenderButton::timerFired(Timer<RenderButton>*)
 {
+    // FIXME Bug 25110: Ideally we would stop our timer when our Document
+    // enters the page cache. But we currently have no way of being notified
+    // when that happens, so we'll just ignore the timer firing as long as
+    // we're in the cache.
+    if (document()->inPageCache())
+        return;
+
     repaint();
 }
 

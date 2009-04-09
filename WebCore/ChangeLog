@@ -1,3 +1,22 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://6592515> Crash closing tab with Top Sites or Cover Flow
+        showing after clicking "Go Back" in phishing alert
+
+        RenderButton's m_timer is not stopped when its Document enters the
+        page cache. When the WebView was torn down, the timer would fire after
+        the Frame's Page had been destroyed, leading to a crash. This patch
+        just makes the timer do nothing when it fires. Making the timer not
+        fire when in the page cache is covered by bug 25110.
+
+        Reviewed by Dave Hyatt.
+
+        No test possible.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::timerFired): Do nothing when we're in the page
+        cache.
+
 2009-04-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben
