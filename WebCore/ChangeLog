@@ -1,3 +1,24 @@
+2009-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        Part of <rdar://problem/5438063> Saving history containing 100,000 entries causes pauses of 2s while browsing
+
+        Longer term solution is to change the design so Safari doesn't read and write all of history.
+        This patch is step one: Do the serializing, which is done on the main thread, much faster.
+
+        * WebCore.base.exp: Added new entry points.
+        * WebCore.xcodeproj/project.pbxproj: Added new source files.
+
+        * history/cf: Added.
+
+        * history/cf/HistoryPropertyList.cpp: Added.
+        * history/cf/HistoryPropertyList.h: Added. Code to write history files. In the future we'll also
+        have code for reading here too.
+
+        * platform/cf/BinaryPropertyList.cpp: Added.
+        * platform/cf/BinaryPropertyList.h: Added. Code to write binary property list files.
+
 2009-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Antti Koivisto

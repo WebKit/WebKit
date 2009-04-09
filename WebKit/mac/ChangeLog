@@ -1,3 +1,22 @@
+2009-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        Part of <rdar://problem/5438063> Saving history containing 100,000 entries causes pauses of 2s while browsing
+
+        Longer term solution is to change the design so Safari doesn't read and write all of history.
+        This patch is step one: Do the serializing, which is done on the main thread, much faster.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]): Added. Returns the NSData object containing serialized history.
+        For creating new SPI so you can get the data in memory instead of on disk. Uses WebHistoryWriter.
+        (-[WebHistoryPrivate saveToURL:error:]): Changed to call [self data
+        (-[WebHistory _data]): Added.
+        (WebHistoryWriter::WebHistoryWriter): Added.
+        (WebHistoryWriter::writeHistoryItems): Added.
+
+        * History/WebHistoryPrivate.h: Added a new _data method.
+
 2009-04-09  Mike Thole  <mthole@apple.com>
 
         Rubber-stamped by Mark Rowe.
