@@ -42,6 +42,10 @@
 #include <limits.h>
 #include <sys/time.h>
 
+#if PLATFORM(ANDROID)
+#include "jni_utility.h"
+#endif
+
 namespace WTF {
 
 typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
@@ -130,6 +134,41 @@ static void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
+#if PLATFORM(ANDROID)
+// On the Android platform, threads must be registered with the VM before they run.
+struct ThreadData {
+    ThreadFunction entryPoint;
+    void* arg;
+};
+
+static void* runThreadWithRegistration(void* arg)
+{
+    ThreadData* data = static_cast<ThreadData*>(arg);
+    JavaVM* vm = JSC::Bindings::getJavaVM();
+    JNIEnv* env;
+    void* ret = 0;
+    if (vm->AttachCurrentThread(&env, 0) == JNI_OK) {
+        ret = data->entryPoint(data->arg);
+        vm->DetachCurrentThread();
+    }
+    delete data;
+    return ret;
+}
+
+ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
+{
+    pthread_t threadHandle;
+    ThreadData* threadData = new ThreadData();
+    threadData->entryPoint = entryPoint;
+    threadData->arg = data;
+
+    if (pthread_create(&threadHandle, 0, runThreadWithRegistration, static_cast<void*>(threadData))) {
+        LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
+        return 0;
+    }
+    return establishIdentifierForPthreadHandle(threadHandle);
+}
+#else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
@@ -140,6 +179,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
     return establishIdentifierForPthreadHandle(threadHandle);
 }
+#endif
 
 void setThreadNameInternal(const char* threadName)
 {

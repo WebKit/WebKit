@@ -1,3 +1,15 @@
+2009-04-09  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25091
+        The Android platform requires threads to be registered with the VM.
+        This patch implements this behaviour inside ThreadingPthreads.cpp.
+
+        * wtf/ThreadingPthreads.cpp: Add a level above threadEntryPoint that takes care of (un)registering threads with the VM.
+        (WTF::runThreadWithRegistration): register the thread and run entryPoint. Unregister the thread afterwards.
+        (WTF::createThreadInternal): call runThreadWithRegistration instead of entryPoint directly.
+
 2009-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Reinstating <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings
