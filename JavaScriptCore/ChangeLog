@@ -1,3 +1,13 @@
+2009-04-09  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        Checking for __GLIBCXX__ being bigger than some date is not enough
+        to get std::tr1, C++0x has to be in use too. Add another check for
+        __GXX_EXPERIMENTAL_CXX0X__.
+
+        * wtf/TypeTraits.h:
+
 2009-04-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam Roben.

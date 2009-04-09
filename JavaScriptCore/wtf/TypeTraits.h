@@ -24,7 +24,7 @@
 
 #include "Platform.h"
 
-#if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
+#if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
 #include <type_traits>
 #endif
 
@@ -132,7 +132,7 @@ namespace WTF {
         typedef T Type;
     };
 
-#if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
+#if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
 
     // GCC's libstdc++ 20070724 and later supports C++ TR1 type_traits in the std namespace.
     // VC10 (VS2010) and later support C++ TR1 type_traits in the std::tr1 namespace.
