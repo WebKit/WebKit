@@ -1,0 +1,26 @@
+<pre id="console"></pre>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    function log(msg)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    function pass()
+    {
+        log("PASS");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    function fail()
+    {
+        log("FAIL");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+<iframe src="resources/subframe-stop-load-in-unload-handler-using-document-write.html"></iframe>

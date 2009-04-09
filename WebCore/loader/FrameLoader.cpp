@@ -273,6 +273,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isRunningScript(false)
     , m_didCallImplicitClose(false)
     , m_wasUnloadEventEmitted(false)
+    , m_unloadEventBeingDispatched(false)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
     , m_cancellingWithLoadInProgress(false)
@@ -607,7 +608,9 @@ void FrameLoader::stopLoading(bool sendUnload)
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
+                m_unloadEventBeingDispatched = true;
                 m_frame->document()->dispatchWindowEvent(eventNames().unloadEvent, false, false);
+                m_unloadEventBeingDispatched = false;
                 if (m_frame->document())
                     m_frame->document()->updateRendering();
                 m_wasUnloadEventEmitted = true;
@@ -2633,6 +2636,9 @@ void FrameLoader::stopLoadingSubframes()
 
 void FrameLoader::stopAllLoaders()
 {
+    if (m_unloadEventBeingDispatched)
+        return;
+
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
     if (m_inStopAllLoaders)
         return;

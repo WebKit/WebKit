@@ -1,3 +1,17 @@
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey "Big Boy" Garen.
+
+        Tests for <rdar://problem/5745677> Possible to stop load during an unload event
+
+        * fast/events/resources/pass.html: Added.
+        * fast/events/resources/subframe-stop-load-in-unload-handler-using-document-write.html: Added.
+        * fast/events/resources/subframe-stop-load-in-unload-handler-using-window-stop.html: Added.
+        * fast/events/stop-load-in-unload-handler-using-document-write-expected.txt: Added.
+        * fast/events/stop-load-in-unload-handler-using-document-write.html: Added.
+        * fast/events/stop-load-in-unload-handler-using-window-stop-expected.txt: Added.
+        * fast/events/stop-load-in-unload-handler-using-window-stop.html: Added.
+
 2009-04-09  Adam Roben  <aroben@apple.com>
 
         Update results for createDocument-namespace-err.html

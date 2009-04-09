@@ -1,3 +1,22 @@
+2009-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey "Big Boy" Garen.
+
+        Fix for <rdar://problem/5745677> Possible to stop load during an unload event
+        Also fixes https://bugs.webkit.org/show_bug.cgi?id=20605
+
+        Tests: fast/events/stop-load-in-unload-handler-using-document-write.html
+               fast/events/stop-load-in-unload-handler-using-window-stop.html
+
+        Don't allow calling methods that would stop the new load inside the unload
+        event.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::stopAllLoaders):
+        * loader/FrameLoader.h:
+
 2009-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Reinstating <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings

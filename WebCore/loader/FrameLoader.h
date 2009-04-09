@@ -583,6 +583,7 @@ namespace WebCore {
 
         bool m_didCallImplicitClose;
         bool m_wasUnloadEventEmitted;
+        bool m_unloadEventBeingDispatched;
         bool m_isComplete;
         bool m_isLoadingMainResource;
 
