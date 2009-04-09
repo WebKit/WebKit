@@ -1,5 +1,15 @@
 2009-04-09  Mike Thole  <mthole@apple.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        Fix 64-bit build
+
+        * Panels/WebAuthenticationPanel.h:
+            Declare the 'separateRealmLabel' IBOutlet as an NSTextField instead of 'id'.
+            This fixes a duplicate method warning (setAutoresizingMask: on NSView and CALayer)
+
+2009-04-09  Mike Thole  <mthole@apple.com>
+
         Reviewed by Ada Chan.
 
         <rdar://problem/5697111> Basic authentication dialog spoofing vulnerability
