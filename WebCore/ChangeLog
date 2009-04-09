@@ -1,3 +1,15 @@
+2009-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Cameron Zwarich
+
+        https://bugs.webkit.org/show_bug.cgi?id=25106
+        
+        Fix signature of virtual function on AnimationBase so that it matches
+        those in the derived classes, by removing unused parameter.
+        
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::endAnimation):
+
 2009-04-08  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings

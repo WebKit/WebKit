@@ -186,7 +186,7 @@ protected:
     virtual void onAnimationIteration(double /*elapsedTime*/) { }
     virtual void onAnimationEnd(double /*elapsedTime*/) { }
     virtual bool startAnimation(double /*beginTime*/) { return false; }
-    virtual void endAnimation(bool /*reset*/, double /*forcePauseTime*/ = -1) { }
+    virtual void endAnimation(bool /*reset*/) { }
 
     void goIntoEndingOrLoopingState();
 
