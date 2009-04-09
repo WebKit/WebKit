@@ -39,8 +39,25 @@
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8XMLHttpRequestUtilities.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
+
+PassRefPtr<EventListener> getEventListener(XMLHttpRequest* xmlHttpRequest, v8::Local<v8::Value> value, bool findOnly)
+{
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
+    if (workerContextProxy)
+        return workerContextProxy->findOrCreateObjectEventListener(value, false, findOnly);
+#endif
+
+    V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
+    if (proxy)
+        return findOnly ? proxy->FindObjectEventListener(value, false) : proxy->FindOrCreateObjectEventListener(value, false);
+
+    return PassRefPtr<EventListener>();
+}
 
 ACCESSOR_GETTER(XMLHttpRequestOnabort)
 {
@@ -68,11 +85,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnabort)
         // Clear the listener.
         xmlHttpRequest->setOnabort(0);
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnabort(listener);
             createHiddenXHRDependency(info.Holder(), value);
@@ -106,11 +119,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnerror)
         // Clear the listener.
         xmlHttpRequest->setOnerror(0);
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnerror(listener);
             createHiddenXHRDependency(info.Holder(), value);
@@ -144,11 +153,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnload)
         xmlHttpRequest->setOnload(0);
 
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnload(listener.get());
             createHiddenXHRDependency(info.Holder(), value);
@@ -182,11 +187,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnloadstart)
         // Clear the listener.
         xmlHttpRequest->setOnloadstart(0);
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnloadstart(listener);
             createHiddenXHRDependency(info.Holder(), value);
@@ -220,11 +221,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnprogress)
         // Clear the listener.
         xmlHttpRequest->setOnprogress(0);
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnprogress(listener);
             createHiddenXHRDependency(info.Holder(), value);
@@ -258,11 +255,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnreadystatechange)
         // Clear the listener.
         xmlHttpRequest->setOnreadystatechange(0);
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnreadystatechange(listener.get());
             createHiddenXHRDependency(info.Holder(), value);
@@ -284,11 +277,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestAddEventListener)
     INC_STATS("DOM.XMLHttpRequest.addEventListener()");
     XMLHttpRequest* xmlHttpRequest = V8Proxy::ToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, args.Holder());
 
-    V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-    if (!proxy)
-        return v8::Undefined();
-
-    RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(args[1], false);
+    RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, args[1], false);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -304,12 +293,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestRemoveEventListener)
     INC_STATS("DOM.XMLHttpRequest.removeEventListener()");
     XMLHttpRequest* xmlHttpRequest = V8Proxy::ToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, args.Holder());
 
-    V8Proxy* proxy = V8Proxy::retrieve(xmlHttpRequest->scriptExecutionContext());
-    if (!proxy)
-        return v8::Undefined(); // Probably leaked.
-
-    RefPtr<EventListener> listener = proxy->FindObjectEventListener(args[1], false);
-
+    RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, args[1], true);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -337,8 +321,15 @@ CALLBACK_FUNC_DECL(XMLHttpRequestOpen)
 
     String method = toWebCoreString(args[0]);
     String urlstring = toWebCoreString(args[1]);
-    V8Proxy* proxy = V8Proxy::retrieve();
-    KURL url = proxy->frame()->document()->completeURL(urlstring);
+    ScriptExecutionContext* context = 0;
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (proxy)
+        context = proxy->workerContext();
+    else
+#endif
+        context = V8Proxy::retrieve()->frame()->document();
+    KURL url = context->completeURL(urlstring);
 
     bool async = (args.Length() < 3) ? true : args[2]->BooleanValue();
 

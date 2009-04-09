@@ -36,6 +36,8 @@
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "XMLHttpRequest.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
@@ -48,8 +50,15 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
 
     // Expect no parameters.
     // Allocate a XMLHttpRequest object as its internal field.
-    Document* doc = V8Proxy::retrieveFrame()->document();
-    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(doc);
+    ScriptExecutionContext* context = 0;
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (proxy)
+        context = proxy->workerContext();
+    else
+#endif
+        context = V8Proxy::retrieveFrame()->document();
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
     V8Proxy::SetDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
 
     // Add object to the wrapper map.
