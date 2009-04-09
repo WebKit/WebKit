@@ -47,6 +47,7 @@ my $iconDatabaseSupport = 1;
 my $offlineWebApplicationSupport = 1;
 my $svgSupport = 1;
 my $svgAnimationSupport = 1;
+my $svgDOMObjCBindingsSupport = isAppleMacWebKit();
 my $svgFiltersSupport = 0;
 my $svgForeignObjectSupport = 1;
 my $svgUseSupport = 1;
@@ -80,6 +81,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
   --[no-]svg-animation          Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
+  --[no-]svg-dom-objc-bindings  Toggle SVG DOM Objective-C bindings support (default: $svgDOMObjCBindingsSupport, implies SVG Support)
   --[no-]svg-filters            Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
   --[no-]svg-foreign-object     Toggle SVG foreign object support (default: $svgForeignObjectSupport, implies SVG Support)
   --[no-]svg-fonts              Toggle SVG fonts support (default: $svgFontsSupport, implies SVG Support)
@@ -104,6 +106,7 @@ GetOptions(
            'offline-web-applications!' => \$offlineWebApplicationSupport,
            'svg!' => \$svgSupport,
            'svg-animation!' => \$svgAnimationSupport,
+           'svg-dom-objc-bindings!' => \$svgDOMObjCBindingsSupport,
            'svg-filters!' => \$svgFiltersSupport,
            'svg-foreign-object!' => \$svgForeignObjectSupport,
            'svg-fonts!' => \$svgFontsSupport,
@@ -156,6 +159,7 @@ push @overrideFeatureDefinesOption, "ENABLE_OFFLINE_WEB_APPLICATIONS" if $offlin
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_AS_IMAGE" if $svgAsImageSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG_DOM_OBJC_BINDINGS" if $svgDOMObjCBindingsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FONTS" if $svgFontsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FOREIGN_OBJECT" if $svgForeignObjectSupport;
@@ -280,6 +284,7 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @xcodeOptions = ();
         push(@xcodeOptions, @options);
+        push(@xcodeOptions, "ENABLE_SVG_DOM_OBJC_BINDINGS=" . ($svgDOMObjCBindingsSupport ? "ENABLE_SVG_DOM_OBJC_BINDINGS" : ""));
         push(@xcodeOptions, $overrideFeatureDefinesString);
         push(@xcodeOptions, @coverageSupportOption);
         push(@xcodeOptions, @ARGV);
@@ -321,9 +326,10 @@ if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " $launcherName will have SVG viewing capabilities.\n";
 }
-if ($svgAnimationSupport or $svgFiltersSupport or $svgForeignObjectSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
+if ($svgAnimationSupport or $svgDOMObjCBindingsSupport or $svgFiltersSupport or $svgForeignObjectSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
     print " Your build supports the following (optional) SVG features: \n";
     print "  * Basic SVG animation.\n" if $svgAnimationSupport;
+    print "  * SVG DOM Objective-C bindings.\n" if $svgDOMObjCBindingsSupport;
     print "  * SVG filters.\n" if $svgFiltersSupport;
     print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
     print "  * SVG fonts.\n" if $svgFontsSupport;

@@ -43,10 +43,6 @@
 #import <WebKit/DOMHTML.h>
 #import <wtf/Assertions.h>
 
-#if ENABLE(SVG)
-#import <WebKit/DOMSVG.h>
-#endif
-
 using namespace WebCore;
 
 @implementation DOMNode (WebDOMNodeOperations)

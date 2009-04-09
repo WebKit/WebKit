@@ -1,3 +1,16 @@
+2009-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings
+
+        Reviewed by Darin Adler and Maciej Stachowiak.
+
+        Introduce the ENABLE_SVG_DOM_OBJC_BINDINGS feature define so
+        that SVG DOM Objective-C bindings may be optionally disabled.
+
+        * Scripts/build-webkit: Added --[no-]svg-dom-objc-bindings
+        command-line argument.  Set special ENABLE_SVG_DOM_OBJC_BINDINGS
+        Xcode variable required by WebCore.xcconfig.
+
 2009-04-07  Adam Roben  <aroben@apple.com>
 
         Print the number of files being compiled when using pdevenv
