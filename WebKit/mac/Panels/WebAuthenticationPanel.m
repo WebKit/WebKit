@@ -131,15 +131,23 @@
     NSString *realm = [space realm];
     NSString *message;
 
+    // Consider the realm name to be "simple" if it does not contain any whitespace or newline characters.
+    // If the realm name is determined to be complex, we will use a slightly different sheet layout, designed
+    // to keep a malicious realm name from spoofing the wording in the sheet text.
+    BOOL realmNameIsSimple = [realm rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].location == NSNotFound;    
+    
     if ([chall previousFailureCount] == 0) {
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
-            message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to area “%@” on %@.",
-                                                           "prompt string in authentication panel"),
-                realm, host];
+            if (realmNameIsSimple)
+                message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to area “%@” on %@.",
+                                                               "prompt string in authentication panel"), realm, host];
+            else
+                message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to this area on %@:",
+                                                               "prompt string in authentication panel"), host];
         }
     } else {
         if ([space isProxy]) {
@@ -147,12 +155,41 @@
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
-            message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
-                                                           "prompt string in authentication panel"),
-                realm, host];
+            if (realmNameIsSimple)
+                message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
+                                                               "prompt string in authentication panel"), realm, host];
+            else
+                message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
+                                                               "prompt string in authentication panel"), host];
         }
     }
+    
+    if (![space isProxy] && !realmNameIsSimple) {
+        [separateRealmLabel setHidden:NO];
+        [separateRealmLabel setStringValue:realm];
+        [separateRealmLabel setAutoresizingMask:NSViewMinYMargin];
+        [separateRealmLabel sizeToFitAndAdjustWindowHeight];
+        [separateRealmLabel setAutoresizingMask:NSViewMaxYMargin];
+    } else {
+        // In the proxy or "simple" realm name case, we need to hide the 'separateRealmLabel'
+        // and move the rest of the contents up appropriately to fill the space.
+        NSRect mainLabelFrame = [mainLabel frame];
+        NSRect realmFrame = [separateRealmLabel frame];
+        NSRect smallLabelFrame = [smallLabel frame];
 
+        // Find the distance between the 'smallLabel' and the label above it, initially the 'separateRealmLabel'.
+        // Then, find the current distance between 'smallLabel' and 'mainLabel'.  The difference between
+        // these two is how much shorter the panel needs to be after hiding the 'separateRealmLabel'.
+        CGFloat smallLabelMargin = NSMinY(realmFrame) - NSMaxY(smallLabelFrame);
+        CGFloat smallLabelToMainLabel = NSMinY(mainLabelFrame) - NSMaxY(smallLabelFrame);
+        CGFloat deltaMargin = smallLabelToMainLabel - smallLabelMargin;
+        
+        [separateRealmLabel setHidden:YES];
+        NSRect windowFrame = [panel frame];
+        windowFrame.size.height -= deltaMargin;
+        [panel setFrame:windowFrame display:NO];
+    }
+    
     [mainLabel setStringValue:message];
     [mainLabel sizeToFitAndAdjustWindowHeight];
 

@@ -1,3 +1,24 @@
+2009-04-09  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Ada Chan.
+
+        <rdar://problem/5697111> Basic authentication dialog spoofing vulnerability
+
+        * Panels/WebAuthenticationPanel.h:
+            Added IBOutlet for separateRealmLabel
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+            In the realm case, decide if it is a simple or complex realm name.  A realm name
+            is considered complex if it has any whitespace or newline characters.  Present
+            alternative text and layout for the complex case, where the realm name isn't inline
+            with the rest of the sheet's text.
+        
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+            Updated the nib with a new 'separateRealmLabel' outlet. 
+            Updated the File's Owner to correctly be WebAuthenticationPanel.  
+            Fixed springs on the sheet's icon to keep it from moving during a resize.
+
 2009-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Reinstating <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings
