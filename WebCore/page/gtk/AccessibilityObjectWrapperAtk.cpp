@@ -733,26 +733,4 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
 
 }
 
-namespace WebCore {
-
-// AccessibilityObject implementations
-
-AccessibilityObjectWrapper* AccessibilityObject::wrapper() const
-{
-    return m_wrapper;
-}
-
-void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
-{
-    if (m_wrapper)
-        g_object_unref(m_wrapper);
-
-    m_wrapper = wrapper;
-
-    if (m_wrapper)
-        g_object_ref(m_wrapper);
-}
-
-} // namespace WebCore
-
 #endif // HAVE(ACCESSIBILITY)

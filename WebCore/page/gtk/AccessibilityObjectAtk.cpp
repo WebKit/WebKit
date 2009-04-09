@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Ltd.
+ * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +21,8 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
+#include <glib-object.h>
+
 #if HAVE(ACCESSIBILITY)
 
 namespace WebCore {
@@ -27,6 +30,25 @@ namespace WebCore {
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
     return false;
+}
+
+AccessibilityObjectWrapper* AccessibilityObject::wrapper() const
+{
+    return m_wrapper;
+}
+
+void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
+{
+    if (wrapper == m_wrapper)
+        return;
+
+    if (m_wrapper)
+        g_object_unref(m_wrapper);
+
+    m_wrapper = wrapper;
+
+    if (m_wrapper)
+        g_object_ref(m_wrapper);
 }
 
 } // namespace WebCore
