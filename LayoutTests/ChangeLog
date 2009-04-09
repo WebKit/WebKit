@@ -1,3 +1,18 @@
+2009-04-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test cases for document.implementation.createDocument
+        https://bugs.webkit.org/show_bug.cgi?id=25096
+
+        We fail some of these tests (as does Mozilla)
+        I didn't want to add a behavior change to this crash fix, so I filed
+        https://bugs.webkit.org/show_bug.cgi?id=25111 as a follow-up bug.
+
+        * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt: Added.
+        * fast/dom/DOMImplementation/createDocument-namespace-err.html: Added.
+        * fast/dom/DOMImplementation/resources/createDocument-namespace-err.js: Copied from fast/dom/Document/resources/createElementNS-namespace-err.js
+
 2009-04-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam Roben.

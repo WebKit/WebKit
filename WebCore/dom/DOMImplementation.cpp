@@ -250,9 +250,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         doc->addChild(doctype);
 
     if (!qualifiedName.isEmpty()) {
-        doc->addChild(doc->createElementNS(namespaceURI, qualifiedName, ec));
-        if (ec != 0)
+        RefPtr<Node> documentElement = doc->createElementNS(namespaceURI, qualifiedName, ec);
+        if (ec)
             return 0;
+        doc->addChild(documentElement.release());
     }
 
     // Hixie's interpretation of the DOM Core spec suggests we should prefer

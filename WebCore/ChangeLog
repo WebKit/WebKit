@@ -1,3 +1,17 @@
+2009-04-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix document.implementation.createDocument(null, "a:b") not to crash!
+        https://bugs.webkit.org/show_bug.cgi?id=25096
+
+        Test: fast/dom/DOMImplementation/createDocument-namespace-err.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChild): add ASSERT() to give a better crash next time
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): check the exception code before using the result
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Make <select>s in application chrome documents match the Vista system
