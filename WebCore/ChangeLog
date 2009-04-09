@@ -1,3 +1,16 @@
+2009-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        https://bugs.webkit.org/show_bug.cgi?id=25122
+
+        If deferred repainting is active, we need to ensure that there are no repaints
+        pending at the end of layoutIfNeededRecursive, which is called just before
+        painting via -viewWillDraw.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutIfNeededRecursive):
+
 2009-04-09  John Grabowski  <jrg@chromium.org>
 
         Reviewed by Darin Fisher.
