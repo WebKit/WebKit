@@ -217,7 +217,78 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
     return atkRole(core(object)->roleValue());
 }
 
+static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkStateSet* stateSet)
+{
+    // Please keep the state list in alphabetical order
+
+    if (coreObject->isChecked())
+        atk_state_set_add_state(stateSet, ATK_STATE_CHECKED);
+
+    if (!coreObject->isReadOnly())
+        atk_state_set_add_state(stateSet, ATK_STATE_EDITABLE);
+
+    if (coreObject->isEnabled())
+        atk_state_set_add_state(stateSet, ATK_STATE_ENABLED);
+
+    if (coreObject->canSetFocusAttribute())
+        atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
+
+    if (coreObject->isFocused())
+        atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
+
+    // TODO: ATK_STATE_HORIZONTAL
+
+    if (coreObject->isIndeterminate())
+        atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
+
+    if (coreObject->isMultiSelect())
+        atk_state_set_add_state(stateSet, ATK_STATE_MULTISELECTABLE);
+
+    // TODO: ATK_STATE_OPAQUE
+
+    if (coreObject->isPressed())
+        atk_state_set_add_state(stateSet, ATK_STATE_PRESSED);
+
+    // TODO: ATK_STATE_SELECTABLE_TEXT
+
+    // TODO: ATK_STATE_SENSITIVE
+
+    if (coreObject->isSelected())
+        atk_state_set_add_state(stateSet, ATK_STATE_SELECTED);
+
+    if (!coreObject->isOffScreen())
+        atk_state_set_add_state(stateSet, ATK_STATE_SHOWING);
+
+    // Mutually exclusive, so we group these two
+    if (coreObject->roleValue() == TextFieldRole)
+        atk_state_set_add_state(stateSet, ATK_STATE_SINGLE_LINE);
+    else if (coreObject->roleValue() == TextAreaRole)
+        atk_state_set_add_state(stateSet, ATK_STATE_MULTI_LINE);
+
+    // TODO: ATK_STATE_SENSITIVE
+
+    // TODO: ATK_STATE_VERTICAL
+
+    if (coreObject->isVisited())
+        atk_state_set_add_state(stateSet, ATK_STATE_VISITED);
+}
+
 static gpointer webkit_accessible_parent_class = NULL;
+
+static AtkStateSet* webkit_accessible_ref_state_set(AtkObject* object)
+{
+    AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_state_set(object);
+    AccessibilityObject* coreObject = core(object);
+
+    if (coreObject == fallbackObject()) {
+        atk_state_set_add_state(stateSet, ATK_STATE_DEFUNCT);
+        return stateSet;
+    }
+
+    setAtkStateSetFromCoreObject(coreObject, stateSet);
+
+    return stateSet;
+}
 
 static void webkit_accessible_init(AtkObject* object, gpointer data)
 {
@@ -254,6 +325,7 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->get_n_children = webkit_accessible_get_n_children;
     klass->ref_child = webkit_accessible_ref_child;
     klass->get_role = webkit_accessible_get_role;
+    klass->ref_state_set = webkit_accessible_ref_state_set;
 }
 
 GType

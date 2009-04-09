@@ -7,6 +7,20 @@
 
         Based on a patch by Alp Toker.
 
+        Implement AtkObject::ref_state_set. Still quite a few states not
+        implemented.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
+2009-04-09  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
+        Based on a patch by Alp Toker.
+
         Move fallback object creation to its own function, as it will be
         used in several places.
 
