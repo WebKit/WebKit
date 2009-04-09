@@ -96,9 +96,6 @@
 
 - (void)downloadDidBegin:(NSURLDownload *)download
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    [[NSProcessInfo processInfo] disableSuddenTermination];
-#endif
     [realDelegate downloadDidBegin:download];
 }
 
@@ -157,17 +154,11 @@
 
 - (void)downloadDidFinish:(NSURLDownload *)download
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    [[NSProcessInfo processInfo] enableSuddenTermination];
-#endif
     [realDelegate downloadDidFinish:download];
 }
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    [[NSProcessInfo processInfo] enableSuddenTermination];
-#endif
     [realDelegate download:download didFailWithError:error];
 }
 
