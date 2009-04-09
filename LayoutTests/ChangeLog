@@ -1,3 +1,15 @@
+2009-04-09  Adam Roben  <aroben@apple.com>
+
+        Update results for createDocument-namespace-err.html
+
+        It looks like the test was changed without updating the results before
+        it was committed.
+
+        Rubber-stamped by Adele Peterson.
+
+        * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt:
+        Updated.
+
 2009-04-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
