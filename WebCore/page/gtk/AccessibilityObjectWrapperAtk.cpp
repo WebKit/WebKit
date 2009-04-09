@@ -50,6 +50,19 @@
 
 using namespace WebCore;
 
+static AccessibilityObject* fallbackObject()
+{
+    static AXObjectCache* fallbackCache = new AXObjectCache();
+    static AccessibilityObject* object = 0;
+    if (!object) {
+        // FIXME: using fallbackCache->getOrCreate(ListBoxOptionRole) is a hack
+        object = fallbackCache->getOrCreate(ListBoxOptionRole);
+        object->ref();
+    }
+
+    return object;
+}
+
 // Used to provide const char* returns.
 static const char* returnString(const String& str)
 {
@@ -716,9 +729,6 @@ AccessibilityObject* webkit_accessible_get_accessibility_object(WebKitAccessible
     return accessible->m_object;
 }
 
-// FIXME: Remove this static initialization.
-static AXObjectCache* fallbackCache = new AXObjectCache();
-
 void webkit_accessible_detach(WebKitAccessible* accessible)
 {
     ASSERT(accessible->m_object);
@@ -726,9 +736,7 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
     // We replace the WebCore AccessibilityObject with a fallback object that
     // provides default implementations to avoid repetitive null-checking after
     // detachment.
-
-    // FIXME: Using fallbackCache->get(ListBoxOptionRole) is a hack.
-    accessible->m_object = fallbackCache->getOrCreate(ListBoxOptionRole);
+    accessible->m_object = fallbackObject();
 }
 
 }
