@@ -1,3 +1,13 @@
+2009-04-09  David Kilzer  <ddkilzer@apple.com>
+
+        Reinstating <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings
+
+        Rolled r42345 back in.  The build failure was caused by an
+        internal script which had not been updated the same way that
+        build-webkit was updated.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2009-04-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reverting <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings.

@@ -41,7 +41,7 @@
 #import "ProgressEvent.h"
 #import "UIEvent.h"
 
-#if ENABLE(SVG)
+#if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVGZoomEvent.h"
 #import "SVGZoomEvent.h"
 #endif
@@ -87,7 +87,7 @@
             wrapperClass = [DOMMouseEvent class];
         else if (impl->isWheelEvent())
             wrapperClass = [DOMWheelEvent class];        
-#if ENABLE(SVG)
+#if ENABLE(SVG_DOM_OBJC_BINDINGS)
         else if (impl->isSVGZoomEvent())
             wrapperClass = [DOMSVGZoomEvent class];
 #endif

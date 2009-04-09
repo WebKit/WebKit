@@ -184,7 +184,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/npruntime.h \
 #
 
-ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
+ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)
 
 all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElementPrivate.h \
