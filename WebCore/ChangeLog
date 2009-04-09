@@ -1,3 +1,13 @@
+2009-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben
+
+        Fix bugs where we would mistakenly turn off blitting for iframes if an external paint
+        caused the checks to be triggered too early in the loading process of the frame.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2009-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Cameron Zwarich

@@ -344,13 +344,19 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && view()->frameView()) {
         Node* elt = document()->ownerElement();
         if (elt) {
-            if (!elt->hasTagName(frameTag)) {
+            if (!elt->hasTagName(frameTag) && document()->haveStylesheetsLoaded()) {
                 // Locate the <body> element using the DOM.  This is easier than trying
                 // to crawl around a render tree with potential :before/:after content and
                 // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
                 // render object very easily via the DOM.
                 HTMLElement* body = document()->body();
-                isTransparent = !body || !body->hasLocalName(framesetTag); // Can't scroll a frameset document anyway.
+                if (body) {
+                    // Can't scroll a frameset document anyway.
+                    isTransparent = !body->hasLocalName(framesetTag);
+                } else {
+                    // <html> will get a <body> eventually anyway, so we'll just wait for that.
+                    isTransparent = document()->documentElement() && !document()->documentElement()->hasLocalName(htmlTag);
+                }
             }
         } else
             isTransparent = view()->frameView()->isTransparent();
