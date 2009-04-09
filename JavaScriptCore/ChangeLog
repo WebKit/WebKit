@@ -1,3 +1,27 @@
+2009-04-08  Paul Pedriana <ppedriana@ea.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20422
+        Allow custom memory allocation control.
+        
+        * wtf/FastAllocBase.h:
+        New added file. Implements allocation base class.
+        * wtf/TypeTraits.h:
+        Augments existing type traits support as needed by FastAllocBase.
+        * wtf/FastMalloc.h:
+        Changed to support FastMalloc match validation.
+        * wtf/FastMalloc.cpp:
+        Changed to support FastMalloc match validation.
+        * wtf/Platform.h:
+        Added ENABLE_FAST_MALLOC_MATCH_VALIDATION; defaults to 0.
+        * GNUmakefile.am:
+        Updated to include added FastAllocBase.h.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Updated to include added FastAllocBase.h.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        Updated to include added FastAllocBase.h.
+
 2009-04-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

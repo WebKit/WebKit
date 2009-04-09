@@ -271,6 +271,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\FastAllocBase.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\FastMalloc.cpp"
 			>
 		</File>
