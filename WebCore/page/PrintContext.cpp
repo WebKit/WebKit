@@ -67,7 +67,7 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
 
     float ratio = printRect.height() / printRect.width();
 
-    float pageWidth  = (float)root->docWidth();
+    float pageWidth  = (float)root->overflowWidth();
     float pageHeight = pageWidth * ratio;
     outPageHeight = pageHeight;   // this is the height of the page adjusted by margins
     pageHeight -= headerHeight + footerHeight;
