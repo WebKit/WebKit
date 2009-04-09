@@ -1,5 +1,15 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Igalia S.L.
+ *
+ * Portions from Mozilla a11y, copyright as follows:
+ *
+ * The Original Code is mozilla.org code.
+ *
+ * The Initial Developer of the Original Code is
+ * Sun Microsystems, Inc.
+ * Portions created by the Initial Developer are Copyright (C) 2002
+ * the Initial Developer. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +45,8 @@
 #include "NotImplemented.h"
 
 #include <atk/atk.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 
 using namespace WebCore;
 
@@ -83,28 +95,6 @@ static AccessibilityObject* core(AtkEditableText* text)
 }
 
 extern "C" {
-
-static gpointer parent_class = NULL;
-
-static void webkit_accessible_init(AtkObject* object, gpointer data)
-{
-    g_return_if_fail(WEBKIT_IS_ACCESSIBLE(object));
-    g_return_if_fail(data);
-
-    if (ATK_OBJECT_CLASS(parent_class)->initialize)
-        ATK_OBJECT_CLASS(parent_class)->initialize(object, data);
-
-    WEBKIT_ACCESSIBLE(object)->m_object = reinterpret_cast<AccessibilityObject*>(data);
-}
-
-static void webkit_accessible_finalize(GObject* object)
-{
-    // This is a good time to clear the return buffer.
-    returnString(String());
-
-    if (G_OBJECT_CLASS(parent_class)->finalize)
-        G_OBJECT_CLASS(parent_class)->finalize(object);
-}
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
@@ -214,26 +204,70 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
     return atkRole(core(object)->roleValue());
 }
 
+static gpointer webkit_accessible_parent_class = NULL;
+
+static void webkit_accessible_init(AtkObject* object, gpointer data)
+{
+    g_return_if_fail(WEBKIT_IS_ACCESSIBLE(object));
+    g_return_if_fail(data);
+
+    if (ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize)
+        ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize(object, data);
+
+    WEBKIT_ACCESSIBLE(object)->m_object = reinterpret_cast<AccessibilityObject*>(data);
+}
+
+static void webkit_accessible_finalize(GObject* object)
+{
+    // This is a good time to clear the return buffer.
+    returnString(String());
+
+    if (G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize)
+        G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize(object);
+}
+
 static void webkit_accessible_class_init(AtkObjectClass* klass)
 {
-    GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
 
-    parent_class = g_type_class_peek_parent(klass);
+    webkit_accessible_parent_class = g_type_class_peek_parent(klass);
+
+    gobjectClass->finalize = webkit_accessible_finalize;
 
     klass->initialize = webkit_accessible_init;
-
-    gobject_class->finalize = webkit_accessible_finalize;
-
     klass->get_name = webkit_accessible_get_name;
     klass->get_description = webkit_accessible_get_description;
     klass->get_parent = webkit_accessible_get_parent;
     klass->get_n_children = webkit_accessible_get_n_children;
     klass->ref_child = webkit_accessible_ref_child;
-    //klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
     klass->get_role = webkit_accessible_get_role;
-    //klass->get_attributes = webkit_accessible_get_attributes;
-    //klass->ref_state_set = webkit_accessible_ref_state_set;
-    //klass->ref_relation_set = webkit_accessible_ref_relation_set;
+}
+
+GType
+webkit_accessible_get_type(void)
+{
+    static volatile gsize type_volatile = 0;
+
+    if (g_once_init_enter(&type_volatile)) {
+        static const GTypeInfo tinfo = {
+            sizeof(WebKitAccessibleClass),
+            (GBaseInitFunc)NULL,
+            (GBaseFinalizeFunc)NULL,
+            (GClassInitFunc)webkit_accessible_class_init,
+            (GClassFinalizeFunc)NULL,
+            NULL, /* class data */
+            sizeof(WebKitAccessible), /* instance size */
+            0, /* nb preallocs */
+            (GInstanceInitFunc)NULL,
+            NULL /* value table */
+        };
+
+        GType type = g_type_register_static(ATK_TYPE_OBJECT,
+                                            "WebKitAccessible", &tinfo, GTypeFlags(0));
+        g_once_init_leave(&type_volatile, type);
+    }
+
+    return type_volatile;
 }
 
 static gboolean webkit_accessible_action_do_action(AtkAction* action, gint i)
@@ -569,67 +603,111 @@ static void atk_streamable_content_interface_init(AtkStreamableContentIface* ifa
     iface->get_uri = webkit_accessible_streamable_content_get_uri;
 }
 
-GType webkit_accessible_get_type()
+static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
+    {(GInterfaceInitFunc)atk_action_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_streamable_content_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_editable_text_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_text_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL}
+};
+
+enum WAIType {
+    WAI_ACTION,
+    WAI_STREAMABLE,
+    WAI_EDITABLE_TEXT,
+    WAI_TEXT
+};
+
+static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 {
-    static GType type = 0;
+  switch (type) {
+  case WAI_ACTION:
+      return ATK_TYPE_ACTION;
+  case WAI_STREAMABLE:
+      return ATK_TYPE_STREAMABLE_CONTENT;
+  case WAI_EDITABLE_TEXT:
+      return ATK_TYPE_EDITABLE_TEXT;
+  case WAI_TEXT:
+      return ATK_TYPE_TEXT;
+  }
 
-    if (!type) {
-        static const GTypeInfo tinfo = {
-            sizeof(WebKitAccessibleClass),
-            (GBaseInitFunc)NULL,
-            (GBaseFinalizeFunc)NULL,
-            (GClassInitFunc)webkit_accessible_class_init,
-            (GClassFinalizeFunc)NULL,
-            NULL, /* class data */
-            sizeof(WebKitAccessible), /* instance size */
-            0, /* nb preallocs */
-            (GInstanceInitFunc)NULL,
-            NULL /* value table */
-        };
+  return G_TYPE_INVALID;
+}
 
-        type = g_type_register_static(ATK_TYPE_OBJECT, "WebKitAccessible", &tinfo, static_cast<GTypeFlags>(0));
+static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
+{
+    guint16 interfaceMask = 0;
 
-        // TODO: Only implement interfaces when necessary, not for all objects.
-        static const GInterfaceInfo atk_action_info =
-        {
-            (GInterfaceInitFunc) atk_action_interface_init,
-            (GInterfaceFinalizeFunc) NULL,
-            NULL
-        };
-        g_type_add_interface_static(type, ATK_TYPE_ACTION, &atk_action_info);
+    // Action and Streamable are always supported (FIXME: Should they?)
+    interfaceMask |= 1 << WAI_ACTION;
+    interfaceMask |= 1 << WAI_STREAMABLE;
 
-        static const GInterfaceInfo atk_text_info =
-        {
-            (GInterfaceInitFunc) atk_text_interface_init,
-            (GInterfaceFinalizeFunc) NULL,
-            NULL
-        };
-        g_type_add_interface_static(type, ATK_TYPE_TEXT, &atk_text_info);
-
-        static const GInterfaceInfo atk_editable_text_info =
-        {
-            (GInterfaceInitFunc) atk_editable_text_interface_init,
-            (GInterfaceFinalizeFunc) NULL,
-            NULL
-        };
-        g_type_add_interface_static(type, ATK_TYPE_EDITABLE_TEXT, &atk_editable_text_info);
-
-        static const GInterfaceInfo atk_streamable_content_info =
-        {
-            (GInterfaceInitFunc) atk_streamable_content_interface_init,
-            (GInterfaceFinalizeFunc) NULL,
-            NULL
-        };
-        g_type_add_interface_static(type, ATK_TYPE_STREAMABLE_CONTENT, &atk_streamable_content_info);
+    // Text & Editable Text
+    if (coreObject->isAccessibilityRenderObject() && coreObject->isTextControl()) {
+        if (coreObject->isReadOnly())
+            interfaceMask |= 1 << WAI_TEXT;
+        else
+            interfaceMask |= 1 << WAI_EDITABLE_TEXT;
     }
+
+    return interfaceMask;
+}
+
+static const char* getUniqueAccessibilityTypeName(guint16 interfaceMask)
+{
+#define WAI_TYPE_NAME_LEN (30) /* Enough for prefix + 5 hex characters (max) */
+    static char name[WAI_TYPE_NAME_LEN + 1];
+    
+    g_sprintf(name, "WAIType%x", interfaceMask);
+    name[WAI_TYPE_NAME_LEN] = '\0';
+    
+    return name;
+}
+
+static GType getAccessibilityTypeFromObject(AccessibilityObject* coreObject)
+{
+    static const GTypeInfo typeInfo = {
+        sizeof(WebKitAccessibleClass),
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc) NULL,
+        (GClassFinalizeFunc) NULL,
+        NULL, /* class data */
+        sizeof(WebKitAccessible), /* instance size */
+        0, /* nb preallocs */
+        (GInstanceInitFunc) NULL,
+        NULL /* value table */
+    };
+
+    guint16 interfaceMask = getInterfaceMaskFromObject(coreObject);
+    const char* atkTypeName = getUniqueAccessibilityTypeName(interfaceMask);
+    GType type = g_type_from_name(atkTypeName);
+    if (type)
+        return type;
+
+    type = g_type_register_static(WEBKIT_TYPE_ACCESSIBLE,
+                                  atkTypeName,
+                                  &typeInfo, GTypeFlags(0));
+    for (guint i = 0; i < G_N_ELEMENTS(AtkInterfacesInitFunctions); i++) {
+        if (interfaceMask & (1 << i))
+            g_type_add_interface_static(type,
+                                        GetAtkInterfaceTypeFromWAIType(static_cast<WAIType>(i)),
+                                        &AtkInterfacesInitFunctions[i]);
+    }
+
     return type;
 }
 
 WebKitAccessible* webkit_accessible_new(AccessibilityObject* coreObject)
 {
-    GType type = WEBKIT_TYPE_ACCESSIBLE;
+    GType type = getAccessibilityTypeFromObject(coreObject);
     AtkObject* object = static_cast<AtkObject*>(g_object_new(type, NULL));
+
     atk_object_initialize(object, coreObject);
+
     return WEBKIT_ACCESSIBLE(object);
 }
 

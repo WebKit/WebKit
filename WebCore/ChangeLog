@@ -1,3 +1,20 @@
+2009-04-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
+        Rework accessibility type generation code, based on Mozilla a11y
+        implementation.
+
+        Have one base a11y type, and generate derived types that implement
+        only the necessary interfaces at runtime, based on the specific
+        object we are wrapping. This allows to save a lot of code while
+        covering all possible cases.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
 2009-04-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
