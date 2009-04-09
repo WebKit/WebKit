@@ -962,6 +962,12 @@ void GraphicsContext::setPlatformShadow(const IntSize& size,
     if (paintingDisabled())
         return;
 
+    // Detect when there's no effective shadow and clear the looper.
+    if (size.width() == 0 && size.height() == 0) {
+        platformContext()->setDrawLooper(NULL);
+        return;
+    }
+
     double width = size.width();
     double height = size.height();
     double blur = blurInt;

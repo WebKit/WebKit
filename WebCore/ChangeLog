@@ -1,3 +1,14 @@
+2009-04-09  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        When there is a shadow set but it specifies "no shadow", clear the
+        shadow shader. This will prevent Chromium from thinking there's a
+        shadow and using the Skia codepath rather than Windows.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2009-04-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
