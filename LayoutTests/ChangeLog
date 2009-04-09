@@ -1,3 +1,13 @@
+2009-04-08  Adam Roben  <aroben@apple.com>
+
+        Skip fast/js/toString-stack-overflow.html on Windows
+
+        This test sometimes crashes in Debug builds.
+
+        Rubber-stamped by Geoff Garen.
+
+        * platform/win/Skipped: Skip toString-stack-overflow.html.
+
 2009-04-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

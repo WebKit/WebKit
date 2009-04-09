@@ -561,3 +561,6 @@ media/video-size-intrinsic-scale.html
 
 # <rdar://6772112> Cookies expire 1 hour too early
 fast/cookies/local-file-can-set-cookies.html
+
+# Bug 12216: Stack overflow crash in JavaScript garbage collector mark pass <https://bugs.webkit.org/show_bug.cgi?id=12216>
+fast/js/toString-stack-overflow.html
