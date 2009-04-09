@@ -1,3 +1,13 @@
+2009-04-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Test to make sure we don't crash when accessing
+        properties (like viewport) on a detached <svg> element.
+
+        * svg/custom/detached-outermost-svg-crash-expected.txt: Added.
+        * svg/custom/detached-outermost-svg-crash.html: Added.
+
 2009-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey "Big Boy" Garen.

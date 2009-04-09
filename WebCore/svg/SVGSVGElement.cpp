@@ -477,6 +477,10 @@ bool SVGSVGElement::hasRelativeValues() const
 
 bool SVGSVGElement::isOutermostSVG() const
 {
+    // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
+    if (!parentNode())
+        return true;
+
     // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
     return !parentNode()->isSVGElement();
 }
