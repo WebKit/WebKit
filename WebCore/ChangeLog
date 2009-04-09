@@ -1,5 +1,20 @@
 2009-04-08  Adam Roben  <aroben@apple.com>
 
+        Make <select>s in application chrome documents match the Vista system
+        dialog look
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::documentIsInApplicationChromeMode): Added this simple helper
+        function.
+        (WebCore::RenderThemeWin::getThemeData): In application chrome mode,
+        the drop down button never uses any look but the "normal" look.
+        (WebCore::RenderThemeWin::paintMenuList): In application chrome mode,
+        use the "readonly" style to match system dialogs.
+
+2009-04-08  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://6592515> Crash closing tab with Top Sites or Cover Flow
         showing after clicking "Go Back" in phishing alert
 
