@@ -684,6 +684,8 @@ NSControlSize RenderThemeChromiumMac::controlSizeForSystemFont(RenderStyle* styl
 // FIXME: This used to be in the upstream version until it was converted to the new theme API in r37731.
 bool RenderThemeChromiumMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     // Determine the width and height needed for the control and prepare the cell for painting.
     setCheckboxCellState(o, r);
 
@@ -763,6 +765,8 @@ void RenderThemeChromiumMac::setCheckboxSize(RenderStyle* style) const
 // FIXME: This used to be in the upstream version until it was converted to the new theme API in r37731.
 bool RenderThemeChromiumMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     // Determine the width and height needed for the control and prepare the cell for painting.
     setRadioCellState(o, r);
 
@@ -1079,6 +1083,8 @@ const int* RenderThemeChromiumMac::popupButtonPadding(NSControlSize size) const
 
 bool RenderThemeChromiumMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     setPopupButtonCellState(o, r);
 
     NSPopUpButtonCell* popupButton = this->popupButton();
@@ -1638,6 +1644,8 @@ void RenderThemeChromiumMac::adjustSearchFieldStyle(CSSStyleSelector* selector, 
 
 bool RenderThemeChromiumMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     Node* input = o->node()->shadowAncestorNode();
     setSearchCellState(input->renderer(), r);
 
@@ -1711,6 +1719,8 @@ void RenderThemeChromiumMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSel
 
 bool RenderThemeChromiumMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     Node* input = o->node()->shadowAncestorNode();
     setSearchCellState(input->renderer(), r);
 
@@ -1736,6 +1746,8 @@ void RenderThemeChromiumMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelecto
 
 bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+
     Node* input = o->node()->shadowAncestorNode();
     setSearchCellState(input->renderer(), r);
 

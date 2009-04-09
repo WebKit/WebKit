@@ -1,3 +1,20 @@
+2009-04-09  John Grabowski  <jrg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25117
+        Fix Mac Chromium form controls.
+
+        * rendering/RenderThemeChromiumMac.mm:
+        When rendering native controls in Mac Chromium, use a clean NSGraphicsContext.
+        Properly save and restore native graphics context.
+        (WebCore::RenderThemeChromiumMac::paintCheckbox):
+        (WebCore::RenderThemeChromiumMac::paintRadio):
+        (WebCore::RenderThemeChromiumMac::paintMenuList):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsButton):
+
 2009-04-09  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Alexey Proskuryakov.
