@@ -1,3 +1,57 @@
+2009-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=25109
+
+        Eliminate CompositeAnimationPrivate, which was a needless level
+        of abstraction. Remove the methods like addToStyleAvailableWaitList()
+        that simply turn around and call the animation controller.
+        
+        Rename animationControllerPriv() to animationController().
+        Rename willNeedService() to timeToNextService().
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::~AnimationBase):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::beginAnimationUpdateTime):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::~CompositeAnimation):
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::cleanupFinishedAnimations):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::overrideImplicitAnimations):
+        (WebCore::CompositeAnimation::resumeOverriddenImplicitAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::pauseTransitionAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::animationController):
+        (WebCore::CompositeAnimation::isSuspended):
+        (WebCore::CompositeAnimation::hasAnimations):
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::timeToNextService):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::timeToNextService):
+        * page/animation/KeyframeAnimation.h:
+
 2009-04-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reverting <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings.

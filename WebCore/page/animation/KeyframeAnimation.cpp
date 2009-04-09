@@ -266,7 +266,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
             return false;
 
         // Schedule event handling
-        m_compAnim->animationControllerPriv()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
+        m_compAnim->animationController()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
 
         // Restore the original (unanimated) style
         if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())
@@ -352,9 +352,9 @@ void KeyframeAnimation::validateTransformFunctionList()
     m_transformFunctionListValid = true;
 }
 
-double KeyframeAnimation::willNeedService()
+double KeyframeAnimation::timeToNextService()
 {
-    double t = AnimationBase::willNeedService();
+    double t = AnimationBase::timeToNextService();
 #if USE(ACCELERATED_COMPOSITING)
     if (t != 0 || preActive())
         return t;

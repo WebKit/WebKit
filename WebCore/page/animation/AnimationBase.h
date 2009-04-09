@@ -45,7 +45,7 @@ class RenderStyle;
 class TimingFunction;
 
 class AnimationBase : public RefCounted<AnimationBase> {
-    friend class CompositeAnimationPrivate;
+    friend class CompositeAnimation;
 
 public:
     AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
@@ -120,7 +120,7 @@ public:
     // "animating" means that something is running that requires a timer to keep firing
     // (e.g. a software animation)
     void setAnimating(bool inAnimating = true) { m_isAnimating = inAnimating; }
-    virtual double willNeedService();
+    virtual double timeToNextService();
 
     double progress(double scale, double offset, const TimingFunction*) const;
 

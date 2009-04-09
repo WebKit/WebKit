@@ -91,7 +91,7 @@ void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = fa
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RefPtr<CompositeAnimation> compAnim = it->second;
         if (!compAnim->isSuspended() && compAnim->hasAnimations()) {
-            double t = compAnim->willNeedService();
+            double t = compAnim->timeToNextService();
             if (t != -1 && (t < needsService || needsService == -1))
                 needsService = t;
             if (needsService == 0) {
