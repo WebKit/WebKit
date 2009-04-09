@@ -154,7 +154,7 @@
 #import "DOMWebKitCSSTransformValueInternal.h"
 #import "DOMWheelEventInternal.h"
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
 #import "DOMSVGAElementInternal.h"
 #import "DOMSVGAltGlyphElementInternal.h"
 #import "DOMSVGAngleInternal.h"
@@ -286,7 +286,7 @@
 #import "DOMSVGUseElementInternal.h"
 #import "DOMSVGViewElementInternal.h"
 #import "DOMSVGZoomEventInternal.h"
-#endif // ENABLE(SVG_DOM_OBJC_BINDINGS)
+#endif // ENABLE(SVG)
 
 namespace JSC {
     class JSObject;
@@ -299,11 +299,11 @@ namespace JSC {
 namespace WebCore {
     class NodeFilter;
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
     class TransformationMatrix;
     class FloatPoint;
     class FloatRect;
-#endif // ENABLE(SVG_DOM_OBJC_BINDINGS)
+#endif // ENABLE(SVG)
 
 #if ENABLE(XPATH)
     class XPathNSResolver;

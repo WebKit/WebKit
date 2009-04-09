@@ -45,7 +45,7 @@
 #import "StyleSheet.h"
 #import <objc/objc-class.h>
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
 #import "DOMSVGColor.h"
 #import "DOMSVGPaint.h"
 #endif
@@ -198,7 +198,7 @@
             wrapperClass = [DOMCSSValue class];
             break;
         case DOM_CSS_CUSTOM:
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
             if (impl->isSVGPaint())
                 wrapperClass = [DOMSVGPaint class];
             else if (impl->isSVGColor())

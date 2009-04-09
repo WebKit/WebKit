@@ -28,14 +28,11 @@
 
 #include "ExceptionCode.h"
 
-NSString *DOMException = @"DOMException";
-NSString *DOMRangeException = @"DOMRangeException";
-NSString *DOMEventException = @"DOMEventException";
-NSString *DOMXPathException = @"DOMXPathException";
-
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-NSString *DOMSVGException = @"DOMSVGException";
-#endif
+NSString * DOMException = @"DOMException";
+NSString * DOMRangeException = @"DOMRangeException";
+NSString * DOMEventException = @"DOMEventException";
+NSString * DOMSVGException = @"DOMSVGException";
+NSString * DOMXPathException = @"DOMXPathException";
 
 namespace WebCore {
 
@@ -51,10 +48,8 @@ void raiseDOMException(ExceptionCode ec)
         exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)
         exceptionName = DOMEventException;
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
     else if (strcmp(description.typeName, "DOM SVG") == 0)
         exceptionName = DOMSVGException;
-#endif
     else if (strcmp(description.typeName, "DOM XPath") == 0)
         exceptionName = DOMXPathException;
     else

@@ -43,10 +43,8 @@ module html {
         readonly attribute DOMWindow contentWindow;
 
 #if ENABLE_SVG
-#if !defined(LANGUAGE_OBJECTIVE_C) || defined(ENABLE_SVG_DOM_OBJC_BINDINGS)
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
-#endif
 #endif
 #endif
 

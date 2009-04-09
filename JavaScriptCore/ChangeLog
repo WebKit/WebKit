@@ -1,3 +1,10 @@
+2009-04-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reverting <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings.
+        It broke Mac build, and I don't know how to fix it.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2009-04-09  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

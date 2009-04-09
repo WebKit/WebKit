@@ -44,7 +44,7 @@
 
 #import <wtf/HashMap.h>
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
 #import "SVGElement.h"
 #import "SVGElementInstance.h"
 #import "SVGNames.h"
@@ -144,7 +144,7 @@ static void createElementClassMap()
     addElementClass(HTMLNames::ulTag, [DOMHTMLUListElement class]);
     addElementClass(HTMLNames::xmpTag, [DOMHTMLPreElement class]);
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
     addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
     addElementClass(SVGNames::altGlyphTag, [DOMSVGAltGlyphElement class]);
 #if ENABLE(SVG_ANIMATION)
@@ -300,7 +300,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
         case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
                 wrapperClass = WebCore::elementClass(static_cast<WebCore::HTMLElement*>(impl)->tagQName(), [DOMHTMLElement class]);
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
             else if (impl->isSVGElement())
                 wrapperClass = WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
 #endif
@@ -331,7 +331,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
         case WebCore::Node::DOCUMENT_NODE:
             if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
                 wrapperClass = [DOMHTMLDocument class];
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
             else if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
                 wrapperClass = [DOMSVGDocument class];
 #endif
@@ -409,7 +409,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 @end
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG)
 @implementation DOMSVGElementInstance (WebCoreInternal)
 
 - (id)_initWithSVGElementInstance:(WebCore::SVGElementInstance *)impl

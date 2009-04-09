@@ -1,3 +1,25 @@
+2009-04-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reverting <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings.
+        It broke Mac build, and I don't know how to fix it.
+
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        (+[DOMNode _wrapNode:WebCore::]):
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSValue _wrapCSSValue:WebCore::]):
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _wrapEvent:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/ExceptionHandlers.mm:
+        (WebCore::raiseDOMException):
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLObjectElement.idl:
+
 2009-04-09  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

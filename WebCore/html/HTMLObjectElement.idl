@@ -52,10 +52,8 @@ module html {
 
 #if !defined(LANGUAGE_COM)
 #if ENABLE_SVG
-#if !defined(LANGUAGE_OBJECTIVE_C) || defined(ENABLE_SVG_DOM_OBJC_BINDINGS)
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
-#endif
 #endif
 #endif
 
