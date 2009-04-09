@@ -1,3 +1,40 @@
+2009-04-09  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25030
+        Refactor MessagePort code to enable Chrome to use a MessagePortProxy object
+        instead of a real MessagePort for the entangledPort, since it could
+        theoretically live in a separate process.
+
+        The goal of this refactoring is to remove all assumptions that the object
+        representing the entangled port is actually of type MessagePort. All
+        operations that were previously directly modifying private MessagePort member
+        variables in the entangled port (i.e. entangle(), postMessage()) have been changed
+        to invoke functions in the  MessagePortProxy interface instead which will allow
+        the Chrome bindings to proxy these calls to another process.
+
+        No new layout tests, as this is just a refactoring with no bug fixes
+        or new functionality.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::clone):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::deliverMessage):
+        (WebCore::MessagePort::startConversation):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::entangle):
+        (WebCore::MessagePort::unentangle):
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::entangledPort):
+        * dom/MessagePortProxy.h: Added.
+        (WebCore::MessagePortProxy::~MessagePortProxy):
+
 2009-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey "Big Boy" Garen.

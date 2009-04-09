@@ -11410,6 +11410,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\MessagePortProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\MouseEvent.cpp"
 				>
 				<FileConfiguration
