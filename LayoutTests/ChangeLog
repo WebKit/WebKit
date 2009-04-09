@@ -1,3 +1,14 @@
+2009-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a test for excess arguments passed to function.apply
+
+        * fast/js/function-apply-expected.txt:
+        * fast/js/resources/function-apply.js:
+        (argumentsApplyExcessArguments.t):
+        (argumentsApplyExcessArguments):
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Skip fast/js/toString-stack-overflow.html on Windows

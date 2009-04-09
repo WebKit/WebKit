@@ -1,3 +1,17 @@
+2009-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix assertion failure in function.apply
+
+        The result of excess arguments to function.apply is irrelevant
+        so we don't need to provide a result register.  We were providing
+        temporary result register but not ref'ing it resulting in an
+        assertion failure.
+
+        * parser/Nodes.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+
 2009-04-08  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings

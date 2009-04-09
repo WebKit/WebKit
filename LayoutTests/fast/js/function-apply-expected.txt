@@ -7,6 +7,8 @@ PASS argumentsApply1(1, 2, 3) is 1
 PASS argumentsApply2(1, 2, 3) is 2
 PASS argumentsApply3(1, 2, 3) is 3
 PASS argumentsApplyLength(1, 2, 3) is 3
+PASS argumentsApplyExcessArguments(1, 2, 3) is 3
+PASS executedAdditionalArgument is true
 PASS arrayApply1([1, 2, 3]) is 1
 PASS arrayApply2([1, 2, 3]) is 2
 PASS arrayApply3([1, 2, 3]) is 3

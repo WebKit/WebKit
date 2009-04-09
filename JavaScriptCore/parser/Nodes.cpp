@@ -801,7 +801,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             ArgumentListNode* args = m_args->m_listNode->m_next.get();
             generator.emitNode(argsRegister.get(), args->m_expr.get());
             while ((args = args->m_next.get()))
-                generator.emitNode(generator.newTemporary(), args->m_expr.get());
+                generator.emitNode(args->m_expr.get());
 
             generator.emitLoadVarargs(argsCountRegister.get(), argsRegister.get());
             generator.emitCallVarargs(finalDestination.get(), realFunction.get(), thisRegister.get(), argsCountRegister.get(), divot(), startOffset(), endOffset());

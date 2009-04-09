@@ -35,11 +35,22 @@ function argumentsApplyLength(a, b, c)
     }
     return t.apply(null, arguments);
 }
+var executedAdditionalArgument = false;
+function argumentsApplyExcessArguments(a, b, c)
+{
+    function t(a, b, c)
+    {
+        return arguments.length;
+    }
+    return t.apply(null, arguments, executedAdditionalArgument = true);
+}
 
 shouldBe("argumentsApply1(1, 2, 3)", "1");
 shouldBe("argumentsApply2(1, 2, 3)", "2");
 shouldBe("argumentsApply3(1, 2, 3)", "3");
 shouldBe("argumentsApplyLength(1, 2, 3)", "3");
+shouldBe("argumentsApplyExcessArguments(1, 2, 3)", "3");
+shouldBeTrue("executedAdditionalArgument");
 
 function arrayApply1(array)
 {
