@@ -99,7 +99,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
-#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
