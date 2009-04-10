@@ -1,3 +1,14 @@
+2009-04-10  Darin Fisher  <darin@chromium.org>
+
+        Fixing build bustage caused by warnings being treated as errors.
+        1- A local variable was only be used inside a debug assertion, which
+           caused grief for the release build.
+        2- Missing initializer for member 'DocumentMarker::activeMatch'
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        (WebCore::Document::setMarkersActive):
+
 2009-04-10  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
         Reviewed by John Sullivan.

@@ -3276,7 +3276,7 @@ void Document::addMarker(Range *range, DocumentMarker::MarkerType type, String d
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
         int exception = 0;
-        DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception), description};
+        DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception), description, false};
         addMarker(textPiece->startContainer(exception), marker);
     }
 }
@@ -3725,8 +3725,7 @@ void Document::setMarkersActive(Node* node, unsigned startOffset, unsigned endOf
         return;
 
     Vector<DocumentMarker>& markers = vectorPair->first;
-    Vector<IntRect>& rects = vectorPair->second;
-    ASSERT(markers.size() == rects.size());
+    ASSERT(markers.size() == vectorPair->second.size());
 
     bool docDirty = false;
     for (size_t i = 0; i != markers.size(); ++i) {
