@@ -1,3 +1,13 @@
+2009-04-10  Adam Roben  <aroben@apple.com>
+
+        Add our invidual IDL files back to Interfaces.vcproj, but disable them
+
+        This allows the IDL files to be found in Solution Explorer.
+
+        Rubber-stamped in advance by Steve Falkenburg.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+
 2009-04-09  Adam Roben  <aroben@apple.com>
 
         Windows part 1 of <rdar://problem/5438063> Saving history containing
