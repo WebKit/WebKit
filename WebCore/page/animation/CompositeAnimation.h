@@ -74,7 +74,7 @@ public:
     
     PassRefPtr<KeyframeAnimation> getAnimationForProperty(int property) const;
 
-    void cleanupFinishedAnimations(RenderObject*);
+    void cleanupFinishedAnimations();
 
     void overrideImplicitAnimations(int property);
     void resumeOverriddenImplicitAnimations(int property);

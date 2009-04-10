@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Dynamic transition removal</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 200px;
+      width: 200px;
+      margin: 20px;
+      background-color: blue;
+    }
+    
+    .animated {
+      -webkit-transition: opacity 200ms;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.waitUntilDone();
+      layoutTestController.dumpAsText();
+    }
+
+    function log(s)
+    {
+      var results = document.getElementById('results');
+      results.innerHTML += s + '<br>';
+    }
+
+    function testTransitions()
+    {
+      if (window.layoutTestController) {
+        var numAnims = layoutTestController.numberOfActiveAnimations();
+        if (numAnims == 0)
+          log('No running transitions: PASS');
+        else
+          log('Still ' + numAnims + ' transitions running: FAIL')
+
+        layoutTestController.notifyDone();
+      }
+    }
+    
+    function removeStyle()
+    {
+      box.className = '';
+      window.setTimeout(testTransitions, 50);
+    }
+
+    function startTransition()
+    {
+      var box = document.getElementById('box');
+      box.className = 'animated';
+      window.setTimeout(function() {
+        box.style.opacity = '0.5';
+        window.setTimeout(removeStyle, 200);
+      }, 0);
+    }
+    
+    window.addEventListener('load', startTransition, false);
+  </script>
+</head>
+<body>
+
+<div id="box"></div>
+
+<div id="results"></div>
+</body>
+</html>

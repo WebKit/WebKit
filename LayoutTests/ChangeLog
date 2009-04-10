@@ -1,3 +1,16 @@
+2009-04-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25108
+
+        Testcase which reproduces the issue described in bug 25108.
+        Won't actually reveal failure, since we have no way to test
+        whether animation timers keep firing from DRT.
+
+        * transitions/remove-transition-style-expected.txt: Added.
+        * transitions/remove-transition-style.html: Added.
+
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

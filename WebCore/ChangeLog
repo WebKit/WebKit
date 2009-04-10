@@ -1,3 +1,29 @@
+2009-04-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=25108
+
+        If you remove a class with a transition while that transition is running
+        the animation timer will continue to fire after the transition is finished.
+        This has no visual indication, but it does drain the processor. And in some
+        cases it might even cause a glitch in future animations. Unfortunately there
+        is no way to test this without putting in printfs.
+
+        This happens because the animation logic is never traversed after a transition
+        is removed, so we never get a chance to cleanup. So I added cleanup in the logic
+        that fires the dispatch of the last style change when the animation finishes.
+
+        Test: transitions/remove-transition-style.html
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::cleanupFinishedAnimations):
+        * page/animation/CompositeAnimation.h:
+
 2009-04-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

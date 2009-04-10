@@ -110,7 +110,11 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
             bool equal = true;
 
             if (implAnim) {
-                // This implAnim might not be an already running transition. It might be
+                // This might be a transition that is just finishing. That would be the case
+                // if it were postActive. But we still need to check for equality because
+                // it could be just finishing AND changing to a new goal state.
+                //
+                // This implAnim might also not be an already running transition. It might be
                 // newly added to the list in a previous iteration. This would happen if
                 // you have both an explicit transition-property and 'all' in the same
                 // list. In this case, the latter one overrides the earlier one, so we
@@ -245,7 +249,7 @@ PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderObject* renderer, Rend
             keyframeAnim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
     }
 
-    cleanupFinishedAnimations(renderer);
+    cleanupFinishedAnimations();
 
     return resultStyle ? resultStyle.release() : targetStyle;
 }
@@ -337,7 +341,7 @@ PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(int pr
     return retval;
 }
 
-void CompositeAnimation::cleanupFinishedAnimations(RenderObject*)
+void CompositeAnimation::cleanupFinishedAnimations()
 {
     if (isSuspended())
         return;
