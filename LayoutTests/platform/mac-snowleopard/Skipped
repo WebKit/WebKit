@@ -24,3 +24,12 @@ webarchive/test-xml-stylesheet.xml
 # <rdar://problem/6733642> Mistimed NPP_SetWindow log messages
 plugins/netscape-plugin-setwindow-size.html
 plugins/netscape-plugin-setwindow-size-2.html
+
+# <rdar://problem/6778101> Four SSL-related test failures
+http/tests/security/cross-frame-access-protocol-explicit-domain.html
+http/tests/security/cross-frame-access-protocol.html
+http/tests/security/originHeader/origin-header-for-https.html
+http/tests/ssl/verify-ssl-enabled.php
+
+# <rdar://problem/6778137> post-goback-repost-policy.html is failing
+http/tests/navigation/post-goback-repost-policy.html
