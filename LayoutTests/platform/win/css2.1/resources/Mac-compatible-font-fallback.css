@@ -11,7 +11,13 @@
 @font-face {
     font-family: 'times' '-webkit-serif';
     src: local('WebKit Layout Tests');
-    unicode-range: U+21E6-21E9 U+25FE U+262F U+2798-279A;
+    unicode-range: U+25FE U+262F U+2798-279A;
+}
+
+@font-face {
+    font-family: 'times' '-webkit-serif';
+    src: local('WebKit Layout Tests 2');
+    unicode-range: U+21E6-21E9;
 }
 
 /* Hebrew, hyphen, non-breaking hyphen, upwards white arrow,

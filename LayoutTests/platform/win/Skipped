@@ -565,29 +565,6 @@ fast/cookies/local-file-can-set-cookies.html
 # Bug 12216: Stack overflow crash in JavaScript garbage collector mark pass <https://bugs.webkit.org/show_bug.cgi?id=12216>
 fast/js/toString-stack-overflow.html
 
-# r42379 caused the results of these tests to differ between Mac and Windows
-# due to differences in the fallback fonts used
-css2.1/t0805-c5519-brdr-r-00-a.html
-css2.1/t0805-c5520-brdr-b-01-e.html
-css2.1/t0805-c5521-brdr-l-00-a.html
-css2.1/t0805-c5521-brdr-l-01-e.html
-css2.1/t0805-c5521-ibrdr-l-00-a.html
-css2.1/t0905-c414-flt-02-c.html
-css2.1/t0905-c414-flt-03-c.html
-css2.1/t0905-c414-flt-04-c.html
-css2.1/t0905-c414-flt-fit-01-d-g.html
-css2.1/t0905-c5525-fltblck-01-d.html
-css2.1/t0905-c5525-fltcont-00-d-g.html
-css2.1/t0905-c5525-fltwidth-00-c-g.html
-css2.1/t0905-c5525-fltwidth-02-c-g.html
-css2.1/t0905-c5525-fltwidth-03-c-g.html
-css2.1/t0905-c5525-fltwrap-00-b.html
-css2.1/t090501-c414-flt-01-b.html
-css2.1/t090501-c414-flt-03-b-g.html
-css2.1/t090501-c5525-flt-l-00-b-g.html
-css2.1/t090501-c5525-flt-r-00-b-g.html
-css2.1/t100304-c43-rpl-bbx-01-d-g.html
-
-# More failures following r42379
+# Failures following r42379
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/international/001.html

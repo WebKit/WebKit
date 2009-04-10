@@ -1,5 +1,16 @@
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Adam Roben.
+
+        - re-enable css2.1 tests that were disabled following r42379 and make
+          them use a different fallback font for certain characters, to get
+          the vertical metrics to match Mac
+
+        * platform/win/Skipped:
+        * platform/win/css2.1/resources/Mac-compatible-font-fallback.css:
+
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
         - skip failures following r42379 until they are addressed by code
           changes or test changes
 
