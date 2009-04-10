@@ -11,10 +11,6 @@ plugins/netscape-throw-exception.html
 # <rdar://problem/6497461> Many media tests fail due to logging, etc.
 media
 
-# <rdar://problem/6718460> Logging on stdout during search-zoomed.html
-fast/forms/search-zoomed.html
-svg/custom/foreign-object-skew.svg
-
 # <rdar://problem/6719019&6719106&6719597&6719661> Incorrect MIME type for some local files
 http/tests/misc/createElementNamespace1.xml
 tables/mozilla/bugs/bug3037-1.html

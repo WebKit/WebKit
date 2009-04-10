@@ -1,5 +1,11 @@
 2009-04-09  Mark Rowe  <mrowe@apple.com>
 
+        Remove two tests from the skipped list now that <rdar://problem/6718460> has been addressed.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-04-09  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Skip a few tests that are currently failing.
