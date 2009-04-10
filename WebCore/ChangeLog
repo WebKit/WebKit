@@ -1,3 +1,13 @@
+2009-04-10  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Build fix for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=12440
+
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::computePageRectsForFrame): change docWidth() to overflowWidth()
+
 2009-04-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt
