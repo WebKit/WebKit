@@ -1,3 +1,14 @@
+2009-04-10  Adam Roben  <aroben@apple.com>
+
+        Update Windows results for complex-character-based-fallback.html
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.checksum:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.png:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+        Updated.
+
 2009-04-09  Dan Bernstein  <mitz@apple.com>
 
         - remove two files I just checked in by accident
