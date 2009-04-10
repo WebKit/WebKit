@@ -1,5 +1,12 @@
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
+        - skip failures following r42379 until they are addressed by code
+          changes or test changes
+
+        * platform/win/Skipped:
+
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - revert broken test results that were checked in with r42379, now that
