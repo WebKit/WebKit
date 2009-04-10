@@ -1,3 +1,11 @@
+2009-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Remove DOMDocumentPrivate.h now that <rdar://problem/6730996> is fixed.
+
+        Rubber-stamped by Mark Rowe.
+
+        * Misc/DOMDocumentPrivate.h: Removed.
+
 2009-04-10  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Adele Peterson.

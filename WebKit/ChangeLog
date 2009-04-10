@@ -1,3 +1,11 @@
+2009-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Remove DOMDocumentPrivate.h now that <rdar://problem/6730996> is fixed.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-04-09  Mike Thole  <mthole@apple.com>
 
         Reviewed by Adam Roben.
