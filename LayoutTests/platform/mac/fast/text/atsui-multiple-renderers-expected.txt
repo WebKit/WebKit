@@ -89,13 +89,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,277) size 784x18
         RenderText {#text} at (0,0) size 277x18
           text run at (0,0) width 277: "The following two lines should be identical."
-      RenderBlock {P} at (0,311) size 784x22
+      RenderBlock {P} at (0,311) size 784x24
         RenderInline {SPAN} at (0,0) size 334x24 [border: (1px solid #008000)]
-          RenderText {#text} at (1,0) size 332x22
-            text run at (1,0) width 332: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
+          RenderText {#text} at (1,2) size 332x22
+            text run at (1,2) width 332: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,349) size 784x21
+      RenderBlock {P} at (0,351) size 784x23
         RenderInline {SPAN} at (0,0) size 334x23 [border: (1px solid #008000)]
-          RenderText {#text} at (1,0) size 332x21
-            text run at (1,0) width 332: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
+          RenderText {#text} at (1,2) size 332x21
+            text run at (1,2) width 332: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0

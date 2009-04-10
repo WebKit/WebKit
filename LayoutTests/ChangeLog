@@ -1,3 +1,43 @@
+2009-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - moved some Leopard-and-earlier results into platform/mac-leopard and
+          added new results under platform/mac
+
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.checksum: Copied from LayoutTests/platform/mac/fast/text/complex-text-opacity-expected.checksum.
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.png: Copied from LayoutTests/platform/mac/fast/text/complex-text-opacity-expected.png.
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.txt: Copied from LayoutTests/platform/mac/fast/text/complex-text-opacity-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.checksum: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.png: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png.
+        * platform/mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt.
+        * platform/mac/fast/events/pointer-events-expected.txt: Added.
+        * platform/mac/fast/events/pointer-events.html: Added.
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.checksum:
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/mac/fast/text/complex-text-opacity-expected.checksum: Replaced.
+        * platform/mac/fast/text/complex-text-opacity-expected.png: Replaced.
+        * platform/mac/fast/text/complex-text-opacity-expected.txt: Replaced.
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum: Replaced.
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.png: Replaced.
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt: Replaced.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum: Replaced.
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Replaced.
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Replaced.
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+
 2009-04-09  Mark Rowe  <mrowe@apple.com>
 
         Remove two tests from the skipped list now that <rdar://problem/6718460> has been addressed.
