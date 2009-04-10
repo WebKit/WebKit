@@ -1,3 +1,19 @@
+2009-04-10  Adam Roben  <aroben@apple.com>
+
+        Turn on window animations for <select> popup menus
+
+        We turned these off back when <select> popup menus were partially
+        transparent. Now that they're opaque, there's no reason not to
+        animate them.
+
+        Reviewed by Steve Falkenburg.
+
+        No test possible.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show): Remove the #ifdef that was disabling the
+        window animation.
+
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
