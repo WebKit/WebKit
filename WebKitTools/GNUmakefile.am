@@ -22,7 +22,8 @@ Programs_GtkLauncher_CFLAGS = \
 
 Programs_GtkLauncher_LDADD = \
 	libwebkit-1.0.la \
-	$(GTK_LIBS)
+	$(GTK_LIBS) \
+	$(GLIB_LIBS)
 
 # DumpRenderTree
 dumprendertree_cppflags := \
@@ -73,7 +74,8 @@ Programs_DumpRenderTree_LDADD = \
 	libwebkit-1.0.la \
 	$(GLOBALDEPS_LIBS) \
 	$(CAIRO_LIBS) \
-	$(GTK_LIBS)
+	$(GTK_LIBS) \
+	$(GLIB_LIBS)
 
 # clean target
 CLEANFILES += \

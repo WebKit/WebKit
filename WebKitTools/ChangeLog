@@ -1,3 +1,10 @@
+2009-04-09  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Unreviewed Gtk build fix for undefined reference: g_thread_init.
+        Add GLIB_LIBS to DRT and GtkLauncher build config.
+
+        * GNUmakefile.am:
+
 2009-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Reinstating <rdar://problem/6718589> Option to turn off SVG DOM Objective-C bindings
