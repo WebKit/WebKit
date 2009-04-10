@@ -1,3 +1,34 @@
+2009-04-10  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by John Sullivan.
+
+        Fixing: https://bugs.webkit.org/show_bug.cgi?id=25117
+        (TextMatches don't have a concept of active match)
+
+        For the ports that use the DocumentMarker as highlighting for FindInPage it is
+        useful to have a flag that specifies which marker is active, so it can be drawn
+        in a different color.
+
+        This allows me to remove the hack to use the SelectionController to highlight
+        the active match (in the ChromiumWin port).
+
+        * dom/Document.cpp:
+        (WebCore::Document::setMarkersActive):
+        * dom/Document.h:
+        * dom/DocumentMarker.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformActiveTextSearchHighlightColor):
+        (WebCore::RenderTheme::platformInactiveTextSearchHighlightColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveTextSearchHighlightColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveTextSearchHighlightColor):
+        * rendering/RenderThemeChromiumWin.h:
+
 2009-04-10  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Dimitri Glazkov.

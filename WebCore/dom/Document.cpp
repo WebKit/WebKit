@@ -3701,6 +3701,54 @@ void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, Documen
         node->renderer()->repaint();
 }
 
+void Document::setMarkersActive(Range* range, bool active)
+{
+    if (m_markers.isEmpty())
+        return;
+
+    ExceptionCode ec = 0;
+    Node* startContainer = range->startContainer(ec);
+    Node* endContainer = range->endContainer(ec);
+
+    Node* pastLastNode = range->pastLastNode();
+    for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
+        int startOffset = node == startContainer ? range->startOffset(ec) : 0;
+        int endOffset = node == endContainer ? range->endOffset(ec) : INT_MAX;
+        setMarkersActive(node, startOffset, endOffset, active);
+    }
+}
+
+void Document::setMarkersActive(Node* node, unsigned startOffset, unsigned endOffset, bool active)
+{
+    MarkerMapVectorPair* vectorPair = m_markers.get(node);
+    if (!vectorPair)
+        return;
+
+    Vector<DocumentMarker>& markers = vectorPair->first;
+    Vector<IntRect>& rects = vectorPair->second;
+    ASSERT(markers.size() == rects.size());
+
+    bool docDirty = false;
+    for (size_t i = 0; i != markers.size(); ++i) {
+        DocumentMarker &marker = markers[i];
+
+        // Markers are returned in order, so stop if we are now past the specified range.
+        if (marker.startOffset >= endOffset)
+            break;
+
+        // Skip marker that is wrong type or before target.
+        if (marker.endOffset < startOffset || marker.type != DocumentMarker::TextMatch)
+            continue;
+
+        marker.activeMatch = active;
+        docDirty = true;
+    }
+
+    // repaint the affected node
+    if (docDirty && node->renderer())
+        node->renderer()->repaint();
+}
+
 #if ENABLE(XSLT)
 
 void Document::applyXSLTransform(ProcessingInstruction* pi)

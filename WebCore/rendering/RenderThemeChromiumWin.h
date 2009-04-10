@@ -61,7 +61,8 @@ namespace WebCore {
         virtual Color platformInactiveSelectionBackgroundColor() const;
         virtual Color platformActiveSelectionForegroundColor() const;
         virtual Color platformInactiveSelectionForegroundColor() const;
-        virtual Color platformTextSearchHighlightColor() const;
+        virtual Color platformActiveTextSearchHighlightColor() const;
+        virtual Color platformInactiveTextSearchHighlightColor() const;
 
         virtual double caretBlinkInterval() const;
 
@@ -133,10 +134,6 @@ namespace WebCore {
         // object.
         static void setDefaultFontSize(int);
 
-        // Enables/Disables FindInPage mode, which (if enabled) overrides the
-        // selection rect color to be orange.
-        static void setFindInPageMode(bool);
-
     private:
         unsigned determineState(RenderObject*);
         unsigned determineSliderThumbState(RenderObject*);
@@ -147,9 +144,6 @@ namespace WebCore {
         bool paintTextFieldInternal(RenderObject*, const RenderObject::PaintInfo&, const IntRect&, bool);
 
         int menuListInternalPadding(RenderStyle*, int paddingType) const;
-
-        // A flag specifying whether we are in Find-in-page mode or not.
-        static bool m_findInPageMode;
     };
 
 } // namespace WebCore

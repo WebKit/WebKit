@@ -117,7 +117,9 @@ public:
     Color inactiveListBoxSelectionBackgroundColor() const;
     Color inactiveListBoxSelectionForegroundColor() const;
 
-    virtual Color platformTextSearchHighlightColor() const;
+    // Highlighting colors for TextMatches.
+    virtual Color platformActiveTextSearchHighlightColor() const;
+    virtual Color platformInactiveTextSearchHighlightColor() const;
 
     virtual void platformColorsDidChange();
 

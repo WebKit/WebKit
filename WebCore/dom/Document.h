@@ -701,6 +701,8 @@ public:
     void setRenderedRectForMarker(Node*, DocumentMarker, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
     void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void setMarkersActive(Range*, bool);
+    void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
     DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     Vector<DocumentMarker> markersForNode(Node*);

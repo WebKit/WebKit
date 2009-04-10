@@ -847,9 +847,14 @@ Color RenderTheme::systemColor(int cssValueId) const
     return Color();
 }
 
-Color RenderTheme::platformTextSearchHighlightColor() const
+Color RenderTheme::platformActiveTextSearchHighlightColor() const
 {
-    return Color(255, 255, 0);
+    return Color(255, 150, 50); // Orange.
+}
+
+Color RenderTheme::platformInactiveTextSearchHighlightColor() const
+{
+    return Color(255, 255, 0); // Yellow.
 }
 
 } // namespace WebCore
