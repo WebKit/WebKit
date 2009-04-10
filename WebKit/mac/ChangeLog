@@ -1,3 +1,14 @@
+2009-04-10  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6646998> Avoid starting QTKitServer if possible
+        Add the requires symbol in the WebSystemInterface. It is used by
+        WebCore.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Add wkQTIncludeOnlyModernMediaFileTypes.
+
 2009-04-09  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Hyatt.

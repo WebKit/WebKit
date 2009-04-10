@@ -956,6 +956,7 @@ _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
 _wkMeasureMediaUIPart
 _wkPopupMenu
+_wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
 _wkQTMovieViewSetDrawSynchronously

@@ -117,6 +117,7 @@ extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOO
 extern BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
+extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);

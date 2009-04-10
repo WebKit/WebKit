@@ -874,25 +874,44 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
-static HashSet<String> mimeTypeCache()
+static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
+{
+    int count = [fileTypes count];
+    for (int n = 0; n < count; n++) {
+        CFStringRef ext = reinterpret_cast<CFStringRef>([fileTypes objectAtIndex:n]);
+        RetainPtr<CFStringRef> uti(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
+        if (!uti)
+            continue;
+        RetainPtr<CFStringRef> mime(AdoptCF, UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+        if (!mime)
+            continue;
+        cache.add(mime.get());
+    }    
+}
+
+static HashSet<String> mimeCommonTypesCache()
 {
     DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
-        NSArray* fileTypes = [QTMovie movieFileTypes:QTIncludeCommonTypes];
-        int count = [fileTypes count];
-        for (int n = 0; n < count; n++) {
-            CFStringRef ext = reinterpret_cast<CFStringRef>([fileTypes objectAtIndex:n]);
-            RetainPtr<CFStringRef> uti(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
-            if (!uti)
-                continue;
-            RetainPtr<CFStringRef> mime(AdoptCF, UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
-            if (!mime)
-                continue;
-            cache.add(mime.get());
-        }
         typeListInitialized = true;
+        NSArray* fileTypes = [QTMovie movieFileTypes:QTIncludeCommonTypes];
+        addFileTypesToCache(fileTypes, cache);
+    }
+    
+    return cache;
+} 
+
+static HashSet<String> mimeModernTypesCache()
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    static bool typeListInitialized = false;
+    
+    if (!typeListInitialized) {
+        typeListInitialized = true;
+        NSArray* fileTypes = [QTMovie movieFileTypes:(QTMovieFileTypeOptions)wkQTIncludeOnlyModernMediaFileTypes()];
+        addFileTypesToCache(fileTypes, cache);
     }
     
     return cache;
@@ -900,14 +919,21 @@ static HashSet<String> mimeTypeCache()
 
 void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
-    types = mimeTypeCache();
+    // Note: this method starts QTKitServer if it isn't already running when in 64-bit because it has to return the list 
+    // of every MIME type supported by QTKit.
+    types = mimeCommonTypesCache();
 } 
 
 MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
 {
-    // only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
-    //  extended MIME type yet
-    return mimeTypeCache().contains(type) ? (codecs && !codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported) : MediaPlayer::IsNotSupported;
+    // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
+    // extended MIME type yet.
+
+    // We check the "modern" type cache first, as it doesn't require QTKitServer to start.
+    if (mimeModernTypesCache().contains(type) || mimeCommonTypesCache().contains(type))
+        return (codecs && !codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported);
+
+    return MediaPlayer::IsNotSupported;
 }
 
 bool MediaPlayerPrivate::isAvailable()

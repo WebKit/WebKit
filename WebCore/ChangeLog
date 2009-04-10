@@ -1,3 +1,25 @@
+2009-04-10  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6646998> Avoid starting QTKitServer if possible
+        When possible avoid asking QTKit for the MIME types that require QTKitServer
+        when running 64-bit.
+
+        * WebCore.base.exp: Added new entry point.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::addFileTypesToCache): Add an NSArray of types to the cache.
+        (WebCore::mimeCommonTypesCache): Add all "common" QTKit types to the cache.
+        (WebCore::mimeModernTypesCache): Add only "modern" QTKit types to the cache (this list does 
+        not start QTKitServer if it is not already running).
+        (WebCore::MediaPlayerPrivate::getSupportedTypes): Refactored.
+        (WebCore::MediaPlayerPrivate::supportsType): Look in list of "modern" types first to avoid
+        starting QTKitServer if possible.
+
+        * platform/mac/WebCoreSystemInterface.h: Add wkQTIncludeOnlyModernMediaFileTypes.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2009-04-10  Adam Roben  <aroben@apple.com>
 
         Turn on window animations for <select> popup menus

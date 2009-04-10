@@ -71,6 +71,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamEnd);
     INIT(SignalCFReadStreamError);
     INIT(SignalCFReadStreamHasBytes);
+    INIT(QTIncludeOnlyModernMediaFileTypes);
     INIT(QTMovieDataRate);
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieViewSetDrawSynchronously);
