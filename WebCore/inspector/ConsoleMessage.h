@@ -35,7 +35,6 @@
 #include "ScriptObject.h"
 #include "ScriptState.h"
 
-#include <runtime/Protect.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

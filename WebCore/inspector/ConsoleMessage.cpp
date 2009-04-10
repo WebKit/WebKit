@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ConsoleMessage.h"
 
-#include "JSInspectedObjectWrapper.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallFrame.h"
 #include "ScriptFunctionCall.h"

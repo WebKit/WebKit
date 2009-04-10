@@ -106,7 +106,7 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
 
 static ScriptObject createHeadersObject(ScriptState* scriptState, const HTTPHeaderMap& headers, bool hadException)
 {
-    ScriptObject object(scriptState);
+    ScriptObject object = ScriptObject::createNew(scriptState);
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
         if (!object.set(scriptState, it->first.string(), it->second)) {

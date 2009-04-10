@@ -1,3 +1,22 @@
+2009-04-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25133
+        Fix an error in InspectorController's bindings, clean up a few header
+        includes, make empty object construction in ScriptObject less ambiguous.
+
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        (WebCore::JSInspectorController::setSetting): Send correct argument from
+            the bindings.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::createNew): Added.
+        * bindings/js/ScriptObject.h: Removed constructor, added decl for createNew.
+        * inspector/ConsoleMessage.cpp: Remove unused header.
+        * inspector/ConsoleMessage.h: Ditto.
+        * inspector/InspectorResource.cpp:
+        (WebCore::createHeadersObject): Changed to use ScriptObject::createNew.
+
 2009-04-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

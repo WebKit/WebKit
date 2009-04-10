@@ -45,17 +45,6 @@ ScriptObject::ScriptObject(JSObject* object)
 {
 }
 
-static JSValuePtr createEmptyObject(ScriptState* scriptState)
-{
-    JSLock lock(false);
-    return constructEmptyObject(scriptState);
-}
-
-ScriptObject::ScriptObject(ScriptState* scriptState)
-    : ScriptValue(createEmptyObject(scriptState))
-{
-}
-
 static bool handleException(ScriptState* scriptState)
 {
     if (!scriptState->hadException())
@@ -119,6 +108,12 @@ bool ScriptObject::set(ScriptState* scriptState, const char* name, bool value)
     PutPropertySlot slot;
     jsObject()->put(scriptState, Identifier(scriptState, name), jsBoolean(value), slot);
     return handleException(scriptState);
+}
+
+ScriptObject ScriptObject::createNew(ScriptState* scriptState)
+{
+    JSLock lock(false);
+    return ScriptObject(constructEmptyObject(scriptState));
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
