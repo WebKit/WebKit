@@ -204,6 +204,8 @@ bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* ren
 
 void AnimationControllerPrivate::suspendAnimations(Document* document)
 {
+    setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
+    
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RenderObject* renderer = it->first;
@@ -217,6 +219,8 @@ void AnimationControllerPrivate::suspendAnimations(Document* document)
 
 void AnimationControllerPrivate::resumeAnimations(Document* document)
 {
+    setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
+    
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RenderObject* renderer = it->first;
