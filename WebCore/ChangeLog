@@ -1,3 +1,13 @@
+2009-04-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6586787> JS debugger does not work in 64-bit
+
+        Don't truncate the source id in JSCallFrame
+
+        * inspector/JavaScriptCallFrame.h:
+
 2009-04-09  Adam Roben  <aroben@apple.com>
 
         Start compiling HistoryPropertyList on Windows
