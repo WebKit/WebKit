@@ -1,3 +1,10 @@
+2009-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the leopard build by updating WebKitSystemInterface.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+
 2009-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Bump version to 530.
