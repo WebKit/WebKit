@@ -96,7 +96,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
         return true;
     }
         
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 
     return result.toBoolean(exec);
 }

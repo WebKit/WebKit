@@ -53,7 +53,7 @@ void WMLNoopElement::insertedIntoDocument()
     if (parent->hasTagName(doTag)) {
         WMLDoElement* doElement = static_cast<WMLDoElement*>(parent);
         doElement->setNoop(true);
-        doElement->setChanged();
+        doElement->setNeedsStyleRecalc();
     } else if (parent->hasTagName(anchorTag))
         reportWMLError(document(), WMLErrorForbiddenTaskInAnchorElement);
 }

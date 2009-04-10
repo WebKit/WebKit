@@ -68,7 +68,7 @@ void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled) {
-            setChanged();
+            setNeedsStyleRecalc();
             if (renderer() && renderer()->style()->hasAppearance())
                 theme()->stateChanged(renderer(), EnabledState);
         }
@@ -76,7 +76,7 @@ void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)
         bool oldReadOnly = m_readOnly;
         m_readOnly = !attr->isNull();
         if (oldReadOnly != m_readOnly) {
-            setChanged();
+            setNeedsStyleRecalc();
             if (renderer() && renderer()->style()->hasAppearance())
                 theme()->stateChanged(renderer(), ReadOnlyState);
         }

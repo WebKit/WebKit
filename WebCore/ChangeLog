@@ -1,3 +1,217 @@
+2009-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben
+
+        Rename all of the changed()/setChanged()/setDocumentChanged() methods to mention style recalc
+        explicitly instead.
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::updateStyleIfNeededForBindings):
+        (WebCore::ScriptController::initJavaJSBindings):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setStringProperty):
+        (WebCore::CSSMutableStyleDeclaration::setImageProperty):
+        (WebCore::CSSMutableStyleDeclaration::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+        (WebCore::CSSMutableStyleDeclaration::setCssText):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::allVisitedStateChanged):
+        (WebCore::CSSStyleSelector::SelectorChecker::visitedStateChanged):
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::removeVariable):
+        (WebCore::CSSVariablesDeclaration::setVariable):
+        (WebCore::CSSVariablesDeclaration::setNeedsStyleRecalc):
+        * css/CSSVariablesDeclaration.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::detach):
+        (WebCore::ContainerNode::setFocus):
+        (WebCore::ContainerNode::setActive):
+        (WebCore::ContainerNode::setHovered):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::unscheduleStyleRecalc):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateStyleForAllDocuments):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::setFocusedNode):
+        (WebCore::Document::setCSSTarget):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::checkForSiblingStyleChanges):
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::parseMaxLengthAttribute):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::setNeedsStyleRecalc):
+        (WebCore::Node::lazyAttach):
+        (WebCore::Node::dispatchGenericEvent):
+        * dom/Node.h:
+        (WebCore::Node::needsStyleRecalc):
+        (WebCore::Node::childNeedsStyleRecalc):
+        (WebCore::Node::setChildNeedsStyleRecalc):
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::setSelectedState):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::evaluateScript):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::classAttributeChanged):
+        (WebCore::StyledElement::parseMappedAttribute):
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::enable):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        (WebCore::HTMLElement::isContentEditable):
+        (WebCore::HTMLElement::isContentRichlyEditable):
+        (WebCore::HTMLElement::contentEditable):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::recalcStyle):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setAutofilled):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        (WebCore::HTMLObjectElement::finishParsingChildren):
+        (WebCore::HTMLObjectElement::childrenChanged):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::restoreState):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        * html/HTMLTableElement.cpp:
+        (WebCore::setTableCellsChanged):
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::executeScript):
+        (WebCore::FrameLoader::gotoAnchor):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::alert):
+        (WebCore::DOMWindow::confirm):
+        (WebCore::DOMWindow::prompt):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hoverTimerFired):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::needsLayout):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        (WebCore::AnimationControllerPrivate::startupdateStyleIfNeededDispatcher):
+        (WebCore::AnimationControllerPrivate::addEventToDispatch):
+        (WebCore::AnimationControllerPrivate::addNodeChangeToDispatch):
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationControllerPrivate::addToStartTimeResponseWaitList):
+        (WebCore::AnimationController::cancelAnimations):
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateDragState):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::svgAttributeChanged):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::setNeedsUpdate):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::addCSSPropertyAndNotifyAttributeMap):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::parseMappedAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::childrenChanged):
+        (WebCore::SVGUseElement::recalcStyle):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::parseMappedAttribute):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::parseMappedAttribute):
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::insertedIntoDocument):
+
 2009-04-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -144,7 +144,7 @@ private:
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 
-    void setChanged();
+    void setNeedsStyleRecalc();
 
     String getShorthandValue(const int* properties, int number) const;
     String getCommonValue(const int* properties, int number) const;

@@ -329,7 +329,7 @@ Node::Node(Document* doc, bool isElement, bool isContainer, bool isText)
     , m_hasId(false)
     , m_hasClass(false)
     , m_attached(false)
-    , m_hasChangedChild(false)
+    , m_childNeedsStyleRecalc(false)
     , m_inDocument(false)
     , m_isLink(false)
     , m_active(false)
@@ -630,7 +630,7 @@ IntRect Node::getRect() const
     return IntRect();
 }
 
-void Node::setChanged(StyleChangeType changeType)
+void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 {
     if ((changeType != NoStyleChange) && !attached()) // changed compared to what?
         return;
@@ -639,9 +639,9 @@ void Node::setChanged(StyleChangeType changeType)
         m_styleChange = changeType;
 
     if (m_styleChange != NoStyleChange) {
-        for (Node* p = parentNode(); p && !p->hasChangedChild(); p = p->parentNode())
-            p->setHasChangedChild(true);
-        document()->setDocumentChanged(true);
+        for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
+            p->setChildNeedsStyleRecalc(true);
+        document()->scheduleStyleRecalc();
     }
 }
 
@@ -663,7 +663,7 @@ void Node::lazyAttach()
         }
 
         if (n->firstChild())
-            n->setHasChangedChild(true);
+            n->setChildNeedsStyleRecalc(true);
         n->m_styleChange = FullStyleChange;
         n->m_attached = true;
     }
@@ -674,9 +674,9 @@ void Node::lazyAttach()
             lazyAttachedAncestor->detach();
         lazyAttachedAncestor->attach();
     } else {
-        for (Node* p = parentNode(); p && !p->hasChangedChild(); p = p->parentNode())
-            p->setHasChangedChild(true);
-        document()->setDocumentChanged(true);
+        for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
+            p->setChildNeedsStyleRecalc(true);
+        document()->scheduleStyleRecalc();
     }
 }
 
@@ -2487,7 +2487,7 @@ doneDispatching:
     }
 
 doneWithDefault:
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 
     return !event->defaultPrevented();
 }

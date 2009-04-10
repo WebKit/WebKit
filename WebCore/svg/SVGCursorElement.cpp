@@ -91,7 +91,7 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
         HashSet<SVGElement*>::const_iterator end = m_clients.end();
 
         for (; it != end; ++it)
-            (*it)->setChanged();
+            (*it)->setNeedsStyleRecalc();
     }
 }
 

@@ -299,7 +299,7 @@ static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset
 
 IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
 
     typedef HashMap<RenderObject*, RenderSelectionInfo*> SelectionMap;
     SelectionMap selectedObjects;

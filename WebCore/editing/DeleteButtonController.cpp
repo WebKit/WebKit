@@ -288,7 +288,7 @@ void DeleteButtonController::enable()
         // Determining if the element is deletable currently depends on style
         // because whether something is editable depends on style, so we need
         // to recalculate style before calling enclosingDeletableElement.
-        m_frame->document()->updateRendering();
+        m_frame->document()->updateStyleIfNeeded();
         show(enclosingDeletableElement(m_frame->selection()->selection()));
     }
 }

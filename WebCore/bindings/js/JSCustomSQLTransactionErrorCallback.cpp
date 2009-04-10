@@ -82,7 +82,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     if (exec->hadException())
         reportCurrentException(exec);
         
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
     
     return result.toBoolean(exec);
 }

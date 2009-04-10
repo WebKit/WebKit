@@ -56,7 +56,7 @@ void WMLAElement::parseMappedAttribute(MappedAttribute* attr)
         bool wasLink = isLink();
         setIsLink(!attr->isNull());
         if (wasLink != isLink())
-            setChanged();
+            setNeedsStyleRecalc();
         if (isLink() && document()->isDNSPrefetchEnabled()) {
             String value = attr->value();
             if (protocolIs(value, "http") || protocolIs(value, "https") || value.startsWith("//"))

@@ -1902,7 +1902,7 @@ void RenderObject::updateDragState(bool dragOn)
     bool valueChanged = (dragOn != m_isDragging);
     m_isDragging = dragOn;
     if (valueChanged && style()->affectedByDragRules())
-        node()->setChanged();
+        node()->setNeedsStyleRecalc();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->updateDragState(dragOn);
 }

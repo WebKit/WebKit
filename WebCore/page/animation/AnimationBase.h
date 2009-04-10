@@ -199,7 +199,7 @@ protected:
     // Return true if we need to start software animation timers
     static bool blendProperties(const AnimationBase* anim, int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
 
-    static void setChanged(Node*);
+    static void setNeedsStyleRecalc(Node*);
     
     void getTimeToNextEvent(double& time, bool& isLooping) const;
 

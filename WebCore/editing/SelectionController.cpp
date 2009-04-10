@@ -214,7 +214,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
 
     if (clearRenderTreeSelection) {
         RefPtr<Document> document = m_sel.start().node()->document();
-        document->updateRendering();
+        document->updateStyleIfNeeded();
         if (RenderView* view = toRenderView(document->renderer()))
             view->clearSelection();
     }
@@ -815,7 +815,7 @@ void SelectionController::layout()
         return;
     }
 
-    m_sel.start().node()->document()->updateRendering();
+    m_sel.start().node()->document()->updateStyleIfNeeded();
     
     m_caretRect = IntRect();
         
@@ -1259,7 +1259,7 @@ void SelectionController::focusedOrActiveStateChanged()
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.
     if (Node* node = m_frame->document()->focusedNode()) {
-        node->setChanged();
+        node->setNeedsStyleRecalc();
         if (RenderObject* renderer = node->renderer())
             if (renderer && renderer->style()->hasAppearance())
                 theme()->stateChanged(renderer, FocusState);

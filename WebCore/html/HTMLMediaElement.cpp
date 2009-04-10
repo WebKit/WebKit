@@ -1475,7 +1475,7 @@ void HTMLMediaElement::finishParsingChildren()
     if (!m_player)
         m_player.set(new MediaPlayer(this));
     
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
     if (m_needWidgetUpdate && renderer())
         static_cast<RenderPartObject*>(renderer())->updateWidget(true);
 }

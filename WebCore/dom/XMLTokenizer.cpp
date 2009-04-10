@@ -273,7 +273,7 @@ void XMLTokenizer::insertErrorMessageBlock()
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
     }
 #endif
-    doc->updateRendering();
+    doc->updateStyleIfNeeded();
 }
 
 void XMLTokenizer::notifyFinished(CachedResource* unusedResource)

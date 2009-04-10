@@ -130,7 +130,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         raisedException = true;
     }
         
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 }
     
 }

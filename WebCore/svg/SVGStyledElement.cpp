@@ -165,7 +165,7 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
     int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
     if (propId > 0) {
         addCSSProperty(attr, propId, attr->value());
-        setChanged();
+        setNeedsStyleRecalc();
         return;
     }
     

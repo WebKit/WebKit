@@ -157,7 +157,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     MappedAttribute* mappedAttr = static_cast<MappedAttribute*>(attr);
     if (mappedAttr->decl() && !preserveDecls) {
         mappedAttr->setDecl(0);
-        setChanged();
+        setNeedsStyleRecalc();
         if (namedAttrMap)
             mappedAttributes()->declRemoved();
     }
@@ -167,7 +167,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     bool needToParse = mapToEntry(attr->name(), entry);
     if (preserveDecls) {
         if (mappedAttr->decl()) {
-            setChanged();
+            setNeedsStyleRecalc();
             if (namedAttrMap)
                 mappedAttributes()->declAdded();
             checkDecl = false;
@@ -177,7 +177,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(entry, attr);
         if (decl) {
             mappedAttr->setDecl(decl);
-            setChanged();
+            setNeedsStyleRecalc();
             if (namedAttrMap)
                 mappedAttributes()->declAdded();
             checkDecl = false;
@@ -189,7 +189,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         parseMappedAttribute(mappedAttr);
 
     if (entry == eNone && ownerDocument()->attached() && ownerDocument()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
-        setChanged();
+        setNeedsStyleRecalc();
 
     if (checkDecl && mappedAttr->decl()) {
         // Add the decl to the table in the appropriate spot.
@@ -227,7 +227,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
         else
             mappedAttributes()->clearClass();
     }
-    setChanged();
+    setNeedsStyleRecalc();
     dispatchSubtreeModifiedEvent();
 }
 
@@ -244,7 +244,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
             else
                 namedAttrMap->setID(attr->value());
         }
-        setChanged();
+        setNeedsStyleRecalc();
     } else if (attr->name() == classAttr)
         classAttributeChanged(attr->value());
     else if (attr->name() == styleAttr) {
@@ -253,7 +253,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
         else
             getInlineStyleDecl()->parseDeclaration(attr->value());
         m_isStyleAttributeValid = true;
-        setChanged();
+        setNeedsStyleRecalc();
     }
 }
 

@@ -80,7 +80,7 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
         raisedException = true;
     }
     
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 }
 
 } // namespace WebCore

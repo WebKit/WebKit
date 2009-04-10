@@ -276,7 +276,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
 
     startTimer(earliersFireTime, animationFrameDelay);
     
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 }
 
 #endif

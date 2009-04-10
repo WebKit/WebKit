@@ -321,7 +321,7 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
             shadowTreeElement->style()->setProperty(attributeName, value, "", ec);
         else
             shadowTreeElement->setAttribute(attributeName, value, ec);
-        (*it)->correspondingUseElement()->setChanged();
+        (*it)->correspondingUseElement()->setNeedsStyleRecalc();
     }
 }
     

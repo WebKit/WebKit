@@ -649,11 +649,11 @@ bool AnimationBase::animationOfPropertyIsAccelerated(int prop)
 }
 #endif
 
-void AnimationBase::setChanged(Node* node)
+void AnimationBase::setNeedsStyleRecalc(Node* node)
 {
     ASSERT(!node || (node->document() && !node->document()->inPageCache()));
     if (node)
-        node->setChanged(AnimationStyleChange);
+        node->setNeedsStyleRecalc(AnimationStyleChange);
 }
 
 double AnimationBase::duration() const
@@ -792,7 +792,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // Decide whether to go into looping or ending state
                 goIntoEndingOrLoopingState();
 
-                // Dispatch updateRendering so we can start the animation
+                // Dispatch updateStyleIfNeeded so we can start the animation
                 if (m_object)
                     m_compAnim->animationController()->addNodeChangeToDispatch(m_object->node());
             } else {

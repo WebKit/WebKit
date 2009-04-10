@@ -141,7 +141,7 @@ void ScriptController::disconnectPlatformScriptObjects()
 
 static pthread_t mainThread;
 
-static void updateRenderingForBindings(JSC::ExecState*, JSC::JSObject* rootObject)
+static void updateStyleIfNeededForBindings(JSC::ExecState*, JSC::JSObject* rootObject)
 {
     if (pthread_self() != mainThread)
         return;
@@ -157,14 +157,14 @@ static void updateRenderingForBindings(JSC::ExecState*, JSC::JSObject* rootObjec
     if (!frame)
         return;
 
-    frame->document()->updateRendering();
+    frame->document()->updateStyleIfNeeded();
 }
 
 void ScriptController::initJavaJSBindings()
 {
     mainThread = pthread_self();
     JSC::Bindings::JavaJSObject::initializeJNIThreading();
-    JSC::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
+    JSC::Bindings::Instance::setDidExecuteFunction(updateStyleIfNeededForBindings);
 }
 
 #endif

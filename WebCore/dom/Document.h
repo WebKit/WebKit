@@ -392,10 +392,10 @@ public:
     PassRefPtr<EditingText> createEditingTextNode(const String&);
 
     virtual void recalcStyle( StyleChange = NoChange );
-    virtual void updateRendering();
+    virtual void updateStyleIfNeeded();
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
-    static void updateDocumentsRendering();
+    static void updateStyleForAllDocuments(); // FIXME: Try to reduce the # of calls to this function.
     DocLoader* docLoader() { return m_docLoader; }
 
     virtual void attach();
@@ -531,7 +531,8 @@ public:
     void setCSSTarget(Element*);
     Element* cssTarget() const { return m_cssTarget; }
     
-    void setDocumentChanged(bool);
+    void scheduleStyleRecalc();
+    void unscheduleStyleRecalc();
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
@@ -888,7 +889,7 @@ private:
     bool m_loadingSheet;
     bool visuallyOrdered;
     bool m_bParsing;
-    bool m_docChanged;
+    bool m_docNeedsStyleRecalc;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
     bool m_usesDescendantRules;

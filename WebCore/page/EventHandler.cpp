@@ -1811,7 +1811,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
             HitTestRequest request(HitTestRequest::MouseMove);
             HitTestResult result(view->windowToContents(m_currentMousePosition));
             renderer->layer()->hitTest(request, result);
-            m_frame->document()->updateRendering();
+            m_frame->document()->updateStyleIfNeeded();
         }
     }
 }

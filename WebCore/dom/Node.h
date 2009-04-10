@@ -265,16 +265,16 @@ public:
     bool focused() const { return hasRareData() ? rareDataFocused() : false; }
     bool attached() const { return m_attached; }
     void setAttached(bool b = true) { m_attached = b; }
-    bool changed() const { return m_styleChange != NoStyleChange; }
+    bool needsStyleRecalc() const { return m_styleChange != NoStyleChange; }
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_styleChange); }
-    bool hasChangedChild() const { return m_hasChangedChild; }
+    bool childNeedsStyleRecalc() const { return m_childNeedsStyleRecalc; }
     bool isLink() const { return m_isLink; }
     void setHasID(bool b = true) { m_hasId = b; }
     void setHasClass(bool b = true) { m_hasClass = b; }
-    void setHasChangedChild( bool b = true ) { m_hasChangedChild = b; }
+    void setChildNeedsStyleRecalc(bool b = true) { m_childNeedsStyleRecalc = b; }
     void setInDocument(bool b = true) { m_inDocument = b; }
     void setInActiveChain(bool b = true) { m_inActiveChain = b; }
-    void setChanged(StyleChangeType changeType = FullStyleChange);
+    void setNeedsStyleRecalc(StyleChangeType changeType = FullStyleChange);
     void setIsLink(bool b = true) { m_isLink = b; }
 
     bool inSubtreeMark() const { return m_inSubtreeMark; }
@@ -684,7 +684,7 @@ private:
     bool m_hasId : 1;
     bool m_hasClass : 1;
     bool m_attached : 1;
-    bool m_hasChangedChild : 1;
+    bool m_childNeedsStyleRecalc : 1;
     bool m_inDocument : 1;
     bool m_isLink : 1;
     bool m_active : 1;

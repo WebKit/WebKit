@@ -612,7 +612,7 @@ void FrameLoader::stopLoading(bool sendUnload)
                 m_frame->document()->dispatchWindowEvent(eventNames().unloadEvent, false, false);
                 m_unloadEventBeingDispatched = false;
                 if (m_frame->document())
-                    m_frame->document()->updateRendering();
+                    m_frame->document()->updateStyleIfNeeded();
                 m_wasUnloadEventEmitted = true;
                 if (m_frame->eventHandler()->pendingFrameUnloadEventCount())
                     m_frame->eventHandler()->clearPendingFrameUnloadEventCount();
@@ -799,7 +799,7 @@ ScriptValue FrameLoader::executeScript(const ScriptSourceCode& sourceCode)
 
     if (!wasRunningScript) {
         m_isRunningScript = false;
-        Document::updateDocumentsRendering();
+        Document::updateStyleForAllDocuments();
     }
 
     return result;
@@ -1616,7 +1616,7 @@ bool FrameLoader::gotoAnchor(const String& name)
 
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.
-    m_frame->document()->updateRendering();
+    m_frame->document()->updateStyleIfNeeded();
     // Only do a layout if changes have occurred that make it necessary.
     if (m_frame->view() && m_frame->contentRenderer() && m_frame->contentRenderer()->needsLayout())
         m_frame->view()->layout();

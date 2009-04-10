@@ -130,7 +130,7 @@ void SVGElementInstance::setNeedsUpdate(bool value)
     m_needsUpdate = value;
 
     if (m_needsUpdate)
-        correspondingUseElement()->setChanged();
+        correspondingUseElement()->setNeedsStyleRecalc();
 }
 
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const

@@ -80,7 +80,7 @@ void JSCustomVoidCallback::handleEvent()
     if (exec->hadException())
         reportCurrentException(exec);
         
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 }
  
 PassRefPtr<VoidCallback> toVoidCallback(ExecState* exec, JSValuePtr value)

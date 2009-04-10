@@ -138,7 +138,7 @@ void MouseRelatedEvent::receivedTarget()
     m_offsetY = m_pageY;
 
     // Must have an updated render tree for this math to work correctly.
-    targ->document()->updateRendering();
+    targ->document()->updateStyleIfNeeded();
 
     // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {

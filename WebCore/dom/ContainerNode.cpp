@@ -155,7 +155,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         child = nextChild.release();
     }
 
-    document()->setDocumentChanged(true);
+    document()->scheduleStyleRecalc();
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -268,7 +268,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         child = nextChild.release();
     }
 
-    document()->setDocumentChanged(true);
+    document()->scheduleStyleRecalc();
     if (childCountDelta)
         childrenChanged(false, prev.get(), next.get(), childCountDelta);
     dispatchSubtreeModifiedEvent();
@@ -362,7 +362,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     allowEventDispatch();
 
-    document()->setDocumentChanged(true);
+    document()->scheduleStyleRecalc();
 
     // Dispatch post-removal mutation events
     childrenChanged(false, prev, next, -1);
@@ -495,7 +495,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         child = nextChild.release();
     }
 
-    document()->setDocumentChanged(true);
+    document()->scheduleStyleRecalc();
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -590,7 +590,7 @@ void ContainerNode::detach()
 {
     for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->detach();
-    setHasChangedChild(false);
+    setChildNeedsStyleRecalc(false);
     Node::detach();
 }
 
@@ -787,7 +787,7 @@ void ContainerNode::setFocus(bool received)
     Node::setFocus(received);
 
     // note that we need to recalc the style
-    setChanged();
+    setNeedsStyleRecalc();
 }
 
 void ContainerNode::setActive(bool down, bool pause)
@@ -801,7 +801,7 @@ void ContainerNode::setActive(bool down, bool pause)
     if (renderer()) {
         bool reactsToPress = renderer()->style()->affectedByActiveRules();
         if (reactsToPress)
-            setChanged();
+            setNeedsStyleRecalc();
         if (renderer() && renderer()->style()->hasAppearance()) {
             if (theme()->stateChanged(renderer(), PressedState))
                 reactsToPress = true;
@@ -816,7 +816,7 @@ void ContainerNode::setActive(bool down, bool pause)
 #endif
 
             // Ensure there are no pending changes
-            Document::updateDocumentsRendering();
+            Document::updateStyleForAllDocuments();
             // Do an immediate repaint.
             if (renderer())
                 renderer()->repaint(true);
@@ -843,7 +843,7 @@ void ContainerNode::setHovered(bool over)
     // FIXME: Move to Element
     if (renderer()) {
         if (renderer()->style()->affectedByHoverRules())
-            setChanged();
+            setNeedsStyleRecalc();
         if (renderer() && renderer()->style()->hasAppearance())
             theme()->stateChanged(renderer(), HoverState);
     }

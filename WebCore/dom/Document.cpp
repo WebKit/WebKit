@@ -285,7 +285,7 @@ static bool disableRangeMutation(Page* page)
 #endif
 }
 
-static HashSet<Document*>* changedDocuments = 0;
+static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
 Document::Document(Frame* frame, bool isXHTML)
     : ContainerNode(0)
@@ -340,7 +340,7 @@ Document::Document(Frame* frame, bool isXHTML)
 
     visuallyOrdered = false;
     m_bParsing = false;
-    m_docChanged = false;
+    m_docNeedsStyleRecalc = false;
     m_tokenizer = 0;
     m_wellFormed = false;
 
@@ -434,8 +434,8 @@ Document::~Document()
 
     forgetAllDOMNodesForDocument(this);
 
-    if (m_docChanged && changedDocuments)
-        changedDocuments->remove(this);
+    unscheduleStyleRecalc();
+
     delete m_tokenizer;
     m_document.resetSkippingRef(0);
     delete m_styleSelector;
@@ -1075,24 +1075,35 @@ PassRefPtr<TreeWalker> Document::createTreeWalker(Node *root, unsigned whatToSho
     return TreeWalker::create(root, whatToShow, filter, expandEntityReferences);
 }
 
-void Document::setDocumentChanged(bool b)
+void Document::scheduleStyleRecalc()
 {
-    if (b) {
-        if (!m_docChanged) {
-            if (!changedDocuments)
-                changedDocuments = new HashSet<Document*>;
-            changedDocuments->add(this);
-        }
-        if (m_accessKeyMapValid) {
-            m_accessKeyMapValid = false;
-            m_elementsByAccessKey.clear();
-        }
-    } else {
-        if (m_docChanged && changedDocuments)
-            changedDocuments->remove(this);
-    }
+    if (m_docNeedsStyleRecalc)
+        return;
 
-    m_docChanged = b;
+    if (!m_docNeedsStyleRecalc) {
+        if (!documentsThatNeedStyleRecalc)
+            documentsThatNeedStyleRecalc = new HashSet<Document*>;
+        documentsThatNeedStyleRecalc->add(this);
+    }
+    
+    // FIXME: Why on earth is this here? This is clearly misplaced.
+    if (m_accessKeyMapValid) {
+        m_accessKeyMapValid = false;
+        m_elementsByAccessKey.clear();
+    }
+    
+    m_docNeedsStyleRecalc = true;
+}
+
+void Document::unscheduleStyleRecalc()
+{
+    if (!m_docNeedsStyleRecalc)
+        return;
+
+    if (documentsThatNeedStyleRecalc)
+        documentsThatNeedStyleRecalc->remove(this);
+
+    m_docNeedsStyleRecalc = false;
 }
 
 void Document::recalcStyle(StyleChange change)
@@ -1151,7 +1162,7 @@ void Document::recalcStyle(StyleChange change)
     }
 
     for (Node* n = firstChild(); n; n = n->nextSibling())
-        if (change >= Inherit || n->hasChangedChild() || n->changed())
+        if (change >= Inherit || n->childNeedsStyleRecalc() || n->needsStyleRecalc())
             n->recalcStyle(change);
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1164,9 +1175,9 @@ void Document::recalcStyle(StyleChange change)
 #endif
 
 bail_out:
-    setChanged(NoStyleChange);
-    setHasChangedChild(false);
-    setDocumentChanged(false);
+    setNeedsStyleRecalc(NoStyleChange);
+    setChildNeedsStyleRecalc(false);
+    unscheduleStyleRecalc();
 
     if (view())
         view()->resumeScheduledEvents();
@@ -1180,9 +1191,9 @@ bail_out:
     }
 }
 
-void Document::updateRendering()
+void Document::updateStyleIfNeeded()
 {
-    if (!hasChangedChild() || inPageCache())
+    if (!childNeedsStyleRecalc() || inPageCache())
         return;
         
     if (m_frame)
@@ -1190,23 +1201,23 @@ void Document::updateRendering()
         
     recalcStyle(NoChange);
     
-    // Tell the animation controller that updateRendering is finished and it can do any post-processing
+    // Tell the animation controller that updateStyleIfNeeded is finished and it can do any post-processing
     if (m_frame)
         m_frame->animation()->endAnimationUpdate();
 }
 
-void Document::updateDocumentsRendering()
+void Document::updateStyleForAllDocuments()
 {
-    if (!changedDocuments)
+    if (!documentsThatNeedStyleRecalc)
         return;
 
-    while (changedDocuments->size()) {
-        HashSet<Document*>::iterator it = changedDocuments->begin();
+    while (documentsThatNeedStyleRecalc->size()) {
+        HashSet<Document*>::iterator it = documentsThatNeedStyleRecalc->begin();
         Document* doc = *it;
-        changedDocuments->remove(it);
+        documentsThatNeedStyleRecalc->remove(it);
         
-        doc->m_docChanged = false;
-        doc->updateRendering();
+        doc->m_docNeedsStyleRecalc = false;
+        doc->updateStyleIfNeeded();
     }
 }
 
@@ -1215,7 +1226,7 @@ void Document::updateLayout()
     if (Element* oe = ownerElement())
         oe->document()->updateLayout();
 
-    updateRendering();
+    updateStyleIfNeeded();
 
     // Only do a layout if changes have occurred that make it necessary.      
     FrameView* v = view();
@@ -1613,7 +1624,7 @@ void Document::implicitClose()
     // (if your platform is syncing flushes and limiting them to 60fps).
     m_overMinimumLayoutThreshold = true;
     if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
-        updateRendering();
+        updateStyleIfNeeded();
         
         // Always do a layout after loading if needed.
         if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
@@ -2016,7 +2027,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     renderView()->layer()->hitTest(request, result);
 
     if (!request.readOnly())
-        updateRendering();
+        updateStyleIfNeeded();
 
     return MouseEventWithHitTestResults(event, result);
 }
@@ -2553,7 +2564,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 #endif
 
 SetFocusedNodeDone:
-    updateRendering();
+    updateStyleIfNeeded();
     return !focusChangeBlocked;
 }
     
@@ -2570,10 +2581,10 @@ void Document::getFocusableNodes(Vector<RefPtr<Node> >& nodes)
 void Document::setCSSTarget(Element* n)
 {
     if (m_cssTarget)
-        m_cssTarget->setChanged();
+        m_cssTarget->setNeedsStyleRecalc();
     m_cssTarget = n;
     if (n)
-        n->setChanged();
+        n->setNeedsStyleRecalc();
 }
 
 void Document::attachNodeIterator(NodeIterator *ni)

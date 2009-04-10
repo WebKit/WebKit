@@ -384,7 +384,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     }
 
     // FIXME: Do we need to be able to detect preserveNewline style even when there's no renderer?
-    // FIXME: Can the renderer be out of date here? Do we need to call updateRendering?
+    // FIXME: Can the renderer be out of date here? Do we need to call updateStyleIfNeeded?
     // For example, for the contents of textarea elements that are display:none?
     RenderObject* r = renderer();
     if (r && r->style()->preserveNewline()) {
@@ -601,7 +601,7 @@ bool HTMLElement::isContentEditable() const
 
     // FIXME: this is a terrible thing to do here:
     // https://bugs.webkit.org/show_bug.cgi?id=21834
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
 
     if (!renderer()) {
         if (parentNode())
@@ -618,7 +618,7 @@ bool HTMLElement::isContentRichlyEditable() const
     if (document()->frame() && document()->frame()->isContentEditable())
         return true;
 
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
 
     if (!renderer()) {
         if (parentNode())
@@ -632,7 +632,7 @@ bool HTMLElement::isContentRichlyEditable() const
 
 String HTMLElement::contentEditable() const 
 {
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
 
     if (!renderer())
         return "false";

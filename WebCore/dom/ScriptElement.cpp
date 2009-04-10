@@ -178,7 +178,7 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
         m_evaluated = true;
 
         frame->script()->evaluate(sourceCode);
-        Document::updateDocumentsRendering();
+        Document::updateStyleForAllDocuments();
     }
 }
 

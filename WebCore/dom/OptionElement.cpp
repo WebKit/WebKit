@@ -42,7 +42,7 @@ void OptionElement::setSelectedState(OptionElementData& data, bool selected)
         return;
 
     data.setSelected(selected);
-    data.element()->setChanged();
+    data.element()->setNeedsStyleRecalc();
 }
 
 String OptionElement::collectOptionText(const OptionElementData& data, Document* document)

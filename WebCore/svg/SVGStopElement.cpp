@@ -51,7 +51,7 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
         else
             setOffsetBaseValue(value.toFloat());
 
-        setChanged();
+        setNeedsStyleRecalc();
     } else
         SVGStyledElement::parseMappedAttribute(attr);
 }

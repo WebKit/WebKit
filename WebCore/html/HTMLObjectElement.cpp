@@ -172,7 +172,7 @@ void HTMLObjectElement::attach()
 
 void HTMLObjectElement::updateWidget()
 {
-    document()->updateRendering();
+    document()->updateStyleIfNeeded();
     if (m_needWidgetUpdate && renderer() && !m_useFallbackContent && !isImageType())
         static_cast<RenderPartObject*>(renderer())->updateWidget(true);
 }
@@ -183,7 +183,7 @@ void HTMLObjectElement::finishParsingChildren()
     if (!m_useFallbackContent) {
         m_needWidgetUpdate = true;
         if (inDocument())
-            setChanged();
+            setNeedsStyleRecalc();
     }
 }
 
@@ -231,7 +231,7 @@ void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange
     updateDocNamedItem();
     if (inDocument() && !m_useFallbackContent) {
         m_needWidgetUpdate = true;
-        setChanged();
+        setNeedsStyleRecalc();
     }
     HTMLPlugInElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }

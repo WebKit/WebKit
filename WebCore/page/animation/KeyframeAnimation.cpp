@@ -216,7 +216,7 @@ void KeyframeAnimation::endAnimation(bool reset)
         UNUSED_PARAM(reset);
 #endif
         // Restore the original (unanimated) style
-        setChanged(m_object->node());
+        setNeedsStyleRecalc(m_object->node());
     }
 }
 
@@ -270,7 +270,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
 
         // Restore the original (unanimated) style
         if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())
-            setChanged(element.get());
+            setNeedsStyleRecalc(element.get());
 
         return true; // Did dispatch an event
     }

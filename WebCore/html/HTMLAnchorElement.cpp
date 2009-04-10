@@ -280,7 +280,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
         bool wasLink = isLink();
         setIsLink(!attr->isNull());
         if (wasLink != isLink())
-            setChanged();
+            setNeedsStyleRecalc();
         if (isLink()) {
             String parsedURL = parseURL(attr->value());
             if (document()->isDNSPrefetchEnabled()) {

@@ -113,7 +113,7 @@ static inline void addCSSPropertyAndNotifyAttributeMap(StyledElement* element, c
         attrs->declRemoved();
     }
 
-    element->setChanged();
+    element->setNeedsStyleRecalc();
     element->addCSSProperty(mappedAttr, cssProperty, value);
 
     if (CSSMappedAttributeDeclaration* decl = mappedAttr->decl()) {
