@@ -12,6 +12,6 @@ layer at (0,0) size 800x600
           text run at (0,36) width 87: "support bold. "
           text run at (87,36) width 640: "This test is making sure we don't make incorrect assumptions based off the fact that we would have to"
           text run at (0,54) width 264: "synthesize bold for the first font in the list."
-      RenderBlock {P} at (0,200) size 784x127
-        RenderText {#text} at (0,0) size 84x127
-          text run at (0,0) width 84 RTL: "\x{5D0}"
+      RenderBlock {P} at (0,200) size 784x149
+        RenderText {#text} at (0,22) size 84x127
+          text run at (0,22) width 84 RTL: "\x{5D0}"
