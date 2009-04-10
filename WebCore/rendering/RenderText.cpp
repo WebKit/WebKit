@@ -65,6 +65,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_linesDirty(false)
      , m_containsReversedText(false)
      , m_isAllASCII(charactersAreAllASCII(m_text.get()))
+     , m_knownNotToUseFallbackFonts(false)
 {
     ASSERT(m_text);
     setIsText();
@@ -104,8 +105,10 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     // we already did this for the parent of the text run.
     // We do have to schedule layouts, though, since a style change can force us to
     // need to relayout.
-    if (diff == StyleDifferenceLayout)
+    if (diff == StyleDifferenceLayout) {
         setNeedsLayoutAndPrefWidthsRecalc();
+        m_knownNotToUseFallbackFonts = false;
+    }
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
@@ -404,7 +407,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     return IntRect(left, top, caretWidth, height);
 }
 
-ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos) const
+ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts) const
 {
     if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
         int monospaceCharacterWidth = f.spaceWidth();
@@ -434,7 +437,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
         return w;
     }
 
-    return f.width(TextRun(text()->characters() + start, len, allowTabs(), xPos));
+    return f.width(TextRun(text()->characters() + start, len, allowTabs(), xPos), fallbackFonts);
 }
 
 void RenderText::trimmedPrefWidths(int leadWidth,
@@ -503,7 +506,7 @@ void RenderText::trimmedPrefWidths(int leadWidth,
                 linelen++;
 
             if (linelen) {
-                endMaxW = widthFromCache(f, i, linelen, leadWidth + endMaxW);
+                endMaxW = widthFromCache(f, i, linelen, leadWidth + endMaxW, 0);
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
@@ -547,7 +550,15 @@ int RenderText::maxPrefWidth() const
 
 void RenderText::calcPrefWidths(int leadWidth)
 {
-    ASSERT(m_hasTab || prefWidthsDirty());
+    HashSet<const SimpleFontData*> fallbackFonts;
+    calcPrefWidths(leadWidth, fallbackFonts);
+    if (fallbackFonts.isEmpty())
+        m_knownNotToUseFallbackFonts = true;
+}
+
+void RenderText::calcPrefWidths(int leadWidth, HashSet<const SimpleFontData*>& fallbackFonts)
+{
+    ASSERT(m_hasTab || prefWidthsDirty() || !m_knownNotToUseFallbackFonts);
 
     m_minWidth = 0;
     m_beginMinWidth = 0;
@@ -619,7 +630,7 @@ void RenderText::calcPrefWidths(int leadWidth)
             lastWordBoundary++;
             continue;
         } else if (c == softHyphen) {
-            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth);
+            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts);
             lastWordBoundary = i + 1;
             continue;
         }
@@ -642,13 +653,13 @@ void RenderText::calcPrefWidths(int leadWidth)
 
         int wordLen = j - i;
         if (wordLen) {
-            int w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth);
+            int w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts);
             currMinWidth += w;
             if (betweenWords) {
                 if (lastWordBoundary == i)
                     currMaxWidth += w;
                 else
-                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth);
+                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts);
                 lastWordBoundary = j;
             }
 
@@ -964,6 +975,7 @@ void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
 
     setTextInternal(text);
     setNeedsLayoutAndPrefWidthsRecalc();
+    m_knownNotToUseFallbackFonts = false;
 }
 
 int RenderText::lineHeight(bool firstLine, bool) const
@@ -1017,7 +1029,7 @@ void RenderText::positionLineBox(InlineBox* box)
     m_containsReversedText |= s->direction() == RTL;
 }
 
-unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine) const
+unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts) const
 {
     if (from >= textLength())
         return 0;
@@ -1025,10 +1037,10 @@ unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine
     if (from + len > textLength())
         len = textLength() - from;
 
-    return width(from, len, style(firstLine)->font(), xPos);
+    return width(from, len, style(firstLine)->font(), xPos, fallbackFonts);
 }
 
-unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos) const
+unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos, HashSet<const SimpleFontData*>* fallbackFonts) const
 {
     ASSERT(from + len <= textLength());
     if (!characters())
@@ -1036,12 +1048,20 @@ unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos)
 
     int w;
     if (&f == &style()->font()) {
-        if (!style()->preserveNewline() && !from && len == textLength())
-            w = maxPrefWidth();
-        else
-            w = widthFromCache(f, from, len, xPos);
+        if (!style()->preserveNewline() && !from && len == textLength()) {
+            if (fallbackFonts) {
+                if (prefWidthsDirty() || !m_knownNotToUseFallbackFonts) {
+                    const_cast<RenderText*>(this)->calcPrefWidths(0, *fallbackFonts);
+                    if (fallbackFonts->isEmpty())
+                        m_knownNotToUseFallbackFonts = true;
+                }
+                w = m_maxWidth;
+            } else
+                w = maxPrefWidth();
+        } else
+            w = widthFromCache(f, from, len, xPos, fallbackFonts);
     } else
-        w = f.width(TextRun(text()->characters() + from, len, allowTabs(), xPos));
+        w = f.width(TextRun(text()->characters() + from, len, allowTabs(), xPos), fallbackFonts);
 
     return w;
 }

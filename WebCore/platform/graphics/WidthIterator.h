@@ -22,16 +22,18 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
+#include <wtf/HashSet.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 class Font;
 class GlyphBuffer;
+class SimpleFontData;
 class TextRun;
 
 struct WidthIterator {
-    WidthIterator(const Font*, const TextRun&);
+    WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0);
 
     void advance(int to, GlyphBuffer* = 0);
     bool advanceOneCharacter(float& width, GlyphBuffer* = 0);
@@ -49,6 +51,7 @@ struct WidthIterator {
 
 private:
     UChar32 normalizeVoicingMarks(int currentCharacter);
+    HashSet<const SimpleFontData*>* m_fallbackFonts;
 };
 
 }

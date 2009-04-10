@@ -339,6 +339,11 @@ IntRect TransparencyAwareUniscribePainter::estimateTextBounds()
 
 }  // namespace
 
+bool Font::canReturnFallbackFontsForComplexText()
+{
+    return false;
+}
+
 void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,
@@ -460,7 +465,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     context->canvas()->endPlatformPaint();
 }
 
-float Font::floatWidthForComplexText(const TextRun& run) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */) const
 {
     UniscribeHelperTextRun state(run, *this);
     return static_cast<float>(state.width());

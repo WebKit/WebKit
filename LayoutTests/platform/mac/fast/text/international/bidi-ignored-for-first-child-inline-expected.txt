@@ -82,31 +82,31 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,352) size 784x18
         RenderText {#text} at (0,0) size 249x18
           text run at (0,0) width 249: "The following lines should be identical:"
-      RenderBlock {P} at (0,386) size 784x18
-        RenderText {#text} at (0,0) size 62x18
-          text run at (0,0) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          text run at (25,0) width 10: "(["
-          text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,420) size 784x18
-        RenderText {#text} at (0,0) size 35x18
-          text run at (0,0) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          text run at (25,0) width 10: "(["
+      RenderBlock {P} at (0,386) size 784x19
+        RenderText {#text} at (0,1) size 62x18
+          text run at (0,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          text run at (25,1) width 10: "(["
+          text run at (35,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+      RenderBlock {P} at (0,421) size 784x19
+        RenderText {#text} at (0,1) size 35x18
+          text run at (0,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          text run at (25,1) width 10: "(["
         RenderInline {SPAN} at (0,0) size 0x18
-        RenderText {#text} at (35,0) size 27x18
-          text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,454) size 784x18
-        RenderText {#text} at (0,0) size 35x18
-          text run at (0,0) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          text run at (25,0) width 10: "(["
-        RenderInline {SPAN} at (0,0) size 0x18
-          RenderInline {SPAN} at (0,0) size 0x18
-        RenderText {#text} at (35,0) size 27x18
-          text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,488) size 784x18
-        RenderText {#text} at (0,0) size 35x18
-          text run at (0,0) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          text run at (25,0) width 10: "(["
+        RenderText {#text} at (35,1) size 27x18
+          text run at (35,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+      RenderBlock {P} at (0,456) size 784x19
+        RenderText {#text} at (0,1) size 35x18
+          text run at (0,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          text run at (25,1) width 10: "(["
         RenderInline {SPAN} at (0,0) size 0x18
           RenderInline {SPAN} at (0,0) size 0x18
-        RenderText {#text} at (35,0) size 27x18
-          text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+        RenderText {#text} at (35,1) size 27x18
+          text run at (35,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+      RenderBlock {P} at (0,491) size 784x19
+        RenderText {#text} at (0,1) size 35x18
+          text run at (0,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          text run at (25,1) width 10: "(["
+        RenderInline {SPAN} at (0,0) size 0x18
+          RenderInline {SPAN} at (0,0) size 0x18
+        RenderText {#text} at (35,1) size 27x18
+          text run at (35,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"

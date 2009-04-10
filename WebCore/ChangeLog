@@ -1,3 +1,143 @@
+2009-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6166612> Text boxes' metrics should be based on
+          the actual fonts used in them, not just the primary font
+
+        Covered by many existing layout tests
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth): Added a fallbackFonts parameter. If the
+        platform supports collecting fallback fonts in its complex font path
+        and fallbackFonts is not null, all fallback fonts used for the text run
+        will be added to it.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::width): Ditto.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Removed an unnecessary namespace
+        qualifier.
+        (WebCore::Font::floatWidthForSimpleText): Added a fallbackFonts
+        parameter, which is passed down to WidthIterator.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Added a fallbackFonts parameter
+        and used it to initialize the m_fallbackFonts member.
+        (WebCore::WidthIterator::advance): Track the fonts being used and add
+        any fallback fonts to the m_fallbackFonts set. Make sure to only add
+        non-small-caps fonts.
+
+        * platform/graphics/WidthIterator.h:
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::canReturnFallbackFontsForComplexText): Added an
+        implementation that returns false, meaning this platform's
+        implementation of floatWidthForComplexText() does not populate the
+        fallbackFonts set.
+        (WebCore::Font::floatWidthForComplexText): Updated for the new
+        prototype.
+
+        * platform/graphics/chromium/FontLinux.cpp: Ditto.
+
+        * platform/graphics/gtk/FontGtk.cpp: Ditto.
+
+        * platform/graphics/mac/CoreTextController.cpp:
+        (WebCore::CoreTextController::CoreTextController): Added a fallbackFonts
+        parameter and used it to initialize the m_fallbackFonts member.
+        (WebCore::CoreTextController::collectCoreTextRunsForCharacters): Add
+        fallback fonts to m_fallbackFonts.
+
+        * platform/graphics/mac/CoreTextController.h:
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::canReturnFallbackFontsForComplexText): Added an
+        implementation that returns true, indicating that the Mac
+        implementations of floatWidthForComplexText() populate the fallbackFonts
+        set.
+        * platform/graphics/mac/FontMacATSUI.mm:
+        (WebCore::ATSULayoutParameters::ATSULayoutParameters): Added a
+        fallbackFonts parameter and used it to initialize the m_fallbackFonts
+        member.
+        (WebCore::ATSULayoutParameters::initialize): Add fallback fonts to
+        m_fallbackFonts.
+        (WebCore::Font::floatWidthForComplexText): Added a fallbackFonts
+        parameter, which is passed down to ATSULayoutParameters.
+
+        * platform/graphics/mac/FontMacCoreText.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added a fallbackFonts
+        parameter, which is passed down to CoreTextController.
+
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::canReturnFallbackFontsForComplexText): Added an
+        implementation that returns true, indicating that the
+        UniscribeController-based implementations of floatWidthForComplexText()
+        populate the fallbackFonts set.
+        (WebCore::Font::floatWidthForComplexText): Added a fallbackFonts
+        parameter, which is passed down to UniscribeController.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController): Added a
+        fallbackfonts parameter and used it to initialize m_fallbackFonts.
+        (WebCore::UniscribeController::advance): Add fallback fonts to
+        m_fallbackFonts.
+
+        * platform/graphics/win/UniscribeController.h:
+        
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::canReturnFallbackFontsForComplexText): Added an
+        implementation that returns false, meaning this platform's
+        implementation of floatWidthForComplexText() does not populate the
+        fallbackFonts set.
+        (WebCore::Font::floatWidthForComplexText): Updated for the new
+        prototype.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights): For an InlineTextBox
+        with multiple fonts, compute a common baseline and line height by
+        considering all fonts' ascents and descents (and line spacing, if
+        applicable).
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::setFallbackFonts): Added. Temporarily stores
+        the set of fallback fonts in a vector.
+        (WebCore::InlineTextBox::takeFallbackFonts): Added. Returns the fallback
+        fonts previously stored and removes them from storage.
+
+        * rendering/InlineTextBox.h:
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText): Initialized the
+        m_knownNotToUseFallbackFonts to false.
+        (WebCore::RenderText::styleDidChange): Reset
+        m_knownNotToUseFallbackFonts to false if the style difference is such that
+        affects layout.
+        (WebCore::RenderText::widthFromCache): Added a fallbackFonts parameter,
+        which is passed down to Font::width().
+        (WebCore::RenderText::trimmedPrefWidths): Updated for the change to
+        widthFromCache().
+        (WebCore::RenderText::calcPrefWidths): Made this call a private version
+        of calcPrefWidths() that takes a fallbackFonts parameter and set the
+        m_knownNotToUseFallbackFonts to true if the set comes back empty.
+        The private version passes the fallbackFonts set to widthFromCache().
+        (WebCore::RenderText::setText): Reset m_knownNotToUseFallbackFonts to
+        false.
+        (WebCore::RenderText::createFallbackFontMetricsBox): Added.
+        (WebCore::RenderText::width): Added a fallbackFonts parameter, which is
+        passed down to calcPrefWidths(), widthFromCache() and Font::width().
+        Set m_knownNotToUseFallbackFonts to true when appropriate.
+
+        * rendering/RenderText.h:
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::constructLine): Added an assertion and a continue
+        statement to remove one level of indentation.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Temporarily
+        store the set of fallback fonts in the InlineTextBox.
+        (WebCore::RenderBlock::computeVerticalPositionsForLine): Added an
+        assertion.
+
 2009-04-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben

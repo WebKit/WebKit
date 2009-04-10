@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x94
-  RenderBlock {HTML} at (0,0) size 800x94
-    RenderBody {BODY} at (8,16) size 784x70
+layer at (0,0) size 800x96
+  RenderBlock {HTML} at (0,0) size 800x96
+    RenderBody {BODY} at (8,16) size 784x72
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 233x18
           text run at (0,0) width 233: "The following two lines should look "
@@ -11,89 +11,89 @@ layer at (0,0) size 800x94
             text run at (233,0) width 91: "approximately"
         RenderText {#text} at (324,0) size 63x18
           text run at (324,0) width 63: " the same:"
-      RenderBlock {DIV} at (0,34) size 784x18
+      RenderBlock {DIV} at (0,34) size 784x19
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (0,0) size 23x18
-              text run at (0,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (23,0) size 4x18
-          text run at (23,0) width 4: " "
+            RenderCounter at (0,1) size 23x18
+              text run at (0,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (23,1) size 4x18
+          text run at (23,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (27,0) size 23x18
-              text run at (27,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (50,0) size 4x18
-          text run at (50,0) width 4: " "
+            RenderCounter at (27,1) size 23x18
+              text run at (27,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (50,1) size 4x18
+          text run at (50,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (54,0) size 23x18
-              text run at (54,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (77,0) size 4x18
-          text run at (77,0) width 4: " "
+            RenderCounter at (54,1) size 23x18
+              text run at (54,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (77,1) size 4x18
+          text run at (77,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (81,0) size 23x18
-              text run at (81,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (104,0) size 4x18
-          text run at (104,0) width 4: " "
+            RenderCounter at (81,1) size 23x18
+              text run at (81,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (104,1) size 4x18
+          text run at (104,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (108,0) size 23x18
-              text run at (108,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (131,0) size 4x18
-          text run at (131,0) width 4: " "
+            RenderCounter at (108,1) size 23x18
+              text run at (108,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (131,1) size 4x18
+          text run at (131,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (135,0) size 23x18
-              text run at (135,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (158,0) size 4x18
-          text run at (158,0) width 4: " "
+            RenderCounter at (135,1) size 23x18
+              text run at (135,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (158,1) size 4x18
+          text run at (158,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (162,0) size 23x18
-              text run at (162,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (185,0) size 4x18
-          text run at (185,0) width 4: " "
+            RenderCounter at (162,1) size 23x18
+              text run at (162,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (185,1) size 4x18
+          text run at (185,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (189,0) size 23x18
-              text run at (189,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (212,0) size 4x18
-          text run at (212,0) width 4: " "
+            RenderCounter at (189,1) size 23x18
+              text run at (189,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (212,1) size 4x18
+          text run at (212,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (216,0) size 23x18
-              text run at (216,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (239,0) size 4x18
-          text run at (239,0) width 4: " "
+            RenderCounter at (216,1) size 23x18
+              text run at (216,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (239,1) size 4x18
+          text run at (239,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (243,0) size 23x18
-              text run at (243,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (266,0) size 4x18
-          text run at (266,0) width 4: " "
+            RenderCounter at (243,1) size 23x18
+              text run at (243,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (266,1) size 4x18
+          text run at (266,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (270,0) size 23x18
-              text run at (270,0) width 23: "\x{25E6}.\x{25E6}"
-        RenderText {#text} at (293,0) size 4x18
-          text run at (293,0) width 4: " "
+            RenderCounter at (270,1) size 23x18
+              text run at (270,1) width 23: "\x{25E6}.\x{25E6}"
+        RenderText {#text} at (293,1) size 4x18
+          text run at (293,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderInline (generated) at (0,0) size 23x18
-            RenderCounter at (297,0) size 23x18
-              text run at (297,0) width 23: "\x{25E6}.\x{25E6}"
+            RenderCounter at (297,1) size 23x18
+              text run at (297,1) width 23: "\x{25E6}.\x{25E6}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 320x18
-          text run at (0,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (27,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (54,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (81,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (108,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (135,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (162,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (189,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (216,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (243,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (270,0) width 27: "\x{25E6}.\x{25E6} "
-          text run at (297,0) width 23: "\x{25E6}.\x{25E6}"
+      RenderBlock {DIV} at (0,53) size 784x19
+        RenderText {#text} at (0,1) size 320x18
+          text run at (0,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (27,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (54,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (81,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (108,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (135,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (162,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (189,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (216,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (243,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (270,1) width 27: "\x{25E6}.\x{25E6} "
+          text run at (297,1) width 23: "\x{25E6}.\x{25E6}"

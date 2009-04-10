@@ -6,20 +6,20 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 774x18
           text run at (0,0) width 774: "These tests to see if bidi text with a base writing direction of right to left is put onto the paste board in logical (DOM) order."
-      RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (712,0) size 72x18
-          text run at (712,0) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
-          text run at (752,0) width 32: "1234"
-      RenderBlock {DIV} at (0,52) size 784x36
-        RenderBlock {DIV} at (0,0) size 784x36
-          RenderBlock {DIV} at (0,0) size 784x18
-            RenderText {#text} at (0,0) size 72x18
-              text run at (0,0) width 32: "1234"
-              text run at (32,0) width 36 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}"
-              text run at (68,0) width 4: ":"
-          RenderBlock {DIV} at (0,18) size 784x18
-            RenderText {#text} at (712,0) size 72x18
-              text run at (712,0) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
-              text run at (752,0) width 32: "1234"
-          RenderBlock (anonymous) at (0,36) size 784x0
+      RenderBlock {DIV} at (0,34) size 784x19
+        RenderText {#text} at (712,1) size 72x18
+          text run at (712,1) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
+          text run at (752,1) width 32: "1234"
+      RenderBlock {DIV} at (0,53) size 784x38
+        RenderBlock {DIV} at (0,0) size 784x38
+          RenderBlock {DIV} at (0,0) size 784x19
+            RenderText {#text} at (0,1) size 72x18
+              text run at (0,1) width 32: "1234"
+              text run at (32,1) width 36 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}"
+              text run at (68,1) width 4: ":"
+          RenderBlock {DIV} at (0,19) size 784x19
+            RenderText {#text} at (712,1) size 72x18
+              text run at (712,1) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
+              text run at (752,1) width 32: "1234"
+          RenderBlock (anonymous) at (0,38) size 784x0
 caret: position 9 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

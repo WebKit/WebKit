@@ -43,6 +43,11 @@ using namespace std;
 
 namespace WebCore {
 
+bool Font::canReturnFallbackFontsForComplexText()
+{
+    return true;
+}
+
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     CGContextRef cgContext = context->platformContext();

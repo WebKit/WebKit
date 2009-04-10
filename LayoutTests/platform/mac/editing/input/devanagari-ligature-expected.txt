@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 11x18
-          text run at (0,0) width 11: "\x{915}\x{94D}\x{937}"
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,1) size 11x18
+          text run at (0,1) width 11: "\x{915}\x{94D}\x{937}"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

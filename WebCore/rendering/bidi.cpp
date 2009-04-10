@@ -553,26 +553,28 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         InlineBox* box = createInlineBoxForRenderer(r->m_object, false, isOnlyRun);
         r->m_box = box;
 
-        if (box) {
-            // If we have no parent box yet, or if the run is not simply a sibling,
-            // then we need to construct inline boxes as necessary to properly enclose the
-            // run's inline box.
-            if (!parentBox || parentBox->renderer() != r->m_object->parent())
-                // Create new inline boxes all the way back to the appropriate insertion point.
-                parentBox = createLineBoxes(r->m_object->parent(), firstLine);
+        ASSERT(box);
+        if (!box)
+            continue;
 
-            // Append the inline box to this line.
-            parentBox->addToLine(box);
+        // If we have no parent box yet, or if the run is not simply a sibling,
+        // then we need to construct inline boxes as necessary to properly enclose the
+        // run's inline box.
+        if (!parentBox || parentBox->renderer() != r->m_object->parent())
+            // Create new inline boxes all the way back to the appropriate insertion point.
+            parentBox = createLineBoxes(r->m_object->parent(), firstLine);
 
-            bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
-            box->setBidiLevel(visuallyOrdered ? 0 : r->level());
+        // Append the inline box to this line.
+        parentBox->addToLine(box);
 
-            if (box->isInlineTextBox()) {
-                InlineTextBox* text = static_cast<InlineTextBox*>(box);
-                text->setStart(r->m_start);
-                text->setLen(r->m_stop - r->m_start);
-                text->m_dirOverride = r->dirOverride(visuallyOrdered);
-            }
+        bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
+        box->setBidiLevel(visuallyOrdered ? 0 : r->level());
+
+        if (box->isInlineTextBox()) {
+            InlineTextBox* text = static_cast<InlineTextBox*>(box);
+            text->setStart(r->m_start);
+            text->setLen(r->m_stop - r->m_start);
+            text->m_dirOverride = r->dirOverride(visuallyOrdered);
         }
     }
 
@@ -624,7 +626,16 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
                     totWidth += rt->style(firstLine)->font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;          
             }
-            r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine));
+            HashSet<const SimpleFontData*> fallbackFonts;
+            r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts));
+            if (!fallbackFonts.isEmpty()
+#if ENABLE(SVG)
+                    && !isSVGText()
+#endif
+            ) {
+                ASSERT(r->m_box->isText());
+                static_cast<InlineTextBox*>(r->m_box)->setFallbackFonts(fallbackFonts);
+            }
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->calcWidth();
@@ -758,6 +769,7 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
 
     // Now make sure we place replaced render objects correctly.
     for (BidiRun* r = firstRun; r; r = r->next()) {
+        ASSERT(r->m_box);
         if (!r->m_box)
             continue; // Skip runs with no line boxes.
 

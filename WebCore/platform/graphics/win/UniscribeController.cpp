@@ -38,9 +38,10 @@ namespace WebCore {
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()
 // take the GlyphBuffer as an arg so that we don't have to populate the glyph buffer when
 // measuring.
-UniscribeController::UniscribeController(const Font* font, const TextRun& run)
+UniscribeController::UniscribeController(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
 : m_font(*font)
 , m_run(run)
+, m_fallbackFonts(fallbackFonts)
 , m_end(run.length())
 , m_currentCharacter(0)
 , m_runWidthSoFar(0)
@@ -147,6 +148,9 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
                 smallCapsBuffer[index] = forceSmallCaps ? c : newC;
         }
 
+        if (m_fallbackFonts && nextFontData != fontData && fontData != m_font.primaryFont())
+            m_fallbackFonts->add(fontData);
+
         if (nextFontData != fontData || nextIsSmallCaps != isSmallCaps) {
             int itemStart = m_run.rtl() ? index + 1 : indexOfFontTransition;
             int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
@@ -158,6 +162,9 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     
     int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : length - indexOfFontTransition;
     if (itemLength) {
+        if (m_fallbackFonts && nextFontData != m_font.primaryFont())
+            m_fallbackFonts->add(nextFontData);
+
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
         m_currentCharacter = baseCharacter + itemStart;
         itemizeShapeAndPlace((nextIsSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, nextFontData, glyphBuffer);

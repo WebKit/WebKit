@@ -43,7 +43,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceS
 {
     bool useSmallCapsFont = forceSmallCaps;
     if (m_fontDescription.smallCaps()) {
-        UChar32 upperC = Unicode::toUpper(c);
+        UChar32 upperC = toUpper(c);
         if (upperC != c) {
             c = upperC;
             useSmallCapsFont = true;
@@ -296,9 +296,9 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
-float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer) const
+float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer, HashSet<const SimpleFontData*>* fallbackFonts) const
 {
-    WidthIterator it(this, run);
+    WidthIterator it(this, run, fallbackFonts);
     it.advance(run.length(), glyphBuffer);
     return it.m_runWidthSoFar;
 }

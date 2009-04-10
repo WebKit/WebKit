@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 648x18
           text run at (0,0) width 648: "The rightmost two words in the Hebrew text should be selectable by dragging or double-clicking them."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,96) size 784x18
+      RenderBlock (anonymous) at (0,96) size 784x19
         RenderInline {SPAN} at (0,0) size 146x18
-          RenderText {#text} at (0,0) size 146x18
-            text run at (0,0) width 62 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
-            text run at (62,0) width 84 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
+          RenderText {#text} at (0,1) size 146x18
+            text run at (0,1) width 62 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
+            text run at (62,1) width 84 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

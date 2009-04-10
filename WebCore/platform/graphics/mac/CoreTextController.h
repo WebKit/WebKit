@@ -37,7 +37,7 @@ namespace WebCore {
 
 class CoreTextController {
 public:
-    CoreTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false);
+    CoreTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0);
 
     // Advance and emit glyphs up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0);
@@ -105,6 +105,8 @@ private:
     float m_finalRoundingWidth;
     float m_padding;
     float m_padPerSpace;
+
+    HashSet<const SimpleFontData*>* m_fallbackFonts;
 
     unsigned m_lastRoundingGlyph;
 };

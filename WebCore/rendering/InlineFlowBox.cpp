@@ -430,25 +430,59 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 maxDescent = descent;
         }
     }
-    
+
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
         bool isInlineFlow = curr->isInlineFlowBox();
 
-        int lineHeight = curr->renderer()->lineHeight(m_firstLine);
-        int baseline = curr->renderer()->baselinePosition(m_firstLine);
+        int lineHeight;
+        int baseline;
+        Vector<const SimpleFontData*> usedFonts;
+        if (curr->isInlineTextBox())
+            static_cast<InlineTextBox*>(curr)->takeFallbackFonts(usedFonts);
+
+        if (!usedFonts.isEmpty()) {
+            usedFonts.append(curr->renderer()->style(m_firstLine)->font().primaryFont());
+            Length parentLineHeight = curr->renderer()->parent()->style()->lineHeight();
+            if (parentLineHeight.isNegative()) {
+                int baselineToBottom = 0;
+                baseline = 0;
+                for (size_t i = 0; i < usedFonts.size(); ++i) {
+                    int halfLeading = (usedFonts[i]->lineSpacing() - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
+                    baselineToBottom = max(baselineToBottom, usedFonts[i]->lineSpacing() - usedFonts[i]->ascent() - usedFonts[i]->descent() - halfLeading);
+                }
+                lineHeight = baseline + baselineToBottom;
+            } else if (parentLineHeight.isPercent()) {
+                lineHeight = parentLineHeight.calcMinValue(curr->renderer()->style()->fontSize());
+                baseline = 0;
+                for (size_t i = 0; i < usedFonts.size(); ++i) {
+                    int halfLeading = (lineHeight - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
+                }
+            } else {
+                lineHeight = parentLineHeight.value();
+                baseline = 0;
+                for (size_t i = 0; i < usedFonts.size(); ++i) {
+                    int halfLeading = (lineHeight - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
+                }
+            }
+        } else {
+            lineHeight = curr->renderer()->lineHeight(m_firstLine);
+            baseline = curr->renderer()->baselinePosition(m_firstLine);
+        }
+
         curr->setY(verticalPositionForBox(curr, m_firstLine));
         if (curr->y() == PositionTop) {
             if (maxPositionTop < lineHeight)
                 maxPositionTop = lineHeight;
-        }
-        else if (curr->y() == PositionBottom) {
+        } else if (curr->y() == PositionBottom) {
             if (maxPositionBottom < lineHeight)
                 maxPositionBottom = lineHeight;
-        }
-        else if ((!isInlineFlow || static_cast<InlineFlowBox*>(curr)->hasTextChildren()) || curr->boxModelObject()->hasHorizontalBordersOrPadding() || strictMode) {
+        } else if ((!isInlineFlow || static_cast<InlineFlowBox*>(curr)->hasTextChildren()) || curr->boxModelObject()->hasHorizontalBordersOrPadding() || strictMode) {
             int ascent = baseline - curr->y();
             int descent = lineHeight - ascent;
             if (maxAscent < ascent)

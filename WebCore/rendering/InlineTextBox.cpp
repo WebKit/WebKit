@@ -931,4 +931,30 @@ bool InlineTextBox::containsCaretOffset(int offset) const
     return true;
 }
 
+typedef HashMap<InlineTextBox*, Vector<const SimpleFontData*> > FallbackFontsMap;
+static FallbackFontsMap* gFallbackFontsMap;
+
+void InlineTextBox::setFallbackFonts(const HashSet<const SimpleFontData*>& fallbackFonts)
+{
+    if (!gFallbackFontsMap)
+        gFallbackFontsMap = new FallbackFontsMap;
+
+    FallbackFontsMap::iterator it = gFallbackFontsMap->set(this, Vector<const SimpleFontData*>()).first;
+    ASSERT(it->second.isEmpty());
+    copyToVector(fallbackFonts, it->second);
+}
+
+void InlineTextBox::takeFallbackFonts(Vector<const SimpleFontData*>& fallbackFonts)
+{
+    if (!gFallbackFontsMap)
+        return;
+
+    FallbackFontsMap::iterator it = gFallbackFontsMap->find(this);
+    if (it == gFallbackFontsMap->end())
+        return;
+
+    fallbackFonts.swap(it->second);
+    gFallbackFontsMap->remove(it);
+}
+
 } // namespace WebCore

@@ -39,13 +39,14 @@ namespace WebCore {
 // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
 static const uint8_t hiraganaKatakanaVoicingMarksCombiningClass = 8;
 
-WidthIterator::WidthIterator(const Font* font, const TextRun& run)
+WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
     : m_font(font)
     , m_run(run)
     , m_end(run.length())
     , m_currentCharacter(0)
     , m_runWidthSoFar(0)
     , m_finalRoundingWidth(0)
+    , m_fallbackFonts(fallbackFonts)
 {
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
@@ -78,7 +79,10 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
     float runWidthSoFar = m_runWidthSoFar;
     float lastRoundingWidth = m_finalRoundingWidth;
-    
+
+    const SimpleFontData* primaryFont = m_font->primaryFont();
+    const SimpleFontData* lastFontData = primaryFont;
+
     while (currentCharacter < offset) {
         UChar32 c = *cp;
         unsigned clusterLength = 1;
@@ -128,6 +132,21 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             // match the width of the space character have the same width as the space character.
             if (width == fontData->m_spaceWidth && (fontData->m_treatAsFixedPitch || glyph == fontData->m_spaceGlyph) && m_run.applyWordRounding())
                 width = fontData->m_adjustedSpaceWidth;
+        }
+
+        if (fontData != lastFontData && width) {
+            lastFontData = fontData;
+            if (m_fallbackFonts && fontData != primaryFont) {
+                // FIXME: This does a little extra work that could be avoided if
+                // glyphDataForCharacter() returned whether it chose to use a small caps font.
+                if (!m_font->isSmallCaps() || c == toUpper(c))
+                    m_fallbackFonts->add(fontData);
+                else {
+                    const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(toUpper(c), rtl);
+                    if (uppercaseGlyphData.fontData != primaryFont)
+                        m_fallbackFonts->add(uppercaseGlyphData.fontData);
+                }
+            }
         }
 
         if (hasExtraSpacing) {

@@ -46,6 +46,11 @@
 
 namespace WebCore {
 
+bool Font::canReturnFallbackFontsForComplexText()
+{
+    return false;
+}
+
 void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,  int from, int numGlyphs,
                       const FloatPoint& point) const {
@@ -111,7 +116,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run,
     notImplemented();
 }
 
-float Font::floatWidthForComplexText(const TextRun& run) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */) const
 {
     notImplemented();
     return 0;

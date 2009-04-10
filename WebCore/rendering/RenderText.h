@@ -67,8 +67,8 @@ public:
     unsigned textLength() const { return m_text->length(); } // non virtual implementation of length()
     void positionLineBox(InlineBox*);
 
-    virtual unsigned width(unsigned from, unsigned len, const Font&, int xPos) const;
-    virtual unsigned width(unsigned from, unsigned len, int xPos, bool firstLine = false) const;
+    virtual unsigned width(unsigned from, unsigned len, const Font&, int xPos, HashSet<const SimpleFontData*>* fallbackFonts = 0) const;
+    virtual unsigned width(unsigned from, unsigned len, int xPos, bool firstLine = false, HashSet<const SimpleFontData*>* fallbackFonts = 0) const;
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
@@ -131,6 +131,8 @@ protected:
     virtual InlineTextBox* createTextBox(); // Subclassed by SVG.
 
 private:
+    void calcPrefWidths(int leadWidth, HashSet<const SimpleFontData*>& fallbackFonts);
+
     // Make length() private so that callers that have a RenderText*
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
@@ -142,7 +144,7 @@ private:
 
     void deleteTextBoxes();
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
-    int widthFromCache(const Font&, int start, int len, int xPos) const;
+    int widthFromCache(const Font&, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts) const;
     bool isAllASCII() const { return m_isAllASCII; }
 
     RefPtr<StringImpl> m_text;
@@ -166,6 +168,7 @@ private:
                            // or removed).
     bool m_containsReversedText : 1;
     bool m_isAllASCII : 1;
+    mutable bool m_knownNotToUseFallbackFonts : 1;
 };
 
 inline RenderText* toRenderText(RenderObject* o)

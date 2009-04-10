@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 527x18
           text run at (0,0) width 527: "The output should be: \"\x{442}??\x{442} ???\" (with black diamonds in place of question marks)."
       RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,86) size 784x18
-        RenderText {#text} at (0,0) size 98x18
-          text run at (0,0) width 98: "\x{442}\x{FFFD}\x{FFFD}\x{442} \x{FFFD}\x{FFFD}\x{FFFD}"
+      RenderBlock {P} at (0,86) size 784x19
+        RenderText {#text} at (0,1) size 98x18
+          text run at (0,1) width 98: "\x{442}\x{FFFD}\x{FFFD}\x{442} \x{FFFD}\x{FFFD}\x{FFFD}"

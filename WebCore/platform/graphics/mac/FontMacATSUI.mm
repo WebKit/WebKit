@@ -47,13 +47,15 @@ namespace WebCore {
 
 struct ATSULayoutParameters : Noncopyable
 {
-    ATSULayoutParameters(const TextRun& run)
+    ATSULayoutParameters(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts = 0)
         : m_run(run)
         , m_font(0)
         , m_hasSyntheticBold(false)
         , m_syntheticBoldPass(false)
         , m_padPerSpace(0)
-    {}
+        , m_fallbackFonts(fallbackFonts)
+    {
+    }
 
     ~ATSULayoutParameters()
     {
@@ -73,6 +75,7 @@ struct ATSULayoutParameters : Noncopyable
     bool m_hasSyntheticBold;
     bool m_syntheticBoldPass;
     float m_padPerSpace;
+    HashSet<const SimpleFontData*>* m_fallbackFonts;
 };
 
 static TextRun copyRunForDirectionalOverrideIfNecessary(const TextRun& run, OwnArrayPtr<UChar>& charactersWithOverride)
@@ -391,8 +394,11 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             substituteFontData = fallbackFontData ? fallbackFontData->fontDataForCharacter(m_run[0]) : 0;
             if (substituteFontData) {
                 initializeATSUStyle(substituteFontData);
-                if (substituteFontData->m_ATSUStyle)
+                if (substituteFontData->m_ATSUStyle) {
                     ATSUSetRunStyle(layout, substituteFontData->m_ATSUStyle, substituteOffset, substituteLength);
+                    if (m_fallbackFonts && substituteFontData != fontData)
+                        (*m_fallbackFonts).add(substituteFontData);
+                }
             } else
                 substituteFontData = fontData;
         } else {
@@ -570,12 +576,12 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
 }
 
-float Font::floatWidthForComplexText(const TextRun& run) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts) const
 {
     if (run.length() == 0)
         return 0;
 
-    ATSULayoutParameters params(run);
+    ATSULayoutParameters params(run, fallbackFonts);
     params.initialize(this);
     
     OSStatus status;

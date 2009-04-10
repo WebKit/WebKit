@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x94
-  RenderBlock {HTML} at (0,0) size 800x94
-    RenderBody {BODY} at (8,16) size 784x70
+layer at (0,0) size 800x95
+  RenderBlock {HTML} at (0,0) size 800x95
+    RenderBody {BODY} at (8,16) size 784x71
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 233x18
           text run at (0,0) width 233: "The following two lines should look "
@@ -11,79 +11,79 @@ layer at (0,0) size 800x94
             text run at (233,0) width 91: "approximately"
         RenderText {#text} at (324,0) size 63x18
           text run at (324,0) width 63: " the same:"
-      RenderBlock {DIV} at (0,34) size 784x18
+      RenderBlock {DIV} at (0,34) size 784x19
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (0,0) size 9x18
-              text run at (0,0) width 9: "\x{25A0}"
-        RenderText {#text} at (9,0) size 4x18
-          text run at (9,0) width 4: " "
+            RenderCounter at (0,1) size 9x18
+              text run at (0,1) width 9: "\x{25A0}"
+        RenderText {#text} at (9,1) size 4x18
+          text run at (9,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (13,0) size 9x18
-              text run at (13,0) width 9: "\x{25A0}"
-        RenderText {#text} at (22,0) size 4x18
-          text run at (22,0) width 4: " "
+            RenderCounter at (13,1) size 9x18
+              text run at (13,1) width 9: "\x{25A0}"
+        RenderText {#text} at (22,1) size 4x18
+          text run at (22,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (26,0) size 9x18
-              text run at (26,0) width 9: "\x{25A0}"
-        RenderText {#text} at (35,0) size 4x18
-          text run at (35,0) width 4: " "
+            RenderCounter at (26,1) size 9x18
+              text run at (26,1) width 9: "\x{25A0}"
+        RenderText {#text} at (35,1) size 4x18
+          text run at (35,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (39,0) size 9x18
-              text run at (39,0) width 9: "\x{25A0}"
-        RenderText {#text} at (48,0) size 4x18
-          text run at (48,0) width 4: " "
+            RenderCounter at (39,1) size 9x18
+              text run at (39,1) width 9: "\x{25A0}"
+        RenderText {#text} at (48,1) size 4x18
+          text run at (48,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (52,0) size 9x18
-              text run at (52,0) width 9: "\x{25A0}"
-        RenderText {#text} at (61,0) size 4x18
-          text run at (61,0) width 4: " "
+            RenderCounter at (52,1) size 9x18
+              text run at (52,1) width 9: "\x{25A0}"
+        RenderText {#text} at (61,1) size 4x18
+          text run at (61,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (65,0) size 9x18
-              text run at (65,0) width 9: "\x{25A0}"
-        RenderText {#text} at (74,0) size 4x18
-          text run at (74,0) width 4: " "
+            RenderCounter at (65,1) size 9x18
+              text run at (65,1) width 9: "\x{25A0}"
+        RenderText {#text} at (74,1) size 4x18
+          text run at (74,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (78,0) size 9x18
-              text run at (78,0) width 9: "\x{25A0}"
-        RenderText {#text} at (87,0) size 4x18
-          text run at (87,0) width 4: " "
+            RenderCounter at (78,1) size 9x18
+              text run at (78,1) width 9: "\x{25A0}"
+        RenderText {#text} at (87,1) size 4x18
+          text run at (87,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (91,0) size 9x18
-              text run at (91,0) width 9: "\x{25A0}"
-        RenderText {#text} at (100,0) size 4x18
-          text run at (100,0) width 4: " "
+            RenderCounter at (91,1) size 9x18
+              text run at (91,1) width 9: "\x{25A0}"
+        RenderText {#text} at (100,1) size 4x18
+          text run at (100,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (104,0) size 9x18
-              text run at (104,0) width 9: "\x{25A0}"
-        RenderText {#text} at (113,0) size 4x18
-          text run at (113,0) width 4: " "
+            RenderCounter at (104,1) size 9x18
+              text run at (104,1) width 9: "\x{25A0}"
+        RenderText {#text} at (113,1) size 4x18
+          text run at (113,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (117,0) size 9x18
-              text run at (117,0) width 9: "\x{25A0}"
-        RenderText {#text} at (126,0) size 4x18
-          text run at (126,0) width 4: " "
+            RenderCounter at (117,1) size 9x18
+              text run at (117,1) width 9: "\x{25A0}"
+        RenderText {#text} at (126,1) size 4x18
+          text run at (126,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (130,0) size 9x18
-              text run at (130,0) width 9: "\x{25A0}"
-        RenderText {#text} at (139,0) size 4x18
-          text run at (139,0) width 4: " "
+            RenderCounter at (130,1) size 9x18
+              text run at (130,1) width 9: "\x{25A0}"
+        RenderText {#text} at (139,1) size 4x18
+          text run at (139,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 9x18
           RenderInline (generated) at (0,0) size 9x18
-            RenderCounter at (143,0) size 9x18
-              text run at (143,0) width 9: "\x{25A0}"
+            RenderCounter at (143,1) size 9x18
+              text run at (143,1) width 9: "\x{25A0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,52) size 784x18
+      RenderBlock {DIV} at (0,53) size 784x18
         RenderText {#text} at (0,0) size 140x18
           text run at (0,0) width 12: "\x{25FE} "
           text run at (12,0) width 12: "\x{25FE} "

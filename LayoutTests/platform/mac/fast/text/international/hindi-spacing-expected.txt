@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
             text run at (0,0) width 87: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
       RenderBR {BR} at (107,51) size 0x0
       RenderInline {SPAN} at (0,0) size 122x18
-        RenderText {#text} at (0,58) size 122x18
-          text run at (0,58) width 122: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (122,58) size 25x18
-        text run at (122,58) width 25: "Foo"
-      RenderBR {BR} at (147,72) size 0x0
+        RenderText {#text} at (0,59) size 122x18
+          text run at (0,59) width 122: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (122,59) size 25x18
+        text run at (122,59) width 25: "Foo"
+      RenderBR {BR} at (147,73) size 0x0
       RenderInline {SPAN} at (0,0) size 122x17
-        RenderText {#text} at (0,76) size 122x17
-          text run at (0,76) width 122: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (122,76) size 25x18
-        text run at (122,76) width 25: "Foo"
-      RenderBR {BR} at (147,90) size 0x0
+        RenderText {#text} at (0,78) size 122x17
+          text run at (0,78) width 122: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (122,78) size 25x18
+        text run at (122,78) width 25: "Foo"
+      RenderBR {BR} at (147,92) size 0x0

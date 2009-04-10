@@ -32,8 +32,8 @@ layer at (8,98) size 182x22 clip at (9,99) size 180x20 scrollWidth 320
       text run at (1,1) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing"
 layer at (8,158) size 182x22 clip at (9,159) size 180x20 scrollX 196 scrollWidth 376
   RenderBlock {DIV} at (0,150) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (-195,1) size 376x18
-      text run at (-195,1) width 376 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
+    RenderText {#text} at (-195,2) size 376x18
+      text run at (-195,2) width 376 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
 layer at (8,218) size 182x22 clip at (9,219) size 180x20 scrollX 140 scrollWidth 320
   RenderBlock {DIV} at (0,210) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-139,1) size 320x18
