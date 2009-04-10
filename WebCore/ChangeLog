@@ -1,3 +1,18 @@
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix a regression from r42379 which made zero-width characters affect
+          line height
+
+        Test: fixes fast/text/wide-zero-width-space.html
+
+        * platform/graphics/mac/FontMacATSUI.mm:
+        (WebCore::overrideLayoutOperation): Add to the fallback font list set
+        here, and only if the glyph is not zero-width...
+        (WebCore::ATSULayoutParameters::initialize): ...instead of doing it
+        here. This matches WidthIterator's behavior.
+
 2009-04-10  Darin Fisher  <darin@chromium.org>
 
         Fixing build bustage caused by warnings being treated as errors.

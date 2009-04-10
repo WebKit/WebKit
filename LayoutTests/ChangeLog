@@ -1,3 +1,14 @@
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - revert broken test results that were checked in with r42379, now that
+          the regression is fixed
+
+        * platform/mac/fast/text/wide-zero-width-space-expected.checksum:
+        * platform/mac/fast/text/wide-zero-width-space-expected.png:
+        * platform/mac/fast/text/wide-zero-width-space-expected.txt:
+
 2009-04-10  Adam Roben  <aroben@apple.com>
 
         Update Windows results for complex-character-based-fallback.html

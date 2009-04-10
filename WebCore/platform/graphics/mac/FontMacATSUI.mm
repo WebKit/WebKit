@@ -183,7 +183,6 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
         bool shouldRound = false;
         bool syntheticBoldPass = params->m_syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
-        ATSGlyphRef spaceGlyph = 0;
         bool hasExtraSpacing = (params->m_font->letterSpacing() || params->m_font->wordSpacing() || params->m_run.padding()) && !params->m_run.spacingDisabled();
         float padding = params->m_run.padding();
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
@@ -193,22 +192,23 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
         for (i = 1; i < count; i++) {
             bool isLastChar = i == count - 1;
             renderer = renderers[offset / 2];
-            if (renderer != lastRenderer) {
-                lastRenderer = renderer;
-                spaceGlyph = renderer->m_spaceGlyph;
-                // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
-                // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
-                // does in any of its device-metrics modes.
-                shouldRound = renderer->platformData().roundsGlyphAdvances();
-                if (syntheticBoldPass)
-                    syntheticBoldOffset = FloatToFixed(renderer->m_syntheticBoldOffset);
-            }
             float width;
             if (nextCh == zeroWidthSpace || Font::treatAsZeroWidthSpace(nextCh) && !Font::treatAsSpace(nextCh)) {
                 width = 0;
-                layoutRecords[i-1].glyphID = spaceGlyph;
+                layoutRecords[i-1].glyphID = renderer->m_spaceGlyph;
             } else {
                 width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
+                if (renderer != lastRenderer && width) {
+                    lastRenderer = renderer;
+                    // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
+                    // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
+                    // does in any of its device-metrics modes.
+                    shouldRound = renderer->platformData().roundsGlyphAdvances();
+                    if (syntheticBoldPass)
+                        syntheticBoldOffset = FloatToFixed(renderer->m_syntheticBoldOffset);
+                    if (params->m_fallbackFonts && renderer != params->m_font->primaryFont())
+                        params->m_fallbackFonts->add(renderer);
+                }
                 if (shouldRound)
                     width = roundf(width);
                 width += renderer->m_syntheticBoldOffset;
@@ -261,7 +261,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
                 if (syntheticBoldOffset)
                     layoutRecords[i-1].realPos += syntheticBoldOffset;
                 else
-                    layoutRecords[i-1].glyphID = spaceGlyph;
+                    layoutRecords[i-1].glyphID = renderer->m_spaceGlyph;
             }
             layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
         }
@@ -394,11 +394,8 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             substituteFontData = fallbackFontData ? fallbackFontData->fontDataForCharacter(m_run[0]) : 0;
             if (substituteFontData) {
                 initializeATSUStyle(substituteFontData);
-                if (substituteFontData->m_ATSUStyle) {
+                if (substituteFontData->m_ATSUStyle)
                     ATSUSetRunStyle(layout, substituteFontData->m_ATSUStyle, substituteOffset, substituteLength);
-                    if (m_fallbackFonts && substituteFontData != fontData)
-                        (*m_fallbackFonts).add(substituteFontData);
-                }
             } else
                 substituteFontData = fontData;
         } else {
