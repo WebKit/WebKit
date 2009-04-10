@@ -36,12 +36,13 @@
 #include "WebPreferences.h"
 #include <CoreFoundation/CoreFoundation.h>
 #pragma warning( push, 0 )
-#include <wtf/Vector.h>
+#include <WebCore/HistoryItem.h>
+#include <WebCore/HistoryPropertyList.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PageGroup.h>
-#include <WebCore/HistoryItem.h>
 #pragma warning( pop )
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 
@@ -49,6 +50,40 @@ CFStringRef DatesArrayKey = CFSTR("WebHistoryDates");
 CFStringRef FileVersionKey = CFSTR("WebHistoryFileVersion");
 
 #define currentFileVersion 1
+
+class WebHistoryWriter : public HistoryPropertyListWriter {
+public:
+    WebHistoryWriter(CFArrayRef entriesByDate);
+
+private:
+    virtual void writeHistoryItems(BinaryPropertyListObjectStream&);
+
+    CFArrayRef m_entriesByDate;
+};
+
+WebHistoryWriter::WebHistoryWriter(CFArrayRef entriesByDate)
+    : m_entriesByDate(entriesByDate)
+{
+}
+
+void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)
+{
+    // for each date with entries
+    CFIndex dateCount = CFArrayGetCount(m_entriesByDate);
+    for (CFIndex i = 0; i < dateCount; ++i) {
+        // get the entries for that date
+        CFArrayRef entries = (CFArrayRef)CFArrayGetValueAtIndex(m_entriesByDate, i);
+        CFIndex entriesCount = CFArrayGetCount(entries);
+        for (CFIndex j = entriesCount - 1; j >= 0; --j) {
+            IWebHistoryItem* item = (IWebHistoryItem*) CFArrayGetValueAtIndex(entries, j);
+            COMPtr<WebHistoryItem> webItem(Query, item);
+            if (!webItem)
+                continue;
+
+            writeHistoryItem(stream, webItem->historyItem());
+        }
+    }
+}
 
 static bool areEqualOrClose(double d1, double d2)
 {
@@ -348,77 +383,36 @@ HRESULT WebHistory::saveHistoryGuts(CFURLRef url, IWebError** error)
 {
     HRESULT hr = S_OK;
 
-    // FIXME:  Correctly report error when new API is ready.
+    // FIXME: Correctly report error when new API is ready.
     if (error)
         *error = 0;
+
+    WebHistoryWriter writer(m_entriesByDate.get());
+    writer.writePropertyList();
+    RetainPtr<CFDataRef> data = writer.releaseData();
 
     RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
     if (!stream) 
         return E_FAIL;
 
-    CFMutableArrayRef rawEntries;
-    hr = datesArray(&rawEntries);
-    if (FAILED(hr))
-        return hr;
-    RetainPtr<CFMutableArrayRef> entries(AdoptCF, rawEntries);
-
-    // create the outer dictionary
-    CFTypeRef keys[2];
-    CFTypeRef values[2];
-    keys[0]   = DatesArrayKey;
-    values[0] = entries.get();
-    keys[1]   = FileVersionKey;
-
-    int version = currentFileVersion;
-    RetainPtr<CFNumberRef> versionCF(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &version));
-    values[1] = versionCF.get();
-
-    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, 
-        CFDictionaryCreate(0, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
     if (!CFWriteStreamOpen(stream.get())) 
         return E_FAIL;
 
-    if (!CFPropertyListWriteToStream(dictionary.get(), stream.get(), kCFPropertyListXMLFormat_v1_0, 0))
-        hr = E_FAIL;
- 
-    CFWriteStreamClose(stream.get());
+    const UInt8* dataPtr = CFDataGetBytePtr(data.get());
+    CFIndex length = CFDataGetLength(data.get());
 
-    return hr;
-}
-
-HRESULT WebHistory::datesArray(CFMutableArrayRef* datesArray)
-{
-    HRESULT hr = S_OK;
-
-    RetainPtr<CFMutableArrayRef> result(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    
-    // for each date with entries
-    int dateCount = CFArrayGetCount(m_entriesByDate.get());
-    for (int i = 0; i < dateCount; ++i) {
-        // get the entries for that date
-        CFArrayRef entries = (CFArrayRef)CFArrayGetValueAtIndex(m_entriesByDate.get(), i);
-        int entriesCount = CFArrayGetCount(entries);
-        for (int j = entriesCount - 1; j >= 0; --j) {
-            IWebHistoryItem* item = (IWebHistoryItem*) CFArrayGetValueAtIndex(entries, j);
-            IWebHistoryItemPrivate* webHistoryItem;
-            hr = item->QueryInterface(IID_IWebHistoryItemPrivate, (void**)&webHistoryItem);
-            if (FAILED(hr))
-                return E_FAIL;
-            
-            CFDictionaryRef itemDict;
-            hr = webHistoryItem->dictionaryRepresentation((void**)&itemDict);
-            webHistoryItem->Release();
-            if (FAILED(hr))
-                return E_FAIL;
-
-            CFArrayAppendValue(result.get(), itemDict);
-            CFRelease(itemDict);
+    while (length) {
+        CFIndex bytesWritten = CFWriteStreamWrite(stream.get(), dataPtr, length);
+        if (bytesWritten <= 0) {
+            hr = E_FAIL;
+            break;
         }
+        dataPtr += bytesWritten;
+        length -= bytesWritten;
     }
 
-    if (SUCCEEDED(hr))
-        *datesArray = result.releaseRef();
+    CFWriteStreamClose(stream.get());
+
     return hr;
 }
 

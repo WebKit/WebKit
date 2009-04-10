@@ -1,3 +1,15 @@
+2009-04-09  Adam Roben  <aroben@apple.com>
+
+        Start compiling HistoryPropertyList on Windows
+
+        Reviewed by Darin Adler.
+
+        * WebCore.vcproj/WebCore.vcproj: Added HistoryPropertyList and its
+        dependencies to the project. Copy headers from history/cf to
+        $WebKitOutputDir.
+        * history/cf/HistoryPropertyList.cpp: Added StringExtras.h so that
+        this file will compile on Windows.
+
 2009-04-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -27,6 +27,7 @@
 #include "HistoryPropertyList.h"
 
 #include "HistoryItem.h"
+#include <wtf/StringExtras.h>
 
 namespace WebCore {
 

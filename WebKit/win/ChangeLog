@@ -1,3 +1,23 @@
+2009-04-09  Adam Roben  <aroben@apple.com>
+
+        Windows part 1 of <rdar://problem/5438063> Saving history containing
+        100,000 entries causes pauses of 2s while browsing
+
+        Use HistoryPropertyListWriter to implement IWebHistory::saveToURL.
+
+        Reviewed by Darin Adler.
+
+        * WebHistory.cpp:
+        (WebHistoryWriter::WebHistoryWriter): Added.
+        (WebHistoryWriter::writeHistoryItems): Added. Loop backwards through
+        the entries for each date, and pass the corresponding
+        WebCore::HistoryItem to writeHistoryItem.
+        (WebHistory::saveHistoryGuts): Use WebHistoryWriter to serialize
+        m_entriesByDate, then write the serialized data to disk using
+        CFWriteStream.
+
+        * WebHistory.h: Removed datesArray.
+
 2009-04-08  Adam Roben  <aroben@apple.com>
 
         Fix security/block-test-no-port.html on Windows

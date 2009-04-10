@@ -141,7 +141,6 @@ private:
     HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);
     HRESULT insertItem(IWebHistoryItem* entry, int dateIndex);
     HRESULT ageLimitDate(CFAbsoluteTime* time);
-    HRESULT datesArray(CFMutableArrayRef* datesArray);
     bool findIndex(int* index, CFAbsoluteTime forDay);
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
