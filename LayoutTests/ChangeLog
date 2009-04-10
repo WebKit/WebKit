@@ -1,3 +1,26 @@
+2009-04-09  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update test results to account for a slight change in +[NSColor disabledControlTextColor].
+
+        * platform/mac-leopard/fast/forms/disabled-select-change-index-expected.checksum: Renamed from LayoutTests/platform/mac/fast/forms/disabled-select-change-index-expected.checksum.
+        * platform/mac-leopard/fast/forms/disabled-select-change-index-expected.png: Renamed from LayoutTests/platform/mac/fast/forms/disabled-select-change-index-expected.png.
+        * platform/mac-leopard/fast/forms/disabled-select-change-index-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/disabled-select-change-index-expected.txt.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.checksum: Renamed from LayoutTests/platform/mac/fast/forms/file-input-disabled-expected.checksum.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.png: Renamed from LayoutTests/platform/mac/fast/forms/file-input-disabled-expected.png.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file-input-disabled-expected.txt.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.checksum: Renamed from LayoutTests/platform/mac/fast/forms/input-text-maxlength-expected.checksum.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.png: Renamed from LayoutTests/platform/mac/fast/forms/input-text-maxlength-expected.png.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-maxlength-expected.txt.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.checksum: Renamed from LayoutTests/platform/mac/fast/forms/input-text-paste-maxlength-expected.checksum.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.png: Renamed from LayoutTests/platform/mac/fast/forms/input-text-paste-maxlength-expected.png.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-paste-maxlength-expected.txt.
+        * platform/mac/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/mac/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/input-text-maxlength-expected.txt:
+        * platform/mac/fast/forms/input-text-paste-maxlength-expected.txt:
+
 2009-04-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

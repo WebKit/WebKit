@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 485x25
             RenderTableCell {TD} at (2,2) size 49x25 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,7) size 96x15 [color=#7F7F7F] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,7) size 96x15 [color=#808080] [r=0 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,29) size 485x25
             RenderTableCell {TD} at (2,29) size 49x25 [r=1 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,34) size 96x15 [color=#7F7F7F] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,34) size 96x15 [color=#808080] [r=1 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,56) size 485x25
             RenderTableCell {TD} at (2,56) size 49x25 [r=2 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,61) size 96x15 [color=#7F7F7F] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,61) size 96x15 [color=#808080] [r=2 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,83) size 485x25
             RenderTableCell {TD} at (2,83) size 49x25 [r=3 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,88) size 96x15 [color=#7F7F7F] [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,88) size 96x15 [color=#808080] [r=3 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,110) size 485x25
             RenderTableCell {TD} at (2,110) size 49x25 [r=4 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,115) size 96x15 [color=#7F7F7F] [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,115) size 96x15 [color=#808080] [r=4 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,137) size 485x25
             RenderTableCell {TD} at (2,137) size 49x25 [r=5 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,142) size 96x15 [color=#7F7F7F] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,142) size 96x15 [color=#808080] [r=5 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -80,7 +80,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,164) size 485x25
             RenderTableCell {TD} at (2,164) size 49x25 [r=6 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,169) size 96x15 [color=#7F7F7F] [r=6 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,169) size 96x15 [color=#808080] [r=6 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -92,7 +92,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,191) size 485x25
             RenderTableCell {TD} at (2,191) size 49x25 [r=7 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,196) size 96x15 [color=#7F7F7F] [r=7 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,196) size 96x15 [color=#808080] [r=7 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,218) size 485x25
             RenderTableCell {TD} at (2,218) size 49x25 [r=8 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (3,3) size 43x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (53,223) size 96x15 [color=#7F7F7F] [r=8 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,223) size 96x15 [color=#808080] [r=8 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 56x13
                 RenderText at (4,1) size 56x13
                   text run at (4,1) width 56: "expected: "
