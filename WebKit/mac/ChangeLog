@@ -1,3 +1,13 @@
+2009-04-09  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/4680397> tearing seen because deferred updates are disabled
+        
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]): Don't call WKDisableCGDeferredUpdates on post-Leopard if 
+        NSAppKitVersionNumberWithDeferredWindowDisplaySupport is defined.
+
 2009-04-09  John Sullivan  <sullivan@apple.com>
 
         <rdar://problem/6775682> WebKit's support for SnowLeopard sudden termination for 

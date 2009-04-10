@@ -307,13 +307,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         [WebViewFactory createSharedFactory];
         [WebKeyGenerator createSharedGenerator];
 
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        
+// FIXME: Remove the NSAppKitVersionNumberWithDeferredWindowDisplaySupport check once
+// once AppKit's Deferred Window Display support is available.
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || !defined(NSAppKitVersionNumberWithDeferredWindowDisplaySupport)
         // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is NO
-        // or has no value. For compatibility with Mac OS X 10.4.6, deferred updates are off by default.
-        if (![defaults boolForKey:WebKitEnableDeferredUpdatesPreferenceKey])
+        // or has no value. For compatibility with Mac OS X 10.5 and lower, deferred updates are off by default.
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:WebKitEnableDeferredUpdatesPreferenceKey])
             WKDisableCGDeferredUpdates();
-
+#endif
         if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS))
             setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundOne);
 
