@@ -642,11 +642,19 @@ static WebWindowWatcher *_windowWatcher = nil;
 @end
 
 
-// FIXME: <rdar://problem/4886761>
-// This is a bizarre policy - we flush the page caches ANY time ANY window is closed?  
+// FIXME: <rdar://problem/4886761>.
+// This is a bizarre policy. We flush the page caches ANY time ANY window is closed?
+
 @implementation WebWindowWatcher
--(void)windowWillClose:(NSNotification *)notification
+
+- (void)windowWillClose:(NSNotification *)notification
 {
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
     pageCache()->releaseAutoreleasedPagesNow();
 }
+
 @end

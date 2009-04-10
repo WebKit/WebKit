@@ -1,3 +1,21 @@
+2009-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6773515> crash in push_heap inside WebCore when printing
+
+        The crash was due to manipulating a timer on a different thread than the one it was created on.
+        This adds some diagnostics so we'll catch that kind of mistake immediately.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::TimerBase): Store the thread identifier in debug versions.
+        (WebCore::TimerBase::start): Assert it's the same thread the timer was created on.
+        (WebCore::TimerBase::stop): Ditto.
+        (WebCore::TimerBase::isActive): Ditto.
+        (WebCore::TimerBase::setNextFireTime): Ditto.
+
+        * platform/Timer.h: Added the thread identifier data member.
+
 2009-04-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein

@@ -1,3 +1,25 @@
+2009-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6773515> crash in push_heap inside WebCore when printing
+
+        The crash was due to manipulating a timer on a different thread than the one it was created on.
+
+        * History/WebHistoryItem.mm:
+        (-[WebWindowWatcher windowWillClose:]): Call later on main thread, if called on non-main thread.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView windowDidBecomeKey:]): Ditto.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+        (-[WebHTMLView windowWillClose:]): Ditto.
+        (-[WebHTMLView _updateControlTints]): Added. Factored out the non-thread-safe part of
+        our override of _windowChangedKeyState.
+        (-[WebHTMLView _windowChangedKeyState]): Call _updateControlTints later on main thread, if
+        called on non-main thread.
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences _postPreferencesChangesNotification]): Call later on main thread, if called
+        on non-main thread
+
 2009-04-10  Timothy Hatcher  <timothy@apple.com>
 
         Remove DOMDocumentPrivate.h now that <rdar://problem/6730996> is fixed.

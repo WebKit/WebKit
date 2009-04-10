@@ -3169,6 +3169,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
     NSWindow *keyWindow = [notification object];
 
     if (keyWindow == [self window])
@@ -3180,6 +3185,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
     NSWindow *formerKeyWindow = [notification object];
 
     if (formerKeyWindow == [self window])
@@ -3193,6 +3203,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
     [_private->compController endRevertingChange:NO moveLeft:NO];
     [[self _pluginController] destroyAllPlugins];
 }
@@ -4720,15 +4735,28 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #endif
 
+- (void)_updateControlTints
+{
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return;
+    FrameView* view = frame->view();
+    if (!view)
+        return;
+    view->updateControlTints();
+}
+
 // Despite its name, this is called at different times than windowDidBecomeKey is.
 // It takes into account all the other factors that determine when NSCell draws
 // with different tints, so it's the right call to use for control tints. We'd prefer
 // to do this with API. <rdar://problem/5136760>
 - (void)_windowChangedKeyState
 {
-    if (Frame* frame = core([self _frame]))
-        if (FrameView* view = frame->view())
-            view->updateControlTints();
+    if (pthread_main_np())
+        [self _updateControlTints];
+    else
+        [self performSelectorOnMainThread:@selector(_updateControlTints) withObject:nil waitUntilDone:NO];
+
     [super _windowChangedKeyState];
 }
 

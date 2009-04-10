@@ -1032,6 +1032,11 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (void)_postPreferencesChangesNotification
 {
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:NO];
+        return;
+    }
+
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebPreferencesChangedNotification object:self
                     userInfo:nil];
