@@ -291,6 +291,7 @@ Document::Document(Frame* frame, bool isXHTML)
     : ContainerNode(0)
     , m_domtree_version(0)
     , m_styleSheets(StyleSheetList::create(this))
+    , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_title("")
     , m_titleSetExplicitly(false)
@@ -340,7 +341,6 @@ Document::Document(Frame* frame, bool isXHTML)
 
     visuallyOrdered = false;
     m_bParsing = false;
-    m_docNeedsStyleRecalc = false;
     m_tokenizer = 0;
     m_wellFormed = false;
 
@@ -429,12 +429,11 @@ Document::~Document()
     ASSERT(!m_inPageCache);
     ASSERT(!m_savedRenderer);
     ASSERT(m_ranges.isEmpty());
+    ASSERT(!m_styleRecalcTimer.isActive());
 
     removeAllEventListeners();
 
     forgetAllDOMNodesForDocument(this);
-
-    unscheduleStyleRecalc();
 
     delete m_tokenizer;
     m_document.resetSkippingRef(0);
@@ -1077,14 +1076,14 @@ PassRefPtr<TreeWalker> Document::createTreeWalker(Node *root, unsigned whatToSho
 
 void Document::scheduleStyleRecalc()
 {
-    if (m_docNeedsStyleRecalc)
+    if (m_styleRecalcTimer.isActive())
         return;
 
-    if (!m_docNeedsStyleRecalc) {
-        if (!documentsThatNeedStyleRecalc)
-            documentsThatNeedStyleRecalc = new HashSet<Document*>;
-        documentsThatNeedStyleRecalc->add(this);
-    }
+    ASSERT(childNeedsStyleRecalc());
+
+    if (!documentsThatNeedStyleRecalc)
+        documentsThatNeedStyleRecalc = new HashSet<Document*>;
+    documentsThatNeedStyleRecalc->add(this);
     
     // FIXME: Why on earth is this here? This is clearly misplaced.
     if (m_accessKeyMapValid) {
@@ -1092,18 +1091,22 @@ void Document::scheduleStyleRecalc()
         m_elementsByAccessKey.clear();
     }
     
-    m_docNeedsStyleRecalc = true;
+    m_styleRecalcTimer.startOneShot(0);
 }
 
 void Document::unscheduleStyleRecalc()
 {
-    if (!m_docNeedsStyleRecalc)
-        return;
+    ASSERT(!childNeedsStyleRecalc());
 
     if (documentsThatNeedStyleRecalc)
         documentsThatNeedStyleRecalc->remove(this);
 
-    m_docNeedsStyleRecalc = false;
+    m_styleRecalcTimer.stop();
+}
+
+void Document::styleRecalcTimerFired(Timer<Document>*)
+{
+    updateStyleIfNeeded();
 }
 
 void Document::recalcStyle(StyleChange change)
@@ -1214,9 +1217,8 @@ void Document::updateStyleForAllDocuments()
     while (documentsThatNeedStyleRecalc->size()) {
         HashSet<Document*>::iterator it = documentsThatNeedStyleRecalc->begin();
         Document* doc = *it;
-        documentsThatNeedStyleRecalc->remove(it);
-        
-        doc->m_docNeedsStyleRecalc = false;
+        documentsThatNeedStyleRecalc->remove(doc);
+        ASSERT(doc->childNeedsStyleRecalc() && !doc->inPageCache());
         doc->updateStyleIfNeeded();
     }
 }
@@ -1321,6 +1323,8 @@ void Document::detach()
     m_activeNode = 0;
 
     ContainerNode::detach();
+
+    unscheduleStyleRecalc();
 
     if (render)
         render->destroy();

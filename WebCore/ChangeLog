@@ -1,3 +1,32 @@
+2009-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        Add a timer for style recalc (similar to the one used for scheduling layouts).  For now in order
+        to reduce the risk of regressions, I have left in all the synchronous machinery for updating style
+        following DOM events and JavaScript timeouts.  Eventually these calls will be removed.
+
+        Where the timer will really kick in and be useful is for clients that do style changes from
+        Objective-C DOM bindings or that execute JavaScript to manipulate style from the JavaScriptCore C API.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::appendChild):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::unscheduleStyleRecalc):
+        (WebCore::Document::styleRecalcTimerFired):
+        (WebCore::Document::updateStyleForAllDocuments):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::setNeedsStyleRecalc):
+        (WebCore::Node::lazyAttach):
+
 2009-04-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
