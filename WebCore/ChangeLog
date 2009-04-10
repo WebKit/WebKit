@@ -1,3 +1,19 @@
+2009-04-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6648858>
+        CrashTracer: [REGRESSION(Safari 4)] 60 crashes in Safari at com.apple.WebCore • WebCore::ScriptController::evaluate + 241
+
+        The Frame (and therefore ScriptController) were being destroyed
+        during JavaScript execution causing the JSDOMWindowShell to become
+        null.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Use a RefPtr to protect the Frame
+        instead of the keep-alive timer, since a nested event loop used from with-in 
+        JavaScript execution could cause the timer to fire before returning.
+
 2009-04-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
