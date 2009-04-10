@@ -1,3 +1,10 @@
+2009-04-10  Eric Carlson  <eric.carlson@apple.com>
+
+        WebKitSystemInterface changes for <rdar://problem/6646998>
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the leopard build by updating WebKitSystemInterface.
