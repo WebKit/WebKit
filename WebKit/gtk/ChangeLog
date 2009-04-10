@@ -1,3 +1,26 @@
+2009-04-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25124
+        [GTK] many strings still missing translation calls
+
+        Mark the missing strings for translation.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_cancel):
+        * webkit/webkitsoupauthdialog.c:
+        (show_auth_dialog):
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_class_init):
+        * webkit/webkitwebinspector.cpp:
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+        * webkit/webkitwebnavigationaction.cpp:
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_class_init):
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        * webkit/webkitwebview.cpp:
+
 2009-04-08  Alejandro Piñeiro  <apinheiro@igalia.com>
 
         Reviewed by Holger Freyther.

@@ -25,6 +25,7 @@
 #include "webkitwebsettings.h"
 #include "webkitprivate.h"
 
+#include <glib/gi18n-lib.h>
 #include "FileSystem.h"
 #include "PluginDatabase.h"
 
@@ -125,8 +126,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_DEFAULT_ENCODING,
                                     g_param_spec_string(
                                     "default-encoding",
-                                    "Default Encoding",
-                                    "The default encoding used to display text.",
+                                    _("Default Encoding"),
+                                    _("The default encoding used to display text."),
                                     "iso-8859-1",
                                     flags));
 
@@ -134,8 +135,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_CURSIVE_FONT_FAMILY,
                                     g_param_spec_string(
                                     "cursive-font-family",
-                                    "Cursive Font Family",
-                                    "The default Cursive font family used to display text.",
+                                    _("Cursive Font Family"),
+                                    _("The default Cursive font family used to display text."),
                                     "serif",
                                     flags));
 
@@ -143,8 +144,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_DEFAULT_FONT_FAMILY,
                                     g_param_spec_string(
                                     "default-font-family",
-                                    "Default Font Family",
-                                    "The default font family used to display text.",
+                                    _("Default Font Family"),
+                                    _("The default font family used to display text."),
                                     "sans-serif",
                                     flags));
 
@@ -152,8 +153,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_FANTASY_FONT_FAMILY,
                                     g_param_spec_string(
                                     "fantasy-font-family",
-                                    "Fantasy Font Family",
-                                    "The default Fantasy font family used to display text.",
+                                    _("Fantasy Font Family"),
+                                    _("The default Fantasy font family used to display text."),
                                     "serif",
                                     flags));
 
@@ -161,8 +162,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_MONOSPACE_FONT_FAMILY,
                                     g_param_spec_string(
                                     "monospace-font-family",
-                                    "Monospace Font Family",
-                                    "The default font family used to display monospace text.",
+                                    _("Monospace Font Family"),
+                                    _("The default font family used to display monospace text."),
                                     "monospace",
                                     flags));
 
@@ -170,8 +171,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_SANS_SERIF_FONT_FAMILY,
                                     g_param_spec_string(
                                     "sans-serif-font-family",
-                                    "Sans Serif Font Family",
-                                    "The default Sans Serif font family used to display text.",
+                                    _("Sans Serif Font Family"),
+                                    _("The default Sans Serif font family used to display text."),
                                     "sans-serif",
                                     flags));
 
@@ -179,8 +180,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_SERIF_FONT_FAMILY,
                                     g_param_spec_string(
                                     "serif-font-family",
-                                    "Serif Font Family",
-                                    "The default Serif font family used to display text.",
+                                    _("Serif Font Family"),
+                                    _("The default Serif font family used to display text."),
                                     "serif",
                                     flags));
 
@@ -188,8 +189,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_DEFAULT_FONT_SIZE,
                                     g_param_spec_int(
                                     "default-font-size",
-                                    "Default Font Size",
-                                    "The default font size used to display text.",
+                                    _("Default Font Size"),
+                                    _("The default font size used to display text."),
                                     5, G_MAXINT, 12,
                                     flags));
 
@@ -197,8 +198,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
                                     g_param_spec_int(
                                     "default-monospace-font-size",
-                                    "Default Monospace Font Size",
-                                    "The default font size used to display monospace text.",
+                                    _("Default Monospace Font Size"),
+                                    _("The default font size used to display monospace text."),
                                     5, G_MAXINT, 10,
                                     flags));
 
@@ -206,8 +207,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_MINIMUM_FONT_SIZE,
                                     g_param_spec_int(
                                     "minimum-font-size",
-                                    "Minimum Font Size",
-                                    "The minimum font size used to display text.",
+                                    _("Minimum Font Size"),
+                                    _("The minimum font size used to display text."),
                                     1, G_MAXINT, 5,
                                     flags));
 
@@ -215,8 +216,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_MINIMUM_LOGICAL_FONT_SIZE,
                                     g_param_spec_int(
                                     "minimum-logical-font-size",
-                                    "Minimum Logical Font Size",
-                                    "The minimum logical font size used to display text.",
+                                    _("Minimum Logical Font Size"),
+                                    _("The minimum logical font size used to display text."),
                                     1, G_MAXINT, 5,
                                     flags));
 
@@ -235,8 +236,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENFORCE_96_DPI,
                                     g_param_spec_boolean(
                                     "enforce-96-dpi",
-                                    "Enforce 96 DPI",
-                                    "Enforce a resolution of 96 DPI",
+                                    _("Enforce 96 DPI"),
+                                    _("Enforce a resolution of 96 DPI"),
                                     FALSE,
                                     flags));
 
@@ -244,8 +245,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_AUTO_LOAD_IMAGES,
                                     g_param_spec_boolean(
                                     "auto-load-images",
-                                    "Auto Load Images",
-                                    "Load images automatically.",
+                                    _("Auto Load Images"),
+                                    _("Load images automatically."),
                                     TRUE,
                                     flags));
 
@@ -253,8 +254,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_AUTO_SHRINK_IMAGES,
                                     g_param_spec_boolean(
                                     "auto-shrink-images",
-                                    "Auto Shrink Images",
-                                    "Automatically shrink standalone images to fit.",
+                                    _("Auto Shrink Images"),
+                                    _("Automatically shrink standalone images to fit."),
                                     TRUE,
                                     flags));
 
@@ -262,8 +263,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_PRINT_BACKGROUNDS,
                                     g_param_spec_boolean(
                                     "print-backgrounds",
-                                    "Print Backgrounds",
-                                    "Whether background images should be printed.",
+                                    _("Print Backgrounds"),
+                                    _("Whether background images should be printed."),
                                     TRUE,
                                     flags));
 
@@ -271,8 +272,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_SCRIPTS,
                                     g_param_spec_boolean(
                                     "enable-scripts",
-                                    "Enable Scripts",
-                                    "Enable embedded scripting languages.",
+                                    _("Enable Scripts"),
+                                    _("Enable embedded scripting languages."),
                                     TRUE,
                                     flags));
 
@@ -280,8 +281,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_PLUGINS,
                                     g_param_spec_boolean(
                                     "enable-plugins",
-                                    "Enable Plugins",
-                                    "Enable embedded plugin objects.",
+                                    _("Enable Plugins"),
+                                    _("Enable embedded plugin objects."),
                                     TRUE,
                                     flags));
 
@@ -289,16 +290,16 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_RESIZABLE_TEXT_AREAS,
                                     g_param_spec_boolean(
                                     "resizable-text-areas",
-                                    "Resizable Text Areas",
-                                    "Whether text areas are resizable.",
+                                    _("Resizable Text Areas"),
+                                    _("Whether text areas are resizable."),
                                     TRUE,
                                     flags));
 
     g_object_class_install_property(gobject_class,
                                     PROP_USER_STYLESHEET_URI,
                                     g_param_spec_string("user-stylesheet-uri",
-                                    "User Stylesheet URI",
-                                    "The URI of a stylesheet that is applied to every page.",
+                                    _("User Stylesheet URI"),
+                                    _("The URI of a stylesheet that is applied to every page."),
                                     0,
                                     flags));
 
@@ -313,8 +314,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ZOOM_STEP,
                                     g_param_spec_float(
                                     "zoom-step",
-                                    "Zoom Stepping Value",
-                                    "The value by which the zoom level is changed when zooming in or out.",
+                                    _("Zoom Stepping Value"),
+                                    _("The value by which the zoom level is changed when zooming in or out."),
                                     0.0f, G_MAXFLOAT, 0.1f,
                                     flags));
 
@@ -332,8 +333,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_DEVELOPER_EXTRAS,
                                     g_param_spec_boolean(
                                     "enable-developer-extras",
-                                    "Enable Developer Extras",
-                                    "Enables special extensions that help developers",
+                                    _("Enable Developer Extras"),
+                                    _("Enables special extensions that help developers"),
                                     FALSE,
                                     flags));
 
@@ -353,8 +354,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_PRIVATE_BROWSING,
                                     g_param_spec_boolean(
                                     "enable-private-browsing",
-                                    "Enable Private Browsing",
-                                    "Enables private browsing mode",
+                                    _("Enable Private Browsing"),
+                                    _("Enables private browsing mode"),
                                     FALSE,
                                     flags));
 

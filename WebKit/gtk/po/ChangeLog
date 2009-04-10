@@ -1,3 +1,17 @@
+2009-04-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25124
+        [GTK] many strings still missing translation calls
+
+        Extracting translation for the files that got translation calls.
+
+        * POTFILES:
+        * de.po:
+        * pt_BR.po:
+        * webkit.pot:
+
 2009-04-06  Christian Dywan  <christian@twotoasts.de>
 
         Rubber-stamped by Oliver Hunt.

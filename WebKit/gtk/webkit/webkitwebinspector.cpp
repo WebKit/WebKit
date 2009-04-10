@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n-lib.h>
 #include "webkitwebinspector.h"
 #include "webkitmarshal.h"
 #include "InspectorClientGtk.h"
@@ -256,8 +257,8 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     g_object_class_install_property(gobject_class, PROP_WEB_VIEW,
                                     g_param_spec_object("web-view",
-                                                        "Web View",
-                                                        "The Web View that renders the Web Inspector itself",
+                                                        _("Web View"),
+                                                        _("The Web View that renders the Web Inspector itself"),
                                                         WEBKIT_TYPE_WEB_VIEW,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -270,8 +271,8 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     g_object_class_install_property(gobject_class, PROP_INSPECTED_URI,
                                     g_param_spec_string("inspected-uri",
-                                                        "Inspected URI",
-                                                        "The URI that is currently being inspected",
+                                                        _("Inspected URI"),
+                                                        _("The URI that is currently being inspected"),
                                                         NULL,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -287,8 +288,8 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
                                     PROP_JAVASCRIPT_PROFILING_ENABLED,
                                     g_param_spec_boolean(
                                         "javascript-profiling-enabled",
-                                        "Enable JavaScript profiling",
-                                        "Profile the executed JavaScript.",
+                                        _("Enable JavaScript profiling"),
+                                        _("Profile the executed JavaScript."),
                                         FALSE,
                                         WEBKIT_PARAM_READWRITE));
 

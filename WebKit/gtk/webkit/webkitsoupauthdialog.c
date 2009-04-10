@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #if USE(GNOMEKEYRING)
@@ -240,7 +241,7 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_box_pack_start(GTK_BOX(hbox), mainVBox, TRUE, TRUE, 0);
 
     uri = soup_message_get_uri(authData->msg);
-    message = g_strdup_printf("A username and password are being requested by the site %s", uri->host);
+    message = g_strdup_printf(_("A username and password are being requested by the site %s"), uri->host);
     messageLabel = gtk_label_new(message);
     g_free(message);
     gtk_misc_set_alignment(GTK_MISC(messageLabel), 0.0, 0.5);
@@ -265,9 +266,9 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_table_set_row_spacings(GTK_TABLE (table), 6);
     gtk_container_add(GTK_CONTAINER(entryContainer), table);
 
-    authData->loginEntry = table_add_entry(table, 0, "Username:",
+    authData->loginEntry = table_add_entry(table, 0, _("Username:"),
                                            login, NULL);
-    authData->passwordEntry = table_add_entry(table, 1, "Password:",
+    authData->passwordEntry = table_add_entry(table, 1, _("Password:"),
                                               password, NULL);
 
     gtk_entry_set_visibility(GTK_ENTRY(authData->passwordEntry), FALSE);
@@ -277,7 +278,7 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_box_pack_start (GTK_BOX (vbox), rememberBox,
                         FALSE, FALSE, 0);
 
-    checkButton = gtk_check_button_new_with_label("Remember password");
+    checkButton = gtk_check_button_new_with_label(_("Remember password"));
     if (login && password)
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkButton), TRUE);
     gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(checkButton))), TRUE);
