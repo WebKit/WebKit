@@ -1,3 +1,14 @@
+2009-04-10  Adam Roben  <aroben@apple.com>
+
+        Give Windows's <select> popup menus drop shadows
+
+        Rubber-stamped by Steve Falkenburg.
+
+        No test possible.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::registerPopup): Use the CS_DROPSHADOW window class style.
+
 2009-04-10  Timothy Hatcher  <timothy@apple.com>
 
         Fix a bug in the Web Inspector where it would show scripts

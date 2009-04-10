@@ -596,7 +596,7 @@ static ATOM registerPopup()
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = 0;
+    wcex.style          = CS_DROPSHADOW;
     wcex.lpfnWndProc    = PopupWndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = sizeof(PopupMenu*); // For the PopupMenu pointer
