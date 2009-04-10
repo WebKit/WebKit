@@ -1,5 +1,12 @@
 2009-04-09  Dan Bernstein  <mitz@apple.com>
 
+        - remove two files I just checked in by accident
+
+        * platform/mac/fast/events/pointer-events-expected.txt: Removed.
+        * platform/mac/fast/events/pointer-events.html: Removed.
+
+2009-04-09  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Mark Rowe.
 
         - moved some Leopard-and-earlier results into platform/mac-leopard and
