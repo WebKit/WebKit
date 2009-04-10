@@ -580,7 +580,7 @@ void JavaScriptDebugServer::recompileAllJSFunctions(Timer<JavaScriptDebugServer>
         result.first->second = newBody;
         function->setBody(newBody.release());
 
-        if (hasListeners())
+        if (hasListeners() && function->scope().globalObject()->debugger() == this)
             sourceProviders.add(sourceCode.provider(), exec);
     }
 

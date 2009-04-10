@@ -1,3 +1,25 @@
+2009-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a bug in the Web Inspector where it would show scripts
+        from previous pages when toggling the debugger off and back on.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25095
+        rdar://problem/6769970
+
+        Reviewed by John Sullivan.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData): Null out the
+        debugger for the scriptController. This balances the attachDebugger
+        that was already in ScriptCachedFrameData::restore.
+        (WebCore::ScriptCachedFrameData::restore): Clean up an if statement.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell): Clear the debugger from
+        the current window before setting the new window.
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctions): Only accumulate
+        source providers for code associated this as the debugger.
+
 2009-04-10  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Adele Peterson.

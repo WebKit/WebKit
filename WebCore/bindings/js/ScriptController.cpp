@@ -122,8 +122,13 @@ void ScriptController::clearWindowShell()
         return;
 
     JSLock lock(false);
+
+    // Clear the debugger from the current window before setting the new window.
+    attachDebugger(0);
+
     m_windowShell->window()->clear();
     m_windowShell->setWindow(m_frame->domWindow());
+
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
         m_windowShell->window()->setProfileGroup(page->group().identifier());
