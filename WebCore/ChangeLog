@@ -1,3 +1,14 @@
+2009-04-10  Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Move WORKERS header files inside ENABLE(WORKERS).
+        So if WORKERS is not enabled and the generated files are not generated, the build is still working.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        * bindings/js/ScheduledAction.cpp:
+
 2009-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.

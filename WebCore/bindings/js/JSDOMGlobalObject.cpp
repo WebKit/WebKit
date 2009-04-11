@@ -30,8 +30,11 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
+
+#if ENABLE(WORKERS)
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
+#endif
 
 using namespace JSC;
 

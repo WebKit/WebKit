@@ -31,14 +31,17 @@
 #include "FrameLoader.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
-#include "JSWorkerContext.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include <runtime/JSLock.h>
+
+#if ENABLE(WORKERS)
+#include "JSWorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
-#include <runtime/JSLock.h>
+#endif
 
 using namespace JSC;
 

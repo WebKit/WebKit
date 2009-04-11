@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "JSDocument.h"
 #include "JSMessageChannel.h"
-#include "JSWorkerContext.h"
 #include "MessageChannel.h"
 
 using namespace JSC;
