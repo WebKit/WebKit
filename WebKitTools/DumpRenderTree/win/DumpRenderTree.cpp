@@ -215,6 +215,7 @@ static void initialize()
         TEXT("Times Bold.ttf"),
         TEXT("Times Italic.ttf"),
         TEXT("Times Roman.ttf"),
+        TEXT("WebKit Layout Tests 2.ttf"),
         TEXT("WebKit Layout Tests.ttf"),
         TEXT("WebKitWeightWatcher100.ttf"),
         TEXT("WebKitWeightWatcher200.ttf"),
