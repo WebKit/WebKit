@@ -566,5 +566,4 @@ fast/cookies/local-file-can-set-cookies.html
 fast/js/toString-stack-overflow.html
 
 # Failures following r42379
-fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/international/001.html

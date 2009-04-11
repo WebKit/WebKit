@@ -1,3 +1,21 @@
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - test and expected result updates following r42379
+
+        * fast/text/offsetForPosition-cluster-at-zero-expected.txt: Updated
+        results.
+        * fast/text/offsetForPosition-cluster-at-zero.html: Removed
+        font-dependent alert that was accidently left in this test.
+        * platform/mac-tiger/fast/text/international/thai-line-breaks-expected.checksum:
+        * platform/mac-tiger/fast/text/international/thai-line-breaks-expected.png:
+        * platform/mac-tiger/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/mac-tiger/fast/text/monospace-width-cache-expected.checksum: Added.
+        * platform/mac-tiger/fast/text/monospace-width-cache-expected.png: Added.
+        * platform/mac-tiger/fast/text/monospace-width-cache-expected.txt: Added.
+        * platform/win/Skipped:
+
 2009-04-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein
