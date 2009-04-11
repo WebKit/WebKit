@@ -1,3 +1,15 @@
+2009-04-10  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Adam Roben.
+
+        Disabled fast/dom/gc-8.html, which was using Timer in an unsafe way that now
+        triggers an assertion.
+
+        We'll reenable the test after fixing the problem. But this is a test-only problem.
+
+        * fast/dom/gc-8.html: Removed.
+        * fast/dom/gc-8.html-disabled: Copied from fast/dom/gc-8.html.
+
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
