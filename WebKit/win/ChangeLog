@@ -1,3 +1,16 @@
+2009-04-10  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/6676024> REGRESSION (PB-40B1): Safari crashes on launch on tablet PC
+        
+        r21436 changed the semantics of AXObjectCache::get() to not create
+        objects on demand. Changing this get() call into a getOrCreate() call
+        fixes the crash.
+        
+        Rubber stamped by Jon Honeycutt.
+
+        * AccessibleDocument.cpp:
+        (AccessibleDocument::AccessibleDocument):
+
 2009-04-10  Adam Roben  <aroben@apple.com>
 
         Add our invidual IDL files back to Interfaces.vcproj, but disable them
