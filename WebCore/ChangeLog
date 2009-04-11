@@ -1,3 +1,20 @@
+2009-04-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=25137
+
+        If we reload, the animation controller sticks around and has
+        a stale animation time. So the needed delay is computed wrong.
+        I added a reset of the animation timer on load.
+
+        I did not do a test case because this only happens on reload so I
+        couldn't make an automated test. I tried using an iframe and using
+        reload() but that doesn't tickle the bug.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitOpen):
+
 2009-04-10  Grace Kloba  <klobag@gmail.com>
 
         Reviewed by Darin Adler.

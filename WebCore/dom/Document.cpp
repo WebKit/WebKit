@@ -1483,6 +1483,11 @@ void Document::implicitOpen()
     clear();
     m_tokenizer = createTokenizer();
     setParsing(true);
+
+    // If we reload, the animation controller sticks around and has
+    // a stale animation time. We need to update it here.
+    if (m_frame && m_frame->animation())
+        m_frame->animation()->beginAnimationUpdate();
 }
 
 HTMLElement* Document::body() const
