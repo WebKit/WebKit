@@ -839,6 +839,11 @@ WebInspector.pausedScript = function()
     this.panels.scripts.debuggerPaused();
 }
 
+WebInspector.resumedScript = function()
+{
+    this.panels.scripts.debuggerResumed();
+}
+
 WebInspector.populateInterface = function()
 {
     for (var panelName in this.panels) {

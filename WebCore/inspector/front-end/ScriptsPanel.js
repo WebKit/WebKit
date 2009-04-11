@@ -359,6 +359,15 @@ WebInspector.ScriptsPanel.prototype = {
         window.focus();
     },
 
+    debuggerResumed: function()
+    {
+        this._paused = false;
+        this._waitingToPause = false;
+        this._stepping = false;
+
+        this._clearInterface();
+    },
+
     debuggerWasEnabled: function()
     {
         this.reset();

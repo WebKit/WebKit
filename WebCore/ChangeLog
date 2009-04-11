@@ -1,3 +1,24 @@
+2009-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Allow page navigation and reload while stopped at a breakpoint.
+
+        <rdar://problem/6781108> Having a breakpoint active prevents page reload
+
+        Reviewed by Darin Adler.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didContinue): Call the resumedScript function.
+        * inspector/InspectorController.h: Added didContinue.
+        * inspector/JavaScriptDebugListener.h: Ditto.
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::pauseIfNeeded): Call didContinue on the listeners.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.debuggerResumed): Update the interface and state.
+        * inspector/front-end/inspector.js:
+        (WebInspector.resumedScript): Call ScriptsPanel.debuggerResumed.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Call resumeDebugger.
+
 2009-04-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.

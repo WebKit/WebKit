@@ -281,6 +281,7 @@ private:
     virtual void didParseSource(JSC::ExecState*, const JSC::SourceCode&);
     virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceCode&, int errorLine, const JSC::UString& errorMessage);
     virtual void didPause();
+    virtual void didContinue();
 #endif
 
     Page* m_inspectedPage;
