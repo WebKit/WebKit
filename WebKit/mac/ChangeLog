@@ -1,3 +1,15 @@
+2009-04-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        - fix <rdar://problem/6752340> Light blue-green background in content
+          area in Mail
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        Use device white, rather than calibrated white, as the default
+        background color.
+
 2009-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.

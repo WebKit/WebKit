@@ -742,7 +742,7 @@ static bool runningTigerMail()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
-    _private->backgroundColor = [[NSColor whiteColor] retain];
+    _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
     _private->useDocumentViews = usesDocumentViews;
 
     WebFrameView *frameView = nil;
