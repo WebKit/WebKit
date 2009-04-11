@@ -1,3 +1,9 @@
+2009-04-10  Adam Roben  <aroben@apple.com>
+
+        Land corrected results for complex-character-based-fallback.html
+
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+
 2009-04-10  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Adam Roben.
