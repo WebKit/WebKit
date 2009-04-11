@@ -57,7 +57,6 @@
 #import "visible_units.h"
 
 #import <Carbon/Carbon.h>
-#import <runtime/JSLock.h>
 #import <wtf/StdLibExtras.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -69,8 +68,6 @@
 @end
  
 using namespace std;
-
-using JSC::JSLock;
 
 namespace WebCore {
 

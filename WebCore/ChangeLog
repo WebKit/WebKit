@@ -1,5 +1,13 @@
 2009-04-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adele Peterson.
+
+        Remove unused include for JSLock.
+
+        * page/mac/FrameMac.mm:
+
+2009-04-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Add back the keepAlive timer for after the script execution to
