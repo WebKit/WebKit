@@ -102,6 +102,10 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, m_windowShell);
     m_windowShell->window()->globalData()->timeoutChecker.stop();
 
+    // Evaluating the JavaScript could cause the frame to be deallocated
+    // so we start the keep alive timer here.
+    m_frame->keepAlive();
+
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
         m_sourceURL = savedSourceURL;
         return comp.value();
