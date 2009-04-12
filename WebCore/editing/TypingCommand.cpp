@@ -358,6 +358,13 @@ void TypingCommand::insertParagraphSeparator()
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
 {
+    // If the selection starts inside a table, just insert the paragraph separator normally
+    // Breaking the blockquote would also break apart the table, which is unecessary when inserting a newline
+    if (enclosingNodeOfType(endingSelection().start(), &isTableStructureNode)) {
+        insertParagraphSeparator();
+        return;
+    }
+        
     applyCommandToComposite(BreakBlockquoteCommand::create(document()));
     typingAddedToOpenCommand();
 }

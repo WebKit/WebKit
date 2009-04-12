@@ -1,3 +1,16 @@
+2009-04-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6609479> Pressing return inside a table cell that's inside quoted content will split the table
+
+        Test: editing/inserting/6609479.html
+
+        Don't break a blockquote if pasting or inserting into a table.
+
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+
 2009-04-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,16 @@
+2009-04-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for <rdar://problem/6609479> Pressing return inside a table cell that's inside quoted content will split the table
+
+        * editing/inserting/5418891.html: Changed test so it doesn't involve tables.
+        * editing/inserting/6609479-expected.txt: Added.
+        * editing/inserting/6609479.html: Added.
+        * platform/mac/editing/inserting/5418891-expected.checksum:
+        * platform/mac/editing/inserting/5418891-expected.png:
+        * platform/mac/editing/inserting/5418891-expected.txt:
+
 2009-04-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
