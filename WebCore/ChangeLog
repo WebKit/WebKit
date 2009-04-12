@@ -1,3 +1,23 @@
+2009-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6643103> Unscaled values from body.scrollHeight
+
+        Test: fast/css/zoom-body-scroll.html
+
+        Adjust scroll{Left,Top,Width,Height} values for zoom in getters and
+        setters.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::adjustForZoom):
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        (WebCore::HTMLBodyElement::scrollHeight):
+        (WebCore::HTMLBodyElement::scrollWidth):
+
 2009-04-10  Timothy Hatcher  <timothy@apple.com>
 
         Allow page navigation and reload while stopped at a breakpoint.

@@ -1,3 +1,12 @@
+2009-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6643103> Unscaled values from body.scrollHeight
+
+        * fast/css/zoom-body-scroll-expected.txt: Added.
+        * fast/css/zoom-body-scroll.html: Added.
+
 2009-04-10  Adam Roben  <aroben@apple.com>
 
         Land corrected results for complex-character-based-fallback.html
