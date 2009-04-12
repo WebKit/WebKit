@@ -1,3 +1,17 @@
+2009-04-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test: editing/inserting/6609479-1.html
+
+        Follow-up to <rdar://problem/6609479>.
+
+        Before my last change, a Mail blockquote would've been broken up earlier, and you would've been guaranteed that the inserted content
+        was at the start of a paragraph.  Now we need to check for that explicitly, and only merge the start of the inserted content if it is 
+        at the start of a paragraph.
+
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::shouldMergeStart):
+
 2009-04-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

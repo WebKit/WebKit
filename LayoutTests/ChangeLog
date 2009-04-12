@@ -1,3 +1,12 @@
+2009-04-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Another test for <rdar://problem/6609479>.  This covers inserting HTML in a quoted table.
+
+        * editing/inserting/6609479-1-expected.txt: Added.
+        * editing/inserting/6609479-1.html: Added.
+
 2009-04-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
