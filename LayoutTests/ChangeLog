@@ -1,5 +1,13 @@
 2009-04-12  Sam Weinig  <sam@webkit.org>
 
+        Update results.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
+2009-04-12  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Update tests after making MessageChannel completely missing when not
