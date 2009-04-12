@@ -1,3 +1,13 @@
+2009-04-12  Timothy Hatcher  <timothy@apple.com>
+
+        A resource's filename is not correct after a redirect in the Inspector.
+
+        Reviewed by Dan Bernstein.
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateScriptObject): Fix a typo in the
+        lastPathComponent property name.
+
 2009-04-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

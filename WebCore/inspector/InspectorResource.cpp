@@ -173,7 +173,7 @@ void InspectorResource::updateScriptObject(ScriptState* scriptState)
         if (!m_scriptObject.set(scriptState, "path", m_requestURL.path()))
             return;
 
-        if (!m_scriptObject.set(scriptState, "lasPathComponent", m_requestURL.lastPathComponent()))
+        if (!m_scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent()))
             return;
 
         ScriptObject requestHeaders = createHeadersObject(scriptState, m_requestHeaderFields, hadException);
