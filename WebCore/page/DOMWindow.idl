@@ -338,6 +338,9 @@ module window {
 
         attribute HTMLCollectionConstructor HTMLCollection;
 
+        attribute [CustomGetter] HTMLImageElementConstructor Image; // Usable with new operator
+        attribute [CustomGetter] HTMLOptionElementConstructor Option; // Usable with new operator
+
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
         attribute TextMetricsConstructor TextMetrics;
 
@@ -358,8 +361,14 @@ module window {
         attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
         attribute WebKitCSSKeyframesRuleConstructor WebKitCSSKeyframesRule;
 
-#if ENABLE_CHANNEL_MESSAGING
+        attribute [JSCCustomGetter] WebKitCSSMatrixConstructor WebKitCSSMatrix; // Usable with the new operator
+
+        attribute [JSCCustomGetter] WebKitPointConstructor WebKitPoint; // Usable with new the operator
+
         attribute MessagePortConstructor MessagePort;
+
+#if ENABLE_CHANNEL_MESSAGING
+        attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
         attribute ClipboardConstructor Clipboard;
@@ -378,19 +387,17 @@ module window {
         attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
+        attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest; // Usable with the new operator
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
-#if defined(V8_BINDING)
-        // With JSC, these are added in JSDOMWindowBase.cpp.
-        attribute XMLHttpRequestConstructor XMLHttpRequest;
-        attribute XSLTProcessorConstructor XSLTProcessor;
-        attribute MessageChannelConstructor MessageChannel;
-        attribute WebKitPointConstructor WebKitPoint;
-#if ENABLE_WORKERS
-        attribute WorkerConstructor Worker;
+
+#if ENABLE_XSLT
+        attribute [JSCCustomGetter] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 #endif
-        attribute WebKitCSSMatrixConstructor WebKitCSSMatrix;
-#endif  // V8_BINDING
+
+#if ENABLE_WORKERS
+        attribute [JSCCustomGetter] WorkerConstructor Worker; // Usable with the new operator
+#endif
 
         attribute PluginConstructor Plugin;
         attribute PluginArrayConstructor PluginArray;
@@ -407,6 +414,7 @@ module window {
 #endif
 
 #if ENABLE_VIDEO
+        attribute [CustomGetter] HTMLAudioElementConstructor Audio; // Usable with the new operator
         attribute HTMLAudioElementConstructor HTMLAudioElement;
         attribute HTMLMediaElementConstructor HTMLMediaElement;
         attribute HTMLVideoElementConstructor HTMLVideoElement;

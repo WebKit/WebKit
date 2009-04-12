@@ -33,24 +33,13 @@
 #include "FrameLoadRequest.h"
 #include "HTMLDocument.h"
 #include "InspectorController.h"
-#include "JSAudioConstructor.h"
 #include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
 #include "JSHTMLCollection.h"
-#include "JSImageConstructor.h"
-#include "JSMessageChannelConstructor.h"
 #include "JSNode.h"
-#include "JSWebKitCSSMatrixConstructor.h"
-#include "JSOptionConstructor.h"
-#include "JSWebKitPointConstructor.h"
-#include "JSWorkerConstructor.h"
-#include "JSXMLHttpRequestConstructor.h"
-#include "JSXSLTProcessorConstructor.h"
 #include "Logging.h"
-#include "MediaPlayer.h"
 #include "Page.h"
 #include "PlatformScreen.h"
-#include "PluginInfoStore.h"
 #include "RenderView.h"
 #include "ScheduledAction.h"
 #include "ScriptController.h"
@@ -69,26 +58,6 @@ static JSValuePtr windowProtoFuncNotImplemented(ExecState*, JSObject*, JSValuePt
 static JSValuePtr jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&);
 static JSValuePtr jsDOMWindowBaseEvent(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValuePtr);
-
-// Constructors
-static JSValuePtr jsDOMWindowBaseAudio(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseImage(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseMessageChannel(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseWorker(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseWorker(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseOption(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseWebKitCSSMatrix(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseWebKitCSSMatrix(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseWebKitPoint(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseWebKitPoint(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValuePtr);
-static JSValuePtr jsDOMWindowBaseXSLTProcessor(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValuePtr);
 
 #include "JSDOMWindowBase.lut.h"
 
@@ -109,16 +78,6 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
 # -- Attributes --
   crypto                        jsDOMWindowBaseCrypto                       DontDelete|ReadOnly
   event                         jsDOMWindowBaseEvent                        DontDelete
-# -- Constructors --
-  Audio                         jsDOMWindowBaseAudio                        DontDelete
-  Image                         jsDOMWindowBaseImage                        DontDelete
-  MessageChannel                jsDOMWindowBaseMessageChannel               DontDelete
-  Option                        jsDOMWindowBaseOption                       DontDelete
-  WebKitCSSMatrix               jsDOMWindowBaseWebKitCSSMatrix              DontDelete
-  WebKitPoint                   jsDOMWindowBaseWebKitPoint                  DontDelete
-  Worker                        jsDOMWindowBaseWorker                       DontDelete
-  XMLHttpRequest                jsDOMWindowBaseXMLHttpRequest               DontDelete
-  XSLTProcessor                 jsDOMWindowBaseXSLTProcessor                DontDelete
 @end
 */
 
@@ -363,178 +322,12 @@ JSValuePtr jsDOMWindowBaseEvent(ExecState* exec, const Identifier&, const Proper
     return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->currentEvent());
 }
 
-JSValuePtr jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSImageConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-}
-
-#if !ENABLE(CHANNEL_MESSAGING)
-
-JSValuePtr jsDOMWindowBaseMessageChannel(ExecState*, const Identifier&, const PropertySlot&)
-{
-    return jsUndefined();
-}
-
-#else
-
-JSValuePtr jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-}
-
-#endif
-
-JSValuePtr jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSOptionConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-}
-
-JSValuePtr jsDOMWindowBaseWebKitCSSMatrix(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec);
-}
- 
-JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-}
-
-JSValuePtr jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-#if ENABLE(VIDEO)
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    if (!MediaPlayer::isAvailable())
-        return jsUndefined();
-    return getDOMConstructor<JSAudioConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-#else
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(slot);
-    return jsUndefined();
-#endif
-}
-
-JSValuePtr jsDOMWindowBaseWebKitPoint(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSWebKitPointConstructor>(exec);
-}
-
-JSValuePtr jsDOMWindowBaseWorker(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-#if ENABLE(WORKERS)
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSWorkerConstructor>(exec);
-#else
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(slot);
-    return jsUndefined();
-#endif
-}
-
-JSValuePtr jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-#if ENABLE(XSLT)
-    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
-        return jsUndefined();
-    return getDOMConstructor<JSXSLTProcessorConstructor>(exec);
-#else
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(slot);
-    return jsUndefined();
-#endif
-}
-
 void setJSDOMWindowBaseEvent(ExecState* exec, JSObject* thisObject, JSValuePtr value)
 {
     if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
         return;
-    // Shadowing a built-in constructor
+    // Shadowing a built-in Event
     static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Event"), value);
-}
-
-void setJSDOMWindowBaseAudio(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Audio"), value);
-}
-
-void setJSDOMWindowBaseImage(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Image"), value);
-}
-
-void setJSDOMWindowBaseMessageChannel(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "MessageChannel"), value);
-}
-
-void setJSDOMWindowBaseOption(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Option"), value);
-}
-
-void setJSDOMWindowBaseWorker(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Worker"), value);
-}
-
-void setJSDOMWindowBaseWebKitCSSMatrix(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "WebKitCSSMatrix"), value);
-}
-
-void setJSDOMWindowBaseWebKitPoint(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "WebKitPoint"), value);
-}
-
-void setJSDOMWindowBaseXMLHttpRequest(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "XMLHttpRequest"), value);
-}
-
-void setJSDOMWindowBaseXSLTProcessor(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
-        return;
-    // Shadowing a built-in constructor
-    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "XSLTProcessor"), value);
 }
 
 namespace WebCore {

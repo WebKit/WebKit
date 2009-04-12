@@ -108,7 +108,7 @@ namespace WebCore {
     }
 
     template<class ConstructorClass>
-    inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
+    inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMGlobalObject* globalObject)
     {
         if (JSC::JSObject* constructor = globalObject->constructors().get(&ConstructorClass::s_info))
             return constructor;

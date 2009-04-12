@@ -1,3 +1,18 @@
+2009-04-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Update tests after making MessageChannel completely missing when not
+        compiling with support for it (and removing it from the tests because
+        we never compile with support for it right now) and exposing the MessagePort
+        constructor.
+
+        * fast/dom/constructors-cached-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+        * fast/dom/resources/constructors-cached.js:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-04-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

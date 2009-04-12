@@ -152,9 +152,6 @@ PASS TryAllocate('XPathEvaluator') is '[object XPathEvaluator]'
 PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
 PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
 PASS TryAllocate('XSLTProcessor') is '[object XSLTProcessor]'
-FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
-FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
-FAIL TryAllocate('MessageChannel') should be [object MessageChannel]. Was no constructor.
 PASS TryAllocate('Audio') is '[object HTMLAudioElement]'
 PASS TryAllocate('Audio') is '[object HTMLAudioElement]'
 PASS TryAllocate('Audio') is '[object HTMLAudioElement]'

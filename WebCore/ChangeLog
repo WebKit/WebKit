@@ -1,3 +1,28 @@
+2009-04-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Move more attributes out of JSDOMWindowBase by
+        partially generating them.
+
+        - Expose the MessagePort constructor.
+
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (setJSDOMWindowBaseEvent):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::image):
+        (WebCore::JSDOMWindow::option):
+        (WebCore::JSDOMWindow::audio):
+        (WebCore::JSDOMWindow::webKitPoint):
+        (WebCore::JSDOMWindow::webKitCSSMatrix):
+        (WebCore::JSDOMWindow::xMLHttpRequest):
+        (WebCore::JSDOMWindow::xSLTProcessor):
+        (WebCore::JSDOMWindow::messageChannel):
+        (WebCore::JSDOMWindow::worker):
+        * page/DOMWindow.idl:
+
 2009-04-12  Timothy Hatcher  <timothy@apple.com>
 
         A resource's filename is not correct after a redirect in the Inspector.

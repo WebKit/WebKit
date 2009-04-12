@@ -1,6 +1,6 @@
 description("This test ensures that objects with security restrictions are cached correctly");
 
-var constructors = ["Image", "MessageChannel", "Option", "XMLHttpRequest", "Audio"];
+var constructors = ["Image", "Option", "XMLHttpRequest", "Audio"];
 
 for (var i = 0; i < constructors.length; i++) {
     var constructor = constructors[i];

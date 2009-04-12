@@ -29,12 +29,22 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "History.h"
+#include "JSAudioConstructor.h"
 #include "JSDOMWindowShell.h"
 #include "JSEventListener.h"
 #include "JSHistory.h"
+#include "JSImageConstructor.h"
 #include "JSLocation.h"
+#include "JSMessageChannelConstructor.h"
 #include "JSMessagePort.h"
+#include "JSOptionConstructor.h"
+#include "JSWebKitCSSMatrixConstructor.h"
+#include "JSWebKitPointConstructor.h"
+#include "JSWorkerConstructor.h"
+#include "JSXMLHttpRequestConstructor.h"
+#include "JSXSLTProcessorConstructor.h"
 #include "Location.h"
+#include "MediaPlayer.h"
 #include "MessagePort.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -182,6 +192,61 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)
         impl()->frame()->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
     }
 }
+
+JSValuePtr JSDOMWindow::image(ExecState* exec) const
+{
+    return getDOMConstructor<JSImageConstructor>(exec, this);
+}
+
+JSValuePtr JSDOMWindow::option(ExecState* exec) const
+{
+    return getDOMConstructor<JSOptionConstructor>(exec, this);
+}
+
+#if ENABLE(VIDEO)
+JSValuePtr JSDOMWindow::audio(ExecState* exec) const
+{
+    if (!MediaPlayer::isAvailable())
+        return jsUndefined();
+    return getDOMConstructor<JSAudioConstructor>(exec, this);
+}
+#endif
+
+JSValuePtr JSDOMWindow::webKitPoint(ExecState* exec) const
+{
+    return getDOMConstructor<JSWebKitPointConstructor>(exec);
+}
+
+JSValuePtr JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
+{
+    return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec);
+}
+ 
+JSValuePtr JSDOMWindow::xMLHttpRequest(ExecState* exec) const
+{
+    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
+}
+
+#if ENABLE(XSLT)
+JSValuePtr JSDOMWindow::xSLTProcessor(ExecState* exec) const
+{
+    return getDOMConstructor<JSXSLTProcessorConstructor>(exec);
+}
+#endif
+
+#if ENABLE(CHANNEL_MESSAGING)
+JSValuePtr JSDOMWindow::messageChannel(ExecState* exec) const
+{
+    return getDOMConstructor<JSMessageChannelConstructor>(exec, this);
+}
+#endif
+
+#if ENABLE(WORKERS)
+JSValuePtr JSDOMWindow::worker(ExecState* exec) const
+{
+    return getDOMConstructor<JSWorkerConstructor>(exec);
+}
+#endif
 
 JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 {
