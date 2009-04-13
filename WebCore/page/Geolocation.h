@@ -38,6 +38,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -54,8 +55,8 @@ public:
     
     Geoposition* lastPosition() const { return m_service->lastPosition(); }
 
-    void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
-    int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
+    void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
+    int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
 
     void suspend();
@@ -72,16 +73,18 @@ private:
 
     class GeoNotifier : public RefCounted<GeoNotifier> {
     public:
-        static PassRefPtr<GeoNotifier> create(PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PositionOptions* options) { return adoptRef(new GeoNotifier(positionCallback, positionErrorCallback, options)); }
+        static PassRefPtr<GeoNotifier> create(PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(new GeoNotifier(positionCallback, positionErrorCallback, options)); }
         
+        void startTimer();
         void timerFired(Timer<GeoNotifier>*);
         
         RefPtr<PositionCallback> m_successCallback;
         RefPtr<PositionErrorCallback> m_errorCallback;
+        RefPtr<PositionOptions> m_options;
         Timer<GeoNotifier> m_timer;
 
     private:
-        GeoNotifier(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
+        GeoNotifier(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     };
 
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
@@ -90,6 +93,11 @@ private:
     void sendErrorToWatchers(PositionError*);
     void sendPositionToOneShots(Geoposition*);
     void sendPositionToWatchers(Geoposition*);
+    
+    static void startTimer(Vector<RefPtr<GeoNotifier> >&);
+    void startTimersForOneShots();
+    void startTimersForWatchers();
+    void startTimers();
     
     void handleError(PositionError*);
 

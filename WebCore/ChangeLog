@@ -1,3 +1,29 @@
+2009-04-13  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25149
+
+        The Geolocation timer needs to start after the UA has granted permission.
+
+        * bindings/js/JSGeolocationCustom.cpp: Use PassRefPtr<PositionOptions>
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * page/Geolocation.cpp: Add a RefPtr<PositionOptions> so it can be used
+        later when the timer is started. Change PositionOptions* to PassRefPtr<PositionOptions>
+        where needed.
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier):
+        (WebCore::Geolocation::GeoNotifier::startTimer):
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        (WebCore::Geolocation::setIsAllowed): Start the timer is the UA allows
+        (WebCore::Geolocation::startTimer):
+        (WebCore::Geolocation::startTimersForOneShots):
+        (WebCore::Geolocation::startTimersForWatchers):
+        (WebCore::Geolocation::startTimers):
+        * page/Geolocation.h:
+        (WebCore::Geolocation::GeoNotifier::create):
+
 2009-04-13  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Fisher.
