@@ -44,7 +44,7 @@ public:
     // A single shared object will be used for each integer in the serialized list.
     virtual void writeInteger(int) = 0;
 
-    // Call writeUniqueString to write a string value.
+    // Call writeString to write a string value.
     // A single shared object will be used for each string in the serialized list.
     virtual void writeString(const String&) = 0;
 
@@ -81,9 +81,9 @@ protected:
 
 class BinaryPropertyListWriter {
 public:
-    // Calls writeToStream once to prepare for writing and determine how big a
+    // Calls writeObjects once to prepare for writing and determine how big a
     // buffer is required. Then calls buffer to get the appropriately-sized
-    // buffer, then calls writeToStream a second time and writes the property list.
+    // buffer, then calls writeObjects a second time and writes the property list.
     void writePropertyList();
 
 protected:

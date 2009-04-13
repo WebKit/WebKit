@@ -452,6 +452,36 @@ static void moveAndReverseBytes(UInt8* destination, const UInt8* source, size_t 
         std::swap(*start++, *--end);
 }
 
+// The serializer uses a single buffer for the property list.
+// The buffer contains:
+//
+//    8-byte header
+//    object data
+//    offset table
+//    32-byte trailer
+//
+// While serializing object, the offset table entry for each object is written just before
+// the object data for that object is written. Aggregates, arrays and dictionaries, are a
+// special case. The objects that go into an aggregate are written before the aggregate is.
+// As each object is written, the object reference is put in the aggregate buffer. Then,
+// when the aggregate is written, the aggregate buffer is copied into place in the object
+// data. Finally, the header and trailer are written.
+//
+// The aggregate buffer shares space with the object data, like this:
+//
+//    8-byte header
+//    object data
+//    >>> aggregate buffer <<<
+//    offset table
+//    32-byte trailer
+//
+// To make it easy to build it incrementally, the buffer starts at the end of the object
+// data space, and grows backwards. We're guaranteed the aggregate buffer will never collide
+// with the object data pointer because we know that the object data is correctly sized
+// based on our plan, and all the data in the aggregate buffer will be used to create the
+// actual aggregate objects; in the worst case the aggregate buffer will already be in
+// exactly the right place, but backwards.
+
 BinaryPropertyListSerializer::BinaryPropertyListSerializer(BinaryPropertyListWriter& client)
     : m_plan(client)
     , m_objectReferenceSize(bytesNeeded(m_plan.objectCount()))

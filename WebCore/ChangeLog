@@ -2,6 +2,13 @@
 
         Reviewed by Dan Bernstein.
 
+        * platform/cf/BinaryPropertyList.cpp: Added comment.
+        * platform/cf/BinaryPropertyList.h: Fixed mistakes in comments.
+
+2009-04-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Bug 25158: hit testing doesn't work right in some cases involving anonymous blocks
         https://bugs.webkit.org/show_bug.cgi?id=25158
         rdar://problem/6769693
