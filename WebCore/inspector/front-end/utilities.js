@@ -962,10 +962,11 @@ function indexOfObjectInListSortedByFunction(anObject, aList, aFunction)
         else if (c < 0)
             last = mid - 1;
         else {
-            //we return the first occurance of an item in the list.
+            // Return the first occurance of an item in the list.
             while (mid > 0 && aFunction(anObject, aList[mid - 1]) === 0)
                 mid--;
-            return mid;
+            first = mid;
+            break;
         }
     }
 

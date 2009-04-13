@@ -582,21 +582,25 @@ WebInspector.ScriptsPanel.prototype = {
         option.representedObject = (script.resource || script);
         option.text = (script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)"));
 
-        var insertionIndex = -1;
-        if (select.childNodes) {
-            insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, function(a, b) {    
-                a = a.text.toLowerCase();
-                b = b.text.toLowerCase();
-                
-                if (a < b)
-                    return -1;
-                else if (a > b)
-                    return 1;
+        function optionCompare(a, b)
+        {
+            var aTitle = a.text.toLowerCase();
+            var bTitle = b.text.toLowerCase();
+            if (aTitle < bTitle)
+                return -1;
+            else if (aTitle > bTitle)
+                return 1;
 
-                return 0;
-            });
+            var aSourceID = a.representedObject.sourceID;
+            var bSourceID = b.representedObject.sourceID;
+            if (aSourceID < bSourceID)
+                return -1;
+            else if (aSourceID > bSourceID)
+                return 1;
+            return 0;
         }
 
+        var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
         if (insertionIndex < 0)
             select.appendChild(option);
         else

@@ -1,3 +1,17 @@
+2009-04-13  Timothy Hatcher  <timothy@apple.com>
+
+        Correctly sort (program) scripts in the Scripts panel popup menu.
+
+        Reviewed by Ada Chan.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): Refactor the code
+        and sort "(program)" options by the sourceID to maintain some order.
+        * inspector/front-end/utilities.js:
+        (indexOfObjectInListSortedByFunction): Fix a bug where identical objects would cause
+        an incorrect return value that confuses insertionIndexForObjectInListSortedByFunction.
+        Just set 'first' and break so the correct result will be returned.
+
 2009-04-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
