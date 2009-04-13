@@ -1,3 +1,12 @@
+2009-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: Made setInlineEventListenerForType not inline, since Document
+        calls it now. Made RegisteredEventListener.h a private header on Mac,
+        so WebKit can use it.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setInlineEventListenerForType):
+
 2009-04-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

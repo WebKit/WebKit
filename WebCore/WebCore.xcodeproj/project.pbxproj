@@ -1087,7 +1087,7 @@
 		85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B330A44EFC700F992E0 /* MutationEvent.cpp */; };
 		85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B340A44EFC700F992E0 /* MutationEvent.h */; };
 		85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */; };
-		85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B360A44EFC700F992E0 /* RegisteredEventListener.h */; };
+		85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B360A44EFC700F992E0 /* RegisteredEventListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B370A44EFC700F992E0 /* UIEvent.cpp */; };
 		85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B380A44EFC700F992E0 /* UIEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */; settings = {ATTRIBUTES = (Private, ); }; };
