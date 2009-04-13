@@ -1,3 +1,15 @@
+2009-04-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler and Dan Bernstein.
+
+        Assertion in updateStyleForAllDocuments.  Make sure to unscheduleStyleRecalc when an object goes into
+        the page cache.  Disallow scheduling of style recalcs on a document that is already in the page cache.
+        Schedule a style recalc if needed when an object comes out of the page cache.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::setInPageCache):
+
 2009-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Correctly sort (program) scripts in the Scripts panel popup menu.

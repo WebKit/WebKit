@@ -1076,7 +1076,7 @@ PassRefPtr<TreeWalker> Document::createTreeWalker(Node *root, unsigned whatToSho
 
 void Document::scheduleStyleRecalc()
 {
-    if (m_styleRecalcTimer.isActive())
+    if (m_styleRecalcTimer.isActive() || inPageCache())
         return;
 
     ASSERT(childNeedsStyleRecalc());
@@ -3160,11 +3160,14 @@ void Document::setInPageCache(bool flag)
         m_savedRenderer = renderer();
         if (FrameView* v = view())
             v->resetScrollbars();
+        unscheduleStyleRecalc();
     } else {
         ASSERT(renderer() == 0 || renderer() == m_savedRenderer);
         ASSERT(m_renderArena);
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
+        if (childNeedsStyleRecalc())
+            scheduleStyleRecalc();
     }
 }
 
