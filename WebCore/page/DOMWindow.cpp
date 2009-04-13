@@ -177,7 +177,7 @@ bool DOMWindow::allowPopUp(Frame* activeFrame)
     if (activeFrame->script()->processingUserGesture())
         return true;
     Settings* settings = activeFrame->settings();
-    return settings && settings->JavaScriptCanOpenWindowsAutomatically();
+    return settings && settings->javaScriptCanOpenWindowsAutomatically();
 }
 
 bool DOMWindow::canShowModalDialog(const Frame* frame)

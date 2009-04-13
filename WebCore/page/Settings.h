@@ -96,7 +96,7 @@ namespace WebCore {
         bool allowUniversalAccessFromFileURLs() const { return m_allowUniversalAccessFromFileURLs; }
 
         void setJavaScriptCanOpenWindowsAutomatically(bool);
-        bool JavaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
+        bool javaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
 
         void setJavaEnabled(bool);
         bool isJavaEnabled() const { return m_isJavaEnabled; }
