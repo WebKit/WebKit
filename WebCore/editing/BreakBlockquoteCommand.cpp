@@ -56,21 +56,30 @@ void BreakBlockquoteCommand::doApply()
     // be in the first node that we need to move (there are a few exceptions to this, see below).
     Position pos = endingSelection().start().downstream();
     
-    // startNode is the first node that we need to move to the new blockquote.
-    Node* startNode = pos.node();
     // Find the top-most blockquote from the start.
     Element* topBlockquote = 0;
-    for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
+    for (Node *node = pos.node()->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
             topBlockquote = static_cast<Element*>(node);
     }
     if (!topBlockquote || !topBlockquote->parentNode())
         return;
     
-    // Insert a break after the top blockquote.
     RefPtr<Element> breakNode = createBreakElement(document());
+
+    // If the position is at the beginning of the top quoted content, we don't need to break the quote.
+    // Instead, insert the break before the blockquote.
+    if (isFirstVisiblePositionInNode(visiblePos, topBlockquote)) {
+        insertNodeBefore(breakNode.get(), topBlockquote);
+        setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
+        rebalanceWhitespace();   
+        return;
+    }
+    
+    // Insert a break after the top blockquote.
     insertNodeAfter(breakNode.get(), topBlockquote);
     
+    // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
     if (isLastVisiblePositionInNode(visiblePos, topBlockquote)) {
         setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
         rebalanceWhitespace();   
@@ -81,6 +90,13 @@ void BreakBlockquoteCommand::doApply()
     // in the new blockquote.
     if (lineBreakExistsAtPosition(visiblePos))
         pos = pos.next();
+        
+    // Adjust the position so we don't split at the beginning of a quote.  
+    while (isFirstVisiblePositionInNode(VisiblePosition(pos), nearestMailBlockquote(pos.node())))
+        pos = pos.previous();
+    
+    // startNode is the first node that we need to move to the new blockquote.
+    Node* startNode = pos.node();
         
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {

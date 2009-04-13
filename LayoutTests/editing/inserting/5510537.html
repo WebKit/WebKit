@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <style>
+            blockquote {
+                color: blue;
+                border-left: 2px solid blue;
+                margin: 0px;
+                padding-left: 10px;
+            }
+        </style>
+        <script>
+            function log(msg)
+            {
+                document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+            }
+            
+            function test()
+            {
+                var s = window.getSelection();
+                s.setPosition(document.getElementById('qt'), 0);
+                document.execCommand("InsertNewlineInQuotedContent");
+                document.execCommand("InsertText", true, "unquoted");
+                s.setPosition(document.getElementById('qt2'), 0);
+                document.execCommand("InsertNewlineInQuotedContent");
+                document.execCommand("InsertText", true, "unquoted");
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>This tests that inserting a newline at the beginning of quoted content doesn't add an extra quoted line.  The test has passed if there are no empty lines (quoted or unquoted) in the box below.</p>
+        <div contenteditable="true">
+            <blockquote type="cite"><div id="qt">quote level one</div></blockquote>
+            <blockquote type="cite"><div>quote level one</div><div><blockquote type="cite"><div id="qt2">quote level two</div></blockquote></div></blockquote>
+        </div>
+        <pre id="console"></pre>
+    </body>
+</html>

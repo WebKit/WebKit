@@ -1,3 +1,14 @@
+2009-04-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/5510537> Typing return at start of block quote yields empty quoted line
+
+        * editing/inserting/5510537.html: Added.
+        * platform/mac/editing/inserting/5510537-expected.checksum: Added.
+        * platform/mac/editing/inserting/5510537-expected.png: Added.
+        * platform/mac/editing/inserting/5510537-expected.txt: Added.
+
 2009-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

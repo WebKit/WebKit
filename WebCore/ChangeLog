@@ -1,3 +1,16 @@
+2009-04-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5510537> Typing return at start of block quote yields empty quoted line
+
+        Test: editing/inserting/5510537.html
+
+        * editing/BreakBlockquoteCommand.cpp: (WebCore::BreakBlockquoteCommand::doApply): If the break insertion position
+        is at the beginning of the topmost quote, then just insert the <br> before the blockquote.  Otherwise, if the break
+        insertion position is at the beginning of any quote, adjust the position so the break comes before the current quote level
+        so we don't end up with an empty line in that quote in addition to the new line we're adding with the <br>.
+
 2009-04-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
