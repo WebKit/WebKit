@@ -1,3 +1,24 @@
+2009-04-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25125.  Rework scrolling so that a layout happens first when
+        it's already needed so that the code doesn't end up making bad decisions based off invalid document sizes.
+
+        This patch also eliminates WebHTMLView's separate notion of needing a layout and just consolidates it with
+        WebCore's notion of needing layout.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        (-[WebHTMLView initWithFrame:]):
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        (-[WebHTMLView setNeedsLayout:]):
+        (-[WebHTMLView _layoutIfNeeded]):
+        (-[WebHTMLView _needsLayout]):
+        * WebView/WebHTMLViewInternal.h:
+
 2009-04-13  Darin Adler  <darin@apple.com>
 
         * WebView/WebViewPrivate.h: Updated comments.

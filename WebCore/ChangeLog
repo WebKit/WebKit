@@ -1,3 +1,18 @@
+2009-04-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25125.  Rework scrolling so that a layout happens first when
+        it's already needed so that the code doesn't end up making bad decisions based off invalid document sizes.
+
+        * WebCore.base.exp:
+        * page/FrameView.h:
+        (WebCore::FrameView::visibleContentsResized):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/ScrollView.h:
+
 2009-04-13  Adam Roben  <aroben@apple.com>
 
         Add SharedBuffer::wrapCFData

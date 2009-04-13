@@ -123,6 +123,18 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     needsLayout = NO;
 
+    // If we came in here with the view already needing a layout, then go ahead and do that
+    // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
+    // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView* htmlView = (WebHTMLView*)documentView;
+        if ([htmlView _needsLayout]) {
+            inUpdateScrollers = YES;
+            [(id <WebDocumentView>)documentView layout];
+            inUpdateScrollers = NO;
+        }
+    }
+
     NSSize documentSize = [documentView frame].size;
     NSSize visibleSize = [self documentVisibleRect].size;
     
@@ -155,7 +167,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (needsLayout && inUpdateScrollersLayoutPass < cMaxUpdateScrollbarsPass && 
         [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
         inUpdateScrollersLayoutPass++;
-        [(id <WebDocumentView>)documentView setNeedsLayout: YES];
+        [(id <WebDocumentView>)documentView setNeedsLayout:YES];
         [(id <WebDocumentView>)documentView layout];
         NSSize newDocumentSize = [documentView frame].size;
         if (NSEqualSizes(documentSize, newDocumentSize)) {
