@@ -621,7 +621,7 @@ void FrameLoader::stopLoading(bool sendUnload)
             }
         }
         if (m_frame->document() && !m_frame->document()->inPageCache())
-            m_frame->document()->removeAllEventListenersFromAllNodes();
+            m_frame->document()->removeAllEventListeners();
     }
 
     m_isComplete = true; // to avoid calling completed() in finishedParsing() (David)
@@ -1829,7 +1829,7 @@ bool FrameLoader::canCachePageContainingThisFrame()
         // the right NPObjects. See <rdar://problem/5197041> for more information.
         && !m_containsPlugIns
         && !m_URL.protocolIs("https")
-        && !m_frame->document()->hasWindowEventListener(eventNames().unloadEvent)
+        && (!m_frame->domWindow() || !m_frame->domWindow()->hasEventListener(eventNames().unloadEvent))
 #if ENABLE(DATABASE)
         && !m_frame->document()->hasOpenDatabases()
 #endif
@@ -1971,7 +1971,7 @@ bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
             { PCLOG("   -Frame contains plugins"); cannotCache = true; }
         if (m_URL.protocolIs("https"))
             { PCLOG("   -Frame is HTTPS"); cannotCache = true; }
-        if (m_frame->document()->hasWindowEventListener(eventNames().unloadEvent))
+        if (m_frame->domWindow() && m_frame->domWindow()->hasEventListener(eventNames().unloadEvent))
             { PCLOG("   -Frame has an unload event listener"); cannotCache = true; }
 #if ENABLE(DATABASE)
         if (m_frame->document()->hasOpenDatabases())

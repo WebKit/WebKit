@@ -379,7 +379,7 @@ JSValuePtr JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
         return jsUndefined();
 
     if (RefPtr<JSProtectedEventListener> listener = findOrCreateJSProtectedEventListener(args.at(exec, 1)))
-        frame->document()->addWindowEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener.release(), args.at(exec, 2).toBoolean(exec));
+        impl()->addEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener.release(), args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
 }
@@ -391,7 +391,7 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
         return jsUndefined();
 
     if (JSProtectedEventListener* listener = findJSProtectedEventListener(args.at(exec, 1)))
-        frame->document()->removeWindowEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener, args.at(exec, 2).toBoolean(exec));
+        impl()->removeEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener, args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
 }

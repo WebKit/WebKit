@@ -184,7 +184,8 @@ void ImageDocument::createDocumentStructure()
     if (shouldShrinkToFit()) {
         // Add event listeners
         RefPtr<EventListener> listener = ImageEventListener::create(this);
-        addWindowEventListener("resize", listener, false);
+        if (DOMWindow* domWindow = this->domWindow())
+            domWindow->addEventListener("resize", listener, false);
         imageElement->addEventListener("click", listener.release(), false);
     }
 

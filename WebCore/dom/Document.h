@@ -575,25 +575,11 @@ public:
     void addListenerType(ListenerType listenerType) { m_listenerTypes = m_listenerTypes | listenerType; }
     void addListenerTypeIfNeeded(const AtomicString& eventType);
 
-    CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
-
-    void handleWindowEvent(Event*, bool useCapture);
-    void setWindowInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
-    EventListener* windowInlineEventListenerForType(const AtomicString& eventType);
-    void removeWindowInlineEventListenerForType(const AtomicString& eventType);
-
     void setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
 
-    void addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    void removeWindowEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    bool hasWindowEventListener(const AtomicString& eventType);
-    
-    void addPendingFrameUnloadEventCount();
-    void removePendingFrameUnloadEventCount();
-    void addPendingFrameBeforeUnloadEventCount();
-    void removePendingFrameBeforeUnloadEventCount();
-
     PassRefPtr<EventListener> createEventListener(const String& functionName, const String& code, Node*);
+
+    CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
@@ -876,8 +862,6 @@ private:
     RefPtr<StyleSheetList> m_styleSheets; // All of the stylesheets that are currently in effect for our media type and stylesheet set.
     ListHashSet<Node*> m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)
 
-    RegisteredEventListenerVector m_windowEventListeners;
-
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     ListHashSet<FormControlElementWithState*> m_formElementsWithState;
     FormElementStateMap m_stateForNewFormElements;
@@ -985,7 +969,7 @@ public:
     void setDashboardRegions(const Vector<DashboardRegionValue>&);
 #endif
 
-    void removeAllEventListenersFromAllNodes();
+    void removeAllEventListeners();
 
     void registerDisconnectedNodeWithEventListeners(Node*);
     void unregisterDisconnectedNodeWithEventListeners(Node*);

@@ -2394,14 +2394,14 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
         }
     }
 
-    // Set up a pointer to indicate whether to dispatch window events.
+    // Set up a pointer to indicate whether / where to dispatch window events.
     // We don't dispatch load events to the window. That quirk was originally
     // added because Mozilla doesn't propagate load events to the window object.
-    Document* documentForWindowEvents = 0;
+    DOMWindow* targetForWindowEvents = 0;
     if (event->type() != eventNames().loadEvent) {
         Node* topLevelContainer = ancestors.isEmpty() ? this : ancestors.last().get();
         if (topLevelContainer->isDocumentNode())
-            documentForWindowEvents = static_cast<Document*>(topLevelContainer);
+            targetForWindowEvents = static_cast<Document*>(topLevelContainer)->domWindow();
     }
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
@@ -2412,9 +2412,9 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     // Trigger capturing event handlers, starting at the top and working our way down.
     event->setEventPhase(Event::CAPTURING_PHASE);
 
-    if (documentForWindowEvents) {
-        event->setCurrentTarget(documentForWindowEvents);
-        documentForWindowEvents->handleWindowEvent(event.get(), true);
+    if (targetForWindowEvents) {
+        event->setCurrentTarget(targetForWindowEvents->document()); // FIXME: targetForWindowEvents should be the event target.
+        targetForWindowEvents->handleEvent(event.get(), true);
         if (event->propagationStopped())
             goto doneDispatching;
     }
@@ -2450,9 +2450,9 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
             if (event->propagationStopped() || event->cancelBubble())
                 goto doneDispatching;
         }
-        if (documentForWindowEvents) {
-            event->setCurrentTarget(documentForWindowEvents);
-            documentForWindowEvents->handleWindowEvent(event.get(), false);
+        if (targetForWindowEvents) {
+            event->setCurrentTarget(targetForWindowEvents->document()); // FIXME: targetForWindowEvents should be the event target.
+            targetForWindowEvents->handleEvent(event.get(), false);
             if (event->propagationStopped() || event->cancelBubble())
                 goto doneDispatching;
         }
@@ -2514,9 +2514,12 @@ void Node::dispatchWindowEvent(PassRefPtr<Event> e)
     ASSERT(!eventDispatchForbidden());
     RefPtr<Event> evt(e);
     RefPtr<Document> doc = document();
-    evt->setTarget(doc);
-    doc->handleWindowEvent(evt.get(), true);
-    doc->handleWindowEvent(evt.get(), false);
+    evt->setTarget(doc); // FIXME: The window should be the event target.
+    DOMWindow* domWindow = doc->domWindow();
+    if (!domWindow)
+        return;
+    domWindow->handleEvent(evt.get(), true);
+    domWindow->handleEvent(evt.get(), false);
 }
 
 void Node::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)

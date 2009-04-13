@@ -25,10 +25,9 @@
 #define RegisteredEventListener_h
 
 #include "AtomicString.h"
+#include "EventListener.h"
 
 namespace WebCore {
-
-    class EventListener;
 
     class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
     public:
@@ -52,6 +51,8 @@ namespace WebCore {
         bool m_useCapture;
         bool m_removed;
     };
+
+    typedef Vector<RefPtr<RegisteredEventListener> > RegisteredEventListenerVector;
 
 } // namespace WebCore
 

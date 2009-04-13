@@ -948,20 +948,127 @@ void DOMWindow::resizeTo(float width, float height) const
     page->chrome()->setWindowRect(fr);
 }
 
+void DOMWindow::handleEvent(Event* event, bool useCapture)
+{
+    if (m_eventListeners.isEmpty())
+        return;
+        
+    // If any HTML event listeners are registered on the window, dispatch them here.
+    RegisteredEventListenerVector listenersCopy = m_eventListeners;
+    size_t size = listenersCopy.size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *listenersCopy[i];
+        if (r.eventType() == event->type() && r.useCapture() == useCapture && !r.removed())
+            r.listener()->handleEvent(event, true);
+    }
+}
+
+void DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+{
+    if (eventType == eventNames().unloadEvent)
+        addPendingFrameUnloadEventCount();
+    else if (eventType == eventNames().beforeunloadEvent)
+        addPendingFrameBeforeUnloadEventCount();
+    // Remove existing identical listener set with identical arguments.
+    // The DOM 2 spec says that "duplicate instances are discarded" in this case.
+    removeEventListener(eventType, listener.get(), useCapture);
+    if (Document* document = this->document())
+        document->addListenerTypeIfNeeded(eventType);
+    m_eventListeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
+}
+
+void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+{
+    size_t size = m_eventListeners.size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *m_eventListeners[i];
+        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
+            if (eventType == eventNames().unloadEvent)
+                removePendingFrameUnloadEventCount();
+            else if (eventType == eventNames().beforeunloadEvent)
+                removePendingFrameBeforeUnloadEventCount();
+            r.setRemoved(true);
+            m_eventListeners.remove(i);
+            return;
+        }
+    }
+}
+
+void DOMWindow::removeAllEventListeners()
+{
+    size_t size = m_eventListeners.size();
+    for (size_t i = 0; i < size; ++i)
+        m_eventListeners[i]->setRemoved(true);
+    m_eventListeners.clear();
+}
+
+bool DOMWindow::hasEventListener(const AtomicString& eventType)
+{
+    size_t size = m_eventListeners.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (m_eventListeners[i]->eventType() == eventType)
+            return true;
+    }
+    return false;
+}
+
 inline void DOMWindow::setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> eventListener)
 {
-    Document* document = this->document();
-    if (!document)
-        return;
-    document->setWindowInlineEventListenerForType(eventType, eventListener);
+    removeInlineEventListenerForType(eventType);
+    if (eventListener)
+        addEventListener(eventType, eventListener, false);
+}
+
+void DOMWindow::removeInlineEventListenerForType(const AtomicString& eventType)
+{
+    size_t size = m_eventListeners.size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *m_eventListeners[i];
+        if (r.eventType() == eventType && r.listener()->isInline()) {
+            if (eventType == eventNames().unloadEvent)
+                removePendingFrameUnloadEventCount();
+            else if (eventType == eventNames().beforeunloadEvent)
+                removePendingFrameBeforeUnloadEventCount();
+            r.setRemoved(true);
+            m_eventListeners.remove(i);
+            return;
+        }
+    }
 }
 
 inline EventListener* DOMWindow::inlineEventListenerForType(const AtomicString& eventType) const
 {
-    Document* document = this->document();
-    if (!document)
-        return 0;
-    return document->windowInlineEventListenerForType(eventType);
+    size_t size = m_eventListeners.size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *m_eventListeners[i];
+        if (r.eventType() == eventType && r.listener()->isInline())
+            return r.listener();
+    }
+    return 0;
+}
+
+void DOMWindow::addPendingFrameUnloadEventCount() 
+{
+    if (m_frame)
+         m_frame->eventHandler()->addPendingFrameUnloadEventCount();
+}
+
+void DOMWindow::removePendingFrameUnloadEventCount() 
+{
+    if (m_frame)
+        m_frame->eventHandler()->removePendingFrameUnloadEventCount();
+}
+
+void DOMWindow::addPendingFrameBeforeUnloadEventCount() 
+{
+    if (m_frame)
+         m_frame->eventHandler()->addPendingFrameBeforeUnloadEventCount();
+}
+
+void DOMWindow::removePendingFrameBeforeUnloadEventCount() 
+{
+    if (m_frame)
+        m_frame->eventHandler()->removePendingFrameBeforeUnloadEventCount();
 }
 
 EventListener* DOMWindow::onabort() const

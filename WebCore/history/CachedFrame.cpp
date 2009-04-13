@@ -122,12 +122,11 @@ void CachedFrame::clear()
 
     if (m_document->inPageCache()) {
         Frame::clearTimers(m_view.get(), m_document.get());
+        m_document->removeAllEventListeners();
 
         m_document->setInPageCache(false);
         // FIXME: We don't call willRemove here. Why is that OK?
         m_document->detach();
-        m_document->removeAllEventListenersFromAllNodes();
-
         m_view->clearFrame();
     }
 

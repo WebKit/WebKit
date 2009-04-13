@@ -1,3 +1,66 @@
+2009-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Moved storage for window event listeners into the window object.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener): Add / remove window event
+        listeners to / from the window object.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeAllEventListeners):
+        (WebCore::Document::clear):
+        (WebCore::Document::setWindowInlineEventListenerForTypeAndAttribute): Moved
+        a bunch of code to the DOMWindow class, and left behind a few calls through
+        to DOMWindow, to support legacy clients. (Eventually, these will go away, too.)
+
+        * dom/Document.h: ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent):
+        (WebCore::Node::dispatchWindowEvent): Dipatch window events on the window
+        object, not the document.
+
+        * dom/Node.h:
+        * dom/RegisteredEventListener.h: Moved RegisteredEventListenerVector
+        declaration, since it's required in more places now.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::clear): Updated for rename. Also, remove event
+        listeners before detaching and clearing the document's window pointer,
+        since the the document needs its window pointer in order to tell the window
+        to clear its event listeners.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision): Updated for rename, and
+        movement of window event listeners into the window.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Updated for movement
+        of window event listeners into the window.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::handleEvent):
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        (WebCore::DOMWindow::hasEventListener):
+        (WebCore::DOMWindow::setInlineEventListenerForType):
+        (WebCore::DOMWindow::removeInlineEventListenerForType):
+        (WebCore::DOMWindow::inlineEventListenerForType):
+        (WebCore::DOMWindow::addPendingFrameUnloadEventCount):
+        (WebCore::DOMWindow::removePendingFrameUnloadEventCount):
+        (WebCore::DOMWindow::addPendingFrameBeforeUnloadEventCount):
+        (WebCore::DOMWindow::removePendingFrameBeforeUnloadEventCount):
+        * page/DOMWindow.h: Moved a bunch of code to the DOMWindow class, from the Document.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldClose): Updated for movement of window event listeners into the window.
+
 2009-04-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

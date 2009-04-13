@@ -28,6 +28,7 @@
 #include "EventTarget.h"
 #include "KURLHash.h"
 #include "PlatformString.h"
+#include "RegisteredEventListener.h"
 #include "TreeShared.h"
 #include "FloatPoint.h"
 #include <wtf/Assertions.h>
@@ -65,8 +66,6 @@ class RenderStyle;
 class StringBuilder;
 
 typedef int ExceptionCode;
-
-typedef Vector<RefPtr<RegisteredEventListener> > RegisteredEventListenerVector;
 
 enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange, AnimationStyleChange };
 

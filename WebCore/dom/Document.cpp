@@ -1342,12 +1342,10 @@ void Document::detach()
     }
 }
 
-void Document::removeAllEventListenersFromAllNodes()
+void Document::removeAllEventListeners()
 {
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i)
-        m_windowEventListeners[i]->setRemoved(true);
-    m_windowEventListeners.clear();
+    if (DOMWindow* domWindow = this->domWindow())
+        domWindow->removeAllEventListeners();
     removeAllDisconnectedNodeEventListeners();
     for (Node* node = this; node; node = node->traverseNextNode())
         node->removeAllEventListeners();
@@ -1747,11 +1745,8 @@ void Document::clear()
     m_tokenizer = 0;
 
     removeChildren();
-
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i)
-        m_windowEventListeners[i]->setRemoved(true);
-    m_windowEventListeners.clear();
+    if (DOMWindow* domWindow = this->domWindow())
+        domWindow->removeAllEventListeners();
 }
 
 const KURL& Document::virtualURL() const
@@ -2762,121 +2757,6 @@ CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
     return 0;
 }
 
-void Document::handleWindowEvent(Event* event, bool useCapture)
-{
-    if (m_windowEventListeners.isEmpty())
-        return;
-        
-    // If any HTML event listeners are registered on the window, dispatch them here.
-    RegisteredEventListenerVector listenersCopy = m_windowEventListeners;
-    size_t size = listenersCopy.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *listenersCopy[i];
-        if (r.eventType() == event->type() && r.useCapture() == useCapture && !r.removed())
-            r.listener()->handleEvent(event, true);
-    }
-}
-
-void Document::setWindowInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> listener)
-{
-    // If we already have it we don't want removeWindowEventListener to delete it
-    removeWindowInlineEventListenerForType(eventType);
-    if (listener)
-        addWindowEventListener(eventType, listener, false);
-}
-
-EventListener* Document::windowInlineEventListenerForType(const AtomicString& eventType)
-{
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *m_windowEventListeners[i];
-        if (r.eventType() == eventType && r.listener()->isInline())
-            return r.listener();
-    }
-    return 0;
-}
-
-void Document::removeWindowInlineEventListenerForType(const AtomicString& eventType)
-{
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *m_windowEventListeners[i];
-        if (r.eventType() == eventType && r.listener()->isInline()) {
-            if (eventType == eventNames().unloadEvent)
-                removePendingFrameUnloadEventCount();
-            else if (eventType == eventNames().beforeunloadEvent)
-                removePendingFrameBeforeUnloadEventCount();
-            r.setRemoved(true);
-            m_windowEventListeners.remove(i);
-            return;
-        }
-    }
-}
-
-void Document::addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
-{
-    if (eventType == eventNames().unloadEvent)
-        addPendingFrameUnloadEventCount();
-    else if (eventType == eventNames().beforeunloadEvent)
-        addPendingFrameBeforeUnloadEventCount();
-    // Remove existing identical listener set with identical arguments.
-    // The DOM 2 spec says that "duplicate instances are discarded" in this case.
-    removeWindowEventListener(eventType, listener.get(), useCapture);
-    addListenerTypeIfNeeded(eventType);
-    m_windowEventListeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
-}
-
-void Document::removeWindowEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
-{
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *m_windowEventListeners[i];
-        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
-            if (eventType == eventNames().unloadEvent)
-                removePendingFrameUnloadEventCount();
-            else if (eventType == eventNames().beforeunloadEvent)
-                removePendingFrameBeforeUnloadEventCount();
-            r.setRemoved(true);
-            m_windowEventListeners.remove(i);
-            return;
-        }
-    }
-}
-
-bool Document::hasWindowEventListener(const AtomicString& eventType)
-{
-    size_t size = m_windowEventListeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_windowEventListeners[i]->eventType() == eventType)
-            return true;
-    }
-    return false;
-}
-
-void Document::addPendingFrameUnloadEventCount() 
-{
-    if (m_frame)
-         m_frame->eventHandler()->addPendingFrameUnloadEventCount();
-}
-
-void Document::removePendingFrameUnloadEventCount() 
-{
-    if (m_frame)
-        m_frame->eventHandler()->removePendingFrameUnloadEventCount();
-}
-
-void Document::addPendingFrameBeforeUnloadEventCount() 
-{
-    if (m_frame)
-         m_frame->eventHandler()->addPendingFrameBeforeUnloadEventCount();
-}
-
-void Document::removePendingFrameBeforeUnloadEventCount() 
-{
-    if (m_frame)
-        m_frame->eventHandler()->removePendingFrameBeforeUnloadEventCount();
-}
-
 PassRefPtr<EventListener> Document::createEventListener(const String& functionName, const String& code, Node* node)
 {
     Frame* frm = frame();
@@ -2894,7 +2774,10 @@ PassRefPtr<EventListener> Document::createEventListener(const String& functionNa
 
 void Document::setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
 {
-    setWindowInlineEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
+    DOMWindow* domWindow = this->domWindow();
+    if (!domWindow)
+        return;
+    domWindow->setInlineEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
 }
 
 Element* Document::ownerElement() const

@@ -1628,7 +1628,8 @@ bool Frame::shouldClose()
 
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
     beforeUnloadEvent->setTarget(doc);
-    doc->handleWindowEvent(beforeUnloadEvent.get(), false);
+    if (m_domWindow)
+        m_domWindow->handleEvent(beforeUnloadEvent.get(), false);
 
     if (!beforeUnloadEvent->defaultPrevented())
         doc->defaultEventHandler(beforeUnloadEvent.get());
