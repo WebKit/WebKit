@@ -46,6 +46,7 @@
 #import "WebIconFetcherInternal.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitVersionChecks.h"
+#import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
@@ -74,6 +75,7 @@
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
 #import <WebCore/ScriptController.h>
@@ -1314,6 +1316,11 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL
 {
+    if (!pthread_main_np()) { 
+        WebCoreThreadViolationCheckRoundTwo();
+        return [[self _webkit_invokeOnMainThread] _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL unreachableURL:unreachableURL];
+    }
+    
     KURL responseURL;
     if (!baseURL) {
         baseURL = blankURL();

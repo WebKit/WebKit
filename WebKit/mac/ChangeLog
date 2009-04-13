@@ -1,3 +1,14 @@
+2009-04-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin Decker
+
+        <rdar://problem/6712063> Garmin WebUpdater crashes
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):  If not called on the main thread,
+          add a ThreadViolationCheckRoundTwo() call to either log or raise an exception.  In the case where it's
+          only a log, reschedule the _loadData call to occur on the main thread.
+
 2009-04-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt.
