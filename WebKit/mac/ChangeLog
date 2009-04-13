@@ -1,5 +1,20 @@
 2009-04-13  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Tim Hatcher
+
+        Tweak my last check-in, moving the thread violation check up to the API-level calls so the logging is more
+        useful to developers/users.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]): If not on the main thread, only
+          perform the "call on main thead" workaround, as the log/exception raising is now up at the API level.
+        (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]): Perform a thread violation check here so logging
+          is more meaningful.
+        (-[WebFrame loadHTMLString:baseURL:]): Ditto.
+        (-[WebFrame loadAlternateHTMLString:baseURL:forUnreachableURL:]): Ditto.
+
+2009-04-13  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Kevin Decker
 
         <rdar://problem/6712063> Garmin WebUpdater crashes

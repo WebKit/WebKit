@@ -1316,10 +1316,8 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL
 {
-    if (!pthread_main_np()) { 
-        WebCoreThreadViolationCheckRoundTwo();
+    if (!pthread_main_np())
         return [[self _webkit_invokeOnMainThread] _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL unreachableURL:unreachableURL];
-    }
     
     KURL responseURL;
     if (!baseURL) {
@@ -1340,6 +1338,8 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
 {
+    WebCoreThreadViolationCheckRoundTwo();
+    
     if (!MIMEType)
         MIMEType = @"text/html";
     [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL unreachableURL:nil];
@@ -1353,11 +1353,15 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
+    WebCoreThreadViolationCheckRoundTwo();
+
     [self _loadHTMLString:string baseURL:baseURL unreachableURL:nil];
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
+    WebCoreThreadViolationCheckRoundTwo();
+
     [self _loadHTMLString:string baseURL:baseURL unreachableURL:unreachableURL];
 }
 
