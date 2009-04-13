@@ -70,6 +70,7 @@ public:
 #endif
 #if PLATFORM(CF)
     CFDataRef createCFData();
+    static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
 #endif
 
     const char* data() const;

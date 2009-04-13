@@ -28,6 +28,7 @@
 #include "WebHistory.h"
 
 #include "CFDictionaryPropertyBag.h"
+#include "MemoryStream.h"
 #include "WebKit.h"
 #include "MarshallingHelpers.h"
 #include "WebHistoryItem.h"
@@ -40,6 +41,7 @@
 #include <WebCore/HistoryPropertyList.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/SharedBuffer.h>
 #pragma warning( pop )
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -387,9 +389,7 @@ HRESULT WebHistory::saveHistoryGuts(CFURLRef url, IWebError** error)
     if (error)
         *error = 0;
 
-    WebHistoryWriter writer(m_entriesByDate.get());
-    writer.writePropertyList();
-    RetainPtr<CFDataRef> data = writer.releaseData();
+    RetainPtr<CFDataRef> data = this->data();
 
     RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
     if (!stream) 
@@ -556,6 +556,17 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
         items[i]->AddRef();
 
     return S_OK;
+}
+
+HRESULT WebHistory::data(IStream** stream)
+{
+    if (!stream)
+        return E_POINTER;
+
+    *stream = 0;
+
+    COMPtr<MemoryStream> result = MemoryStream::createInstance(SharedBuffer::wrapCFData(data().get()));
+    return result.copyRefTo(stream);
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::setHistoryItemLimit( 
@@ -933,4 +944,11 @@ static void addVisitedLinkToPageGroup(const void* key, const void*, void* contex
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
 {
     CFDictionaryApplyFunction(m_entriesByURL.get(), addVisitedLinkToPageGroup, &group);
+}
+
+RetainPtr<CFDataRef> WebHistory::data() const
+{
+    WebHistoryWriter writer(m_entriesByDate.get());
+    writer.writePropertyList();
+    return writer.releaseData();
 }

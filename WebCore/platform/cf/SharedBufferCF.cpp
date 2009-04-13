@@ -51,6 +51,11 @@ CFDataRef SharedBuffer::createCFData()
 }
 #endif
 
+PassRefPtr<SharedBuffer> SharedBuffer::wrapCFData(CFDataRef data)
+{
+    return adoptRef(new SharedBuffer(data));
+}
+
 bool SharedBuffer::hasPlatformData() const
 {
     return m_cfData;

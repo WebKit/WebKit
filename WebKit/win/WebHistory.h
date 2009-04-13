@@ -113,6 +113,8 @@ public:
         /* [out][in] */ int* count,
         /* [retval][out] */ IWebHistoryItem** items);
 
+    virtual HRESULT STDMETHODCALLTYPE data(IStream**);
+
     // WebHistory
     static WebHistory* sharedHistory();
     void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure);
@@ -145,6 +147,7 @@ private:
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
     HRESULT itemForURLString(CFStringRef urlString, IWebHistoryItem** item) const;
+    RetainPtr<CFDataRef> data() const;
 
     ULONG m_refCount;
     RetainPtr<CFMutableDictionaryRef> m_entriesByURL;

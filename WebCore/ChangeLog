@@ -1,3 +1,15 @@
+2009-04-13  Adam Roben  <aroben@apple.com>
+
+        Add SharedBuffer::wrapCFData
+
+        This is the CF-equivalent of wrapNSData.
+
+        Reviewed by Brady Eidson.
+
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::wrapCFData):
+
 2009-04-13  Dan Bernstein  <mitz@apple.com>
 
         - build fix
