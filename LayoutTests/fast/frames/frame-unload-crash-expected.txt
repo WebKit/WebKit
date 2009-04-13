@@ -1,5 +1,5 @@
 frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
-This is a test for bug 25136: CRASH in DocumentLoader::removeSubresourceLoader due to null m_frame. If success ful, PASS should be printed below.
+This is a test for bug 25136: CRASH in DocumentLoader::removeSubresourceLoader due to null m_frame. If successful, PASS should be printed below.
 
 PASS
 

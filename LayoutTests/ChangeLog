@@ -1,5 +1,11 @@
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
+        Fix bad expected result.
+
+        * fast/frames/frame-unload-crash-expected.txt:
+
+2009-04-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Update tests after moving showModalDialog from JSDOMWindowBase to
