@@ -75,7 +75,7 @@ static bool shouldHideFourDot(Frame* frame)
     const String* sourceURL = frame->script()->sourceURL();
     if (!sourceURL)
         return false;
-    if (!(sourceURL->endsWith("/dqm_script.js") || sourceURL->endsWith("/dqm_loader.js")))
+    if (!(sourceURL->endsWith("/dqm_script.js") || sourceURL->endsWith("/dqm_loader.js") || sourceURL->endsWith("/tdqm_loader.js")))
         return false;
     Settings* settings = frame->settings();
     if (!settings)

@@ -1,3 +1,14 @@
+2009-04-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6404439> REGRESSION: Overlapping text and other
+          layout issues in View Sample feature of MYOB FIrstEdge v3
+
+        * page/Navigator.cpp:
+        (WebCore::shouldHideFourDot): Added "tdqm_loader.js" to the list of
+        JavaScript files this quirk applies to.
+
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
