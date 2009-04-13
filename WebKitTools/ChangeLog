@@ -1,3 +1,12 @@
+2009-04-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/check-for-exit-time-destructors: Add ERROR: and WARNING: prefixes to
+        make these scripts work better with the build window in new versions of Xcode.
+        * Scripts/check-for-global-initializers: Ditto.
+        * Scripts/check-for-weak-vtables: Ditto.
+
 2009-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

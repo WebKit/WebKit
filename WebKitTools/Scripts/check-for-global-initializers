@@ -57,7 +57,7 @@ my $scriptAge = -M $0;
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
 if (!open LIST, $list) {
-    print "Could not open $list\n";
+    print "ERROR: Could not open $list\n";
     exit 1;
 }
 
@@ -73,7 +73,7 @@ for my $file (sort @files) {
         next if defined $fileAge && $fileAge > $buildTimestampAge;
     }
     if (!open NM, "(nm '$file' | sed 's/^/STDOUT:/') 2>&1 |") {
-        print "Could not open $file\n";
+        print "ERROR: Could not open $file\n";
         $sawError = 1;
         next;
     }
@@ -114,7 +114,7 @@ for my $file (sort @files) {
             }
         }
 
-        print "$shortName has a global initializer in it! ($file)\n";
+        print "ERROR: $shortName has a global initializer in it! ($file)\n";
         $sawError = 1;
     }
 }

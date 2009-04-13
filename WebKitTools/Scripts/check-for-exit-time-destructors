@@ -58,7 +58,7 @@ my $scriptAge = -M $0;
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
 if (!open LIST, $list) {
-    print "Could not open $list\n";
+    print "ERROR: Could not open $list\n";
     exit 1;
 }
 
@@ -74,7 +74,7 @@ for my $file (sort @files) {
         next if defined $fileAge && $fileAge > $buildTimestampAge;
     }
     if (!open NM, "(nm '$file' | sed 's/^/STDOUT:/') 2>&1 |") {
-        print "Could not open $file\n";
+        print "ERROR: Could not open $file\n";
         $sawError = 1;
         next;
     }
@@ -96,7 +96,7 @@ for my $file (sort @files) {
 }
 
 if ($sawError and !$coverageBuild) {
-    print "Use DEFINE_STATIC_LOCAL from <wtf/StdLibExtras.h>\n";
+    print "ERROR: Use DEFINE_STATIC_LOCAL from <wtf/StdLibExtras.h>\n";
     unlink $executablePath;
     exit 1;
 }
@@ -115,7 +115,7 @@ sub demangle($)
 {
     my ($symbol) = @_;
     if (!open FILT, "c++filt $symbol |") {
-        print "Could not open c++filt\n";
+        print "ERROR: Could not open c++filt\n";
         return;
     }
     my $result = <FILT>;
@@ -128,7 +128,7 @@ sub printFunctions($$)
 {
     my ($shortName, $path) = @_;
     if (!open OTOOL, "otool -tV '$path' |") {
-        print "Could not open $path\n";
+        print "WARNING: Could not open $path\n";
         return 0;
     }
     my %functions;
@@ -142,10 +142,10 @@ sub printFunctions($$)
     my $result = 0;
     for my $function (sort keys %functions) {
         if (!$result) {
-            print "$shortName has exit time destructors in it! ($path)\n";
+            print "ERROR: $shortName has exit time destructors in it! ($path)\n";
             $result = 1;
         }
-        print "    $function\n";
+        print "ERROR: In function $function\n";
     }
     return $result;
 }

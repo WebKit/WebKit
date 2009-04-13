@@ -58,7 +58,7 @@ my $sawError = 0;
 
 if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePathAge > $buildTimestampAge) {
     if (!open NM, "(nm -m '$executablePath' | c++filt | sed 's/^/STDOUT:/') 2>&1 |") {
-        print "Could not open $executablePath\n";
+        print "ERROR: Could not open $executablePath\n";
         $sawError = 1;
         next;
     }
@@ -75,10 +75,10 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
         my $shortName = $executablePath;
         $shortName =~ s/.*\///;
 
-        print "$shortName has a weak vtable in it ($executablePath)\n";
-        print "Fix by making sure the first virtual function in each of these classes is not an inline:\n";
+        print "ERROR: $shortName has a weak vtable in it ($executablePath)\n";
+        print "ERROR: Fix by making sure the first virtual function in each of these classes is not an inline:\n";
         for my $class (sort @weakVTableClasses) {
-            print "    $class\n";
+            print "ERROR: class $class\n";
         }
         $sawError = 1;
     }
