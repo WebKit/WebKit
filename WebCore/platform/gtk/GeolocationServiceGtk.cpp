@@ -181,8 +181,8 @@ void GeolocationServiceGtk::updatePosition()
     m_lastError = 0;
 
     RefPtr<Coordinates> coordinates = Coordinates::create(m_latitude, m_longitude,
-                                                          m_altitude, m_accuracy,
-                                                          m_altitudeAccuracy, 0.0, 0.0);
+                                                          true, m_altitude, m_accuracy,
+                                                          true, m_altitudeAccuracy, false, 0.0, false, 0.0);
     m_lastPosition = Geoposition::create(coordinates.release(), m_timestamp * 1000.0);
     positionChanged();
 }

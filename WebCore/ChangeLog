@@ -1,3 +1,10 @@
+2009-04-13  Greg Bolsinga  <bolsinga@apple.com>
+
+        Fix GTK build break.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::updatePosition):
+
 2009-04-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein.
