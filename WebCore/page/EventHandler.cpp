@@ -1068,6 +1068,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     m_mouseDownWasInSubframe = false;
 
     HitTestRequest request(HitTestRequest::Active);
+    // Save the document point we generate in case the window coordinate is invalidated by what happens 
+    // when we dispatch the event.
     IntPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
     MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
 
