@@ -116,6 +116,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
         next if $file =~ m:resources/use-instanceRoot-event-bubbling\.js$:;
         next if $file =~ m:resources/use-instanceRoot-event-listeners\.js$:;
+        next if $file =~ m:resources/window-properties\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
         next if $file =~ m:resources/xhtml-scripts\.js$:;
 

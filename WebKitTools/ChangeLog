@@ -1,3 +1,7 @@
+2009-04-13  Darin Adler  <darin@apple.com>
+
+        * Scripts/make-js-test-wrappers: Added another exception.
+
 2009-04-10  Adam Roben  <aroben@apple.com>
 
         Add our new test font to the list that DRT knows about
