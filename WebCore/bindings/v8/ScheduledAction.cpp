@@ -106,7 +106,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
         proxy->evaluate(m_code, 0);
 
     if (context->isDocument())
-        static_cast<Document*>(context)->updateRendering();
+        static_cast<Document*>(context)->updateStyleIfNeeded();
 
     proxy->setTimerCallback(false);
 }

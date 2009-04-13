@@ -133,7 +133,7 @@ void V8AbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     invokeEventHandler(context, event, jsEvent, isWindowEvent);
 
-    Document::updateDocumentsRendering();
+    Document::updateStyleForAllDocuments();
 }
 
 void V8AbstractEventListener::disposeListenerObject()

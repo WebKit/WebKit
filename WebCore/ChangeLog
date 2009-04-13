@@ -1,3 +1,17 @@
+2009-04-13  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix Chromium (V8) build by renaming methods to match changes
+        in http://trac.webkit.org/changeset/42377.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25141
+
+        * bindings/v8/ScheduledAction.cpp:
+     (WebCore::ScheduledAction::execute): updateRendering() -> updateStyleIfNeeded()
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::handleEvent): updateDocumentsRendering() -> updateStyleForAllDocuments()
+
 2009-04-13  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
