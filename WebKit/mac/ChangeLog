@@ -1,3 +1,7 @@
+2009-04-13  Darin Adler  <darin@apple.com>
+
+        * WebView/WebViewPrivate.h: Updated comments.
+
 2009-04-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

@@ -369,15 +369,22 @@ Could be worth adding to the API.
 - (WebHistoryItem *)_globalHistoryItem;
 
 /*!
- @method textIteratorForRect:
- @param rectangle from which we want the WebTextIterator to load text from
- @result a WebtextIterator object.
+    @method textIteratorForRect:
+    @param rect The rectangle of the document that we're interested in text from.
+    @result WebTextIterator object, initialized with a range that corresponds to
+    the passed-in rectangle.
+    @abstract This method gives the text for the approximate range of the document
+    corresponding to the rectangle. The range is determined by using hit testing at
+    the top left and bottom right of the rectangle. Because of that, there can be
+    text visible in the rectangle that is not included in the iterator. If you need
+    a guarantee of iterating all text that is visible, then you need to instead make
+    a WebTextIterator with a DOMRange that covers the entire document.
  */
 - (WebTextIterator *)textIteratorForRect:(NSRect)rect;
 
 #if ENABLE_DASHBOARD_SUPPORT
-// <rdar://problem/5217124> Clients other than dashboard, don't use this.
-// Do not remove until Dashboard has moved off it
+// <rdar://problem/5217124> Clients other than Dashboard, don't use this.
+// As of this writing, Dashboard uses this on Tiger, but not on Leopard or newer.
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 #endif
 
