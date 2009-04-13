@@ -15,19 +15,19 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
-  
     var pointerEventsValues = ['auto', 'none'];
   
     var topEdge = 120;
     
     function clickHit(identifierString) {
       var text = document.getElementById('text' + identifierString);
-      text.textContent = 'HIT';
+      text.textContent = '-HIT-';
     }
   
     function testContent() {
+      if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
       var yOffset = topEdge;
     
       var testContent = document.getElementById("test-content");
@@ -45,7 +45,7 @@
         hit.style.left = "140px";
         hit.style.top = yOffset + "px";
         hit.id = "text" + pointerEventsValues[pi];
-        hit.appendChild(document.createTextNode("miss"));
+        hit.appendChild(document.createTextNode("-miss-"));
               
         testContent.appendChild(hit);
             
@@ -58,9 +58,6 @@
 
         yOffset += 40;
       }
-      
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
     }
   </script>
   

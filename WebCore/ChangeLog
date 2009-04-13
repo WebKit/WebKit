@@ -1,3 +1,21 @@
+2009-04-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 25158: hit testing doesn't work right in some cases involving anonymous blocks
+        https://bugs.webkit.org/show_bug.cgi?id=25158
+        rdar://problem/6769693
+
+        Test: editing/selection/click-after-nested-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isChildHitTestCandidate): Added. Helper so the two loops in positionForPoint
+        can share code.
+        (WebCore::RenderBlock::positionForPoint): Removed unneeded special case for first
+        child box. Changed special case for last child box to propertly handle the various
+        types of child box that are not hit test candidates (the same ones already handled
+        by the hit test loop below), adding in a loop so we find the last candidate.
+
 2009-04-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

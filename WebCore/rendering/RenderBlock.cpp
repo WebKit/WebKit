@@ -3492,6 +3492,11 @@ static VisiblePosition positionForPointWithInlineChildren(RenderBlock* block, co
     return block->createVisiblePosition(0, DOWNSTREAM);
 }
 
+static inline bool isChildHitTestCandidate(RenderBox* box)
+{
+    return box->height() && box->style()->visibility() == VISIBLE && !box->isFloatingOrPositioned();
+}
+
 VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
 {
     if (isTable())
@@ -3513,19 +3518,17 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
         return positionForPointWithInlineChildren(this, pointInContents);
     }
 
-    // Check top/bottom child-margin/parent-padding for clicks and place them in the first/last child
-    // FIXME: This will not correctly handle first or last children being positioned or non-visible
-    if (firstChildBox() && contentsY < firstChildBox()->y())
-        return positionForPointRespectingEditingBoundaries(this, firstChildBox(), pointInContents);
-    if (lastChildBox() && contentsY > lastChildBox()->y())
-        return positionForPointRespectingEditingBoundaries(this, lastChildBox(), pointInContents);
-
-    for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
-        if (childBox->height() == 0 || childBox->style()->visibility() != VISIBLE || childBox->isFloatingOrPositioned())
-            continue;
-        // We hit this child if our click was above the bottom of its padding box (like IE6/7 and FF3)
-        if (contentsY < childBox->y() + childBox->height())
-            return positionForPointRespectingEditingBoundaries(this, childBox, pointInContents);
+    if (lastChildBox() && contentsY > lastChildBox()->y()) {
+        for (RenderBox* childBox = lastChildBox(); childBox; childBox = childBox->previousSiblingBox()) {
+            if (isChildHitTestCandidate(childBox))
+                return positionForPointRespectingEditingBoundaries(this, childBox, pointInContents);
+        }
+    } else {
+        for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
+            // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
+            if (isChildHitTestCandidate(childBox) && contentsY < childBox->frameRect().bottom())
+                return positionForPointRespectingEditingBoundaries(this, childBox, pointInContents);
+        }
     }
 
     // We only get here if there are no, or only floated/positioned, or only
