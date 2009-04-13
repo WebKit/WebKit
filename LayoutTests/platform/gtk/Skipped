@@ -132,6 +132,7 @@ fast/dom/Window/window-open-pending-url.html
 fast/dom/Window/window-properties.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
+fast/dom/Window/window-screen-properties.html
 fast/dom/Window/window-xy-properties.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/paused-event-dispatch.html
@@ -213,6 +214,7 @@ fast/events/tabindex-focus-chain.html
 fast/events/window-events-bubble2.html
 fast/events/window-events-bubble.html
 fast/events/window-events-capture.html
+fast/forms/25153.html
 fast/forms/access-key.html
 fast/forms/button-enter-click.html
 fast/forms/button-spacebar-click.html
@@ -294,6 +296,7 @@ fast/frames/frame-length-fractional.html
 fast/frames/hover-timer-crash.html
 fast/frames/iframe-window-focus.html
 fast/frames/removal-before-attach-crash.html
+fast/frames/frame-unload-crash.html
 fast/history/go-back-to-changed-name.html
 fast/history/history_reload.html
 fast/history/window-open.html
@@ -301,6 +304,7 @@ fast/html/tab-order.html
 fast/js/date-DST-time-cusps.html
 fast/js/date-big-setdate.html
 fast/js/exceptions-thrown-in-callbacks.html
+fast/js/navigator-mimeTypes-length.html
 fast/layers/resize-layer-deletion-crash.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/main-document-url-for-non-http-loads.html
@@ -383,6 +387,7 @@ http/tests/history/redirect-meta-refresh-2-seconds.html
 
 # tests that failed
 http/tests/incremental/slow-utf8-text.pl
+http/tests/incremental/split-hex-entities.pl
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
@@ -537,6 +542,7 @@ http/tests/xmlhttprequest/exceptions.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
 http/tests/xmlhttprequest/get-dangerous-headers.html
+http/tests/xmlhttprequest/interactive-state.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/methods-lower-case.html
 http/tests/xmlhttprequest/methods.html
@@ -641,6 +647,7 @@ storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
 svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getscreenctm-in-mixed-content2.xhtml
+svg/custom/getSubStringLength.html
 svg/custom/glyph-setting-d-attribute.svg
 svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
