@@ -144,6 +144,62 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     window.setY(max(screen.y(), min(window.y(), screen.bottom() - window.height())));
 }
 
+void DOMWindow::parseModalDialogFeatures(const String& featuresArg, HashMap<String, String>& map)
+{
+    Vector<String> features;
+    featuresArg.split(';', features);
+    Vector<String>::const_iterator end = features.end();
+    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
+        String s = *it;
+        int pos = s.find('=');
+        int colonPos = s.find(':');
+        if (pos >= 0 && colonPos >= 0)
+            continue; // ignore any strings that have both = and :
+        if (pos < 0)
+            pos = colonPos;
+        if (pos < 0) {
+            // null string for value means key without value
+            map.set(s.stripWhiteSpace().lower(), String());
+        } else {
+            String key = s.left(pos).stripWhiteSpace().lower();
+            String val = s.substring(pos + 1).stripWhiteSpace().lower();
+            int spacePos = val.find(' ');
+            if (spacePos != -1)
+                val = val.left(spacePos);
+            map.set(key, val);
+        }
+    }
+}
+
+bool DOMWindow::allowPopUp(Frame* activeFrame)
+{
+    ASSERT(activeFrame);
+    if (activeFrame->script()->processingUserGesture())
+        return true;
+    Settings* settings = activeFrame->settings();
+    return settings && settings->JavaScriptCanOpenWindowsAutomatically();
+}
+
+bool DOMWindow::canShowModalDialog(const Frame* frame)
+{
+    if (!frame)
+        return false;
+    Page* page = frame->page();
+    if (!page)
+        return false;
+    return page->chrome()->canRunModal();
+}
+
+bool DOMWindow::canShowModalDialogNow(const Frame* frame)
+{
+    if (!frame)
+        return false;
+    Page* page = frame->page();
+    if (!page)
+        return false;
+    return page->chrome()->canRunModalNow();
+}
+
 DOMWindow::DOMWindow(Frame* frame)
     : m_frame(frame)
 {

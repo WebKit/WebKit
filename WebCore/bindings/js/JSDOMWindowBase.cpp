@@ -28,47 +28,27 @@
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "Element.h"
-#include "FloatRect.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "HTMLDocument.h"
 #include "InspectorController.h"
 #include "JSDOMWindowCustom.h"
-#include "JSEvent.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PlatformScreen.h"
-#include "RenderView.h"
 #include "ScheduledAction.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "WindowFeatures.h"
 #include <runtime/JSLock.h>
-#include <wtf/MathExtras.h>
 
 using namespace JSC;
-
-static JSValuePtr windowProtoFuncOpen(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr windowProtoFuncShowModalDialog(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-
-#include "JSDOMWindowBase.lut.h"
 
 namespace WebCore {
 
 ////////////////////// JSDOMWindowBase Object ////////////////////////
 
-const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 0 };
-
-/*
-@begin JSDOMWindowBaseTable
-# -- Functions --
-  open                          windowProtoFuncOpen                         DontDelete|Function 3
-  showModalDialog               windowProtoFuncShowModalDialog              DontDelete|Function 1
-@end
-*/
+const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, 0, 0 };
 
 JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : impl(window)
@@ -104,195 +84,6 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
     return d()->impl->document();
 }
 
-static bool allowPopUp(ExecState* exec)
-{
-    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-
-    ASSERT(frame);
-    if (frame->script()->processingUserGesture())
-        return true;
-    Settings* settings = frame->settings();
-    return settings && settings->JavaScriptCanOpenWindowsAutomatically();
-}
-
-static HashMap<String, String> parseModalDialogFeatures(const String& featuresArg)
-{
-    HashMap<String, String> map;
-
-    Vector<String> features;
-    featuresArg.split(';', features);
-    Vector<String>::const_iterator end = features.end();
-    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
-        String s = *it;
-        int pos = s.find('=');
-        int colonPos = s.find(':');
-        if (pos >= 0 && colonPos >= 0)
-            continue; // ignore any strings that have both = and :
-        if (pos < 0)
-            pos = colonPos;
-        if (pos < 0) {
-            // null string for value means key without value
-            map.set(s.stripWhiteSpace().lower(), String());
-        } else {
-            String key = s.left(pos).stripWhiteSpace().lower();
-            String val = s.substring(pos + 1).stripWhiteSpace().lower();
-            int spacePos = val.find(' ');
-            if (spacePos != -1)
-                val = val.left(spacePos);
-            map.set(key, val);
-        }
-    }
-
-    return map;
-}
-
-static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& url,
-    const String& frameName, const WindowFeatures& windowFeatures, JSValuePtr dialogArgs)
-{
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    ASSERT(activeFrame);
-
-    ResourceRequest request;
-
-    request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
-    FrameLoader::addHTTPOriginIfNeeded(request, activeFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(request, frameName);
-
-    // FIXME: It's much better for client API if a new window starts with a URL, here where we
-    // know what URL we are going to open. Unfortunately, this code passes the empty string
-    // for the URL, but there's a reason for that. Before loading we have to set up the opener,
-    // openedByDOM, and dialogArguments values. Also, to decide whether to use the URL we currently
-    // do an allowsAccessFrom call using the window we create, which can't be done before creating it.
-    // We'd have to resolve all those issues to pass the URL instead of "".
-
-    bool created;
-    // We pass in the opener frame here so it can be used for looking up the frame name, in case the active frame
-    // is different from the opener frame, and the name references a frame relative to the opener frame, for example
-    // "_self" or "_parent".
-    Frame* newFrame = activeFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
-    if (!newFrame)
-        return 0;
-
-    newFrame->loader()->setOpener(openerFrame);
-    newFrame->loader()->setOpenedByDOM();
-
-    JSDOMWindow* newWindow = toJSDOMWindow(newFrame);
-
-    if (dialogArgs)
-        newWindow->putDirect(Identifier(exec, "dialogArguments"), dialogArgs);
-
-    if (!protocolIs(url, "javascript") || newWindow->allowsAccessFrom(exec)) {
-        KURL completedURL = url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
-        bool userGesture = activeFrame->script()->processingUserGesture();
-
-        if (created)
-            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
-        else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
-    }
-
-    return newFrame;
-}
-
-static bool canShowModalDialog(const Frame* frame)
-{
-    if (!frame)
-        return false;
-
-    Page* page = frame->page();
-    if (!page)
-        return false;
-
-    return page->chrome()->canRunModal();
-}
-
-static bool canShowModalDialogNow(const Frame* frame)
-{
-    if (!frame)
-        return false;
-
-    Page* page = frame->page();
-    if (!page)
-        return false;
-
-    return page->chrome()->canRunModalNow();
-}
-
-static JSValuePtr showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValuePtr dialogArgs, const String& featureArgs)
-{
-    if (!canShowModalDialogNow(frame) || !allowPopUp(exec))
-        return jsUndefined();
-
-    const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
-
-    const bool trusted = false;
-
-    // The following features from Microsoft's documentation are not implemented:
-    // - default font settings
-    // - width, height, left, and top specified in units other than "px"
-    // - edge (sunken or raised, default is raised)
-    // - dialogHide: trusted && boolFeature(features, "dialoghide"), makes dialog hide when you print
-    // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
-    // - unadorned: trusted && boolFeature(features, "unadorned");
-
-    if (!frame)
-        return jsUndefined();
-
-    FloatRect screenRect = screenAvailableRect(frame->view());
-
-    WindowFeatures wargs;
-    wargs.width = WindowFeatures::floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
-    wargs.widthSet = true;
-    wargs.height = WindowFeatures::floatFeature(features, "dialogheight", 100, screenRect.height(), 450); // default here came from frame size of dialog in MacIE
-    wargs.heightSet = true;
-
-    wargs.x = WindowFeatures::floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - wargs.width, -1);
-    wargs.xSet = wargs.x > 0;
-    wargs.y = WindowFeatures::floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - wargs.height, -1);
-    wargs.ySet = wargs.y > 0;
-
-    if (WindowFeatures::boolFeature(features, "center", true)) {
-        if (!wargs.xSet) {
-            wargs.x = screenRect.x() + (screenRect.width() - wargs.width) / 2;
-            wargs.xSet = true;
-        }
-        if (!wargs.ySet) {
-            wargs.y = screenRect.y() + (screenRect.height() - wargs.height) / 2;
-            wargs.ySet = true;
-        }
-    }
-
-    wargs.dialog = true;
-    wargs.resizable = WindowFeatures::boolFeature(features, "resizable");
-    wargs.scrollbarsVisible = WindowFeatures::boolFeature(features, "scroll", true);
-    wargs.statusBarVisible = WindowFeatures::boolFeature(features, "status", !trusted);
-    wargs.menuBarVisible = false;
-    wargs.toolBarVisible = false;
-    wargs.locationBarVisible = false;
-    wargs.fullscreen = false;
-
-    Frame* dialogFrame = createWindow(exec, frame, url, "", wargs, dialogArgs);
-    if (!dialogFrame)
-        return jsUndefined();
-
-    JSDOMWindow* dialogWindow = toJSDOMWindow(dialogFrame);
-
-    // Get the return value either just before clearing the dialog window's
-    // properties (in JSDOMWindowBase::clear), or when on return from runModal.
-    JSValuePtr returnValue = noValue();
-    dialogWindow->setReturnValueSlot(&returnValue);
-    dialogFrame->page()->chrome()->runModal();
-    dialogWindow->setReturnValueSlot(0);
-
-    // If we don't have a return value, get it now.
-    // Either JSDOMWindowBase::clear was not called yet, or there was no return value,
-    // and in that case, there's no harm in trying again (no benefit either).
-    if (!returnValue)
-        returnValue = dialogWindow->getDirect(Identifier(exec, "returnValue"));
-
-    return returnValue ? returnValue : jsUndefined();
-}
-
 JSValuePtr JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
@@ -326,22 +117,6 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     // it the Moz way.
     if (impl()->frame()->tree()->child(propertyName)) {
         slot.setCustom(this, childFrameGetter);
-        return true;
-    }
-
-    const HashEntry* entry = JSDOMWindowBaseTable.entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & Function) {
-            if (entry->function() == windowProtoFuncShowModalDialog) {
-                if (!canShowModalDialog(impl()->frame()))
-                    return false;
-            }
-            if (allowsAccessFrom(exec))
-                setUpStaticFunctionSlot(exec, entry, this, propertyName, slot);
-            else
-                slot.setUndefined();
-        } else
-            slot.setCustom(this, entry->propertyGetter());
         return true;
     }
 
@@ -387,17 +162,6 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
 void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
-    const HashEntry* entry = JSDOMWindowBaseTable.entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & Function) {
-            if (allowsAccessFrom(exec))
-                Base::put(exec, propertyName, value, slot);
-            return;
-        }
-        if (entry->attributes() & ReadOnly)
-            return;
-    }
-
     if (allowsAccessFrom(exec))
         Base::put(exec, propertyName, value, slot);
 }
@@ -509,104 +273,10 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     return globalData;
 }
 
-} // namespace WebCore
-
-using namespace WebCore;
-
-JSValuePtr windowProtoFuncOpen(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!activeFrame)
-        return  jsUndefined();
-
-    Page* page = frame->page();
-
-    String urlString = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    AtomicString frameName = args.at(exec, 1).isUndefinedOrNull() ? "_blank" : AtomicString(args.at(exec, 1).toString(exec));
-
-    // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
-    // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!allowPopUp(exec) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
-        return jsUndefined();
-
-    // Get the target frame for the special cases of _top and _parent.  In those
-    // cases, we can schedule a location change right now and return early.
-    bool topOrParent = false;
-    if (frameName == "_top") {
-        frame = frame->tree()->top();
-        topOrParent = true;
-    } else if (frameName == "_parent") {
-        if (Frame* parent = frame->tree()->parent())
-            frame = parent;
-        topOrParent = true;
-    }
-    if (topOrParent) {
-        if (!activeFrame->loader()->shouldAllowNavigation(frame))
-            return jsUndefined();
-
-        String completedURL;
-        if (!urlString.isEmpty())
-            completedURL = activeFrame->document()->completeURL(urlString).string();
-
-        const JSDOMWindow* targetedWindow = toJSDOMWindow(frame);
-        if (!completedURL.isEmpty() && (!protocolIs(completedURL, "javascript") || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
-            bool userGesture = activeFrame->script()->processingUserGesture();
-            frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
-        }
-        return toJS(exec, frame->domWindow());
-    }
-
-    // In the case of a named frame or a new window, we'll use the createWindow() helper
-    WindowFeatures windowFeatures(valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2)));
-    FloatRect windowRect(windowFeatures.xSet ? windowFeatures.x : 0, windowFeatures.ySet ? windowFeatures.y : 0,
-                         windowFeatures.widthSet ? windowFeatures.width : 0, windowFeatures.heightSet ? windowFeatures.height : 0);
-    DOMWindow::adjustWindowRect(screenAvailableRect(page ? page->mainFrame()->view() : 0), windowRect, windowRect);
-
-    windowFeatures.x = windowRect.x();
-    windowFeatures.y = windowRect.y();
-    windowFeatures.height = windowRect.height();
-    windowFeatures.width = windowRect.width();
-
-    frame = createWindow(exec, frame, urlString, frameName, windowFeatures, noValue());
-
-    if (!frame)
-        return jsUndefined();
-
-    return toJS(exec, frame->domWindow()); // global object
-}
-
-JSValuePtr windowProtoFuncShowModalDialog(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    return showModalDialog(exec, frame, valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0)), args.at(exec, 1), valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2)));
-}
-
-namespace WebCore {
-
 void JSDOMWindowBase::setReturnValueSlot(JSValuePtr* slot)
 {
     d()->returnValueSlot = slot;
 }
-
-////////////////////// timeouts ////////////////////////
 
 int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {

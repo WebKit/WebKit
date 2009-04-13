@@ -1,3 +1,15 @@
+2009-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Update tests after moving showModalDialog from JSDOMWindowBase to
+        JSDOMWindow and slightly changing the behavior when showModalDialog
+        is not available, as is the case for DumpRenderTree.
+
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-04-13  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

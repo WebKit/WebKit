@@ -1,3 +1,37 @@
+2009-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Move open and showModalDialog functions out of JSDOMWindowBase
+        and into JSDOMWindow by partially generating them.
+
+        This slightly changes the behavior of getting window.showModalDialog
+        when the embedding app does not support it to return undefined regardless
+        of shadowing.  This should not be an issue in a practice, but will be addressed
+        when we add a generic way to handle runtime specialization of property
+        access.
+
+        * DerivedSources.make: Remove JSDOMWindowBase.lut.h
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::):
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot): Move canShowModalDialog check from
+        here to JSDOMWindow::customGetOwnPropertySlot.
+        (WebCore::JSDOMWindowBase::put): Remove dead code.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parseModalDialogFeatures): Move from JSDOMWindowBase.
+        (WebCore::DOMWindow::allowPopUp): Ditto.
+        (WebCore::DOMWindow::canShowModalDialog): Ditto.
+        (WebCore::DOMWindow::canShowModalDialogNow): Ditto.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2009-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

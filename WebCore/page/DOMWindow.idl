@@ -70,6 +70,14 @@ module window {
         void print();
         void stop();
 
+        [Custom] DOMWindow open(in DOMString url,
+                                in DOMString name,
+                                in [Optional] DOMString options);
+
+        [Custom] DOMObject showModalDialog(in DOMString url, 
+                                           in [Optional] DOMObject dialogArgs,
+                                           in [Optional] DOMString featureArgs);
+
         void alert(in DOMString message);
         boolean confirm(in DOMString message);
         [ConvertNullStringTo=Null] DOMString prompt(in DOMString message,
@@ -466,17 +474,7 @@ module window {
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING)
-    // These were implemented in JSCDOMWindowBase and not moved to IDL yet.
-
-    [Custom] DOMWindow open(in DOMString url,
-                            in DOMString name,
-                            in [Optional] DOMString options);
-
-    [Custom] DOMObject showModalDialog(in DOMString url, 
-                                       in [Optional] DOMObject dialogArgs,
-                                       in [Optional] DOMString featureArgs);
-
-    // window.toString requires special handling
+    // window.toString() requires special handling in V8
     [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
 #endif // defined(V8_BINDING)
   };

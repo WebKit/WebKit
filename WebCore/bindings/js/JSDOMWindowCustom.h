@@ -106,6 +106,11 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
                     slot.setCustom(this, nonCachingStaticPostMessageFunctionGetter);
                     return true;
                 }
+            } else if (entry->function() == jsDOMWindowPrototypeFunctionShowModalDialog) {
+                if (!DOMWindow::canShowModalDialog(impl()->frame())) {
+                    slot.setUndefined();
+                    return true;
+                }
             }
         }
     } else {

@@ -386,7 +386,6 @@ DOM_CLASSES = \
 all : \
     $(filter-out JSEventListener.h JSEventTarget.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
-    JSDOMWindowBase.lut.h \
     JSRGBColor.lut.h \
     JSWorkerContextBase.lut.h \
     \
