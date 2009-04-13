@@ -1,3 +1,9 @@
+2009-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Mac build fix: Made another header private.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-04-13  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.
