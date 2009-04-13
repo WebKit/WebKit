@@ -1,3 +1,14 @@
+2009-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Update test results after putting the MessagePort constructor
+        back in ENABLE_CHANNEL_MESSAGING.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-04-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Holger Freyther.

@@ -1,3 +1,11 @@
+2009-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Put the MessagePort constructor back in ENABLE_CHANNEL_MESSAGING.
+
+        * page/DOMWindow.idl:
+
 2009-04-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Fix GTK build break.

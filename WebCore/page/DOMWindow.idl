@@ -372,12 +372,6 @@ module window {
 
         attribute [JSCCustomGetter] WebKitPointConstructor WebKitPoint; // Usable with new the operator
 
-        attribute MessagePortConstructor MessagePort;
-
-#if ENABLE_CHANNEL_MESSAGING
-        attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel; // Usable with the new operator
-#endif
-
         attribute ClipboardConstructor Clipboard;
 
         attribute FileConstructor File;
@@ -400,6 +394,11 @@ module window {
 
 #if ENABLE_XSLT
         attribute [JSCCustomGetter] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
+#endif
+
+#if ENABLE_CHANNEL_MESSAGING
+        attribute MessagePortConstructor MessagePort;
+        attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
 #if ENABLE_WORKERS
