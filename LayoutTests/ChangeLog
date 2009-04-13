@@ -1,3 +1,16 @@
+2009-04-13  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25136
+        CRASH in DocumentLoader::removeSubresourceLoader due to null m_frame
+
+        * fast/frames/frame-unload-crash-expected.txt: Added.
+        * fast/frames/frame-unload-crash.html: Added.
+        * fast/frames/resources/frame-unload-crash-1.html: Added.
+        * fast/frames/resources/frame-unload-crash-2.html: Added.
+        * fast/frames/resources/frame-unload-crash-3.html: Added.
+
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

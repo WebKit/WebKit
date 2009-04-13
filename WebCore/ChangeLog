@@ -1,3 +1,15 @@
+2009-04-13  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25136
+        CRASH in DocumentLoader::removeSubresourceLoader due to null m_frame
+
+        Test: fast/frames/frame-unload-crash.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::updateLoading): Added null check of m_frame.
+
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

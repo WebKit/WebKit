@@ -405,6 +405,10 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
 
 void DocumentLoader::updateLoading()
 {
+    if (!m_frame) {
+        setLoading(false);
+        return;
+    }
     ASSERT(this == frameLoader()->activeDocumentLoader());
     setLoading(frameLoader()->isLoading());
 }
