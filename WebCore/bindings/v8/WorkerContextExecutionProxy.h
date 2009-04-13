@@ -86,6 +86,7 @@ namespace WebCore {
         static void setIsWebWorkersEnabled(bool);
 
     private:
+        void initV8IfNeeded();
         void initContextIfNeeded();
         void dispose();
         PassRefPtr<V8EventListener> findOrCreateEventListenerHelper(v8::Local<v8::Value> object, bool isInline, bool findOnly, bool createObjectEventListener);

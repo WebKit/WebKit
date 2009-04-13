@@ -49,6 +49,33 @@ namespace WebCore {
 
 static bool isWorkersEnabled = false;
 
+static void reportFatalErrorInV8(const char* location, const char* message)
+{
+    // FIXME: We temporarily deal with V8 internal error situations such as out-of-memory by crashing the worker.
+    CRASH();
+}
+
+static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+{
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (!proxy)
+        return;
+    
+    WorkerContext* workerContext = proxy->workerContext();
+    if (!workerContext)
+        return;
+    
+    v8::Handle<v8::String> errorMessageString = message->Get();
+    ASSERT(!errorMessageString.IsEmpty());
+    String errorMessage = ToWebCoreString(errorMessageString);
+    
+    v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
+    bool useURL = (resourceName.IsEmpty() || !resourceName->IsString());
+    String resourceNameString = useURL ? workerContext->url() : ToWebCoreString(resourceName);
+    
+    workerContext->addMessage(ConsoleDestination, JSMessageSource, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
+}
+
 bool WorkerContextExecutionProxy::isWebWorkersEnabled()
 {
     return isWorkersEnabled;
@@ -63,9 +90,7 @@ WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerCo
     : m_workerContext(workerContext)
     , m_recursion(0)
 {
-    // Need to use lock since V8EventListenerList constructor creates HandleScope.
-    v8::Locker locker;
-    m_listeners.set(new V8EventListenerList("m_listeners"));
+    initV8IfNeeded();
 }
 
 WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
@@ -76,13 +101,16 @@ WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
 void WorkerContextExecutionProxy::dispose()
 {
     // Disconnect all event listeners.
-    for (V8EventListenerList::iterator iterator(m_listeners->begin()); iterator != m_listeners->end(); ++iterator)
-       static_cast<V8WorkerContextEventListener*>(*iterator)->disconnect();
-
+    if (m_listeners.get())
     {
-        // Need to use lock since V8EventListenerList::clear() creates HandleScope.
-        v8::Locker locker;
-        m_listeners->clear();
+        for (V8EventListenerList::iterator iterator(m_listeners->begin()); iterator != m_listeners->end(); ++iterator)
+           static_cast<V8WorkerContextEventListener*>(*iterator)->disconnect();
+
+        {
+            // Need to use lock since V8EventListenerList::clear() creates HandleScope.
+            v8::Locker locker;
+            m_listeners->clear();
+        }
     }
 
     // Detach all events from their JS wrappers.
@@ -123,6 +151,29 @@ WorkerContextExecutionProxy* WorkerContextExecutionProxy::retrieve()
     return workerContext->script()->proxy();
 }
 
+void WorkerContextExecutionProxy::initV8IfNeeded()
+{
+    static bool v8Initialized = false;
+
+    // Use v8::Locker to guarantee that only one thread can enter the following one-time initialization code.
+    v8::Locker locker;
+    if (v8Initialized)
+        return;
+
+    // Tell V8 not to call the default OOM handler, binding code will handle it.
+    v8::V8::IgnoreOutOfMemoryException();
+    v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
+
+    // Set up the handler for V8 error message.
+    v8::V8::AddMessageListener(handleConsoleMessage);
+
+    // Enable preemption so that one worker will not be blocked by another long-running worker.
+    const int workerThreadPreemptionIntervalMs = 100;
+    v8::Locker::StartPreemption(workerThreadPreemptionIntervalMs);
+
+    v8Initialized = true;
+}
+
 void WorkerContextExecutionProxy::initContextIfNeeded()
 {
     // Bail out if the context has already been initialized.
@@ -157,6 +208,8 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = m_context->Global();
     globalObject->Set(implicitProtoString, jsWorkerContext);
+
+    m_listeners.set(new V8EventListenerList("m_listeners"));
 }
 
 v8::Local<v8::Function> WorkerContextExecutionProxy::GetConstructor(V8ClassIndex::V8WrapperType type)
@@ -288,10 +341,6 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::evaluate(const String& script,
 {
     v8::Locker locker;
     v8::HandleScope hs;
-
-    // Enable preemption so that one worker will not be blocked by another long-running worker.
-    const int workerThreadPreemptionIntervalMs = 100;
-    v8::Locker::StartPreemption(workerThreadPreemptionIntervalMs);
 
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
