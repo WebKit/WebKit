@@ -1,3 +1,35 @@
+2009-04-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix problem when encoding history files with duplicate integer arrays near the end of the file.
+        This results in an assertion failure, and if assertions are turned off, corrupted output.
+
+        When writing an integer array it's important not to add an object reference to the
+        aggregate buffer. The writing of the array does not depend on the aggregate buffer. But,
+        more importantly, it's possible this instance integer array is a duplicate and won't be
+        written out. If so, there's no guarantee there's enough space in the aggregate buffer to
+        store the object references (the references will be ignored). In some cases the aggregate
+        buffer can then overrun the data being written; normally this is prevented by the fact that
+        the data being written will include a copy of the aggregate buffer.
+
+        Also removed a bit of unneeded dead code to handle the integer -1.
+
+        * platform/cf/BinaryPropertyList.cpp:
+        (WebCore::BinaryPropertyListPlan::BinaryPropertyListPlan): Removed unneeded
+        m_integerNegativeOneObjectReference, since property lists support only non-negative integers.
+        (WebCore::BinaryPropertyListPlan::writeInteger): Removed support for
+        m_integerNegativeOneObjectReference.
+        (WebCore::BinaryPropertyListPlan::integerObjectReference): Ditto.
+        (WebCore::BinaryPropertyListSerializer::writeIntegerWithoutAddingAggregateObjectReference):
+        Added. Factored out most of writeInteger, for use in writeIntegerArray, without calling
+        addAggregateObjectReference.
+        (WebCore::BinaryPropertyListSerializer::writeInteger): Changed to call the new
+        writeIntegerWithoutAddingAggregateObjectReference function.
+        (WebCore::BinaryPropertyListSerializer::writeIntegerArray): Call the new
+        writeIntegerWithoutAddingAggregateObjectReference function and therefore remove the
+        code to save and restore m_currentAggregateBufferByte, which is no longer needed.
+
 2009-04-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed Qt build fix.

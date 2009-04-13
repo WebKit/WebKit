@@ -145,7 +145,6 @@ private:
     typedef HashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
 
     ObjectReference m_booleanTrueObjectReference;
-    ObjectReference m_integerNegativeOneObjectReference;
     ObjectReference m_integerZeroObjectReference;
     HashMap<int, ObjectReference> m_integers;
     HashMap<String, ObjectReference> m_strings;
@@ -161,7 +160,6 @@ private:
 
 BinaryPropertyListPlan::BinaryPropertyListPlan(BinaryPropertyListWriter& client)
     : m_booleanTrueObjectReference(invalidObjectReference())
-    , m_integerNegativeOneObjectReference(invalidObjectReference())
     , m_integerZeroObjectReference(invalidObjectReference())
     , m_currentObjectReference(0)
     , m_currentAggregateSize(0)
@@ -200,21 +198,13 @@ void BinaryPropertyListPlan::writeInteger(int integer)
 {
     ASSERT(integer >= 0);
     ++m_currentAggregateSize;
-    switch (integer) {
-        case -1:
-            if (m_integerNegativeOneObjectReference != invalidObjectReference())
-                return;
-            m_integerNegativeOneObjectReference = m_currentObjectReference;
-            break;
-        case 0:
-            if (m_integerZeroObjectReference != invalidObjectReference())
-                return;
-            m_integerZeroObjectReference = m_currentObjectReference;
-            break;
-        default:
-            if (!m_integers.add(integer, m_currentObjectReference).second)
-                return;
-            break;
+    if (!integer) {
+        if (m_integerZeroObjectReference != invalidObjectReference())
+            return;
+        m_integerZeroObjectReference = m_currentObjectReference;
+    } else {
+        if (!m_integers.add(integer, m_currentObjectReference).second)
+            return;
     }
     ++m_currentObjectReference;
     m_byteCount += integerByteCount(integer);
@@ -330,17 +320,13 @@ ObjectReference BinaryPropertyListPlan::booleanTrueObjectReference() const
 
 ObjectReference BinaryPropertyListPlan::integerObjectReference(int integer) const
 {
-    switch (integer) {
-        case -1:
-            ASSERT(m_integerNegativeOneObjectReference != invalidObjectReference());
-            return m_integerNegativeOneObjectReference;
-        case 0:
-            ASSERT(m_integerZeroObjectReference != invalidObjectReference());
-            return m_integerZeroObjectReference;
-        default:
-            ASSERT(m_integers.contains(integer));
-            return m_integers.get(integer);
+    ASSERT(integer >= 0);
+    if (!integer) {
+        ASSERT(m_integerZeroObjectReference != invalidObjectReference());
+        return m_integerZeroObjectReference;
     }
+    ASSERT(m_integers.contains(integer));
+    return m_integers.get(integer);
 }
 
 ObjectReference BinaryPropertyListPlan::stringObjectReference(const String& string) const
@@ -370,6 +356,8 @@ private:
     virtual void writeArrayEnd(size_t);
     virtual size_t writeDictionaryStart();
     virtual void writeDictionaryEnd(size_t);
+
+    ObjectReference writeIntegerWithoutAddingAggregateObjectReference(int);
 
     void appendIntegerObject(int);
     void appendStringObject(const String&);
@@ -520,14 +508,19 @@ void BinaryPropertyListSerializer::writeBooleanTrue()
     addAggregateObjectReference(reference);
 }
 
-void BinaryPropertyListSerializer::writeInteger(int integer)
+inline ObjectReference BinaryPropertyListSerializer::writeIntegerWithoutAddingAggregateObjectReference(int integer)
 {
     ObjectReference reference = m_plan.integerObjectReference(integer);
     if (m_currentObjectReference != reference)
         ASSERT(reference < m_currentObjectReference);
     else
         appendIntegerObject(integer);
-    addAggregateObjectReference(reference);
+    return reference;
+}
+
+void BinaryPropertyListSerializer::writeInteger(int integer)
+{
+    addAggregateObjectReference(writeIntegerWithoutAddingAggregateObjectReference(integer));
 }
 
 void BinaryPropertyListSerializer::writeString(const String& string)
@@ -543,11 +536,8 @@ void BinaryPropertyListSerializer::writeString(const String& string)
 void BinaryPropertyListSerializer::writeIntegerArray(const int* integers, size_t size)
 {
     ObjectReference reference = m_plan.integerArrayObjectReference(integers, size);
-    UInt8* savedAggregateBufferByte = m_currentAggregateBufferByte;
     for (size_t i = 0; i < size; ++i)
-        writeInteger(integers[i]);
-    m_currentAggregateBufferByte = savedAggregateBufferByte;
-    ASSERT(m_currentByte <= m_currentAggregateBufferByte);
+        writeIntegerWithoutAddingAggregateObjectReference(integers[i]);
     if (m_currentObjectReference != reference)
         ASSERT(reference < m_currentObjectReference);
     else
