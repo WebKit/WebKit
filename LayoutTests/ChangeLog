@@ -1,3 +1,15 @@
+2009-04-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Holger Freyther.
+
+        Reworked the skipped tests listing so that it is easier to find
+        tests that are skipped but pass using diff. Enable all tests that
+        are passing, and disable failing tests except for a few crashers
+        and known regressions. This is an effort to make the build slave
+        output more useful when it is back.
+
+        * platform/gtk/Skipped:
+
 2009-04-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
