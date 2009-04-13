@@ -55,6 +55,10 @@ module window {
         attribute [Replaceable] Navigator clientInformation;
         attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8DisallowShadowing] Location location;
 
+        attribute [Replaceable, CustomGetter] Event event;
+
+        readonly attribute [Custom] Crypto crypto;
+
         DOMSelection getSelection();
 
         readonly attribute [CheckNodeSecurity] Element frameElement;
@@ -209,14 +213,17 @@ module window {
         attribute [ProtectedListener] EventListener onmove;
 #endif
 
-        // EventTarget interface
-        [Custom] void addEventListener(in DOMString type,
+    // EventTarget interface
+    [Custom] void addEventListener(in DOMString type,
+                                  in EventListener listener,
+                                  in boolean useCapture);
+    [Custom] void removeEventListener(in DOMString type,
                                       in EventListener listener,
                                       in boolean useCapture);
-        [Custom] void removeEventListener(in DOMString type,
-                                          in EventListener listener,
-                                          in boolean useCapture);
-        // FIXME: Implement dispatchEvent
+    // FIXME: Implement dispatchEvent
+
+    [JSCCustom, V8Custom=DOMWindowNOP] void captureEvents(in long eventFlags);
+    [JSCCustom, V8Custom=DOMWindowNOP] void releaseEvents(in long eventFlags);
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
@@ -469,10 +476,6 @@ module window {
     [Custom] DOMObject showModalDialog(in DOMString url, 
                                        in [Optional] DOMObject dialogArgs,
                                        in [Optional] DOMString featureArgs);
-
-    // These are defined on JSDOMWindowBase, but not implemented.
-    [Custom=DOMWindowNOP] void captureEvents(in long eventFlags);
-    [Custom=DOMWindowNOP] void releaseEvents(in long eventFlags);
 
     // window.toString requires special handling
     [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();

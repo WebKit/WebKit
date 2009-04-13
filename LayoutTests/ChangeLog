@@ -1,5 +1,13 @@
 2009-04-12  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Update test result for new nop window.crypto behavior.
+
+        * http/tests/security/cross-frame-access-get-expected.txt:
+
+2009-04-12  Sam Weinig  <sam@webkit.org>
+
         Update results.
 
         * fast/dom/Window/window-properties-expected.txt:

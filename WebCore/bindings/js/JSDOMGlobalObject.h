@@ -74,7 +74,7 @@ namespace WebCore {
         JSListenersMap& jsInlineEventListeners();
 
         void setCurrentEvent(Event*);
-        Event* currentEvent();
+        Event* currentEvent() const;
 
         virtual void mark();
 

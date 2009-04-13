@@ -31,6 +31,7 @@
 #include "History.h"
 #include "JSAudioConstructor.h"
 #include "JSDOMWindowShell.h"
+#include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
@@ -191,6 +192,19 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)
         // We want a new history item if this JS was called via a user gesture
         impl()->frame()->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
     }
+}
+
+JSValuePtr JSDOMWindow::crypto(ExecState*) const
+{
+    return jsUndefined();
+}
+
+JSValuePtr JSDOMWindow::event(ExecState* exec) const
+{
+    Event* event = currentEvent();
+    if (!event)
+        return jsUndefined();
+    return toJS(exec, event);
 }
 
 JSValuePtr JSDOMWindow::image(ExecState* exec) const
@@ -379,6 +393,16 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
     if (JSProtectedEventListener* listener = findJSProtectedEventListener(args.at(exec, 1)))
         frame->document()->removeWindowEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener, args.at(exec, 2).toBoolean(exec));
 
+    return jsUndefined();
+}
+
+JSValuePtr JSDOMWindow::captureEvents(ExecState*, const ArgList&)
+{
+    return jsUndefined();
+}
+
+JSValuePtr JSDOMWindow::releaseEvents(ExecState*, const ArgList&)
+{
     return jsUndefined();
 }
 

@@ -2,6 +2,24 @@
 
         Reviewed by Mark Rowe.
 
+        Move the event and crypto attributes and the captureEvents and releaseEvents
+        functions out of JSDOMWindowBase by partially generating them.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::currentEvent): Make const.
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::crypto): Not implemented.
+        (WebCore::JSDOMWindow::event):
+        (WebCore::JSDOMWindow::captureEvents): Not implemented.
+        (WebCore::JSDOMWindow::releaseEvents): Ditto.
+        * page/DOMWindow.idl:
+
+2009-04-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         Move more attributes out of JSDOMWindowBase by
         partially generating them.
 

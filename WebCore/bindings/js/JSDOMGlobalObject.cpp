@@ -156,7 +156,7 @@ void JSDOMGlobalObject::setCurrentEvent(Event* evt)
     d()->evt = evt;
 }
 
-Event* JSDOMGlobalObject::currentEvent()
+Event* JSDOMGlobalObject::currentEvent() const
 {
     return d()->evt;
 }
