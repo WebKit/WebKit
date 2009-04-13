@@ -954,6 +954,7 @@ _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
 _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
+_wkInitializeMaximumHTTPConnectionCountPerHost
 _wkMeasureMediaUIPart
 _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes

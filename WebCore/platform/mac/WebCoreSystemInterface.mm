@@ -75,6 +75,7 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
+unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
 
 #ifndef BUILDING_ON_TIGER
 void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);

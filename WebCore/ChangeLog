@@ -1,3 +1,22 @@
+2009-04-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6740294> Increase the connection count per host
+        
+        Try to use six connections per host if possible.
+
+        * WebCore.base.exp:
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::initMaximumHTTPConnectionCountPerHost):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::initMaximumHTTPConnectionCountPerHost):
+
 2009-04-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele Peterson.

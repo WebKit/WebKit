@@ -59,6 +59,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(HitTestMediaUIPart);
+    INIT(InitializeMaximumHTTPConnectionCountPerHost);
     INIT(MeasureMediaUIPart);
     INIT(PopupMenu);
     INIT(SetCGFontRenderingMode);

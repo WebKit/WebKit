@@ -146,5 +146,11 @@ void ResourceRequest::applyWebArchiveHackForMail()
     // Hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest()];
 }
+    
+unsigned initializeMaximumHTTPConnectionCountPerHost()
+{
+    static const unsigned preferredConnectionCount = 6;
+    return wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+}
 
 }

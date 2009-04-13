@@ -345,4 +345,13 @@ void ResourceRequestBase::updateResourceRequest() const
     m_resourceRequestUpdated = true;
 }
 
+#if !PLATFORM(MAC)
+unsigned initializeMaximumHTTPConnectionCountPerHost()
+{
+    // This is used by the loader to control the number of issued parallel load requests. 
+    // Four seems to be a common default in HTTP frameworks.
+    return 4;
+}
+#endif
+
 }

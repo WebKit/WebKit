@@ -1,3 +1,13 @@
+2009-04-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/6740294> Increase the connection count per host
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-04-10  Eric Carlson  <eric.carlson@apple.com>
 
         WebKitSystemInterface changes for <rdar://problem/6646998>

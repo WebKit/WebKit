@@ -173,6 +173,8 @@ namespace WebCore {
         RefPtr<FormData> m_httpBody;
         bool m_allowHTTPCookies;
     };
+    
+    unsigned initializeMaximumHTTPConnectionCountPerHost();
 
 } // namespace WebCore
 

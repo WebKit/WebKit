@@ -1,3 +1,12 @@
+2009-04-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/6740294> Increase the connection count per host
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2009-04-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
