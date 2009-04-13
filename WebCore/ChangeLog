@@ -1,3 +1,19 @@
+2009-04-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25153
+        Can't place the caret into text field that scrolls the window on focus
+        
+        We refetch the target node in the shadow node case, and when we do so the window coordinate for the mouse event may
+        be invalid because of scrolling that the focus handler did.  Cache the document point (that we derived from the window
+        coordinate) and use that any time we refetch.
+
+        * page/EventHandler.cpp:
+        (WebCore::documentPointForWindowPoint):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::prepareMouseEvent):
+
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

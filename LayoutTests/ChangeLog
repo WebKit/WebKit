@@ -1,3 +1,12 @@
+2009-04-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        <rdar://problem/6748324> REGRESSION (Kirkwood): Can't type in Netflix search field
+
+        * fast/forms/25153-expected.txt: Added.
+        * fast/forms/25153.html: Added.
+
 2009-04-13  Sam Weinig  <sam@webkit.org>
 
         Fix bad expected result.

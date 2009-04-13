@@ -1039,6 +1039,14 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
     }
     return pointerCursor();
 }
+    
+IntPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
+{
+    FrameView* view = frame->view();
+    // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
+    // Historically the code would just crash; this is clearly no worse than that.
+    return view ? view->windowToContents(windowPoint) : windowPoint;
+}
 
 bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 {
@@ -1060,7 +1068,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     m_mouseDownWasInSubframe = false;
 
     HitTestRequest request(HitTestRequest::Active);
-    MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
+    IntPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
+    MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
 
     if (!mev.targetNode()) {
         invalidateClick();
@@ -1139,7 +1148,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     if (mev.scrollbar()) {
         const bool wasLastScrollBar = mev.scrollbar() == m_lastScrollbarUnderMouse.get();
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
-        mev = prepareMouseEvent(request, mouseEvent);
+        mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
         if (wasLastScrollBar && mev.scrollbar() != m_lastScrollbarUnderMouse.get())
             m_lastScrollbarUnderMouse = 0;
     }
@@ -1155,7 +1164,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         // event target node can't still be the shadow node.
         if (mev.targetNode()->isShadowNode() && mev.targetNode()->shadowParentNode()->hasTagName(inputTag)) {
             HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
-            mev = prepareMouseEvent(request, mouseEvent);
+            mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
         }
 
         FrameView* view = m_frame->view();
@@ -1499,12 +1508,8 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
 {
     ASSERT(m_frame);
     ASSERT(m_frame->document());
-
-    FrameView* view = m_frame->view();
-    // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
-    // Historically the code would just crash; this is clearly no worse than that.
-    IntPoint documentPoint = view ? view->windowToContents(mev.pos()) : mev.pos();
-    return m_frame->document()->prepareMouseEvent(request, documentPoint, mev);
+    
+    return m_frame->document()->prepareMouseEvent(request, documentPointForWindowPoint(m_frame, mev.pos()), mev);
 }
 
 #if ENABLE(SVG)
