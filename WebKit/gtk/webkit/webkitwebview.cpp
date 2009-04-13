@@ -139,6 +139,7 @@ enum {
     CUT_CLIPBOARD,
     DOWNLOAD_REQUESTED,
     MOVE_CURSOR,
+    PRINT_REQUESTED,
     LAST_SIGNAL
 };
 
@@ -1374,6 +1375,35 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
             GTK_TYPE_MENU);
+
+    /**
+     * WebKitWebView::print-requested
+     * @web_view: the object in which the signal is emitted
+     * @web_frame: the frame that is requesting to be printed
+     * @return: %TRUE if the print request has been handled, %FALSE if
+     * the default handler should run
+     *
+     * Emitted when printing is requested by the frame, usually
+     * because of a javascript call. When handling this signal you
+     * should call webkit_web_frame_print_full() or
+     * webkit_web_frame_print() to do the actual printing.
+     *
+     * The default handler will present a print dialog and carry a
+     * print operation. Notice that this means that if you intend to
+     * ignore a print request you must connect to this signal, and
+     * return %TRUE.
+     *
+     * Since: 1.1.5
+     */
+    webkit_web_view_signals[PRINT_REQUESTED] = g_signal_new("print-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT,
+            G_TYPE_BOOLEAN, 1,
+            WEBKIT_TYPE_WEB_FRAME);
 
     webkit_web_view_signals[STATUS_BAR_TEXT_CHANGED] = g_signal_new("status-bar-text-changed",
             G_TYPE_FROM_CLASS(webViewClass),

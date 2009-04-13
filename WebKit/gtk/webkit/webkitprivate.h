@@ -176,9 +176,6 @@ extern "C" {
     WEBKIT_API gchar*
     webkit_web_frame_get_inner_text (WebKitWebFrame* frame);
 
-    WEBKIT_API void
-    webkit_web_frame_print (WebKitWebFrame* frame);
-
     WEBKIT_API gchar*
     webkit_web_frame_dump_render_tree (WebKitWebFrame* frame);
 

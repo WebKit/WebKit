@@ -404,7 +404,14 @@ void ChromeClient::setToolTip(const String& toolTip)
 
 void ChromeClient::print(Frame* frame)
 {
-    webkit_web_frame_print(kit(frame));
+    WebKitWebFrame* webFrame = kit(frame);
+    gboolean isHandled = false;
+    g_signal_emit_by_name(m_webView, "print-requested", webFrame, &isHandled);
+
+    if (isHandled)
+        return;
+
+    webkit_web_frame_print(webFrame);
 }
 
 void ChromeClient::exceededDatabaseQuota(Frame* frame, const String&)

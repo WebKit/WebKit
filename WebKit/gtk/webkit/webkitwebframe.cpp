@@ -6,6 +6,7 @@
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo <jmalonzo@gmail.com>
+ * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -611,7 +612,7 @@ gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame)
     return g_strdup(string.utf8().data());
 }
 
-static void begin_print(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
+static void begin_print_callback(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
 
@@ -629,7 +630,7 @@ static void begin_print(GtkPrintOperation* op, GtkPrintContext* context, gpointe
     gtk_print_operation_set_n_pages(op, printContext->pageCount());
 }
 
-static void draw_page(GtkPrintOperation* op, GtkPrintContext* context, gint page_nr, gpointer user_data)
+static void draw_page_callback(GtkPrintOperation* op, GtkPrintContext* context, gint page_nr, gpointer user_data)
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
 
@@ -639,34 +640,72 @@ static void draw_page(GtkPrintOperation* op, GtkPrintContext* context, gint page
     printContext->spoolPage(ctx, page_nr, width);
 }
 
-static void end_print(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
+static void end_print_callback(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
     printContext->end();
 }
 
-void webkit_web_frame_print(WebKitWebFrame* frame)
+/**
+ * webkit_web_frame_print_full:
+ * @frame: a #WebKitWebFrame to be printed
+ * @operation: the #GtkPrintOperation to be carried
+ * @action: the #GtkPrintOperationAction to be performed
+ * @error: #GError for error return
+ *
+ * Prints the given #WebKitFrame, using the given #GtkPrintOperation
+ * and #GtkPrintOperationAction. This function wraps a call to
+ * gtk_print_operation_run() for printing the contents of the
+ * #WebKitWebFrame.
+ *
+ * Since: 1.1.5
+ */
+GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPrintOperation* operation, GtkPrintOperationAction action, GError** error)
 {
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), GTK_PRINT_OPERATION_RESULT_ERROR);
+    g_return_val_if_fail(GTK_IS_PRINT_OPERATION(operation), GTK_PRINT_OPERATION_RESULT_ERROR);
+
     GtkWidget* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(frame)));
     if (!GTK_WIDGET_TOPLEVEL(topLevel))
         topLevel = NULL;
 
     Frame* coreFrame = core(frame);
     if (!coreFrame)
-        return;
+        return GTK_PRINT_OPERATION_RESULT_ERROR;
 
     PrintContext printContext(coreFrame);
 
-    GtkPrintOperation* op = gtk_print_operation_new();
-    g_signal_connect(op, "begin-print", G_CALLBACK(begin_print), &printContext);
-    g_signal_connect(op, "draw-page", G_CALLBACK(draw_page), &printContext);
-    g_signal_connect(op, "end-print", G_CALLBACK(end_print), &printContext);
-    GError *error = NULL;
-    gtk_print_operation_run(op, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, GTK_WINDOW(topLevel), &error);
-    g_object_unref(op);
+    g_signal_connect(operation, "begin-print", G_CALLBACK(begin_print_callback), &printContext);
+    g_signal_connect(operation, "draw-page", G_CALLBACK(draw_page_callback), &printContext);
+    g_signal_connect(operation, "end-print", G_CALLBACK(end_print_callback), &printContext);
+
+    return gtk_print_operation_run(operation, action, GTK_WINDOW(topLevel), error);
+}
+
+/**
+ * webkit_web_frame_print:
+ * @frame: a #WebKitWebFrame
+ *
+ * Prints the given #WebKitFrame, by presenting a print dialog to the
+ * user. If you need more control over the printing process, see
+ * webkit_web_frame_print_full().
+ *
+ * Since: 1.1.5
+ */
+void webkit_web_frame_print(WebKitWebFrame* frame)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+
+    WebKitWebFramePrivate* priv = frame->priv;
+    GtkPrintOperation* operation = gtk_print_operation_new();
+    GError* error = 0;
+
+    webkit_web_frame_print_full(frame, operation, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, &error);
+    g_object_unref(operation);
 
     if (error) {
-        GtkWidget* dialog = gtk_message_dialog_new(GTK_WINDOW(topLevel),
+        GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(priv->webView));
+        GtkWidget* dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_MESSAGE_ERROR,
                                                    GTK_BUTTONS_CLOSE,

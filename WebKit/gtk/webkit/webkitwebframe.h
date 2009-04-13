@@ -22,6 +22,8 @@
 #define WEBKIT_WEB_FRAME_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
+
 #include <JavaScriptCore/JSBase.h>
 
 #include <webkit/webkitdefines.h>
@@ -107,6 +109,15 @@ webkit_web_frame_find_frame         (WebKitWebFrame       *frame,
 
 WEBKIT_API JSGlobalContextRef
 webkit_web_frame_get_global_context (WebKitWebFrame       *frame);
+
+WEBKIT_API GtkPrintOperationResult
+webkit_web_frame_print_full         (WebKitWebFrame       *frame,
+                                     GtkPrintOperation    *operation,
+                                     GtkPrintOperationAction action,
+                                     GError              **error);
+
+WEBKIT_API void
+webkit_web_frame_print              (WebKitWebFrame       *frame);
 
 G_END_DECLS
 
