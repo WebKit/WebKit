@@ -2,6 +2,15 @@
 
         Reviewed by Sam Weinig.
 
+        Disabled another JavaScriptCore test because it fails on Windows but
+        not Mac, so it makes the bots red.
+
+        * Scripts/run-javascriptcore-tests:
+
+2009-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Disabled two JavaScriptCore tests because they fail on Window or Mac but
         not both, so they make the bots red.
 
