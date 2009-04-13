@@ -16828,6 +16828,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCoordinatesCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCustomPositionCallback.cpp"
 					>
 				</File>

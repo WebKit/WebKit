@@ -153,26 +153,36 @@ void GeolocationServiceMac::errorOccurred(PassRefPtr<PositionError> error)
     UNUSED_PARAM(oldLocation);
 
     // Normalize
+    bool canProvideAltitude = true;
+    bool canProvideAltitudeAccuracy = true;
     double altitude = newLocation.altitude;
     double altitudeAccuracy = newLocation.verticalAccuracy;
     if (altitudeAccuracy < 0.0) {
-        altitudeAccuracy = 0.0;
-        altitude = 0.0;
+        canProvideAltitude = false;
+        canProvideAltitudeAccuracy = false;
     }
+    
+    bool canProvideSpeed = true;
     double speed = newLocation.speed;
     if (speed < 0.0)
-        speed = 0.0;
+        canProvideSpeed = false;
+
+    bool canProvideHeading = true;
     double heading = newLocation.course;
     if (heading < 0.0)
-        heading = 0.0;
+        canProvideHeading = false;
     
     WTF::RefPtr<WebCore::Coordinates> newCoordinates = WebCore::Coordinates::create(
                             newLocation.coordinate.latitude,
                             newLocation.coordinate.longitude,
+                            canProvideAltitude,
                             altitude,
                             newLocation.horizontalAccuracy,
+                            canProvideAltitudeAccuracy,
                             altitudeAccuracy,
+                            canProvideHeading,
                             heading,
+                            canProvideSpeed,
                             speed);
     WTF::RefPtr<WebCore::Geoposition> newPosition = WebCore::Geoposition::create(
                              newCoordinates.release(),

@@ -422,6 +422,7 @@ SOURCES += \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \
+    bindings/js/JSCoordinatesCustom.cpp \
     bindings/js/JSCustomPositionCallback.cpp \
     bindings/js/JSCustomPositionErrorCallback.cpp \
     bindings/js/JSCustomVoidCallback.cpp \

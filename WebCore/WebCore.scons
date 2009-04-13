@@ -616,6 +616,7 @@ sources['bindings/js'] = [
     "bindings/js/JSCanvasRenderingContext2DCustom.cpp",
     "bindings/js/JSClipboardCustom.cpp",
     "bindings/js/JSConsoleCustom.cpp",
+    "bindings/js/JSCoordinatesCustom.cpp",
     "bindings/js/JSCustomPositionCallback.cpp",
     "bindings/js/JSCustomPositionErrorCallback.cpp",
     "bindings/js/JSCustomSQLStatementCallback.cpp",

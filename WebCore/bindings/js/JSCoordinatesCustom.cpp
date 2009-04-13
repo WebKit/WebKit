@@ -23,19 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module core {
+#include "config.h"
+#include "JSCoordinates.h"
 
-    interface Coordinates {
-        readonly attribute double latitude;
-        readonly attribute double longitude;
-        readonly attribute [Custom] double altitude;
-        readonly attribute double accuracy;
-        readonly attribute [Custom] double altitudeAccuracy;
-        readonly attribute [Custom] double heading;
-        readonly attribute [Custom] double speed;
+#include "Coordinates.h"
 
-#if defined(LANGUAGE_JAVASCRIPT)
-        [DontEnum] DOMString toString();
-#endif
-    };
+using namespace JSC;
+
+namespace WebCore {
+    
+JSValuePtr JSCoordinates::altitude(ExecState* exec) const
+{
+    Coordinates* imp = impl();
+    if (!imp->canProvideAltitude())
+        return jsNull();
+    return jsNumber(exec, imp->altitude());
 }
+
+JSValuePtr JSCoordinates::altitudeAccuracy(ExecState* exec) const
+{
+    Coordinates* imp = impl();
+    if (!imp->canProvideAltitudeAccuracy())
+        return jsNull();
+    return jsNumber(exec, imp->altitudeAccuracy());
+}
+
+JSValuePtr JSCoordinates::heading(ExecState* exec) const
+{
+    Coordinates* imp = impl();
+    if (!imp->canProvideHeading())
+        return jsNull();
+    return jsNumber(exec, imp->heading());
+}
+
+JSValuePtr JSCoordinates::speed(ExecState* exec) const
+{
+    Coordinates* imp = impl();
+    if (!imp->canProvideSpeed())
+        return jsNull();
+    return jsNumber(exec, imp->speed());
+}
+
+} // namespace WebCore

@@ -256,6 +256,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSClipboardCustom.cpp \
 	WebCore/bindings/js/JSConsoleCustom.cpp \
+	WebCore/bindings/js/JSCoordinatesCustom.cpp \
 	WebCore/bindings/js/JSCustomPositionCallback.cpp \
 	WebCore/bindings/js/JSCustomPositionCallback.h \
 	WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
