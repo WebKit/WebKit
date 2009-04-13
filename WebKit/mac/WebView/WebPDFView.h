@@ -37,7 +37,7 @@
     NSView *previewView;
     PDFView *PDFSubview;
     NSString *path;
-    id trackedFirstResponder;
+    BOOL firstResponderIsPDFDocumentView;
     BOOL written;
     BOOL _ignoreScaleAndDisplayModeAndPageNotifications;
     BOOL _willUpdatePreferencesSoon;

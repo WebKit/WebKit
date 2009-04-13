@@ -184,7 +184,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)dealloc
 {
-    ASSERT(!trackedFirstResponder);
     [dataSource release];
     [previewView release];
     [PDFSubview release];
@@ -470,8 +469,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
                                   name:NSViewBoundsDidChangeNotification 
                                 object:[self _clipViewForPDFDocumentView]];
     
-    [trackedFirstResponder release];
-    trackedFirstResponder = nil;
+    firstResponderIsPDFDocumentView = NO;
 }
 
 #pragma mark NSUserInterfaceValidations PROTOCOL IMPLEMENTATION
@@ -1388,20 +1386,17 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)_trackFirstResponder
 {
     ASSERT([self window]);
-    
-    id newFirstResponder = [[self window] firstResponder];
-    if (newFirstResponder == trackedFirstResponder)
+    BOOL newFirstResponderIsPDFDocumentView = [[self window] firstResponder] == [PDFSubview documentView];
+    if (newFirstResponderIsPDFDocumentView == firstResponderIsPDFDocumentView)
         return;
     
     // This next clause is the entire purpose of _trackFirstResponder. In other WebDocument
     // view classes this is done in a resignFirstResponder override, but in this case the
     // first responder view is a PDFKit class that we can't subclass.
-    if (trackedFirstResponder == [PDFSubview documentView] && ![[dataSource _webView] maintainsInactiveSelection])
+    if (newFirstResponderIsPDFDocumentView && ![[dataSource _webView] maintainsInactiveSelection])
         [self deselectAll];
     
-    
-    [trackedFirstResponder release];
-    trackedFirstResponder = [newFirstResponder retain];
+    firstResponderIsPDFDocumentView = newFirstResponderIsPDFDocumentView;
 }
 
 - (void)_updatePreferences:(WebPreferences *)prefs

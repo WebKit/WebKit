@@ -1,3 +1,21 @@
+2009-04-13  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/6784955> REGRESSION: closing a tab containing a PDF causes world leaks
+        
+        Simplify the _trackFirstResponder method by just caching the value instead of retaining
+        a Cocoa object.
+        
+        * WebView/WebPDFView.h: Eliminated trackedFirstResponder object and replaced it with
+        a firstResponderIsPDFDocumentView boolean.
+        * WebView/WebPDFView.mm: 
+        (-[WebPDFView dealloc]): Removed no longer necessary ASSERT.
+        (-[WebPDFView viewWillMoveToWindow:]): Removed call to release and nil-out trackedFirstResponder,
+        which no longer exists. In the new code all we do now is set firstResponderIsPDFDocumentView to NO.
+        (-[WebPDFView _trackFirstResponder]): Rewrote this method to just cache the value instead
+        of retaining an object.
+
 2009-04-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
