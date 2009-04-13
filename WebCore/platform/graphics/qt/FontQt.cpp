@@ -183,7 +183,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
         p->drawText(pt, string, flags, run.padding());
 }
 
-float Font::floatWidthForComplexText(const TextRun& run) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*) const
 {
     if (!run.length())
         return 0;

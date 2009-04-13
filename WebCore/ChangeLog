@@ -1,3 +1,10 @@
+2009-04-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed Qt build fix.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+
 2009-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
