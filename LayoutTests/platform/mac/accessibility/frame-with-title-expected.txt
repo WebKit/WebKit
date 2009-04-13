@@ -21,7 +21,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXWebArea>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
-AXLayoutCount: 2
+AXLayoutCount: 3
 AXURL: about:blank
 
 
@@ -48,7 +48,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXWebArea>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
-AXLayoutCount: 3
+AXLayoutCount: 4
 AXURL: about:blank
 
 
