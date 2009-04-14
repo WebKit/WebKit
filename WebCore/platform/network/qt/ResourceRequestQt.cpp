@@ -41,6 +41,22 @@ QNetworkRequest ResourceRequest::toNetworkRequest() const
         request.setRawHeader(name, value);
     }
 
+    switch (cachePolicy()) {
+    case ReloadIgnoringCacheData:
+        request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+        break;
+    case ReturnCacheDataElseLoad:
+        request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+        break;
+    case ReturnCacheDataDontLoad:
+        request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysCache);
+        break;
+    case UseProtocolCachePolicy:
+        // QNetworkRequest::PreferNetwork
+    default:
+        break;
+    }
+
     return request;
 }
 

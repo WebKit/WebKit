@@ -1,3 +1,18 @@
+2009-04-14  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25099
+
+        When creating a QNetworkRequest make sure to populate the
+        CacheLoadControlAttribute with the value set by the ResourceRequest::cachePolicy() so that the cache will be used as WebKit expects.
+
+        * WebKit/qt/tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::requestCache):
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2009-04-14  Timothy Hatcher  <timothy@apple.com>
 
         Fix a world leak caused by opening the Web Inspector. This was
