@@ -1,5 +1,12 @@
 2009-04-14  Alexey Proskuryakov  <ap@webkit.org>
 
+        Another Windows build fix.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoader::load):
+
+2009-04-14  Alexey Proskuryakov  <ap@webkit.org>
+
         Windows build fix.
 
         * platform/network/cf/ResourceHandleCFNet.cpp:
