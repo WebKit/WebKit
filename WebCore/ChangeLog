@@ -4,9 +4,6 @@
 
         <rdar://problem/6698851> Implement XMLHttpRequest withCredentials attribute
 
-        Tests: http/tests/xmlhttprequest/cross-origin-authorization.html
-               http/tests/xmlhttprequest/cross-origin-no-authorization.html
-
         * WebCore.xcodeproj/project.pbxproj: Made ThreadableLoader.h private, as enum definitions
         from it are now used in otehr private headers.
 
