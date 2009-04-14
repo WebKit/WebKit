@@ -1,3 +1,11 @@
+2009-04-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Remove an outdated comment in ScrollView.h
+
+        * platform/ScrollView.h:
+
 2009-04-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Mark Rowe.
