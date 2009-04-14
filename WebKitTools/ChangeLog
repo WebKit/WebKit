@@ -1,5 +1,15 @@
 2009-04-14  Adam Roben  <aroben@apple.com>
 
+        Small run-javascriptcore-tests cleanup
+
+        Reviewed by Cameron Zwarich.
+
+        * Scripts/run-javascriptcore-tests: Move the list of tests to skip
+        into its own variable, annotated with the bugs that are filed about
+        the various failures.
+
+2009-04-14  Adam Roben  <aroben@apple.com>
+
         Skip another sometimes-failing ecma/Date test on Windows
 
         These failing tests are covered by Bug 25160: Various ecma/Date tests
