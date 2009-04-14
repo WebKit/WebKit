@@ -1,3 +1,13 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Remove support for profile-guided optimization on Windows
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Removed
+        the Release_PGO configuration. Also let VS re-order the source files
+        list.
+
 2009-04-14  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

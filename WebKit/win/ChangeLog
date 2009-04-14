@@ -1,3 +1,12 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Remove support for profile-guided optimization on Windows
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.vcproj: Removed the Release_PGOInstrument and
+        Release_PGOOptimize configurations.
+
 2009-04-13  Adam Roben  <aroben@apple.com>
 
         Windows part 2 of <rdar://5438063> Saving history containing 100,000

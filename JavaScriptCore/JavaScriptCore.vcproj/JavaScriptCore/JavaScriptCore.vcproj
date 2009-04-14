@@ -199,68 +199,6 @@
 				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
-		<Configuration
-			Name="Release_PGO|Win32"
-			OutputDirectory="$(WebKitOutputDir)\lib"
-			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				Description=""
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="__STD_C"
-				ForcedIncludeFiles=""
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="winmm.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -930,15 +868,6 @@
 							DisableSpecificWarnings="4701"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_PGO|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							WholeProgramOptimization="false"
-							DisableSpecificWarnings="4701"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\Grammar.h"
@@ -1204,14 +1133,6 @@
 			<File
 				RelativePath="..\..\parser\Nodes.cpp"
 				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\parser\Nodes.h"
@@ -1238,27 +1159,11 @@
 			Name="bytecode"
 			>
 			<File
-				RelativePath="..\..\bytecode\StructureStubInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\StructureStubInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\CodeBlock.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\bytecode\CodeBlock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\JumpTable.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\JumpTable.h"
 				>
 			</File>
 			<File
@@ -1286,19 +1191,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\TimeoutChecker.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\TimeoutChecker.h"
+				RelativePath="..\..\jit\JITStubs.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\jit\JITStubs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\jit\JITStubs.cpp"
 				>
 			</File>
 			<File
@@ -1307,6 +1204,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSPropertyNameIterator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\JumpTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\JumpTable.h"
 				>
 			</File>
 			<File
@@ -1335,6 +1240,22 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\SamplingTool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\StructureStubInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\StructureStubInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\TimeoutChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\TimeoutChecker.h"
 				>
 			</File>
 		</Filter>
@@ -1438,27 +1359,7 @@
 			Name="jit"
 			>
 			<File
-				RelativePath="..\..\jit\JIT.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\jit\JIT.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\jit\ExecutableAllocator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\jit\ExecutableAllocatorWin.cpp"
 				>
 			</File>
 			<File
@@ -1466,28 +1367,24 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\ExecutableAllocatorWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JIT.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JIT.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITArithmetic.cpp"
 				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\jit\JITCall.cpp"
 				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\jit\JITInlineMethods.h"
@@ -1496,14 +1393,6 @@
 			<File
 				RelativePath="..\..\jit\JITPropertyAccess.cpp"
 				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

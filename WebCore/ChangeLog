@@ -1,3 +1,12 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Remove support for profile-guided optimization on Windows
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj: Removed the Release_PGO
+        configuration.
+
 2009-04-14  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.
