@@ -30,6 +30,7 @@ module svg {
         Conditional=SVG,
         ObjCCustomInternalImpl,
         CustomListeners,
+        CustomMarkFunction,
         CustomPushEventHandlerScope,
         GenerateToJS,
         GenerateNativeConverter
@@ -49,46 +50,46 @@ module svg {
 
         // EventTarget
 #if !defined(LANGUAGE_OBJECTIVE_C)
-        attribute [DontEnum, ProtectedListener] EventListener onabort;
-        attribute [DontEnum, ProtectedListener] EventListener onblur;
-        attribute [DontEnum, ProtectedListener] EventListener onchange;
-        attribute [DontEnum, ProtectedListener] EventListener onclick;
-        attribute [DontEnum, ProtectedListener] EventListener oncontextmenu;
-        attribute [DontEnum, ProtectedListener] EventListener ondblclick;
-        attribute [DontEnum, ProtectedListener] EventListener onerror;
-        attribute [DontEnum, ProtectedListener] EventListener onfocus;
-        attribute [DontEnum, ProtectedListener] EventListener oninput;
-        attribute [DontEnum, ProtectedListener] EventListener onkeydown;
-        attribute [DontEnum, ProtectedListener] EventListener onkeypress;
-        attribute [DontEnum, ProtectedListener] EventListener onkeyup;
-        attribute [DontEnum, ProtectedListener] EventListener onload;
-        attribute [DontEnum, ProtectedListener] EventListener onmousedown;
-        attribute [DontEnum, ProtectedListener] EventListener onmousemove;
-        attribute [DontEnum, ProtectedListener] EventListener onmouseout;
-        attribute [DontEnum, ProtectedListener] EventListener onmouseover;
-        attribute [DontEnum, ProtectedListener] EventListener onmouseup;
-        attribute [DontEnum, ProtectedListener] EventListener onmousewheel;
-        attribute [DontEnum, ProtectedListener] EventListener onbeforecut;
-        attribute [DontEnum, ProtectedListener] EventListener oncut;
-        attribute [DontEnum, ProtectedListener] EventListener onbeforecopy;
-        attribute [DontEnum, ProtectedListener] EventListener oncopy;
-        attribute [DontEnum, ProtectedListener] EventListener onbeforepaste;
-        attribute [DontEnum, ProtectedListener] EventListener onpaste;
-        attribute [DontEnum, ProtectedListener] EventListener ondragenter;
-        attribute [DontEnum, ProtectedListener] EventListener ondragover;
-        attribute [DontEnum, ProtectedListener] EventListener ondragleave;
-        attribute [DontEnum, ProtectedListener] EventListener ondrop;
-        attribute [DontEnum, ProtectedListener] EventListener ondragstart;
-        attribute [DontEnum, ProtectedListener] EventListener ondrag;
-        attribute [DontEnum, ProtectedListener] EventListener ondragend;
-        attribute [DontEnum, ProtectedListener] EventListener onreset;
-        attribute [DontEnum, ProtectedListener] EventListener onresize;
-        attribute [DontEnum, ProtectedListener] EventListener onscroll;
-        attribute [DontEnum, ProtectedListener] EventListener onsearch;
-        attribute [DontEnum, ProtectedListener] EventListener onselect;
-        attribute [DontEnum, ProtectedListener] EventListener onselectstart;
-        attribute [DontEnum, ProtectedListener] EventListener onsubmit;
-        attribute [DontEnum, ProtectedListener] EventListener onunload;
+        attribute [DontEnum] EventListener onabort;
+        attribute [DontEnum] EventListener onblur;
+        attribute [DontEnum] EventListener onchange;
+        attribute [DontEnum] EventListener onclick;
+        attribute [DontEnum] EventListener oncontextmenu;
+        attribute [DontEnum] EventListener ondblclick;
+        attribute [DontEnum] EventListener onerror;
+        attribute [DontEnum] EventListener onfocus;
+        attribute [DontEnum] EventListener oninput;
+        attribute [DontEnum] EventListener onkeydown;
+        attribute [DontEnum] EventListener onkeypress;
+        attribute [DontEnum] EventListener onkeyup;
+        attribute [DontEnum] EventListener onload;
+        attribute [DontEnum] EventListener onmousedown;
+        attribute [DontEnum] EventListener onmousemove;
+        attribute [DontEnum] EventListener onmouseout;
+        attribute [DontEnum] EventListener onmouseover;
+        attribute [DontEnum] EventListener onmouseup;
+        attribute [DontEnum] EventListener onmousewheel;
+        attribute [DontEnum] EventListener onbeforecut;
+        attribute [DontEnum] EventListener oncut;
+        attribute [DontEnum] EventListener onbeforecopy;
+        attribute [DontEnum] EventListener oncopy;
+        attribute [DontEnum] EventListener onbeforepaste;
+        attribute [DontEnum] EventListener onpaste;
+        attribute [DontEnum] EventListener ondragenter;
+        attribute [DontEnum] EventListener ondragover;
+        attribute [DontEnum] EventListener ondragleave;
+        attribute [DontEnum] EventListener ondrop;
+        attribute [DontEnum] EventListener ondragstart;
+        attribute [DontEnum] EventListener ondrag;
+        attribute [DontEnum] EventListener ondragend;
+        attribute [DontEnum] EventListener onreset;
+        attribute [DontEnum] EventListener onresize;
+        attribute [DontEnum] EventListener onscroll;
+        attribute [DontEnum] EventListener onsearch;
+        attribute [DontEnum] EventListener onselect;
+        attribute [DontEnum] EventListener onselectstart;
+        attribute [DontEnum] EventListener onsubmit;
+        attribute [DontEnum] EventListener onunload;
 
         [Custom] void addEventListener(in DOMString type, 
                                        in EventListener listener, 

@@ -1011,13 +1011,17 @@ sub GenerateImplementation
         push(@implContent, "${className}::~$className()\n");
         push(@implContent, "{\n");
 
-         if ($interfaceName eq "Node") {
+        if ($interfaceName eq "Node") {
              $implIncludes{"RegisteredEventListener.h"} = 1;
-             push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
              push(@implContent, "    invalidateEventListeners(m_impl->eventListeners());\n");
+             push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
         } elsif ($interfaceName eq "DOMWindow") {
              $implIncludes{"RegisteredEventListener.h"} = 1;
              push(@implContent, "    invalidateEventListeners(impl()->eventListeners());\n");
+        } elsif ($interfaceName eq "SVGElementInstance") {
+             $implIncludes{"RegisteredEventListener.h"} = 1;
+             push(@implContent, "    invalidateEventListeners(m_impl->eventListeners());\n");
+             push(@implContent, "    forgetDOMObject(*Heap::heap(this)->globalData(), m_impl.get());\n");
         } else {
             if ($podType) {
                 my $animatedType = $implClassName;
