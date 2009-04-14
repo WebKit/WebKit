@@ -40,7 +40,7 @@ use POSIX;
 setConfiguration();
 my $configuration = configuration();
 
-my $jsDriverArgs = "-L ecma_3/Date/15.9.5.7.js ecma/Date/15.9.2.2-1.js ecma/Date/15.9.2.2-4.js";
+my $jsDriverArgs = "-L ecma_3/Date/15.9.5.7.js ecma/Date/15.9.2.1.js ecma/Date/15.9.2.2-1.js ecma/Date/15.9.2.2-4.js";
 my $root; # intentionally left undefined
 my $showHelp = 0;
 

@@ -1,3 +1,16 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Skip another sometimes-failing ecma/Date test on Windows
+
+        These failing tests are covered by Bug 25160: Various ecma/Date tests
+        sometimes fail on Windows (but not Mac)
+        <https://bugs.webkit.org/show_bug.cgi?id=25160>
+
+        Reviewed by Cameron Zwarich.
+
+        * Scripts/run-javascriptcore-tests: Added ecma/Date/15.9.2.1.js to the
+        list of tests to skip.
+
 2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
