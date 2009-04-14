@@ -409,7 +409,7 @@ static void* openFunc(const char* uri)
     // FIXME: We should restore the original global error handler as well.
 
     if (docLoader->frame()) 
-        docLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
+        docLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, error, response, data);
 
     globalDocLoader = docLoader;
 

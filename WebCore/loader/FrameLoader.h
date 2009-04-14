@@ -33,6 +33,7 @@
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
+#include "ThreadableLoader.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -147,7 +148,7 @@ namespace WebCore {
         // Called by createWindow in JSDOMWindowBase.cpp, e.g. to fulfill a modal dialog creation
         Frame* createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest&, const WindowFeatures&, bool& created);
 
-        unsigned long loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
+        unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
         bool canHandleRequest(const ResourceRequest&);
 

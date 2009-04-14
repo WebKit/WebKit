@@ -133,6 +133,10 @@ namespace WebCore {
 #endif
             , m_failureTimer(loader, &ResourceHandle::fireFailure)
         {
+            const KURL& url = m_request.url();
+            m_user = url.user();
+            m_pass = url.pass();
+            m_request.removeCredentials();
         }
         
         ~ResourceHandleInternal();
@@ -141,6 +145,10 @@ namespace WebCore {
         ResourceHandleClient* m_client;
         
         ResourceRequest m_request;
+
+        // Suggested credentials for the current redirection step.
+        String m_user;
+        String m_pass;
         
         int status;
 

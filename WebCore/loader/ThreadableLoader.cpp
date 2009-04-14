@@ -40,33 +40,33 @@
 
 namespace WebCore {
 
-PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff) 
+PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials) 
 {
     ASSERT(client);
     ASSERT(context);
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext())
-        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff);
+        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff, storedCredentials);
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff);
+    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff, storedCredentials);
 }
 
-void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client)
+void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, StoredCredentials storedCredentials)
 {
     ASSERT(context);
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext()) {
-        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client);
+        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client, storedCredentials);
         return;
     }
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    DocumentThreadableLoader::loadResourceSynchronously(static_cast<Document*>(context), request, client);
+    DocumentThreadableLoader::loadResourceSynchronously(static_cast<Document*>(context), request, client, storedCredentials);
 }
 
 } // namespace WebCore

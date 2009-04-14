@@ -117,6 +117,16 @@ void ResourceRequestBase::setURL(const KURL& url)
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::removeCredentials()
+{
+    updateResourceRequest(); 
+
+    m_url.setUser(String());
+    m_url.setPass(String());
+
+    m_platformRequestUpdated = false;
+}
+
 ResourceRequestCachePolicy ResourceRequestBase::cachePolicy() const
 {
     updateResourceRequest(); 

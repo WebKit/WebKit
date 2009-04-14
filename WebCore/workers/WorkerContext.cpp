@@ -247,7 +247,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
         request.setHTTPMethod("GET");
         request.setHTTPOrigin(securityOrigin);
         WorkerImportScriptsClient client(scriptExecutionContext(), *it, callerURL, callerLine);
-        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, client);
+        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, client, AllowStoredCredentials);
         
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
         if (client.failed()) {

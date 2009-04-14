@@ -55,11 +55,11 @@ static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMo
 
 // FIXME: The assumption that we can upcast worker object proxy to WorkerMessagingProxy will not be true in multi-process implementation.
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting,
-                                               ContentSniff contentSniff)
+                                               ContentSniff contentSniff, StoredCredentials storedCredentials)
     : m_workerContext(workerContext)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
     , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), taskMode, request, callbacksSetting,
-                                      contentSniff)))
+                                      contentSniff, storedCredentials)))
 {
 }
 
@@ -68,7 +68,7 @@ WorkerThreadableLoader::~WorkerThreadableLoader()
     m_bridge.destroy();
 }
 
-void WorkerThreadableLoader::loadResourceSynchronously(WorkerContext* workerContext, const ResourceRequest& request, ThreadableLoaderClient& client)
+void WorkerThreadableLoader::loadResourceSynchronously(WorkerContext* workerContext, const ResourceRequest& request, ThreadableLoaderClient& client, StoredCredentials storedCredentials)
 {
     WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
 
@@ -77,7 +77,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerContext* workerCont
     mode.append(String::number(runLoop.createUniqueId()));
 
     ContentSniff contentSniff = request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
-    RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerContext, &client, mode, request, DoNotSendLoadCallbacks, contentSniff);
+    RefPtr<WorkerThreadableLoader> loader = WorkerThreadableLoader::create(workerContext, &client, mode, request, DoNotSendLoadCallbacks, contentSniff, storedCredentials);
 
     MessageQueueWaitResult result = MessageQueueMessageReceived;
     while (!loader->done() && result != MessageQueueTerminated)
@@ -93,20 +93,20 @@ void WorkerThreadableLoader::cancel()
 }
 
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerMessagingProxy& messagingProxy, const String& taskMode,
-                                                           const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+                                                           const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials)
     : m_workerClientWrapper(workerClientWrapper)
     , m_messagingProxy(messagingProxy)
     , m_taskMode(taskMode.copy())
 {
     ASSERT(m_workerClientWrapper.get());
-    m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff));
+    m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff, storedCredentials));
 }
 
 WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 {
 }
 
-void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, auto_ptr<CrossThreadResourceRequestData> requestData, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
+void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, auto_ptr<CrossThreadResourceRequestData> requestData, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials)
 {
     // FIXME: This assert fails for nested workers.  Removing the assert would allow it to work,
     // but then there would be one WorkerThreadableLoader in every intermediate worker simply
@@ -125,7 +125,7 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExec
     // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
     // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
     // a failure.
-    thisPtr->m_mainThreadLoader = ThreadableLoader::create(context, thisPtr, *request, callbacksSetting, contentSniff);
+    thisPtr->m_mainThreadLoader = ThreadableLoader::create(context, thisPtr, *request, callbacksSetting, contentSniff, storedCredentials);
     ASSERT(thisPtr->m_mainThreadLoader);
 }
 

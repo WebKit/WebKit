@@ -1,3 +1,145 @@
+2009-04-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6698851> Implement XMLHttpRequest withCredentials attribute
+
+        Tests: http/tests/xmlhttprequest/cross-origin-authorization.html
+               http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+        * WebCore.xcodeproj/project.pbxproj: Made ThreadableLoader.h private, as enum definitions
+        from it are now used in otehr private headers.
+
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+        Added withCredentials attribute. When it is false (default), neither credentials nor cookies
+        are sent with cross origin requests, When it is true, those are sent, but the server needs
+        to allow handling results via Access-Control-Allow-Credentials header. It was always possible
+        to send a cross-site request with credentials via IFRAME or IMG, so this just adds a way to
+        read results, as long as the server reports that it's allowed.
+        Having the default set to false ensures that requests won't fail unexpectedly because of
+        stored credentials and cookies for other resources in the target protection space.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestSynchronously): Allow stored credentials for same origin
+        requests, and for cross origin ones that have withCredentials attribute set. Such code already
+        existed for cookies (but it's simpler, because we could just set a ResourceRequest flag).
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously): Ditto.
+
+        * platform/network/ResourceHandle.h: Added willSendRequest() - just like for other callbacks,
+        is is easier to have code in the class. Also, loadResourceSynchronously() now takes a
+        StoredCredentials option, matching async case.
+
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::receivedCredential): Removed. This method could never be
+        called, and no client used it.
+        (WebCore::ResourceHandleClient::receivedRequestToContinueWithoutCredential): Ditto.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Split username and password out
+        of request URL. We want to always get a callback for credentials to manage them in WebCore,
+        so network back-end shouldn't see them too early.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::removeCredentials):
+        * platform/network/ResourceRequestBase.h:
+        Added a removeCredentials() method that removes login and password parts from request URL.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCoreCredentialStorage): Added a simple storage class for per-session credentials.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Pass allowStoredCredentials through.
+        (WebCore::ResourceHandle::willSendRequest): On a redirect, credentials should be replaced.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Try credentials from the URL
+        and per-session credentials. Code was partially moved from Obj-C callback.
+        (WebCore::ResourceHandle::receivedCredential): Intercept per-session credentials and store
+        them in WebCore storage.
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): Don't
+        store the redirected URL - we only needed credentials, which are now stored separately.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]): Removed
+        code that was setting credentials from URL. First, the code is now in ResourceHandle, and
+        also, it wasn't actually needed in Leopard release before this patch, see <rdar://problem/5298142>.
+        (-[WebCoreSynchronousLoader dealloc]): Release credentials. Note that unlike ResourceHandle,
+        this class still needs to track URL for checking whether a redirect is allowed. This is
+        not a great solution, and we should unify client code to use the same checks in sync and
+        async cases.
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]): Just like in
+        async case, put credentials aside to ensure that network back-end asks for them.
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]): Use credentials
+        from URL, or from WebCore storage.
+        (-[WebCoreSynchronousLoader connectionShouldUseCredentialStorage:]): Don't use stored
+        credentials when not allowed to.
+        (+[WebCoreSynchronousLoader loadRequest:allowStoredCredentials:returningResponse:error:]):
+        Put credentials aside to ensure that network back-end asks for them.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreCredentialStorage::set):
+        (WebCore::WebCoreCredentialStorage::get):
+        (WebCore::willSendRequest):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::WebCoreSynchronousLoader::willSendRequest):
+        (WebCore::WebCoreSynchronousLoader::didReceiveChallenge):
+        (WebCore::WebCoreSynchronousLoader::shouldUseCredentialStorage):
+        (WebCore::WebCoreSynchronousLoader::load):
+        Same changes as in Mac case.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        Trying not to break the build.
+
+        * dom/XMLTokenizerLibxml2.cpp: (WebCore::openFunc):
+        * xml/XSLTProcessor.cpp: (WebCore::docLoaderFunc):
+        Unconditionally allow stored credentials for these, as they only support same origin loads.
+
+        * workers/WorkerContext.cpp: (WebCore::WorkerContext::importScripts):
+        WorkerContext.importScripts() can be cross-origin, but sending credentials with it is no worse
+        than sending them with <script src=...>, so this is also unconditionally allowed.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously): Pass through storedCredentials.
+        (WebCore::DocumentThreadableLoader::create): Ditto.
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Save storedCredentials and
+        sameOrigin flags foruse in callbacks.
+        (WebCore::DocumentThreadableLoader::willSendRequest): Assert that loaders aren't all confused.
+        (WebCore::DocumentThreadableLoader::didSendData): Ditto.
+        (WebCore::DocumentThreadableLoader::didReceiveResponse): Ditto.
+        (WebCore::DocumentThreadableLoader::didReceiveData): Ditto.
+        (WebCore::DocumentThreadableLoader::didFinishLoading): Ditto.
+        (WebCore::DocumentThreadableLoader::didFail): Ditto.
+        (WebCore::DocumentThreadableLoader::getShouldUseCredentialStorage): Don't use credential
+        storage if that's not allowed by the code that invoked DocumentThreadableLoader.
+        (WebCore::DocumentThreadableLoader::didReceiveAuthenticationChallenge): Simulate a failure
+        and cancel the request if we are about to ask the user for credentials for a cross-origin
+        request, which is forbidden by CORS (and would have been very confusing if allowed).
+        (WebCore::DocumentThreadableLoader::receivedCancellation): Assert that loaders aren't all confused.
+
+        * loader/DocumentThreadableLoader.h: Updated for the new flags (storedCredentials and
+        sameOrigin) that affect the loader. Eventually, we need to move all CORS logic from XHR here.
+
+        * loader/ThreadableLoader.h: (StoredCredentials): Added another flag that affects loader
+        behavior. We should combine all of these into a structure, and use it for sync requests, too.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        Pass through storedCredentials.
+
 2009-04-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Cameron Zwarich.

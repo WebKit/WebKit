@@ -128,7 +128,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
             bool requestAllowed = globalDocLoader->frame() && globalDocLoader->doc()->securityOrigin()->canRequest(url);
             if (requestAllowed) {
-                globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
+                globalDocLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, error, response, data);
                 requestAllowed = globalDocLoader->doc()->securityOrigin()->canRequest(response.url());
             }
             if (!requestAllowed) {

@@ -28,6 +28,7 @@
 
 #include "AuthenticationChallenge.h"
 #include "HTTPHeaderMap.h"
+#include "ThreadableLoader.h"
 #include <wtf/OwnPtr.h>
 
 #if USE(SOUP)
@@ -103,7 +104,7 @@ public:
     // FIXME: should not need the Frame
     static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle = false);
 
-    static void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data, Frame* frame);
+    static void loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data, Frame* frame);
     static bool willLoadFromCache(ResourceRequest&);
 #if PLATFORM(MAC)
     static bool didSendBodyDataDelegateExists();
@@ -112,6 +113,7 @@ public:
     ~ResourceHandle();
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
+    void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
     bool shouldUseCredentialStorage();
 #endif
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)

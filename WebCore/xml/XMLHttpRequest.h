@@ -63,6 +63,8 @@ public:
     String statusText(ExceptionCode&) const;
     int status(ExceptionCode&) const;
     State readyState() const;
+    bool withCredentials() const { return m_includeCredentials; }
+    void setWithCredentials(bool value) { m_includeCredentials = value; }
     void open(const String& method, const KURL&, bool async, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
@@ -195,7 +197,7 @@ private:
     RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
     bool m_async;
-    bool m_includeCredentials; // FIXME: Currently, setting this flag is not implemented, so it is always false.
+    bool m_includeCredentials;
 
     RefPtr<ThreadableLoader> m_loader;
     State m_state;

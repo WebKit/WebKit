@@ -79,8 +79,6 @@ namespace WebCore {
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
-        virtual void receivedCredential(ResourceHandle*, const AuthenticationChallenge&, const Credential&) { }
-        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
 #if PLATFORM(MAC)        

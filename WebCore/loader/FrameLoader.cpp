@@ -3649,10 +3649,8 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
         loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());    
 }
 
-unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoad method.
     String referrer = m_outgoingReferrer;
     if (shouldHideReferrer(request.url(), referrer))
         referrer = String();
@@ -3690,7 +3688,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
                 error = cannotShowURLError(newRequest);
         } else {
 #endif
-            ResourceHandle::loadResourceSynchronously(newRequest, error, response, data, m_frame);
+            ResourceHandle::loadResourceSynchronously(newRequest, storedCredentials, error, response, data, m_frame);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
             // If normal loading results in a redirect to a resource with another origin (indicative of a captive portal), or a 4xx or 5xx status code or equivalent,
