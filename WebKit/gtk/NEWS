@@ -1,4 +1,23 @@
 ================
+WebKitGTK+ 1.1.5
+================
+
+What's new in WebKitGTK+ 1.1.5?
+
+  - Added gtk-doc support to the build system. It is not fully
+    integrated yet, so some manual tweaking is still needed.
+  - Minimum required GTK+ version is now 2.10.
+  - Added l10n support with gettext. Translations are stored in
+    WebKit/gtk/po/.
+  - Many improvements to the ATK support. It's good enough to provide
+    a basic user experience with Accerciser now, but we'll keep
+    improving it in further releases.
+  - New printing API that allows applications to control and monitor
+    the printing process, when requested by javascript or started by
+    the user.
+  - Many bugfixes.
+
+================
 WebKitGTK+ 1.1.4
 ================
 
