@@ -1,3 +1,10 @@
+2009-04-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Update gtk-doc control and base sgml files for 1.1.5.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
 2009-04-14  Xan Lopez  <xlopez@igalia.com>
 
         * NEWS: updated for 1.1.5 release.

@@ -93,6 +93,8 @@ webkit_web_frame_load_request
 webkit_web_frame_load_string
 webkit_web_frame_load_uri
 webkit_web_frame_new
+webkit_web_frame_print
+webkit_web_frame_print_full
 webkit_web_frame_reload
 webkit_web_frame_stop_loading
 <SUBSECTION Standard>
