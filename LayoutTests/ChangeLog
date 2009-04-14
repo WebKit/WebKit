@@ -1,5 +1,11 @@
 2009-04-14  Adam Roben  <aroben@apple.com>
 
+        Skip another test that sometimes times out on Windows
+
+        * platform/win/Skipped: Added dom/html/level2/html/table29.html.
+
+2009-04-14  Adam Roben  <aroben@apple.com>
+
         Skip a test that sometimes times out on Windows
 
         * platform/win/Skipped: Added
