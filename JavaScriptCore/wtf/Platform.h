@@ -506,7 +506,7 @@
 #define ENABLE_WREC 1
 #endif
 
-// Yet Another Regex Runtime.
+/* Yet Another Regex Runtime. */
 #define ENABLE_YARR 0
 #define ENABLE_YARR_JIT 0
 #if ENABLE(YARR_JIT) && !ENABLE(YARR)

@@ -1,3 +1,12 @@
+2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix when building minidom. Not reviewed.
+
+        Use C-style comment instead of C++ style since autotools builds
+        minidom using gcc and not g++.
+
+        * wtf/Platform.h:
+
 2009-04-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY - speculative build fix.
