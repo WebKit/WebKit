@@ -48,7 +48,7 @@ const UString& InternalFunction::name(JSGlobalData* globalData)
     return asString(getDirect(globalData->propertyNames->name))->value();
 }
 
-const UString& InternalFunction::displayName(JSGlobalData* globalData)
+const UString InternalFunction::displayName(JSGlobalData* globalData)
 {
     JSValuePtr displayName = getDirect(globalData->propertyNames->displayName);
     
@@ -58,9 +58,9 @@ const UString& InternalFunction::displayName(JSGlobalData* globalData)
     return UString::null();
 }
 
-const UString& InternalFunction::calculatedDisplayName(JSGlobalData* globalData)
+const UString InternalFunction::calculatedDisplayName(JSGlobalData* globalData)
 {
-    const UString& explicitName = displayName(globalData);
+    const UString explicitName = displayName(globalData);
     
     if (!explicitName.isEmpty())
         return explicitName;

@@ -1,3 +1,12 @@
+2009-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Missed code from last patch).
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::displayName):
+        (JSC::InternalFunction::calculatedDisplayName):
+        * runtime/InternalFunction.h:
+
 2009-04-13  Francisco Tolmasky  <francisco@280north.com>
 
         Reviewed by Oliver Hunt.
