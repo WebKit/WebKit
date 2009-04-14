@@ -1,3 +1,15 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Skip another JavaScriptCore test that sometimes fails on Windows
+
+        See Bug 25160: Various ecma/Date tests sometimes fail on Windows (but
+        not Mac)
+        <https://bugs.webkit.org/show_bug.cgi?id=25160>
+
+        Rubber-stamped by Geoff Garen.
+
+        * Scripts/run-javascriptcore-tests: Skip ecma/Date/15.9.2.2-3.js.
+
 2009-04-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Move the DerivedSources.make calls into build-wxwebkit so that
