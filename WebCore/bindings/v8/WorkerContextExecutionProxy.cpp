@@ -126,17 +126,6 @@ void WorkerContextExecutionProxy::dispose()
         m_context.Dispose();
         m_context.Clear();
     }
-
-    // Remove the wrapping between JS object and DOM object. This is because
-    // the worker context object is going to be disposed immediately when a
-    // worker thread is tearing down. We do not want to re-delete the real object
-    // when JS object is garbage collected.
-    v8::Locker locker;
-    v8::HandleScope scope;
-    v8::Persistent<v8::Object> wrapper = domObjectMap().get(m_workerContext);
-    if (!wrapper.IsEmpty())
-        V8Proxy::SetDOMWrapper(wrapper, V8ClassIndex::INVALID_CLASS_INDEX, 0);
-    domObjectMap().forget(m_workerContext);
 }
 
 WorkerContextExecutionProxy* WorkerContextExecutionProxy::retrieve()
@@ -204,6 +193,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     V8Proxy::SetDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(V8ClassIndex::WORKERCONTEXT), m_workerContext);
 
     V8Proxy::SetJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
+    m_workerContext->ref();
 
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = m_context->Global();

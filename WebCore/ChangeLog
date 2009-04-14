@@ -1,3 +1,26 @@
+2009-04-14  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25163
+        Upstream fix for releasing v8 objects on worker thread termination in Chromium.
+
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::domDataList): Now uses Vector instead of HashMap.
+        (WebCore::domDataListMutex):
+        (WebCore::ThreadSpecificDOMData::ThreadSpecificDOMData):  remove usage of currentThread();
+        (WebCore::ThreadSpecificDOMData::~ThreadSpecificDOMData): ditto.
+        (WebCore::NonMainThreadSpecificDOMData::~NonMainThreadSpecificDOMData): moved call to removeAllDOMObjectsInCurrentThread() to ~WorkerScriptController.
+        (WebCore::handleWeakObjectInOwningThread):
+        (WebCore::derefDelayedObjects):
+        (WebCore::removeAllDOMObjectsInCurrentThread): not static anymore.
+        * bindings/v8/V8DOMMap.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::dispose): removed code that avoided dual-dereference of WorkerContext.
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded): this ref() is countered in removeAllDOMObjectsInCurrentThread(), when the WorkerContext is removed from the v8 map.
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Fix Bug 25183: Split up WebCore.vcproj's settings into vsprops files
