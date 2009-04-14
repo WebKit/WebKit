@@ -1,3 +1,9 @@
+2009-04-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY - speculative build fix.
+
+        * runtime/RegExp.h:
+
 2009-04-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cap'n Geoff Garen.

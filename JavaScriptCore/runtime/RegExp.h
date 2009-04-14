@@ -26,8 +26,8 @@
 #include "ExecutableAllocator.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include "RegexJIT.h"
-#include "RegexInterpreter.h"
+#include "yarr/RegexJIT.h"
+#include "yarr/RegexInterpreter.h"
 
 struct JSRegExp;
 
