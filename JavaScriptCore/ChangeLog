@@ -1,3 +1,9 @@
+2009-04-14  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am:
+
 2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix when building minidom. Not reviewed.
