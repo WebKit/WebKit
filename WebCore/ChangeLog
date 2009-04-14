@@ -1,3 +1,22 @@
+2009-04-14  Antony Sargent  <asargent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        This is some cleanup motivated by the crash in http://crbug.com/9775 , which 
+        happens because of calling window.open inside a window.onload handler. 
+
+        These changes are just part of the fix, along with some asserts to help prevent
+        breakage on future changes. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=25132
+
+        * bindings/v8/V8EventListenerList.cpp:
+        (WebCore::V8EventListenerList::add):
+        (WebCore::V8EventListenerList::remove):
+        (WebCore::V8EventListenerList::clear):
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::size):
+
 2009-04-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

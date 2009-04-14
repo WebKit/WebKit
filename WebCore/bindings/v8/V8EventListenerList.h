@@ -56,6 +56,7 @@ namespace WebCore {
         void remove(V8EventListener*);
         V8EventListener* find(v8::Local<v8::Object>, bool isInline);
         void clear();
+        size_t size() { return m_list.size(); }
 
     private:
         v8::Handle<v8::String> getKey(bool isInline);

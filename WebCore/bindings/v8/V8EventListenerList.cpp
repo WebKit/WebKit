@@ -74,6 +74,7 @@ v8::Handle<v8::String> V8EventListenerList::getKey(bool isInline)
 // See comment in .h file for this function, and update accordingly if implementation details change here.
 void V8EventListenerList::add(V8EventListener* listener)
 {
+    ASSERT(v8::Context::InContext());
     m_list.append(listener);
 
     v8::HandleScope handleScope;
@@ -84,12 +85,19 @@ void V8EventListenerList::add(V8EventListener* listener)
 
 void V8EventListenerList::remove(V8EventListener* listener)
 {
+    ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
+    v8::Handle<v8::String> key = getKey(listener->isInline());
     for (size_t i = 0; i < m_list.size(); i++) {
         V8EventListener* element = m_list.at(i);
         if (element->isInline() == listener->isInline() && element == listener) {
             v8::Local<v8::Object> object = listener->getListenerObject();
-            object->DeleteHiddenValue(getKey(listener->isInline()));
+
+            // FIXME(asargent) this check for hidden value being !empty is a workaround for
+            // http://code.google.com/p/v8/issues/detail?id=300
+            // Once the fix for that is pulled into chromium we can remove the check here.
+            if (!object->GetHiddenValue(key).IsEmpty())
+              object->DeleteHiddenValue(getKey(listener->isInline()));
             m_list.remove(i);
             break;
         }
@@ -98,6 +106,7 @@ void V8EventListenerList::remove(V8EventListener* listener)
 
 void V8EventListenerList::clear()
 {
+    ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
     for (size_t i = 0; i < m_list.size(); i++) {
         V8EventListener* element = m_list.at(i);
