@@ -1,5 +1,14 @@
 2009-04-14  Adam Roben  <aroben@apple.com>
 
+        Skip a sometimes-failing test on Windows
+
+        Rubber-stamped by Simon Fraser.
+
+        * platform/win/Skipped: Added
+        transitions/zero-duration-with-non-zero-delay-end.html.
+
+2009-04-14  Adam Roben  <aroben@apple.com>
+
         Land updated Windows results for two tests changed by r42471
 
         Rubber-stamped by Anders Carlsson.

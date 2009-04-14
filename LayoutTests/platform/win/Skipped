@@ -567,3 +567,6 @@ fast/js/toString-stack-overflow.html
 
 # Failures following r42379
 fast/text/international/001.html
+
+# transitions/zero-duration-with-non-zero-delay-end.html sometimes fails on Windows <https://bugs.webkit.org/show_bug.cgi?id=25188>
+transitions/zero-duration-with-non-zero-delay-end.html
