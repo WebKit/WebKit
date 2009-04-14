@@ -1,3 +1,14 @@
+2009-04-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24841
+
+        Fix linking against QtWebKit for Symbian and other platforms
+        where the OS ABI distinguishes between an import or an export situation.
+
+        * Api/qwebkitglobal.h: Instead of white-listing Win, remove the test.
+
 2009-04-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Tor Arne Vestbø.
