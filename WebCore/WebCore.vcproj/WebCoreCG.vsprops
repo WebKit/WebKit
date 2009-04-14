@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebCoreCG"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;"
+	/>
+</VisualStudioPropertySheet>

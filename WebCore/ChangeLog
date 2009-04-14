@@ -1,3 +1,33 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 25183: Split up WebCore.vcproj's settings into vsprops files
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25183>
+
+        WebCore.vcproj now uses a set of .vsprops files to store most of its
+        settings.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.vcproj/WebCore.vcproj: Moved settings from here into the new
+        .vsprops files.
+
+        * WebCore.vcproj/WebCoreCFNetwork.vsprops: Added. Contains settings
+        for ports that build against CFNetwork.
+        * WebCore.vcproj/WebCoreCG.vsprops: Added. Contains settings for ports
+        that build against CoreGraphics.
+        * WebCore.vcproj/WebCoreCURL.vsprops: Added. Contains settings for
+        ports that build against libcurl.
+        * WebCore.vcproj/WebCoreCairo.vsprops: Added. Contains settings for
+        ports that build against Cairo.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Added. Contains settings
+        shared by all ports.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Added. Contains settings for
+        ports that use QTMovieWin to implement the MediaPlayerPrivate
+        interface.
+        * WebCore.vcproj/WebCorePthreads.vsprops: Added. Contains settings for
+        ports that build against pthreads.
+
 2009-04-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
