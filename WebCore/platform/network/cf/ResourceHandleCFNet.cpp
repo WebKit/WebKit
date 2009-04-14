@@ -590,7 +590,7 @@ CFURLRequestRef WebCoreSynchronousLoader::willSendRequest(CFURLConnectionRef, CF
         if (loader->m_user || loader->m_pass) {
             ResourceRequest requestWithoutCredentials = cfRequest;
             requestWithoutCredentials.removeCredentials();
-            return requestWithoutCredentials.createCFURLRequest();
+            cfRequest = requestWithoutCredentials.cfURLRequest();
         }
     }
 
@@ -646,7 +646,7 @@ void WebCoreSynchronousLoader::didReceiveChallenge(CFURLConnectionRef conn, CFUR
         loader->m_pass = 0;
         return;
     }
-    if (!CFURLAuthChallengeGetPreviousFailureCount(challenge) && m_allowStoredCredentials) {
+    if (!CFURLAuthChallengeGetPreviousFailureCount(challenge) && loader->m_allowStoredCredentials) {
         CFURLCredentialRef credential = WebCoreCredentialStorage::get(CFURLAuthChallengeGetProtectionSpace(challenge));
         if (credential) {
             ASSERT(CFURLCredentialGetPersistence(credential) == kCFURLCredentialPersistenceNone);
