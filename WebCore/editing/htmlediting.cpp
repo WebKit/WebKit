@@ -906,14 +906,25 @@ int caretMaxOffset(const Node* n)
     return lastOffsetForEditing(n);
 }
 
-bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)
+bool lineBreakExistsAtVisiblePosition(const VisiblePosition& visiblePosition)
 {
-    if (visiblePosition.isNull())
+    return lineBreakExistsAtPosition(visiblePosition.deepEquivalent().downstream());
+}
+
+bool lineBreakExistsAtPosition(const Position& position)
+{
+    if (position.isNull())
         return false;
-        
-    Position downstream(visiblePosition.deepEquivalent().downstream());
-    return downstream.node()->hasTagName(brTag) ||
-           (downstream.node()->isTextNode() && downstream.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n');
+    
+    if (position.anchorNode()->hasTagName(brTag) && position.atFirstEditingPositionForNode())
+        return true;
+    
+    if (!position.anchorNode()->isTextNode() || !position.anchorNode()->renderer()->style()->preserveNewline())
+        return false;
+    
+    Text* textNode = static_cast<Text*>(position.anchorNode());
+    unsigned offset = position.offsetInContainerNode();
+    return offset < textNode->length() && textNode->data()[offset] == '\n';
 }
 
 // Modifies selections that have an end point at the edge of a table

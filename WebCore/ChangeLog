@@ -1,3 +1,47 @@
+2009-04-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25172
+        Extra partial layout during the first keypress in an empty block
+        
+        Determining if a placeholder needs to be removed requires the creation of a VisiblePosition 
+        which was triggering layout before we were finished modifying the DOM for the insert operation.
+        
+        Find out if we need to remove a placeholder near the start of the operation, and if we do remember 
+        where it's located.  Then, later, remove it along with all of the other DOM operations we perform.
+        
+        Renamed lineBreakExistsAtPosition to lineBreakExistsAtVisiblePosition and added a lineBreakExistsAtPosition
+        that takes in a Position.  In InsertTextCommand, we can use the latter, since we normalize manually.
+        
+        removePlaceholderAt now takes in a Position that it assumes has already been checked for a placeholder.
+        
+        No test added as this only effects performance.
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/htmlediting.cpp:
+        (WebCore::lineBreakExistsAtVisiblePosition):
+        (WebCore::lineBreakExistsAtPosition):
+        * editing/htmlediting.h:
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Remove support for profile-guided optimization on Windows

@@ -170,7 +170,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // including when the block is empty. 
     if (isLastInBlock) {
         if (nestNewBlock) {
-            if (isFirstInBlock && !lineBreakExistsAtPosition(visiblePos)) {
+            if (isFirstInBlock && !lineBreakExistsAtVisiblePosition(visiblePos)) {
                 // The block is empty.  Create an empty block to
                 // represent the paragraph that we're leaving.
                 RefPtr<Element> extraBlock = createDefaultParagraphElement(document());
@@ -282,7 +282,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // If the paragraph separator was inserted at the end of a paragraph, an empty line must be
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
-    if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtPosition(visiblePos))
+    if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtVisiblePosition(visiblePos))
         appendNode(createBreakElement(document()).get(), blockToInsert.get());
         
     // Move the start node and the siblings of the start node.

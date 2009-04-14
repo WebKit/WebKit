@@ -88,7 +88,7 @@ void BreakBlockquoteCommand::doApply()
     
     // Don't move a line break just after the caret.  Doing so would create an extra, empty paragraph
     // in the new blockquote.
-    if (lineBreakExistsAtPosition(visiblePos))
+    if (lineBreakExistsAtVisiblePosition(visiblePos))
         pos = pos.next();
         
     // Adjust the position so we don't split at the beginning of a quote.  

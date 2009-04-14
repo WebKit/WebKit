@@ -127,7 +127,8 @@ Node* highestAncestor(Node*);
 bool isTableElement(Node*);
 bool isTableCell(const Node*);
 
-bool lineBreakExistsAtPosition(const VisiblePosition&);
+bool lineBreakExistsAtPosition(const Position&);
+bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 

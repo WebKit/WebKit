@@ -124,7 +124,7 @@ void FormatBlockCommand::doApply()
     appendNode(placeholder, blockNode);
     
     VisiblePosition destination(Position(placeholder.get(), 0));
-    if (paragraphStart == paragraphEnd && !lineBreakExistsAtPosition(paragraphStart)) {
+    if (paragraphStart == paragraphEnd && !lineBreakExistsAtVisiblePosition(paragraphStart)) {
         setEndingSelection(destination);
         return;
     }

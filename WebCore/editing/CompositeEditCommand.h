@@ -89,7 +89,7 @@ protected:
     PassRefPtr<Node> appendBlockPlaceholder(PassRefPtr<Element>);
     PassRefPtr<Node> insertBlockPlaceholder(const Position&);
     PassRefPtr<Node> addBlockPlaceholderIfNeeded(Element*);
-    void removePlaceholderAt(const VisiblePosition&);
+    void removePlaceholderAt(const Position&);
 
     PassRefPtr<Node> insertNewDefaultParagraphElementAt(const Position&);
 

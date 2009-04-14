@@ -108,7 +108,7 @@ void InsertLineBreakCommand::doApply()
     
     // FIXME: Need to merge text nodes when inserting just after or before text.
     
-    if (isEndOfParagraph(caret) && !lineBreakExistsAtPosition(caret)) {
+    if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
         bool needExtraLineBreak = !pos.node()->hasTagName(hrTag) && !pos.node()->hasTagName(tableTag);
         
         insertNodeAt(nodeToInsert.get(), pos);
