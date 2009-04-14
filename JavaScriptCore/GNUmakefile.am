@@ -268,7 +268,12 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/UTF8.h \
 	JavaScriptCore/wtf/unicode/Unicode.h \
 	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
-	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h
+	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h \
+	JavaScriptCore/yarr/RegexCompiler.h \
+	JavaScriptCore/yarr/RegexInterpreter.h \
+	JavaScriptCore/yarr/RegexJIT.h \
+	JavaScriptCore/yarr/RegexParser.h \
+	JavaScriptCore/yarr/RegexPattern.h
 
 # Debug build
 if ENABLE_DEBUG

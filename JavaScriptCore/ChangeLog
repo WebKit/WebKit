@@ -1,3 +1,13 @@
+2009-04-14  Xan Lopez  <xlopez@igalia.com>
+
+        Fix the build.
+
+        Add the yarr headers (and only the headers) to the build, so that
+        RegExp.cpp can compile. The headers are ifdefed out with yarr
+        disabled, so we don't need anything else for now.
+
+        * GNUmakefile.am:
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Remove support for profile-guided optimization on Windows
