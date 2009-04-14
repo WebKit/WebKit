@@ -130,8 +130,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
     return handleException(scriptState);
 }
 
-
-bool ScriptGlobalObject::getObject(ScriptState* scriptState, const char* name, ScriptObject& value)
+bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {
     JSLock lock(false);
     JSValuePtr jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier(scriptState, name));
@@ -143,6 +142,13 @@ bool ScriptGlobalObject::getObject(ScriptState* scriptState, const char* name, S
 
     value = ScriptObject(asObject(jsValue));
     return true;
+}
+
+bool ScriptGlobalObject::remove(ScriptState* scriptState, const char* name)
+{
+    JSLock lock(false);
+    scriptState->lexicalGlobalObject()->deleteProperty(scriptState, Identifier(scriptState, name));
+    return handleException(scriptState);
 }
 
 } // namespace WebCore

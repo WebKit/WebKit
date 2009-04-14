@@ -194,16 +194,12 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 
 InspectorController::~InspectorController()
 {
-    m_client->inspectorDestroyed();
-
-    if (m_scriptState)
-        ScriptGlobalObject::set(m_scriptState, "InspectorController", ScriptObject());
-
-    if (m_page)
-        m_page->setParentInspectorController(0);
-
-    // m_inspectedPage should have been cleared in inspectedPageDestroyed().
+    // These should have been cleared in inspectedPageDestroyed().
+    ASSERT(!m_client);
+    ASSERT(!m_scriptState);
     ASSERT(!m_inspectedPage);
+    ASSERT(!m_page || (m_page && !m_page->parentInspectorController()));
+    ASSERT(m_webInspector.hasNoValue());
 
     deleteAllValues(m_frameResources);
     deleteAllValues(m_consoleMessages);
@@ -220,10 +216,19 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
+    if (m_scriptState)
+        ScriptGlobalObject::remove(m_scriptState, "InspectorController");
+
+    if (m_page)
+        m_page->setParentInspectorController(0);
+
     close();
 
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
+
+    m_client->inspectorDestroyed();
+    m_client = 0;
 }
 
 bool InspectorController::enabled() const
@@ -584,7 +589,7 @@ void InspectorController::scriptObjectReady()
     if (!m_scriptState)
         return;
 
-    if (!ScriptGlobalObject::getObject(m_scriptState, "WebInspector", m_webInspector))
+    if (!ScriptGlobalObject::get(m_scriptState, "WebInspector", m_webInspector))
         return;
 
     // Make sure our window is visible now that the page loaded
