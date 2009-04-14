@@ -1,3 +1,16 @@
+2009-04-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6703873> Triple-click quoted line and type Return creates an extra quoted blank line
+
+        Test: editing/inserting/6703873.html
+
+        * editing/BreakBlockquoteCommand.cpp: (WebCore::BreakBlockquoteCommand::doApply):
+        If the startNode's original parent is now empty, we can remove it.  Its already been cloned and copied with the startNode,
+        so we only need to keep it around if it actually holds some original content, otherwise it will look like an extra empty 
+        container in the document.
+
 2009-04-14  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

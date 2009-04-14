@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <style>
+            blockquote {
+                color: blue;
+                border-left: 2px solid blue;
+                margin: 0px;
+                padding-left: 10px;
+            }
+        </style>
+        <script>
+            function log(msg)
+            {
+                document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+            }
+            
+            function test()
+            {
+                var s = window.getSelection();
+                s.setPosition(document.getElementById('qt'), 0);
+                s.modify("extend", "forward", "line");
+                document.execCommand("InsertNewlineInQuotedContent");
+                document.execCommand("InsertText", "true", "unquoted");
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>This tests that inserting a newline in place of a full line of quoted content doesn't add an extra quoted line.  The test has passed if there are no empty lines (quoted or unquoted) in the box below.</p>
+        <div contenteditable="true">
+            <blockquote type="cite"><div>quoted</div><div id="qt">quoted</div><div>quoted</div></blockquote>
+        </div>
+        <pre id="console"></pre>
+    </body>
+</html>
