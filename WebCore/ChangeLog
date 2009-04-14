@@ -1,5 +1,12 @@
 2009-04-13  Ada Chan  <adachan@apple.com>
 
+        Forgot to capitalize the "US".
+
+        * platform/text/win/TextBreakIteratorInternalICUWin.cpp:
+        (WebCore::currentTextBreakLocaleID):
+
+2009-04-13  Ada Chan  <adachan@apple.com>
+
         <rdar://problem/6564956> URL field double-click selects entire domain, rather than single word or entire URL
         Revert back to the old word breaking behavior by using en_US_POSIX locale.        
 
