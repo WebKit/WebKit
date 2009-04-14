@@ -1,3 +1,12 @@
+2009-04-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a race that can occur between flex and the perl script that parses
+        its output.
+
+        * css/maketokenizer: Consume all input.
+
 2009-04-14  Rohit Rao  <rohitrao@google.com>
 
         Reviewed by Dan Bernstein.

@@ -126,3 +126,10 @@ while (<>) {
     print;
     last if /end of yylex/;
 }
+
+# We don't want the remainder of flex's output.
+# However, flex may choke with "flex: error writing output file <stdout>"
+# if its stdout is unexpectedly closed on it.
+# Consume the remaining output.
+while (<>) {
+}
