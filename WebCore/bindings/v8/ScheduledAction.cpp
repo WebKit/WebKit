@@ -100,13 +100,11 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 
     proxy->setTimerCallback(true);
 
-    if (!m_function.IsEmpty() && m_function->IsFunction())
+    if (!m_function.IsEmpty() && m_function->IsFunction()) {
         proxy->CallFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
-    else
+        Document::updateStyleForAllDocuments();
+    } else
         proxy->evaluate(m_code, 0);
-
-    if (context->isDocument())
-        static_cast<Document*>(context)->updateStyleIfNeeded();
 
     proxy->setTimerCallback(false);
 }
