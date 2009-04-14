@@ -129,7 +129,7 @@ void tst_QWebElement::textHtml()
     QCOMPARE(body.toPlainText(), QString("test"));
     QCOMPARE(body.toPlainText(), m_mainFrame->toPlainText());
 
-    QCOMPARE(body.html(), html);
+    QCOMPARE(body.toXml(QWebElement::InnerXml), html);
 }
 
 void tst_QWebElement::simpleSelection()
@@ -330,7 +330,7 @@ void tst_QWebElement::foreachManipulation()
     QWebElement body = m_mainFrame->documentElement();
 
     foreach(QWebElement p, body.findAll("p")) {
-        p.setHtml("<div>foo</div><div>bar</div>");
+        p.setXml(QWebElement::InnerXml, "<div>foo</div><div>bar</div>");
     }
 
     QCOMPARE(body.findAll("div").count(), 4);

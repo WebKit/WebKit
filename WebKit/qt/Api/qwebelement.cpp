@@ -177,31 +177,52 @@ QString QWebElement::toPlainText() const
 }
 
 /*!
-    Replaces the existing content of this element with \a html.
-    The string may contain HTML tags, which is parsed and formatted
+    Replaces the existing content of this element with \a markup.
+    The string may contain HTML or XML tags, which is parsed and formatted
     before insertion into the document.
 
-    This is equivalent to settng the HTML innerHTML property.
+    If \a scope is InnerXml this is equivalent to setting the HTML innerHTML
+    property, and similarily for OuterXml.
+
+    \note This is currently only implemented for (X)HTML elements.
 */
-void QWebElement::setHtml(const QString &html)
+void QWebElement::setXml(XmlScope scope, const QString &markup)
 {
     if (!m_element || !m_element->isHTMLElement())
         return;
+
     ExceptionCode exception = 0;
-    static_cast<HTMLElement*>(m_element)->setInnerHTML(html, exception);
+
+    switch (scope) {
+    case InnerXml:
+        static_cast<HTMLElement*>(m_element)->setInnerHTML(markup, exception);
+        break;
+    case OuterXml:
+        static_cast<HTMLElement*>(m_element)->setOuterHTML(markup, exception);
+        break;
+    }
 }
 
 /*!
-    Returns the HTML between the start and the end tag of this
+    Returns the XML between the start and the end tag of this
     element.
 
-    This is equivalent to reading the HTML innerHTML property.
+    If \a scope is InnerXml this is equivalent to reading the HTML
+    innerHTML property, and similarily for OuterXml.
+
+    \note This is currently only implemented for (X)HTML elements.
 */
-QString QWebElement::html() const
+QString QWebElement::toXml(XmlScope scope) const
 {
     if (!m_element || !m_element->isHTMLElement())
         return QString();
-    return static_cast<HTMLElement*>(m_element)->innerHTML();
+
+    switch (scope) {
+    case InnerXml:
+        return static_cast<HTMLElement*>(m_element)->innerHTML();
+    case OuterXml:
+        return static_cast<HTMLElement*>(m_element)->outerHTML();
+    }
 }
 
 /*!
