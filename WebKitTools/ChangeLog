@@ -1,3 +1,10 @@
+2009-04-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Move the DerivedSources.make calls into build-wxwebkit so that
+        the FEATURE_DEFINES are parsed properly.
+
+        * wx/build-wxwebkit:
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Small run-javascriptcore-tests cleanup

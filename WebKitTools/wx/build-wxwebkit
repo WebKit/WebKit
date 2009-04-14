@@ -216,10 +216,7 @@ if [ $do_clean != 1 ]; then
         # we need to do this because Bakefile doesn't know which
         # platform it's running on with GNU format, and so it defaults
         # to the standard Unix file endings and linker args.
-        if [ "${OSTYPE:0:6}" = "darwin" ]; then
-            sed "s/libwebcore-wx.so/libwebcore-wx.dylib/" < $WK_ROOT/WebCore/GNUmakefile > temp
-            mv temp $WK_ROOT/WebCore/GNUmakefile
-    
+        if [ "${OSTYPE:0:6}" = "darwin" ]; then    
             sed "s/\-shared/\-dynamiclib/" < $WK_ROOT/WebCore/GNUmakefile > temp
             mv temp $WK_ROOT/WebCore/GNUmakefile
             
@@ -240,16 +237,23 @@ if [ $do_clean != 1 ]; then
             $WK_ROOT/WebKitTools/wx/install-unix-extras
         fi
         
+        
+        export CREATE_HASH_TABLE="$WK_ROOT/JavaScriptCore/create_hash_table"
         cd $WK_ROOT/JavaScriptCore
-        ./make-generated-sources.sh
+        mkdir -p DerivedSources/JavaScriptCore
+        cd DerivedSources/JavaScriptCore
+        
+        make -f ../../DerivedSources.make JavaScriptCore=../.. BUILT_PRODUCTS_DIR=../.. all FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT"
         if [ $? != 0 ]; then
-            exit $? 
+            exit 1
         fi
     
         cd $WK_ROOT/WebCore
-        ./make-generated-sources.sh FEATURE_DEFINES="ENABLE_DATABASE"
+        mkdir -p DerivedSources/WebCore
+        cd DerivedSources/WebCore
+        make -f ../../DerivedSources.make all WebCore=../.. SOURCE_ROOT=../.. FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT"
         if [ $? != 0 ]; then
-            exit $? 
+            exit 1
         fi
     fi
 fi
