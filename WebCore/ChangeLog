@@ -1,3 +1,113 @@
+2009-04-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Add header guards to WebCore forwarding headers.
+        
+        Speeds up WebCore debug build on Windows by 12% on my system,
+        since Visual Studio appears to not optimize for standard header
+        guards in included files.
+        
+        Rubber stamped by Ada Chan.
+
+        * ForwardingHeaders/debugger/Debugger.h:
+        * ForwardingHeaders/debugger/DebuggerActivation.h:
+        * ForwardingHeaders/debugger/DebuggerCallFrame.h:
+        * ForwardingHeaders/interpreter/CallFrame.h:
+        * ForwardingHeaders/interpreter/Interpreter.h:
+        * ForwardingHeaders/masm/X86Assembler.h:
+        * ForwardingHeaders/parser/Parser.h:
+        * ForwardingHeaders/parser/SourceCode.h:
+        * ForwardingHeaders/parser/SourceProvider.h:
+        * ForwardingHeaders/pcre/pcre.h:
+        * ForwardingHeaders/profiler/Profile.h:
+        * ForwardingHeaders/profiler/ProfileNode.h:
+        * ForwardingHeaders/profiler/Profiler.h:
+        * ForwardingHeaders/runtime/ArgList.h:
+        * ForwardingHeaders/runtime/ArrayPrototype.h:
+        * ForwardingHeaders/runtime/BooleanObject.h:
+        * ForwardingHeaders/runtime/CallData.h:
+        * ForwardingHeaders/runtime/Collector.h:
+        * ForwardingHeaders/runtime/CollectorHeapIterator.h:
+        * ForwardingHeaders/runtime/Completion.h:
+        * ForwardingHeaders/runtime/ConstructData.h:
+        * ForwardingHeaders/runtime/DateInstance.h:
+        * ForwardingHeaders/runtime/Error.h:
+        * ForwardingHeaders/runtime/FunctionConstructor.h:
+        * ForwardingHeaders/runtime/FunctionPrototype.h:
+        * ForwardingHeaders/runtime/Identifier.h:
+        * ForwardingHeaders/runtime/InitializeThreading.h:
+        * ForwardingHeaders/runtime/InternalFunction.h:
+        * ForwardingHeaders/runtime/JSArray.h:
+        * ForwardingHeaders/runtime/JSByteArray.h:
+        * ForwardingHeaders/runtime/JSFunction.h:
+        * ForwardingHeaders/runtime/JSGlobalData.h:
+        * ForwardingHeaders/runtime/JSGlobalObject.h:
+        * ForwardingHeaders/runtime/JSLock.h:
+        * ForwardingHeaders/runtime/JSNumberCell.h:
+        * ForwardingHeaders/runtime/JSObject.h:
+        * ForwardingHeaders/runtime/JSString.h:
+        * ForwardingHeaders/runtime/JSValue.h:
+        * ForwardingHeaders/runtime/Lookup.h:
+        * ForwardingHeaders/runtime/ObjectPrototype.h:
+        * ForwardingHeaders/runtime/Operations.h:
+        * ForwardingHeaders/runtime/PropertyMap.h:
+        * ForwardingHeaders/runtime/PropertyNameArray.h:
+        * ForwardingHeaders/runtime/Protect.h:
+        * ForwardingHeaders/runtime/PrototypeFunction.h:
+        * ForwardingHeaders/runtime/StringObject.h:
+        * ForwardingHeaders/runtime/StringObjectThatMasqueradesAsUndefined.h:
+        * ForwardingHeaders/runtime/StringPrototype.h:
+        * ForwardingHeaders/runtime/Structure.h:
+        * ForwardingHeaders/runtime/SymbolTable.h:
+        * ForwardingHeaders/runtime/UString.h:
+        * ForwardingHeaders/wrec/WREC.h:
+        * ForwardingHeaders/wtf/ASCIICType.h:
+        * ForwardingHeaders/wtf/AlwaysInline.h:
+        * ForwardingHeaders/wtf/Assertions.h:
+        * ForwardingHeaders/wtf/ByteArray.h:
+        * ForwardingHeaders/wtf/CurrentTime.h:
+        * ForwardingHeaders/wtf/Deque.h:
+        * ForwardingHeaders/wtf/DisallowCType.h:
+        * ForwardingHeaders/wtf/FastMalloc.h:
+        * ForwardingHeaders/wtf/Forward.h:
+        * ForwardingHeaders/wtf/GetPtr.h:
+        * ForwardingHeaders/wtf/HashCountedSet.h:
+        * ForwardingHeaders/wtf/HashFunctions.h:
+        * ForwardingHeaders/wtf/HashMap.h:
+        * ForwardingHeaders/wtf/HashSet.h:
+        * ForwardingHeaders/wtf/HashTable.h:
+        * ForwardingHeaders/wtf/HashTraits.h:
+        * ForwardingHeaders/wtf/ListHashSet.h:
+        * ForwardingHeaders/wtf/ListRefPtr.h:
+        * ForwardingHeaders/wtf/Locker.h:
+        * ForwardingHeaders/wtf/MainThread.h:
+        * ForwardingHeaders/wtf/MathExtras.h:
+        * ForwardingHeaders/wtf/MessageQueue.h:
+        * ForwardingHeaders/wtf/Noncopyable.h:
+        * ForwardingHeaders/wtf/NotFound.h:
+        * ForwardingHeaders/wtf/OwnArrayPtr.h:
+        * ForwardingHeaders/wtf/OwnPtr.h:
+        * ForwardingHeaders/wtf/PassRefPtr.h:
+        * ForwardingHeaders/wtf/Platform.h:
+        * ForwardingHeaders/wtf/PtrAndFlags.h:
+        * ForwardingHeaders/wtf/RandomNumber.h:
+        * ForwardingHeaders/wtf/RefCounted.h:
+        * ForwardingHeaders/wtf/RefCountedLeakCounter.h:
+        * ForwardingHeaders/wtf/RefPtr.h:
+        * ForwardingHeaders/wtf/RetainPtr.h:
+        * ForwardingHeaders/wtf/StdLibExtras.h:
+        * ForwardingHeaders/wtf/StringExtras.h:
+        * ForwardingHeaders/wtf/ThreadSpecific.h:
+        * ForwardingHeaders/wtf/Threading.h:
+        * ForwardingHeaders/wtf/TypeTraits.h:
+        * ForwardingHeaders/wtf/UnusedParam.h:
+        * ForwardingHeaders/wtf/Vector.h:
+        * ForwardingHeaders/wtf/VectorTraits.h:
+        * ForwardingHeaders/wtf/dtoa.h:
+        * ForwardingHeaders/wtf/unicode/Collator.h:
+        * ForwardingHeaders/wtf/unicode/UTF8.h:
+        * ForwardingHeaders/wtf/unicode/Unicode.h:
+        * ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h:
+
 2009-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
