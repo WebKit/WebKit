@@ -37,6 +37,8 @@ namespace JSC {
         static const ClassInfo info;
 
         const UString& name(JSGlobalData*);
+        const UString& displayName(JSGlobalData*);
+        const UString& calculatedDisplayName(JSGlobalData*);
 
         static PassRefPtr<Structure> createStructure(JSValuePtr proto) 
         { 

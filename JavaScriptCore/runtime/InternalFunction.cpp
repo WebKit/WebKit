@@ -48,4 +48,24 @@ const UString& InternalFunction::name(JSGlobalData* globalData)
     return asString(getDirect(globalData->propertyNames->name))->value();
 }
 
+const UString& InternalFunction::displayName(JSGlobalData* globalData)
+{
+    JSValuePtr displayName = getDirect(globalData->propertyNames->displayName);
+    
+    if (displayName)
+        return asString(displayName)->value();
+    
+    return UString::null();
+}
+
+const UString& InternalFunction::calculatedDisplayName(JSGlobalData* globalData)
+{
+    const UString& explicitName = displayName(globalData);
+    
+    if (!explicitName.isEmpty())
+        return explicitName;
+    
+    return name(globalData);
+}
+
 } // namespace JSC

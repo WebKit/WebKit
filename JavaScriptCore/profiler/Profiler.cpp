@@ -148,7 +148,7 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValueP
 
 CallIdentifier createCallIdentifierFromFunctionImp(JSGlobalData* globalData, JSFunction* function)
 {
-    const UString& name = function->name(globalData);
+    const UString& name = function->calculatedDisplayName(globalData);
     return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->body()->sourceURL(), function->body()->lineNo());
 }
 

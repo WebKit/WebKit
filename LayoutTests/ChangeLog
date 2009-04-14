@@ -1,3 +1,17 @@
+2009-04-13  Francisco Tolmasky  <francisco@280north.com>
+
+        Reviewed by Oliver Hunt.
+
+        BUG 25171: It should be possible to manually set the name of an anonymous function
+        <https://bugs.webkit.org/show_bug.cgi?id=25171>
+
+        Added test cases for using displayName property on anonymous and named functions.
+
+        * fast/profiler/anonymous-functions-with-display-names-expected.txt: Added.
+        * fast/profiler/anonymous-functions-with-display-names.html: Added.
+        * fast/profiler/named-functions-with-display-names-expected.txt: Added.
+        * fast/profiler/named-functions-with-display-names.html: Added.
+
 2009-04-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

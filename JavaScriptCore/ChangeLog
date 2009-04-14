@@ -1,3 +1,20 @@
+2009-04-13  Francisco Tolmasky  <francisco@280north.com>
+
+        Reviewed by Oliver Hunt.
+        
+        BUG 25171: It should be possible to manually set the name of an anonymous function
+        <https://bugs.webkit.org/show_bug.cgi?id=25171>
+
+        This change adds the displayName property to functions, which when set overrides the 
+        normal name when appearing in the console.
+
+        * profiler/Profiler.cpp:
+        (JSC::createCallIdentifierFromFunctionImp): Changed call to InternalFunction::name to InternalFunction::calculatedDisplayName
+        * runtime/CommonIdentifiers.h: Added displayName common identifier.
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::displayName): Access to user settable displayName property
+        (JSC::InternalFunction::calculatedDisplayName): Returns displayName if it exists, if not then the natural name
+
 2009-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

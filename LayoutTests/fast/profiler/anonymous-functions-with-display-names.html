@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
+
+function anonymousFunctionGenerator(iterations)
+{
+    var variableThatPointsToAnAnonymousFunction = function()
+    {
+        for (var i = 0; i < iterations; ++i) ;
+    }
+    
+    variableThatPointsToAnAnonymousFunction.displayName = iterations + " iterations function";
+    
+    return variableThatPointsToAnAnonymousFunction;
+}
+
+function startTest()
+{
+    console.profile("Anonymous functions with display names");
+
+    anonymousFunctionGenerator(0)();
+    anonymousFunctionGenerator(1)();
+    anonymousFunctionGenerator(2)();
+    anonymousFunctionGenerator(20)();
+    anonymousFunctionGenerator(1000)();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls anonymous functions with display names.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  You should see functions named "[x] iterations function", and no anonymous functions.
+<div id="output"></div>
+</body>
+</html>
