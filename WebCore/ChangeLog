@@ -5,6 +5,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=21546
         [GTK] ATK accessibility enhancements
 
+        Remove some dead code and g_return_if_fail from static functions.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
+2009-04-14  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
         Also implement text interface for StaticTextRole, which covers
         most of the text in web pages.
 
