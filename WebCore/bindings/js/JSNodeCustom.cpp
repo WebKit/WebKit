@@ -68,12 +68,6 @@ namespace WebCore {
 
 typedef int ExpectionCode;
 
-static inline void markEventListeners(const RegisteredEventListenerVector& listeners)
-{
-    for (size_t i = 0; i < listeners.size(); ++i)
-        listeners[i]->listener()->markJSFunction();
-}
-
 JSValuePtr JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;

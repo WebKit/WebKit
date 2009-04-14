@@ -434,7 +434,7 @@ sub GenerateHeader
     }
 
     # Destructor
-    push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
+    push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document" or $interfaceName eq "DOMWindow");
 
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
@@ -1007,16 +1007,17 @@ sub GenerateImplementation
     push(@implContent, "}\n\n");
 
     # Destructor
-    if (!$hasParent) {
+    if (!$hasParent || $interfaceName eq "DOMWindow") {
         push(@implContent, "${className}::~$className()\n");
         push(@implContent, "{\n");
 
          if ($interfaceName eq "Node") {
              $implIncludes{"RegisteredEventListener.h"} = 1;
              push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
-             push(@implContent, "    const RegisteredEventListenerVector& eventListeners = m_impl->eventListeners();\n");
-             push(@implContent, "    for (size_t i = 0; i < eventListeners.size(); ++i)\n");
-             push(@implContent, "        eventListeners[i]->listener()->clearJSFunction();\n");
+             push(@implContent, "    invalidateEventListeners(m_impl->eventListeners());\n");
+        } elsif ($interfaceName eq "DOMWindow") {
+             $implIncludes{"RegisteredEventListener.h"} = 1;
+             push(@implContent, "    invalidateEventListeners(impl()->eventListeners());\n");
         } else {
             if ($podType) {
                 my $animatedType = $implClassName;

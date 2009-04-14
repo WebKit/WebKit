@@ -52,6 +52,7 @@
 #include "MessagePort.h"
 #include "Page.h"
 #include "PlatformScreen.h"
+#include "RegisteredEventListener.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
@@ -65,6 +66,8 @@ namespace WebCore {
 void JSDOMWindow::mark()
 {
     Base::mark();
+
+    markEventListeners(impl()->eventListeners());
 
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
@@ -585,7 +588,7 @@ JSValuePtr JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    if (RefPtr<JSProtectedEventListener> listener = findOrCreateJSProtectedEventListener(args.at(exec, 1)))
+    if (RefPtr<JSEventListener> listener = findOrCreateJSEventListener(args.at(exec, 1)))
         impl()->addEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener.release(), args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();
@@ -597,7 +600,7 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
     if (!frame)
         return jsUndefined();
 
-    if (JSProtectedEventListener* listener = findJSProtectedEventListener(args.at(exec, 1)))
+    if (JSEventListener* listener = findJSEventListener(args.at(exec, 1)))
         impl()->removeEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener, args.at(exec, 2).toBoolean(exec));
 
     return jsUndefined();

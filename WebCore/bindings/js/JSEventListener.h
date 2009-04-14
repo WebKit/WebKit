@@ -56,12 +56,13 @@ namespace WebCore {
 
         void clearGlobalObject();
 
-    private:
-        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
-
         virtual JSC::JSObject* jsFunction() const;
         virtual void clearJSFunction();
         virtual void markJSFunction();
+
+    private:
+        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
+
         virtual JSDOMGlobalObject* globalObject() const;
 
         void clearJSFunctionInline()
