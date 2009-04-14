@@ -1,5 +1,18 @@
 2009-04-14  Geoffrey Garen  <ggaren@apple.com>
 
+        Used svn merge -r42529:42528 to roll out my last patch because it broke
+        the build.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::findJSProtectedEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSProtectedEventListener):
+        (WebCore::JSDOMGlobalObject::jsProtectedEventListeners):
+        (WebCore::JSDOMGlobalObject::jsProtectedInlineEventListeners):
+        * bindings/js/JSDOMGlobalObject.h:
+
+2009-04-14  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Nixed some now-dead code related to protected event listeners.
