@@ -1,3 +1,15 @@
+2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] disable soup auth dialog when running DRT
+        https://bugs.webkit.org/show_bug.cgi?id=24598
+
+        Enable http/tests/xmlhttprequest/failed-auth.html test. We should
+        be able to run this test in non-interactive mode
+
+        * platform/gtk/Skipped:
+
 2009-04-13  Francisco Tolmasky  <francisco@280north.com>
 
         Reviewed by Oliver Hunt.

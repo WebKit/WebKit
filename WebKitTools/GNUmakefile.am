@@ -59,11 +59,13 @@ Programs_DumpRenderTree_SOURCES = \
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(global_cxxflags) \
+	$(dumprendertree_cppflags) \
 	$(Programs_DumpRenderTree_CFLAGS)
 
 Programs_DumpRenderTree_CFLAGS = \
 	-fno-strict-aliasing \
 	-O2 \
+	$(dumprendertree_cppflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
@@ -75,7 +77,8 @@ Programs_DumpRenderTree_LDADD = \
 	$(GLOBALDEPS_LIBS) \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS) \
-	$(GLIB_LIBS)
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS)
 
 # clean target
 CLEANFILES += \

@@ -1,3 +1,16 @@
+2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] disable soup auth dialog when running DRT
+        https://bugs.webkit.org/show_bug.cgi?id=24598
+
+        Disable soup's auth dialog when running the tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (setDefaultsToConsistentStateValuesForTesting):
+        * GNUmakefile.am:
+
 2009-04-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

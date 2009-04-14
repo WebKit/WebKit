@@ -539,7 +539,6 @@ http/tests/xmlhttprequest/cookies.html
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/encode-request-url-2.html
 http/tests/xmlhttprequest/exceptions.html
-http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
 http/tests/xmlhttprequest/get-dangerous-headers.html
 http/tests/xmlhttprequest/interactive-state.html
