@@ -5,6 +5,20 @@
         https://bugs.webkit.org/show_bug.cgi?id=21546
         [GTK] ATK accessibility enhancements
 
+        Add a proper implementation of AtkText::get_text and
+        AtkText::get_character_count, which takes into account non
+        TextControl text. With this the 'Text' field in Accerciser's
+        Interface Viewer is filled correctly.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
+2009-04-14  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
         Remove some dead code and g_return_if_fail from static functions.
 
         * page/gtk/AccessibilityObjectWrapperAtk.cpp:
