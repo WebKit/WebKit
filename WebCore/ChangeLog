@@ -1,5 +1,11 @@
 2009-04-14  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2009-04-14  Steve Falkenburg  <sfalken@apple.com>
+
         Add header guards to WebCore forwarding headers.
         
         Speeds up WebCore debug build on Windows by 12% on my system,
