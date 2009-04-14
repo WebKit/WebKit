@@ -1,3 +1,12 @@
+2009-04-14  Adam Roben  <aroben@apple.com>
+
+        Land updated Windows results for two tests changed by r42471
+
+        Rubber-stamped by Anders Carlsson.
+
+        * platform/win/css1/text_properties/text_transform-expected.txt: Copied from LayoutTests/platform/mac-leopard/css1/text_properties/text_transform-expected.txt.
+        * platform/win/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt: Copied from LayoutTests/platform/mac-leopard/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt.
+
 2009-04-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
