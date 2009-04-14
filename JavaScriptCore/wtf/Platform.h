@@ -506,6 +506,13 @@
 #define ENABLE_WREC 1
 #endif
 
+// Yet Another Regex Runtime.
+#define ENABLE_YARR 0
+#define ENABLE_YARR_JIT 0
+#if ENABLE(YARR_JIT) && !ENABLE(YARR)
+#error "YARR_JIT requires YARR"
+#endif
+
 #if ENABLE(JIT) || ENABLE(WREC)
 #define ENABLE_ASSEMBLER 1
 #endif

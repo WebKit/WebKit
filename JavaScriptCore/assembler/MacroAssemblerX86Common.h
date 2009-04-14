@@ -327,7 +327,8 @@ public:
 #else
     void move(RegisterID src, RegisterID dest)
     {
-        m_assembler.movl_rr(src, dest);
+        if (src != dest)
+            m_assembler.movl_rr(src, dest);
     }
 
     void move(ImmPtr imm, RegisterID dest)
@@ -337,19 +338,18 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
-        m_assembler.xchgl_rr(reg1, reg2);
+        if (reg1 != reg2)
+            m_assembler.xchgl_rr(reg1, reg2);
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
-        if (src != dest)
-            move(src, dest);
+        move(src, dest);
     }
 
     void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
     {
-        if (src != dest)
-            move(src, dest);
+        move(src, dest);
     }
 #endif
 
@@ -406,9 +406,23 @@ public:
         return Jump(m_assembler.jCC(cond));
     }
 
+    Jump branch32(Condition cond, BaseIndex left, Imm32 right)
+    {
+        m_assembler.cmpl_im(right.m_value, left.offset, left.base, left.index, left.scale);
+        return Jump(m_assembler.jCC(cond));
+    }
+
     Jump branch16(Condition cond, BaseIndex left, RegisterID right)
     {
         m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branch16(Condition cond, BaseIndex left, Imm32 right)
+    {
+        ASSERT(!(right.m_value & 0xFFFF0000));
+
+        m_assembler.cmpw_im(right.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(cond));
     }
 

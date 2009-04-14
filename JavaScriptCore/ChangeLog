@@ -1,3 +1,301 @@
+2009-04-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cap'n Geoff Garen.
+
+        Yarr!
+        (Yet another regex runtime).
+
+        Currently disabled by default since the interpreter, whilst awesomely
+        functional, has not been optimized and is likely slower than PCRE, and
+        the JIT, whilst faster than WREC, is presently incomplete and does not
+        fallback to using an interpreter for the cases it cannot handle.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::move):
+        (JSC::MacroAssemblerX86Common::swap):
+        (JSC::MacroAssemblerX86Common::signExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::branch16):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpw_im):
+        (JSC::X86Assembler::testw_rr):
+        (JSC::X86Assembler::X86InstructionFormatter::immediate16):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::~RegExp):
+        (JSC::RegExp::create):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * wtf/Platform.h:
+        * yarr: Added.
+        * yarr/RegexCompiler.cpp: Added.
+        (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::Yarr::CharacterClassConstructor::reset):
+        (JSC::Yarr::CharacterClassConstructor::append):
+        (JSC::Yarr::CharacterClassConstructor::putChar):
+        (JSC::Yarr::CharacterClassConstructor::isUnicodeUpper):
+        (JSC::Yarr::CharacterClassConstructor::isUnicodeLower):
+        (JSC::Yarr::CharacterClassConstructor::putRange):
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::CharacterClassConstructor::addSortedRange):
+        (JSC::Yarr::newlineCreate):
+        (JSC::Yarr::digitsCreate):
+        (JSC::Yarr::spacesCreate):
+        (JSC::Yarr::wordcharCreate):
+        (JSC::Yarr::nondigitsCreate):
+        (JSC::Yarr::nonspacesCreate):
+        (JSC::Yarr::nonwordcharCreate):
+        (JSC::Yarr::RegexPatternConstructor::RegexPatternConstructor):
+        (JSC::Yarr::RegexPatternConstructor::~RegexPatternConstructor):
+        (JSC::Yarr::RegexPatternConstructor::reset):
+        (JSC::Yarr::RegexPatternConstructor::assertionBOL):
+        (JSC::Yarr::RegexPatternConstructor::assertionEOL):
+        (JSC::Yarr::RegexPatternConstructor::assertionWordBoundary):
+        (JSC::Yarr::RegexPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::RegexPatternConstructor::atomBuiltInCharacterClass):
+        (JSC::Yarr::RegexPatternConstructor::atomCharacterClassBegin):
+        (JSC::Yarr::RegexPatternConstructor::atomCharacterClassAtom):
+        (JSC::Yarr::RegexPatternConstructor::atomCharacterClassRange):
+        (JSC::Yarr::RegexPatternConstructor::atomCharacterClassBuiltIn):
+        (JSC::Yarr::RegexPatternConstructor::atomCharacterClassEnd):
+        (JSC::Yarr::RegexPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::RegexPatternConstructor::atomParentheticalAssertionBegin):
+        (JSC::Yarr::RegexPatternConstructor::atomParenthesesEnd):
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::copyDisjunction):
+        (JSC::Yarr::RegexPatternConstructor::copyTerm):
+        (JSC::Yarr::RegexPatternConstructor::quantifyAtom):
+        (JSC::Yarr::RegexPatternConstructor::disjunction):
+        (JSC::Yarr::RegexPatternConstructor::regexBegin):
+        (JSC::Yarr::RegexPatternConstructor::regexEnd):
+        (JSC::Yarr::RegexPatternConstructor::regexError):
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeOffsets):
+        (JSC::Yarr::RegexPatternConstructor::setupDisjunctionOffsets):
+        (JSC::Yarr::RegexPatternConstructor::setupOffsets):
+        (JSC::Yarr::compileRegex):
+        * yarr/RegexCompiler.h: Added.
+        * yarr/RegexInterpreter.cpp: Added.
+        (JSC::Yarr::Interpreter::appendParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::popParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::DisjunctionContext::DisjunctionContext):
+        (JSC::Yarr::Interpreter::DisjunctionContext::operator new):
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::ParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::operator new):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::restoreOutput):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::getDisjunctionContext):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::InputStream::InputStream):
+        (JSC::Yarr::Interpreter::InputStream::next):
+        (JSC::Yarr::Interpreter::InputStream::rewind):
+        (JSC::Yarr::Interpreter::InputStream::read):
+        (JSC::Yarr::Interpreter::InputStream::readChecked):
+        (JSC::Yarr::Interpreter::InputStream::reread):
+        (JSC::Yarr::Interpreter::InputStream::prev):
+        (JSC::Yarr::Interpreter::InputStream::getPos):
+        (JSC::Yarr::Interpreter::InputStream::setPos):
+        (JSC::Yarr::Interpreter::InputStream::atStart):
+        (JSC::Yarr::Interpreter::InputStream::atEnd):
+        (JSC::Yarr::Interpreter::InputStream::checkInput):
+        (JSC::Yarr::Interpreter::InputStream::uncheckInput):
+        (JSC::Yarr::Interpreter::testCharacterClass):
+        (JSC::Yarr::Interpreter::tryConsumeCharacter):
+        (JSC::Yarr::Interpreter::checkCharacter):
+        (JSC::Yarr::Interpreter::tryConsumeCharacterClass):
+        (JSC::Yarr::Interpreter::checkCharacterClass):
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+        (JSC::Yarr::Interpreter::matchAssertionBOL):
+        (JSC::Yarr::Interpreter::matchAssertionEOL):
+        (JSC::Yarr::Interpreter::matchAssertionWordBoundary):
+        (JSC::Yarr::Interpreter::matchPatternCharacter):
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::backtrackCharacterClass):
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackBackReference):
+        (JSC::Yarr::Interpreter::recordParenthesesMatch):
+        (JSC::Yarr::Interpreter::resetMatches):
+        (JSC::Yarr::Interpreter::resetAssertionMatches):
+        (JSC::Yarr::Interpreter::parenthesesDoBacktrack):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionOnceBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionOnceEnd):
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::Interpreter::matchTerm):
+        (JSC::Yarr::Interpreter::backtrackTerm):
+        (JSC::Yarr::Interpreter::matchAlternative):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::matchNonZeroDisjunction):
+        (JSC::Yarr::Interpreter::interpret):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::ByteCompiler::ParenthesesStackEntry::ParenthesesStackEntry):
+        (JSC::Yarr::ByteCompiler::ByteCompiler):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::checkInput):
+        (JSC::Yarr::ByteCompiler::assertionBOL):
+        (JSC::Yarr::ByteCompiler::assertionEOL):
+        (JSC::Yarr::ByteCompiler::assertionWordBoundary):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::popParenthesesStack):
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+        (JSC::Yarr::ByteCompiler::closeAlternative):
+        (JSC::Yarr::ByteCompiler::atomParenthesesEnd):
+        (JSC::Yarr::ByteCompiler::regexBegin):
+        (JSC::Yarr::ByteCompiler::regexEnd):
+        (JSC::Yarr::ByteCompiler::alterantiveDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        (JSC::Yarr::byteCompileRegex):
+        (JSC::Yarr::interpretRegex):
+        * yarr/RegexInterpreter.h: Added.
+        (JSC::Yarr::ByteTerm::):
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::BOL):
+        (JSC::Yarr::ByteTerm::CheckInput):
+        (JSC::Yarr::ByteTerm::EOL):
+        (JSC::Yarr::ByteTerm::WordBoundary):
+        (JSC::Yarr::ByteTerm::BackReference):
+        (JSC::Yarr::ByteTerm::AlternativeBegin):
+        (JSC::Yarr::ByteTerm::AlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::AlternativeEnd):
+        (JSC::Yarr::ByteTerm::PatternEnd):
+        (JSC::Yarr::ByteTerm::invert):
+        (JSC::Yarr::ByteTerm::capture):
+        (JSC::Yarr::ByteDisjunction::ByteDisjunction):
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        (JSC::Yarr::BytecodePattern::~BytecodePattern):
+        * yarr/RegexJIT.cpp: Added.
+        (JSC::Yarr::RegexGenerator::optimizeAlternative):
+        (JSC::Yarr::RegexGenerator::matchCharacterClassRange):
+        (JSC::Yarr::RegexGenerator::matchCharacterClass):
+        (JSC::Yarr::RegexGenerator::jumpIfNoAvailableInput):
+        (JSC::Yarr::RegexGenerator::jumpIfAvailableInput):
+        (JSC::Yarr::RegexGenerator::checkInput):
+        (JSC::Yarr::RegexGenerator::atEndOfInput):
+        (JSC::Yarr::RegexGenerator::notAtEndOfInput):
+        (JSC::Yarr::RegexGenerator::jumpIfCharEquals):
+        (JSC::Yarr::RegexGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::RegexGenerator::readCharacter):
+        (JSC::Yarr::RegexGenerator::storeToFrame):
+        (JSC::Yarr::RegexGenerator::loadFromFrame):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::TermGenerationState):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::resetAlternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::alternativeValid):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::nextAlternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::alternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::resetTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::termValid):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::nextTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::term):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::lookaheadTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isSinglePatternCharacterLookaheadTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::inputOffset):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::jumpToBacktrack):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setBacktrackGenerated):
+        (JSC::Yarr::RegexGenerator::jumpToBacktrackCheckEmitPending):
+        (JSC::Yarr::RegexGenerator::genertateAssertionBOL):
+        (JSC::Yarr::RegexGenerator::genertateAssertionEOL):
+        (JSC::Yarr::RegexGenerator::matchAssertionWordchar):
+        (JSC::Yarr::RegexGenerator::genertateAssertionWordBoundary):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterSingle):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterPair):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterFixed):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterNonGreedy):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassSingle):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassFixed):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassGreedy):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingleDisjunctionOneAlternative):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+        (JSC::Yarr::RegexGenerator::RegexGenerator):
+        (JSC::Yarr::RegexGenerator::generate):
+        (JSC::Yarr::jitCompileRegex):
+        (JSC::Yarr::executeRegex):
+        * yarr/RegexJIT.h: Added.
+        (JSC::Yarr::RegexCodeBlock::RegexCodeBlock):
+        * yarr/RegexParser.h: Added.
+        (JSC::Yarr::):
+        (JSC::Yarr::Parser::):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::begin):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacterUnescaped):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBuiltInCharacterClass):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::end):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::assertionWordBoundary):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBackReference):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::flush):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::):
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseAtomEscape):
+        (JSC::Yarr::Parser::parseCharacterClassEscape):
+        (JSC::Yarr::Parser::parseCharacterClass):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::parseParenthesesEnd):
+        (JSC::Yarr::Parser::parseQuantifier):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::parse):
+        (JSC::Yarr::Parser::saveState):
+        (JSC::Yarr::Parser::restoreState):
+        (JSC::Yarr::Parser::atEndOfPattern):
+        (JSC::Yarr::Parser::peek):
+        (JSC::Yarr::Parser::peekIsDigit):
+        (JSC::Yarr::Parser::peekDigit):
+        (JSC::Yarr::Parser::consume):
+        (JSC::Yarr::Parser::consumeDigit):
+        (JSC::Yarr::Parser::consumeNumber):
+        (JSC::Yarr::Parser::consumeOctal):
+        (JSC::Yarr::Parser::tryConsume):
+        (JSC::Yarr::Parser::tryConsumeHex):
+        (JSC::Yarr::parse):
+        * yarr/RegexPattern.h: Added.
+        (JSC::Yarr::CharacterRange::CharacterRange):
+        (JSC::Yarr::):
+        (JSC::Yarr::PatternTerm::):
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::PatternTerm::BOL):
+        (JSC::Yarr::PatternTerm::EOL):
+        (JSC::Yarr::PatternTerm::WordBoundary):
+        (JSC::Yarr::PatternTerm::invert):
+        (JSC::Yarr::PatternTerm::capture):
+        (JSC::Yarr::PatternTerm::quantify):
+        (JSC::Yarr::PatternAlternative::PatternAlternative):
+        (JSC::Yarr::PatternAlternative::lastTerm):
+        (JSC::Yarr::PatternAlternative::removeLastTerm):
+        (JSC::Yarr::PatternDisjunction::PatternDisjunction):
+        (JSC::Yarr::PatternDisjunction::~PatternDisjunction):
+        (JSC::Yarr::PatternDisjunction::addNewAlternative):
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::~RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+        (JSC::Yarr::RegexPattern::containsIllegalBackReference):
+        (JSC::Yarr::RegexPattern::newlineCharacterClass):
+        (JSC::Yarr::RegexPattern::digitsCharacterClass):
+        (JSC::Yarr::RegexPattern::spacesCharacterClass):
+        (JSC::Yarr::RegexPattern::wordcharCharacterClass):
+        (JSC::Yarr::RegexPattern::nondigitsCharacterClass):
+        (JSC::Yarr::RegexPattern::nonspacesCharacterClass):
+        (JSC::Yarr::RegexPattern::nonwordcharCharacterClass):
+
 2009-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Missed code from last patch).
