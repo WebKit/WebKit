@@ -1,3 +1,14 @@
+2009-04-14  Rohit Rao  <rohitrao@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25184
+        Do not change the text color for selected text in Mac Chromium.
+
+        * rendering/RenderThemeChromiumMac.h:
+        (WebCore::RenderThemeChromiumMac::supportsSelectionForegroundColors):
+        Now returns false, matching the behavior of Safari on Mac.
+
 2009-04-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric Seidel.

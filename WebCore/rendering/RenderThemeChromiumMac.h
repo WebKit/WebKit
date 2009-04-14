@@ -85,6 +85,8 @@ namespace WebCore {
         virtual Color systemColor(int cssValueId) const;
 
     protected:
+        virtual bool supportsSelectionForegroundColors() const { return false; }
+
         // Methods for each appearance value.
         virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
         virtual void setCheckboxSize(RenderStyle*) const;
