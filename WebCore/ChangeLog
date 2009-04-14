@@ -1,3 +1,15 @@
+2009-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Use a template function to generalize the way we create non-caching
+        JS function getters.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::nonCachingStaticFunctionGetter):
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+
 2009-04-14  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by George Staikos.

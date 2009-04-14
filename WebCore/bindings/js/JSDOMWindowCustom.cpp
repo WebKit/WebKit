@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,7 +57,6 @@
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include <runtime/JSObject.h>
-#include <runtime/PrototypeFunction.h>
 
 using namespace JSC;
 
@@ -626,26 +625,6 @@ DOMWindow* toDOMWindow(JSValuePtr value)
     if (object->inherits(&JSDOMWindowShell::s_info))
         return static_cast<JSDOMWindowShell*>(object)->impl();
     return 0;
-}
-
-JSValuePtr nonCachingStaticCloseFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
-{
-    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionClose);
-}
-
-JSValuePtr nonCachingStaticBlurFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
-{
-    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionBlur);
-}
-
-JSValuePtr nonCachingStaticFocusFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
-{
-    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionFocus);
-}
-
-JSValuePtr nonCachingStaticPostMessageFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
-{
-    return new (exec) PrototypeFunction(exec, 2, propertyName, jsDOMWindowPrototypeFunctionPostMessage);
 }
 
 } // namespace WebCore

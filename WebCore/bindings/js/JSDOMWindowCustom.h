@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008 Apple Inc. All rights reseved.
+ *  Copyright (C) 2008, 2009 Apple Inc. All rights reseved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
+#include <runtime/PrototypeFunction.h>
 #include <wtf/AlwaysInline.h>
 
 namespace WebCore {
@@ -35,10 +36,11 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
-JSC::JSValuePtr nonCachingStaticCloseFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticBlurFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticFocusFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticPostMessageFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+template<JSC::NativeFunction nativeFunction, int length>
+JSC::JSValuePtr nonCachingStaticFunctionGetter(JSC::ExecState* exec, const JSC::Identifier& propertyName, const JSC::PropertySlot&)
+{
+    return new (exec) JSC::PrototypeFunction(exec, length, propertyName, nativeFunction);
+}
 
 ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
 {
@@ -59,7 +61,7 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
         }
         entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
-            slot.setCustom(this, nonCachingStaticCloseFunctionGetter);
+            slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             return true;
         }
 
@@ -88,22 +90,22 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsDOMWindowPrototypeFunctionBlur) {
                 if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticBlurFunctionGetter);
+                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionClose) {
                 if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticCloseFunctionGetter);
+                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionFocus) {
                 if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticFocusFunctionGetter);
+                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionPostMessage) {
                 if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticPostMessageFunctionGetter);
+                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionShowModalDialog) {
