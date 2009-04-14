@@ -1,3 +1,24 @@
+2009-04-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Rename QWebElement::setText() and text() to ::setPlainText and
+        ::toPlainText, respectively.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::setPlainText):
+        (QWebElement::toPlainText):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::textHtml):
+        (tst_QWebElement::simpleSelection):
+        (tst_QWebElement::appendAndPrepend):
+        (tst_QWebElement::insertBeforeAndAfter):
+        (tst_QWebElement::replaceWith):
+        (tst_QWebElement::wrap):
+        (tst_QWebElement::firstChildNextSiblingWithTag):
+        (tst_QWebElement::lastChildPreviousSiblingWithTag):
+
 2009-04-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

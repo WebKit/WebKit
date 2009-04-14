@@ -50,8 +50,8 @@ public:
     QWebElementSelection findAll(const QString &query) const;
     QWebElement findFirst(const QString &query) const;
 
-    void setText(const QString &text);
-    QString text() const;
+    void setPlainText(const QString &text);
+    QString toPlainText() const;
 
     void setHtml(const QString &html);
     QString html() const;
