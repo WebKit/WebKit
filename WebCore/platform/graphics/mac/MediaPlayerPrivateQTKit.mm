@@ -67,6 +67,7 @@ SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (tim
 SOFT_LINK_CLASS(QTKit, QTMovie)
 SOFT_LINK_CLASS(QTKit, QTMovieView)
 
+SOFT_LINK_POINTER(QTKit, QTTrackMediaTypeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeBase, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeMPEG, NSString *)
@@ -95,6 +96,7 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
 
+#define QTTrackMediaTypeAttribute getQTTrackMediaTypeAttribute()
 #define QTMediaTypeAttribute getQTMediaTypeAttribute()
 #define QTMediaTypeBase getQTMediaTypeBase()
 #define QTMediaTypeMPEG getQTMediaTypeMPEG()
@@ -992,24 +994,18 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         if (![track isEnabled])
             continue;
         
-        // Grab the track's media. We're going to check to see if we need to
-        // disable the tracks. They could be unsupported.
-        QTMedia *trackMedia = [track media];
-        if (!trackMedia)
-            continue;
-        
-        // Grab the media type for this track.
-        NSString *mediaType = [trackMedia attributeForKey:QTMediaTypeAttribute];
+        // Get the track's media type.
+        NSString *mediaType = [track attributeForKey:QTTrackMediaTypeAttribute];
         if (!mediaType)
             continue;
-        
+
         // Test whether the media type is in our white list.
         if (!allowedTrackTypes->contains(mediaType)) {
             // If this track type is not allowed, then we need to disable it.
             [track setEnabled:NO];
             --m_enabledTrackCount;
         }
-        
+
         // Disable chapter tracks. These are most likely to lead to trouble, as
         // they will be composited under the video tracks, forcing QT to do extra
         // work.

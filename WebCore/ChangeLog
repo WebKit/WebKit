@@ -1,3 +1,16 @@
+2009-04-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25177
+
+        QTTrack's -media method always return NULL in 64-bit QTKit, so
+        MediaPlayerPrivate::disableUnsupportedTracks should use 
+        QTTrackMediaTypeAttribute to get a track's type.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+
 2009-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
@@ -34,6 +47,8 @@
 2009-04-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Mark Rowe.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25155
 
         OS X standalone media documents should not switch from <video> to <embed> when 
         QTKit load state is QTMovieLoadStateLoading as that happens frequently when a loading
