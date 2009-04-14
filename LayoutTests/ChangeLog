@@ -1,5 +1,12 @@
 2009-04-14  Adam Roben  <aroben@apple.com>
 
+        Skip a test that sometimes times out on Windows
+
+        * platform/win/Skipped: Added
+        http/tests/incremental/slow-utf8-text.pl.
+
+2009-04-14  Adam Roben  <aroben@apple.com>
+
         Skip a sometimes-failing test on Windows
 
         Rubber-stamped by Simon Fraser.
