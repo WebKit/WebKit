@@ -960,7 +960,7 @@ bool FrameView::needsLayout() const
     return layoutPending()
         || (root && root->needsLayout())
         || m_layoutRoot
-        || document->childNeedsStyleRecalc() // can occur when using WebKit ObjC interface
+        || (document && document->childNeedsStyleRecalc()) // can occur when using WebKit ObjC interface
         || m_frame->needsReapplyStyles();
 }
 
