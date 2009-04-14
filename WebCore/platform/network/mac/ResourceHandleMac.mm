@@ -416,8 +416,9 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
                                                                    password:d->m_pass
                                                                 persistence:NSURLCredentialPersistenceNone];
-        WebCoreCredentialStorage::set(credential, [mac(challenge) protectionSpace]);
-        [challenge.sender() useCredential:credential forAuthenticationChallenge:mac(challenge)];
+        d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+        d->m_currentWebChallenge = challenge;
+        receivedCredential(challenge, core(credential));
         [credential release];
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
         d->m_user = String();
@@ -428,7 +429,6 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (!challenge.previousFailureCount() && (!client() || client()->shouldUseCredentialStorage(this))) {
         NSURLCredential *credential = WebCoreCredentialStorage::get([mac(challenge) protectionSpace]);
         if (credential) {
-            ASSERT([credential persistence] == NSURLCredentialPersistenceNone);
             [challenge.sender() useCredential:credential forAuthenticationChallenge:mac(challenge)];
             return;
         }
@@ -460,13 +460,22 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     if (challenge != d->m_currentWebChallenge)
         return;
 
+#ifdef BUILDING_ON_TIGER
+    if (credential.persistence() == CredentialPersistenceNone) {
+        // NSURLCredentialPersistenceNone doesn't work on Tiger, so we have to use session persistence.
+        Credential webCredential(credential.user(), credential.password(), CredentialPersistenceForSession);
+        WebCoreCredentialStorage::set(mac(webCredential), [d->m_currentMacChallenge protectionSpace]);
+        [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
+    } else
+#else
     if (credential.persistence() == CredentialPersistenceForSession) {
-        // Manage per-session credentials internally, because once NSURLCredentialPersistencePerSession is used, there is no way
+        // Manage per-session credentials internally, because once NSURLCredentialPersistenceForSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceNone);
         WebCoreCredentialStorage::set(mac(webCredential), [d->m_currentMacChallenge protectionSpace]);
         [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
+#endif
         [[d->m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();

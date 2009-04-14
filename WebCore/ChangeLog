@@ -1,4 +1,20 @@
-2009-04-13  Adele Peterson  <adele@apple.com>
+2009-04-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        http/tests/xmlhttprequest/basic-auth.html fails on Tiger.
+
+        Turns out that NSURLCredentialPersistenceNone doesn't work on Tiger, so we have to use
+        session persistence.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Route the credential through
+        receivedCredential(), ensuring that the Tiger-specific need to use session credentials
+        is honored.
+        (WebCore::ResourceHandle::receivedCredential): On Tiger, change PersistenceNone to
+        PersistenceForSession, because the former doesn't work.
+
+2009-04-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
 
