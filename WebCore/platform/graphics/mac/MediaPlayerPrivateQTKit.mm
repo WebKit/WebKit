@@ -678,18 +678,17 @@ void MediaPlayerPrivate::updateStates()
         m_readyState = MediaPlayer::HaveMetadata;
         m_networkState = MediaPlayer::Loading;
     } else if (loadState > QTMovieLoadStateError) {
+        m_readyState = MediaPlayer::HaveNothing;
+        m_networkState = MediaPlayer::Loading;
+    } else {
         if (m_player->inMediaDocument()) {
             // Something went wrong in the loading of media within a standalone file. 
             // This can occur with chained refmovies pointing to streamed media.
             sawUnsupportedTracks();
             return;
-        } else {
-            m_readyState = MediaPlayer::HaveNothing;
-            m_networkState = MediaPlayer::Loading;
         }
-    } else {
-        float loaded = maxTimeLoaded();
 
+        float loaded = maxTimeLoaded();
         if (!loaded)
             m_readyState = MediaPlayer::HaveNothing;
 

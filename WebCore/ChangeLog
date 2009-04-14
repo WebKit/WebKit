@@ -1,3 +1,15 @@
+2009-04-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        OS X standalone media documents should not switch from <video> to <embed> when 
+        QTKit load state is QTMovieLoadStateLoading as that happens frequently when a loading
+        with a slow network connection or when a movie is not saved fast-start.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates): Don't open movie with plug-in when QTKit's
+        loadstate is QTMovieLoadStateLoading, wait until it drops below QTMovieLoadStateError.
+
 2009-04-13  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
