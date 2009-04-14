@@ -1,3 +1,12 @@
+2009-04-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Initialize WebKitSystemInterface in class methods that could get called before a WebView/WebFrame is set up.  This was causing Mail to crash on launch.
+
+        * Misc/WebCache.mm: (+[WebCache initialize]):
+        * WebView/WebView.mm: (+[WebView initialize]):
+
 2009-04-13  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

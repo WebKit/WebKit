@@ -26,6 +26,7 @@
 #import "WebCache.h"
 
 #import "WebPreferences.h"
+#import "WebSystemInterface.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
@@ -33,6 +34,11 @@
 #import <WebCore/CrossOriginPreflightResultCache.h>
 
 @implementation WebCache
+
++ (void)initialize
+{
+    InitWebCoreSystemInterface();   
+}
 
 + (NSArray *)statistics
 {
