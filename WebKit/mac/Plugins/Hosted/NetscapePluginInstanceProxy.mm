@@ -281,6 +281,9 @@ bool NetscapePluginInstanceProxy::wheelEvent(NSView *pluginView, NSEvent *event)
                                   pluginPoint.x, pluginPoint.y, [event buttonNumber], 
                                   [event deltaX], [event deltaY], [event deltaZ]);
     
+    // Protect ourselves in case waiting for the reply causes us to be deleted.
+    RefPtr<NetscapePluginInstanceProxy> protect(this);
+
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get() || !reply->m_result)
         return false;
