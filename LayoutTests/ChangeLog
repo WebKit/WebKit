@@ -1,3 +1,14 @@
+2009-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Part of <rdar://problem/6150868>
+        Test for incorrect handling of content that needs to go into the head element
+        once the head element has been removed.
+
+        * fast/parser/head-content-after-head-removal-expected.txt: Added.
+        * fast/parser/head-content-after-head-removal.html: Added.
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Skip another test that sometimes times out on Windows

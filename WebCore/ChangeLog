@@ -1,3 +1,19 @@
+2009-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Part of <rdar://problem/6150868>
+        Fix incorrect handling of content that needs to go into the head element
+        once the head element has been removed.
+
+        Test: fast/parser/head-content-after-head-removal.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser): Remove unneeded initializer of m_head.
+        (WebCore::HTMLParser::handleError): Update since m_head is now a RefPtr.
+        (WebCore::HTMLParser::createHead): Ditto.
+        * html/HTMLParser.h: Make m_head a RefPtr.
+
 2009-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Used svn merge -r42529:42528 to roll out my last patch because it broke
