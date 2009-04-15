@@ -1,3 +1,17 @@
+2009-04-15  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25180
+
+        Restore stroked outlines to PlatformContextSkia::drawRect().
+        These were removed inadvertently in r41805, aka
+        https://bugs.webkit.org/show_bug.cgi?id=24662.
+        SkRect is { left, top, right, bottom }, not { left, top, width, height }.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::drawRect):
+
 2009-04-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

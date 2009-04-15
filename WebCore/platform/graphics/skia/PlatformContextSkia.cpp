@@ -277,13 +277,13 @@ void PlatformContextSkia::drawRect(SkRect rect)
         if (oldFillColor != m_state->m_strokeColor)
             setFillColor(m_state->m_strokeColor);
         setupPaintForFilling(&paint);
-        SkRect topBorder = { rect.fLeft, rect.fTop, rect.width(), 1 };
+        SkRect topBorder = { rect.fLeft, rect.fTop, rect.fRight, rect.fTop + 1 };
         canvas()->drawRect(topBorder, paint);
-        SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.width(), 1 };
+        SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.fRight, rect.fBottom };
         canvas()->drawRect(bottomBorder, paint);
-        SkRect leftBorder = { rect.fLeft, rect.fTop + 1, 1, rect.height() - 2 };
+        SkRect leftBorder = { rect.fLeft, rect.fTop + 1, rect.fLeft + 1, rect.fBottom - 1 };
         canvas()->drawRect(leftBorder, paint);
-        SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, 1, rect.height() - 2 };
+        SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, rect.fRight, rect.fBottom - 1 };
         canvas()->drawRect(rightBorder, paint);
         if (oldFillColor != m_state->m_strokeColor)
             setFillColor(oldFillColor);
