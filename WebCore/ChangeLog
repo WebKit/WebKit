@@ -1,3 +1,20 @@
+2009-04-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6777374> Generated content with display: run-in
+          causes a crash
+
+        Test: fast/runin/generated.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild): Check if the run-in block is
+        generated, and if so, make the RenderInline anonymous instead of passing
+        a 0 node to the RenderInline constructor. If the run-in itself is
+        generated, do move :before and :after children from the block into the
+        inline, as they will not be regenerated. Changed nested ifs into early
+        returns.
+
 2009-04-15  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Geoffrey Garen.

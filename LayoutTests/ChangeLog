@@ -1,3 +1,15 @@
+2009-04-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/6777374> Generated content with display:
+          run-in causes a crash
+
+        * fast/runin/generated.html: Added.
+        * platform/mac/fast/runin/generated-expected.checksum: Added.
+        * platform/mac/fast/runin/generated-expected.png: Added.
+        * platform/mac/fast/runin/generated-expected.txt: Added.
+
 2009-04-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
