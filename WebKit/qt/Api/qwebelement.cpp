@@ -1311,7 +1311,7 @@ QWebElementSelection::~QWebElementSelection()
     Appends the items of the \a other list to this list and returns a
     reference to this list.
 
-    \sa operator+(), extend()
+    \sa operator+(), append()
 */
 
 /*!
@@ -1332,7 +1332,7 @@ QWebElementSelection QWebElementSelection::operator+(const QWebElementSelection 
 
     \sa operator+=()
 */
-void QWebElementSelection::extend(const QWebElementSelection &other)
+void QWebElementSelection::append(const QWebElementSelection &other)
 {
     if (!d) {
         *this = other;

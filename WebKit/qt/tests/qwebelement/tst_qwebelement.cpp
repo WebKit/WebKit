@@ -79,7 +79,7 @@ private slots:
     void frame();
     void emptySelection();
     void style();
-    void extendSelection();
+    void appendSelection();
     void properties();
     void appendAndPrepend();
     void insertBeforeAndAfter();
@@ -432,7 +432,7 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
 }
 
-void tst_QWebElement::extendSelection()
+void tst_QWebElement::appendSelection()
 {
     QString html = "<body><span class='a'>aaa</span><p>first para</p><div>foo</div>"
         "<span class='b'>bbb</span><p>second para</p><div>bar</div></body>";
@@ -442,7 +442,7 @@ void tst_QWebElement::extendSelection()
     QWebElementSelection selection = body.findAll("p");
     QCOMPARE(selection.count(), 2);
 
-    selection.extend(body.findAll("div"));
+    selection.append(body.findAll("div"));
     QCOMPARE(selection.count(), 4);
 
     selection += body.findAll("span.a");
@@ -457,9 +457,9 @@ void tst_QWebElement::extendSelection()
 
     QCOMPARE(selection.count(), 5);
     QWebElementSelection test;
-    test.extend(selection);
+    test.append(selection);
     QCOMPARE(test.count(), 5);
-    test.extend(QWebElementSelection());
+    test.append(QWebElementSelection());
     QCOMPARE(test.count(), 5);
 }
 

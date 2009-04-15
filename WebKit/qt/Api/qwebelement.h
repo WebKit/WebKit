@@ -151,10 +151,10 @@ public:
     QWebElementSelection operator+(const QWebElementSelection &other) const;
     inline QWebElementSelection &operator+=(const QWebElementSelection &other)
     {
-        extend(other); return *this;
+        append(other); return *this;
     }
 
-    void extend(const QWebElementSelection &selection);
+    void append(const QWebElementSelection &selection);
 
     int count() const;
     QWebElement at(int i) const;

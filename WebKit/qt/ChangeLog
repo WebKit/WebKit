@@ -1,5 +1,17 @@
 2009-04-15  Antonio Gomes   <antonio.gomes@openbossa.org>
 
+        Reviewed by Ariya Hidayat.
+
+        Rename extend() method in QWebElementSelection to append().
+
+        * Api/qwebelement.cpp:
+        (QWebElementSelection::append):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::appendSelection):
+
+2009-04-15  Antonio Gomes   <antonio.gomes@openbossa.org>
+
         Reviewed by Simon Hausmann.
 
         Fixed nit/typo in QWebElement documentation.
