@@ -1,3 +1,26 @@
+2009-04-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Don't keep platform objects for authentication challenge in ResourceHandleInternal.
+        We already have a copy in AuthenticationChallenge object.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::clearAuthentication):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+
 2009-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
