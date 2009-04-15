@@ -37,17 +37,14 @@ namespace WebCore {
     public:
         RenderSVGHiddenContainer(SVGStyledElement*);
         virtual ~RenderSVGHiddenContainer();
-        
+
         virtual bool isSVGContainer() const { return true; }
         virtual bool isSVGHiddenContainer() const { return true; }
 
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
-        
+
         virtual bool requiresLayer() const { return false; }
-        
-        virtual int lineHeight(bool b, bool isRootLineBox = false) const;
-        virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
-        
+
         virtual void layout();
         virtual void paint(PaintInfo&, int parentX, int parentY);
         

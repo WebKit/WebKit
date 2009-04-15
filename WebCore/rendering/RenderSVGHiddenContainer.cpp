@@ -39,16 +39,6 @@ RenderSVGHiddenContainer::~RenderSVGHiddenContainer()
 {
 }
 
-int RenderSVGHiddenContainer::lineHeight(bool, bool) const
-{
-    return 0;
-}
-
-int RenderSVGHiddenContainer::baselinePosition(bool, bool) const
-{
-    return 0;
-}
-
 void RenderSVGHiddenContainer::layout()
 {
     ASSERT(needsLayout());

@@ -2,6 +2,22 @@
 
         Reviewed by Simon Fraser.
 
+        Remove more dead code from RenderSVGHiddenContainer.
+
+        lineHeight and baselinePosition used to be on RenderSVGContainer
+        (of which this is a subclass) because RenderSVGContainer used
+        to be a RenderBox and always the renderer for <svg>
+        Now <svg> uses RenderSVGRoot when needing a RenderBox (inside HTML)
+        and RenderSVGViewportContainer (when inside SVG content)
+        so there is no need for RenderSVGHiddenContainer to have these HTML-specific methods.
+
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+
+2009-04-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Remove unneeded (broken) code from SVG renderers
         https://bugs.webkit.org/show_bug.cgi?id=25214
 
