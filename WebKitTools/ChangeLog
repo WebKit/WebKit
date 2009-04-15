@@ -1,3 +1,11 @@
+2009-04-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build of DumpRenderTree.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sharedCFURLCache):
+        (main):
+
 2009-04-15  Adam Roben  <aroben@apple.com>
 
         Skip yet another JavaScriptCore test that sometimes fails on Windows
