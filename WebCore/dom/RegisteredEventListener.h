@@ -54,6 +54,7 @@ namespace WebCore {
 
     typedef Vector<RefPtr<RegisteredEventListener> > RegisteredEventListenerVector;
 
+#if USE(JSC)
     inline void markEventListeners(const RegisteredEventListenerVector& listeners)
     {
         for (size_t i = 0; i < listeners.size(); ++i)
@@ -65,6 +66,7 @@ namespace WebCore {
         for (size_t i = 0; i < listeners.size(); ++i)
             listeners[i]->listener()->clearJSFunction();
     }
+#endif
 
 } // namespace WebCore
 

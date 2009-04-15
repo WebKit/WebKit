@@ -1,3 +1,14 @@
+2009-04-14  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25198
+
+        Wrap RegisteredEventListener's markEventListeners and invalidateEventListeners
+        in a USE(JSC), since it doesn't compile with V8 bindings.
+
+        * dom/RegisteredEventListener.h:
+
 2009-04-15  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Darin Adler.
