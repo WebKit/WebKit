@@ -1,3 +1,9 @@
+2009-04-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix incorrect expected result.
+
+        * http/tests/security/local-video-source-from-remote-expected.txt:
+
 2009-04-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 0: Not allowed to load local resource: scaled-matrix.mov
 Test that a remote video element will not use a local <source>, and will use another remote <source>
 
-This test only works in DRT
+This test only behaves correctly in DRT
 
 EVENT(loadedmetadata)
 url http://localhost:8000/resources/silence.mpg loaded.
