@@ -205,7 +205,7 @@ static bool allowPopUp()
     if (frame->script()->processingUserGesture())
         return true;
     Settings* settings = frame->settings();
-    return settings && settings->JavaScriptCanOpenWindowsAutomatically();
+    return settings && settings->javaScriptCanOpenWindowsAutomatically();
 }
 
 static HashMap<String, String> parseModalDialogFeatures(const String& featuresArg)
