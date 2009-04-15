@@ -58,8 +58,8 @@ public:
 
     The element's attributes can be read using attribute() and changed using setAttribute().
 
-    The content of the child elements can be converted to toPlainText() and html(), and it is possible to
-    replace the content using setPlainText() and setHtml().
+    The content of the child elements can be converted to plain text using toPlainText() and to 
+    x(html) using toXml(), and it is possible to replace the content using setPlainText() and setXml().
 
     Depending on the type of the underlying element there may be extra functionality available, not
     covered through QWebElement's API. For example a HTML form element can be triggered to submit the
