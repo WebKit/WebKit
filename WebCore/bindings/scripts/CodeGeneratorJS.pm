@@ -1250,12 +1250,6 @@ sub GenerateImplementation
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
-                            my $listenerType;
-                            if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
-                                $listenerType = "JSProtectedEventListener";
-                            } else {
-                                $listenerType = "JSEventListener";
-                            }
                             if ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<$className*>(thisObject);\n");
                             } else {
@@ -1265,7 +1259,7 @@ sub GenerateImplementation
                                 push(@implContent, "    if (!globalObject)\n");
                                 push(@implContent, "        return;\n");
                             }
-                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->findOrCreate${listenerType}(value, true));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->findOrCreateJSEventListener(value, true));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;
