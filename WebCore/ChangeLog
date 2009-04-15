@@ -1,3 +1,30 @@
+2009-04-15  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Move VDMX parsing into the Chromium Linux port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25116
+
+        VDMX tables are optional tables in TrueType fonts which contain the
+        exact pixel height of a given font at a given pel size. In order to
+        match Windows font metrics we have to use these numbers.
+
+        Previously, the parsing was performed in Skia. As part of the merge
+        with upstream Skia, an interface for getting table data from a font
+        has been added to Skia and we're moving the parsing into WebKit.
+
+        This does not change any layout tests.
+
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::uniqueID):
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+        * platform/graphics/chromium/FontTrueTypeLinux.cpp: Added.
+        * platform/graphics/chromium/FontTrueTypeLinux.h: Added.
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2009-04-15  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

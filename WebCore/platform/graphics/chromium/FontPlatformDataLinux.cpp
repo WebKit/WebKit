@@ -95,6 +95,11 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
     paint->setTextEncoding(SkPaint::kUTF16_TextEncoding);
 }
 
+SkFontID FontPlatformData::uniqueID() const
+{
+    return m_typeface->uniqueID();
+}
+
 bool FontPlatformData::operator==(const FontPlatformData& a) const
 {
     // If either of the typeface pointers are invalid (either NULL or the
