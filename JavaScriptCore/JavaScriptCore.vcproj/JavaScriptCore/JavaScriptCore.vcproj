@@ -283,6 +283,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\interpreter\CallFrameClosure.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\ClassInfo.h"
 				>
 			</File>

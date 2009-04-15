@@ -1,3 +1,19 @@
+2009-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Move CallFrameClosure from inside the Interpreter class to its own file.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CachedCall.h:
+        * interpreter/CallFrameClosure.h: Copied from JavaScriptCore/yarr/RegexJIT.h.
+        (JSC::CallFrameClosure::setArgument):
+        (JSC::CallFrameClosure::resetCallFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+
 2009-04-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

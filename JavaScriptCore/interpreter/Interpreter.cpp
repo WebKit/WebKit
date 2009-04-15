@@ -32,6 +32,7 @@
 
 #include "Arguments.h"
 #include "BatchedTransitionOptimizer.h"
+#include "CallFrameClosure.h"
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
 #include "EvalCodeCache.h"
@@ -700,7 +701,7 @@ JSValuePtr Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* c
     return result;
 }
 
-Interpreter::CallFrameClosure Interpreter::prepareForRepeatCall(FunctionBodyNode* functionBodyNode, CallFrame* callFrame, JSFunction* function, int argCount, ScopeChainNode* scopeChain, JSValuePtr* exception)
+CallFrameClosure Interpreter::prepareForRepeatCall(FunctionBodyNode* functionBodyNode, CallFrame* callFrame, JSFunction* function, int argCount, ScopeChainNode* scopeChain, JSValuePtr* exception)
 {
     ASSERT(!scopeChain->globalData->exception);
     

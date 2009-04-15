@@ -51,6 +51,7 @@ namespace JSC {
     class Register;
     class ScopeChainNode;
     class SamplingTool;
+    struct CallFrameClosure;
     struct HandlerInfo;
 
     enum DebugHookID {
@@ -109,33 +110,7 @@ namespace JSC {
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
-        
-        struct CallFrameClosure {
-            CallFrame* oldCallFrame;
-            CallFrame* newCallFrame;
-            JSFunction* function;
-            CodeBlock* codeBlock;
-            JSGlobalData* globalData;
-            Register* oldEnd;
-            ScopeChainNode* scopeChain;
-            int expectedParams;
-            int providedParams;
 
-            void setArgument(int arg, JSValuePtr value)
-            {
-                if (arg < expectedParams)
-                    newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
-                else
-                    newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
-            }
-            void resetCallFrame()
-            {
-                newCallFrame->setScopeChain(scopeChain);
-                newCallFrame->setCalleeArguments(0);
-                for (int i = providedParams; i < expectedParams; ++i)
-                    newCallFrame[i - RegisterFile::CallFrameHeaderSize - expectedParams] = jsUndefined();
-            }
-        };
         CallFrameClosure prepareForRepeatCall(FunctionBodyNode*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*, JSValuePtr* exception);
         void endRepeatCall(CallFrameClosure&);
         JSValuePtr execute(CallFrameClosure&, JSValuePtr* exception);
