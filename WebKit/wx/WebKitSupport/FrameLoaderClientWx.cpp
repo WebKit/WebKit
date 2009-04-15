@@ -690,12 +690,23 @@ void FrameLoaderClientWx::dispatchDecidePolicyForMIMEType(FramePolicyFunction fu
     (m_frame->loader()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&)
+void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& request, PassRefPtr<FormState>, const String& targetName)
 {
     if (!m_frame)
         return;
 
-    notImplemented();
+    if (m_webView) {
+        wxWebViewNewWindowEvent wkEvent(m_webView);
+        wkEvent.SetURL(request.url().string());
+        wkEvent.SetTargetName(targetName);
+        if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
+            // if the app handles and doesn't skip the event, 
+            // from WebKit's perspective treat it as blocked / ignored
+            (m_frame->loader()->*function)(PolicyIgnore);
+            return;
+        }
+    }
+    
     (m_frame->loader()->*function)(PolicyUse);
 }
 

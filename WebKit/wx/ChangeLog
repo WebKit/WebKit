@@ -1,3 +1,14 @@
+2009-04-15  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Implement support for wxWebViewNewWindowEvent.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19043
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
+
 2009-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for wxMac/Tiger.
