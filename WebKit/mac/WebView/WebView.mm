@@ -1134,6 +1134,10 @@ static bool runningTigerMail()
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
         _private->hasSpellCheckerDocumentTag = NO;
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    [_private _clearViewUpdateRunLoopObserver];
+#endif
     
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -2569,10 +2573,6 @@ static bool needsWebViewInitThreadWorkaround()
 {
     // _close existed first, and some clients might be calling or overriding it, so call through.
     [self _close];
-
-#if USE(ACCELERATED_COMPOSITING)
-    [_private _clearViewUpdateRunLoopObserver];
-#endif
 }
 
 - (void)setShouldCloseWithWindow:(BOOL)close
