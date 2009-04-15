@@ -33,6 +33,7 @@
 #include "GraphicsTypes.h"
 #include "InlineTextBox.h"
 #include "HTMLNames.h"
+#include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"

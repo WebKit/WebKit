@@ -27,10 +27,9 @@
 
 #if ENABLE(SVG)
 
-#include "TransformationMatrix.h"
 #include "FloatRect.h"
-
-#include "RenderObject.h"
+#include "RenderSVGModelObject.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ class FloatPoint;
 class RenderSVGContainer;
 class SVGStyledTransformableElement;
 
-class RenderPath : public RenderObject {
+class RenderPath : public RenderSVGModelObject {
 public:
     RenderPath(SVGStyledTransformableElement*);
 
@@ -50,7 +49,7 @@ public:
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
     const Path& path() const;
-    void setPath(const Path& newPath);
+    void setPath(const Path&);
 
     virtual bool isRenderPath() const { return true; }
     virtual const char* renderName() const { return "RenderPath"; }

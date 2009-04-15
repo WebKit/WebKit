@@ -44,6 +44,7 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
+#include "RenderPath.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"

@@ -1855,6 +1855,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGImage.cpp \
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
+        rendering/RenderSVGModelObject.cpp \
         rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGText.cpp \
         rendering/RenderSVGTextPath.cpp \

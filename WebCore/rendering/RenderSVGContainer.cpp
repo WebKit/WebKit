@@ -37,7 +37,7 @@
 namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
-    : RenderObject(node)
+    : RenderSVGModelObject(node)
     , m_drawsContents(true)
 {
 }

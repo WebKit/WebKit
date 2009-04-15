@@ -2948,6 +2948,8 @@
 		A8F46B810CB20A9D003A9670 /* DOMSVGStringList.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85D79AD20ACA17EB00F02FC5 /* DOMSVGStringList.h */; };
 		A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */; };
 		A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */; };
+		A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */; };
+		A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */; };
 		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; };
 		A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */; };
 		A9C6E4E30D745E05006442E9 /* MimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* MimeType.cpp */; };
@@ -7570,6 +7572,8 @@
 		A8EA80060A19516E00A8EF5F /* MediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaList.h; sourceTree = "<group>"; };
 		A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderSupport.h; sourceTree = "<group>"; };
 		A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderSupport.cpp; sourceTree = "<group>"; };
+		A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGModelObject.h; sourceTree = "<group>"; };
+		A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGModelObject.cpp; sourceTree = "<group>"; };
 		A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
 		A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pattern.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* MimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MimeType.cpp; sourceTree = "<group>"; };
@@ -14337,6 +14341,8 @@
 				BCEA4814097D93020094C9E4 /* bidi.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
+				A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */,
+				A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -16826,6 +16832,7 @@
 				938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */,
 				9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */,
 				415E3EF60F8D67FE007EEB50 /* MessagePortProxy.h in Headers */,
+				A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18837,6 +18844,7 @@
 				938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */,
 				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
 				FE700DD10F92D81A008E2BFE /* JSCoordinatesCustom.cpp in Sources */,
+				A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7736,6 +7736,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGModelObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGModelObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGRoot.cpp"
 				>
 			</File>

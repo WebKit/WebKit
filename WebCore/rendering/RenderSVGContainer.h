@@ -24,14 +24,13 @@
 
 #if ENABLE(SVG)
 
-#include "RenderPath.h"
-#include "SVGPreserveAspectRatio.h"
+#include "RenderSVGModelObject.h"
 
 namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGContainer : public RenderObject {
+class RenderSVGContainer : public RenderSVGModelObject {
 public:
     RenderSVGContainer(SVGStyledElement*);
     ~RenderSVGContainer();
@@ -49,8 +48,6 @@ public:
 
     virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGContainer"; }
-
-    virtual bool requiresLayer() const { return false; }
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);

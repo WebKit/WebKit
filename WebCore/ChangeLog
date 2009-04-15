@@ -24,6 +24,36 @@
 
         Reviewed by Simon Fraser.
 
+        Add minimal RenderSVGModelObject and make RenderPath and RenderSVGContainer use it.
+        https://bugs.webkit.org/show_bug.cgi?id=25221
+        
+        RenderSVGModelObject is the base rendering class for things which live
+        in the SVG rendering tree.  Not all SVG renders are RenderSVGModelObjects yet.
+        
+        More patches coming.  This is just adding the class, future patches
+        will pull more logic out of RenderPath and RenderSVGContainer into RenderSVGModelObject.
+
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGModelObject.cpp: Added.
+        (WebCore::RenderSVGModelObject::RenderSVGModelObject):
+        * rendering/RenderSVGModelObject.h: Added.
+        (WebCore::RenderSVGModelObject::requiresLayer):
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/SVGRenderTreeAsText.cpp:
+
+2009-04-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Remove more dead code from RenderSVGHiddenContainer.
 
         lineHeight and baselinePosition used to be on RenderSVGContainer

@@ -64,9 +64,8 @@ private:
     RenderStyle* m_style;
 };
 
-// RenderPath
 RenderPath::RenderPath(SVGStyledTransformableElement* node)
-    : RenderObject(node)
+    : RenderSVGModelObject(node)
 {
 }
 
