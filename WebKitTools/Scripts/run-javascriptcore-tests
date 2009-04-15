@@ -44,6 +44,7 @@ my @testsToSkip = (
     # Various ecma/Date tests sometimes fail on Windows (but not Mac) https://bugs.webkit.org/show_bug.cgi?id=25160
     "ecma/Date/15.9.2.1.js",
     "ecma/Date/15.9.2.2-1.js",
+    "ecma/Date/15.9.2.2-2.js",
     "ecma/Date/15.9.2.2-3.js",
     "ecma/Date/15.9.2.2-4.js",
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
