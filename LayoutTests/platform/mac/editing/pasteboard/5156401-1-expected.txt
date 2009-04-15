@@ -12,12 +12,6 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,2) size 144x22
               RenderTableCell {TD} at (2,2) size 140x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 136x18 [color=#0000EE]
-                  RenderText {#text} at (2,2) size 10x18
-                    text run at (2,2) width 10: "T"
-                  RenderText {#text} at (12,2) size 122x18
-                    text run at (12,2) width 122: "his should be a link"
-                  RenderInline {SPAN} at (0,0) size 4x18 [color=#000000]
-                    RenderInline {A} at (0,0) size 4x18 [color=#0000EE]
-                      RenderText {#text} at (134,2) size 4x18
-                        text run at (134,2) width 4: "."
-caret: position 20 of child 1 {#text} of child 0 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+                  RenderText {#text} at (2,2) size 136x18
+                    text run at (2,2) width 136: "This should be a link."
+caret: position 21 of child 0 {#text} of child 0 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document

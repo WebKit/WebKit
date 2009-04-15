@@ -1,3 +1,26 @@
+2009-04-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25204
+        Create a fast path for ReplaceSelectionCommand that merges text nodes
+        
+        During simple pastes, where we're just pasting a text node into a run of text, we would split the current
+        text and insert the new node in between.  This is slow and we hit this bug:
+
+        https://bugs.webkit.org/show_bug.cgi?id=6148
+
+        in the layout and rendering code where adjacent text nodes don't shape correctly in Arabic.
+        
+        This change creates a fast path for ReplaceSelectionCommand that inserts text directly into the
+        text node that holds the selection (very similar to the fast path we wrote for InsertTextCommand).
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+        * editing/ReplaceSelectionCommand.h:
+        * editing/TextIterator.cpp:
+
 2009-04-15  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.

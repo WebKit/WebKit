@@ -1,3 +1,28 @@
+2009-04-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25204
+        Create a fast path for ReplaceSelectionCommand that merges text nodes
+        
+        Simplified DOM/Render trees:
+        * editing/pasteboard/4840662-expected.txt:
+        * platform/mac/editing/pasteboard/bad-placeholder-expected.txt:
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-019-expected.txt:
+        * platform/mac/editing/pasteboard/paste-xml-expected.txt:
+
+        Removed redundant styles that were generated during nesting prevention that is no longer needed:
+        * platform/mac/editing/pasteboard/4076267-2-expected.txt:
+        * platform/mac/editing/pasteboard/5156401-1-expected.txt:
+        
+        No longer incorrectly uncollapsing unrendered whitespace:
+        * editing/pasteboard/paste-into-anchor-text-expected.txt:
+        * platform/mac/editing/pasteboard/5387578-expected.txt:
+        
+        No longer invalidating the old selected DOM range during a paste:
+        * editing/pasteboard/copy-in-password-field-expected.txt:
+
 2009-04-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

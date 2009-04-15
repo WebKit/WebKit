@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class DocumentFragment;
+class ReplacementFragment;
 
 class ReplaceSelectionCommand : public CompositeEditCommand {
 public:
@@ -74,6 +75,8 @@ private:
     
     VisiblePosition positionAtStartOfInsertedContent();
     VisiblePosition positionAtEndOfInsertedContent();
+    
+    bool performTrivialReplace(const ReplacementFragment&);
 
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastLeafInserted;

@@ -690,7 +690,8 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
     // Merging forward will remove m_lastLeafInserted from the document.
     // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
-    // only ever used to create positions where inserted content starts/ends.
+    // only ever used to create positions where inserted content starts/ends.  Also, we sometimes insert content
+    // directly into text nodes already in the document, in which case tracking inserted nodes is inadequate.
     if (mergeForward) {
         m_lastLeafInserted = destination.previous().deepEquivalent().node();
         if (!m_firstNodeInserted->inDocument())
@@ -710,6 +711,9 @@ void ReplaceSelectionCommand::doApply()
     
     Element* currentRoot = selection.rootEditableElement();
     ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection);
+    
+    if (performTrivialReplace(fragment))
+        return;
     
     if (m_matchStyle)
         m_insertionStyle = styleAtPosition(selection.start());
@@ -821,6 +825,9 @@ void ReplaceSelectionCommand::doApply()
         frame->clearTypingStyle();
     
     bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
+    
+    // FIXME: When pasting rich content we're often prevented from heading down the fast path by style spans.  Try
+    // again here if they've been removed.
     
     // We're finished if there is nothing to add.
     if (fragment.isEmpty() || !fragment.firstChild())
@@ -1091,6 +1098,40 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
         return;
     
     m_lastLeafInserted = node->lastDescendant();
+}
+
+// During simple pastes, where we're just pasting a text node into a run of text, we insert the text node
+// directly into the text node that holds the selection.  This is much faster than the generalized code in
+// ReplaceSelectionCommand, and works around <https://bugs.webkit.org/show_bug.cgi?id=6148> since we don't 
+// split text nodes.
+bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& fragment)
+{
+    if (!fragment.firstChild() || fragment.firstChild() != fragment.lastChild() || !fragment.firstChild()->isTextNode())
+        return false;
+        
+    // FIXME: Would be nice to handle smart replace in the fast path.
+    if (m_smartReplace || fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd())
+        return false;
+    
+    Text* textNode = static_cast<Text*>(fragment.firstChild());
+    // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
+    String text(textNode->data());
+    
+    Position start = endingSelection().start();
+    Position end = endingSelection().end();
+    
+    if (start.anchorNode() != end.anchorNode() || !start.anchorNode()->isTextNode())
+        return false;
+        
+    replaceTextInNode(static_cast<Text*>(start.anchorNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
+    
+    end = Position(start.anchorNode(), start.offsetInContainerNode() + text.length());
+    
+    VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
+    
+    setEndingSelection(selectionAfterReplace);
+    
+    return true;
 }
 
 } // namespace WebCore
