@@ -1,3 +1,14 @@
+2009-04-15  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25192
+
+        Expose DOMWindow::removeInlineEventListenerForType and
+        DOMWindow::inlineEventListenerForType as public.
+
+        * page/DOMWindow.h:
+
 2009-04-14  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Darin Adler.
