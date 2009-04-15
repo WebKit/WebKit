@@ -33,7 +33,6 @@ my $newPublicClass = 0;
 my $interfaceAvailabilityVersion = "";
 my $isProtocol = 0;
 my $noImpl = 0;
-my @ivars = ();
 
 my @headerContentHeader = ();
 my @headerContent = ();
@@ -542,30 +541,9 @@ sub GetInternalTypeMakerSignature
     if ($podType) {
         $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
     }
- 
-    my @ivarsToRetain = ();
-    my $ivarsToInit = "";
-    my $typeMakerSigAddition = "";
-    if (@ivars > 0) {
-        my @ivarsInitSig = ();
-        my @ivarsInitCall = ();
-        foreach $attribute (@ivars) {
-            my $name = $attribute->signature->name;
-            my $memberName = "m_" . $name;
-            my $varName = "in" . $name;
-            my $type = GetObjCType($attribute->signature->type);
-            push(@ivarsInitSig, "$name:($type)$varName");
-            push(@ivarsInitCall, "$name:$varName");
-            push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
-        }
-        $ivarsToInit = " " . join(" ", @ivarsInitCall);
-        $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
-    }
 
     my $typeMakerName = GetObjCTypeMaker($interfaceName);
-    return ("+ ($className *)$typeMakerName:(" . ($podType ? "$podTypeWithNamespace" : "$implClassNameWithNamespace *") . ")impl" . $typeMakerSigAddition,
-            $typeMakerSigAddition,
-            $ivarsToInit);
+    return "+ ($className *)$typeMakerName:(" . ($podType ? "$podTypeWithNamespace" : "$implClassNameWithNamespace *") . ")impl";
 }
 
 sub AddForwardDeclarationsForType
@@ -758,23 +736,6 @@ sub GenerateHeader
 
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
-        # Add ivars, if any, first
-        @ivars = ();
-        foreach my $attribute (@{$dataNode->attributes}) {
-            push(@ivars, $attribute) if $attribute->signature->extendedAttributes->{"ObjCIvar"};
-        }
-
-        if (@ivars > 0) {
-            push(@headerContent, "{\n");
-            foreach my $attribute (@ivars) {
-                my $type = GetObjCType($attribute->signature->type);
-                my $name = "m_" . $attribute->signature->name;
-                my $ivarDeclaration = "$type $name";
-                push(@headerContent, "    $ivarDeclaration;\n");
-            }
-            push(@headerContent, "}\n");
-        }
-
         foreach my $attribute (@{$dataNode->attributes}) {
             my $attributeName = $attribute->signature->name;
 
@@ -991,7 +952,7 @@ sub GenerateHeader
         # Generate internal interfaces
         my $podType = $dataNode->extendedAttributes->{"PODType"};
         my $typeGetterSig = GetInternalTypeGetterSignature($interfaceName, $podType);
-        my ($typeMakerSig, $typeMakerSigAddition, $ivarsToInit) = GetInternalTypeMakerSignature($interfaceName, $podType);
+        my $typeMakerSig = GetInternalTypeMakerSignature($interfaceName, $podType);
 
         # Generate interface definitions. 
         @internalHeaderContent = split("\r", $implementationLicenceTemplate);
@@ -1110,18 +1071,9 @@ sub GenerateImplementation
 
     # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
     if ($parentImplClassName eq "Object") {
-        my @ivarsToRelease = ();
-        if (@ivars > 0) {
-            foreach $attribute (@ivars) {
-                my $name = "m_" . $attribute->signature->name;
-                push(@ivarsToRelease, "    [$name release];\n");
-            }
-        }
-
         push(@implContent, "- (void)dealloc\n");
         push(@implContent, "{\n");
         push(@implContent, "    $assertMainThread\n");
-        push(@implContent, @ivarsToRelease);
         if ($interfaceName eq "NodeIterator") {
             push(@implContent, "    if (_internal) {\n");
             push(@implContent, "        [self detach];\n");
@@ -1559,12 +1511,12 @@ sub GenerateImplementation
 
         push(@implContent, "}\n\n");
 
-        my ($typeMakerSig, $typeMakerSigAddition, $ivarsToInit) = GetInternalTypeMakerSignature($interfaceName, $podType);
+        my $typeMakerSig = GetInternalTypeMakerSignature($interfaceName, $podType);
 
         if ($podType) {
             # - (id)_initWithFooBar:(WebCore::FooBar)impl for implementation class FooBar
             my $initWithImplName = "_initWith" . $implClassName;
-            my $initWithSig = "- (id)$initWithImplName:($podTypeWithNamespace)impl" . $typeMakerSigAddition;
+            my $initWithSig = "- (id)$initWithImplName:($podTypeWithNamespace)impl";
 
             # FIXME: Implement Caching
             push(@implContent, "$initWithSig\n");
@@ -1585,7 +1537,7 @@ sub GenerateImplementation
         } elsif ($parentImplClassName eq "Object") {        
             # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             my $initWithImplName = "_initWith" . $implClassName;
-            my $initWithSig = "- (id)$initWithImplName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
+            my $initWithSig = "- (id)$initWithImplName:($implClassNameWithNamespace *)impl";
 
             push(@implContent, "$initWithSig\n");
             push(@implContent, "{\n");
@@ -1594,7 +1546,6 @@ sub GenerateImplementation
             push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(impl);\n");
             push(@implContent, "    impl->ref();\n");
             push(@implContent, "    WebCore::addDOMWrapper(self, impl);\n");
-            push(@implContent, @ivarsToRetain);
             push(@implContent, "    return self;\n");
             push(@implContent, "}\n\n");
 
@@ -1608,7 +1559,7 @@ sub GenerateImplementation
             push(@implContent, "    cachedInstance = WebCore::getDOMWrapper(impl);\n");
             push(@implContent, "    if (cachedInstance)\n");
             push(@implContent, "        return [[cachedInstance retain] autorelease];\n");
-            push(@implContent, "    return [[[self alloc] $initWithImplName:impl" . $ivarsToInit . "] autorelease];\n");
+            push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
             push(@implContent, "}\n\n");
         } else {
             my $internalBaseType = "DOM$baseClass";
