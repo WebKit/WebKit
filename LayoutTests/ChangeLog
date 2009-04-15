@@ -1,3 +1,17 @@
+2009-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 25202: Improve performance of repeated callbacks into the VM
+
+        Used Array.prototype.filter as the test function for the cached vm
+        reentry so extended the existing Array.prototype.filter tests to be
+        more thorough in order to test more edge cases.
+
+        * fast/js/array-filter-expected.txt:
+        * fast/js/array-filter.html:
+        * fast/js/resources/array-filter.js: Added.
+
 2009-04-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

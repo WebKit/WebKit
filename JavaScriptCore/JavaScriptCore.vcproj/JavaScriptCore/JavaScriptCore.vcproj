@@ -271,6 +271,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\interpreter\CachedCall.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\interpreter\CallFrame.cpp"
 				>
 			</File>

@@ -700,6 +700,76 @@ JSValuePtr Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* c
     return result;
 }
 
+Interpreter::CallFrameClosure Interpreter::prepareForRepeatCall(FunctionBodyNode* functionBodyNode, CallFrame* callFrame, JSFunction* function, int argCount, ScopeChainNode* scopeChain, JSValuePtr* exception)
+{
+    ASSERT(!scopeChain->globalData->exception);
+    
+    if (m_reentryDepth >= MaxReentryDepth) {
+        *exception = createStackOverflowError(callFrame);
+        return CallFrameClosure();
+    }
+    
+    Register* oldEnd = m_registerFile.end();
+    int argc = 1 + argCount; // implicit "this" parameter
+    
+    if (!m_registerFile.grow(oldEnd + argc)) {
+        *exception = createStackOverflowError(callFrame);
+        return CallFrameClosure();
+    }
+
+    CallFrame* newCallFrame = CallFrame::create(oldEnd);
+    size_t dst = 0;
+    for (int i = 0; i < argc; ++i)
+        newCallFrame[++dst] = jsUndefined();
+    
+    CodeBlock* codeBlock = &functionBodyNode->bytecode(scopeChain);
+    newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argc + RegisterFile::CallFrameHeaderSize, argc);
+    if (UNLIKELY(!newCallFrame)) {
+        *exception = createStackOverflowError(callFrame);
+        m_registerFile.shrink(oldEnd);
+        return CallFrameClosure();
+    }
+    // a 0 codeBlock indicates a built-in caller
+    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), 0, argc, function);
+#if ENABLE(JIT)
+    if (!codeBlock->jitCode())
+        JIT::compile(scopeChain->globalData, codeBlock);
+#endif
+
+    CallFrameClosure result = { callFrame, newCallFrame, function, codeBlock, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
+    return result;
+}
+
+JSValuePtr Interpreter::execute(CallFrameClosure& closure, JSValuePtr* exception) 
+{
+    closure.resetCallFrame();
+    Profiler** profiler = Profiler::enabledProfilerReference();
+    if (*profiler)
+        (*profiler)->willExecute(closure.oldCallFrame, closure.function);
+    
+    JSValuePtr result;
+    {
+        SamplingTool::CallRecord callRecord(m_sampler);
+        
+        m_reentryDepth++;
+#if ENABLE(JIT)
+        result = closure.codeBlock->jitCode().execute(&m_registerFile, closure.newCallFrame, closure.globalData, exception);
+#else
+        result = privateExecute(Normal, &m_registerFile, closure.newCallFrame, exception);
+#endif
+        m_reentryDepth--;
+    }
+    
+    if (*profiler)
+        (*profiler)->didExecute(closure.oldCallFrame, closure.function);
+    return result;
+}
+
+void Interpreter::endRepeatCall(CallFrameClosure& closure)
+{
+    m_registerFile.shrink(closure.oldEnd);
+}
+
 JSValuePtr Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject* thisObj, ScopeChainNode* scopeChain, JSValuePtr* exception)
 {
     return execute(evalNode, callFrame, thisObj, m_registerFile.size() + evalNode->bytecode(scopeChain).m_numParameters + RegisterFile::CallFrameHeaderSize, scopeChain, exception);

@@ -1,31 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script type="text/javascript">
-
-function print(str) {
-    document.writeln(str+"<br/>");
-}
-
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
 <body>
-1.0 Behavior with Holes in Array<br/>
-The following tests ensure that filter skips holes in the array it constructs. You should see true printed twice:<br/><br/>
-<script>
-function passUndefined(element, index, array) {
-    return typeof element === "undefined";
-}
-
-var arr = [undefined];
-var res = arr.filter(passUndefined);
-print(res.length == 1 && 0 in res && res[0] === undefined);
-
-arr = new Array(20);
-res = arr.filter(passUndefined);
-print(res.length == 0);
-
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/array-filter.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

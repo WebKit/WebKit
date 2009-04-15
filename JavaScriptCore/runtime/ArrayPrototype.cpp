@@ -25,6 +25,7 @@
 #include "ArrayPrototype.h"
 
 #include "CodeBlock.h"
+#include "CachedCall.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "ObjectPrototype.h"
@@ -585,24 +586,41 @@ JSValuePtr arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValuePtr thisValue
 
     unsigned filterIndex = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
-        PropertySlot slot(thisObj);
+    if (callType == CallTypeHost || !isJSArray(&exec->globalData(), thisObj) || !asArray(thisObj)->canGetIndex(length - 1)) {
+        for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+            PropertySlot slot(thisObj);
+            
+            if (!thisObj->getPropertySlot(exec, k, slot))
+                continue;
 
-        if (!thisObj->getPropertySlot(exec, k, slot))
-            continue;
+            JSValuePtr v = slot.getValue(exec, k);
 
-        JSValuePtr v = slot.getValue(exec, k);
+            ArgList eachArguments;
 
-        ArgList eachArguments;
+            eachArguments.append(v);
+            eachArguments.append(jsNumber(exec, k));
+            eachArguments.append(thisObj);
 
-        eachArguments.append(v);
-        eachArguments.append(jsNumber(exec, k));
-        eachArguments.append(thisObj);
+            JSValuePtr result = call(exec, function, callType, callData, applyThis, eachArguments);
 
-        JSValuePtr result = call(exec, function, callType, callData, applyThis, eachArguments);
+            if (result.toBoolean(exec))
+                resultArray->put(exec, filterIndex++, v);
+        }
+    } else {
+        JSFunction* f = asFunction(function);
+        JSArray* array = asArray(thisObj);
+        CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
+        for (unsigned k = 0; k < length && !exec->hadException(); ++k) {            
+            JSValuePtr v = array->getIndex(k);
+            cachedCall.setThis(applyThis);
+            cachedCall.setArgument(0, v);
+            cachedCall.setArgument(1, jsNumber(exec, k));
+            cachedCall.setArgument(2, thisObj);
 
-        if (result.toBoolean(exec))
-            resultArray->put(exec, filterIndex++, v);
+            JSValuePtr result = cachedCall.call();
+            if (result.toBoolean(exec))
+                resultArray->put(exec, filterIndex++, v);
+        }
     }
     return resultArray;
 }

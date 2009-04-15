@@ -98,6 +98,7 @@ namespace JSC  {
         friend class JSGlobalObject;
         friend class Interpreter;
         friend class JITStubs;
+        friend struct CallFrameClosure;
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }

@@ -1,3 +1,44 @@
+2009-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 25202: Improve performance of repeated callbacks into the VM
+
+        Add the concept of a CachedCall to native code for use in Array
+        prototype and similar functions where a single callback function
+        is called repeatedly with the same number of arguments.
+
+        Used Array.prototype.filter as the test function and got a 50% win
+        over a naive non-caching specialised version.  This makes the native
+        implementation of Array.prototype.filter faster than the JS one once
+        more.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CachedCall.h: Added.
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::call):
+        (JSC::CachedCall::setThis):
+        (JSC::CachedCall::setArgument):
+        (JSC::CachedCall::~CachedCall):
+           CachedCall is a wrapper that automates the calling and teardown
+           for a CallFrameClosure
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall):
+           Create the basic entry closure for a function
+        (JSC::Interpreter::execute):
+           A new ::execute method to enter the interpreter from a closure
+        (JSC::Interpreter::endRepeatCall):
+           Clear the entry closure
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::CallFrameClosure::setArgument):
+        (JSC::Interpreter::CallFrameClosure::resetCallFrame):
+           Helper functions to simplify setting up the closure's callframe
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+
 2009-04-14  Xan Lopez  <xlopez@igalia.com>
 
         Fix the build.

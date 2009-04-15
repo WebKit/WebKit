@@ -67,7 +67,7 @@ namespace JSC {
     class Interpreter {
         friend class JIT;
         friend class JITStubs;
-
+        friend class CachedCall;
     public:
         Interpreter();
 
@@ -109,6 +109,36 @@ namespace JSC {
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
+        
+        struct CallFrameClosure {
+            CallFrame* oldCallFrame;
+            CallFrame* newCallFrame;
+            JSFunction* function;
+            CodeBlock* codeBlock;
+            JSGlobalData* globalData;
+            Register* oldEnd;
+            ScopeChainNode* scopeChain;
+            int expectedParams;
+            int providedParams;
+
+            void setArgument(int arg, JSValuePtr value)
+            {
+                if (arg < expectedParams)
+                    newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
+                else
+                    newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
+            }
+            void resetCallFrame()
+            {
+                newCallFrame->setScopeChain(scopeChain);
+                newCallFrame->setCalleeArguments(0);
+                for (int i = providedParams; i < expectedParams; ++i)
+                    newCallFrame[i - RegisterFile::CallFrameHeaderSize - expectedParams] = jsUndefined();
+            }
+        };
+        CallFrameClosure prepareForRepeatCall(FunctionBodyNode*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*, JSValuePtr* exception);
+        void endRepeatCall(CallFrameClosure&);
+        JSValuePtr execute(CallFrameClosure&, JSValuePtr* exception);
 
         NEVER_INLINE JSValuePtr callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset, JSValuePtr& exceptionValue);
         JSValuePtr execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValuePtr* exception);
@@ -153,7 +183,7 @@ namespace JSC {
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
     };
-
+    
 } // namespace JSC
 
 #endif // Interpreter_h
