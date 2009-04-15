@@ -17,6 +17,7 @@
         * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
         * platform/mac/editing/pasteboard/paste-text-019-expected.txt:
         * platform/mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/win/editing/selection/text-drag-delay.html
 
         Removed redundant styles that were generated during nesting prevention that is no longer needed:
         * platform/mac/editing/pasteboard/4076267-2-expected.txt:
