@@ -1,3 +1,14 @@
+2009-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add tests for Array.prototype.reduce
+
+        * fast/js/array-reduce-expected.txt: Added.
+        * fast/js/array-reduce.html: Added.
+        * fast/js/resources/array-reduce.js: Added.
+        (toObject):
+
 2009-04-15  Eric Carlson  <eric.carlson@apple.com>
 
         Fix incorrect expected result.

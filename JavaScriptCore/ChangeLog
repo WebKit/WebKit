@@ -1,3 +1,15 @@
+2009-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 25159: Support Array.prototype.reduce
+        <https://bugs.webkit.org/show_bug.cgi?id=25159>
+
+        Implement Array.prototype.reduce
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncReduce):
+
 2009-04-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
