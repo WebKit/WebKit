@@ -1,3 +1,18 @@
+2009-04-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Fix <rdar://problem/6755724> <audio> and <video> elements can reference local 
+        file:/// URLs from remote in Safari
+
+        Tests: http/tests/security/local-video-poster-from-remote.html
+               http/tests/security/local-video-source-from-remote.html
+               http/tests/security/local-video-src-from-remote.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Don't pass url to media engine unless loader->canLoad()
+        says it is OK.
+
 2009-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

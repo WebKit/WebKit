@@ -32,6 +32,7 @@
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "DocLoader.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -468,8 +469,24 @@ void HTMLMediaElement::loadNextSourceChild()
 
 void HTMLMediaElement::loadResource(String url, ContentType& contentType)
 {
-    // The resource fetch algorithm 
+    Frame* frame = document()->frame();
+    FrameLoader* loader = frame ? frame->loader() : 0;
 
+    // don't allow remote to local urls
+    if (!loader || !loader->canLoad(KURL(KURL(), url), String(), document())) {
+        FrameLoader::reportLocalLoadFailed(frame, url);
+
+        // If we rejected the url from a <source> element and there are more <source> children, schedule
+        // the next one without reporting an error
+        if (m_loadState == LoadingFromSourceElement && havePotentialSourceChild())
+            scheduleLoad();
+        else
+            noneSupported();
+
+        return;
+    }
+
+    // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
 
     m_currentSrc = url;

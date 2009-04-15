@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 0: Not allowed to load local resource: scaled-matrix.mov
+Test that a remote video element will not use a local <source>, and will use another remote <source>
+
+This test only works in DRT
+
+EVENT(loadedmetadata)
+url http://localhost:8000/security/resources/load-media.cgi?url=/../../media/content/test.mp4 loaded.
+
+SUCCESS: remote movie loaded, local movie failed to load
+
+END OF TEST
+

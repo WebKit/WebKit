@@ -1,3 +1,21 @@
+2009-04-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix <rdar://problem/6755724> <audio> and <video> elements can reference local 
+        file:/// URLs from remote in Safari
+
+        Test cases to ensure that local 'src', 'poster', and <source> are not loaded.
+
+        * http/tests/security/local-video-poster-from-remote-expected.txt: Added.
+        * http/tests/security/local-video-poster-from-remote.html: Added.
+        * http/tests/security/local-video-source-from-remote-expected.txt: Added.
+        * http/tests/security/local-video-source-from-remote.html: Added.
+        * http/tests/security/local-video-src-from-remote-expected.txt: Added.
+        * http/tests/security/local-video-src-from-remote.html: Added.
+        * http/tests/security/resources/load-media.cgi: Added.
+        * http/tests/security/resources/silence.mpg: Added.
+
 2009-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
