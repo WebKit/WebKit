@@ -1,3 +1,16 @@
+2009-04-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use a media file inside of LayoutTests/http/ so a cgi isn't necessary to load 
+        it. Fixes a test failure introduced in r42533.
+
+        * http/tests/resources/silence.mpg: Added.
+        * http/tests/security/local-video-source-from-remote-expected.txt:
+        * http/tests/security/local-video-source-from-remote.html: change the
+        remote url, update a comment.
+        * http/tests/security/resources/load-media.cgi: Removed.
+
 2009-04-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

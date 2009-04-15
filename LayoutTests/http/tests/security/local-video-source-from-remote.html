@@ -61,7 +61,8 @@
             }
 
             var localMovie = "file:///tmp/LayoutTests/media/content/scaled-matrix.mov";
-            var remoteUrl = "http://localhost:8000/security/resources/load-media.cgi?url=/../../media/content/test.mp4";
+            var remoteUrl = "http://localhost:8000/resources/silence.mpg";
+
             function loadedmetadata(evt) 
             { 
                 var src = video.currentSrc;
@@ -114,7 +115,7 @@
         <p>Test that a remote video element will not use a local &lt;source&gt;, and will
         use another remote &lt;source&gt;</p>
 
-        <p>This test only works in DRT</p>
+        <p>This test only behaves correctly in DRT</p>
 
     </body>
 </html>

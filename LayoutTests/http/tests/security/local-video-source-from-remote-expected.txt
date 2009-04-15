@@ -4,7 +4,7 @@ Test that a remote video element will not use a local <source>, and will use ano
 This test only works in DRT
 
 EVENT(loadedmetadata)
-url http://localhost:8000/security/resources/load-media.cgi?url=/../../media/content/test.mp4 loaded.
+url http://localhost:8000/resources/silence.mpg loaded.
 
 SUCCESS: remote movie loaded, local movie failed to load
 
