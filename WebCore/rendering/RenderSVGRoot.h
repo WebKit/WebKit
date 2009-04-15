@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2009 Google, Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -51,11 +50,6 @@ public:
     
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
-    
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual TransformationMatrix absoluteTransform() const;
 

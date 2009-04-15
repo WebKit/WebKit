@@ -219,40 +219,6 @@ void RenderSVGRoot::calcViewport()
                                  svg->relativeHeightValue() : height.value(svg));
 }
 
-IntRect RenderSVGRoot::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
-{
-    IntRect repaintRect;
-
-    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
-        repaintRect.unite(current->clippedOverflowRectForRepaint(repaintContainer));
-
-#if ENABLE(SVG_FILTERS)
-    // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
-    if (filter)
-        repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
-#endif
-
-    return repaintRect;
-}
-
-void RenderSVGRoot::addFocusRingRects(GraphicsContext* graphicsContext, int, int)
-{
-    graphicsContext->addFocusRingRect(m_absoluteBounds);
-}
-
-void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, int, int)
-{
-    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
-        current->absoluteRects(rects, 0, 0);
-}
-
-void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool)
-{
-    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
-        current->absoluteQuads(quads);
-}
-
 TransformationMatrix RenderSVGRoot::absoluteTransform() const
 {
     TransformationMatrix ctm = RenderBox::absoluteTransform();

@@ -1,5 +1,37 @@
 2009-04-15  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        Remove unneeded (broken) code from SVG renderers
+        https://bugs.webkit.org/show_bug.cgi?id=25214
+
+        Mostly due to my historical confusions about the render tree
+        and some methods not being removed after classes were split.
+
+        RenderSVGRoot is an RenderBox and should just use all the
+        standard RenderBox methods for inspector and repaint rects.
+
+        RenderSVGContainer is *not* a RenderBox (any more) and thus
+        doesn't need lineHeight or width/height or calcBounds.
+
+        RenderSVGViewportContainer had some broken code which tried
+        to see if the click was inside the container at all, but it
+        was using width/height metrics based off of the containing
+        block (from calcWidth) which is wrong (since its real
+        width/height are from its containing viewport not containing block).
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGRoot.cpp:
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+        (WebCore::RenderSVGViewportContainer::nodeAtPoint):
+
+2009-04-15  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser and Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=25217

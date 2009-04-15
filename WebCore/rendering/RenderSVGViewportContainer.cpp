@@ -55,7 +55,7 @@ void RenderSVGViewportContainer::layout()
     // FIXME: using m_absoluteBounds breaks if containerForRepaint() is not the root
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout(), &m_absoluteBounds);
     
-    calcBounds();    
+    m_absoluteBounds = absoluteClippedOverflowRect();
     
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (selfNeedsLayout())
@@ -153,8 +153,9 @@ bool RenderSVGViewportContainer::nodeAtPoint(const HitTestRequest& request, HitT
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
-        // Check if we need to do anything at all.
-        IntRect overflowBox = IntRect(0, 0, width(), height());
+        // Check to see if the region is outside of our viewport (and thus can't hit our kids)
+        // FIXME: This code seems needlessly complicated (and thus likely wrong)
+        IntRect overflowBox = IntRect(0, 0, viewport().width(), viewport().height());
         overflowBox.move(_tx, _ty);
         TransformationMatrix ctm = RenderObject::absoluteTransform();
         ctm.translate(viewport().x(), viewport().y());

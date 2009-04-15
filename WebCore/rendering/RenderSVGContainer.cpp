@@ -2,8 +2,7 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2009 Google, Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -39,8 +38,6 @@ namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
     : RenderObject(node)
-    , m_width(0)
-    , m_height(0)
     , m_drawsContents(true)
 {
 }
@@ -62,16 +59,6 @@ void RenderSVGContainer::setDrawsContents(bool drawsContents)
 TransformationMatrix RenderSVGContainer::localTransform() const
 {
     return m_localTransform;
-}
-
-int RenderSVGContainer::lineHeight(bool, bool) const
-{
-    return height();
-}
-
-int RenderSVGContainer::baselinePosition(bool, bool) const
-{
-    return height();
 }
 
 bool RenderSVGContainer::calculateLocalTransform()
@@ -104,42 +91,12 @@ void RenderSVGContainer::layout()
         ASSERT(!child->needsLayout());
     }
 
-    calcBounds();
+    m_absoluteBounds = absoluteClippedOverflowRect();
 
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
     setNeedsLayout(false);
-}
-
-int RenderSVGContainer::calcReplacedWidth() const
-{
-    switch (style()->width().type()) {
-    case Fixed:
-        return max(0, style()->width().value());
-    case Percent:
-    {
-        const int cw = containingBlock()->availableWidth();
-        return cw > 0 ? max(0, style()->width().calcMinValue(cw)) : 0;
-    }
-    default:
-        return 0;
-    }
-}
-
-int RenderSVGContainer::calcReplacedHeight() const
-{
-    switch (style()->height().type()) {
-    case Fixed:
-        return max(0, style()->height().value());
-    case Percent:
-    {
-        RenderBlock* cb = containingBlock();
-        return style()->height().calcValue(cb->availableHeight());
-    }
-    default:
-        return 0;
-    }
 }
 
 void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
@@ -151,13 +108,6 @@ void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
 void RenderSVGContainer::applyAdditionalTransforms(PaintInfo&)
 {
     // no-op
-}
-
-void RenderSVGContainer::calcBounds()
-{
-    m_width = calcReplacedWidth();
-    m_height = calcReplacedHeight();
-    m_absoluteBounds = absoluteClippedOverflowRect();
 }
 
 bool RenderSVGContainer::selfWillPaint() const

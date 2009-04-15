@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2009 Google, Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -42,9 +41,6 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    int width() const { return m_width; }
-    int height() const { return m_height; }
-
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG
@@ -55,8 +51,6 @@ public:
     virtual const char* renderName() const { return "RenderSVGContainer"; }
 
     virtual bool requiresLayer() const { return false; }
-    virtual int lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
@@ -78,18 +72,10 @@ protected:
     virtual void applyContentTransforms(PaintInfo&);
     virtual void applyAdditionalTransforms(PaintInfo&);
 
-    void calcBounds();
-
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const;
 
 private:
-    int calcReplacedWidth() const;
-    int calcReplacedHeight() const;
-
     RenderObjectChildList m_children;
-
-    int m_width;
-    int m_height;
     
     bool selfWillPaint() const;
 
