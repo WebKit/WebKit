@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2009 Google, Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -40,69 +39,52 @@ SVGLocatable::~SVGLocatable()
 {
 }
 
-SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* e)
+static bool isViewportElement(Node* node)
 {
-    Node* n = e->parentNode();
-    while (n && !n->isDocumentNode()) {
-        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag))
-            return static_cast<SVGElement*>(n);
+    return (node->hasTagName(SVGNames::svgTag)
+        || node->hasTagName(SVGNames::symbolTag)
 #if ENABLE(SVG_FOREIGN_OBJECT)
-        if (n->hasTagName(SVGNames::foreignObjectTag))
-            return static_cast<SVGElement*>(n);
+        || node->hasTagName(SVGNames::foreignObjectTag)
 #endif
+        || node->hasTagName(SVGNames::imageTag));
+}
 
-        n = n->parentNode();
+SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
+{
+    ASSERT(element);
+    for (Node* n = element->parentNode(); n && !n->isDocumentNode(); n = n->parentNode()) {
+        if (isViewportElement(n))
+            return static_cast<SVGElement*>(n);
     }
 
     return 0;
 }
 
-SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* e)
+SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
 {
-    // FIXME : likely this will be always the <svg> farthest away.
-    // If we have a different implementation of documentElement(), one
-    // that give the documentElement() of the svg fragment, it could be
-    // used instead. This depends on cdf demands though(Rob.)
+    ASSERT(element);
     SVGElement* farthest = 0;
-    Node* n = e->parentNode();
-    while (n && !n->isDocumentNode()) {
-        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag))
+    for (Node* n = element->parentNode(); n && !n->isDocumentNode(); n = n->parentNode()) {
+        if (isViewportElement(n))
             farthest = static_cast<SVGElement*>(n);
-#if ENABLE(SVG_FOREIGN_OBJECT)
-        if (n->hasTagName(SVGNames::foreignObjectTag))
-            farthest = static_cast<SVGElement*>(n);
-#endif
-
-        n = n->parentNode();
     }
-
     return farthest;
 }
 
-// Spec:
-// http://www.w3.org/TR/2005/WD-SVGMobile12-20050413/svgudom.html#svg::SVGLocatable
-FloatRect SVGLocatable::getBBox(const SVGElement* e)
+FloatRect SVGLocatable::getBBox(const SVGElement* element)
 {
-    FloatRect bboxRect;
+    element->document()->updateLayoutIgnorePendingStylesheets();
 
-    e->document()->updateLayoutIgnorePendingStylesheets();
+    // FIXME: Eventually we should support getBBox for detached elements.
+    if (!element->renderer())
+        return FloatRect();
 
-    if (e && e->renderer()) {
-        // Need this to make sure we have render object dimensions.
-        // See bug 11686.
-        bboxRect = e->renderer()->relativeBBox(false);
-    }
-
-    return bboxRect;
+    return element->renderer()->relativeBBox(false);
 }
 
 TransformationMatrix SVGLocatable::getCTM(const SVGElement* element)
 {
-    if (!element)
-        return TransformationMatrix();
-
+    ASSERT(element);
     TransformationMatrix ctm;
 
     Node* parent = element->parentNode();
@@ -119,9 +101,7 @@ TransformationMatrix SVGLocatable::getCTM(const SVGElement* element)
 
 TransformationMatrix SVGLocatable::getScreenCTM(const SVGElement* element)
 {
-    if (!element)
-        return TransformationMatrix();
-
+    ASSERT(element);
     TransformationMatrix ctm;
 
     Node* parent = element->parentNode();

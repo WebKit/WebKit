@@ -1,3 +1,19 @@
+2009-04-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser and Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25217
+        Simplify nearestViewportElement and farthestViewportElement using isViewportElement and a for loop
+        Add ASSERT(element) to all these functions since they should never be passed a null element.
+
+        * svg/SVGLocatable.cpp:
+        (WebCore::isViewportElement):
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        (WebCore::SVGLocatable::getBBox):
+        (WebCore::SVGLocatable::getCTM):
+        (WebCore::SVGLocatable::getScreenCTM):
+
 2009-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
