@@ -1,3 +1,15 @@
+2009-04-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add special casing to bindings generator so that custom functions
+        starting with xml or xslt conform to WebKit style guidelines.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::xmlHttpRequest):
+        (WebCore::JSDOMWindow::xsltProcessor):
+        * bindings/scripts/CodeGenerator.pm:
+
 2009-04-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

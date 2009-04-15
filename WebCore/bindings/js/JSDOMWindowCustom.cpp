@@ -246,13 +246,13 @@ JSValuePtr JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
     return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec);
 }
  
-JSValuePtr JSDOMWindow::xMLHttpRequest(ExecState* exec) const
+JSValuePtr JSDOMWindow::xmlHttpRequest(ExecState* exec) const
 {
     return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
 }
 
 #if ENABLE(XSLT)
-JSValuePtr JSDOMWindow::xSLTProcessor(ExecState* exec) const
+JSValuePtr JSDOMWindow::xsltProcessor(ExecState* exec) const
 {
     return getDOMConstructor<JSXSLTProcessorConstructor>(exec);
 }
