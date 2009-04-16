@@ -1,3 +1,37 @@
+2009-04-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20765 Website 
+        crashes on load due to messy HTML in search form
+        -and corresponding-
+        <rdar://problem/6210633>
+
+        Before this patch, <form>s were allowed to sit inside tables 
+        without being wrapped by anonymous table parts. There was also a 
+        concept that such a from could be "demoted" and would not be 
+        allowed to have any children. This patch has the HTML parser mark 
+        form elements that have been demoted as such, and then the demoted 
+        forms are not given renderers. I also removed the code that allowed 
+        forms to sit in tables without anonymous table sections. So now any 
+        forms that do manage to get a renderer inside a table will also be 
+        wrapped with appropriate table parts.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::rendererIsNeeded):
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::setDemoted):
+        (WebCore::HTMLFormElement::isDemoted):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::insertNode):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+
 2009-04-16  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -18,5 +18,4 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,86) size 100x100 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 94x94
           RenderTableRow {TR} at (0,2) size 94x90
-            RenderBlock {FORM} at (0,0) size 0x0
             RenderTableCell {TD} at (2,46) size 90x2 [r=0 c=0 rs=1 cs=1]

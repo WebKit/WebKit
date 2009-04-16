@@ -81,6 +81,7 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
     , m_doingsubmit(false)
     , m_inreset(false)
     , m_malformed(false)
+    , m_demoted(false)
 {
     ASSERT(hasTagName(formTag));
 }
@@ -107,6 +108,31 @@ bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
 void HTMLFormElement::attach()
 {
     HTMLElement::attach();
+}
+
+bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
+{
+    if (!isDemoted())
+        return HTMLElement::rendererIsNeeded(style);
+    
+    Node* node = parentNode();
+    RenderObject* parentRenderer = node->renderer();
+    bool parentIsTableElementPart = (parentRenderer->isTable() && node->hasTagName(tableTag))
+        || (parentRenderer->isTableRow() && node->hasTagName(trTag))
+        || (parentRenderer->isTableSection() && node->hasTagName(tbodyTag))
+        || (parentRenderer->isTableCol() && node->hasTagName(colTag)) 
+        || (parentRenderer->isTableCell() && node->hasTagName(trTag));
+
+    if (!parentIsTableElementPart)
+        return true;
+
+    EDisplay display = style->display();
+    bool formIsTablePart = display == TABLE || display == INLINE_TABLE || display == TABLE_ROW_GROUP
+        || display == TABLE_HEADER_GROUP || display == TABLE_FOOTER_GROUP || display == TABLE_ROW
+        || display == TABLE_COLUMN_GROUP || display == TABLE_COLUMN || display == TABLE_CELL
+        || display == TABLE_CAPTION;
+
+    return formIsTablePart;
 }
 
 void HTMLFormElement::insertedIntoDocument()

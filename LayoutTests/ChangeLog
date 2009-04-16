@@ -1,3 +1,41 @@
+2009-04-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=20765 Website 
+        crashes on load due to messy HTML in search form
+        -and corresponding-
+        <rdar://problem/6210633>
+
+        New tests:
+        * fast/forms/form-added-to-table.html: Added.
+        * fast/forms/form-in-malformed-markup.html: Added.
+        * platform/mac/fast/forms/form-added-to-table-expected.checksum: Added.
+        * platform/mac/fast/forms/form-added-to-table-expected.png: Added.
+        * platform/mac/fast/forms/form-added-to-table-expected.txt: Added.
+        * platform/mac/fast/forms/form-in-malformed-markup-expected.checksum: Added.
+        * platform/mac/fast/forms/form-in-malformed-markup-expected.png: Added.
+        * platform/mac/fast/forms/form-in-malformed-markup-expected.txt: Added.
+
+        Tests with new results:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/mac/fast/table/fixed-table-non-cell-in-row-expected.txt:
+        * platform/mac/fast/table/inline-form-assert-expected.txt:
+        * platform/mac/fast/table/insert-cell-before-form-expected.txt:
+        * platform/mac/fast/table/insert-row-before-form-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2516-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96343-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+
 2009-04-16  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Simon Fraser.

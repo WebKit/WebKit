@@ -345,6 +345,8 @@ bool HTMLParser::insertNode(Node* n, bool flat)
             // This case should only be hit when a demoted <form> is placed inside a table.
             ASSERT(localName == formTag);
             reportError(FormInsideTablePartError, &m_current->localName());
+            HTMLFormElement* form = static_cast<HTMLFormElement*>(n);
+            form->setDemoted(true);
         } else {
             // The pushBlock function transfers ownership of current to the block stack
             // so we're guaranteed that m_didRefCurrent is false. The code below is an

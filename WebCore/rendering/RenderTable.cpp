@@ -109,7 +109,6 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         beforeChild = lastChild();
 
     bool wrapInAnonymousSection = !child->isPositioned();
-    bool isTableElement = node() && node()->hasTagName(tableTag);
 
     if (child->isRenderBlock() && child->style()->display() == TABLE_CAPTION) {
         // First caption wins.
@@ -162,11 +161,10 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             default:
                 ASSERT_NOT_REACHED();
         }
-    } else if (child->isTableCell() || child->isTableRow()) {
+    } else if (child->isTableCell() || child->isTableRow())
         wrapInAnonymousSection = true;
-    } else
-        // Allow a form to just sit at the top level.
-        wrapInAnonymousSection = !isTableElement || !child->node() || !(child->node()->hasTagName(formTag) && document()->isHTMLDocument());
+    else
+        wrapInAnonymousSection = true;
 
     if (!wrapInAnonymousSection) {
         // If the next renderer is actually wrapped in an anonymous table section, we need to go up and find that.

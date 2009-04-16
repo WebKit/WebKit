@@ -17,7 +17,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,36) size 155x18 [bgcolor=#00FFFF] [r=2 c=0 rs=40 cs=1]
               RenderText {#text} at (0,0) size 8x18
                 text run at (0,0) width 8: "3"
-          RenderBlock {FORM} at (0,0) size 0x0
           RenderTableRow {TR} at (0,36) size 600x28
             RenderTableCell {TD} at (155,36) size 445x28 [bgcolor=#FFA500] [r=3 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 440x28
