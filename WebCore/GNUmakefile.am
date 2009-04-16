@@ -1629,6 +1629,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderSlider.h \
+	WebCore/rendering/RenderSVGModelObject.cpp \
+	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderTable.cpp \
 	WebCore/rendering/RenderTable.h \
 	WebCore/rendering/RenderTableCell.cpp \

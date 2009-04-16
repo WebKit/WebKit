@@ -1,3 +1,9 @@
+2009-04-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix. Add RenderSVGModelObject.* to GTK+'s build.
+
+        * GNUmakefile.am:
+
 2009-04-15  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6785760> WebCore should use a maximum of 6 connections per host, not 4
