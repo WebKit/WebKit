@@ -1,3 +1,15 @@
+2009-04-16  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24527
+        caret does not paint the first time you focus on a 0px right padding RTL div
+
+        * fast/forms/caret-rtl.html: Added.
+        * platform/mac/fast/forms/caret-rtl-expected.checksum: Added.
+        * platform/mac/fast/forms/caret-rtl-expected.png: Added.
+        * platform/mac/fast/forms/caret-rtl-expected.txt: Added.
+
 2009-04-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Simon Fraser.

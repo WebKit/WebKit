@@ -4953,7 +4953,7 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
             x = (x + w - (borderRight() + paddingRight())) / 2;
             break;
         case alignRight:
-            x = w - (borderRight() + paddingRight());
+            x = w - (borderRight() + paddingRight()) - caretWidth;
             break;
     }
 

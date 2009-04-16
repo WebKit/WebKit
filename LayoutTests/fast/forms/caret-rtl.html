@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+
+function runTest()
+{
+    var e = document.getElementById("test");
+    e.focus();
+}
+
+</script>
+</head>
+<body>
+This tests that clicking in a contenteditable div will set the caret in the right edge of the div
+<br>
+<p>
+    Click in the div, the caret should be on the right edge of the div.
+</p>
+<div CONTENTEDITABLE id="test" style="direction: rtl; width:200px; font-size:2000%"; outline: solid thin; overflow: hidden></div> 
+</body>
+<script> runTest(); </script>
+</html>
+
