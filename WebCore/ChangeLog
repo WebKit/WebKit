@@ -1,3 +1,21 @@
+2009-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6032139> Table cell widths calculated
+          incorrectly on table that uses table-layout:fixed, colspans, and a mix
+          of percentage and pixel widths
+
+        Test: fast/table/fixed-granular-cols.html
+
+        The incorrect widths resulted from incorrect handling of the case where
+        the <col> elements are more granular than the table cells.
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray): When processing <col>
+        elements, append effective columns or split existing effective columns
+        as needed.
+
 2009-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
         <rdar://problem/6795285> Infinite recursion in ResourceHandle::receivedRequestToContinueWithoutCredential

@@ -1,3 +1,16 @@
+2009-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6032139> Table cell widths calculated
+          incorrectly on table that uses table-layout:fixed, colspans, and a mix
+          of percentage and pixel widths
+
+        * fast/table/fixed-granular-cols.html: Added.
+        * platform/mac/fast/table/fixed-granular-cols-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-granular-cols-expected.png: Added.
+        * platform/mac/fast/table/fixed-granular-cols-expected.txt: Added.
+
 2009-04-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
