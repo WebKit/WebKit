@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        Bug 25229: Need support for Array.prototype.reduceRight
+        <https://bugs.webkit.org/show_bug.cgi?id=25229>
+
+        Implement Array.reduceRight
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncReduceRight):
+
+2009-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Bug 25227: Array.filter triggers an assertion when the target array shrinks while being filtered
         <https://bugs.webkit.org/show_bug.cgi?id=25227>
 
