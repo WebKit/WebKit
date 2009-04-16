@@ -1,3 +1,15 @@
+2009-04-16  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix <rdar://problem/6766969>
+        
+        When deferred repaints are enabled and being reset and there is a active
+        timer, stop the timer and do the deferred repaints immediately.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetDeferredRepaintDelay):
+
 2009-04-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Sam Weinig.

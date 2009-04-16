@@ -840,8 +840,11 @@ void FrameView::updateDeferredRepaintDelay()
 void FrameView::resetDeferredRepaintDelay()
 {
     m_deferredRepaintDelay = 0;
-    if (m_deferredRepaintTimer.isActive())
-        m_deferredRepaintTimer.startOneShot(0);
+    if (m_deferredRepaintTimer.isActive()) {
+        m_deferredRepaintTimer.stop();
+        if (!m_deferringRepaints)
+            doDeferredRepaints();
+    }
 }
 
 double FrameView::adjustedDeferredRepaintDelay() const
