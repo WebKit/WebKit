@@ -1,3 +1,18 @@
+2009-04-16  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25187
+        Bug 25187: <video> may not be rendered upon certain racy conditions
+
+        Always create the video renderer when the load state reaches QTMovieLoadStateLoaded and
+        the element is visible, not just when the movie has just been opened.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates): Make sure we do not make false
+        assumption on the state changes order. Create the renderer if none is present,
+        when movie is loaded instead.
+
 2009-04-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoffrey Garen.

@@ -713,7 +713,7 @@ void MediaPlayerPrivate::updateStates()
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
 
-    if (loadState >= QTMovieLoadStateLoaded && oldReadyState < MediaPlayer::HaveMetadata && m_player->visible())
+    if (loadState >= QTMovieLoadStateLoaded && (!m_qtMovieView && !m_qtVideoRenderer) && m_player->visible())
         setUpVideoRendering();
 
     if (loadState >= QTMovieLoadStateLoaded) {
