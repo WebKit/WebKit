@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,35 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+#include "config.h"
+#include "ScriptState.h"
 
-#include <v8.h>
+#include "Frame.h"
+#include "Page.h"
+#include "ScriptController.h"
 
 namespace WebCore {
-    class Page;
-    class Frame;
 
-    class ScriptState {
-    public:
-        ScriptState() { }
-        ScriptState(Frame* frame);
-
-        bool hadException() { return !m_exception.IsEmpty(); }
-        void setException(v8::Local<v8::Value> exception)
-        {
-            m_exception = exception;
-        }
-        v8::Local<v8::Value> exception() { return m_exception; }
-
-        Frame* frame() const { return m_frame; }
-
-    private:
-        v8::Local<v8::Value> m_exception;
-        Frame* m_frame;
-    };
-
-    ScriptState* scriptStateFromPage(Page* page);
+ScriptState::ScriptState(Frame* frame)
+    : m_frame(frame)
+{
 }
 
-#endif // ScriptState_h
+ScriptState* scriptStateFromPage(Page* page)
+{
+    return page->mainFrame()->script()->state();
+}
+
+}

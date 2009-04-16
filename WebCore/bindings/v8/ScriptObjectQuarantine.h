@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,35 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+// ScriptObjectQuarantine is used in JSC for wrapping DOM objects of the page
+// before they are passed to Inspector's front-end. The wrapping prevents
+// malicious scripts from gaining privileges. For V8, we are currently just
+// passing the object itself, without any wrapping.
 
-#include <v8.h>
+#ifndef ScriptObjectQuarantine_h
+#define ScriptObjectQuarantine_h
+
+#include "ScriptState.h"
 
 namespace WebCore {
-    class Page;
+
+    class Database;
+    class DOMWindow;
     class Frame;
+    class Node;
+    class ScriptObject;
+    class ScriptValue;
+    class Storage;
 
-    class ScriptState {
-    public:
-        ScriptState() { }
-        ScriptState(Frame* frame);
+    ScriptValue quarantineValue(ScriptState*, const ScriptValue&);
 
-        bool hadException() { return !m_exception.IsEmpty(); }
-        void setException(v8::Local<v8::Value> exception)
-        {
-            m_exception = exception;
-        }
-        v8::Local<v8::Value> exception() { return m_exception; }
+    bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObject);
+    bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& quarantinedObject);
+    bool getQuarantinedScriptObject(Node* node, ScriptObject& quarantinedObject);
+    bool getQuarantinedScriptObject(DOMWindow* domWindow, ScriptObject& quarantinedObject);
 
-        Frame* frame() const { return m_frame; }
-
-    private:
-        v8::Local<v8::Value> m_exception;
-        Frame* m_frame;
-    };
-
-    ScriptState* scriptStateFromPage(Page* page);
 }
 
-#endif // ScriptState_h
+#endif // ScriptObjectQuarantine_h

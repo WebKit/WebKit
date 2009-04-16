@@ -37,6 +37,7 @@ namespace WebCore {
 
 class ScriptString {
 public:
+    ScriptString() {}
     ScriptString(const String& s) : m_str(s) {}
     ScriptString(const char* s) : m_str(s) {}
 

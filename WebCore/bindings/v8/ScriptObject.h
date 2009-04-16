@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,35 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+#ifndef ScriptObject_h
+#define ScriptObject_h
+
+#include "ScriptValue.h"
 
 #include <v8.h>
 
 namespace WebCore {
-    class Page;
-    class Frame;
+    class InspectorController;
+    class ScriptState;
 
-    class ScriptState {
+    class ScriptObject : public ScriptValue {
     public:
-        ScriptState() { }
-        ScriptState(Frame* frame);
+        ScriptObject(v8::Handle<v8::Object>);
+        ScriptObject() {}
+        virtual ~ScriptObject() {}
 
-        bool hadException() { return !m_exception.IsEmpty(); }
-        void setException(v8::Local<v8::Value> exception)
-        {
-            m_exception = exception;
-        }
-        v8::Local<v8::Value> exception() { return m_exception; }
+        v8::Local<v8::Object> v8Object() const;
 
-        Frame* frame() const { return m_frame; }
+        bool set(ScriptState*, const String& name, const String&);
+        bool set(ScriptState*, const char* name, const ScriptObject&);
+        bool set(ScriptState*, const char* name, const String&);
+        bool set(ScriptState*, const char* name, double);
+        bool set(ScriptState*, const char* name, long long);
+        bool set(ScriptState*, const char* name, int);
+        bool set(ScriptState*, const char* name, bool);
 
-    private:
-        v8::Local<v8::Value> m_exception;
-        Frame* m_frame;
+        static ScriptObject createNew(ScriptState*);
     };
 
-    ScriptState* scriptStateFromPage(Page* page);
+    class ScriptGlobalObject {
+    public:
+        static bool set(ScriptState*, const char* name, const ScriptObject&);
+        static bool set(ScriptState*, const char* name, InspectorController*);
+        static bool getObject(ScriptState*, const char* name, ScriptObject&);
+    private:
+        ScriptGlobalObject() { }
+    };
+
 }
 
-#endif // ScriptState_h
+#endif // ScriptObject_h

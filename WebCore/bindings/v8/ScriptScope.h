@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,35 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+#ifndef ScriptScope_h
+#define ScriptScope_h
 
 #include <v8.h>
 
 namespace WebCore {
-    class Page;
-    class Frame;
+    class ScriptState;
 
-    class ScriptState {
+    class ScriptScope {
     public:
-        ScriptState() { }
-        ScriptState(Frame* frame);
+        ScriptScope(ScriptState* scriptState, bool reportExceptions = true);
+        bool success();
 
-        bool hadException() { return !m_exception.IsEmpty(); }
-        void setException(v8::Local<v8::Value> exception)
-        {
-            m_exception = exception;
-        }
-        v8::Local<v8::Value> exception() { return m_exception; }
-
-        Frame* frame() const { return m_frame; }
+        v8::Local<v8::Object> global() const { return m_context->Global(); }
 
     private:
-        v8::Local<v8::Value> m_exception;
-        Frame* m_frame;
+        v8::HandleScope m_handleScope;
+        v8::Local<v8::Context> m_context;
+        v8::Context::Scope m_scope;
+        v8::TryCatch m_exceptionCatcher;
+        ScriptState* m_scriptState;
+        bool m_reportExceptions;
     };
 
-    ScriptState* scriptStateFromPage(Page* page);
 }
 
-#endif // ScriptState_h
+#endif // ScriptScope_h

@@ -1,3 +1,26 @@
+2009-04-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25201
+        Add ScriptFunctionCall/ScriptObject for V8.
+
+        * bindings/v8/ScriptFunctionCall.cpp: Added.
+        * bindings/v8/ScriptFunctionCall.h: Added.
+        * bindings/v8/ScriptObject.cpp: Added.
+        * bindings/v8/ScriptObject.h: Added.
+        * bindings/v8/ScriptObjectQuarantine.cpp: Added.
+        * bindings/v8/ScriptObjectQuarantine.h: Added.
+        * bindings/v8/ScriptScope.cpp: Added.
+        * bindings/v8/ScriptScope.h: Added.
+        * bindings/v8/ScriptState.h:
+        (WebCore::ScriptState::ScriptState): Added new constructors.
+        (WebCore::ScriptState::frame): Added Frame ptr accessor.
+        * bindings/v8/ScriptString.h:
+        (WebCore::ScriptString::ScriptString): Added default constructor.
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::isEqual): Added.
+
 2009-04-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Add RenderSVGModelObject.* to GTK+'s build.
