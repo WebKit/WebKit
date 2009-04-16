@@ -1,3 +1,15 @@
+2009-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25228
+        SelectionController::absoluteCaretBounds returns an inflated caret (the caret repaint rect)
+
+        * editing/selection/25228.html: Added.
+        * platform/mac/editing/selection/25228-expected.checksum: Added.
+        * platform/mac/editing/selection/25228-expected.png: Added.
+        * platform/mac/editing/selection/25228-expected.txt: Added.
+
 2009-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

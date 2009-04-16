@@ -876,9 +876,18 @@ RenderObject* SelectionController::caretRenderer() const
 IntRect SelectionController::localCaretRect() const
 {
     if (m_needsLayout)
-        const_cast<SelectionController *>(this)->layout();
+        const_cast<SelectionController*>(this)->layout();
     
     return m_caretRect;
+}
+
+IntRect SelectionController::absoluteBoundsForLocalRect(const IntRect& rect) const
+{
+    RenderObject* caretPainter = caretRenderer();
+    if (!caretPainter)
+        return IntRect();
+        
+    return caretPainter->localToAbsoluteQuad(FloatRect(rect)).enclosingBoundingBox();
 }
 
 IntRect SelectionController::absoluteCaretBounds()
@@ -899,13 +908,7 @@ static IntRect repaintRectForCaret(IntRect caret)
 
 IntRect SelectionController::caretRepaintRect() const
 {
-    IntRect localRect = repaintRectForCaret(localCaretRect());
-    
-    RenderObject* caretPainter = caretRenderer();
-    if (caretPainter)
-        return caretPainter->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
-
-    return IntRect();
+    return absoluteBoundsForLocalRect(repaintRectForCaret(localCaretRect()));
 }
 
 bool SelectionController::recomputeCaretRect()
@@ -921,22 +924,26 @@ bool SelectionController::recomputeCaretRect()
         return false;
 
     IntRect oldRect = m_caretRect;
-    m_needsLayout = true;
     IntRect newRect = localCaretRect();
     if (oldRect == newRect && !m_absCaretBoundsDirty)
         return false;
 
-    IntRect oldAbsRepaintRect = m_absCaretBounds;
-    m_absCaretBounds = caretRepaintRect();
+    IntRect oldAbsCaretBounds = m_absCaretBounds;
+    // FIXME: Rename m_caretRect to m_localCaretRect.
+    m_absCaretBounds = absoluteBoundsForLocalRect(m_caretRect);
     m_absCaretBoundsDirty = false;
     
-    if (oldAbsRepaintRect == m_absCaretBounds)
+    if (oldAbsCaretBounds == m_absCaretBounds)
         return false;
+        
+    IntRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
+    // We believe that we need to inflate the local rect before transforming it to obtain the repaint bounds.
+    m_absoluteCaretRepaintBounds = caretRepaintRect();
     
     if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
         // FIXME: make caret repainting container-aware.
-        view->repaintRectangleInViewAndCompositedLayers(oldAbsRepaintRect, false);
-        view->repaintRectangleInViewAndCompositedLayers(m_absCaretBounds, false);
+        view->repaintRectangleInViewAndCompositedLayers(oldAbsoluteCaretRepaintBounds, false);
+        view->repaintRectangleInViewAndCompositedLayers(m_absoluteCaretRepaintBounds, false);
     }
 
     return true;

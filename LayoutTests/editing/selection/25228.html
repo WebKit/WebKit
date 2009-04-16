@@ -1,0 +1,23 @@
+<head>
+<script>
+function runTest() {
+    if (!layoutTestController)
+        return;
+        
+    layoutTestController.waitUntilDone();
+    window.setTimeout(afterDelay, 20);
+}
+
+function afterDelay() {
+    edit = document.getElementById("edit");
+    edit.focus();
+    window.scrollBy(100, 100);
+    textInputController.doCommand("moveBackward:");
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest();">
+<div id="edit" contentEditable="true" style="border: 1px solid red; height:">This tests for a bug (https://bugs.webkit.org/show_bug.cgi?id=25228) where SelectionController::absoluteCaretBounds was returning an inflated caret.  It would manifest itself during revealSelection calls.  Before the change we would reveal one pixel too much because of the inflation.  To run manually, place the caret just after the first character, scroll 100x100 pixels or so and hit the back arrow.  The caret should be right up against the edge of the window.  If we change the way selections are revealed the results for this test might change and it may no longer test for the bug.</div>
+<div style="height:3000px; width:2000px;">
+</body>

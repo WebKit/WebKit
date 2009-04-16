@@ -1,0 +1,24 @@
+layer at (0,0) size 2008x3108
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 2008x3108
+  RenderBlock {HTML} at (0,0) size 785x3108
+    RenderBody {BODY} at (8,8) size 769x3092
+      RenderBlock {DIV} at (0,0) size 769x92 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 758x90
+          text run at (1,1) width 751: "This tests for a bug (https://bugs.webkit.org/show_bug.cgi?id=25228) where SelectionController::absoluteCaretBounds"
+          text run at (752,1) width 4: " "
+          text run at (1,19) width 198: "was returning an inflated caret. "
+          text run at (199,19) width 329: "It would manifest itself during revealSelection calls. "
+          text run at (528,19) width 224: "Before the change we would reveal"
+          text run at (752,19) width 4: " "
+          text run at (1,37) width 279: "one pixel too much because of the inflation. "
+          text run at (280,37) width 475: "To run manually, place the caret just after the first character, scroll 100x100"
+          text run at (755,37) width 4: " "
+          text run at (1,55) width 225: "pixels or so and hit the back arrow. "
+          text run at (226,55) width 386: "The caret should be right up against the edge of the window. "
+          text run at (612,55) width 136: "If we change the way"
+          text run at (748,55) width 4: " "
+          text run at (1,73) width 606: "selections are revealed the results for this test might change and it may no longer test for the bug."
+      RenderBlock {DIV} at (0,92) size 2000x3000
+caret: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+scrolled to 9,9

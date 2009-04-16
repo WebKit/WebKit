@@ -1,3 +1,19 @@
+2009-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25228
+        SelectionController::absoluteCaretBounds returns an inflated caret (the caret repaint rect)
+        
+        Return the bounds of the transformed caret, not the transformed repaint rect for the caret (which is inflated).
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::localCaretRect):
+        (WebCore::SelectionController::absoluteBoundsForLocalRect):
+        (WebCore::SelectionController::caretRepaintRect):
+        (WebCore::SelectionController::recomputeCaretRect):
+        * editing/SelectionController.h:
+
 2009-04-16  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
