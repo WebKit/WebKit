@@ -222,6 +222,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     , m_baseScopeDepth(0)
     , m_codeType(GlobalCode)
     , m_nextGlobalIndex(-1)
+    , m_globalConstantIndex(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
@@ -304,6 +305,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(0)
     , m_codeType(FunctionCode)
+    , m_globalConstantIndex(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
@@ -378,6 +380,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(codeBlock->baseScopeDepth())
     , m_codeType(EvalCode)
+    , m_globalConstantIndex(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
@@ -756,6 +759,16 @@ unsigned BytecodeGenerator::addUnexpectedConstant(JSValuePtr v)
     return m_codeBlock->addUnexpectedConstant(v);
 }
 
+RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst, JSObject* globalObject)
+{
+    if (!m_globalConstantIndex)
+        m_globalConstantIndex = m_codeBlock->addUnexpectedConstant(globalObject);
+    emitOpcode(op_unexpected_load);
+    instructions().append(dst->index());
+    instructions().append(m_globalConstantIndex);
+    return dst;
+}
+
 unsigned BytecodeGenerator::addRegExp(RegExp* r)
 {
     return m_codeBlock->addRegExp(r);
@@ -1099,10 +1112,47 @@ RegisterID* BytecodeGenerator::emitResolveBase(RegisterID* dst, const Identifier
 
 RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
 {
-    emitOpcode(op_resolve_with_base);
-    instructions().append(baseDst->index());
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    if (!findScopedProperty(property, index, depth, false, globalObject) || !globalObject) {
+        // We can't optimise at all :-(
+        emitOpcode(op_resolve_with_base);
+        instructions().append(baseDst->index());
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        return baseDst;
+    }
+
+    bool forceGlobalResolve = false;
+    if (m_regeneratingForExceptionInfo) {
+#if ENABLE(JIT)
+        forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInfoAtBytecodeOffset(instructions().size());
+#else
+        forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInstructionAtBytecodeOffset(instructions().size());
+#endif
+    }
+
+    // Global object is the base
+    emitLoadGlobalObject(baseDst, globalObject);
+
+    if (index != missingSymbolMarker() && !forceGlobalResolve) {
+        // Directly index the property lookup across multiple scopes.
+        emitGetScopedVar(propDst, depth, index, globalObject);
+        return baseDst;
+    }
+
+#if ENABLE(JIT)
+    m_codeBlock->addGlobalResolveInfo(instructions().size());
+#else
+    m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
+    emitOpcode(op_resolve_global);
     instructions().append(propDst->index());
+    instructions().append(globalObject);
     instructions().append(addConstant(property));
+    instructions().append(0);
+    instructions().append(0);
     return baseDst;
 }
 

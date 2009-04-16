@@ -243,6 +243,7 @@ namespace JSC {
         RegisterID* emitLoad(RegisterID* dst, JSValuePtr);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
+        RegisterID* emitLoadGlobalObject(RegisterID* dst, JSObject* globalObject);
 
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
         RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes);
@@ -461,6 +462,7 @@ namespace JSC {
         int m_nextGlobalIndex;
         int m_nextParameterIndex;
         int m_nextConstantIndex;
+        unsigned m_globalConstantIndex;
 
         int m_globalVarStorageOffset;
 

@@ -2,6 +2,22 @@
 
         Reviewed by Gavin Barraclough.
 
+        Improve performance of read-write-modify operators
+
+        Implement cross scope optimisation for read-write-modify
+        operators, to avoid unnecessary calls to property resolve
+        helper functions.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        * bytecompiler/BytecodeGenerator.h:
+
+2009-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Improve performance of remaining array enumeration functions
 
         Make use of function entry cache for remaining Array enumeration functions.
