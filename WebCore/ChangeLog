@@ -9,7 +9,7 @@
 
         Before this patch, <form>s were allowed to sit inside tables 
         without being wrapped by anonymous table parts. There was also a 
-        concept that such a from could be "demoted" and would not be 
+        concept that such a form could be "demoted" and would not be 
         allowed to have any children. This patch has the HTML parser mark 
         form elements that have been demoted as such, and then the demoted 
         forms are not given renderers. I also removed the code that allowed 
