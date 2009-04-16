@@ -533,6 +533,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     context->beginPath();
                     context->addPath(identifier.pathData);
 
+                    // FIXME: setup() tries to get objectBoundingBox() from run.referencingRenderObject()
+                    // which is wrong.  We need to change setup() to take a bounding box instead, or pass
+                    // a RenderObject which would return the bounding box for identifier.pathData
                     if (activePaintServer->setup(context, run.referencingRenderObject(), targetType)) {
                         // Spec: Any properties specified on a text elements which represents a length, such as the
                         // 'stroke-width' property, might produce surprising results since the length value will be

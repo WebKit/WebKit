@@ -297,7 +297,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
 
 static TextStream& operator<<(TextStream& ts, const RenderPath& path)
 {
-    ts << " " << path.absoluteTransform().mapRect(path.relativeBBox());
+    ts << " " << path.absoluteTransform().mapRect(path.repaintRectInLocalCoordinates());
 
     writeStyle(ts, path);
 
@@ -308,7 +308,7 @@ static TextStream& operator<<(TextStream& ts, const RenderPath& path)
 
 static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& container)
 {
-    ts << " " << container.absoluteTransform().mapRect(container.relativeBBox());
+    ts << " " << container.absoluteTransform().mapRect(container.repaintRectInLocalCoordinates());
 
     writeStyle(ts, container);
 
@@ -317,7 +317,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& containe
 
 static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
 {
-    ts << " " << root.absoluteTransform().mapRect(root.relativeBBox());
+    ts << " " << root.absoluteTransform().mapRect(root.repaintRectInLocalCoordinates());
 
     writeStyle(ts, root);
 

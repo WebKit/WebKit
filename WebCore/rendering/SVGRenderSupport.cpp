@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *           (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Google, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -172,6 +173,25 @@ void clampImageBufferSizeToViewport(RenderObject* object, IntSize& size)
 
     if (size.height() > viewHeight)
         size.setHeight(viewHeight);
+}
+
+FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent)
+{
+    FloatRect boundingBox;
+
+    RenderObject* current = container->firstChild();
+    for (; current != 0; current = current->nextSibling()) {
+        FloatRect childBBox = includeAllPaintedContent ? current->repaintRectInLocalCoordinates() : current->objectBoundingBox();
+        FloatRect childBBoxInLocalCoords = current->localTransform().mapRect(childBBox);
+
+        // <svg> elements may a viewBox transform as well
+        if (current->isSVGContainer())
+            childBBoxInLocalCoords = static_cast<RenderSVGContainer*>(current)->viewportTransform().mapRect(childBBoxInLocalCoords);
+
+        boundingBox.unite(childBBoxInLocalCoords);
+    }
+
+    return boundingBox;
 }
 
 } // namespace WebCore

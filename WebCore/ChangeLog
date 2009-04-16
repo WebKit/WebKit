@@ -1,3 +1,102 @@
+2009-04-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Split out objectBoundingBox and repaintRectInLocalCoordinates from relativeBBox
+        in preparation for simplifying (and fixing) repaint logic in the SVG rendering tree.
+        https://bugs.webkit.org/show_bug.cgi?id=25224
+
+        objectBoundingBox() matches the SVG 1.1 concept of a "bounding box"
+
+        repaintRectInLocalCoordinates() should return the a rect covering all painted content.
+        However, repaintRectInLocalCoordinates() still only returns the "stroke bounding box"
+        in this patch.  In a future patch, repaintRectInLocalCoordinates will be fixed to return
+        a rect covering all painted content.  In order to avoid changing several hundred layout test results, I've left
+        the behavior as-is for now.  The returned rect is used by various repaintRectInLocalCoordinates
+        implementations and sometimes adjusted to include all painted content, but not always, and
+        the places where the adjustments are made are sometimes wrong.  Again, will be fixed in
+        an upcoming patch.
+
+        This patch discovered a bug in Font::drawTextUsingSVGFont, which is probably causing
+        bounding-box relative gradients on SVGFont glyphs to not paint correctly.
+        I chose not to try and fix the bug in this patch and instead left a FIXME.
+
+        This patch also discovered that at least tspan.getBBox() is broken.  This
+        along with the foreignObject.getBBox() change will be tested (and fixed) in a
+        later patch.  https://bugs.webkit.org/show_bug.cgi?id=25225
+
+        No change in behavior (besides the above mentioned foreignObject.getBBox()), thus no tests.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::objectBoundingBox): this is a behavior improvement for getBBox() test case coming in a later patch
+        (WebCore::RenderForeignObject::repaintRectInLocalCoordinates): only really used for layout test results, might some day be used for repaint.
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::objectBoundingBox): new methods, ASSERT if used but not implemented.
+        (WebCore::RenderObject::repaintRectInLocalCoordinates):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::objectBoundingBox):
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::clippedOverflowRectForRepaint):
+        (WebCore::RenderPath::lineHeight):
+        (WebCore::RenderPath::baselinePosition):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::addFocusRingRects):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::objectBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::objectBoundingBox):
+        (WebCore::RenderSVGGradientStop::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::objectBoundingBox):
+        (WebCore::RenderSVGHiddenContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::objectBoundingBox):
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGImage::calculateAbsoluteBounds):
+        (WebCore::RenderSVGImage::addFocusRingRects):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::objectBoundingBox):
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGTSpan.h:
+        (WebCore::RenderSVGTSpan::objectBoundingBox):
+        (WebCore::RenderSVGTSpan::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::absoluteQuads):
+        (WebCore::RenderSVGText::objectBoundingBox):
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::viewportTransform):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::computeContainerBoundingBox):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawTextUsingSVGFont):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2009-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -137,8 +137,8 @@ TransformationMatrix RenderSVGViewportContainer::viewportTransform() const
         SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(node());
         return marker->viewBoxToViewTransform(viewport().width(), viewport().height());
     }
- 
-     return TransformationMatrix();
+
+    return TransformationMatrix();
 }
 
 TransformationMatrix RenderSVGViewportContainer::absoluteTransform() const

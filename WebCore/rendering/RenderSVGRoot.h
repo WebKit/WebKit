@@ -55,10 +55,12 @@ public:
 
     bool fillContains(const FloatPoint&) const;
     bool strokeContains(const FloatPoint&) const;
-    FloatRect relativeBBox(bool includeStroke = true) const;
-    
+
+    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect repaintRectInLocalCoordinates() const;
+
     virtual TransformationMatrix localTransform() const;
-   
+
     FloatRect viewport() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);

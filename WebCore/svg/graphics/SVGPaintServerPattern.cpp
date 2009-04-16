@@ -102,7 +102,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         IntRect textBoundary = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
         targetRect = object->absoluteTransform().inverse().mapRect(textBoundary);
     } else
-        targetRect = object->relativeBBox(false);
+        targetRect = object->objectBoundingBox();
 
     const SVGRenderStyle* style = object->style()->svgStyle();
     bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();

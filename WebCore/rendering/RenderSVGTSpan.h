@@ -1,8 +1,7 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *           (C) 2006 Apple Computer Inc.
+ *           (C) 2009 Google Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +33,12 @@ public:
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+
+    // FIXME: These are incorrect, but have always behaved this way.
+    // These empty implementations prevent us from hitting RenderObject ASSERTS.
+    // tspan.getBBox() will be wrong, and repainting for tspans may not work correctly!
+    virtual FloatRect objectBoundingBox() const { return FloatRect(); }
+    virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
 };
 }
 

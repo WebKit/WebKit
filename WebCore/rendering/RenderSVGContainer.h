@@ -57,7 +57,8 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
-    FloatRect relativeBBox(bool includeStroke = true) const;
+    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual bool calculateLocalTransform();
     virtual TransformationMatrix localTransform() const;

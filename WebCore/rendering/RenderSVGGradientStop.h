@@ -1,7 +1,6 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Google, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,11 +40,13 @@ namespace WebCore {
 
         virtual void layout();
 
-        // This override is needed to prevent an assert on <svg><stop /></svg>
-        // RenderObject's default impl asserts.
+        // This overrides are needed to prevent ASSERTs on <svg><stop /></svg>
+        // RenderObject's default implementations ASSERT_NOT_REACHED()
         // https://bugs.webkit.org/show_bug.cgi?id=20400
         virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
-    
+        virtual FloatRect objectBoundingBox() const { return FloatRect(); }
+        virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
+
     protected:
         virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

@@ -294,7 +294,17 @@ public:
     virtual bool isRenderPath() const { return false; }
     virtual bool isSVGText() const { return false; }
 
-    virtual FloatRect relativeBBox(bool includeStroke = true) const;
+    // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
+    // This is used for all computation of objectBoundingBox relative units and by SVGLocateable::getBBox().
+    // NOTE: Markers are not specifically ignored here by SVG 1.1 spec, but we ignore them
+    // since stroke-width is ignored (and marker size can depend on stroke-width).
+    // objectBoundingBox is returned local coordinates.
+    // The name objectBoundingBox is taken from the SVG 1.1 spec.
+    virtual FloatRect objectBoundingBox() const;
+
+    // Returns the smallest rectangle enclosing all of the painted content
+    // respecting clipping, masking, filters, opacity, stroke-width and markers
+    virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual TransformationMatrix localTransform() const;
     virtual TransformationMatrix absoluteTransform() const;

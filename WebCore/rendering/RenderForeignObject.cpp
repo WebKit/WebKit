@@ -1,7 +1,6 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2009 Google, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -68,6 +67,20 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.context->endTransparencyLayer();
 
     paintInfo.context->restore();
+}
+
+FloatRect RenderForeignObject::objectBoundingBox() const
+{
+    return borderBoxRect();
+}
+
+FloatRect RenderForeignObject::repaintRectInLocalCoordinates() const
+{
+    // HACK: to maintain historical LayoutTest results for now.
+    // RenderForeignObject is a RenderBlock (not a RenderSVGModelObject) so this
+    // should not affect repaint correctness.  But it should really be:
+    // return borderBoxRect();
+    return FloatRect();
 }
 
 void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)

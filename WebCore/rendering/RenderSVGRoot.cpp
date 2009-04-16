@@ -178,7 +178,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     SVGResourceFilter* filter = 0;
 
-    FloatRect boundingBox = relativeBBox(true);
+    FloatRect boundingBox = repaintRectInLocalCoordinates();
     if (childPaintInfo.phase == PaintPhaseForeground)
         prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
 
@@ -230,21 +230,15 @@ TransformationMatrix RenderSVGRoot::absoluteTransform() const
     return svg->viewBoxToViewTransform(width(), height()) * ctm;
 }
 
-FloatRect RenderSVGRoot::relativeBBox(bool includeStroke) const
+FloatRect RenderSVGRoot::objectBoundingBox() const
 {
-    FloatRect rect;
-    
-    RenderObject* current = firstChild();
-    for (; current != 0; current = current->nextSibling()) {
-        FloatRect childBBox = current->relativeBBox(includeStroke);
-        FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
-        // <svg> can have a viewBox contributing to the bbox
-        if (current->isSVGContainer())
-            mappedBBox = static_cast<RenderSVGContainer*>(current)->viewportTransform().mapRect(mappedBBox);
-        rect.unite(mappedBBox);
-    }
+    return computeContainerBoundingBox(this, false);
+}
 
-    return rect;
+FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
+{
+    // FIXME: This does not include the border but it should!
+    return computeContainerBoundingBox(this, true);
 }
 
 TransformationMatrix RenderSVGRoot::localTransform() const

@@ -79,7 +79,7 @@ FloatRect SVGLocatable::getBBox(const SVGElement* element)
     if (!element->renderer())
         return FloatRect();
 
-    return element->renderer()->relativeBBox(false);
+    return element->renderer()->objectBoundingBox();
 }
 
 TransformationMatrix SVGLocatable::getCTM(const SVGElement* element)

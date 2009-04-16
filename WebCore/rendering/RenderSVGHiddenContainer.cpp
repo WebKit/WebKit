@@ -91,7 +91,12 @@ bool RenderSVGHiddenContainer::nodeAtPoint(const HitTestRequest&, HitTestResult&
     return false;
 }
 
-FloatRect RenderSVGHiddenContainer::relativeBBox(bool) const
+FloatRect RenderSVGHiddenContainer::objectBoundingBox() const
+{
+    return FloatRect();
+}
+
+FloatRect RenderSVGHiddenContainer::repaintRectInLocalCoordinates() const
 {
     return FloatRect();
 }

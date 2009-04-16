@@ -41,8 +41,10 @@ namespace WebCore {
         virtual ~RenderSVGImage();
         
         virtual TransformationMatrix localTransform() const { return m_localTransform; }
-        
-        virtual FloatRect relativeBBox(bool includeStroke = true) const;
+
+        virtual FloatRect objectBoundingBox() const;
+        virtual FloatRect repaintRectInLocalCoordinates() const;
+
         virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
         virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);

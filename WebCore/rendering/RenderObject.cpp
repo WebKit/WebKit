@@ -2350,8 +2350,17 @@ VisiblePosition RenderObject::createVisiblePosition(const Position& position)
 
 #if ENABLE(SVG)
 
-FloatRect RenderObject::relativeBBox(bool) const
+FloatRect RenderObject::objectBoundingBox() const
 {
+    ASSERT_NOT_REACHED();
+    return FloatRect();
+}
+
+// Returns the smallest rectangle enclosing all of the painted content
+// respecting clipping, masking, filters, opacity, stroke-width and markers
+FloatRect RenderObject::repaintRectInLocalCoordinates() const
+{
+    ASSERT_NOT_REACHED();
     return FloatRect();
 }
 

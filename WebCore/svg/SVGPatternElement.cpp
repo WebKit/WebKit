@@ -191,7 +191,7 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
             if (!n->isSVGElement() || !static_cast<SVGElement*>(n)->isStyledTransformable() || !n->renderer())
                 continue;
-            patternContentBoundaries.unite(n->renderer()->relativeBBox(true));
+            patternContentBoundaries.unite(n->renderer()->repaintRectInLocalCoordinates());
         }
     }
 

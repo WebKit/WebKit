@@ -45,8 +45,8 @@ public:
     bool fillContains(const FloatPoint&, bool requiresFill = true) const;
     bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
 
-    // Returns an unscaled bounding box (not even including localTransform()) for this vector path
-    virtual FloatRect relativeBBox(bool includeStroke = true) const;
+    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect repaintRectInLocalCoordinates() const;
 
     const Path& path() const;
     void setPath(const Path&);
