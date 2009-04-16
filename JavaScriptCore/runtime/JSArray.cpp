@@ -24,9 +24,11 @@
 #include "JSArray.h"
 
 #include "ArrayPrototype.h"
+#include "CachedCall.h"
 #include "PropertyNameArray.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
+#include <wtf/OwnPtr.h>
 #include <Operations.h>
 
 #define CHECK_ARRAY_CONSISTENCY 0
@@ -745,6 +747,7 @@ struct AVLTreeAbstractorForArrayCompare {
     CallType m_compareCallType;
     const CallData* m_compareCallData;
     JSValuePtr m_globalThisValue;
+    OwnPtr<CachedCall> m_cachedCall;
 
     handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
     void set_less(handle h, handle lh) { m_nodes[h].lt &= 0x80000000; m_nodes[h].lt |= lh; }
@@ -780,10 +783,18 @@ struct AVLTreeAbstractorForArrayCompare {
         if (m_exec->hadException())
             return 1;
 
-        ArgList arguments;
-        arguments.append(va);
-        arguments.append(vb);
-        double compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
+        double compareResult;
+        if (m_cachedCall) {
+            m_cachedCall->setThis(m_globalThisValue);
+            m_cachedCall->setArgument(0, va);
+            m_cachedCall->setArgument(1, vb);
+            compareResult = m_cachedCall->call().toNumber(m_exec);
+        } else {
+            ArgList arguments;
+            arguments.append(va);
+            arguments.append(vb);
+            compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
+        }
         return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
 
@@ -817,6 +828,9 @@ void JSArray::sort(ExecState* exec, JSValuePtr compareFunction, CallType callTyp
     tree.abstractor().m_compareCallData = &callData;
     tree.abstractor().m_globalThisValue = exec->globalThisValue();
     tree.abstractor().m_nodes.resize(usedVectorLength + (m_storage->m_sparseValueMap ? m_storage->m_sparseValueMap->size() : 0));
+
+    if (callType == CallTypeJS)
+        tree.abstractor().m_cachedCall.set(new CachedCall(exec, asFunction(compareFunction), 2, exec->exceptionSlot()));
 
     if (!tree.abstractor().m_nodes.begin()) {
         throwOutOfMemoryError(exec);

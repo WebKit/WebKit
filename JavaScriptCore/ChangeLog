@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        Improve performance of Array.sort
+
+        Cache the VM entry for Array.sort when using a JS comparison function.
+
+        * runtime/JSArray.cpp:
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        (JSC::JSArray::sort):
+
+2009-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Bug 25229: Need support for Array.prototype.reduceRight
         <https://bugs.webkit.org/show_bug.cgi?id=25229>
 
