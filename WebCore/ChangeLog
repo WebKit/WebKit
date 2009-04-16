@@ -1,3 +1,23 @@
+2009-04-16  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix Chromium's rendering of <option> elements inside of <optgroups>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25244
+
+        Test (will included as a manual test by https://bugs.webkit.org/show_bug.cgi?id=24900):
+
+        <select>
+          <optgroup label="Should be bold">
+            <option>Should not be bold</option>
+          </optgroup>
+        </select>
+
+        * css/themeWin.css: adding comments
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::getRowFont): use menuStyle() rather than the item's style
+
 2009-04-16  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

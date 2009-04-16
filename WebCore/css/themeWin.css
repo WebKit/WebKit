@@ -97,7 +97,10 @@ select[size="1"] {
     -webkit-border-radius: 0;
     margin: 0;
 }
-/* Options always use the selects' fonts */
+
+/* Option font must be inherited because we depend on computing the size of the
+   <select> based on the size of the options, and they must use the same font
+   for that computation to be correct */
 option {
     font: inherit !important;
 }
