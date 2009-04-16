@@ -588,41 +588,45 @@ JSValuePtr arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValuePtr thisValue
 
     unsigned filterIndex = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    if (callType == CallTypeHost || !isJSArray(&exec->globalData(), thisObj) || !asArray(thisObj)->canGetIndex(length - 1)) {
-        for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
-            PropertySlot slot(thisObj);
-            
-            if (!thisObj->getPropertySlot(exec, k, slot))
-                continue;
-
-            JSValuePtr v = slot.getValue(exec, k);
-
-            ArgList eachArguments;
-
-            eachArguments.append(v);
-            eachArguments.append(jsNumber(exec, k));
-            eachArguments.append(thisObj);
-
-            JSValuePtr result = call(exec, function, callType, callData, applyThis, eachArguments);
-
-            if (result.toBoolean(exec))
-                resultArray->put(exec, filterIndex++, v);
-        }
-    } else {
+    unsigned k = 0;
+    if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
         JSFunction* f = asFunction(function);
         JSArray* array = asArray(thisObj);
         CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
-        for (unsigned k = 0; k < length && !exec->hadException(); ++k) {            
+        for (; k < length && !exec->hadException(); ++k) {
+            if (!array->canGetIndex(k))
+                break;
             JSValuePtr v = array->getIndex(k);
             cachedCall.setThis(applyThis);
             cachedCall.setArgument(0, v);
             cachedCall.setArgument(1, jsNumber(exec, k));
             cachedCall.setArgument(2, thisObj);
-
+            
             JSValuePtr result = cachedCall.call();
             if (result.toBoolean(exec))
                 resultArray->put(exec, filterIndex++, v);
         }
+        if (k == length)
+            return resultArray;
+    }
+    for (; k < length && !exec->hadException(); ++k) {
+        PropertySlot slot(thisObj);
+
+        if (!thisObj->getPropertySlot(exec, k, slot))
+            continue;
+
+        JSValuePtr v = slot.getValue(exec, k);
+
+        ArgList eachArguments;
+
+        eachArguments.append(v);
+        eachArguments.append(jsNumber(exec, k));
+        eachArguments.append(thisObj);
+
+        JSValuePtr result = call(exec, function, callType, callData, applyThis, eachArguments);
+
+        if (result.toBoolean(exec))
+            resultArray->put(exec, filterIndex++, v);
     }
     return resultArray;
 }

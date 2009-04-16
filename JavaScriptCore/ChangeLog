@@ -1,3 +1,16 @@
+2009-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 25227: Array.filter triggers an assertion when the target array shrinks while being filtered
+        <https://bugs.webkit.org/show_bug.cgi?id=25227>
+
+        We correct this simply by making the fast array path fall back on the slow path if
+        we ever discover the fast access is unsafe.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+
 2009-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
