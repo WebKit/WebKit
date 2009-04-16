@@ -45,7 +45,7 @@ namespace WebCore {
 
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
-    , m_handlerLineno(0)
+    , m_handlerLineNumber(0)
     , m_sourceURL(0)
     , m_processingTimerCallback(false)
     , m_paused(false)
@@ -138,13 +138,6 @@ void ScriptController::clearWindowShell()
 
     // There is likely to be a lot of garbage now.
     gcController().garbageCollectSoon();
-}
-
-PassRefPtr<EventListener> ScriptController::createInlineEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node)
-{
-    initScriptIfNeeded();
-    JSLock lock(false);
-    return JSLazyEventListener::create(functionName, eventParameterName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 
 void ScriptController::initScript()

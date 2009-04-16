@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
+#include "JSLazyEventListener.h"
 
 #if ENABLE(WORKERS)
 #include "JSWorkerContext.h"
@@ -87,27 +88,6 @@ void JSDOMGlobalObject::mark()
         if (!it2->second->marked())
             it2->second->mark();
     }
-}
-
-JSProtectedEventListener* JSDOMGlobalObject::findJSProtectedEventListener(JSValuePtr val, bool isInline)
-{
-    if (!val.isObject())
-        return 0;
-    JSObject* object = asObject(val);
-    ProtectedListenersMap& listeners = isInline ? d()->jsProtectedInlineEventListeners : d()->jsProtectedEventListeners;
-    return listeners.get(object);
-}
-
-PassRefPtr<JSProtectedEventListener> JSDOMGlobalObject::findOrCreateJSProtectedEventListener(JSValuePtr val, bool isInline)
-{
-    if (JSProtectedEventListener* listener = findJSProtectedEventListener(val, isInline))
-        return listener;
-
-    if (!val.isObject())
-        return 0;
-
-    // The JSProtectedEventListener constructor adds it to our jsProtectedEventListeners map.
-    return JSProtectedEventListener::create(asObject(val), this, isInline).get();
 }
 
 JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValuePtr val, bool isInline)

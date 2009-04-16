@@ -1,3 +1,44 @@
+2009-04-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        More fix for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        Some cleanup in event handling code.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h: Removed findJSProtectedEventListener
+        and findJSProtectedEventListener because they are now unused.
+
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::clearGlobalObject):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::~JSLazyEventListener):
+        (WebCore::JSLazyEventListener::globalObject):
+        * bindings/js/JSLazyEventListener.h:
+        (WebCore::JSLazyEventListener::clearGlobalObject): Nixed JSProtectedEventListener,
+        and merged it with JSLazyEventListener, the only remaining event listener
+        that still GC-protects its function and global object.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::setEventHandlerLineNumber):
+        (WebCore::ScriptController::eventHandlerLineNumber): Renamed handlerLineno =>
+        handlerLineNumber, because anything less would be uncivilized. Removed
+        createInlineEventListener because it mostly did irrelevent work, so it
+        just got in the way of understanding how event handler creation works.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEventListener):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processToken): Ditto.
+
 2009-04-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

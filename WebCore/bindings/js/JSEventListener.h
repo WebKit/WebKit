@@ -54,7 +54,7 @@ namespace WebCore {
         }
         virtual ~JSEventListener();
 
-        void clearGlobalObject();
+        void clearGlobalObject() { m_globalObject = 0; }
 
         virtual JSC::JSObject* jsFunction() const;
         virtual void clearJSFunction();
@@ -69,27 +69,6 @@ namespace WebCore {
 
         JSC::JSObject* m_jsFunction;
         JSDOMGlobalObject* m_globalObject;
-    };
-
-    class JSProtectedEventListener : public JSAbstractEventListener {
-    public:
-        static PassRefPtr<JSProtectedEventListener> create(JSC::JSObject* function, JSDOMGlobalObject* globalObject, bool isInline)
-        {
-            return adoptRef(new JSProtectedEventListener(function, globalObject, isInline));
-        }
-        virtual ~JSProtectedEventListener();
-
-        void clearGlobalObject();
-
-    protected:
-        JSProtectedEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
-
-        mutable JSC::ProtectedPtr<JSC::JSObject> m_jsFunction;
-        JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
-
-    private:
-        virtual JSC::JSObject* jsFunction() const;
-        virtual JSDOMGlobalObject* globalObject() const;
     };
 
 } // namespace WebCore
