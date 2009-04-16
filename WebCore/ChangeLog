@@ -1,3 +1,15 @@
+2009-04-16  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25218
+
+        Make DOMWindow::inlineEventListenerForType not have the "inline"
+        keyword. As this method gets used outside of DOMWindow.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::inlineEventListenerForType):
+
 2009-04-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Antti Koivisto.
