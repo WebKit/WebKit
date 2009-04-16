@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        Optimise op_resolve_base
+
+        If we can statically find a property we are trying to resolve
+        the base of, the base is guaranteed to be the global object.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveBase):
+
+2009-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Improve performance of read-write-modify operators
 
         Implement cross scope optimisation for read-write-modify

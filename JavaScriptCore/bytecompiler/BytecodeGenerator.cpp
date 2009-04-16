@@ -1104,10 +1104,20 @@ RegisterID* BytecodeGenerator::emitPutScopedVar(size_t depth, int index, Registe
 
 RegisterID* BytecodeGenerator::emitResolveBase(RegisterID* dst, const Identifier& property)
 {
-    emitOpcode(op_resolve_base);
-    instructions().append(dst->index());
-    instructions().append(addConstant(property));
-    return dst;
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    findScopedProperty(property, index, depth, false, globalObject);
+    if (!globalObject) {
+        // We can't optimise at all :-(
+        emitOpcode(op_resolve_base);
+        instructions().append(dst->index());
+        instructions().append(addConstant(property));
+        return dst;
+    }
+
+    // Global object is the base
+    return emitLoadGlobalObject(dst, globalObject);
 }
 
 RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
