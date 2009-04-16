@@ -1,3 +1,27 @@
+2009-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        <rdar://problem/6795285> Infinite recursion in ResourceHandle::receivedRequestToContinueWithoutCredential
+
+        Rolled out <http://trac.webkit.org/projects/webkit/changeset/42536> - the two instances of
+        authentication challenge are different, after all. Added a FIXME comment about a possible
+        future improvement.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::clearAuthentication):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+
 2009-04-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

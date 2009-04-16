@@ -406,7 +406,8 @@ bool ResourceHandle::shouldUseCredentialStorage()
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
-    ASSERT(d->m_currentChallenge.isNull());
+    ASSERT(!d->m_currentMacChallenge);
+    ASSERT(d->m_currentWebChallenge.isNull());
     // Since NSURLConnection networking relies on keeping a reference to the original NSURLAuthenticationChallenge,
     // we make sure that is actually present
     ASSERT(challenge.nsURLAuthenticationChallenge());
@@ -415,7 +416,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
                                                                    password:d->m_pass
                                                                 persistence:NSURLCredentialPersistenceNone];
-        d->m_currentChallenge = challenge;
+        d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+        d->m_currentWebChallenge = challenge;
         receivedCredential(challenge, core(credential));
         [credential release];
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
@@ -432,19 +434,21 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         }
     }
 
-    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge.nsURLAuthenticationChallenge() 
+    d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:d->m_currentMacChallenge 
                                                                                        sender:(id<NSURLAuthenticationChallengeSender>)delegate()];
-    d->m_currentChallenge = core(webChallenge);
+    d->m_currentWebChallenge = core(webChallenge);
     [webChallenge release];
 
     if (client())
-        client()->didReceiveAuthenticationChallenge(this, d->m_currentChallenge);
+        client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
 }
 
 void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
-    ASSERT(!d->m_currentChallenge.isNull());
-    ASSERT(d->m_currentChallenge == challenge);
+    ASSERT(d->m_currentMacChallenge);
+    ASSERT(!d->m_currentWebChallenge.isNull());
+    ASSERT(d->m_currentWebChallenge == challenge);
 
     if (client())
         client()->didCancelAuthenticationChallenge(this, challenge);
@@ -453,28 +457,26 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
     ASSERT(!challenge.isNull());
-    if (challenge != d->m_currentChallenge)
+    if (challenge != d->m_currentWebChallenge)
         return;
-
-    NSURLAuthenticationChallenge *currentMacChallenge = challenge.nsURLAuthenticationChallenge();
 
 #ifdef BUILDING_ON_TIGER
     if (credential.persistence() == CredentialPersistenceNone) {
         // NSURLCredentialPersistenceNone doesn't work on Tiger, so we have to use session persistence.
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceForSession);
-        WebCoreCredentialStorage::set(mac(webCredential), [currentMacChallenge protectionSpace]);
-        [[currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:currentMacChallenge];
+        WebCoreCredentialStorage::set(mac(webCredential), [d->m_currentMacChallenge protectionSpace]);
+        [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
 #else
     if (credential.persistence() == CredentialPersistenceForSession) {
         // Manage per-session credentials internally, because once NSURLCredentialPersistenceForSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceNone);
-        WebCoreCredentialStorage::set(mac(webCredential), [currentMacChallenge protectionSpace]);
-        [[currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:currentMacChallenge];
+        WebCoreCredentialStorage::set(mac(webCredential), [d->m_currentMacChallenge protectionSpace]);
+        [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
 #endif
-        [[currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:currentMacChallenge];
+        [[d->m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();
 }
@@ -482,18 +484,17 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
     ASSERT(!challenge.isNull());
-    if (challenge != d->m_currentChallenge)
+    if (challenge != d->m_currentWebChallenge)
         return;
 
-    NSURLAuthenticationChallenge *currentMacChallenge = challenge.nsURLAuthenticationChallenge();
-    [[currentMacChallenge sender] continueWithoutCredentialForAuthenticationChallenge:currentMacChallenge];
+    [[d->m_currentMacChallenge sender] continueWithoutCredentialForAuthenticationChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();
 }
 
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
 {
-    if (challenge != d->m_currentChallenge)
+    if (challenge != d->m_currentWebChallenge)
         return;
 
     if (client())
