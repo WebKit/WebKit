@@ -65,14 +65,7 @@ namespace WebCore {
 
         virtual JSDOMGlobalObject* globalObject() const;
 
-        void clearJSFunctionInline()
-        {
-            if (m_jsFunction && m_globalObject) {
-                JSDOMWindow::JSListenersMap& listeners = isInline()
-                    ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
-                listeners.remove(m_jsFunction);
-            }
-        }
+        void clearJSFunctionInline();
 
         JSC::JSObject* m_jsFunction;
         JSDOMGlobalObject* m_globalObject;

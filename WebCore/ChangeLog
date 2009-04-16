@@ -1,3 +1,28 @@
+2009-04-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        More fix for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+
+        Also fixed <rdar://problem/6792909> WebInspector crashes when reloading
+        a page with breakpoints set
+        
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::clearJSFunctionInline):
+        (WebCore::JSEventListener::markJSFunction):
+        * bindings/js/JSEventListener.h: Actually clear our function and global
+        object pointers when our client instructs us to. (Oops!) Also, mark
+        our global object while we still intend to use it.
+
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::mark):
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * svg/SVGElementInstance.idl: For every SVGElementInstance wrapper, ensure
+        that the corresponding element also has a wrapper, to keep its event
+        listeners alive.
+
 2009-04-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

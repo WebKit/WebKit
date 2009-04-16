@@ -144,6 +144,18 @@ JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalOb
     }
 }
 
+inline void JSEventListener::clearJSFunctionInline()
+{
+    if (m_jsFunction && m_globalObject) {
+        JSDOMWindow::JSListenersMap& listeners = isInline()
+            ? m_globalObject->jsInlineEventListeners() : m_globalObject->jsEventListeners();
+        listeners.remove(m_jsFunction);
+    }
+    
+    m_jsFunction = 0;
+    m_globalObject = 0;
+}
+
 JSEventListener::~JSEventListener()
 {
     clearJSFunctionInline();
@@ -173,6 +185,8 @@ void JSEventListener::markJSFunction()
 {
     if (m_jsFunction && !m_jsFunction->marked())
         m_jsFunction->mark();
+    if (m_globalObject && !m_globalObject->marked())
+        m_globalObject->mark();
 }
 
 #ifndef NDEBUG

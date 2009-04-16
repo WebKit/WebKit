@@ -145,7 +145,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "ImageData" or $type eq "Element" or $type eq "Text";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "ImageData" or $type eq "Element" or $type eq "Text" or $type eq "SVGElementInstance";
     return 0;
 }
 
@@ -1018,10 +1018,6 @@ sub GenerateImplementation
         } elsif ($interfaceName eq "DOMWindow") {
              $implIncludes{"RegisteredEventListener.h"} = 1;
              push(@implContent, "    invalidateEventListeners(impl()->eventListeners());\n");
-        } elsif ($interfaceName eq "SVGElementInstance") {
-             $implIncludes{"RegisteredEventListener.h"} = 1;
-             push(@implContent, "    invalidateEventListeners(m_impl->eventListeners());\n");
-             push(@implContent, "    forgetDOMObject(*Heap::heap(this)->globalData(), m_impl.get());\n");
         } else {
             if ($podType) {
                 my $animatedType = $implClassName;

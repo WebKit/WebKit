@@ -26,11 +26,12 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGElementInstance.h"
 #include "JSSVGElementInstance.h"
 
-#include "JSEventListener.h"
 #include "JSDOMWindow.h"
+#include "JSEventListener.h"
+#include "JSSVGElement.h"
+#include "SVGElementInstance.h"
 
 using namespace JSC;
 
@@ -38,9 +39,13 @@ namespace WebCore {
 
 void JSSVGElementInstance::mark()
 {
-    Base::mark();
+    DOMObject::mark();
 
-    markEventListeners(impl()->eventListeners());
+    // Mark the wrapper for our corresponding element, so it can mark its event handlers.
+    JSNode* correspondingWrapper = getCachedDOMNodeWrapper(impl()->correspondingElement()->document(), impl()->correspondingElement());
+    ASSERT(correspondingWrapper);
+    if (!correspondingWrapper->marked())
+        correspondingWrapper->mark();
 }
 
 JSValuePtr JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
@@ -71,6 +76,17 @@ void JSSVGElementInstance::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }
 
+JSC::JSValuePtr toJS(JSC::ExecState* exec, SVGElementInstance* object)
+{
+    JSValuePtr result = getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
+
+    // Ensure that our corresponding element has a JavaScript wrapper to keep its event handlers alive.
+    if (object)
+        toJS(exec, object->correspondingElement());
+
+    return result;
 }
 
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(SVG)
