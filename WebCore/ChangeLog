@@ -1,3 +1,24 @@
+2009-04-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add filterBoundingBox() to RenderSVGModelObject to share a tiny bit of code
+
+        RenderSVGModelObject has much more interesting code it can share,
+        but I'm just trying to get the commits out of my local branch and into
+        the repository in any order I can. :)  This one was small.
+
+        This will be used by the unified RenderSVGModelObject
+        clippedOverflowRectForRepaint patch coming soon.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::filterBoundingBox):
+        * rendering/RenderSVGModelObject.h:
+
 2009-04-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel and Adam Roben.

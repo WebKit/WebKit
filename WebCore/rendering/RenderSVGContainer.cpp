@@ -169,12 +169,8 @@ IntRect RenderSVGContainer::clippedOverflowRectForRepaint(RenderBoxModelObject* 
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->clippedOverflowRectForRepaint(repaintContainer));
 
-#if ENABLE(SVG_FILTERS)
-    // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
-    if (filter)
-        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
-#endif
+    // Filters can paint anywhere.  If we have one, expand our rect so we are sure to repaint it.
+    repaintRect.unite(filterBoundingBox());
 
     if (!repaintRect.isEmpty())
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing

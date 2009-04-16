@@ -49,6 +49,10 @@ public:
     RenderSVGModelObject(SVGStyledElement*);
 
     virtual bool requiresLayer() const { return false; }
+
+protected:
+    // Returns the bounding box for the filter associated with this object (if any)
+    FloatRect filterBoundingBox() const;
 };
 
 }
