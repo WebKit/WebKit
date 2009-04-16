@@ -1,3 +1,14 @@
+2009-04-16  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=25042
+        destroying webview widget directly causes crash.
+
+        * tests/testwebframe.c:
+        (test_webkit_web_frame_create_destroy): Add a test case for destroying
+        a web view shortly after packing it in a window.
+
 2009-04-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Sam Weinig.
