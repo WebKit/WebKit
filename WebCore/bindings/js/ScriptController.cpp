@@ -140,23 +140,12 @@ void ScriptController::clearWindowShell()
     gcController().garbageCollectSoon();
 }
 
-PassRefPtr<EventListener> ScriptController::createInlineEventListener(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> ScriptController::createInlineEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock(false);
-    return JSLazyEventListener::create(JSLazyEventListener::HTMLLazyEventListener, functionName, code, m_windowShell->window(), node, m_handlerLineno);
+    return JSLazyEventListener::create(functionName, eventParameterName, code, m_windowShell->window(), node, m_handlerLineno);
 }
-
-#if ENABLE(SVG)
-
-PassRefPtr<EventListener> ScriptController::createSVGEventHandler(const String& functionName, const String& code, Node* node)
-{
-    initScriptIfNeeded();
-    JSLock lock(false);
-    return JSLazyEventListener::create(JSLazyEventListener::SVGLazyEventListener, functionName, code, m_windowShell->window(), node, m_handlerLineno);
-}
-
-#endif
 
 void ScriptController::initScript()
 {

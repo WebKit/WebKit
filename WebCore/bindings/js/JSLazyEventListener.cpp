@@ -28,14 +28,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSLazyEventListener::JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
     : JSProtectedEventListener(0, globalObject, true)
     , m_functionName(functionName)
+    , m_eventParameterName(eventParameterName)
     , m_code(code)
     , m_parsed(false)
     , m_lineNumber(lineNumber)
     , m_originalNode(node)
-    , m_type(type)
 {
     // We don't retain the original node because we assume it
     // will stay alive as long as this handler object is around
@@ -53,20 +53,6 @@ JSObject* JSLazyEventListener::jsFunction() const
 {
     parseCode();
     return m_jsFunction;
-}
-
-static inline JSValuePtr eventParameterName(JSLazyEventListener::LazyEventListenerType type, ExecState* exec)
-{
-    switch (type) {
-        case JSLazyEventListener::HTMLLazyEventListener:
-            return jsNontrivialString(exec, "event");
-#if ENABLE(SVG)
-        case JSLazyEventListener::SVGLazyEventListener:
-            return jsNontrivialString(exec, "evt");
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return jsUndefined();
 }
 
 void JSLazyEventListener::parseCode() const
@@ -91,7 +77,7 @@ void JSLazyEventListener::parseCode() const
 
     ArgList args;
     UString sourceURL(m_globalObject->scriptExecutionContext()->url().string());
-    args.append(eventParameterName(m_type, exec));
+    args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsString(exec, m_code));
 
     // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
@@ -117,9 +103,10 @@ void JSLazyEventListener::parseCode() const
         }
     }
 
-    // no more need to keep the unparsed code around
+    // Since we only parse once, there's no need to keep data used for parsing around anymore.
     m_functionName = String();
     m_code = String();
+    m_eventParameterName = String();
 
     if (m_jsFunction) {
         ASSERT(isInline());

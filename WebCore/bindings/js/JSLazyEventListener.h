@@ -29,20 +29,13 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSProtectedEventListener {
     public:
-        enum LazyEventListenerType {
-            HTMLLazyEventListener
-#if ENABLE(SVG)
-            , SVGLazyEventListener
-#endif
-        };
-
-        static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
+        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
         {
-            return adoptRef(new JSLazyEventListener(type, functionName, code, globalObject, node, lineNumber));
+            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, globalObject, node, lineNumber));
         }
 
     private:
-        JSLazyEventListener(LazyEventListenerType, const String& functionName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
+        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
 
         virtual JSC::JSObject* jsFunction() const;
         virtual bool wasCreatedFromMarkup() const { return true; }
@@ -50,12 +43,11 @@ namespace WebCore {
         void parseCode() const;
 
         mutable String m_functionName;
+        mutable String m_eventParameterName;
         mutable String m_code;
         mutable bool m_parsed;
         int m_lineNumber;
         Node* m_originalNode;
-
-        LazyEventListenerType m_type;
     };
 
 } // namespace WebCore

@@ -34,7 +34,6 @@ namespace WebCore {
     class Frame;
     class JSDOMWindow;
     class JSDOMWindowShell;
-    class JSProtectedEventListener;
     class JSLocation;
     class JSEventListener;
     class ScheduledAction;

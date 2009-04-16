@@ -1,3 +1,29 @@
+2009-04-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel and Adam Roben.
+
+        More fix for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        Simplified some EventHandler creation code.
+        
+        Removed a pile of code whose sole purpose was to allow SVG event handlers
+        to supply a parameter named "evt" instead of the normal "event", and
+        replaced it with a single parameter to JSLazyEventListener's constructor
+        specifying the parameter name to use.
+
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSLazyEventListener.h:
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createInlineEventListener):
+        * bindings/js/ScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::createEventListener):
+
 2009-04-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt.

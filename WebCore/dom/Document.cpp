@@ -2763,13 +2763,15 @@ PassRefPtr<EventListener> Document::createEventListener(const String& functionNa
     if (!frm || !frm->script()->isEnabled())
         return 0;
 
+    DEFINE_STATIC_LOCAL(const String, eventString, ("event"));
+
 #if ENABLE(SVG)
+    DEFINE_STATIC_LOCAL(const String, evtString, ("evt"));
     if (node ? node->isSVGElement() : isSVGDocument())
-        return frm->script()->createSVGEventHandler(functionName, code, node);
+        return frm->script()->createInlineEventListener(functionName, evtString, code, node);
 #endif
 
-    // We may want to treat compound document event handlers in a different way, in future.
-    return frm->script()->createInlineEventListener(functionName, code, node);
+    return frm->script()->createInlineEventListener(functionName, eventString, code, node);
 }
 
 void Document::setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
