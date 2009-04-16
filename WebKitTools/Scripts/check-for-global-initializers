@@ -103,7 +103,7 @@ for my $file (sort @files) {
                 next if $shortName eq "CachedResource.o";
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "JSCustomSQLTransactionCallback.o";
-                next if $shortName eq "JSEventListener.o";
+                next if $shortName eq "JSLazyEventListener.o";
                 next if $shortName eq "Node.o";
                 next if $shortName eq "Page.o";
                 next if $shortName eq "Range.o";

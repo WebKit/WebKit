@@ -1,3 +1,9 @@
+2009-04-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: updated check-for-global-initializers to account for code motion.
+
+        * Scripts/check-for-global-initializers:
+
 2009-04-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Adam Roben.
