@@ -1,3 +1,13 @@
+2009-04-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Compare test's response mime type and dump test as text properly.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+
+
 2009-04-16  Adam Roben  <aroben@apple.com>
 
         Skip yet another JavaScriptCore test that sometimes fails on Windows
