@@ -122,6 +122,16 @@ QWebElement::~QWebElement()
         m_element->deref();
 }
 
+bool QWebElement::operator==(const QWebElement& o) const
+{
+    return m_element == o.m_element;
+}
+
+bool QWebElement::operator!=(const QWebElement& o) const
+{
+    return m_element != o.m_element;
+}
+
 /*!
     Returns true if the element is a null element; false otherwise.
 */

@@ -1,3 +1,15 @@
+2009-04-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Make the operator== and operator!= non inline to
+        allow looking at the d-pointer in the future.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::operator==):
+        (QWebElement::operator!=):
+        * Api/qwebelement.h:
+
 2009-04-15  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Ariya Hidayat.
