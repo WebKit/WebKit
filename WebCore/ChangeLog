@@ -1,3 +1,54 @@
+2009-04-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25241
+        Remove superfluous NotImplemented.h includes.
+
+        * html/CanvasRenderingContext2D.cpp:
+        * html/CanvasStyle.cpp:
+        * page/AccessibilityRenderObject.cpp:
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cairo/PathCairo.cpp:
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        * platform/graphics/gtk/FontGtk.cpp:
+        * platform/graphics/gtk/IconGtk.cpp:
+        * platform/graphics/qt/IconQt.cpp:
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        * platform/graphics/skia/ImageSkia.cpp:
+        * platform/graphics/win/ColorSafari.cpp:
+        * platform/graphics/win/FontWin.cpp:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        * platform/graphics/wx/ImageWx.cpp:
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        * platform/gtk/PopupMenuGtk.cpp:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/gtk/ScrollbarGtk.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/posix/FileSystemPOSIX.cpp:
+        * platform/qt/DragDataQt.cpp:
+        * platform/qt/FileSystemQt.cpp:
+        * platform/qt/Localizations.cpp:
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/win/EditorWin.cpp:
+        * platform/win/PasteboardWin.cpp:
+        * platform/wx/KeyboardEventWx.cpp:
+        * platform/wx/PopupMenuWx.cpp:
+        * platform/wx/SharedTimerWx.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/mac/PluginPackageMac.cpp:
+        * plugins/qt/PluginPackageQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * rendering/RenderThemeChromiumLinux.cpp:
+        * svg/graphics/SVGImage.cpp:
+
 2009-04-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

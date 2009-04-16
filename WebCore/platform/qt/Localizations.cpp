@@ -30,7 +30,6 @@
 
 #include "IntSize.h"
 #include "LocalizedStrings.h"
-#include "NotImplemented.h"
 #include "PlatformString.h"
 
 #include <QCoreApplication>

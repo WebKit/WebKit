@@ -22,7 +22,6 @@
 #include "IntRect.h"
 #include "GraphicsContext.h"
 #include "FrameView.h"
-#include "NotImplemented.h"
 #include "ScrollbarTheme.h"
 #include "gtkdrawing.h"
 

@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "SharedTimer.h"
-#include "NotImplemented.h"
 #include "Widget.h"
 
 #include <wtf/Assertions.h>

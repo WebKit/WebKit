@@ -27,7 +27,6 @@
 #include "GraphicsContext.h"
 
 #include "TransformationMatrix.h"
-#include "NotImplemented.h"
 #include "Path.h"
 
 #include <cairo-win32.h>

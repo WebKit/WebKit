@@ -34,7 +34,6 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
-#include "NotImplemented.h"
 #include "Pattern.h"
 #include "PlatformString.h"
 

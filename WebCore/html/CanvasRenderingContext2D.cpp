@@ -49,7 +49,6 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "KURL.h"
-#include "NotImplemented.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "SecurityOrigin.h"

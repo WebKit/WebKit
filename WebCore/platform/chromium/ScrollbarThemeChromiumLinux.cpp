@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ScrollbarThemeChromium.h"
 
-#include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"

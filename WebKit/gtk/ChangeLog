@@ -1,3 +1,12 @@
+2009-04-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25241
+        Remove superfluous NotImplemented.h includes.
+
+        * webkit/webkitprivate.cpp:
+
 2009-04-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Update gtk-doc control and base sgml files for 1.1.5.

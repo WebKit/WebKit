@@ -24,7 +24,6 @@
 #include "GraphicsContext.h"
 #include "PlatformString.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 
 #include <qpainter.h>
 #include <qpixmap.h>

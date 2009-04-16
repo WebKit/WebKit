@@ -36,7 +36,6 @@
 #include "BitmapImageSingleFrameSkia.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-#include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "PNGImageEncoder.h"
 #include "SkiaUtils.h"

@@ -47,7 +47,6 @@
 #pragma warning(push, 0)
 #include <WebCore/AuthenticationCF.h>
 #include <WebCore/BString.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>

@@ -31,7 +31,6 @@
 #include "PlatformScreen.h"
 
 #include "HostWindow.h"
-#include "NotImplemented.h"
 #include "ScrollView.h"
 #include "Widget.h"
 

@@ -33,7 +33,6 @@
 #include <wtf/RetainPtr.h>
 #include "CString.h"
 #include "MIMETypeRegistry.h"
-#include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"

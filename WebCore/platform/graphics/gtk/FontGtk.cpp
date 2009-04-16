@@ -34,7 +34,6 @@
 #include "Font.h"
 
 #include "GraphicsContext.h"
-#include "NotImplemented.h"
 #include "SimpleFontData.h"
 
 #include <cairo.h>

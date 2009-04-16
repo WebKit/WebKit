@@ -29,7 +29,6 @@
 #include "config.h"
 #include "ImageSource.h"
 #include "ImageDecoderQt.h"
-#include "NotImplemented.h"
 #include "SharedBuffer.h"
 
 #include <QBuffer>

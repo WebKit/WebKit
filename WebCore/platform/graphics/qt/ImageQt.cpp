@@ -36,7 +36,6 @@
 #include "PlatformString.h"
 #include "GraphicsContext.h"
 #include "TransformationMatrix.h"
-#include "NotImplemented.h"
 #include "StillImageQt.h"
 #include "qwebsettings.h"
 

@@ -33,7 +33,6 @@
 #include "FileSystem.h"
 
 #include "CString.h"
-#include "NotImplemented.h"
 #include "PlatformString.h"
 
 #include <QDateTime>

@@ -1,3 +1,14 @@
+2009-04-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25241
+        Remove superfluous NotImplemented.h includes
+
+        * WebDownloadCFNet.cpp:
+        * WebURLAuthenticationChallengeSender.cpp:
+        * WebView.cpp:
+
 2009-04-14  Adam Roben  <aroben@apple.com>
 
         Remove support for profile-guided optimization on Windows

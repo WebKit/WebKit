@@ -35,7 +35,6 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollbarGtk.h"

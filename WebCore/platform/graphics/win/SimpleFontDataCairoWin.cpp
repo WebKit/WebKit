@@ -35,7 +35,6 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "MathExtras.h"
-#include "NotImplemented.h"
 #include <cairo.h>
 #include <cairo-win32.h>
 #include <mlang.h>

@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "markup.h"
-#include "NotImplemented.h"
 
 #include <QList>
 #include <QMimeData>

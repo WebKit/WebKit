@@ -29,7 +29,6 @@
 #include "WebURLAuthenticationChallengeSender.h"
 
 #include "COMPtr.h"
-#include "NotImplemented.h"
 #include "WebKit.h"
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLCredential.h"

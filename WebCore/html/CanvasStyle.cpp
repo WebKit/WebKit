@@ -44,8 +44,6 @@
 #include <QBrush>
 #include <QPen>
 #include <QColor>
-#elif PLATFORM(CAIRO)
-#include "NotImplemented.h"
 #endif
 
 namespace WebCore {

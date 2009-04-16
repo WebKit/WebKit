@@ -30,7 +30,6 @@
 #include "BitmapImage.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "NotImplemented.h"
 
 #include <math.h>
 #include <stdio.h>

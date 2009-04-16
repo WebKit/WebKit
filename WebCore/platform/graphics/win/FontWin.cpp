@@ -30,7 +30,6 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 #include "SimpleFontData.h"
 #include "UniscribeController.h"
 #include <wtf/MathExtras.h>
