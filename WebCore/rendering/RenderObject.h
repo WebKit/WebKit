@@ -306,7 +306,18 @@ public:
     // respecting clipping, masking, filters, opacity, stroke-width and markers
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
+    // FIXME: This accessor is deprecated and mostly around for SVGRenderTreeAsText.
+    // This only returns the transform="" value from the element
+    // most callsites want localToParentTransform() instead.
     virtual TransformationMatrix localTransform() const;
+
+    // Returns the full transform mapping from local coordinates to local coords for the parent SVG renderer
+    // This includes any viewport transforms and x/y offsets as well as the transform="" value off the element.
+    virtual TransformationMatrix localToParentTransform() const;
+
+    // Walks up the parent chain to create a transform which maps from local to document coords
+    // NOTE: This method is deprecated!  It doesn't respect scroll offsets or repaint containers.
+    // FIXME: This is only virtual so that RenderSVGHiddenContainer can override it to match old LayoutTest results.
     virtual TransformationMatrix absoluteTransform() const;
 #endif
 

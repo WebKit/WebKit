@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-    2004, 2005, 2006 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2009 Google, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,6 +32,16 @@ namespace WebCore {
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransformableElement* node)
     : RenderSVGContainer(node)
 {
+}
+
+TransformationMatrix RenderSVGTransformableContainer::localToParentTransform() const
+{
+    return m_localTransform;
+}
+
+TransformationMatrix RenderSVGTransformableContainer::localTransform() const
+{
+    return m_localTransform;
 }
 
 bool RenderSVGTransformableContainer::calculateLocalTransform()

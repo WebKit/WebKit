@@ -219,15 +219,22 @@ void RenderSVGRoot::calcViewport()
                                  svg->relativeHeightValue() : height.value(svg));
 }
 
-TransformationMatrix RenderSVGRoot::absoluteTransform() const
+TransformationMatrix RenderSVGRoot::localToParentTransform() const
 {
-    TransformationMatrix ctm = RenderBox::absoluteTransform();
+    TransformationMatrix ctm;
     ctm.translate(x(), y());
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     ctm.scale(svg->currentScale());
     ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
     ctm.translate(viewport().x(), viewport().y());
     return svg->viewBoxToViewTransform(width(), height()) * ctm;
+}
+
+// FIXME: This method should be removed as soon as callers to RenderBox::absoluteTransform() can be removed.
+TransformationMatrix RenderSVGRoot::absoluteTransform() const
+{
+    // This would apply localTransform() twice if localTransform() were not the identity.
+    return localToParentTransform() * RenderBox::absoluteTransform();
 }
 
 FloatRect RenderSVGRoot::objectBoundingBox() const

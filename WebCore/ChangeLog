@@ -1,3 +1,51 @@
+2009-04-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add a localToParentTransform() method which includes the
+        full transform between local and parent local coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=25226
+
+        Moved m_localTransform up into RenderSVGTransformableContainer
+        and added a comment to RenderSVGViewportContainer to make it more
+        clear that it does not have a localTransform().
+
+        This patch reveals two more failed design decisions:
+        1.  Use of RenderBox::absoluteTransform() to mean "absoluteTransform()
+            including only my localTransform()" callers are probably using it
+            incorrectly anyway and are just masking bugs in the confused code.
+        2.  computeContainerBoundingBox does not include viewport translations in
+            its computed bounding box, so bounding boxes will be off for parents of
+            inner <svg> elements.  I'll fix this an updated the results in a separate change.
+
+        No functional changes, thus no tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToParentTransform):
+        (WebCore::RenderObject::absoluteTransform):
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::viewportTransform):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::absoluteTransform):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::localToParentTransform):
+        (WebCore::RenderSVGTransformableContainer::localTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        (WebCore::RenderSVGViewportContainer::absoluteTransform):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::computeContainerBoundingBox):
+
 2009-04-16  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.

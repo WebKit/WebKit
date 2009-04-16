@@ -76,16 +76,6 @@ void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&, bool)
     // This subtree does not take up space or paint
 }
 
-TransformationMatrix RenderSVGHiddenContainer::absoluteTransform() const
-{
-    return TransformationMatrix();
-}
-
-TransformationMatrix RenderSVGHiddenContainer::localTransform() const
-{
-    return TransformationMatrix();
-}
-
 bool RenderSVGHiddenContainer::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
 {
     return false;

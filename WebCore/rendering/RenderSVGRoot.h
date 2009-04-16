@@ -51,7 +51,7 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual TransformationMatrix absoluteTransform() const;
+    virtual TransformationMatrix localToParentTransform() const;
 
     bool fillContains(const FloatPoint&) const;
     bool strokeContains(const FloatPoint&) const;
@@ -59,7 +59,9 @@ public:
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
+    // FIXME: Both of these overrides should be removed.
     virtual TransformationMatrix localTransform() const;
+    virtual TransformationMatrix absoluteTransform() const;
 
     FloatRect viewport() const;
 
