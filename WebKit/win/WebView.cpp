@@ -79,6 +79,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Language.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
