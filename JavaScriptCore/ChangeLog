@@ -1,3 +1,17 @@
+2009-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve performance of remaining array enumeration functions
+
+        Make use of function entry cache for remaining Array enumeration functions.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+
 2009-04-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -648,8 +648,24 @@ JSValuePtr arrayProtoFuncMap(ExecState* exec, JSObject*, JSValuePtr thisValue, c
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
 
     JSArray* resultArray = constructEmptyArray(exec, length);
+    unsigned k = 0;
+    if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
+        JSFunction* f = asFunction(function);
+        JSArray* array = asArray(thisObj);
+        CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
+        for (; k < length && !exec->hadException(); ++k) {
+            if (UNLIKELY(!array->canGetIndex(k)))
+                break;
 
-    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+            cachedCall.setThis(applyThis);
+            cachedCall.setArgument(0, array->getIndex(k));
+            cachedCall.setArgument(1, jsNumber(exec, k));
+            cachedCall.setArgument(2, thisObj);
+
+            resultArray->JSArray::put(exec, k, cachedCall.call());
+        }
+    }
+    for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
@@ -689,7 +705,25 @@ JSValuePtr arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValuePtr thisValue,
     JSValuePtr result = jsBoolean(true);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+    unsigned k = 0;
+    if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
+        JSFunction* f = asFunction(function);
+        JSArray* array = asArray(thisObj);
+        CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
+        for (; k < length && !exec->hadException(); ++k) {
+            if (UNLIKELY(!array->canGetIndex(k)))
+                break;
+            
+            cachedCall.setThis(applyThis);
+            cachedCall.setArgument(0, array->getIndex(k));
+            cachedCall.setArgument(1, jsNumber(exec, k));
+            cachedCall.setArgument(2, thisObj);
+            
+            if (!cachedCall.call().toBoolean(exec))
+                return jsBoolean(false);
+        }
+    }
+    for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
 
         if (!thisObj->getPropertySlot(exec, k, slot))
@@ -725,7 +759,24 @@ JSValuePtr arrayProtoFuncForEach(ExecState* exec, JSObject*, JSValuePtr thisValu
     JSObject* applyThis = args.at(exec, 1).isUndefinedOrNull() ? exec->globalThisValue() : args.at(exec, 1).toObject(exec);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+    unsigned k = 0;
+    if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
+        JSFunction* f = asFunction(function);
+        JSArray* array = asArray(thisObj);
+        CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
+        for (; k < length && !exec->hadException(); ++k) {
+            if (UNLIKELY(!array->canGetIndex(k)))
+                break;
+
+            cachedCall.setThis(applyThis);
+            cachedCall.setArgument(0, array->getIndex(k));
+            cachedCall.setArgument(1, jsNumber(exec, k));
+            cachedCall.setArgument(2, thisObj);
+
+            cachedCall.call();
+        }
+    }
+    for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
@@ -755,7 +806,25 @@ JSValuePtr arrayProtoFuncSome(ExecState* exec, JSObject*, JSValuePtr thisValue, 
     JSValuePtr result = jsBoolean(false);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+    unsigned k = 0;
+    if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
+        JSFunction* f = asFunction(function);
+        JSArray* array = asArray(thisObj);
+        CachedCall cachedCall(exec, f, 3, exec->exceptionSlot());
+        for (; k < length && !exec->hadException(); ++k) {
+            if (UNLIKELY(!array->canGetIndex(k)))
+                break;
+            
+            cachedCall.setThis(applyThis);
+            cachedCall.setArgument(0, array->getIndex(k));
+            cachedCall.setArgument(1, jsNumber(exec, k));
+            cachedCall.setArgument(2, thisObj);
+            
+            if (cachedCall.call().toBoolean(exec))
+                return jsBoolean(true);
+        }
+    }
+    for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
