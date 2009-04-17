@@ -1,3 +1,12 @@
+2009-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        <rdar://problem/5753299> "Private Browsing" doesn't affect HTML 5 Database storage
+
+        * storage/private-browsing-readonly-expected.txt: Added.
+        * storage/private-browsing-readonly.html: Added.
+
 2009-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Antti Koivisto.

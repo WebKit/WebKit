@@ -1,3 +1,52 @@
+2009-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        <rdar://problem/5753299> "Private Browsing" doesn't affect HTML 5 Database storage
+
+        If the Page is in private browsing mode when a statement is queued up, flag that 
+        statement as read-only.
+
+        It would be better to set the read-only flag on the database thread when it actually
+        executes, but that would either require making Settings access a lock-protected operation
+        or involve a synchronous callback to the WebCore thread, neither of which seem worth it.
+        If it becomes an issue in practice, we can revisit this later.
+
+        Test: storage/private-browsing-readonly.html
+
+        * storage/Database.cpp:
+        (WebCore::Database::setAuthorizerReadOnly):
+        * storage/Database.h:
+
+        * storage/DatabaseAuthorizer.cpp:  For all action types that would alter the database,
+          deny when in read-only mode.
+        (WebCore::DatabaseAuthorizer::reset):
+        (WebCore::DatabaseAuthorizer::createTable):
+        (WebCore::DatabaseAuthorizer::dropTable):
+        (WebCore::DatabaseAuthorizer::allowAlterTable):
+        (WebCore::DatabaseAuthorizer::createIndex):
+        (WebCore::DatabaseAuthorizer::dropIndex):
+        (WebCore::DatabaseAuthorizer::createTrigger):
+        (WebCore::DatabaseAuthorizer::dropTrigger):
+        (WebCore::DatabaseAuthorizer::createVTable):
+        (WebCore::DatabaseAuthorizer::dropVTable):
+        (WebCore::DatabaseAuthorizer::allowDelete):
+        (WebCore::DatabaseAuthorizer::allowInsert):
+        (WebCore::DatabaseAuthorizer::allowUpdate):
+        (WebCore::DatabaseAuthorizer::setReadOnly):
+        * storage/DatabaseAuthorizer.h:
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::create): Add a m_readOnly flag.
+        (WebCore::SQLStatement::SQLStatement): Ditto.
+        (WebCore::SQLStatement::execute): If m_readOnly is set, tell the authorizer to change
+          to read-only mode.
+        * storage/SQLStatement.h:
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL): Flag the statement as read-only if the Page is
+          currently in private browsing mode.
+
 2009-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Antti Koivisto.

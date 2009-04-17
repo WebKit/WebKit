@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"
 #include "SQLResultSet.h"
@@ -88,15 +89,20 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         e = INVALID_STATE_ERR;
         return;
     }
+
+    bool readOnlyMode = false;
+    Page* page = m_database->document()->page();
+    if (!page || page->settings()->privateBrowsingEnabled())
+        readOnlyMode = true;
     
-    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement.copy(), arguments, callback, callbackError);
+    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement.copy(), arguments, callback, callbackError, readOnlyMode);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();
 
     if (!m_database->versionMatchesExpected())
         statement->setVersionMismatchedError();
-        
+
     enqueueStatement(statement);
 }
 

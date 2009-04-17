@@ -362,6 +362,12 @@ void Database::enableAuthorizer()
     m_databaseAuthorizer->enable();
 }
 
+void Database::setAuthorizerReadOnly()
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->setReadOnly();
+}
+
 static int guidForOriginAndName(const String& origin, const String& name)
 {
     String stringID;

@@ -78,6 +78,7 @@ public:
 
     void disableAuthorizer();
     void enableAuthorizer();
+    void setAuthorizerReadOnly();
 
     Vector<String> tableNames();
 

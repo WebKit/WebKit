@@ -85,6 +85,7 @@ public:
 
     void disable();
     void enable();
+    void setReadOnly();
 
     void reset();
 
@@ -95,9 +96,10 @@ private:
     DatabaseAuthorizer();
     int denyBasedOnTableName(const String&);
 
-    bool m_securityEnabled;
-    bool m_lastActionWasInsert;
-    bool m_lastActionChangedDatabase;
+    bool m_securityEnabled : 1;
+    bool m_lastActionWasInsert : 1;
+    bool m_lastActionChangedDatabase : 1;
+    bool m_readOnly : 1;
 };
 
 } // namespace WebCore
