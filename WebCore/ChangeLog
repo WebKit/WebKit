@@ -1,3 +1,19 @@
+2009-04-16  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Switch to wxGraphicsBitmap when using wxGraphicsContext so that we're not doing
+        unnecessary conversions internally when drawing bitmaps.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25248
+
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+
 2009-04-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

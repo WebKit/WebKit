@@ -26,10 +26,11 @@
 #include "config.h"
 #include "Image.h"
 
-#include "TransformationMatrix.h"
 #include "BitmapImage.h"
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "TransformationMatrix.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -97,13 +98,13 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 #if USE(WXGC)
     wxGCDC* context = (wxGCDC*)ctxt->platformContext();
     wxGraphicsContext* gc = context->GetGraphicsContext();
+    wxGraphicsBitmap* bitmap = frameAtIndex(m_currentFrame);
 #else
     wxWindowDC* context = ctxt->platformContext();
+    wxBitmap* bitmap = frameAtIndex(m_currentFrame);
 #endif
 
     startAnimation();
-
-    wxBitmap* bitmap = frameAtIndex(m_currentFrame);
     if (!bitmap) // If it's too early we won't have an image yet.
         return;
     
@@ -128,17 +129,15 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         adjustedDestRect.setLocation(FloatPoint(dst.x() - src.x() / scaleX, dst.y() - src.y() / scaleY));
         adjustedDestRect.setSize(FloatSize(selfSize.width() / scaleX, selfSize.height() / scaleY));
     }
-    
-    // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
-    int currHeight = bitmap->GetHeight(); 
-    if (currHeight < selfSize.height())
-        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height());
 
-    gc->PushState();
     gc->Clip(dst.x(), dst.y(), dst.width(), dst.height());
-    gc->DrawBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
-    gc->PopState();
+#if wxCHECK_VERSION(2,9,0)
+    gc->DrawGraphicsBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
 #else
+    gc->DrawGraphicsBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
+#endif
+
+#else // USE(WXGC)
     IntRect srcIntRect(src);
     IntRect dstIntRect(dst);
     bool rescaling = false;
@@ -180,21 +179,29 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, c
 
 #if USE(WXGC)
     wxGCDC* context = (wxGCDC*)ctxt->platformContext();
+    wxGraphicsBitmap* bitmap = frameAtIndex(m_currentFrame);
 #else
     wxWindowDC* context = ctxt->platformContext();
+    wxBitmap* bitmap = frameAtIndex(m_currentFrame);
 #endif
+
+    if (!bitmap) // If it's too early we won't have an image yet.
+        return;
 
     ctxt->save();
     ctxt->clip(IntRect(dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height()));
-    wxBitmap* bitmap = frameAtIndex(m_currentFrame);
-    if (!bitmap) // If it's too early we won't have an image yet.
-        return;
     
     float currentW = 0;
     float currentH = 0;
     
 #if USE(WXGC)
     wxGraphicsContext* gc = context->GetGraphicsContext();
+
+    float adjustedX = phase.x() + srcRect.x() *
+                      narrowPrecisionToFloat(patternTransform.a());
+    float adjustedY = phase.y() + srcRect.y() *
+                      narrowPrecisionToFloat(patternTransform.d());
+                      
     gc->ConcatTransform(patternTransform);
 #else
     wxMemoryDC mydc;
@@ -207,7 +214,11 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, c
     while ( currentW < dstRect.width()  && currentW < clientSize.x - origin.x ) {
         while ( currentH < dstRect.height() && currentH < clientSize.y - origin.y) {
 #if USE(WXGC)
-            gc->DrawBitmap(*bitmap, (wxDouble)dstRect.x() + currentW, (wxDouble)dstRect.y() + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+#if wxCHECK_VERSION(2,9,0)
+            gc->DrawBitmap(*bitmap, adjustedX + currentW, adjustedY + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+#else
+            gc->DrawGraphicsBitmap(*bitmap, adjustedX + currentW, adjustedY + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+#endif
 #else
             context->Blit((wxCoord)dstRect.x() + currentW, (wxCoord)dstRect.y() + currentH,  
                             (wxCoord)srcRect.width(), (wxCoord)srcRect.height(), &mydc, 

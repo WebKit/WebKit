@@ -31,6 +31,7 @@
 
 #if PLATFORM(WX)
 class wxBitmap;
+class wxGraphicsBitmap;
 #elif PLATFORM(CG)
 typedef struct CGImageSource* CGImageSourceRef;
 typedef struct CGImage* CGImageRef;
@@ -57,7 +58,11 @@ class String;
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
 typedef const Vector<char>* NativeBytePtr;
+#if USE(WXGC)
+typedef wxGraphicsBitmap* NativeImagePtr;
+#else
 typedef wxBitmap* NativeImagePtr;
+#endif
 #elif PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
