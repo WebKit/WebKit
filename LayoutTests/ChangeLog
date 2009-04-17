@@ -1,3 +1,15 @@
+2009-04-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 25027: JavaScript parseInt wrong on negative numbers
+        <https://bugs.webkit.org/show_bug.cgi?id=25027>
+
+        Add a simple test for parseInt with negative numbers.
+
+        * fast/js/numeric-conversion-expected.txt:
+        * fast/js/resources/numeric-conversion.js:
+
 2009-04-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

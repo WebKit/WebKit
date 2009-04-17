@@ -1,3 +1,15 @@
+2009-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 25027: JavaScript parseInt wrong on negative numbers
+        <https://bugs.webkit.org/show_bug.cgi?id=25027>
+
+        When dealing with negative numbers, parseInt should use ceil instead of floor.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+
 2009-04-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Oliver Hunt.

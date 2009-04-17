@@ -20,6 +20,7 @@ PASS parseInt('9007199254740992.0e2000').toString() is '9007199254740992'
 PASS parseInt(NaN) is NaN
 PASS parseInt(-Infinity) is NaN
 PASS parseInt(Infinity) is NaN
+PASS parseInt(-0.6).toString() is '0'
 PASS successfullyParsed is true
 
 TEST COMPLETE
