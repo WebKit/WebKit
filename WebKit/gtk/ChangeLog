@@ -1,3 +1,21 @@
+2009-04-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25251
+        Crash when frame creation removes it from the parent
+
+        This brings us up-to-date with the expectations of sub-frame
+        creation, following what Mac has done. It fixes crashes when
+        calling init on the child frame removes it from the page.
+
+        This makes the following test pass instead of crash:
+
+          fast/loader/frame-creation-removal.html
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+
 2009-04-16  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
