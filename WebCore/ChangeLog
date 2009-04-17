@@ -1,3 +1,13 @@
+2009-04-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25260
+        Finish V8 custom bindings for InspectorController.
+
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Added.
+
 2009-04-16  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
