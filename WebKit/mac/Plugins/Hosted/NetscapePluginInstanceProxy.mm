@@ -53,8 +53,8 @@
 #import <WebCore/runtime_object.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
-#include <runtime/JSLock.h>
-#include <runtime/PropertyNameArray.h>
+#import <runtime/JSLock.h>
+#import <runtime/PropertyNameArray.h>
 #import <utility>
 
 extern "C" {
@@ -208,7 +208,7 @@ bool NetscapePluginInstanceProxy::cancelStreamLoad(uint32_t streamID, NPReason r
     else
         stream = m_streams.get(streamID).get();
     
-    if (!streamID)
+    if (!stream)
         return false;
     
     stream->cancelLoad(reason);

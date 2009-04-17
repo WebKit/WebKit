@@ -1,3 +1,13 @@
+2009-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix crashes seen in regression tests with hosted plug-ins.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::cancelStreamLoad): Check the stream for 0,
+        not the stream ID.
+
 2009-04-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti Koivisto.
