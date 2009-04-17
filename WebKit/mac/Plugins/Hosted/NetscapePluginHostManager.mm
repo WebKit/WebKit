@@ -197,7 +197,7 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
     }
 }
 
-PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame)
 {
     NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage);
     if (!hostProxy)
@@ -220,10 +220,12 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     if (sourceURL)
         [properties.get() setObject:[sourceURL absoluteString] forKey:@"sourceURL"];
     
+    [properties.get() setObject:[NSNumber numberWithBool:fullFrame] forKey:@"fullFrame"];
+    
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
     ASSERT(data);
     
-    RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
+    RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);
     uint32_t requestID = instance->nextRequestID();
     kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     if (kr == MACH_SEND_INVALID_DEST) {
@@ -234,7 +236,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         hostProxy = hostForPackage(pluginPackage);
         
         // Create a new instance.
-        instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
+        instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);
         requestID = instance->nextRequestID();
         kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     }

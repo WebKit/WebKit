@@ -1375,14 +1375,11 @@ public:
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-static Class netscapePluginViewClass()
-{
 #if USE(PLUGIN_HOST_PROCESS)
-    return [WebHostedNetscapePluginView class];
+#define NETSCAPE_PLUGIN_VIEW WebHostedNetscapePluginView
 #else
-    return [WebNetscapePluginView class];
+#define NETSCAPE_PLUGIN_VIEW WebNetscapePluginView
 #endif
-}
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -1452,7 +1449,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
             
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            WebBaseNetscapePluginView *pluginView = [[[netscapePluginViewClass() alloc]
+            WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
                 initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                 URL:URL
@@ -1501,8 +1498,8 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     NSView *pluginView = pluginWidget->platformWidget();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if ([pluginView isKindOfClass:[WebNetscapePluginView class]])
-        [representation _redirectDataToManualLoader:(WebNetscapePluginView *)pluginView forPluginView:pluginView];
+    if ([pluginView isKindOfClass:[NETSCAPE_PLUGIN_VIEW class]])
+        [representation _redirectDataToManualLoader:(NETSCAPE_PLUGIN_VIEW *)pluginView forPluginView:pluginView];
     else {
 #else
     {
@@ -1545,7 +1542,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAp
         } 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            view = [[[netscapePluginViewClass() alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+            view = [[[NETSCAPE_PLUGIN_VIEW alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                 URL:nil
                 baseURL:baseURL

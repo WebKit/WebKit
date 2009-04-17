@@ -368,11 +368,9 @@ kern_return_t WKPCCancelLoadURL(mach_port_t clientPort, uint32_t pluginID, uint3
     if (!instanceProxy)
         return KERN_FAILURE;
     
-    HostedNetscapePluginStream* pluginStream = instanceProxy->pluginStream(streamID);
-    if (!pluginStream)
+    if (!instanceProxy->cancelStreamLoad(streamID, reason))
         return KERN_FAILURE;
-
-    pluginStream->cancelLoad(reason);
+    
     return KERN_SUCCESS;
 }
 

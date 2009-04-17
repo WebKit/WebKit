@@ -1,3 +1,60 @@
+2009-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit side of <rdar://problem/6449642>.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        (WebKit::HostedNetscapePluginStream::create):
+        New function that creates a stream from a frame loader.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        Add the constructor that takes a frame loader.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        Pass "fullFrame" to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCCancelLoadURL):
+        Call NetscapePluginInstanceProxy::cancelStreamLoad.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::create):
+        Pass "fullFrame" to the constructor.
+        
+        (WebKit::NetscapePluginInstanceProxy::manualStream):
+        New getter for the manual stream.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Take the implicit request into account if we have a full frame plug-in.
+        
+        (WebKit::NetscapePluginInstanceProxy::setManualStream):
+        Setter for the manual stream.
+        
+        (WebKit::NetscapePluginInstanceProxy::cancelStreamLoad):
+        Cancel the manual stream if necessary.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        WebHostedNetscapePluginView now conforms to the WebPluginManualLoader protocol.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Pass "fullFrame" to instantiatePlugin.
+        
+        (-[WebHostedNetscapePluginView pluginView:receivedResponse:]):
+        (-[WebHostedNetscapePluginView pluginView:receivedData:]):
+        (-[WebHostedNetscapePluginView pluginView:receivedError:]):
+        (-[WebHostedNetscapePluginView pluginViewFinishedLoading:]):
+        Call the equivalent manual stream functions.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        Use a macro for getting the plug-in view type.
+
 2009-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

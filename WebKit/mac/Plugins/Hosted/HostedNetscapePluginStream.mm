@@ -57,6 +57,14 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
         [m_request.get() _web_setHTTPReferrer:nil];
 }
 
+HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstanceProxy* instance, WebCore::FrameLoader* frameLoader)
+    : m_instance(instance)
+    , m_streamID(1)
+    , m_isTerminated(false)
+    , m_frameLoader(frameLoader)
+{
+}
+
 void HostedNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)
 {
     didReceiveResponse(0, response);

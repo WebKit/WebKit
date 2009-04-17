@@ -51,13 +51,18 @@ public:
     {
         return adoptRef(new HostedNetscapePluginStream(instance, streamID, request));
     }
-    
+    static PassRefPtr<HostedNetscapePluginStream> create(NetscapePluginInstanceProxy* instance, WebCore::FrameLoader* frameLoader)
+    {
+        return adoptRef(new HostedNetscapePluginStream(instance, frameLoader));
+    }
+                                     
     uint32_t streamID() const { return m_streamID; }
     
     void startStreamWithResponse(NSURLResponse *response);
     void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length);
     void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
-    
+    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
+
     void start();
     void stop();
 
@@ -68,6 +73,7 @@ private:
     void cancelLoad(NSError *);
 
     HostedNetscapePluginStream(NetscapePluginInstanceProxy*, uint32_t streamID, NSURLRequest *);
+    HostedNetscapePluginStream(NetscapePluginInstanceProxy*, WebCore::FrameLoader*);
     
     void startStream(NSURL *, long long expectedContentLength, NSDate *lastModifiedDate, NSString *mimeType, NSData *headers);
 
@@ -75,7 +81,6 @@ private:
 
     // NetscapePlugInStreamLoaderClient methods.
     void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&);
-    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
     bool wantsAllStreams() const;
     
     RefPtr<NetscapePluginInstanceProxy> m_instance;

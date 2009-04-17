@@ -31,10 +31,11 @@
 #import <wtf/RefPtr.h>
 
 namespace WebKit {
+    class HostedNetscapePluginStream;
     class NetscapePluginInstanceProxy;
 }
 
-@interface WebHostedNetscapePluginView : WebBaseNetscapePluginView
+@interface WebHostedNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader>
 {
     RetainPtr<NSArray> _attributeKeys;
     RetainPtr<NSArray> _attributeValues;

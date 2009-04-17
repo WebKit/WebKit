@@ -58,9 +58,9 @@ class ProxyInstance;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
 public:
-    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView)
+    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
     {
-        return adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView));
+        return adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView, fullFramePlugin));
     }
     ~NetscapePluginInstanceProxy();
     
@@ -79,8 +79,11 @@ public:
     WebHostedNetscapePluginView *pluginView() const { return m_pluginView; }
     NetscapePluginHostProxy* hostProxy() const { return m_pluginHostProxy; }
     
-    HostedNetscapePluginStream *pluginStream(uint32_t streamID);
+    bool cancelStreamLoad(uint32_t streamID, NPReason);
     void disconnectStream(HostedNetscapePluginStream*);
+    
+    void setManualStream(PassRefPtr<HostedNetscapePluginStream>);
+    HostedNetscapePluginStream* manualStream() const { return m_manualStream.get(); }
     
     void pluginHostDied();
     
@@ -242,7 +245,7 @@ public:
     }
     
 private:
-    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *);
+    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, bool fullFramePlugin);
 
     NPError loadRequest(NSURLRequest *, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
     
@@ -291,6 +294,8 @@ private:
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;
     uint32_t m_currentRequestID;
+    
+    RefPtr<HostedNetscapePluginStream> m_manualStream;
 };
     
 } // namespace WebKit

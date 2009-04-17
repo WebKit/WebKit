@@ -93,7 +93,7 @@ private:
 
 static uint32_t pluginIDCounter;
 
-NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView)
+NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
     , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
@@ -107,6 +107,12 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_currentRequestID(0)
 {
     ASSERT(m_pluginView);
+    
+    if (fullFramePlugin) {
+        // For full frame plug-ins, the first requestID will always be the one for the already
+        // open stream.
+        ++m_currentRequestID;
+    }
     
     // Assign a plug-in ID.
     do {
@@ -186,9 +192,27 @@ void NetscapePluginInstanceProxy::destroy()
     invalidate();
 }
 
-HostedNetscapePluginStream *NetscapePluginInstanceProxy::pluginStream(uint32_t streamID)
+void NetscapePluginInstanceProxy::setManualStream(PassRefPtr<HostedNetscapePluginStream> manualStream) 
 {
-    return m_streams.get(streamID).get();
+    ASSERT(!m_manualStream);
+    
+    m_manualStream = manualStream;
+}
+
+bool NetscapePluginInstanceProxy::cancelStreamLoad(uint32_t streamID, NPReason reason) 
+{
+    HostedNetscapePluginStream* stream = 0;
+    
+    if (m_manualStream && streamID == 1)
+        stream = m_manualStream.get();
+    else
+        stream = m_streams.get(streamID).get();
+    
+    if (!streamID)
+        return false;
+    
+    stream->cancelLoad(reason);
+    return true;
 }
 
 void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* stream)
