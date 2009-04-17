@@ -5569,6 +5569,7 @@
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
+		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
 		464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crossHairCursor.png; sourceTree = "<group>"; };
 		464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notAllowedCursor.png; sourceTree = "<group>"; };
@@ -9734,6 +9735,7 @@
 			children = (
 				1CDD45E60BA9C84600F90147 /* Base.xcconfig */,
 				1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */,
+				449098B10F8F82520076A327 /* FeatureDefines.xcconfig */,
 				1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */,
 				1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */,
 			);

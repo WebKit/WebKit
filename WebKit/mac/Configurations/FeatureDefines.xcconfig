@@ -1,0 +1,17 @@
+// The contents of this file must be kept in sync with FeatureDefines.xcconfig in JavaScriptCore,
+// WebCore and WebKit.  Also the default values of the ENABLE_FEATURE_NAME macros in build-webkit
+// should match the values below, but they do not need to be in the same order.
+
+// Set any ENABLE_FEATURE_NAME macro to an empty string to disable that feature.
+
+ENABLE_GEOLOCATION = $(ENABLE_GEOLOCATION_$(MAC_OS_X_VERSION_MAJOR));
+ENABLE_GEOLOCATION_ = $(ENABLE_GEOLOCATION_1040);
+ENABLE_GEOLOCATION_1040 = ;
+ENABLE_GEOLOCATION_1050 = ;
+ENABLE_GEOLOCATION_1060 = ENABLE_GEOLOCATION;
+
+ENABLE_SVG_DOM_OBJC_BINDINGS = ENABLE_SVG_DOM_OBJC_BINDINGS;
+
+// For now this needs to be kept sorted and in sync with FEATURE_DEFINES in the default settings
+// for build-webkit to prevent needless rebuilding when using both Xcode and build-webkit.
+FEATURE_DEFINES = ENABLE_DATABASE ENABLE_DOM_STORAGE $(ENABLE_GEOLOCATION) ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_AS_IMAGE $(ENABLE_SVG_DOM_OBJC_BINDINGS) ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_USE ENABLE_VIDEO ENABLE_WORKERS ENABLE_XPATH ENABLE_XSLT;

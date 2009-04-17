@@ -1,3 +1,21 @@
+2009-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Simplify FEATURE_DEFINES definition
+
+        Reviewed by Darin Adler.
+
+        This moves FEATURE_DEFINES and its related ENABLE_FEATURE_NAME
+        variables to their own FeatureDefines.xcconfig file.  It also
+        extracts a new ENABLE_GEOLOCATION variable so that
+        FEATURE_DEFINES only needs to be defined once.
+
+        * Configurations/FeatureDefines.xcconfig: Added.
+        * Configurations/JavaScriptCore.xcconfig: Removed definition of
+        ENABLE_SVG_DOM_OBJC_BINDINGS and FEATURE_DEFINES.  Added include
+        of FeatureDefines.xcconfig.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added
+        FeatureDefines.xcconfig file.
+
 2009-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Oliver Hunt.

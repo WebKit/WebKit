@@ -217,7 +217,7 @@ sub ReadPublicInterfaces
 
     my $fileName = "WebCore/bindings/objc/PublicDOMInterfaces.h";
     open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "objective-c", 
-        (map { "-D$_" } split(/ /, $defines)), "-DOBJC_CODE_GENERATION", $fileName or die "Could not open $fileName";
+        (map { "-D$_" } split(/ +/, $defines)), "-DOBJC_CODE_GENERATION", $fileName or die "Could not open $fileName";
     my @documentContent = <FILE>;
     close FILE;
 

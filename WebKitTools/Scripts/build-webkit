@@ -42,6 +42,7 @@ my $originalWorkingDirectory = getcwd();
 my $channelMessagingSupport = 0;
 my $databaseSupport = 1;
 my $domStorageSupport = 1;
+my $geolocationSupport = (isAppleMacWebKit() && !isTiger() && !isLeopard());
 my $gnomeKeyringSupport = 0;
 my $iconDatabaseSupport = 1;
 my $offlineWebApplicationSupport = 1;
@@ -59,7 +60,6 @@ my $wmlSupport = 0;
 my $coverageSupport = 0;
 my $videoSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds and Gtk+
 my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds (mac/win) and Gtk+
-my $geolocationSupport = (isAppleMacWebKit() && !isTiger() && !isLeopard());
 my $showHelp = 0;
 my $clean = 0;
 my $threeDRenderingSupport = 0;
@@ -77,6 +77,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
+  --[no-]geolocation            Toggle Geolocation support (default: $geolocationSupport)
   --[no-]gnomekeyring           Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
@@ -92,7 +93,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]wml                    Toggle WML support (default: $wmlSupport)
   --[no-]video                  Toggle Video support (default: $videoSupport)
   --[no-]workers                Toggle Web Workers support (default: $workersSupport)
-  --[no-]geolocation            Toggle Geolocation support (default: $geolocationSupport)
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
@@ -101,6 +101,7 @@ GetOptions(
            'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
+           'geolocation!' => \$geolocationSupport,
            'gnomekeyring!' => \$gnomeKeyringSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
@@ -117,10 +118,10 @@ GetOptions(
            'wml!' => \$wmlSupport,
            'video!' => \$videoSupport,
            'workers!' => \$workersSupport,
-           'geolocation!' => \$geolocationSupport,
            'coverage!' => \$coverageSupport,
            'help' => \$showHelp,
-           'clean' => \$clean);
+           'clean' => \$clean,
+);
 
 if ($showHelp) {
    print STDERR $usage;
@@ -147,13 +148,14 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
-# This needs to be kept sorted, and in sync with FEATURE_DEFINES in JavaScriptCore.xcconfig, WebCore.xcconfig
-# and WebKit.xcconfig to prevent needless rebuilding when using both Xcode and build-webkit.
+# For now this needs to be kept sorted and in sync with FEATURE_DEFINES in FeatureDefines.xcconfig in
+# JavaScriptCore, WebCore and WebKit to prevent needless rebuilding when using both Xcode and build-webkit.
 
 push @overrideFeatureDefinesOption, "ENABLE_3D_RENDERING" if $threeDRenderingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;
+push @overrideFeatureDefinesOption, "ENABLE_GEOLOCATION" if $geolocationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_OFFLINE_WEB_APPLICATIONS" if $offlineWebApplicationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
@@ -169,7 +171,6 @@ push @overrideFeatureDefinesOption, "ENABLE_WORKERS" if $workersSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
 push @overrideFeatureDefinesOption, "ENABLE_WML" if $wmlSupport;
-push @overrideFeatureDefinesOption, "ENABLE_GEOLOCATION" if $geolocationSupport;
 my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
 
 my @coverageSupportOption = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
@@ -284,6 +285,7 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @xcodeOptions = ();
         push(@xcodeOptions, @options);
+        push(@xcodeOptions, "ENABLE_GEOLOCATION=" . ($geolocationSupport ? "ENABLE_GEOLOCATION" : ""));
         push(@xcodeOptions, "ENABLE_SVG_DOM_OBJC_BINDINGS=" . ($svgDOMObjCBindingsSupport ? "ENABLE_SVG_DOM_OBJC_BINDINGS" : ""));
         push(@xcodeOptions, $overrideFeatureDefinesString);
         push(@xcodeOptions, @coverageSupportOption);

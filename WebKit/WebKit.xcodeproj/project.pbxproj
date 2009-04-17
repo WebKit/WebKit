@@ -407,6 +407,7 @@
 		3944607F020F50ED0ECA1767 /* WebHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		39446080020F50ED0ECA1767 /* WebHistoryItem.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHistoryItem.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationInternal.h; sourceTree = "<group>"; };
+		449098B90F8F82DF0076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
 		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		51079D140CED11B00077247D /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
@@ -789,6 +790,7 @@
 			children = (
 				1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */,
 				1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */,
+				449098B90F8F82DF0076A327 /* FeatureDefines.xcconfig */,
 				1C904FD30BA9DD0F0081E9D0 /* Version.xcconfig */,
 				1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */,
 			);

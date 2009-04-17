@@ -1,3 +1,18 @@
+2009-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Simplify FEATURE_DEFINES definition
+
+        Reviewed by Darin Adler.
+
+        This moves FEATURE_DEFINES and its related ENABLE_FEATURE_NAME
+        variables to their own FeatureDefines.xcconfig file.  It also
+        extracts a new ENABLE_GEOLOCATION variable so that
+        FEATURE_DEFINES only needs to be defined once.
+
+        * Scripts/build-webkit: Realphabetized code related to enabling
+        Geolation features for WebKit.  Also set ENABLE_GEOLOCATION
+        variable for xcodebuild.
+
 2009-04-16  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
