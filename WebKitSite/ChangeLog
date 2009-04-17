@@ -1,3 +1,11 @@
+2009-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Steve Falkenburg
+        
+        Fix the link for setting the Platform SDK paths in the Windows instructions.
+
+        * building/build.html:
+
 2009-04-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
