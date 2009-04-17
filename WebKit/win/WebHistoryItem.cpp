@@ -411,21 +411,14 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::children(unsigned* outChildCount, SAFE
         return E_OUTOFMEMORY;
 
     for (unsigned i = 0; i < childCount; ++i) {
-        WebHistoryItem* item = WebHistoryItem::createInstance(coreChildren[i]);
+        COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance(coreChildren[i]));
         if (!item) {
             SafeArrayDestroy(children);
             return E_OUTOFMEMORY;
         }
 
-        COMPtr<IUnknown> unknown;
-        HRESULT hr = item->QueryInterface(IID_IUnknown, (void**)&unknown);
-        if (FAILED(hr)) {
-            SafeArrayDestroy(children);
-            return hr;
-        }
-
         LONG longI = i;
-        hr = SafeArrayPutElement(children, &longI, unknown.get());
+        HRESULT hr = SafeArrayPutElement(children, &longI, item.get());
         if (FAILED(hr)) {
             SafeArrayDestroy(children);
             return hr;
