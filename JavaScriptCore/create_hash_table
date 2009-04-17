@@ -269,10 +269,6 @@ sub output() {
     print "   { 0, 0, 0, 0 }\n";
     print "};\n\n";
     print "extern const struct HashTable $name =\n";
-    print "#if ENABLE(PERFECT_HASH_SIZE)\n";
-    print "    \{ ", $pefectHashSize - 1, ", $nameEntries, 0 \};\n";
-    print "#else\n";
     print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";
-    print "#endif\n\n";
     print "} // namespace\n";
 }

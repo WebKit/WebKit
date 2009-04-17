@@ -26,19 +26,6 @@ namespace JSC {
 
 void HashTable::createTable(JSGlobalData* globalData) const
 {
-#if ENABLE(PERFECT_HASH_SIZE)
-    ASSERT(!table);
-    HashEntry* entries = new HashEntry[hashSizeMask + 1];
-    for (int i = 0; i <= hashSizeMask; ++i)
-        entries[i].setKey(0);
-    for (int i = 0; values[i].key; ++i) {
-        UString::Rep* identifier = Identifier::add(globalData, values[i].key).releaseRef();
-        int hashIndex = identifier->computedHash() & hashSizeMask;
-        ASSERT(!entries[hashIndex].key());
-        entries[hashIndex].initialize(identifier, values[i].attributes, values[i].value1, values[i].value2);
-    }
-    table = entries;
-#else
     ASSERT(!table);
     int linkIndex = compactHashSizeMask + 1;
     HashEntry* entries = new HashEntry[compactSize];
@@ -61,17 +48,12 @@ void HashTable::createTable(JSGlobalData* globalData) const
         entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2);
     }
     table = entries;
-#endif
 }
 
 void HashTable::deleteTable() const
 {
     if (table) {
-#if ENABLE(PERFECT_HASH_SIZE)
-        int max = hashSizeMask + 1;
-#else
         int max = compactSize;
-#endif
         for (int i = 0; i != max; ++i) {
             if (UString::Rep* key = table[i].key())
                 key->deref();

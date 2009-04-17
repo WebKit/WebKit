@@ -1,3 +1,22 @@
+2009-04-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6744652> 32-bit to 64-bit: Javascript hash tables double in size
+
+        Remove perfect hash optimization which removes 1 MB of overhead on 32-bit and almost 2 MB on 64-bit.  Removing the optimization was not a regression on SunSpider and the acid 3 test still passes.
+
+        * create_hash_table:
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::HashTable::deleteTable):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::next):
+        (JSC::HashTable::entry):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getEnumerableNamesFromClassInfoTable):
+
 2009-04-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
