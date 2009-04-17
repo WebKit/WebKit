@@ -3085,6 +3085,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\SuddenTermination.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\SystemTime.h"
 				>
 			</File>

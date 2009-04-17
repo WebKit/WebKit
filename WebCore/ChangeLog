@@ -1,3 +1,17 @@
+2009-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Added sudden termination functions that can be called without involving
+        the page or client.
+
+        * GNUmakefile.am: Added SuddenTermination.h.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto. Also added SuddenTermination.mm.
+
+        * platform/SuddenTermination.h: Added.
+        * platform/mac/SuddenTermination.mm: Added.
+
 2009-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

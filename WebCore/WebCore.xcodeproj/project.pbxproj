@@ -1999,6 +1999,8 @@
 		939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B02ED0EA2DBC400C54570 /* WidthIterator.h */; };
 		939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */; };
 		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
+		93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */; };
+		93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */; };
 		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */; };
 		93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */; };
@@ -6910,6 +6912,8 @@
 		939B02ED0EA2DBC400C54570 /* WidthIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidthIterator.h; sourceTree = "<group>"; };
 		939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
 		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
+		93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuddenTermination.h; sourceTree = "<group>"; };
+		93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SuddenTermination.mm; sourceTree = "<group>"; };
 		93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenu.h; sourceTree = "<group>"; };
 		93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenu.cpp; sourceTree = "<group>"; };
 		93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMac.mm; sourceTree = "<group>"; };
@@ -10159,6 +10163,7 @@
 				0A4844980CA44CB200B7BD48 /* SoftLinking.h */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
+				93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				BCE659E50EA92FB2007E4533 /* ThemeMac.h */,
 				BCE659E80EA92FFA007E4533 /* ThemeMac.mm */,
@@ -13833,6 +13838,7 @@
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				9352071709BD3BA500F2038D /* StaticConstructors.h */,
+				93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
 				BCE65D310EAD1211007E4533 /* Theme.cpp */,
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
@@ -16835,6 +16841,7 @@
 				415E3EF60F8D67FE007EEB50 /* MessagePortProxy.h in Headers */,
 				A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */,
 				93D3C1590F97A9D70053C013 /* DOMHTMLCanvasElement.h in Headers */,
+				93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18847,6 +18854,7 @@
 				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
 				FE700DD10F92D81A008E2BFE /* JSCoordinatesCustom.cpp in Sources */,
 				A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */,
+				93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1313,6 +1313,7 @@ webcore_sources += \
 	WebCore/platform/SharedTimer.h \
 	WebCore/platform/Sound.h \
 	WebCore/platform/StaticConstructors.h \
+	WebCore/platform/SuddenTermination.h \
 	WebCore/platform/SystemTime.h \
 	WebCore/platform/ThemeTypes.h \
 	WebCore/platform/ThreadCheck.h \
