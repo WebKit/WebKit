@@ -50,6 +50,9 @@ public:
 
     virtual bool requiresLayer() const { return false; }
 
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
+
 protected:
     // Returns the bounding box for the filter associated with this object (if any)
     FloatRect filterBoundingBox() const;

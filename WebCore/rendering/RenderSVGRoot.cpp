@@ -2,8 +2,7 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007, 2008, 2009 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
-
-    This file is part of the KDE project
+                  2009 Google, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -251,6 +250,20 @@ FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 TransformationMatrix RenderSVGRoot::localTransform() const
 {
     return TransformationMatrix();
+}
+
+void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+{
+    // Apply our viewbox transform, and then call RenderBox's method to handle all the normal CSS Box model bits
+    TransformationMatrix localToParent = localToParentTransform();
+
+    // Undo the x(),y() translation included in localToParentTransform() because
+    // RenderBox::computeRectForRepaint() expects it to be included in repaintRect
+    localToParent.translateRight(-x(), -y());
+
+    // Apply our localToParent transform and pass the rect off to our RenderBox
+    repaintRect = localToParent.mapRect(repaintRect);
+    RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

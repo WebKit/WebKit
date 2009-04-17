@@ -1,3 +1,16 @@
+2009-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Move RenderPath and RenderSVGContainer onto a unified clippedOverflowRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=25268
+
+        * platform/mac/svg/custom/focus-ring-expected.checksum:
+        * platform/mac/svg/custom/focus-ring-expected.png:
+        * platform/mac/svg/custom/marker-overflow-clip-expected.txt:
+        * platform/mac/svg/custom/scroll-hit-test-expected.checksum:
+        * platform/mac/svg/custom/scroll-hit-test-expected.png:
+
 2009-04-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Anders Carlsson.

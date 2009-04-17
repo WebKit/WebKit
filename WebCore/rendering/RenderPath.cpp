@@ -2,8 +2,7 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2008 Rob Buis <buis@kde.org>
                   2005, 2007 Eric Seidel <eric@webkit.org>
-
-    This file is part of the KDE project
+                  2009 Google, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -112,10 +111,10 @@ FloatRect RenderPath::objectBoundingBox() const
     if (m_path.isEmpty())
         return FloatRect();
 
-    if (m_fillBBox.isEmpty())
-        m_fillBBox = m_path.boundingRect();
+    if (m_cachedLocalFillBBox.isEmpty())
+        m_cachedLocalFillBBox = m_path.boundingRect();
 
-    return m_fillBBox;
+    return m_cachedLocalFillBBox;
 }
 
 FloatRect RenderPath::repaintRectInLocalCoordinates() const
@@ -123,23 +122,29 @@ FloatRect RenderPath::repaintRectInLocalCoordinates() const
     if (m_path.isEmpty())
         return FloatRect();
 
-    if (m_strokeBbox.isEmpty()) {
-        if (!style()->svgStyle()->hasStroke())
-            return objectBoundingBox();
+    // If we already have a cached repaint rect, return that
+    if (!m_cachedLocalRepaintRect.isEmpty())
+        return m_cachedLocalRepaintRect;
 
+    if (!style()->svgStyle()->hasStroke())
+        m_cachedLocalRepaintRect = objectBoundingBox();
+    else {
         BoundingRectStrokeStyleApplier strokeStyle(this, style());
-        m_strokeBbox = m_path.strokeBoundingRect(&strokeStyle);
+        m_cachedLocalRepaintRect = m_path.strokeBoundingRect(&strokeStyle);
     }
-    // FIXME: This should include filter and marker content too.
 
-    return m_strokeBbox;
+    // Markers and filters can paint outside of the stroke path
+    m_cachedLocalRepaintRect.unite(m_markerBounds);
+    m_cachedLocalRepaintRect.unite(filterBoundingBox());
+
+    return m_cachedLocalRepaintRect;
 }
 
 void RenderPath::setPath(const Path& newPath)
 {
     m_path = newPath;
-    m_strokeBbox = FloatRect();
-    m_fillBBox = FloatRect();
+    m_cachedLocalRepaintRect = FloatRect();
+    m_cachedLocalFillBBox = FloatRect();
 }
 
 const Path& RenderPath::path() const
@@ -168,23 +173,6 @@ void RenderPath::layout()
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
-}
-
-IntRect RenderPath::clippedOverflowRectForRepaint(RenderBoxModelObject* /*repaintContainer*/)
-{
-    // FIXME: handle non-root repaintContainer
-    FloatRect repaintRect = absoluteTransform().mapRect(repaintRectInLocalCoordinates());
-
-    // Markers can expand the bounding box
-    repaintRect.unite(m_markerBounds);
-
-    // Filters can paint anywhere.  If we have one, expand our rect so we are sure to repaint it.
-    repaintRect.unite(filterBoundingBox());
-
-    if (!repaintRect.isEmpty())
-        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
-
-    return enclosingIntRect(repaintRect);
 }
 
 int RenderPath::lineHeight(bool, bool) const

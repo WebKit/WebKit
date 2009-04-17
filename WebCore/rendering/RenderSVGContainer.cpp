@@ -152,22 +152,6 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
-IntRect RenderSVGContainer::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
-{
-    FloatRect repaintRect;
-
-    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
-        repaintRect.unite(current->clippedOverflowRectForRepaint(repaintContainer));
-
-    // Filters can paint anywhere.  If we have one, expand our rect so we are sure to repaint it.
-    repaintRect.unite(filterBoundingBox());
-
-    if (!repaintRect.isEmpty())
-        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
-
-    return enclosingIntRect(repaintRect);
-}
-
 void RenderSVGContainer::addFocusRingRects(GraphicsContext* graphicsContext, int, int)
 {
     graphicsContext->addFocusRingRect(m_absoluteBounds);
@@ -192,7 +176,12 @@ FloatRect RenderSVGContainer::objectBoundingBox() const
 // width or height, so we union all of our child rects as our repaint rect.
 FloatRect RenderSVGContainer::repaintRectInLocalCoordinates() const
 {
-    return computeContainerBoundingBox(this, true);
+    FloatRect repaintRect = computeContainerBoundingBox(this, true);
+
+    // A filter on this container can paint outside of the union of the child repaint rects
+    repaintRect.unite(filterBoundingBox());
+
+    return repaintRect;
 }
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

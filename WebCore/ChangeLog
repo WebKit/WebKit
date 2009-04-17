@@ -1,3 +1,41 @@
+2009-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Move RenderPath and RenderSVGContainer onto a unified clippedOverflowRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=25268
+
+        Lots of minus lines.  Now we're sharing more sane code
+        (which will respect -webkit-transforms! and scroll offsets correctly)
+
+        Which means this fixes:
+        https://bugs.webkit.org/show_bug.cgi?id=20769 and
+        https://bugs.webkit.org/show_bug.cgi?id=21968 too!
+
+        We're no longer expanding the paint rect "for anti-aliasing", since
+        I can't find a case where that's required.  If it is, repaintRectInLocalCoordinates()
+        should be fixed to handle those cases instead of here.
+
+        This fixes svg/custom/scroll-hit-test (now that we respect scroll offsets when repainting)
+        as well as improves our focus ring drawing seen in svg/custom/focus-ring
+        focus rings are now closer to transformed content by a couple pixels (they were needlessly outset by the antialiasing hack)
+        Also, it fixes the dumped rects for markers, causing a progression in svg/custom/marker-overflow-clip
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::setPath):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/RenderSVGRoot.h:
+
 2009-04-17  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

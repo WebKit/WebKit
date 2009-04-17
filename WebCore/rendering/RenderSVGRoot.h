@@ -47,7 +47,7 @@ public:
     virtual int lineHeight(bool b, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void calcPrefWidths();
-    
+
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
@@ -66,7 +66,9 @@ public:
     FloatRect viewport() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    
+
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed);
+
 private:
     void calcViewport(); 
     void applyContentTransforms(PaintInfo&, int parentX, int parentY);
