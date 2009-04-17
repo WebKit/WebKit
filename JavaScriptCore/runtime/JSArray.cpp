@@ -788,7 +788,7 @@ struct AVLTreeAbstractorForArrayCompare {
             m_cachedCall->setThis(m_globalThisValue);
             m_cachedCall->setArgument(0, va);
             m_cachedCall->setArgument(1, vb);
-            compareResult = m_cachedCall->call().toNumber(m_exec);
+            compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame());
         } else {
             ArgList arguments;
             arguments.append(va);

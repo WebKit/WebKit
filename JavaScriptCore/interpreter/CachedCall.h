@@ -48,7 +48,7 @@ namespace JSC {
         }
         void setThis(JSValuePtr v) { m_closure.setArgument(0, v); }
         void setArgument(int n, JSValuePtr v) { m_closure.setArgument(n + 1, v); }
-        
+        CallFrame* newCallFrame() { return m_closure.newCallFrame; }
         ~CachedCall()
         {
             if (m_valid)

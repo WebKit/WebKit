@@ -2,6 +2,22 @@
 
         Reviewed by Gavin Barraclough.
 
+        Fix subtle error in optimised VM reentry in Array.sort
+
+        Basically to ensure we don't accidentally invalidate the cached callframe
+        we should be using the cached callframe rather than our own exec state.
+        While the old behaviour was wrong i have been unable to actually create a
+        test case where anything actually ends up going wrong.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::newCallFrame):
+        * runtime/JSArray.cpp:
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+
+2009-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Optimise op_resolve_base
 
         If we can statically find a property we are trying to resolve
