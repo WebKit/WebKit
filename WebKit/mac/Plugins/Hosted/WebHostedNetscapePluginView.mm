@@ -294,6 +294,12 @@ extern "C" {
         _proxy->keyEvent(self, event, NPCocoaEventKeyUp);
 }
 
+- (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
+{
+    if (_isStarted && _proxy)
+        _proxy->syntheticKeyDownWithCommandModifier(keyCode, character);
+}
+
 - (void)pluginHostDied
 {
     _pluginHostDied = YES;

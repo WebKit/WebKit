@@ -1,3 +1,46 @@
+2009-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6714488>
+        REGRESSION (Safari 3-4): Edit menu commands (cut/copy/paste/select all) do not work on Flash content
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier):
+        Send a keyDown event to the plug-in host.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView sendModifierEventWithKeyCode:character:]):
+        Call the plug-in instance proxy.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendModifierEventWithKeyCode:character:]):
+        Add this. Subclasses are required to override it.
+        
+        (-[WebBaseNetscapePluginView cut:]):
+        (-[WebBaseNetscapePluginView copy:]):
+        (-[WebBaseNetscapePluginView paste:]):
+        (-[WebBaseNetscapePluginView selectAll:]):
+        Call sendModifierEventWithKeyCode.
+        
+        * Plugins/WebNetscapePluginEventHandler.h:
+        Add syntheticKeyDownWithCommandModifier.
+        
+        * Plugins/WebNetscapePluginEventHandlerCarbon.h:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::syntheticKeyDownWithCommandModifier):
+        Send the synthetic event.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier):
+        Send the synthetic event.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendModifierEventWithKeyCode:character:]):
+        Call the event handler.
+
 2009-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Simplify FEATURE_DEFINES definition

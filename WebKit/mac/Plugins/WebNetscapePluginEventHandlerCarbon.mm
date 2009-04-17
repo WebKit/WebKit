@@ -209,6 +209,17 @@ void WebNetscapePluginEventHandlerCarbon::keyDown(NSEvent *theEvent)
     WKSendKeyEventToTSM(theEvent);
 }
 
+void WebNetscapePluginEventHandlerCarbon::syntheticKeyDownWithCommandModifier(int keyCode, char character)
+{
+    EventRecord event;
+    getCarbonEvent(&event);
+    
+    event.what = ::keyDown;
+    event.modifiers |= cmdKey;
+    event.message = keyCode << 8 | character;
+    sendEvent(&event);
+}
+
 static UInt32 keyMessageForEvent(NSEvent *event)
 {
     NSData *data = [[event characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];

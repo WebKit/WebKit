@@ -97,6 +97,7 @@ public:
     void keyEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
     void insertText(NSString *);
     bool wheelEvent(NSView *pluginView, NSEvent *);
+    void syntheticKeyDownWithCommandModifier(int keyCode, char character);
     
     void print(CGContextRef, unsigned width, unsigned height);
     

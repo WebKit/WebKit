@@ -825,6 +825,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _eventHandler->flagsChanged(theEvent);
 }
 
+- (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
+{
+    if (!_isStarted)
+        return;
+    
+    _eventHandler->syntheticKeyDownWithCommandModifier(keyCode, character);
+}
+
 #pragma mark WEB_NETSCAPE_PLUGIN
 
 - (BOOL)isNewWindowEqualToOldWindow

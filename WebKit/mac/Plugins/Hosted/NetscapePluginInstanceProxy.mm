@@ -287,6 +287,18 @@ void NetscapePluginInstanceProxy::keyEvent(NSView *pluginView, NSEvent *event, N
                                      [event isARepeat], [event keyCode]);
 }
 
+void NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier(int keyCode, char character)
+{
+    NSData *charactersData = [NSData dataWithBytes:&character length:1];
+
+    _WKPHPluginInstanceKeyboardEvent(m_pluginHostProxy->port(), m_pluginID, 
+                                     [NSDate timeIntervalSinceReferenceDate], 
+                                     NPCocoaEventKeyDown, NSCommandKeyMask,
+                                     const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
+                                     const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
+                                     false, keyCode);
+}
+
 void NetscapePluginInstanceProxy::insertText(NSString *text)
 {
     NSData *textData = [text dataUsingEncoding:NSUTF8StringEncoding];

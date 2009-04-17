@@ -203,6 +203,11 @@ using namespace WebCore;
     ASSERT_NOT_REACHED();
 }
 
+- (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
+{
+    ASSERT_NOT_REACHED();
+}
+
 - (void)removeTrackingRect
 {
     if (_trackingTag) {
@@ -606,26 +611,24 @@ using namespace WebCore;
     return _element.get();
 }
 
-// We want to treat these as regular keyboard events.
-
 - (void)cut:(id)sender
 {
-    [self keyDown:[NSApp currentEvent]];
+    [self sendModifierEventWithKeyCode:7 character:'x'];
 }
 
 - (void)copy:(id)sender
 {
-    [self keyDown:[NSApp currentEvent]];
+    [self sendModifierEventWithKeyCode:8 character:'c'];
 }
 
 - (void)paste:(id)sender
 {
-    [self keyDown:[NSApp currentEvent]];
+    [self sendModifierEventWithKeyCode:9 character:'v'];
 }
 
 - (void)selectAll:(id)sender
 {
-    [self keyDown:[NSApp currentEvent]];
+    [self sendModifierEventWithKeyCode:0 character:'a'];
 }
 
 // AppKit doesn't call mouseDown or mouseUp on right-click. Simulate control-click

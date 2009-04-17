@@ -151,6 +151,23 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
     sendEvent(&event);
 }
 
+void WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier(int keyCode, char character)
+{
+    char nullTerminatedString[] = { character, '\0' };
+    
+    RetainPtr<NSString> characters(AdoptNS, [[NSString alloc] initWithUTF8String:nullTerminatedString]);
+    
+    NPCocoaEvent event;
+    initializeEvent(&event, NPCocoaEventKeyDown);
+    event.data.key.modifierFlags = NSCommandKeyMask;
+    event.data.key.keyCode = keyCode;
+    event.data.key.isARepeat = false;
+    event.data.key.characters = (NPNSString *)characters.get();
+    event.data.key.charactersIgnoringModifiers = (NPNSString *)characters.get();
+
+    sendEvent(&event);
+}
+
 bool WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)
 {
     NPCocoaEvent event;
