@@ -75,12 +75,13 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_asyncEventTimer(this, &HTMLMediaElement::asyncEventTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
+    , m_playedTimeRanges()
     , m_playbackRate(1.0f)
     , m_defaultPlaybackRate(1.0f)
     , m_networkState(NETWORK_EMPTY)
     , m_readyState(HAVE_NOTHING)
     , m_volume(1.0f)
-    , m_currentTimeDuringSeek(0)
+    , m_lastSeekTime(0)
     , m_previousProgress(0)
     , m_previousProgressTime(numeric_limits<double>::max())
     , m_lastTimeUpdateEventWallTime(0)
@@ -89,6 +90,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_currentSourceNode(0)
     , m_player(0)
     , m_restrictions(NoRestrictions)
+    , m_playing(false)
     , m_processingMediaPlayerCallback(0)
     , m_processingLoad(false)
     , m_delayingTheLoadEvent(false)
@@ -391,6 +393,8 @@ void HTMLMediaElement::loadInternal()
     // 5 
     m_error = 0;
     m_autoplaying = true;
+    m_playedTimeRanges = TimeRanges::create();
+    m_lastSeekTime = 0;
 
     // 6
     setPlaybackRate(defaultPlaybackRate());
@@ -403,6 +407,7 @@ void HTMLMediaElement::loadInternal()
         m_seeking = false;
         if (m_player) {
             m_player->pause();
+            m_playing = false;
             m_player->seek(0);
         }
         dispatchEventForType(eventNames().emptiedEvent, false, true);
@@ -792,7 +797,11 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
         return;
 
     // 5
-    m_currentTimeDuringSeek = time;
+    if (m_playing) {
+        if (m_lastSeekTime < now)
+            m_playedTimeRanges->add(m_lastSeekTime, now);
+    }
+    m_lastSeekTime = time;
 
     // 6 - set the seeking flag, it will be cleared when the engine tells is the time has actually changed
     m_seeking = true;
@@ -823,7 +832,7 @@ float HTMLMediaElement::currentTime() const
     if (!m_player)
         return 0;
     if (m_seeking)
-        return m_currentTimeDuringSeek;
+        return m_lastSeekTime;
     return m_player->currentTime();
 }
 
@@ -1255,8 +1264,12 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 
 PassRefPtr<TimeRanges> HTMLMediaElement::played() const
 {
-    // FIXME track played
-    return TimeRanges::create();
+    if (m_playing) {
+        float time = currentTime();
+        if (m_lastSeekTime < time)
+            m_playedTimeRanges->add(m_lastSeekTime, time);
+    }
+    return m_playedTimeRanges->copy();
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
@@ -1335,9 +1348,14 @@ void HTMLMediaElement::updatePlayState()
         m_player->setRate(m_playbackRate);
         m_player->play();
         startPlaybackProgressTimer();
+        m_playing = true;
     } else if (!shouldBePlaying && !playerPaused) {
         m_player->pause();
         m_playbackProgressTimer.stop();
+        m_playing = false;
+        float time = currentTime();
+        if (m_lastSeekTime < time)
+            m_playedTimeRanges->add(m_lastSeekTime, time);
     }
     
     if (renderer())

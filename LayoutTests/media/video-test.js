@@ -2,6 +2,8 @@
 var video = null;
 var media = null;
 var console = null;
+var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
+var Failed = false;
 
 findMediaElement();
 logConsole();
@@ -10,6 +12,11 @@ setTimeout(hanged, 10000);
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+}
+
+function disableFullTestDetailsPrinting()
+{
+    printFullTestDetails = false;
 }
 
 function logConsole()
@@ -32,7 +39,7 @@ function findMediaElement()
 
 function hanged()
 {
-    consoleWrite("FAIL: timed out");
+    logResult(Failed, "FAIL: timed out");
     if (window.layoutTestController)
         layoutTestController.notifyDone();  
 }
@@ -75,13 +82,37 @@ function testExpected(testFuncString, expected, comparison)
     reportExpected(success, testFuncString, comparison, expected, observed)
 }
 
+var testNumber = 0;
+
 function reportExpected(success, testFuncString, comparison, expected, observed)
 {
-    var msg = "EXPECTED (<em>" + testFuncString + " </em>" + comparison + " '<em>" + expected + "</em>')";
+    testNumber++;
+
+    var msg = "Test " + testNumber;
+
+    if (printFullTestDetails || !success)
+        msg = "EXPECTED (<em>" + testFuncString + " </em>" + comparison + " '<em>" + expected + "</em>')";
+
     if (!success)
         msg +=  ", OBSERVED '<em>" + observed + "</em>'";
 
     logResult(success, msg);
+}
+
+function runSilently(testFuncString)
+{
+    if (printFullTestDetails)
+        consoleWrite("RUN(" + testFuncString + ")");
+    try {
+        eval(testFuncString);
+    } catch (ex) {
+        if (!printFullTestDetails) {
+            // No details were printed previous, give some now.
+            // This will be helpful in case of error.
+            logResult(Failed, "Error in RUN(" + testFuncString + "):");
+        }
+        logResult(Failed, "<span style='color:red'>"+ex+"</span>");
+    }
 }
 
 function run(testFuncString)
@@ -104,7 +135,7 @@ function waitForEvent(eventName, func, endit)
     function _eventCallback(event)
     {
         consoleWrite("EVENT(" + eventName + ")");
-        
+
         if (func)
             func(event);
         
@@ -171,7 +202,7 @@ function failTestIn(ms)
 
 function failTest(text)
 {
-    logResult(false, text);
+    logResult(Failed, text);
     endTest();
 }
 

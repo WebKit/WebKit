@@ -1,3 +1,33 @@
+2009-04-17  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add support for the media element 'played' attribute.
+        This involves support of "normalized TimeRanges" as described by
+        the spec.
+
+        Test: media/video-played.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Renamed 
+        m_currentTimeDuringSeek->m_lastSeekTime. Added m_playing and m_playedTimeRanges.
+        (WebCore::HTMLMediaElement::loadInternal): Reset m_playing, m_lastSeekTime, and
+        m_playedTimeRanges
+        (WebCore::HTMLMediaElement::seek): Set current time to m_playedTimeRanges
+        (WebCore::HTMLMediaElement::currentTime): m_currentTimeDuringSeek -> m_lastSeekTime
+        (WebCore::HTMLMediaElement::played): Returns m_playedTimeRanges.
+        (WebCore::HTMLMediaElement::updatePlayState): Add the new played time ranges when pausing. 
+        Set the m_playing flag.
+        * html/HTMLMediaElement.h:
+
+        * html/TimeRanges.cpp:
+        (TimeRanges::add): Merge range(s) if overlap.
+        * html/TimeRanges.h: Add various helpers (below).
+        (WebCore::TimeRanges::Range::isPointInRange): Added.
+        (WebCore::TimeRanges::Range::isOverlappingRange): Ditto.
+        (WebCore::TimeRanges::Range::unionWithOverlappingRange): Ditto.
+        (WebCore::TimeRanges::Range::isBeforeRange): Ditto.
+
 2009-04-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti Koivisto.

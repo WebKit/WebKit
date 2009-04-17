@@ -1,3 +1,18 @@
+2009-04-17  Pierre d'Herbemont <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add test for media element 'played' attribute.
+
+        * media/video-played-expected.txt: Added.
+        * media/video-played.html: Added.
+        * media/video-test.js:
+        (disableFullTestDetailsPrinting): New, include less information in 'reportExpected' output
+        to accomodate tests with values that are expected to change from run to run.
+        (reportExpected): Don't log expected and observed values when printFullTestDetails is false.
+        (runSilently): New, same as run() but without logging.
+        (run): Call runSilently to run command.
+
 2009-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak
