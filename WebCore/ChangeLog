@@ -1,3 +1,17 @@
+2009-04-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 25259: AX: VoiceOver cmd-cntl-space does not follow the google.com->more link
+        https://bugs.webkit.org/show_bug.cgi?id=25259
+  
+        When a node becomes visible or hidden, accessibility needs to be told to update.
+
+        Test: accessibility/visible-elements.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2009-04-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, added missing header.

@@ -1,3 +1,15 @@
+2009-04-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by NOBODY Darin Adler.
+
+        Bug 25259: AX: VoiceOver cmd-cntl-space does not follow the google.com->more link 
+        https://bugs.webkit.org/show_bug.cgi?id=25259
+
+        Add a test to make sure accessibility is updated when a node becomes visible or hidden.
+
+        * accessibility/visible-elements-expected.txt: Added.
+        * accessibility/visible-elements.html: Added.
+
 2009-04-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Oliver Hunt.
