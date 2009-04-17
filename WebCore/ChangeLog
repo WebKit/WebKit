@@ -1,3 +1,14 @@
+2009-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Performing a block style change in an editable root that contains only a br adds a newline
+        https://bugs.webkit.org/show_bug.cgi?id=25256
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Fix a bad check for an root
+        block that didn't handle a root that contained a placeholder.
+
 2009-04-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

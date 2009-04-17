@@ -1,3 +1,13 @@
+2009-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        Performing a block style change in an editable root that contains only a br adds a newline
+        https://bugs.webkit.org/show_bug.cgi?id=25256
+
+        * editing/execCommand/25256-expected.txt: Added.
+        * editing/execCommand/25256.html: Added.
+
 2009-04-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

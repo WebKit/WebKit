@@ -656,9 +656,9 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
         // If the block is the root editable element, always move content to a new block,
         // since it is illegal to modify attributes on the root editable element for editing.
         if (upstreamStart.node() == editableRootForPosition(upstreamStart)) {
-            // If the block is the root editable element and there is nothing insde of it, create a new
+            // If the block is the root editable element and it contains no rendered content, create a new
             // block but don't try and move content into it, since there's nothing to move.
-            if (upstreamStart == upstreamEnd)
+            if (!hasARenderedDescendant(upstreamStart.node()))
                 return insertNewDefaultParagraphElementAt(upstreamStart);
         } else if (isBlock(upstreamEnd.node())) {
             if (!upstreamEnd.node()->isDescendantOf(upstreamStart.node())) {
