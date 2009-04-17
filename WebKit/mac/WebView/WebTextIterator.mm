@@ -67,7 +67,7 @@ using namespace WebCore;
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->_textIterator.set(new TextIterator([range _range], true, false));
+    _private->_textIterator.set(new TextIterator(core(range), true, false));
     return self;
 }
 
@@ -83,7 +83,7 @@ using namespace WebCore;
 
 - (DOMRange *)currentRange
 {
-    return [DOMRange _wrapRange:_private->_textIterator->range().get()];
+    return kit(_private->_textIterator->range().get());
 }
 
 - (const unichar *)currentTextPointer
@@ -102,7 +102,7 @@ using namespace WebCore;
 
 - (DOMNode *)currentNode
 {
-    return [DOMNode _wrapNode:_private->_textIterator->node()];
+    return kit(_private->_textIterator->node());
 }
 
 - (NSString *)currentText

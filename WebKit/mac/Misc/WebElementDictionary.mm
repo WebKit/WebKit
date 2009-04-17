@@ -28,6 +28,7 @@
 
 #import "WebElementDictionary.h"
 
+#import "DOMNodeInternal.h"
 #import "WebDOMOperations.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"

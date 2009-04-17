@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         GenerateConstructor,
-        ObjCCustomInternalImpl,
+        Polymorphic,
         InterfaceUUID=548139b4-31ab-4978-b1d5-cfcfdfbaea0e,
         ImplementationUUID=0268e673-2489-4743-9a3a-197dae4b4d9c
     ] CSSRule {

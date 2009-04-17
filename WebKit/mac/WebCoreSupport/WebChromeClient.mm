@@ -29,7 +29,7 @@
 
 #import "WebChromeClient.h"
 
-#import <Foundation/Foundation.h>
+#import "DOMNodeInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
@@ -37,14 +37,15 @@
 #import "WebGeolocationInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
-#import "WebKitSystemInterface.h"
 #import "WebKitPrefix.h"
+#import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebPlugin.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>

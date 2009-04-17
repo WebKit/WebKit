@@ -139,7 +139,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
         Pasteboard::generalPasteboard(); //Initialises pasteboard types
     ASSERT(selectedRange);
     
-    NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:[DOMRange _wrapRange:selectedRange]] autorelease];
+    NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:kit(selectedRange)] autorelease];
 #ifdef BUILDING_ON_TIGER
     // 4930197: Mail overrides [WebHTMLView pasteboardTypesForSelection] in order to add another type to the pasteboard
     // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 

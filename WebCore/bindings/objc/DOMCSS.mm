@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -26,193 +26,97 @@
  */
 
 #import "config.h"
-#import "DOMCSS.h"
 
-#import "CSSCharsetRule.h"
-#import "CSSFontFaceRule.h"
-#import "CSSImportRule.h"
-#import "CSSMediaRule.h"
-#import "CSSPageRule.h"
-#import "CSSPrimitiveValue.h"
 #import "CSSRule.h"
-#import "CSSRuleList.h"
-#import "CSSStyleDeclaration.h"
-#import "CSSStyleRule.h"
-#import "CSSStyleSheet.h"
-#import "CSSValueList.h"
+#import "CSSValue.h"
+#import "DOMCSSCharsetRule.h"
+#import "DOMCSSFontFaceRule.h"
+#import "DOMCSSImportRule.h"
+#import "DOMCSSMediaRule.h"
+#import "DOMCSSPageRule.h"
+#import "DOMCSSPrimitiveValue.h"
+#import "DOMCSSRuleInternal.h"
+#import "DOMCSSStyleDeclaration.h"
+#import "DOMCSSStyleRule.h"
+#import "DOMCSSStyleSheet.h"
+#import "DOMCSSUnknownRule.h"
+#import "DOMCSSValueInternal.h"
+#import "DOMCSSValueList.h"
+#import "DOMCSSVariablesRule.h"
 #import "DOMInternal.h"
-#import "DOMPrivate.h"
-#import "StyleSheet.h"
-#import <objc/objc-class.h>
+#import "DOMStyleSheetInternal.h"
+#import "DOMWebKitCSSKeyframeRule.h"
+#import "DOMWebKitCSSKeyframesRule.h"
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-#import "DOMSVGColor.h"
 #import "DOMSVGPaint.h"
 #endif
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
 
-@implementation DOMStyleSheet (WebCoreInternal)
-
-- (WebCore::StyleSheet *)_styleSheet
+Class kitClass(WebCore::StyleSheet* impl)
 {
-    return reinterpret_cast<WebCore::StyleSheet*>(_internal);
-}
-
-- (id)_initWithStyleSheet:(WebCore::StyleSheet *)impl
-{
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMStyleSheet *)_wrapStyleSheet:(WebCore::StyleSheet *)impl
-{
-    if (!impl)
-        return nil;
-
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    Class wrapperClass;
     if (impl->isCSSStyleSheet())
-        wrapperClass = [DOMCSSStyleSheet class];
-    else
-        wrapperClass = [DOMStyleSheet class];
-    return [[[wrapperClass alloc] _initWithStyleSheet:impl] autorelease];
+        return [DOMCSSStyleSheet class];
+    return [DOMStyleSheet class];
 }
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMCSSRule
 
-@implementation DOMCSSRule (WebCoreInternal)
-
-- (WebCore::CSSRule *)_CSSRule
+Class kitClass(WebCore::CSSRule* impl)
 {
-    return reinterpret_cast<WebCore::CSSRule*>(_internal);
-}
-
-- (id)_initWithCSSRule:(WebCore::CSSRule *)impl
-{
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMCSSRule *)_wrapCSSRule:(WebCore::CSSRule *)impl
-{
-    if (!impl)
-        return nil;
-
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-
-    Class wrapperClass = nil;
     switch (impl->type()) {
         case DOM_UNKNOWN_RULE:
-            wrapperClass = [DOMCSSUnknownRule class];
-            break;
+            return [DOMCSSUnknownRule class];
         case DOM_STYLE_RULE:
-            wrapperClass = [DOMCSSStyleRule class];
-            break;
+            return [DOMCSSStyleRule class];
         case DOM_CHARSET_RULE:
-            wrapperClass = [DOMCSSCharsetRule class];
-            break;
+            return [DOMCSSCharsetRule class];
         case DOM_IMPORT_RULE:
-            wrapperClass = [DOMCSSImportRule class];
-            break;
+            return [DOMCSSImportRule class];
         case DOM_MEDIA_RULE:
-            wrapperClass = [DOMCSSMediaRule class];
-            break;
+            return [DOMCSSMediaRule class];
         case DOM_FONT_FACE_RULE:
-            wrapperClass = [DOMCSSFontFaceRule class];
-            break;
+            return [DOMCSSFontFaceRule class];
         case DOM_PAGE_RULE:
-            wrapperClass = [DOMCSSPageRule class];
-            break;
+            return [DOMCSSPageRule class];
         case DOM_VARIABLES_RULE:
-            wrapperClass = [DOMCSSVariablesRule class];
-            break;
+            return [DOMCSSVariablesRule class];
         case DOM_WEBKIT_KEYFRAMES_RULE:
-            wrapperClass = [DOMWebKitCSSKeyframesRule class];
-            break;
+            return [DOMWebKitCSSKeyframesRule class];
         case DOM_WEBKIT_KEYFRAME_RULE:
-            wrapperClass = [DOMWebKitCSSKeyframeRule class];
-            break;
+            return [DOMWebKitCSSKeyframeRule class];
     }
-    return [[[wrapperClass alloc] _initWithCSSRule:impl] autorelease];
+    ASSERT_NOT_REACHED();
+    return nil;
 }
-
-@end
-
 
 //------------------------------------------------------------------------------------------
 // DOMCSSValue
 
-@implementation DOMCSSValue (WebCoreInternal)
-
-- (WebCore::CSSValue *)_CSSValue
+Class kitClass(WebCore::CSSValue* impl)
 {
-    return reinterpret_cast<WebCore::CSSValue*>(_internal);
-}
-
-- (id)_initWithCSSValue:(WebCore::CSSValue *)impl
-{
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMCSSValue *)_wrapCSSValue:(WebCore::CSSValue *)impl
-{
-    if (!impl)
-        return nil;
-
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-
-    Class wrapperClass = nil;
     switch (impl->cssValueType()) {
         case DOM_CSS_PRIMITIVE_VALUE:
-            wrapperClass = [DOMCSSPrimitiveValue class];
-            break;
+            return [DOMCSSPrimitiveValue class];
         case DOM_CSS_VALUE_LIST:
-            wrapperClass = [DOMCSSValueList class];
-            break;
+            return [DOMCSSValueList class];
         case DOM_CSS_INHERIT:
-            wrapperClass = [DOMCSSValue class];
-            break;
+            return [DOMCSSValue class];
         case DOM_CSS_CUSTOM:
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
             if (impl->isSVGPaint())
-                wrapperClass = [DOMSVGPaint class];
-            else if (impl->isSVGColor())
-                wrapperClass = [DOMSVGColor class];
-            else
+                return [DOMSVGPaint class];
+            if (impl->isSVGColor())
+                return [DOMSVGColor class];
 #endif
-                wrapperClass = [DOMCSSValue class];
-            break;
+            return [DOMCSSValue class];
     }
-    return [[[wrapperClass alloc] _initWithCSSValue:impl] autorelease];
+    ASSERT_NOT_REACHED();
+    return nil;
 }
-
-@end
-
 
 //------------------------------------------------------------------------------------------
 // DOMCSSStyleDeclaration CSS2 Properties

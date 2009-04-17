@@ -28,6 +28,7 @@
 
 #import "WebInspectorClient.h"
 
+#import "DOMNodeInternal.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebInspector.h"
@@ -35,12 +36,9 @@
 #import "WebNodeHighlight.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
-
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
-
 #import <WebKit/DOMExtensions.h>
-
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;

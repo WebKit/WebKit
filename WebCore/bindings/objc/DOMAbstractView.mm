@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,14 @@
  */
 
 #import "config.h"
-#import "DOMAbstractView.h"
+#import "DOMInternal.h" // import first to make the private/public trick work
+#import "DOMAbstractViewInternal.h"
 
-#import "DOMDocument.h"
-#import "DOMInternal.h"
-#import "DOMWindow.h"
-#import "Document.h"
+#import "DOMDocumentInternal.h"
 #import "ExceptionHandlers.h"
 #import "Frame.h"
 #import "ThreadCheck.h"
-#import <wtf/GetPtr.h>
+#import "WebScriptObjectPrivate.h"
 
 #define IMPL reinterpret_cast<WebCore::Frame*>(_internal)
 
@@ -52,7 +50,7 @@
 {
     if (!_internal)
         return nil;
-    return [DOMDocument _wrapDocument:WTF::getPtr(IMPL->domWindow()->document())];
+    return kit(IMPL->domWindow()->document());
 }
 
 @end
@@ -62,44 +60,34 @@
 - (void)_disconnectFrame
 {
     ASSERT(_internal);
-    WebCore::removeDOMWrapper(_internal);
+    removeDOMWrapper(_internal);
     _internal = 0;
 }
 
 @end
 
-@implementation DOMAbstractView (WebCoreInternal)
-
-- (WebCore::DOMWindow *)_abstractView
+WebCore::DOMWindow* core(DOMAbstractView *wrapper)
 {
-    if (!_internal)
-        return nil;
-    return IMPL->domWindow();
+    if (!wrapper)
+        return 0;
+    if (!wrapper->_internal)
+        return 0;
+    return reinterpret_cast<WebCore::Frame*>(wrapper->_internal)->domWindow();
 }
 
-- (id)_initWithFrame:(WebCore::Frame *)impl
-{
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMAbstractView *)_wrapAbstractView:(WebCore::DOMWindow *)impl
+DOMAbstractView *kit(WebCore::DOMWindow* value)
 {
     { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
 
-    if (!impl)
+    if (!value)
         return nil;
-    WebCore::Frame* frame = impl->frame();
+    WebCore::Frame* frame = value->frame();
     if (!frame)
         return nil;
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(frame);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    return [[[self alloc] _initWithFrame:frame] autorelease];
+    if (DOMAbstractView *wrapper = getDOMWrapper(frame))
+        return [[wrapper retain] autorelease];
+    DOMAbstractView *wrapper = [[DOMAbstractView alloc] _init];
+    wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(frame);
+    addDOMWrapper(wrapper, frame);
+    return [wrapper autorelease];
 }
-
-@end

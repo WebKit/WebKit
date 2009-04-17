@@ -41,7 +41,7 @@ short ObjCNodeFilterCondition::acceptNode(ExecState*, Node* node) const
 {
     if (!node)
         return NodeFilter::FILTER_REJECT;
-    return [m_filter.get() acceptNode:[DOMNode _wrapNode:node]];
+    return [m_filter.get() acceptNode:kit(node)];
 }
 
 } // namespace WebCore

@@ -160,76 +160,6 @@ NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterf
 
 @end
 
-CSSStyleDeclaration* core(DOMCSSStyleDeclaration *declaration)
-{
-    return [declaration _CSSStyleDeclaration];
-}
-
-DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* declaration)
-{
-    return [DOMCSSStyleDeclaration _wrapCSSStyleDeclaration:declaration];
-}
-
-Element* core(DOMElement *element)
-{
-    return [element _element];
-}
-
-DOMElement *kit(Element* element)
-{
-    return [DOMElement _wrapElement:element];
-}
-
-Node* core(DOMNode *node)
-{
-    return [node _node];
-}
-
-DOMNode *kit(Node* node)
-{
-    return [DOMNode _wrapNode:node];
-}
-
-Document* core(DOMDocument *document)
-{
-    return [document _document];
-}
-
-DOMDocument *kit(Document* document)
-{
-    return [DOMDocument _wrapDocument:document];
-}
-
-DocumentFragment* core(DOMDocumentFragment *fragment)
-{
-    return [fragment _documentFragment];
-}
-
-DOMDocumentFragment *kit(DocumentFragment* fragment)
-{
-    return [DOMDocumentFragment _wrapDocumentFragment:fragment];
-}
-
-HTMLElement* core(DOMHTMLElement *element)
-{
-    return [element _HTMLElement];
-}
-
-DOMHTMLElement *kit(HTMLElement *element)
-{
-    return [DOMHTMLElement _wrapHTMLElement:element];
-}
-
-Range* core(DOMRange *range)
-{
-    return [range _range];
-}
-
-DOMRange *kit(Range* range)
-{
-    return [DOMRange _wrapRange:range];
-}
-
 EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
 {
     switch (editableLinkBehavior) {
@@ -534,7 +464,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     size_t size = nodesVector->size();
     NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:size];
     for (size_t i = 0; i < size; ++i)
-        [nodes addObject:[DOMNode _wrapNode:(*nodesVector)[i]]];
+        [nodes addObject:kit((*nodesVector)[i])];
     return nodes;
 }
 
@@ -542,7 +472,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     // FIXME: This is always "for interchange". Is that right? See the previous method.
     Vector<Node*> nodeList;
-    NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange);
+    NSString *markupString = createMarkup(core(range), nodes ? &nodeList : 0, AnnotateForInterchange);
     if (nodes)
         *nodes = [self _nodesFromList:&nodeList];
 
@@ -558,7 +488,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     // This will give a system malloc'd buffer that can be turned directly into an NSString
     unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer([range _range], length, true);
+    UChar* buf = plainTextToMallocAllocatedBuffer(core(range), length, true);
     
     if (!buf)
         return [NSString string];
@@ -663,19 +593,19 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
-    VisiblePosition visiblePosition([node _node], offset, static_cast<EAffinity>(affinity));
+    VisiblePosition visiblePosition(core(node), offset, static_cast<EAffinity>(affinity));
     return visiblePosition.absoluteCaretBounds();
 }
 
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range
 {
-   return _private->coreFrame->firstRectForRange([range _range]);
+   return _private->coreFrame->firstRectForRange(core(range));
 }
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
 {
     NSRect rangeRect = [self _firstRectForDOMRange:range];    
-    Node *startNode = [[range startContainer] _node];
+    Node *startNode = core([range startContainer]);
         
     if (startNode && startNode->renderer()) {
         RenderLayer *layer = startNode->renderer()->enclosingLayer();
@@ -717,7 +647,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     SelectionController selection;
     selection.setSelection(_private->coreFrame->selection()->selection());
     selection.modify(alteration, direction, granularity);
-    return [DOMRange _wrapRange:selection.toNormalizedRange().get()];
+    return kit(selection.toNormalizedRange().get());
 }
 
 - (TextGranularity)_selectionGranularity
@@ -779,7 +709,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
 {
-    return [DOMRange _wrapRange:[self _convertToDOMRange:nsrange].get()];
+    return kit([self _convertToDOMRange:nsrange].get());
 }
 
 - (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
@@ -790,12 +720,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
 {
-    return [self _convertToNSRange:[range _range]];
+    return [self _convertToNSRange:core(range)];
 }
 
 - (DOMRange *)_markDOMRange
 {
-    return [DOMRange _wrapRange:_private->coreFrame->mark().toNormalizedRange().get()];
+    return kit(_private->coreFrame->mark().toNormalizedRange().get());
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
@@ -803,8 +733,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 // the text surrounding the deletion.
 - (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
 {
-    Node *startContainer = [[proposedRange startContainer] _node];
-    Node *endContainer = [[proposedRange endContainer] _node];
+    Node* startContainer = core([proposedRange startContainer]);
+    Node* endContainer = core([proposedRange endContainer]);
     if (startContainer == nil || endContainer == nil)
         return nil;
 
@@ -828,7 +758,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     int exception = 0;
     range->setStart(newStart.node(), newStart.m_offset, exception);
     range->setEnd(newStart.node(), newStart.m_offset, exception);
-    return [DOMRange _wrapRange:range.get()];
+    return kit(range.get());
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
@@ -844,8 +774,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         *afterString = nil;
         
     // inspect destination
-    Node *startContainer = [[rangeToReplace startContainer] _node];
-    Node *endContainer = [[rangeToReplace endContainer] _node];
+    Node *startContainer = core([rangeToReplace startContainer]);
+    Node *endContainer = core([rangeToReplace endContainer]);
 
     Position startPos(startContainer, [rangeToReplace startOffset]);
     Position endPos(endContainer, [rangeToReplace endOffset]);
@@ -892,28 +822,28 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
     if (!_private->coreFrame || !_private->coreFrame->document())
-        return 0;
+        return nil;
 
-    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromMarkup(_private->coreFrame->document(), markupString, baseURLString).get()];
+    return kit(createFragmentFromMarkup(_private->coreFrame->document(), markupString, baseURLString).get());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
 {
     if (!_private->coreFrame || !_private->coreFrame->document())
-        return 0;
+        return nil;
     
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     Vector<Node*> nodesVector;
     DOMNode *node;
     while ((node = [nodeEnum nextObject]))
-        nodesVector.append([node _node]);
+        nodesVector.append(core(node));
     
-    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromNodes(_private->coreFrame->document(), nodesVector).get()];
+    return kit(createFragmentFromNodes(_private->coreFrame->document(), nodesVector).get());
 }
 
 - (void)_replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    DOMDocumentFragment *fragment = [DOMDocumentFragment _wrapDocumentFragment:_private->coreFrame->document()->createDocumentFragment().get()];
+    DOMDocumentFragment *fragment = kit(_private->coreFrame->document()->createDocumentFragment().get());
     [fragment appendChild:node];
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
@@ -941,7 +871,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
-        DOMRange *previousCharacterRange = [DOMRange _wrapRange:makeRange(previous, position).get()];
+        DOMRange *previousCharacterRange = kit(makeRange(previous, position).get());
         NSRect rect = [self _firstRectForDOMRange:previousCharacterRange];
         if (NSPointInRect(point, rect))
             return previousCharacterRange;
@@ -949,7 +879,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     VisiblePosition next = position.next();
     if (next.isNotNull()) {
-        DOMRange *nextCharacterRange = [DOMRange _wrapRange:makeRange(position, next).get()];
+        DOMRange *nextCharacterRange = kit(makeRange(position, next).get());
         NSRect rect = [self _firstRectForDOMRange:nextCharacterRange];
         if (NSPointInRect(point, rect))
             return nextCharacterRange;
@@ -962,14 +892,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame || !_private->coreFrame->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _wrapCSSStyleDeclaration:_private->coreFrame->typingStyle()->copy().get()];
+    return kit(_private->coreFrame->typingStyle()->copy().get());
 }
 
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (!_private->coreFrame)
         return;
-    _private->coreFrame->computeAndSetTypingStyle([style _CSSStyleDeclaration], undoAction);
+    _private->coreFrame->computeAndSetTypingStyle(core(style), undoAction);
 }
 
 - (void)_dragSourceMovedTo:(NSPoint)windowLoc
@@ -1152,7 +1082,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!controller)
         return false;
 
-    Node* coreNode = [node _node];
+    Node* coreNode = core(node);
     if (!coreNode || !coreNode->renderer())
         return false;
 
@@ -1169,7 +1099,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!controller)
         return false;
 
-    Node* coreNode = [node _node];
+    Node* coreNode = core(node);
     if (!coreNode || !coreNode->renderer())
         return false;
 
@@ -1194,7 +1124,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (_private->coreFrame->selection()->isNone() || !fragment)
         return;
     
-    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
+    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), core(fragment), selectReplacement, smartReplace, matchStyle));
     _private->coreFrame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 

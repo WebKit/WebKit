@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@ module html {
         HasNameGetter,
         CustomCall,
         CustomToJS,
+        Polymorphic,
         InterfaceUUID=b0d215ff-6f9c-4d1f-86c3-f200a65a5134,
         ImplementationUUID=8e81b17f-7f74-4121-8f2f-a339a7e66447
     ] HTMLCollection {

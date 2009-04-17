@@ -28,6 +28,7 @@
 
 #import "WebNSPasteboardExtras.h"
 
+#import "DOMElementInternal.h"
 #import "WebArchive.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLViewInternal.h"
@@ -211,7 +212,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
     
 }
 
-static CachedImage* imageFromElement(DOMElement *domElement) {
+static CachedImage* imageFromElement(DOMElement *domElement)
+{
     Element* element = core(domElement);
     if (!element)
         return 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,11 @@
 
 #if ENABLE(XPATH)
 
+#import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOMXPath.h"
 
-#import "DOMInternal.h"
 #import "PlatformString.h"
+#import "WebScriptObjectPrivate.h"
 #import "XPathNSResolver.h"
 
 //------------------------------------------------------------------------------------------
@@ -55,40 +56,31 @@
     [super finalize];
 }
 
-- (WebCore::XPathNSResolver *)_xpathNSResolver
-{
-    return IMPL;
-}
-
-- (id)_initWithXPathNSResolver:(WebCore::XPathNSResolver *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;    
-}
-
-+ (DOMNativeXPathNSResolver *)_wrapXPathNSResolver:(WebCore::XPathNSResolver *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[DOMNativeXPathNSResolver alloc] _initWithXPathNSResolver:impl] autorelease];    
-}
-
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
     return IMPL->lookupNamespaceURI(prefix);
 }
 
 @end
+
+WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *wrapper)
+{
+    return wrapper ? reinterpret_cast<WebCore::XPathNSResolver*>(wrapper->_internal) : 0;
+}
+
+DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
+{
+    if (!impl)
+        return nil;
+    
+    if (DOMNativeXPathNSResolver *wrapper = getDOMWrapper(impl))
+        return [[wrapper retain] autorelease];
+    
+    DOMNativeXPathNSResolver *wrapper = [[DOMNativeXPathNSResolver alloc] _init];
+    wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(impl);
+    impl->ref();
+    addDOMWrapper(wrapper, impl);
+    return [wrapper autorelease];    
+}
 
 #endif // ENABLE(XPATH)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
@@ -26,85 +26,46 @@
  */
 
 #import "config.h"
-#import "DOMEvents.h"
+#import "DOMEventInternal.h"
 
-#import "DOMInternal.h"
+#import "DOMKeyboardEvent.h"
 #import "DOMMessageEvent.h"
-#import "DOMPrivate.h"
+#import "DOMMouseEvent.h"
+#import "DOMMutationEvent.h"
+#import "DOMOverflowEvent.h"
 #import "DOMProgressEvent.h"
+#import "DOMTextEvent.h"
+#import "DOMWheelEvent.h"
 #import "Event.h"
-#import "KeyboardEvent.h"
-#import "MessageEvent.h"
-#import "MouseEvent.h"
-#import "MutationEvent.h"
-#import "OverflowEvent.h"
-#import "ProgressEvent.h"
-#import "UIEvent.h"
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVGZoomEvent.h"
-#import "SVGZoomEvent.h"
 #endif
 
-//------------------------------------------------------------------------------------------
-// DOMEvent
-
-@implementation DOMEvent (WebCoreInternal)
-
-- (WebCore::Event *)_event
+Class kitClass(WebCore::Event* impl)
 {
-    return reinterpret_cast<WebCore::Event*>(_internal);
-}
-
-- (id)_initWithEvent:(WebCore::Event *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMEvent *)_wrapEvent:(WebCore::Event *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-
-    Class wrapperClass = nil;
     if (impl->isUIEvent()) {
         if (impl->isKeyboardEvent())
-            wrapperClass = [DOMKeyboardEvent class];
-        else if (impl->isTextEvent())
-            wrapperClass = [DOMTextEvent class];
-        else if (impl->isMouseEvent())
-            wrapperClass = [DOMMouseEvent class];
-        else if (impl->isWheelEvent())
-            wrapperClass = [DOMWheelEvent class];        
+            return [DOMKeyboardEvent class];
+        if (impl->isTextEvent())
+            return [DOMTextEvent class];
+        if (impl->isMouseEvent())
+            return [DOMMouseEvent class];
+        if (impl->isWheelEvent())
+            return [DOMWheelEvent class];        
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-        else if (impl->isSVGZoomEvent())
-            wrapperClass = [DOMSVGZoomEvent class];
+        if (impl->isSVGZoomEvent())
+            return [DOMSVGZoomEvent class];
 #endif
-        else
-            wrapperClass = [DOMUIEvent class];
-    } else if (impl->isMutationEvent())
-        wrapperClass = [DOMMutationEvent class];
-    else if (impl->isOverflowEvent())
-        wrapperClass = [DOMOverflowEvent class];
-    else if (impl->isMessageEvent())
-        wrapperClass = [DOMMessageEvent class];
-    else if (impl->isProgressEvent())
-        wrapperClass = [DOMProgressEvent class];
-    else
-        wrapperClass = [DOMEvent class];
-
-    return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
+        return [DOMUIEvent class];
+    }
+    if (impl->isMutationEvent())
+        return [DOMMutationEvent class];
+    if (impl->isOverflowEvent())
+        return [DOMOverflowEvent class];
+    if (impl->isMessageEvent())
+        return [DOMMessageEvent class];
+    if (impl->isProgressEvent())
+        return [DOMProgressEvent class];
+    return [DOMEvent class];
 }
-
-@end

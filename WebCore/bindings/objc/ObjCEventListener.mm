@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -26,15 +26,12 @@
  */
 
 #import "config.h"
-
 #import "ObjCEventListener.h"
 
 #import "DOMEventInternal.h"
 #import "DOMEventListener.h"
 #import "Event.h"
 #import "EventListener.h"
-
-#import <objc/objc-class.h>
 #import <wtf/HashMap.h>
 
 namespace WebCore {
@@ -44,9 +41,10 @@ static ListenerMap* listenerMap;
 
 ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
 {
-    if (ListenerMap* map = listenerMap)
-        return map->get(listener);
-    return 0;
+    ListenerMap* map = listenerMap;
+    if (!map)
+        return 0;
+    return map->get(listener);
 }
 
 PassRefPtr<ObjCEventListener> ObjCEventListener::wrap(id <DOMEventListener> listener)
@@ -76,7 +74,7 @@ ObjCEventListener::~ObjCEventListener()
 
 void ObjCEventListener::handleEvent(Event* event, bool)
 {
-    [m_listener handleEvent:[DOMEvent _wrapEvent:event]];
+    [m_listener handleEvent:kit(event)];
 }
 
 } // namespace WebCore

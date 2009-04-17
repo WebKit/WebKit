@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,27 @@
 
 #import "config.h"
 
+#import "DOMAbstractViewInternal.h"
+#import "DOMCSSRuleInternal.h"
+#import "DOMCSSRuleListInternal.h"
+#import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMCSSValueInternal.h"
+#import "DOMCounterInternal.h"
+#import "DOMEventInternal.h"
+#import "DOMHTMLCollectionInternal.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
+#import "DOMMediaListInternal.h"
+#import "DOMNamedNodeMapInternal.h"
+#import "DOMNodeInternal.h"
+#import "DOMNodeIteratorInternal.h"
+#import "DOMNodeListInternal.h"
+#import "DOMRGBColorInternal.h"
+#import "DOMRangeInternal.h"
+#import "DOMRectInternal.h"
+#import "DOMStyleSheetInternal.h"
+#import "DOMStyleSheetListInternal.h"
+#import "DOMTreeWalkerInternal.h"
 #import "JSCSSRule.h"
 #import "JSCSSRuleList.h"
 #import "JSCSSStyleDeclaration.h"
@@ -52,20 +71,25 @@
 #import "JSTreeWalker.h"
 #import "JSXPathExpression.h"
 #import "JSXPathResult.h"
-#import "Node.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
-#import <objc/objc-runtime.h>
+
+#if ENABLE(XPATH)
+#import "DOMXPathExpressionInternal.h"
+#import "DOMXPathResultInternal.h"
+#endif
+
+// FIXME: Couldn't get an include of "DOMDOMImplementationInternal.h" to work here.
+DOMImplementation *kit(WebCore::DOMImplementationFront*);
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
 // headers are included and what namespaces we use to avoid naming conflicts.
 
-// FIXME: This has to be in the KJS namespace to avoid an Objective-C++ ambiguity with C++ and
-// Objective-C classes of the same name (even when not in the same namespace). That's also the
-// reason for the use of objc_getClass in the WRAP_OLD macro below.
+// FIXME: This has to be in the JSC namespace to avoid an Objective-C++ ambiguity with C++ and
+// Objective-C classes of the same name (even when not in the same namespace).
 
 // Some day if the compiler is fixed, or if all the JS wrappers are named with a "JS" prefix,
-// we could move the function into the WebCore namespace where it belongs.
+// we could move the function out of the JSC namespace.
 
 namespace JSC {
 
@@ -73,7 +97,7 @@ static inline id createDOMWrapper(JSC::JSObject* object)
 {
     #define WRAP(className) \
         if (object->inherits(&WebCore::JS##className::s_info)) \
-            return [DOM##className _wrap##className:static_cast<WebCore::JS##className*>(object)->impl()];
+            return kit(static_cast<WebCore::JS##className*>(object)->impl());
 
     WRAP(CSSRule)
     WRAP(CSSRuleList)
@@ -105,17 +129,15 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     #undef WRAP
 
     if (object->inherits(&WebCore::JSDOMWindowShell::s_info))
-        return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindowShell*>(object)->impl()];
+        return kit(static_cast<WebCore::JSDOMWindowShell*>(object)->impl());
 
     if (object->inherits(&WebCore::JSDOMImplementation::s_info))
-        return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
+        return kit(implementationFront(static_cast<WebCore::JSDOMImplementation*>(object)));
 
     return nil;
 }
 
 }
-
-namespace WebCore {
 
 id createDOMWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current)
 {
@@ -123,6 +145,4 @@ id createDOMWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject>
     if (![wrapper _hasImp]) // new wrapper, not from cache
         [wrapper _setImp:object originRootObject:origin rootObject:current];
     return wrapper;
-}
-
 }

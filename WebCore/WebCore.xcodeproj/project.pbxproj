@@ -2020,6 +2020,8 @@
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93CCF0600AF6CA7600018E89 /* NavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */; };
+		93D3C1590F97A9D70053C013 /* DOMHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */; };
+		93D3C17D0F97AA760053C013 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */; };
 		93D9D53C0DA27E180077216C /* RangeBoundaryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */; };
 		93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */; };
@@ -2095,7 +2097,6 @@
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */; };
-		93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */; settings = {ATTRIBUTES = (); }; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
 		93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */; };
 		93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6DE0BA0FB7200854064 /* JSComment.cpp */; };
@@ -2385,7 +2386,7 @@
 		A81369D3097374F600D74463 /* HTMLButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B7097374F500D74463 /* HTMLButtonElement.cpp */; };
 		A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B8097374F500D74463 /* HTMLFieldSetElement.h */; };
 		A81369D5097374F600D74463 /* HTMLFieldSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B9097374F500D74463 /* HTMLFieldSetElement.cpp */; };
-		A81369D6097374F600D74463 /* HTMLTextAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BA097374F500D74463 /* HTMLTextAreaElement.h */; };
+		A81369D6097374F600D74463 /* HTMLTextAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BA097374F500D74463 /* HTMLTextAreaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BB097374F500D74463 /* HTMLTextAreaElement.cpp */; };
 		A81369D8097374F600D74463 /* HTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BC097374F500D74463 /* HTMLSelectElement.h */; };
 		A81369D9097374F600D74463 /* HTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BD097374F500D74463 /* HTMLSelectElement.cpp */; };
@@ -4531,7 +4532,7 @@
 				85ECBF090AA7628900544F0B /* DOMHTMLBaseFontElement.h in Copy Generated Headers */,
 				8575DF810AA612D600F5DBB5 /* DOMHTMLBodyElement.h in Copy Generated Headers */,
 				85BA4CE50AA686510088052D /* DOMHTMLButtonElement.h in Copy Generated Headers */,
-				93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */,
+				93D3C17D0F97AA760053C013 /* DOMHTMLCanvasElement.h in Copy Generated Headers */,
 				1C11CCBA0AA6093700DADB20 /* DOMHTMLCollection.h in Copy Generated Headers */,
 				85BA4D2A0AA6889F0088052D /* DOMHTMLDListElement.h in Copy Generated Headers */,
 				85BA4D280AA6889F0088052D /* DOMHTMLDirectoryElement.h in Copy Generated Headers */,
@@ -6938,6 +6939,7 @@
 		93CA4CA309DF93FA00DF8677 /* tokenizer.flex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer.flex; sourceTree = "<group>"; };
 		93CCF0260AF6C52900018E89 /* NavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAction.h; sourceTree = "<group>"; };
 		93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationAction.cpp; sourceTree = "<group>"; };
+		93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
 		93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeBoundaryPoint.h; sourceTree = "<group>"; };
 		93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoader.cpp; sourceTree = "<group>"; };
 		93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainResourceLoader.cpp; sourceTree = "<group>"; };
@@ -6979,7 +6981,6 @@
 		93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLStructure.pm; path = scripts/IDLStructure.pm; sourceTree = "<group>"; };
 		93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedRadioButtons.h; sourceTree = "<group>"; };
 		93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedRadioButtons.cpp; sourceTree = "<group>"; };
-		93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
 		93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLCanvasElement.mm; sourceTree = "<group>"; };
 		93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElementInternal.h; sourceTree = "<group>"; };
 		93F9B6DE0BA0FB7200854064 /* JSComment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComment.cpp; sourceTree = "<group>"; };
@@ -11009,9 +11010,8 @@
 				859A9C400AA5E3BD00B694B2 /* DOMHTMLBodyElement.mm */,
 				85BA4CD50AA6861B0088052D /* DOMHTMLButtonElement.h */,
 				85BA4CD60AA6861B0088052D /* DOMHTMLButtonElement.mm */,
-				93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */,
+				93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */,
 				93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */,
-				93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */,
 				85DF2F8C0AA3C88100AD64C5 /* DOMHTMLCollection.h */,
 				85DF2F8D0AA3C88100AD64C5 /* DOMHTMLCollection.mm */,
 				85BA4D010AA688680088052D /* DOMHTMLDListElement.h */,
@@ -11164,6 +11164,7 @@
 				85E7114F0AC5D5340053270F /* DOMHTMLBaseFontElementInternal.h */,
 				85E711500AC5D5340053270F /* DOMHTMLBodyElementInternal.h */,
 				85E711520AC5D5340053270F /* DOMHTMLButtonElementInternal.h */,
+				93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */,
 				85E711530AC5D5340053270F /* DOMHTMLCollectionInternal.h */,
 				85E711560AC5D5340053270F /* DOMHTMLDListElementInternal.h */,
 				85E711540AC5D5340053270F /* DOMHTMLDirectoryElementInternal.h */,
@@ -16833,6 +16834,7 @@
 				9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */,
 				415E3EF60F8D67FE007EEB50 /* MessagePortProxy.h in Headers */,
 				A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */,
+				93D3C1590F97A9D70053C013 /* DOMHTMLCanvasElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

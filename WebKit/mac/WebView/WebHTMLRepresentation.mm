@@ -28,7 +28,7 @@
 
 #import "WebHTMLRepresentation.h"
 
-#import "DOMNodeInternal.h"
+#import "DOMElementInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebBasePluginPackage.h"
@@ -260,13 +260,13 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    return [NSAttributedString _web_attributedStringFromRange:Range::create([startNode _node]->document(), [startNode _node], startOffset, [endNode _node], endOffset).get()];
+    return [NSAttributedString _web_attributedStringFromRange:Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get()];
 }
 
 static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 {
-    Node* node = [element _node];
-    return node && node->hasTagName(formTag) ? static_cast<HTMLFormElement *>(node) : 0;
+    Element* node = core(element);
+    return node && node->hasTagName(formTag) ? static_cast<HTMLFormElement*>(node) : 0;
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
@@ -286,7 +286,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
-    Node* node = [element _node];
+    Element* node = core(element);
     return node && node->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(node) : 0;
 }
 

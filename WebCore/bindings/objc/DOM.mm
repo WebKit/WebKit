@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -26,33 +26,31 @@
  */
 
 #import "config.h"
+#import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOM.h"
 
+#import "DOMRangeInternal.h"
+#import "DOMElementInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMHTMLCanvasElement.h"
-#import "DOMInternal.h"
-#import "ExceptionHandlers.h"
 #import "Frame.h"
 #import "HTMLNames.h"
-#import "HTMLPlugInElement.h"
-#import "NodeIterator.h"
-#import "Range.h"
+#import "HTMLElement.h"
 #import "RenderImage.h"
-#import "RenderView.h"
-#import "ScriptController.h"
-#import "SimpleFontData.h"
-#import "TreeWalker.h"
-
+#import "NodeFilter.h"
+#import "WebScriptObjectPrivate.h"
 #import <wtf/HashMap.h>
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-#import "SVGElement.h"
-#import "SVGElementInstance.h"
-#import "SVGNames.h"
 #import "DOMSVG.h"
+#import "SVGElementInstance.h"
 #endif
 
 using namespace JSC;
 using namespace WebCore;
+
+// FIXME: Would be nice to break this up into separate files to match how other WebKit
+// code is organized.
 
 //------------------------------------------------------------------------------------------
 // DOMNode
@@ -260,7 +258,6 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 @implementation DOMNode (WebCoreInternal)
 
-// FIXME: should this go in the main implementation?
 - (NSString *)description
 {
     if (!_internal)
@@ -274,192 +271,118 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
 
-- (id)_initWithNode:(WebCore::Node *)impl
+- (JSC::Bindings::RootObject*)_rootObject
 {
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
+    WebCore::Frame* frame = core(self)->document()->frame();
+    if (!frame)
+        return 0;
+    return frame->script()->bindingRootObject();
 }
 
-+ (DOMNode *)_wrapNode:(WebCore::Node *)impl
+@end
+
+Class kitClass(WebCore::Node* impl)
 {
-    if (!impl)
-        return nil;
-
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-
-    Class wrapperClass = nil;
     switch (impl->nodeType()) {
         case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
-                wrapperClass = WebCore::elementClass(static_cast<WebCore::HTMLElement*>(impl)->tagQName(), [DOMHTMLElement class]);
+                return WebCore::elementClass(static_cast<WebCore::HTMLElement*>(impl)->tagQName(), [DOMHTMLElement class]);
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-            else if (impl->isSVGElement())
-                wrapperClass = WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
+            if (impl->isSVGElement())
+                return WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
 #endif
-            else
-                wrapperClass = [DOMElement class];
-            break;
+            return [DOMElement class];
         case WebCore::Node::ATTRIBUTE_NODE:
-            wrapperClass = [DOMAttr class];
-            break;
+            return [DOMAttr class];
         case WebCore::Node::TEXT_NODE:
-            wrapperClass = [DOMText class];
-            break;
+            return [DOMText class];
         case WebCore::Node::CDATA_SECTION_NODE:
-            wrapperClass = [DOMCDATASection class];
-            break;
+            return [DOMCDATASection class];
         case WebCore::Node::ENTITY_REFERENCE_NODE:
-            wrapperClass = [DOMEntityReference class];
-            break;
+            return [DOMEntityReference class];
         case WebCore::Node::ENTITY_NODE:
-            wrapperClass = [DOMEntity class];
-            break;
+            return [DOMEntity class];
         case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
-            wrapperClass = [DOMProcessingInstruction class];
-            break;
+            return [DOMProcessingInstruction class];
         case WebCore::Node::COMMENT_NODE:
-            wrapperClass = [DOMComment class];
-            break;
+            return [DOMComment class];
         case WebCore::Node::DOCUMENT_NODE:
             if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
-                wrapperClass = [DOMHTMLDocument class];
+                return [DOMHTMLDocument class];
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-            else if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
-                wrapperClass = [DOMSVGDocument class];
+            if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
+                return [DOMSVGDocument class];
 #endif
-            else
-                wrapperClass = [DOMDocument class];
-            break;
+            return [DOMDocument class];
         case WebCore::Node::DOCUMENT_TYPE_NODE:
-            wrapperClass = [DOMDocumentType class];
-            break;
+            return [DOMDocumentType class];
         case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
-            wrapperClass = [DOMDocumentFragment class];
-            break;
+            return [DOMDocumentFragment class];
         case WebCore::Node::NOTATION_NODE:
-            wrapperClass = [DOMNotation class];
-            break;
+            return [DOMNotation class];
         case WebCore::Node::XPATH_NAMESPACE_NODE:
             // FIXME: Create an XPath objective C wrapper
             // See http://bugs.webkit.org/show_bug.cgi?id=8755
             return nil;
     }
-    return [[[wrapperClass alloc] _initWithNode:impl] autorelease];
-}
-
-+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget
-{
-    if (!eventTarget)
-        return nil;
-
-    // We don't have an ObjC binding for XMLHttpRequest
-    return [DOMNode _wrapNode:eventTarget->toNode()];
-}
-
-- (WebCore::Node *)_node
-{
-    return reinterpret_cast<WebCore::Node*>(_internal);
-}
-
-- (JSC::Bindings::RootObject*)_rootObject
-{
-    if (WebCore::Node *n = [self _node]) {
-        if (WebCore::Frame* frame = n->document()->frame())
-            return frame->script()->bindingRootObject();
-    }
-    return 0;
-}
-
-@end
-
-@implementation DOMNode (DOMNodeExtensions)
-
-// FIXME: This should be implemented in Node so we don't have to fetch the renderer.
-// If it was, we could even autogenerate.
-- (NSRect)boundingBox
-{
-    [self _node]->document()->updateLayoutIgnorePendingStylesheets();
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer)
-        return renderer->absoluteBoundingBoxRect();
-    return NSZeroRect;
-}
-
-// FIXME: This should be implemented in Node so we don't have to fetch the renderer.
-// If it was, we could even autogenerate.
-- (NSArray *)lineBoxRects
-{
-    [self _node]->document()->updateLayoutIgnorePendingStylesheets();
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer) {
-        Vector<WebCore::IntRect> rects;
-        renderer->absoluteRectsForRange(rects);
-        return kit(rects);
-    }
+    ASSERT_NOT_REACHED();
     return nil;
 }
 
-@end
-
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-@implementation DOMSVGElementInstance (WebCoreInternal)
-
-- (id)_initWithSVGElementInstance:(WebCore::SVGElementInstance *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMSVGElementInstance *)_wrapSVGElementInstance:(WebCore::SVGElementInstance *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithSVGElementInstance:impl] autorelease];
-}
-
-+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget
+id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     if (!eventTarget)
         return nil;
 
-    return [DOMSVGElementInstance _wrapSVGElementInstance:eventTarget->toSVGElementInstance()];
+    if (WebCore::Node* node = eventTarget->toNode())
+        return kit(node);
+
+#if ENABLE(SVG_DOM_OBJC_BINDINGS)
+    if (WebCore::SVGElementInstance* svgElementInstance = eventTarget->toSVGElementInstance())
+        return kit(svgElementInstance);
+#endif
+
+    // We don't have an ObjC binding for XMLHttpRequest.
+
+    return nil;
 }
 
-- (WebCore::SVGElementInstance *)_SVGElementInstance
+@implementation DOMNode (DOMNodeExtensions)
+
+- (NSRect)boundingBox
 {
-    return reinterpret_cast<WebCore::SVGElementInstance*>(_internal);
+    // FIXME: Could we move this function to WebCore::Node and autogenerate?
+    core(self)->document()->updateLayoutIgnorePendingStylesheets();
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return NSZeroRect;
+    return renderer->absoluteBoundingBoxRect();
+}
+
+- (NSArray *)lineBoxRects
+{
+    // FIXME: Could we move this function to WebCore::Node and autogenerate?
+    core(self)->document()->updateLayoutIgnorePendingStylesheets();
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return nil;
+    Vector<WebCore::IntRect> rects;
+    renderer->absoluteRectsForRange(rects);
+    return kit(rects);
 }
 
 @end
-#endif
 
 @implementation DOMNode (DOMNodeExtensionsPendingPublic)
 
 - (NSImage *)renderedImage
 {
-    if (WebCore::Node *node = [self _node])
-        if (WebCore::Frame* frame = node->document()->frame())
-            return frame->nodeImage(node);
-    return nil;
+    // FIXME: Could we move this function to WebCore::Node and autogenerate?
+    WebCore::Node* node = core(self);
+    WebCore::Frame* frame = node->document()->frame();
+    if (!frame)
+        return nil;
+    return frame->nodeImage(node);
 }
 
 @end
@@ -468,15 +391,17 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 - (NSRect)boundingBox
 {
-    [self _range]->ownerDocument()->updateLayoutIgnorePendingStylesheets();
-    return [self _range]->boundingBox();
+    // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
+    core(self)->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    return core(self)->boundingBox();
 }
 
 - (NSArray *)lineBoxRects
 {
+    // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     Vector<WebCore::IntRect> rects;
-    [self _range]->ownerDocument()->updateLayoutIgnorePendingStylesheets();
-    [self _range]->addLineBoxRects(rects);
+    core(self)->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    core(self)->addLineBoxRects(rects);
     return kit(rects);
 }
 
@@ -485,66 +410,62 @@ static NSArray *kit(const Vector<IntRect>& rects)
 //------------------------------------------------------------------------------------------
 // DOMElement
 
-// FIXME: this should be auto-generated in DOMElement.mm
 @implementation DOMElement (DOMElementAppKitExtensions)
 
-// FIXME: this should be implemented in the implementation
 - (NSImage*)image
 {
-    WebCore::RenderObject* renderer = [self _element]->renderer();
-    if (renderer && renderer->isImage()) {
-        WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
-        if (img->cachedImage() && !img->cachedImage()->errorOccurred())
-            return img->cachedImage()->image()->getNSImage();
-    }
-    return nil;
+    // FIXME: Could we move this function to WebCore::Node and autogenerate?
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer || !renderer->isImage())
+        return nil;
+    WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nil;
+    return cachedImage->image()->getNSImage();
 }
 
 @end
 
 @implementation DOMElement (WebPrivate)
 
-// FIXME: this should be implemented in the implementation
 - (NSFont *)_font
 {
-    WebCore::RenderObject* renderer = [self _element]->renderer();
-    if (renderer)
-        return renderer->style()->font().primaryFont()->getNSFont();
-    return nil;
+    // FIXME: Could we move this function to WebCore::Element and autogenerate?
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return nil;
+    return renderer->style()->font().primaryFont()->getNSFont();
 }
 
-// FIXME: this should be implemented in the implementation
 - (NSData *)_imageTIFFRepresentation
 {
-    WebCore::RenderObject* renderer = [self _element]->renderer();
-    if (renderer && renderer->isImage()) {
-        WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
-        if (img->cachedImage() && !img->cachedImage()->errorOccurred())
-            return (NSData*)(img->cachedImage()->image()->getTIFFRepresentation());
-    }
-    return nil;
+    // FIXME: Could we move this function to WebCore::Element and autogenerate?
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer || !renderer->isImage())
+        return nil;
+    WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nil;
+    return (NSData *)cachedImage->image()->getTIFFRepresentation();
 }
 
-// FIXME: this should be implemented in the implementation
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
+    // FIXME: Could we move this function to WebCore::Element and autogenerate?
     ASSERT(name);
-    WebCore::Element* element = [self _element];
+    WebCore::Element* element = core(self);
     ASSERT(element);
     return element->document()->completeURL(parseURL(element->getAttribute(name)));
 }
 
-// FIXME: this should be implemented in the implementation
 - (BOOL)isFocused
 {
-    WebCore::Element* impl = [self _element];
-    if (impl->document()->focusedNode() == impl)
-        return YES;
-    return NO;
+    // FIXME: Could we move this function to WebCore::Element and autogenerate?
+    WebCore::Element* element = core(self);
+    return element->document()->focusedNode() == element;
 }
 
 @end
-
 
 //------------------------------------------------------------------------------------------
 // DOMRange
@@ -559,7 +480,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
                [self startContainer], [self startOffset], [self endContainer], [self endOffset]];
 }
 
-// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
+// FIXME: This should be removed as soon as all internal Apple uses of it have been replaced with
 // calls to the public method - (NSString *)text.
 - (NSString *)_text
 {
@@ -568,42 +489,30 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 @end
 
-
 //------------------------------------------------------------------------------------------
 // DOMNodeFilter
 
-// FIXME: This implementation should be in it's own file.
-
-@implementation DOMNodeFilter
-
-- (id)_initWithNodeFilter:(WebCore::NodeFilter *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    WebCore::addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMNodeFilter *)_wrapNodeFilter:(WebCore::NodeFilter *)impl
+DOMNodeFilter *kit(WebCore::NodeFilter* impl)
 {
     if (!impl)
         return nil;
-
-    id cachedInstance;
-    cachedInstance = WebCore::getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-
-    return [[[self alloc] _initWithNodeFilter:impl] autorelease];
+    
+    if (DOMNodeFilter *wrapper = getDOMWrapper(impl))
+        return [[wrapper retain] autorelease];
+    
+    DOMNodeFilter *wrapper = [[DOMNodeFilter alloc] _init];
+    wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(impl);
+    impl->ref();
+    addDOMWrapper(wrapper, impl);
+    return [wrapper autorelease];
 }
 
-- (WebCore::NodeFilter *)_nodeFilter
+WebCore::NodeFilter* core(DOMNodeFilter *wrapper)
 {
-    return reinterpret_cast<WebCore::NodeFilter*>(_internal);
+    return wrapper ? reinterpret_cast<WebCore::NodeFilter*>(wrapper->_internal) : 0;
 }
+
+@implementation DOMNodeFilter
 
 - (void)dealloc
 {
@@ -621,7 +530,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 - (short)acceptNode:(DOMNode *)node
 {
-    return [self _nodeFilter]->acceptNode([node _node]);
+    return core(self)->acceptNode(core(node));
 }
 
 @end

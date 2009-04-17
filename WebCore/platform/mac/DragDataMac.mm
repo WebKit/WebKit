@@ -124,7 +124,7 @@ String DragData::asURL(String* title) const
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
 {
-    return [m_pasteboardHelper->fragmentFromPasteboard([m_platformDragData draggingPasteboard]) _documentFragment];
+    return core(m_pasteboardHelper->fragmentFromPasteboard([m_platformDragData draggingPasteboard]));
 }
     
 }

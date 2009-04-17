@@ -27,12 +27,27 @@
  */
 
 
-#import <WebKit/WebPluginController.h>
+#import "WebPluginController.h"
 
+#import "DOMNodeInternal.h"
+#import "WebDataSourceInternal.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebNSURLExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebPlugin.h"
+#import "WebPluginContainer.h"
+#import "WebPluginContainerCheck.h"
+#import "WebPluginPackage.h"
+#import "WebPluginPrivate.h"
+#import "WebPluginViewFactory.h"
+#import "WebUIDelegate.h"
+#import "WebViewInternal.h"
 #import <Foundation/NSURLRequest.h>
-#import <runtime/JSLock.h>
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/DOMNodeInternal.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLMediaElement.h>
@@ -42,22 +57,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebCoreURLResponse.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPlugin.h>
-#import <WebKit/WebPluginContainer.h>
-#import <WebKit/WebPluginContainerCheck.h>
-#import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebPluginPrivate.h>
-#import <WebKit/WebPluginViewFactory.h>
-#import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebViewInternal.h>
+#import <runtime/JSLock.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

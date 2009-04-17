@@ -324,7 +324,7 @@ void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, c
 {
     ASSERT(frame);
     if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _wrapElement:element], url, title, frame);
+        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), kit(element), url, title, frame);
 }
     
 DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const

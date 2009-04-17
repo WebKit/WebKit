@@ -1,3 +1,79 @@
+2009-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 25210: don't use ObjC methods to wrap/unwrap DOM objects with ObjC
+        https://bugs.webkit.org/show_bug.cgi?id=25210
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode markupString]): Use the core function instead of an Objective-C method.
+        (-[DOMNode _subresourceURLs]): Ditto.
+        (-[DOMDocument _focusableNodes]): Ditto.
+        (-[DOMRange webArchive]): Ditto.
+        (-[DOMRange markupString]): Ditto.
+
+        * Misc/WebElementDictionary.mm: Added now-needed include since the core and kit
+        functions now come from the internal headers from DOM bindings.
+        * Misc/WebNSPasteboardExtras.mm: Ditto.
+        * Plugins/WebNullPluginView.mm: Ditto.
+        * Plugins/WebPluginController.mm: Ditto.
+        * WebCoreSupport/WebChromeClient.mm: Ditto.
+        * WebCoreSupport/WebInspectorClient.mm: Ditto.
+        * WebCoreSupport/WebPasteboardHelper.mm: Ditto.
+        * WebView/WebHTMLView.mm: Ditto.
+
+        * WebCoreSupport/WebEditorClient.mm: Made kit function have internal linkage
+        since it's only used in this file. Someone had instead added a declaration to
+        suppress the warning you would otherwise get. Removed the core function.
+        (WebEditorClient::textFieldDidBeginEditing): Added correct type checking.
+        Previously the function would check only that something was an HTMLElement,
+        but then cast it to HTMLInputElement. Also call kit instead of old wrap method.
+        (WebEditorClient::textFieldDidEndEditing): Ditto.
+        (WebEditorClient::textDidChangeInTextField): Ditto.
+        (WebEditorClient::doTextFieldCommandFromEvent): Ditto.
+        (WebEditorClient::textWillBeDeletedInTextField): Ditto.
+        (WebEditorClient::textDidChangeInTextArea): Ditto, but for HTMLTextAreaElement.
+
+        * WebView/WebFrame.mm: Removed the core and kit functions here which are no longer
+        needed since they're automatically generated now.
+        (-[WebFrame _nodesFromList:]): Use kit.
+        (-[WebFrame _markupStringFromRange:nodes:]): Use core.
+        (-[WebFrame _stringForRange:]): More of the same.
+        (-[WebFrame _caretRectAtNode:offset:affinity:]): Ditto.
+        (-[WebFrame _firstRectForDOMRange:]): Ditto.
+        (-[WebFrame _scrollDOMRangeToVisible:]): Ditto.
+        (-[WebFrame _rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        Ditto.
+        (-[WebFrame _convertNSRangeToDOMRange:]): Ditto.
+        (-[WebFrame _convertDOMRangeToNSRange:]): Ditto.
+        (-[WebFrame _markDOMRange]): Ditto.
+        (-[WebFrame _smartDeleteRangeForProposedRange:]): Ditto.
+        (-[WebFrame _smartInsertForString:replacingRange:beforeString:afterString:]): Ditto.
+        (-[WebFrame _documentFragmentWithMarkupString:baseURLString:]): Ditto.
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]): Ditto.
+        (-[WebFrame _replaceSelectionWithNode:selectReplacement:smartReplace:matchStyle:]): Ditto.
+        (-[WebFrame _characterRangeAtPoint:]): Ditto.
+        (-[WebFrame _typingStyle]): Ditto.
+        (-[WebFrame _setTypingStyle:withUndoAction:]): Ditto.
+        (-[WebFrame _pauseAnimation:onNode:atTime:]): Ditto.
+        (-[WebFrame _pauseTransitionOfProperty:onNode:atTime:]): Ditto.
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]): Ditto.
+
+        * WebView/WebFrameInternal.h: Removed the core and kit functions here which are no longer
+        needed since they're automatically generated now.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]): Use core.
+        (formElementFromDOMElement): Ditto.
+        (inputElementFromDOMElement): Ditto.
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]): Ditto.
+        (-[WebTextIterator currentRange]): Ditto.
+        (-[WebTextIterator currentNode]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView textIteratorForRect:]): Ditto.
+        (-[WebView setSelectedDOMRange:affinity:]): Ditto.
+
 2009-04-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

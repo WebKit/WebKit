@@ -29,8 +29,11 @@
 
 #import "WebEditorClient.h"
 
+#import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMHTMLElementInternal.h"
 #import "DOMHTMLInputElementInternal.h"
 #import "DOMHTMLTextAreaElementInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebDataSourceInternal.h"
@@ -48,6 +51,9 @@
 #import <WebCore/Document.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
+#import <WebCore/HTMLInputElement.h>
+#import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -59,15 +65,9 @@
 using namespace WebCore;
 using namespace WTF;
 
-EditorInsertAction core(WebViewInsertAction);
-WebViewInsertAction kit(EditorInsertAction);
+using namespace HTMLNames;
 
-EditorInsertAction core(WebViewInsertAction kitAction)
-{
-    return static_cast<EditorInsertAction>(kitAction);
-}
-
-WebViewInsertAction kit(EditorInsertAction coreAction)
+static WebViewInsertAction kit(EditorInsertAction coreAction)
 {
     return static_cast<WebViewInsertAction>(coreAction);
 }
@@ -453,30 +453,30 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(inputTag))
         return;
 
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement, kit(element->document()->frame()));
 }
 
 void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(inputTag))
         return;
 
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element->document()->frame()));
 }
     
 void WebEditorClient::textDidChangeInTextField(Element* element)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(inputTag))
         return;
 
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement, kit(element->document()->frame()));
 }
@@ -506,10 +506,10 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
 
 bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(inputTag))
         return NO;
 
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
     FormDelegateLog(inputElement);
     if (SEL commandSelector = selectorForKeyEvent(event))
         return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, commandSelector, kit(element->document()->frame()));
@@ -518,10 +518,10 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
 
 void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(inputTag))
         return;
 
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = kit(static_cast<HTMLInputElement*>(element));
     FormDelegateLog(inputElement);
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
     CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, @selector(deleteBackward:), kit(element->document()->frame()));
@@ -529,10 +529,10 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    if (!element->isHTMLElement())
+    if (!element->hasTagName(textareaTag))
         return;
 
-    DOMHTMLTextAreaElement* textAreaElement = [DOMHTMLTextAreaElement _wrapHTMLTextAreaElement:(HTMLTextAreaElement*)element];
+    DOMHTMLTextAreaElement* textAreaElement = kit(static_cast<HTMLTextAreaElement*>(element));
     FormDelegateLog(textAreaElement);
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document()->frame()));
 }

@@ -1,3 +1,154 @@
+2009-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 25210: don't use ObjC methods to wrap/unwrap DOM objects with ObjC
+        https://bugs.webkit.org/show_bug.cgi?id=25210
+
+        * WebCore.base.exp: Export the core and kit function overloads that are used
+        in WebKit. Also resorted this file.
+
+        * WebCore.xcodeproj/project.pbxproj: Re-added DOMHTMLCanvasElement.h to fix
+        a strange problem with the file type.
+
+        * bindings/objc/DOM.mm: Removed the many extraneous includes. Added new includes
+        so we can use and implement the new core and kit functions. Import DOMInternal.h
+        first so it can do its public/private magic.
+        (-[DOMNode _rootObject]): Changed to use early-return style.
+        (kitClass): Added. Tells the wrapper generator what kind of node class to create
+        to wrap DOM nodes. This has the code that used to be in the _wrapNode method.
+        (kit): Added. Takes an EventTarget and makes the appropriate type of wrapper,
+        dpending on whether it's a Node or an SVGElementInstance. This replace methods
+        that used to be on both of those classes.
+        (-[DOMNode boundingBox]): Changed to use early return, and the core function.
+        (-[DOMNode lineBoxRects]): Ditto.
+        (-[DOMNode renderedImage]): Ditto.
+        (-[DOMRange boundingBox]): Ditto.
+        (-[DOMRange lineBoxRects]): Ditto.
+        (-[DOMElement image]): Ditto.
+        (-[DOMElement _font]): Ditto.
+        (-[DOMElement _imageTIFFRepresentation]): Ditto.
+        (-[DOMElement _getURLAttribute:]): Ditto.
+        (-[DOMElement isFocused]): Ditto.
+        (kit): Hand-wrote the version of this for NodeFilter, since it's a protocol,
+        not a class in the binding.
+        (core): Ditto.
+        (-[DOMNodeFilter acceptNode:]): Use core.
+
+        * bindings/objc/DOMAbstractView.mm:
+        (-[DOMAbstractView document]): Use kit.
+        (-[DOMAbstractView _disconnectFrame]): Call removeDOMWrapper, which is no longer
+        in the WebCore namespace, since it's headed for WebKit in the future.
+        (core): Hand-wrote the version of this for DOMAbstractView.mm, since we store
+        a pointer to the Frame, not the DMWindow.
+        (kit): Ditto.
+
+        * bindings/objc/DOMCSS.mm:
+        (kitClass): Added. Tells the wrapper generator what kind of node class to create
+        to wrap CSS objects. This has the code that used to be in the _wrapStyleSheet,
+        _wrapCSSRule, and _wrapCSSValue methods.
+
+        * bindings/objc/DOMEvents.mm:
+        (kitClass): Added. Tells the wrapper generator what kind of node class to create
+        to wrap event objects. This has the code that used to be in the _wrapEvent methods.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument createDocumentFragmentWithMarkupString:baseURL:]): Use kit and core.
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]): Ditto.
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]): Ditto.
+        (-[DOMHTMLInputElement _rectOnScreen]): Ditto.
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]): Ditto.
+        (-[DOMHTMLInputElement _selectedRange]): Ditto.
+        (-[DOMHTMLInputElement _setAutofilled:]): Ditto.
+        (-[DOMHTMLSelectElement _activateItemAtIndex:]): Ditto.
+        (-[DOMHTMLInputElement _isEdited]): Ditto.
+        (-[DOMHTMLTextAreaElement _isEdited]): Ditto.
+        (kitClass): Added. Gives HTMLOptionCollection objects an appropriate wrapper.
+
+        * bindings/objc/DOMInternal.h: Removed most of the imports. There's no reason
+        to have this header include all the other internal DOM headers. Removed unneeded
+        interfaces, including the redeclaration of _init in DOMObject, since it's already
+        inherited from WebScriptObject. Moved all the functions out of the WebCore
+        namespace since this code is destined for WebKit, which doesn't use a namespace.
+        Added kit and core functions for the two classes that live in this header.
+
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]): Use core.
+
+        * bindings/objc/DOMObject.h: Made the _internal field be private instead of
+        protected. This also allows the "#define private public" trick to be used to
+        make the field accessible inside the bindings code.
+
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject dealloc]): Updated for namespace change.
+        (-[DOMObject sheet]): Use core and kit functions.
+
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor dealloc]): Updated for namespace change.
+        (-[DOMRGBColor red]): Use kit function.
+        (-[DOMRGBColor green]): Ditto.
+        (-[DOMRGBColor blue]): Ditto.
+        (-[DOMRGBColor alpha]): Ditto.
+        (core): Added. Replaces the _RGBColor method.
+        (kit): Added. Replaces the _wrapRGBColor method.
+
+        * bindings/objc/DOMSVGPathSegInternal.mm:
+        (kitClass): Added. Replaces the _wrapSVGPathSeg method.
+
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper): Use kit function.
+        (createDOMWrapper): Ditto.
+
+        * bindings/objc/DOMXPath.mm:
+        (core): Added. Replaces the _xpathNSResolver method.
+        (kit): Added. Replaces the _wrapXPathNSResolver method.
+
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::find): Changed to use early return.
+        (WebCore::ObjCEventListener::handleEvent): Use kit function.
+
+        * bindings/objc/ObjCNodeFilterCondition.mm:
+        (WebCore::ObjCNodeFilterCondition::acceptNode): Use kit function.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject scriptObjectForJSObject:originRootObject:rootObject:]):
+        Updated for namespace change.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Changed spelling of "license"
+        to U.S. spelling. Removed GetObjCTypeMaker, GetObjCTypeGetterName,
+        GetInternalTypeGetterSignature, and GetInternalTypeMakerSignature.
+        Changed includes to conform to new scheme. Generate core and kit
+        functions instead of methods and calls to those functions. Added a new
+        attribute, Polymorphic, to indicate classes that have derived subclasses.
+        Removed the old ObjCCustomInternalImpl attribute.
+
+        * css/CSSRule.idl: Use Polymorphic attribute, so core and kit functions
+        will be generated, with kit calling kitClass. This requires less hand-
+        written code than the old ObjCCustomInternalImpl.
+        * css/CSSValue.idl: Ditto.
+        * css/StyleSheet.idl: Ditto.
+        * dom/Event.idl: Ditto.
+        * dom/Node.idl: Ditto.
+        * html/HTMLCollection.idl: Ditto.
+        * svg/SVGPathSeg.idl: Ditto.
+
+        * editing/TextAffinity.h: Moved kit and core functions out of the
+        WebCore namespace since this code is destined for WebKit, which
+        doesn't use a namespace
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::declareAndWriteDragImage): Use kit function.
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asFragment): Use core function.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): Use kit function.
+
+        * svg/SVGElementInstance.idl: Removed now-unneeded ObjCCustomInternalImpl
+        function. This can be generated in a standard way now.
+        * svg/SVGViewSpec.idl: Ditto.
+
 2009-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak

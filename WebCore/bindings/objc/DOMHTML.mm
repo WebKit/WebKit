@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,18 +25,21 @@
  */
 
 #import "config.h"
-#import "DOMHTML.h"
 
-#import "CSSHelper.h"
+#import "DOMDocumentFragmentInternal.h"
 #import "DOMExtensions.h"
-#import "DOMInternal.h"
+#import "DOMHTMLCollectionInternal.h"
+#import "DOMHTMLDocumentInternal.h"
+#import "DOMHTMLInputElementInternal.h"
+#import "DOMHTMLSelectElementInternal.h"
+#import "DOMHTMLTextAreaElementInternal.h"
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
 #import "FrameView.h"
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"
-#import "HTMLObjectElement.h"
 #import "HTMLSelectElement.h"
+#import "HTMLTextAreaElement.h"
 #import "Range.h"
 #import "RenderTextControl.h"
 #import "markup.h"
@@ -48,13 +51,13 @@
 
 - (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromMarkup([self _document], markupString, [baseURL absoluteString]).get()];
+    return kit(createFragmentFromMarkup(core(self), markupString, [baseURL absoluteString]).get());
 }
 
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
-    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromText([self _document]->createRange().get(), text).get()];
+    return kit(createFragmentFromText(core(self)->createRange().get(), text).get());
 }
 
 @end
@@ -63,7 +66,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    NSURL *baseURL = [self _document]->completeURL(WebCore::parseURL(baseURLString));
+    NSURL *baseURL = core(self)->completeURL(WebCore::parseURL(baseURLString));
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 
@@ -74,9 +77,7 @@
 
 @end
 
-#pragma mark DOM EXTENSIONS
-
-@implementation DOMHTMLInputElement(FormAutoFillTransition)
+@implementation DOMHTMLInputElement (FormAutoFillTransition)
 
 - (BOOL)_isTextField
 {
@@ -113,10 +114,10 @@
 {
     // Returns bounding rect of text field, in screen coordinates.
     NSRect result = [self boundingBox];
-    if (![self _HTMLInputElement]->document()->view())
+    if (!core(self)->document()->view())
         return result;
 
-    NSView* view = [self _HTMLInputElement]->document()->view()->documentView();
+    NSView* view = core(self)->document()->view()->documentView();
     result = [view convertRect:result toView:nil];
     result.origin = [[view window] convertBaseToScreen:result.origin];
     return result;
@@ -124,7 +125,7 @@
 
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
 {
-    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
+    WebCore::HTMLInputElement* inputElement = core(self);
     if (inputElement) {
         WebCore::String newValue = inputElement->value();
         newValue.replace(targetRange.location, targetRange.length, replacementString);
@@ -135,7 +136,7 @@
 
 - (NSRange)_selectedRange
 {
-    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
+    WebCore::HTMLInputElement* inputElement = core(self);
     if (inputElement) {
         int start = inputElement->selectionStart();
         int end = inputElement->selectionEnd();
@@ -149,9 +150,7 @@
     // This notifies the input element that the content has been autofilled
     // This allows WebKit to obey the -webkit-autofill pseudo style, which
     // changes the background color.
-    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
-    if (inputElement)
-        inputElement->setAutofilled(filled);
+    core(self)->setAutofilled(filled);
 }
 
 @end
@@ -160,30 +159,35 @@
 
 - (void)_activateItemAtIndex:(int)index
 {
-    if (WebCore::HTMLSelectElement* select = [self _HTMLSelectElement])
+    if (WebCore::HTMLSelectElement* select = core(self))
         select->setSelectedIndex(index);
 }
 
 @end
 
 @implementation DOMHTMLInputElement (FormPromptAdditions)
+
 - (BOOL)_isEdited
 {
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer && [self _isTextField])
-        return static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
-    
-    return NO;
+    WebCore::RenderObject *renderer = core(self)->renderer();
+    return renderer && [self _isTextField] && static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
 }
+
 @end
 
 @implementation DOMHTMLTextAreaElement (FormPromptAdditions)
+
 - (BOOL)_isEdited
 {
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer)
-        return static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
-    
-    return NO;
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    return renderer && static_cast<WebCore::RenderTextControl*>(renderer)->isUserEdited();
 }
+
 @end
+
+Class kitClass(WebCore::HTMLCollection* collection)
+{
+    if (collection->type() == WebCore::HTMLCollection::SelectOptions)
+        return [DOMHTMLOptionsCollection class];
+    return [DOMHTMLCollection class];
+}

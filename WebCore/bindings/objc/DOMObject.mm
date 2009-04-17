@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2006, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth <speth@end.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
@@ -28,11 +28,11 @@
 #import "config.h"
 #import "DOMObject.h"
 
-#import "DOMHTMLLinkElement.h"
-#import "DOMHTMLStyleElement.h"
+#import "DOMHTMLLinkElementInternal.h"
+#import "DOMHTMLStyleElementInternal.h"
 #import "DOMInternal.h"
-#import "DOMProcessingInstruction.h"
-#import "DOMStyleSheet.h"
+#import "DOMProcessingInstructionInternal.h"
+#import "DOMStyleSheetInternal.h"
 #import "HTMLLinkElement.h"
 #import "HTMLStyleElement.h"
 #import "ProcessingInstruction.h"
@@ -53,7 +53,7 @@
 - (void)dealloc
 {
     if (_internal)
-        WebCore::removeDOMWrapper(_internal);
+        removeDOMWrapper(_internal);
     [super dealloc];
 }
 
@@ -69,27 +69,18 @@
 
 - (DOMStyleSheet *)sheet
 {
-    WebCore::StyleSheet *styleSheet;
+    WebCore::StyleSheet* styleSheet;
 
     if ([self isKindOfClass:[DOMProcessingInstruction class]])
-        styleSheet = static_cast<WebCore::ProcessingInstruction*>([(DOMProcessingInstruction *)self _node])->sheet();
+        styleSheet = core(static_cast<DOMProcessingInstruction *>(self))->sheet();
     else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
-        styleSheet = static_cast<WebCore::HTMLLinkElement*>([(DOMHTMLLinkElement *)self _node])->sheet();
+        styleSheet = core(static_cast<DOMHTMLLinkElement *>(self))->sheet();
     else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
-        styleSheet = static_cast<WebCore::HTMLStyleElement*>([(DOMHTMLStyleElement *)self _node])->sheet();
+        styleSheet = core(static_cast<DOMHTMLStyleElement *>(self))->sheet();
     else
         return nil;
 
-    return [DOMStyleSheet _wrapStyleSheet:styleSheet];
-}
-
-@end
-
-@implementation DOMObject (WebCoreInternal)
-
-- (id)_init
-{
-    return [super _init];
+    return kit(styleSheet);
 }
 
 @end

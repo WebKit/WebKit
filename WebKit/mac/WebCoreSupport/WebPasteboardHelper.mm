@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "WebPasteboardHelper.h"
+
 #import "WebArchive.h"
 #import "WebHTMLViewInternal.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebPasteboardHelper.h"
-
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMDocumentFragment.h>
 #import <WebCore/PlatformString.h>
+#import <WebKit/DOMDocument.h>
+#import <WebKit/DOMDocumentFragment.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 

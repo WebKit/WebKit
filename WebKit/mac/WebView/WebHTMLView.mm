@@ -29,6 +29,9 @@
 
 #import "WebHTMLView.h"
 
+#import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMDocumentFragmentInternal.h"
+#import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"

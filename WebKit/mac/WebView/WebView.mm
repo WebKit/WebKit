@@ -29,6 +29,8 @@
 
 #import "WebViewInternal.h"
 
+#import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebBackForwardListInternal.h"
 #import "WebCache.h"
@@ -2090,7 +2092,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     
     VisibleSelection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
     
-    return [[[WebTextIterator alloc] initWithRange:[DOMRange _wrapRange:selectionInsideRect.toNormalizedRange().get()]] autorelease];
+    return [[[WebTextIterator alloc] initWithRange:kit(selectionInsideRect.toNormalizedRange().get())] autorelease];
 }
 
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
@@ -4255,7 +4257,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
         if (!coreFrame)
             return;
 
-        coreFrame->selection()->setSelectedRange([range _range], core(selectionAffinity), true);
+        coreFrame->selection()->setSelectedRange(core(range), core(selectionAffinity), true);
     }
 }
 

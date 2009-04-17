@@ -113,7 +113,7 @@ static void addExceptionToConsole(ExecState* exec)
 
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
-    if (id domWrapper = WebCore::createDOMWrapper(toJS(jsObject), originRootObject, rootObject))
+    if (id domWrapper = createDOMWrapper(toJS(jsObject), originRootObject, rootObject))
         return domWrapper;
     
     return WebCore::createJSWrapper(toJS(jsObject), originRootObject, rootObject);

@@ -28,7 +28,6 @@ module svg {
 
     interface [
         Conditional=SVG,
-        ObjCCustomInternalImpl,
         CustomListeners,
         CustomMarkFunction,
         CustomPushEventHandlerScope,
