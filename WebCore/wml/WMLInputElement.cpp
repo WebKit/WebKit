@@ -300,13 +300,13 @@ void WMLInputElement::defaultEventHandler(Event* evt)
     if (clickDefaultFormButton) {
         // Fire onChange for text fields.
         RenderObject* r = renderer();
-        if (r && r->isEdited()) {
+        if (r && toRenderTextControl(r)->isEdited()) {
             dispatchEventForType(eventNames().changeEvent, true, false);
             
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();
             if (r)
-                r->setEdited(false);
+                toRenderTextControl(r)->setEdited(false);
         }
 
         evt->setDefaultHandled();

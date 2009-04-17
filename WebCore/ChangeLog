@@ -1,3 +1,12 @@
+2009-04-17  Nikolas Zimmermann  <nikolas.zimmerman@torchmobile.com>
+
+        Not reviewed. Fix WML enabled builds.
+
+        * rendering/RenderTableRow.cpp: Remove dead code, which is no longer necessary.
+        (WebCore::RenderTableRow::addChild):
+        * wml/WMLInputElement.cpp: Apply same fix HTMLInputElement received. Covert RenderObject's to RenderTextControl where needed.
+        (WebCore::WMLInputElement::defaultEventHandler):
+
 2009-04-17  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
