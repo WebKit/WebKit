@@ -27,7 +27,7 @@ MSGMERGE_UPDATE := $(MSGMERGE) --update
 
 POFILES += $(shell ls $(srcdir)/WebKit/gtk/po/*.po)
 
-MOFILES += $(shell echo $(POFILES) | sed "s,^$(srcdir)/,,g" | sed 's/\.po/.mo/g')
+MOFILES += $(shell echo $(POFILES) | tr ' ' '\n' | sed "s,^$(srcdir)/,,g" | sed 's/\.po/.mo/g')
 
 .po.mo:
 	test -d WebKit/gtk/po/ || mkdir -p WebKit/gtk/po/
