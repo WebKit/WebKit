@@ -1,3 +1,12 @@
+2009-04-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        - remove tests affected by <rdar://problem/6661401> from the skip list,
+          now that it is fixed.
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-04-17  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by NOBODY Darin Adler.
