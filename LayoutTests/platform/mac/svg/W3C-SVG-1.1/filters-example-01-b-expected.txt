@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (-10,0.50) size 489.50x359
-    RenderSVGContainer {g} at (-10,0.75) size 320x178.50
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
+    RenderSVGContainer {g} at (70,110.75) size 320x178.50
       RenderSVGViewportContainer {svg} at (70,110.75) size 320x178.50
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderPath {rect} at (80.75,110.75) size 298.50x178.50 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [data="M1.00,1.00 L199.00,1.00 L199.00,119.00 L1.00,119.00 Z"]

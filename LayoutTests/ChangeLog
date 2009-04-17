@@ -1,3 +1,27 @@
+2009-04-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix computeContainerBoundingBox to respect RenderSVGViewportContainer
+        viewport translations (x/y on nested <svg> elements)
+        https://bugs.webkit.org/show_bug.cgi?id=25254
+
+        All of these results are progressions.
+
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-group-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt:
+        * platform/mac/svg/carto.net/textbox-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/mac/svg/custom/image-clipped-hit-expected.txt:
+
 2009-04-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

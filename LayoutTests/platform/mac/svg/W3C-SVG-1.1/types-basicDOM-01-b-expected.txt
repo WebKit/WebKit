@@ -1,10 +1,10 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,-55) size 479x414.50
-    RenderSVGContainer {g} at (10,-55) size 342.80x358
-      RenderSVGContainer {g} at (10,-55) size 342.80x358
-        RenderSVGContainer {g} at (16.97,-55) size 335.83x219.44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
+    RenderSVGContainer {g} at (10,8.73) size 365x294.27
+      RenderSVGContainer {g} at (10,8.73) size 365x294.27
+        RenderSVGContainer {g} at (16.97,8.73) size 358.03x155.70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
           RenderSVGText {text} at (30,150) size 344x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-18) size 344x23
               chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 344.00: "Rotated Text for testing SVGLocatable"

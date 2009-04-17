@@ -51,7 +51,7 @@ public:
     FloatRect viewport() const;
 
     // FIXME: This is only public for SVGResourceMarker::draw, likely the callsite should be changed.
-    virtual TransformationMatrix viewportTransform() const;
+    TransformationMatrix viewportTransform() const;
 
 private:
     void calcViewport();

@@ -2,6 +2,25 @@
 
         Reviewed by Simon Fraser.
 
+        Fix computeContainerBoundingBox to respect viewport translations
+        https://bugs.webkit.org/show_bug.cgi?id=25254
+
+        Previously computeContainerBoundingBox was just adding the viewportTranslation.
+        Which, although it has a confusing name, only contains the scale and translation
+        for the viewBox/preserveAspectRatio adjustment.  It does not contain the
+        translation for the x/y offset of the viewport.
+        localToParentTransform() does contain this offset, so we use that instead
+        of the previous hacky code.
+
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::computeContainerBoundingBox):
+
+2009-04-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Add a localToParentTransform() method which includes the
         full transform between local and parent local coordinates.
         https://bugs.webkit.org/show_bug.cgi?id=25226
