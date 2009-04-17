@@ -183,6 +183,10 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle(
 
 void FrameLoadDelegate::processWork()
 {
+    // if another load started, then wait for it to complete.
+    if (topLoadingFrame)
+        return;
+
     // if we finish all the commands, we're ready to dump state
     if (WorkQueue::shared()->processWork() && !::gLayoutTestController->waitToDump())
         dump();

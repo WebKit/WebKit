@@ -4443,13 +4443,17 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     // Note if we have child frames we do a real reload, since the child frames might not
     // match our current frame structure, or they might not have the right content.  We could
     // check for all that as an additional optimization.
-    // We also do not do anchor-style navigation if we're posting a form.
-    
+    // We also do not do anchor-style navigation if we're posting a form or navigating from
+    // a page that was resulted from a form post.
+
+    bool shouldScroll = !formData && !m_currentHistoryItem->formData() && urlsMatchItem(item);
+
 #if ENABLE(WML)
-    if (!formData && urlsMatchItem(item) && !m_frame->document()->isWMLDocument()) {
-#else
-    if (!formData && urlsMatchItem(item)) {
+    if (m_frame->document()->isWMLDocument())
+        shouldScroll = false;
 #endif
+
+    if (shouldScroll) {
         // Must do this maintenance here, since we don't go through a real page reload
         saveScrollPositionAndViewStateToItem(m_currentHistoryItem.get());
 

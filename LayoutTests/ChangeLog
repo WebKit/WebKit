@@ -1,3 +1,14 @@
+2009-04-16  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25223
+        REGRESSION: Back button after form submission to the same URL fails to navigate.
+
+        * http/tests/navigation/post-goback-same-url.html: Added.
+        * http/tests/navigation/post-goback-same-url-expected.txt: Added.
+        * http/tests/navigation/resources/post-goback-same-url.php: Added.
+
 2009-04-17  Pierre d'Herbemont <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
