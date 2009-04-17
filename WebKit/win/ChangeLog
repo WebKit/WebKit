@@ -1,3 +1,12 @@
+2009-04-17  Ada Chan  <adachan@apple.com>
+
+        Fix a leak in WebHistory::data().
+
+        Reviewed by Adam Roben.
+
+        * WebHistory.cpp:
+        (WebHistory::data):
+
 2009-04-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Mark Rowe.
