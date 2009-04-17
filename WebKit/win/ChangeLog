@@ -1,3 +1,12 @@
+2009-04-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix for heavy leakage of WebURLResponses seen during the stress test 
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldCacheResponse):
+
 2009-04-16  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

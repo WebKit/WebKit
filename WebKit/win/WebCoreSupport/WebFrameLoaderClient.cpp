@@ -237,7 +237,7 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned 
     if (!resourceLoadDelegatePrivate)
         return true;
 
-    COMPtr<IWebURLResponse> urlResponse(WebURLResponse::createInstance(response));
+    COMPtr<IWebURLResponse> urlResponse(AdoptCOM, WebURLResponse::createInstance(response));
     BOOL shouldCache;
     if (SUCCEEDED(resourceLoadDelegatePrivate->shouldCacheResponse(webView, identifier, urlResponse.get(), data, length, getWebDataSource(loader), &shouldCache)))
         return shouldCache;
