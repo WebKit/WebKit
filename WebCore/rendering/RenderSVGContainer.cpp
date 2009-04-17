@@ -147,24 +147,22 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
 
     paintInfo.context->restore();
-    
+
+    // FIXME: This really should be drawn from local coordinates, but currently we hack it
+    // to avoid our clip killing our outline rect.  Thus we translate our
+    // outline rect into parent coords before drawing.
+    // FIXME: This means our focus ring won't share our rotation like it should.
+    // We should instead disable our clip during PaintPhaseOutline
+    IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
+        paintOutline(paintInfo.context, paintRectInParent.x(), paintRectInParent.y(), paintRectInParent.width(), paintRectInParent.height(), style());
 }
 
+// addFocusRingRects is called from paintOutline and needs to be in the same coordinates as the paintOuline call
 void RenderSVGContainer::addFocusRingRects(GraphicsContext* graphicsContext, int, int)
 {
-    graphicsContext->addFocusRingRect(m_absoluteBounds);
-}
-
-void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
-{
-    rects.append(absoluteClippedOverflowRect());
-}
-
-void RenderSVGContainer::absoluteQuads(Vector<FloatQuad>& quads, bool)
-{
-    quads.append(absoluteClippedOverflowRect());
+    IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));
+    graphicsContext->addFocusRingRect(paintRectInParent);
 }
 
 FloatRect RenderSVGContainer::objectBoundingBox() const

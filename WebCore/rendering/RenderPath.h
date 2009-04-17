@@ -52,24 +52,19 @@ public:
 
     virtual bool isRenderPath() const { return true; }
     virtual const char* renderName() const { return "RenderPath"; }
-    
+
     bool calculateLocalTransform();
     virtual TransformationMatrix localTransform() const;
-    
+
     virtual void layout();
-    virtual bool requiresLayer() const { return false; }
-    virtual int lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     FloatRect drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
-    
+
 private:
     FloatPoint mapAbsolutePointToLocal(const FloatPoint&) const;
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const;

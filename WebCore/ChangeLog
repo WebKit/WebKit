@@ -1,3 +1,26 @@
+2009-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Move more code into RenderSVGModelObject
+
+        needsLayer() already returns false from RenderSVGModelObject
+        lineHeight and baselinePosition are from days of RenderPath having RenderBox parents.
+
+        I also added comments to explain how focus rings work (now that I understand)
+        I got rid of two more uses of m_absoluteBounds (nearly dead!)
+
+        * rendering/RenderPath.cpp:
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::addFocusRingRects):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::absoluteRects):
+        (WebCore::RenderSVGModelObject::absoluteQuads):
+        * rendering/RenderSVGModelObject.h:
+
 2009-04-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adele Peterson.

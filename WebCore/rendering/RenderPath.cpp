@@ -175,16 +175,6 @@ void RenderPath::layout()
     setNeedsLayout(false);
 }
 
-int RenderPath::lineHeight(bool, bool) const
-{
-    return repaintRectInLocalCoordinates().height();
-}
-
-int RenderPath::baselinePosition(bool, bool) const
-{
-    return repaintRectInLocalCoordinates().height();
-}
-
 static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderStyle* style, RenderPath* object)
 {
     context->beginPath();
@@ -234,19 +224,11 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->restore();
 }
 
+// This method is called from inside paintOutline() since we call paintOutline()
+// while transformed to our coord system, return local coords
 void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int, int) 
 {
     graphicsContext->addFocusRingRect(enclosingIntRect(repaintRectInLocalCoordinates()));
-}
-
-void RenderPath::absoluteRects(Vector<IntRect>& rects, int, int, bool)
-{
-    rects.append(absoluteClippedOverflowRect());
-}
-
-void RenderPath::absoluteQuads(Vector<FloatQuad>& quads, bool)
-{
-    quads.append(absoluteClippedOverflowRect());
 }
 
 bool RenderPath::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int _x, int _y, int, int, HitTestAction hitTestAction)

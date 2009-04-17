@@ -33,6 +33,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGModelObject.h"
 
+#include "GraphicsContext.h"
 #include "RenderLayer.h"
 #include "SVGStyledElement.h"
 
@@ -65,6 +66,16 @@ void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintCo
     // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
     repaintRect = localToParentTransform().mapRect(repaintRect);
     parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+}
+
+void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, int, int, bool)
+{
+    rects.append(absoluteClippedOverflowRect());
+}
+
+void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool)
+{
+    quads.append(absoluteClippedOverflowRect());
 }
 
 FloatRect RenderSVGModelObject::filterBoundingBox() const
