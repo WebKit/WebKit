@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TransformationMatrix.h"
 
+#include "Assertions.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 

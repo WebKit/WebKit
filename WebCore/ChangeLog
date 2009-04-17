@@ -1,3 +1,9 @@
+2009-04-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, added missing header.
+
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+
 2009-04-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix.
