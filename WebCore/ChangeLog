@@ -1,3 +1,11 @@
+2009-04-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix.
+
+        Fix the build with enabled SVG filters
+
+        * rendering/RenderSVGModelObject.cpp: Include SVGResourceFilter.h.
+
 2009-04-16  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

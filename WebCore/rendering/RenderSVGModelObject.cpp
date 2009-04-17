@@ -29,9 +29,13 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "RenderSVGModelObject.h"
 
+#if ENABLE(SVG_FILTERS)
+#include "SVGResourceFilter.h"
+#endif
 #include "SVGStyledElement.h"
 
 namespace WebCore {
