@@ -287,7 +287,7 @@ void Scrollbar::setHoveredPart(ScrollbarPart part)
 
     if ((m_hoveredPart == NoPart || part == NoPart) && theme()->invalidateOnMouseEnterExit())
         invalidate();  // Just invalidate the whole scrollbar, since the buttons at either end change anyway.
-    else if (m_pressedPart == NoPart) {
+    else if (m_pressedPart == NoPart) {  // When there's a pressed part, we don't draw a hovered state, so there's no reason to invalidate.
         theme()->invalidatePart(this, part);
         theme()->invalidatePart(this, m_hoveredPart);
     }
@@ -301,6 +301,8 @@ void Scrollbar::setPressedPart(ScrollbarPart part)
     m_pressedPart = part;
     if (m_pressedPart != NoPart)
         theme()->invalidatePart(this, m_pressedPart);
+    else if (m_hoveredPart != NoPart)  // When we no longer have a pressed part, we can start drawing a hovered state on the hovered part.
+        theme()->invalidatePart(this, m_hoveredPart);
 }
 
 bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
