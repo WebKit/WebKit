@@ -1,3 +1,12 @@
+2009-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        <rdar://problem/6778137> - Disable post-goback-repost-policy.html until the networking layer allows it to be useful.
+
+        * http/tests/navigation/post-goback-repost-policy.html: Removed.
+        * http/tests/navigation/post-goback-repost-policy.html-disabled: Copied from http/tests/navigation/post-goback-repost-policy.html.
+
 2009-04-16  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

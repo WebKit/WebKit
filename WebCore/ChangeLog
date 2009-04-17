@@ -1,3 +1,12 @@
+2009-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        <rdar://problem/6786999> Tiger WebKit shouldn't try to POST on back/forward without nagging.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willLoadFromCache):
+
 2009-04-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Timothy Hatcher.

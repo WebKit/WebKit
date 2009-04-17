@@ -333,6 +333,7 @@ bool ResourceHandle::loadsBlocked()
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
 {
+#ifndef BUILDING_ON_TIGER
     request.setCachePolicy(ReturnCacheDataDontLoad);
     NSURLResponse *nsURLResponse = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -342,6 +343,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return nsURLResponse;
+#else
+    // <rdar://problem/6803217> - Re-enable after <rdar://problem/6786454> is resolved.
+    UNUSED_PARAM(request);
+    return false;
+#endif
 }
 
 void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame*)
