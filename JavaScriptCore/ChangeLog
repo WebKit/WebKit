@@ -1,3 +1,14 @@
+2009-04-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe and Dan Bernstein.
+
+        Fix for <rdar://problem/5861188>
+        A little bit of hardening for Vector.
+
+        * wtf/Vector.h:
+        (WTF::Vector<T, inlineCapacity>::append):
+        (WTF::Vector<T, inlineCapacity>::insert):
+
 2009-04-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

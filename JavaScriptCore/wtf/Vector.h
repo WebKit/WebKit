@@ -781,6 +781,8 @@ namespace WTF {
             if (!begin())
                 return;
         }
+        if (newSize < m_size)
+            CRASH();
         T* dest = end();
         for (size_t i = 0; i < dataSize; ++i)
             new (&dest[i]) T(data[i]);
@@ -842,6 +844,8 @@ namespace WTF {
             if (!begin())
                 return;
         }
+        if (newSize < m_size)
+            CRASH();
         T* spot = begin() + position;
         TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
         for (size_t i = 0; i < dataSize; ++i)
