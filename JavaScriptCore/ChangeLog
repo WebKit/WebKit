@@ -1,3 +1,47 @@
+2009-04-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        On x86_64, make all JIT-code allocations from a new heap, managed
+        by FixedVMPoolAllocator.  This class allocates a single large (2Gb)
+        pool of virtual memory from which all further allocations take place.
+        Since all JIT code is allocated from this pool, we can continue to
+        safely assume (as is already asserted) that it will always be possible
+        to link any JIT-code to JIT-code jumps and calls.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            Add new file.
+        * jit/ExecutableAllocatorFixedVMPool.cpp: Added.
+        (JSC::FreeListEntry::FreeListEntry):
+        (JSC::AVLTreeAbstractorForFreeList::get_less):
+        (JSC::AVLTreeAbstractorForFreeList::set_less):
+        (JSC::AVLTreeAbstractorForFreeList::get_greater):
+        (JSC::AVLTreeAbstractorForFreeList::set_greater):
+        (JSC::AVLTreeAbstractorForFreeList::get_balance_factor):
+        (JSC::AVLTreeAbstractorForFreeList::set_balance_factor):
+        (JSC::AVLTreeAbstractorForFreeList::null):
+        (JSC::AVLTreeAbstractorForFreeList::compare_key_key):
+        (JSC::AVLTreeAbstractorForFreeList::compare_key_node):
+        (JSC::AVLTreeAbstractorForFreeList::compare_node_node):
+        (JSC::sortFreeListEntriesByPointer):
+        (JSC::sortCommonSizedAllocations):
+        (JSC::FixedVMPoolAllocator::release):
+        (JSC::FixedVMPoolAllocator::reuse):
+        (JSC::FixedVMPoolAllocator::addToFreeList):
+        (JSC::FixedVMPoolAllocator::coalesceFreeSpace):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+            The new 2Gb heap class!
+        * jit/ExecutableAllocatorPosix.cpp:
+            Disable use of this implementation on x86_64.
+        * wtf/AVLTree.h:
+            Add missing variable initialization.
+        (WTF::::remove):
+
 2009-04-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

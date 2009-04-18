@@ -764,7 +764,7 @@ AVLTree<Abstractor, maxDepth, BSet>::remove(key k)
 
     handle h = abs.root;
     handle parent = null(), child;
-    int cmp, cmp_shortened_sub_with_path;
+    int cmp, cmp_shortened_sub_with_path = 0;
 
     for (;;) {
         if (h == null())
