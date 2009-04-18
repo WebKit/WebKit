@@ -1,3 +1,11 @@
+2009-04-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Update fast/wml/fieldset.wml layout test result, as RenderLegend is gone.
+
+        * platform/mac/fast/wml/fieldset-expected.txt: Rename 'RenderLegend' to 'RenderBlock'.
+
 2009-04-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

@@ -13,7 +13,9 @@ go
 head interfaceName=WMLElement
 img interfaceName=WMLImageElement
 input
+#if 0
 # Note: 'insertedLegend' is not an official WML element - internal purpose only!
+#endif
 insertedLegend interfaceName=WMLInsertedLegendElement
 meta
 noop

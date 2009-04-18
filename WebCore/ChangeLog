@@ -1,3 +1,15 @@
+2009-04-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Make WML work again, most regressions test were failing.
+
+        * dom/Document.cpp: Be sure to create WML elements in WML namespace. Otherwhise hasTagName() comparisions fail.
+        (WebCore::Document::createElement):
+        * wml/WMLCardElement.cpp: Add ASSERT(hasTagName(cardTag)) to catch errors like this in future.
+        (WebCore::WMLCardElement::WMLCardElement):
+        * wml/WMLTagNames.in: Wrap comment in #if 0/#endif blocks, to silence the generation script.
+
 2009-04-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

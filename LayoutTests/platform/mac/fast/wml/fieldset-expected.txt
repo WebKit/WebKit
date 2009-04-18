@@ -5,7 +5,7 @@ layer at (0,0) size 800x103
     RenderBlock {card} at (8,16) size 784x71
       RenderBlock {p} at (0,0) size 784x71
         RenderFieldSet {fieldset} at (2,0) size 780x71 [border: (2px groove #C0C0C0)]
-          RenderLegend {insertedLegend} at (14,0) size 42x18
+          RenderBlock {insertedLegend} at (14,0) size 42x18
             RenderText {#text} at (2,0) size 38x18
               text run at (2,0) width 38: "Name"
           RenderBlock (anonymous) at (14,23) size 752x36

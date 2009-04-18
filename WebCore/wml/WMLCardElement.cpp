@@ -48,6 +48,7 @@ WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
     , m_eventTimer(0)
     , m_template(0)
 {
+    ASSERT(hasTagName(cardTag));
 }
 
 WMLCardElement::~WMLCardElement()
