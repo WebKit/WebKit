@@ -515,16 +515,19 @@ public:
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
+    // Used for standard DOM addEventListener / removeEventListener APIs.
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
-    void removeAllEventListeners() { if (hasRareData()) removeAllEventListenersSlowCase(); }
 
-    void setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
-    void setInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
-    void removeInlineEventListenerForType(const AtomicString& eventType);
-    bool dispatchEventForType(const AtomicString& eventType, bool canBubble, bool cancelable);
-    EventListener* inlineEventListenerForType(const AtomicString& eventType) const;
+    // Used for legacy "onEvent" property APIs.
+    void setInlineEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
+    void clearInlineEventListener(const AtomicString& eventType);
+    EventListener* getInlineEventListener(const AtomicString& eventType) const;
+
+    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+    bool dispatchEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
+
+    void removeAllEventListeners() { if (hasRareData()) removeAllEventListenersSlowCase(); }
 
     void dispatchSubtreeModifiedEvent();
     void dispatchWindowEvent(PassRefPtr<Event>);

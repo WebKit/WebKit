@@ -26,8 +26,8 @@
 #include "config.h"
 #include "HTMLInputElement.h"
 
-#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Event.h"
@@ -41,6 +41,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -587,20 +588,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().focusEvent, attr);
+        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().blurEvent, attr);
+        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onselectAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().selectEvent, attr);
+        setInlineEventListener(eventNames().selectEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onchangeAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().changeEvent, attr);
+        setInlineEventListener(eventNames().changeEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == oninputAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().inputEvent, attr);
+        setInlineEventListener(eventNames().inputEvent, createInlineEventListener(this, attr));
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().searchEvent, attr);
+        setInlineEventListener(eventNames().searchEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;
@@ -1516,7 +1517,7 @@ void HTMLInputElement::onSearch()
     ASSERT(isSearchField());
     if (renderer())
         static_cast<RenderTextControlSingleLine*>(renderer())->stopSearchEventTimer();
-    dispatchEventForType(eventNames().searchEvent, true, false);
+    dispatchEvent(eventNames().searchEvent, true, false);
 }
 
 VisibleSelection HTMLInputElement::selection() const

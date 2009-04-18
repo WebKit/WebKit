@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -67,7 +68,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
     if (attrName == srcAttr)
         handleSourceAttribute(m_data, attr->value());
     else if (attrName == onloadAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
     else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -215,12 +216,12 @@ void HTMLScriptElement::dispatchLoadEvent()
     ASSERT(!m_data.haveFiredLoadEvent());
     m_data.setHaveFiredLoadEvent(true);
 
-    dispatchEventForType(eventNames().loadEvent, false, false);
+    dispatchEvent(eventNames().loadEvent, false, false);
 }
 
 void HTMLScriptElement::dispatchErrorEvent()
 {
-    dispatchEventForType(eventNames().errorEvent, true, false);
+    dispatchEvent(eventNames().errorEvent, true, false);
 }
 
 }

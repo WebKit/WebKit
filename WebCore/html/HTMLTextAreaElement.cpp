@@ -34,6 +34,7 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"
@@ -179,13 +180,13 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
     } else if (attr->name() == onfocusAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().focusEvent, attr);
+        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onblurAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().blurEvent, attr);
+        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onselectAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().selectEvent, attr);
+        setInlineEventListener(eventNames().selectEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onchangeAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().changeEvent, attr);
+        setInlineEventListener(eventNames().changeEvent, createInlineEventListener(this, attr));
     else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }

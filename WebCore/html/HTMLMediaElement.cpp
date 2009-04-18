@@ -410,7 +410,7 @@ void HTMLMediaElement::loadInternal()
             m_playing = false;
             m_player->seek(0);
         }
-        dispatchEventForType(eventNames().emptiedEvent, false, true);
+        dispatchEvent(eventNames().emptiedEvent, false, true);
     }
     
     selectMediaResource();

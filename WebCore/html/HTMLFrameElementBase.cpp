@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "KURL.h"
 #include "Page.h"
 #include "RenderFrame.h"
@@ -140,10 +141,10 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         if (contentFrame())
             contentFrame()->setInViewSourceMode(viewSourceMode());
     } else if (attr->name() == onloadAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
-        setInlineEventListenerForTypeAndAttribute(eventNames().beforeunloadEvent, attr);
+        setInlineEventListener(eventNames().beforeunloadEvent, createInlineEventListener(this, attr));
     } else
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }

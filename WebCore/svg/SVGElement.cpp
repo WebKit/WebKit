@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "PlatformString.h"
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
@@ -150,25 +151,25 @@ void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     // standard events
     if (attr->name() == onloadAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onclickAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().clickEvent, attr);
+        setInlineEventListener(eventNames().clickEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onmousedownAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().mousedownEvent, attr);
+        setInlineEventListener(eventNames().mousedownEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onmousemoveAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().mousemoveEvent, attr);
+        setInlineEventListener(eventNames().mousemoveEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onmouseoutAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().mouseoutEvent, attr);
+        setInlineEventListener(eventNames().mouseoutEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onmouseoverAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().mouseoverEvent, attr);
+        setInlineEventListener(eventNames().mouseoverEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onmouseupAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().mouseupEvent, attr);
+        setInlineEventListener(eventNames().mouseupEvent, createInlineEventListener(this, attr));
     else if (attr->name() == SVGNames::onfocusinAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().DOMFocusInEvent, attr);
+        setInlineEventListener(eventNames().DOMFocusInEvent, createInlineEventListener(this, attr));
     else if (attr->name() == SVGNames::onfocusoutAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().DOMFocusOutEvent, attr);
+        setInlineEventListener(eventNames().DOMFocusOutEvent, createInlineEventListener(this, attr));
     else if (attr->name() == SVGNames::onactivateAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().DOMActivateEvent, attr);
+        setInlineEventListener(eventNames().DOMActivateEvent, createInlineEventListener(this, attr));
     else
         StyledElement::parseMappedAttribute(attr);
 }

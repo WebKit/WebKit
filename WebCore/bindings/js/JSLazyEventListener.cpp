@@ -23,6 +23,7 @@
 #include "Frame.h"
 #include "JSNode.h"
 #include <runtime/FunctionConstructor.h>
+#include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 using namespace JSC;
@@ -32,6 +33,15 @@ namespace WebCore {
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter eventListenerCounter("JSLazyEventListener");
 #endif
+
+static const String& eventParameterName(bool isSVGEvent)
+{
+    DEFINE_STATIC_LOCAL(const String, eventString, ("event"));
+#if ENABLE(SVG)
+    DEFINE_STATIC_LOCAL(const String, evtString, ("evt"));
+#endif
+    return isSVGEvent ? evtString : eventString;
+}
 
 JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
     : JSAbstractEventListener(true)
@@ -54,11 +64,6 @@ JSLazyEventListener::JSLazyEventListener(const String& functionName, const Strin
     if (m_lineNumber == 0)
         m_lineNumber = 1;
 
-    if (m_jsFunction) {
-        JSDOMWindow::ProtectedListenersMap& listeners = isInline()
-            ? m_globalObject->jsProtectedInlineEventListeners() : m_globalObject->jsProtectedEventListeners();
-        listeners.set(m_jsFunction, this);
-    }
 #ifndef NDEBUG
     eventListenerCounter.increment();
 #endif
@@ -145,6 +150,39 @@ void JSLazyEventListener::parseCode() const
 JSDOMGlobalObject* JSLazyEventListener::globalObject() const
 {
     return m_globalObject;
+}
+
+PassRefPtr<JSLazyEventListener> createInlineEventListener(Node* node, Attribute* attr)
+{
+    ASSERT(node);
+
+    Document* document = node->document();
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+
+    ScriptController* scriptController = frame->script();
+    if (!scriptController->isEnabled())
+        return 0;
+
+    JSDOMWindow* globalObject = scriptController->globalObject();
+
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), globalObject, node, scriptController->eventHandlerLineNumber());
+}
+
+PassRefPtr<JSLazyEventListener> createInlineEventListener(Frame* frame, Attribute* attr)
+{
+    if (!frame)
+        return 0;
+
+    ScriptController* scriptController = frame->script();
+    if (!scriptController->isEnabled())
+        return 0;
+
+    JSDOMWindow* globalObject = scriptController->globalObject();
+
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), globalObject, 0, scriptController->eventHandlerLineNumber());
 }
 
 } // namespace WebCore

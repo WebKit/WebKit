@@ -1306,4 +1306,12 @@ unsigned Element::childElementCount() const
     return count;
 }
 
+void Element::setWindowInlineEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
+{
+    DOMWindow* domWindow = document()->domWindow();
+    if (!domWindow)
+        return;
+    domWindow->setInlineEventListener(eventType, listener);
 }
+
+} // namespace WebCore

@@ -42,6 +42,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderTextControl.h"
@@ -297,7 +298,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if (dispatchEventForType(eventNames().submitEvent, true, true) && !m_doingsubmit)
+    if (dispatchEvent(eventNames().submitEvent, true, true) && !m_doingsubmit)
         m_doingsubmit = true;
 
     m_insubmit = false;
@@ -417,7 +418,7 @@ void HTMLFormElement::reset()
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
-    if ( !dispatchEventForType(eventNames().resetEvent,true, true) ) {
+    if ( !dispatchEvent(eventNames().resetEvent,true, true) ) {
         m_inreset = false;
         return;
     }
@@ -451,9 +452,9 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
         else
             document()->unregisterForDocumentActivationCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().submitEvent, attr);
+        setInlineEventListener(eventNames().submitEvent, createInlineEventListener(this, attr));
     else if (attr->name() == onresetAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().resetEvent, attr);
+        setInlineEventListener(eventNames().resetEvent, createInlineEventListener(this, attr));
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {

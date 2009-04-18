@@ -34,6 +34,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderSVGRoot.h"
 #include "SVGAngle.h"
@@ -220,13 +221,13 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
-            document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().unloadEvent, attr);
+            setWindowInlineEventListener(eventNames().unloadEvent, createInlineEventListener(document()->frame(), attr));
         else if (attr->name() == onresizeAttr)
-            document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().resizeEvent, attr);
+            setWindowInlineEventListener(eventNames().resizeEvent, createInlineEventListener(document()->frame(), attr));
         else if (attr->name() == onscrollAttr)
-            document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().scrollEvent, attr);
+            setWindowInlineEventListener(eventNames().scrollEvent, createInlineEventListener(document()->frame(), attr));
         else if (attr->name() == SVGNames::onzoomAttr)
-            document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().zoomEvent, attr);
+            setWindowInlineEventListener(eventNames().zoomEvent, createInlineEventListener(document()->frame(), attr));
         else
             setListener = false;
  
@@ -235,9 +236,9 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
     }
 
     if (attr->name() == onabortAttr)
-        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().abortEvent, attr);
+        setWindowInlineEventListener(eventNames().abortEvent, createInlineEventListener(document()->frame(), attr));
     else if (attr->name() == onerrorAttr)
-        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().errorEvent, attr);
+        setWindowInlineEventListener(eventNames().errorEvent, createInlineEventListener(document()->frame(), attr));
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)

@@ -1068,14 +1068,14 @@ bool DOMWindow::hasEventListener(const AtomicString& eventType)
     return false;
 }
 
-void DOMWindow::setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> eventListener)
+void DOMWindow::setInlineEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
-    removeInlineEventListenerForType(eventType);
-    if (eventListener)
-        addEventListener(eventType, eventListener, false);
+    clearInlineEventListener(eventType);
+    if (listener)
+        addEventListener(eventType, listener, false);
 }
 
-void DOMWindow::removeInlineEventListenerForType(const AtomicString& eventType)
+void DOMWindow::clearInlineEventListener(const AtomicString& eventType)
 {
     size_t size = m_eventListeners.size();
     for (size_t i = 0; i < size; ++i) {
@@ -1092,7 +1092,7 @@ void DOMWindow::removeInlineEventListenerForType(const AtomicString& eventType)
     }
 }
 
-EventListener* DOMWindow::inlineEventListenerForType(const AtomicString& eventType) const
+EventListener* DOMWindow::getInlineEventListener(const AtomicString& eventType) const
 {
     size_t size = m_eventListeners.size();
     for (size_t i = 0; i < size; ++i) {
@@ -1129,292 +1129,292 @@ void DOMWindow::removePendingFrameBeforeUnloadEventCount()
 
 EventListener* DOMWindow::onabort() const
 {
-    return inlineEventListenerForType(eventNames().abortEvent);
+    return getInlineEventListener(eventNames().abortEvent);
 }
 
 void DOMWindow::setOnabort(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().abortEvent, eventListener);
+    setInlineEventListener(eventNames().abortEvent, eventListener);
 }
 
 EventListener* DOMWindow::onblur() const
 {
-    return inlineEventListenerForType(eventNames().blurEvent);
+    return getInlineEventListener(eventNames().blurEvent);
 }
 
 void DOMWindow::setOnblur(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().blurEvent, eventListener);
+    setInlineEventListener(eventNames().blurEvent, eventListener);
 }
 
 EventListener* DOMWindow::onchange() const
 {
-    return inlineEventListenerForType(eventNames().changeEvent);
+    return getInlineEventListener(eventNames().changeEvent);
 }
 
 void DOMWindow::setOnchange(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().changeEvent, eventListener);
+    setInlineEventListener(eventNames().changeEvent, eventListener);
 }
 
 EventListener* DOMWindow::onclick() const
 {
-    return inlineEventListenerForType(eventNames().clickEvent);
+    return getInlineEventListener(eventNames().clickEvent);
 }
 
 void DOMWindow::setOnclick(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().clickEvent, eventListener);
+    setInlineEventListener(eventNames().clickEvent, eventListener);
 }
 
 EventListener* DOMWindow::ondblclick() const
 {
-    return inlineEventListenerForType(eventNames().dblclickEvent);
+    return getInlineEventListener(eventNames().dblclickEvent);
 }
 
 void DOMWindow::setOndblclick(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().dblclickEvent, eventListener);
+    setInlineEventListener(eventNames().dblclickEvent, eventListener);
 }
 
 EventListener* DOMWindow::onerror() const
 {
-    return inlineEventListenerForType(eventNames().errorEvent);
+    return getInlineEventListener(eventNames().errorEvent);
 }
 
 void DOMWindow::setOnerror(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().errorEvent, eventListener);
+    setInlineEventListener(eventNames().errorEvent, eventListener);
 }
 
 EventListener* DOMWindow::onfocus() const
 {
-    return inlineEventListenerForType(eventNames().focusEvent);
+    return getInlineEventListener(eventNames().focusEvent);
 }
 
 void DOMWindow::setOnfocus(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().focusEvent, eventListener);
+    setInlineEventListener(eventNames().focusEvent, eventListener);
 }
 
 EventListener* DOMWindow::onkeydown() const
 {
-    return inlineEventListenerForType(eventNames().keydownEvent);
+    return getInlineEventListener(eventNames().keydownEvent);
 }
 
 void DOMWindow::setOnkeydown(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().keydownEvent, eventListener);
+    setInlineEventListener(eventNames().keydownEvent, eventListener);
 }
 
 EventListener* DOMWindow::onkeypress() const
 {
-    return inlineEventListenerForType(eventNames().keypressEvent);
+    return getInlineEventListener(eventNames().keypressEvent);
 }
 
 void DOMWindow::setOnkeypress(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().keypressEvent, eventListener);
+    setInlineEventListener(eventNames().keypressEvent, eventListener);
 }
 
 EventListener* DOMWindow::onkeyup() const
 {
-    return inlineEventListenerForType(eventNames().keyupEvent);
+    return getInlineEventListener(eventNames().keyupEvent);
 }
 
 void DOMWindow::setOnkeyup(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().keyupEvent, eventListener);
+    setInlineEventListener(eventNames().keyupEvent, eventListener);
 }
 
 EventListener* DOMWindow::onload() const
 {
-    return inlineEventListenerForType(eventNames().loadEvent);
+    return getInlineEventListener(eventNames().loadEvent);
 }
 
 void DOMWindow::setOnload(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().loadEvent, eventListener);
+    setInlineEventListener(eventNames().loadEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmousedown() const
 {
-    return inlineEventListenerForType(eventNames().mousedownEvent);
+    return getInlineEventListener(eventNames().mousedownEvent);
 }
 
 void DOMWindow::setOnmousedown(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mousedownEvent, eventListener);
+    setInlineEventListener(eventNames().mousedownEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmousemove() const
 {
-    return inlineEventListenerForType(eventNames().mousemoveEvent);
+    return getInlineEventListener(eventNames().mousemoveEvent);
 }
 
 void DOMWindow::setOnmousemove(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mousemoveEvent, eventListener);
+    setInlineEventListener(eventNames().mousemoveEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmouseout() const
 {
-    return inlineEventListenerForType(eventNames().mouseoutEvent);
+    return getInlineEventListener(eventNames().mouseoutEvent);
 }
 
 void DOMWindow::setOnmouseout(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mouseoutEvent, eventListener);
+    setInlineEventListener(eventNames().mouseoutEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmouseover() const
 {
-    return inlineEventListenerForType(eventNames().mouseoverEvent);
+    return getInlineEventListener(eventNames().mouseoverEvent);
 }
 
 void DOMWindow::setOnmouseover(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mouseoverEvent, eventListener);
+    setInlineEventListener(eventNames().mouseoverEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmouseup() const
 {
-    return inlineEventListenerForType(eventNames().mouseupEvent);
+    return getInlineEventListener(eventNames().mouseupEvent);
 }
 
 void DOMWindow::setOnmouseup(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mouseupEvent, eventListener);
+    setInlineEventListener(eventNames().mouseupEvent, eventListener);
 }
 
 EventListener* DOMWindow::onmousewheel() const
 {
-    return inlineEventListenerForType(eventNames().mousewheelEvent);
+    return getInlineEventListener(eventNames().mousewheelEvent);
 }
 
 void DOMWindow::setOnmousewheel(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().mousewheelEvent, eventListener);
+    setInlineEventListener(eventNames().mousewheelEvent, eventListener);
 }
 
 EventListener* DOMWindow::onreset() const
 {
-    return inlineEventListenerForType(eventNames().resetEvent);
+    return getInlineEventListener(eventNames().resetEvent);
 }
 
 void DOMWindow::setOnreset(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().resetEvent, eventListener);
+    setInlineEventListener(eventNames().resetEvent, eventListener);
 }
 
 EventListener* DOMWindow::onresize() const
 {
-    return inlineEventListenerForType(eventNames().resizeEvent);
+    return getInlineEventListener(eventNames().resizeEvent);
 }
 
 void DOMWindow::setOnresize(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().resizeEvent, eventListener);
+    setInlineEventListener(eventNames().resizeEvent, eventListener);
 }
 
 EventListener* DOMWindow::onscroll() const
 {
-    return inlineEventListenerForType(eventNames().scrollEvent);
+    return getInlineEventListener(eventNames().scrollEvent);
 }
 
 void DOMWindow::setOnscroll(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().scrollEvent, eventListener);
+    setInlineEventListener(eventNames().scrollEvent, eventListener);
 }
 
 EventListener* DOMWindow::onsearch() const
 {
-    return inlineEventListenerForType(eventNames().searchEvent);
+    return getInlineEventListener(eventNames().searchEvent);
 }
 
 void DOMWindow::setOnsearch(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().searchEvent, eventListener);
+    setInlineEventListener(eventNames().searchEvent, eventListener);
 }
 
 EventListener* DOMWindow::onselect() const
 {
-    return inlineEventListenerForType(eventNames().selectEvent);
+    return getInlineEventListener(eventNames().selectEvent);
 }
 
 void DOMWindow::setOnselect(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().selectEvent, eventListener);
+    setInlineEventListener(eventNames().selectEvent, eventListener);
 }
 
 EventListener* DOMWindow::onsubmit() const
 {
-    return inlineEventListenerForType(eventNames().submitEvent);
+    return getInlineEventListener(eventNames().submitEvent);
 }
 
 void DOMWindow::setOnsubmit(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().submitEvent, eventListener);
+    setInlineEventListener(eventNames().submitEvent, eventListener);
 }
 
 EventListener* DOMWindow::onunload() const
 {
-    return inlineEventListenerForType(eventNames().unloadEvent);
+    return getInlineEventListener(eventNames().unloadEvent);
 }
 
 void DOMWindow::setOnunload(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().unloadEvent, eventListener);
+    setInlineEventListener(eventNames().unloadEvent, eventListener);
 }
 
 EventListener* DOMWindow::onbeforeunload() const
 {
-    return inlineEventListenerForType(eventNames().beforeunloadEvent);
+    return getInlineEventListener(eventNames().beforeunloadEvent);
 }
 
 void DOMWindow::setOnbeforeunload(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().beforeunloadEvent, eventListener);
+    setInlineEventListener(eventNames().beforeunloadEvent, eventListener);
 }
 
 EventListener* DOMWindow::onwebkitanimationstart() const
 {
-    return inlineEventListenerForType(eventNames().webkitAnimationStartEvent);
+    return getInlineEventListener(eventNames().webkitAnimationStartEvent);
 }
 
 void DOMWindow::setOnwebkitanimationstart(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().webkitAnimationStartEvent, eventListener);
+    setInlineEventListener(eventNames().webkitAnimationStartEvent, eventListener);
 }
 
 EventListener* DOMWindow::onwebkitanimationiteration() const
 {
-    return inlineEventListenerForType(eventNames().webkitAnimationIterationEvent);
+    return getInlineEventListener(eventNames().webkitAnimationIterationEvent);
 }
 
 void DOMWindow::setOnwebkitanimationiteration(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().webkitAnimationIterationEvent, eventListener);
+    setInlineEventListener(eventNames().webkitAnimationIterationEvent, eventListener);
 }
 
 EventListener* DOMWindow::onwebkitanimationend() const
 {
-    return inlineEventListenerForType(eventNames().webkitAnimationEndEvent);
+    return getInlineEventListener(eventNames().webkitAnimationEndEvent);
 }
 
 void DOMWindow::setOnwebkitanimationend(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().webkitAnimationEndEvent, eventListener);
+    setInlineEventListener(eventNames().webkitAnimationEndEvent, eventListener);
 }
 
 EventListener* DOMWindow::onwebkittransitionend() const
 {
-    return inlineEventListenerForType(eventNames().webkitTransitionEndEvent);
+    return getInlineEventListener(eventNames().webkitTransitionEndEvent);
 }
 
 void DOMWindow::setOnwebkittransitionend(PassRefPtr<EventListener> eventListener)
 {
-    setInlineEventListenerForType(eventNames().webkitTransitionEndEvent, eventListener);
+    setInlineEventListener(eventNames().webkitTransitionEndEvent, eventListener);
 }
 
 } // namespace WebCore

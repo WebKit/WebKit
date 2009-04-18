@@ -32,6 +32,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "MIMETypeRegistry.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"
@@ -39,7 +40,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "Text.h"
-
 
 namespace WebCore {
 
@@ -95,7 +95,7 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         if (renderer())
           m_needWidgetUpdate = true;
     } else if (attr->name() == onloadAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {

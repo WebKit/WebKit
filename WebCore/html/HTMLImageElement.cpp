@@ -30,6 +30,7 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "RenderImage.h"
 
 using namespace std;
@@ -113,9 +114,9 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attrName == ismapAttr)
         ismap = true;
     else if (attrName == onabortAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().abortEvent, attr);
+        setInlineEventListener(eventNames().abortEvent, createInlineEventListener(this, attr));
     else if (attrName == onloadAttr)
-        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
     else if (attrName == compositeAttr) {
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;

@@ -2488,7 +2488,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         // Dispatch a change event for text fields or textareas that have been edited
         RenderObject* r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer());
         if (r && r->isTextControl() && toRenderTextControl(r)->isEdited()) {
-            oldFocusedNode->dispatchEventForType(eventNames().changeEvent, true, false);
+            oldFocusedNode->dispatchEvent(eventNames().changeEvent, true, false);
             if ((r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer()))) {
                 if (r->isTextControl())
                     toRenderTextControl(r)->setEdited(false);
@@ -2756,31 +2756,6 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
 {
     return 0;
-}
-
-PassRefPtr<EventListener> Document::createEventListener(const String& functionName, const String& code, Node* node)
-{
-    Frame* frm = frame();
-    if (!frm || !frm->script()->isEnabled())
-        return 0;
-
-    DEFINE_STATIC_LOCAL(const String, eventString, ("event"));
-
-#if ENABLE(SVG)
-    DEFINE_STATIC_LOCAL(const String, evtString, ("evt"));
-    if (node ? node->isSVGElement() : isSVGDocument())
-        return JSLazyEventListener::create(functionName, evtString, code, frm->script()->globalObject(), node, frm->script()->eventHandlerLineNumber());
-#endif
-
-    return JSLazyEventListener::create(functionName, eventString, code, frm->script()->globalObject(), node, frm->script()->eventHandlerLineNumber());
-}
-
-void Document::setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
-{
-    DOMWindow* domWindow = this->domWindow();
-    if (!domWindow)
-        return;
-    domWindow->setInlineEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
 }
 
 Element* Document::ownerElement() const

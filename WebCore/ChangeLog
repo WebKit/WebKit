@@ -1,3 +1,124 @@
+2009-04-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        More fix for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        Some refactoring of "inline" event listeners.
+        
+        Renames:
+            dispatchEventForType => dispatchEvent
+            setWindowInlineEventListenerForTypeAndAttribute => setWindowInlineEventListener
+            removeInlineEventListenerForType => clearInlineEventListener
+            setInlineEventListenerForType => setInlineEventListener
+            inlineEventListenerForType => getInlineEventListener
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::eventParameterName):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::createInlineEventListener):
+        * bindings/js/JSLazyEventListener.h: Added two helper functions for
+        creating "inline" event listeners. These replace Document::createEventListener,
+        and abstract the creation of JS event listeners for DOM attributes out
+        of the DOM. Removed legacy JSProtectedEventListener constructor code for
+        adding the event listener's function to a map, since lazy event listeners
+        don't have functions at construction time.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Document.h:
+        (WebCore::Document::isSVGDocument):
+        * dom/Element.cpp:
+        (WebCore::Element::setWindowInlineEventListener):
+        * dom/Element.h: Updated for renames. Nixed Document::createEventListener,
+        mentioned above. Moved setWindowInlineEventListenerForTypeAndAttribute
+        to Element, for simplicity.
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchFocusEvent):
+        (WebCore::Node::dispatchBlurEvent):
+        (WebCore::Node::dispatchEvent):
+        (WebCore::Node::clearInlineEventListener):
+        (WebCore::Node::setInlineEventListener):
+        (WebCore::Node::getInlineEventListener):
+        (WebCore::Node::onabort):
+        (WebCore::Node::setOnabort):
+        (WebCore::Node::etc.):
+        * dom/Node.h: Updated for renames.
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Updated for renames.
+        
+        Updated these files for renames, and to use the new createInlineEventListener
+        helper function:
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::onChange):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        (WebCore::HTMLScriptElement::dispatchErrorEvent):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::eventListeners):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::canMouseDragExtendSelect):
+        (WebCore::EventHandler::sendScrollEvent):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::selectionChanged):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+        * svg/SVGElementInstance.cpp:
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::dispatchErrorEvent):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::defaultEventHandler):
+
 2009-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Simplify FEATURE_DEFINES definition

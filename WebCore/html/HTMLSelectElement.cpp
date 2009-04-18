@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
+#include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -326,11 +327,11 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=12072
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().focusEvent, attr);
+        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().blurEvent, attr);
+        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
     } else if (attr->name() == onchangeAttr) {
-        setInlineEventListenerForTypeAndAttribute(eventNames().changeEvent, attr);
+        setInlineEventListener(eventNames().changeEvent, createInlineEventListener(this, attr));
     } else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }

@@ -29,6 +29,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "JSLazyEventListener.h"
 #include "Length.h"
 #include "Length.h"
 #include "MouseEvent.h"
@@ -125,11 +126,11 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
             m_borderColorSet = true;
         }
     } else if (attr->name() == onloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
+        setWindowInlineEventListener(eventNames().loadEvent, createInlineEventListener(document()->frame(), attr));
     } else if (attr->name() == onbeforeunloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().beforeunloadEvent, attr);
+        setWindowInlineEventListener(eventNames().beforeunloadEvent, createInlineEventListener(document()->frame(), attr));
     } else if (attr->name() == onunloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().unloadEvent, attr);
+        setWindowInlineEventListener(eventNames().unloadEvent, createInlineEventListener(document()->frame(), attr));
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

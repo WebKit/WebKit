@@ -304,6 +304,8 @@ public:
     virtual bool isImageDocument() const { return false; }
 #if ENABLE(SVG)
     virtual bool isSVGDocument() const { return false; }
+#else
+    static bool isSVGDocument() const { return false; }
 #endif
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }
@@ -574,10 +576,6 @@ public:
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
     void addListenerType(ListenerType listenerType) { m_listenerTypes = m_listenerTypes | listenerType; }
     void addListenerTypeIfNeeded(const AtomicString& eventType);
-
-    void setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
-
-    PassRefPtr<EventListener> createEventListener(const String& functionName, const String& code, Node*);
 
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
