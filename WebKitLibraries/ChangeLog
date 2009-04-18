@@ -1,3 +1,14 @@
+2009-04-18  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        <rdar://problem/6747241> work around QTKit no longer reaching
+        QTMovieLoadStateComplete
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-04-15  Steve Falkenburg  <sfalken@apple.com>
 
         Updated WebKitSystemInterface for Windows.

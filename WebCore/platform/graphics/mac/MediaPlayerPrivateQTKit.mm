@@ -230,7 +230,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                      [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",     // FIXME: Use defined attribute when required version of QT supports this attribute
                                      nil];
     
-    NSError* error = nil;
+    NSError *error = nil;
     m_qtMovie.adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
     
     // FIXME: Find a proper way to detect streaming content.
@@ -245,6 +245,17 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                              selector:@selector(loadStateChanged:) 
                                                  name:QTMovieLoadStateDidChangeNotification 
                                                object:m_qtMovie.get()];
+
+    // In updateState(), we track when maxTimeLoaded() == duration().
+    // In newer version of QuickTime, a notification is emitted when maxTimeLoaded changes.
+    // In older version of QuickTime, QTMovieLoadStateDidChangeNotification be fired.
+    if (NSString *maxTimeLoadedChangeNotification = wkQTMovieMaxTimeLoadedChangeNotification()) {
+        [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
+                                                 selector:@selector(loadStateChanged:) 
+                                                     name:maxTimeLoadedChangeNotification
+                                                   object:m_qtMovie.get()];        
+    }
+
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(rateChanged:) 
                                                  name:QTMovieRateDidChangeNotification 
@@ -665,7 +676,14 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
-    if (loadState >= QTMovieLoadStateComplete && !m_isStreaming) {
+    BOOL completelyLoaded = !m_isStreaming && (loadState >= QTMovieLoadStateComplete);
+
+    // Note: QT indicates that we are fully loaded with QTMovieLoadStateComplete.
+    // However newer versions of QT do not, so we check maxTimeLoaded against duration.
+    if (!completelyLoaded && !m_isStreaming && metaDataAvailable())
+        completelyLoaded = maxTimeLoaded() == duration();
+
+    if (completelyLoaded) {
         // "Loaded" is reserved for fully buffered movies, never the case when streaming
         m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::HaveEnoughData;

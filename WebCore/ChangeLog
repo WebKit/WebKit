@@ -1,3 +1,20 @@
+2009-04-18  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6747241> work around QTKit no longer reaching
+        QTMovieLoadStateComplete
+
+        * WebCore.base.exp: Export wkQTMovieMaxTimeLoadedChangeNotification.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): observe QTMovieMaxTimeLoadedChangeNotification.
+        (WebCore::MediaPlayerPrivate::updateStates): compare duuration() with maxTimeLoaded() instead of
+        using QTMovieLoadStateComplete to determine if a movie are fully loaded.
+
+        * platform/mac/WebCoreSystemInterface.h: Add wkQTMovieMaxTimeLoadedChangeNotification.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2009-04-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

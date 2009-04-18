@@ -1,3 +1,13 @@
+2009-04-18  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6747241> work around QTKit no longer reaching
+        QTMovieLoadStateComplete
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Init the new WKSI exported symbol.
+
 2009-04-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

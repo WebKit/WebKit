@@ -983,6 +983,7 @@ _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
+_wkQTMovieMaxTimeLoadedChangeNotification
 _wkQTMovieViewSetDrawSynchronously
 _wkSetCGFontRenderingMode
 _wkSetDragImage
