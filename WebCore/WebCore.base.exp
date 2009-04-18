@@ -984,6 +984,7 @@ _wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
 _wkQTMovieMaxTimeLoadedChangeNotification
+_wkQTMovieMaxTimeSeekable
 _wkQTMovieViewSetDrawSynchronously
 _wkSetCGFontRenderingMode
 _wkSetDragImage

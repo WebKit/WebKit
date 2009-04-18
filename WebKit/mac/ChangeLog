@@ -2,6 +2,17 @@
 
         Reviewed by Mark Rowe.
 
+        <rdar://problem/6781295> video.buffered and video.seekable are not
+        the same. video.buffered should return only what is buffered and
+        not what is seekable
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Add wkQTMovieMaxTimeSeekable.
+
+2009-04-18  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Adele Peterson.
+
         <rdar://problem/6747241> work around QTKit no longer reaching
         QTMovieLoadStateComplete
 

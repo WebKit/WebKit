@@ -182,6 +182,7 @@ BOOL WKAppVersionCheckLessThan(NSString *, int, double);
 unsigned WKQTIncludeOnlyModernMediaFileTypes(void);
 int WKQTMovieDataRate(QTMovie* movie);
 float WKQTMovieMaxTimeLoaded(QTMovie* movie);
+float WKQTMovieMaxTimeSeekable(QTMovie* movie);
 NSString *WKQTMovieMaxTimeLoadedChangeNotification(void);
 void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
 

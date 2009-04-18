@@ -611,8 +611,14 @@ float MediaPlayerPrivate::maxTimeBuffered() const
 
 float MediaPlayerPrivate::maxTimeSeekable() const
 {
+    if (!metaDataAvailable())
+        return 0;
+
     // infinite duration means live stream
-    return isinf(duration()) ? 0 : maxTimeLoaded();
+    if (isinf(duration()))
+        return 0;
+
+    return wkQTMovieMaxTimeSeekable(m_qtMovie.get());
 }
 
 float MediaPlayerPrivate::maxTimeLoaded() const
