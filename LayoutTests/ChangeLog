@@ -1,3 +1,11 @@
+2009-04-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Updated test results for https://bugs.webkit.org/show_bug.cgi?id=25277
+
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.checksum:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+
 2009-04-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
