@@ -1,3 +1,19 @@
+2009-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25277
+        If there is no line wrapping, a caret can leave its containing block but it shouldn't leave its root line box
+
+        * fast/inline/25277-2.html: Added.
+        * fast/inline/25277.html: Added.
+        * platform/mac/fast/inline/25277-2-expected.checksum: Added.
+        * platform/mac/fast/inline/25277-2-expected.png: Added.
+        * platform/mac/fast/inline/25277-2-expected.txt: Added.
+        * platform/mac/fast/inline/25277-expected.checksum: Added.
+        * platform/mac/fast/inline/25277-expected.png: Added.
+        * platform/mac/fast/inline/25277-expected.txt: Added.
+
 2009-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

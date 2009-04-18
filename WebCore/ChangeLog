@@ -1,3 +1,19 @@
+2009-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25277
+        If there is no line wrapping, a caret can leave its containing block but it shouldn't leave its root line box
+        
+        Also added code to handle a caret wider than one pixel.
+        
+        Added fast/inline/25277.html and fast/inline/25277-2.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect): Distribute a caret's width to either side of the offset,
+        so that a caret between two characters doesn't hang over one character more than the other.
+        If there is no wrapping, the caret can leave its containing block, but not its root line box.
+
 2009-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
