@@ -1,3 +1,17 @@
+2009-04-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix bug where the VM reentry cache would not correctly unroll the cached callframe
+
+        Fix a check that was intended to mark a cached call as invalid when the callframe could
+        not be constructed.  Instead it was just checking that there was a place to put the
+        exception.  This eventually results in a non-recoverable RegisterFile starvation.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::call): add assertion to ensure we don't use a bad callframe
+
 2009-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Simplify FEATURE_DEFINES definition

@@ -1,3 +1,14 @@
+2009-04-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Testcase to ensure reentry cache correctly unrolls callframe
+        when it's destroyed.
+
+        * fast/js/repeat-cached-vm-reentry-expected.txt: Added.
+        * fast/js/repeat-cached-vm-reentry.html: Added.
+        * fast/js/resources/repeat-cached-vm-reentry.js: Added.
+
 2009-04-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

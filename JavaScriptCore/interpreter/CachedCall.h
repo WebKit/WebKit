@@ -39,11 +39,12 @@ namespace JSC {
             , m_globalObjectScope(callFrame, callFrame->globalData().dynamicGlobalObject ? callFrame->globalData().dynamicGlobalObject : function->scope().node()->globalObject())
         {
             m_closure = m_interpreter->prepareForRepeatCall(function->body(), callFrame, function, argCount, function->scope().node(), exception);
-            m_valid = !exception;
+            m_valid = !*exception;
         }
         
         JSValuePtr call()
         { 
+            ASSERT(m_valid);
             return m_interpreter->execute(m_closure, m_exception);
         }
         void setThis(JSValuePtr v) { m_closure.setArgument(0, v); }
