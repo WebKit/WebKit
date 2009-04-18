@@ -1,5 +1,16 @@
 2009-04-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Fix for <rdar://problem/5861045>
+        A little bit of hardening for UString.
+
+        * runtime/UString.cpp:
+        (JSC::concatenate):
+        (JSC::UString::append):
+
+2009-04-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe and Dan Bernstein.
 
         Fix for <rdar://problem/5861188>
