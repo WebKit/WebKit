@@ -1,5 +1,12 @@
 2009-04-18  Dan Bernstein  <mitz@apple.com>
 
+        - revert the previous change, which was to a file that the Windows
+          port does not even use
+
+        * icu/unicode/utf16.h:
+
+2009-04-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         - try to fix the Windows build

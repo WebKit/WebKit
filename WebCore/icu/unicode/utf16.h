@@ -252,12 +252,10 @@
 #define U16_NEXT(s, i, length, c) { \
     (c)=(s)[(i)++]; \
     if(U16_IS_LEAD(c)) { \
-        if((i)<(length)) { \
-            uint16_t __c2=(s)[(i)]; \
-            if(U16_IS_TRAIL(__c2)) { \
-                ++(i); \
-                (c)=U16_GET_SUPPLEMENTARY((c), __c2); \
-            } \
+        uint16_t __c2; \
+        if((i)<(length) && U16_IS_TRAIL(__c2=(s)[(i)])) { \
+            ++(i); \
+            (c)=U16_GET_SUPPLEMENTARY((c), __c2); \
         } \
     } \
 }
@@ -478,12 +476,10 @@
 #define U16_PREV(s, start, i, c) { \
     (c)=(s)[--(i)]; \
     if(U16_IS_TRAIL(c)) { \
-        if((i)>(start)) { \
-            uint16_t __c2=(s)[(i)-1]; \
-            if (U16_IS_LEAD(__c2)) { \
-                --(i); \
-                (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
-            } \
+        uint16_t __c2; \
+        if((i)>(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+            --(i); \
+            (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
         } \
     } \
 }
