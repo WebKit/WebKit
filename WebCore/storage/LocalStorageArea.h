@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,11 @@
 #ifndef LocalStorageArea_h
 #define LocalStorageArea_h
 
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
-
 #include "SQLiteDatabase.h"
 #include "StorageArea.h"
 #include "StringHash.h"
 #include "Timer.h"
-
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
     
@@ -88,6 +82,7 @@ namespace WebCore {
 
     private:
         void syncTimerFired(Timer<LocalStorageArea>*);
+        void sync(bool clearItems, const HashMap<String, String>& items);
 
         Mutex m_syncLock;
         HashMap<String, String> m_itemsPendingSync;

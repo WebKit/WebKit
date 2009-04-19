@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,12 @@
 #include "CString.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameTree.h"
 #include "HTMLElement.h"
 #include "LocalStorage.h"
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformString.h"
-#include "SecurityOrigin.h"
 #include "SQLiteStatement.h"
+#include "SuddenTermination.h"
 
 namespace WebCore {
 
@@ -69,7 +65,13 @@ LocalStorageArea::~LocalStorageArea()
 
 void LocalStorageArea::scheduleFinalSync()
 {
-    m_syncTimer.stop();
+    if (m_syncTimer.isActive())
+        m_syncTimer.stop();
+    else {
+        // The following is balanced by the call to enableSuddenTermination in the
+        // syncTimerFired function.
+        disableSuddenTermination();
+    }
     syncTimerFired(&m_syncTimer);
     m_finalSyncScheduled = true;
 }
@@ -237,8 +239,13 @@ void LocalStorageArea::scheduleItemForSync(const String& key, const String& valu
     ASSERT(!m_finalSyncScheduled);
 
     m_changedItems.set(key, value);
-    if (!m_syncTimer.isActive())
+    if (!m_syncTimer.isActive()) {
         m_syncTimer.startOneShot(LocalStorageSyncInterval);
+
+        // The following is balanced by the call to enableSuddenTermination in the
+        // syncTimerFired function.
+        disableSuddenTermination();
+    }
 }
 
 void LocalStorageArea::scheduleClear()
@@ -248,8 +255,13 @@ void LocalStorageArea::scheduleClear()
 
     m_changedItems.clear();
     m_itemsCleared = true;
-    if (!m_syncTimer.isActive())
+    if (!m_syncTimer.isActive()) {
         m_syncTimer.startOneShot(LocalStorageSyncInterval);
+
+        // The following is balanced by the call to enableSuddenTermination in the
+        // syncTimerFired function.
+        disableSuddenTermination();
+    }
 }
 
 void LocalStorageArea::syncTimerFired(Timer<LocalStorageArea>*)
@@ -273,9 +285,18 @@ void LocalStorageArea::syncTimerFired(Timer<LocalStorageArea>*)
 
         if (!m_syncScheduled) {
             m_syncScheduled = true;
+
+            // The following is balanced by the call to enableSuddenTermination in the
+            // performSync function.
+            disableSuddenTermination();
+
             m_localStorage->scheduleSync(this);
         }
     }
+
+    // The following is balanced by the calls to disableSuddenTermination in the
+    // scheduleItemForSync, scheduleClear, and scheduleFinalSync functions.
+    enableSuddenTermination();
 
     m_changedItems.clear();
 }
@@ -347,25 +368,15 @@ void LocalStorageArea::markImported()
     m_importCondition.signal();
 }
 
-void LocalStorageArea::performSync()
+void LocalStorageArea::sync(bool clearItems, const HashMap<String, String>& items)
 {
     ASSERT(!isMainThread());
 
     if (!m_database.isOpen())
         return;
 
-    HashMap<String, String> items;
-    bool clearFirst = false;
-    {
-        MutexLocker locker(m_syncLock);
-        m_itemsPendingSync.swap(items);
-        clearFirst = m_clearItemsWhileSyncing;
-        m_clearItemsWhileSyncing = false;
-        m_syncScheduled = false;
-    }
-
-    // If the clear flag is marked, then we clear all items out before we write any new ones in
-    if (clearFirst) {
+    // If the clear flag is set, then we clear all items out before we write any new ones in.
+    if (clearItems) {
         SQLiteStatement clear(m_database, "DELETE FROM ItemTable");
         if (clear.prepare() != SQLResultOk) {
             LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
@@ -391,10 +402,10 @@ void LocalStorageArea::performSync()
         return;
     }
 
-    HashMap<String, String>::iterator end = items.end();
+    HashMap<String, String>::const_iterator end = items.end();
 
-    for (HashMap<String, String>::iterator it = items.begin(); it != end; ++it) {
-        // Based on the null-ness of the second argument, decide whether this is an insert or a delete
+    for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
+        // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
         SQLiteStatement& query = it->second.isNull() ? remove : insert;        
 
         query.bindText(1, it->first);
@@ -411,6 +422,31 @@ void LocalStorageArea::performSync()
 
         query.reset();
     }
+}
+
+void LocalStorageArea::performSync()
+{
+    ASSERT(!isMainThread());
+
+    bool clearItems;
+    HashMap<String, String> items;
+    {
+        MutexLocker locker(m_syncLock);
+
+        ASSERT(m_syncScheduled);
+
+        clearItems = m_clearItemsWhileSyncing;
+        m_itemsPendingSync.swap(items);
+
+        m_clearItemsWhileSyncing = false;
+        m_syncScheduled = false;
+    }
+
+    sync(clearItems, items);
+
+    // The following is balanced by the call to disableSuddenTermination in the
+    // syncTimerFired function.
+    enableSuddenTermination();
 }
 
 } // namespace WebCore

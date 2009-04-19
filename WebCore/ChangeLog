@@ -1,3 +1,40 @@
+2009-04-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add hoooks so sudden termination will not cause loss of icons or local storage.
+        rdar://problem/5951701
+
+        * loader/icon/IconDatabase.cpp: Marked various constants static to give them
+        internal linkage.
+        (WebCore::IconDatabase::IconDatabase): Added initial value for m_syncTimer.
+        Removed unneeded initial value for m_defaultIconRecord. Changed assertion to
+        work cross-platform.
+        (WebCore::IconDatabase::wakeSyncThread): Added disableSuddenTermination, so
+        we won't terminate until the sync thread has done its thing.
+        (WebCore::IconDatabase::scheduleOrDeferSyncTimer): Added disableSuddenTermination,
+        so we won't terminate if we have an outstanding sync timer.
+        (WebCore::IconDatabase::syncTimerFired): Added enableSuddenTermination, to
+        balance the one in scheduleOrDeferSyncTimer.
+        (WebCore::IconDatabase::syncThreadMainLoop): Added enableSuddenTermination, to
+        balance the one in wakeSyncThread.
+        (WebCore::IconDatabase::deleteAllPreparedStatements): Use clear() instead of set(0).
+
+        * loader/icon/IconDatabase.h: Use a Timer instead of an OwnPtr<Timer>.
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::scheduleFinalSync): Added disableSuddenTermination.
+        (WebCore::LocalStorageArea::scheduleItemForSync): Ditto.
+        (WebCore::LocalStorageArea::scheduleClear): Ditto.
+        (WebCore::LocalStorageArea::syncTimerFired): Added a disableSuddenTermination if
+        we schedule a performSync callback for later and an unconditional
+        enableSuddenTermination to balance the ones in the schedule calls above.
+        (WebCore::LocalStorageArea::sync): Factored out the work of the sync function so it
+        can continue to use early return idiom.
+        (WebCore::LocalStorageArea::performSync): Added a call to enableSuddenTermination.
+
+        * storage/LocalStorageArea.h: Added declaration of the sync function.
+
 2009-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Make FEATURE_DEFINES completely dynamic

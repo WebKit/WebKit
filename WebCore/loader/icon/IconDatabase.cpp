@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,34 +28,19 @@
 #include "IconDatabase.h"
 
 #include "AutodrainedPool.h"
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "FileSystem.h"
 #include "IconDatabaseClient.h"
 #include "IconRecord.h"
-#include "Image.h"
 #include "IntSize.h"
-#include "KURL.h"
 #include "Logging.h"
-#include "PageURLRecord.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include "SuddenTermination.h"
 #include <runtime/InitializeThreading.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-
-#if PLATFORM(WIN_OS)
-#include <windows.h>
-#include <winbase.h>
-#include <shlobj.h>
-#else
-#include <sys/stat.h>
-#endif
-
-#if PLATFORM(DARWIN)
-#include <pthread.h>
-#endif
 
 // For methods that are meant to support API from the main thread - should not be called internally
 #define ASSERT_NOT_SYNC_THREAD() ASSERT(!m_syncThreadRunning || !IS_ICON_SYNC_THREAD())
@@ -77,12 +62,12 @@ static int databaseCleanupCounter = 0;
 // Currently, a mismatched schema causes the DB to be wiped and reset.  This isn't 
 // so bad during development but in the future, we would need to write a conversion
 // function to advance older released schemas to "current"
-const int currentDatabaseVersion = 6;
+static const int currentDatabaseVersion = 6;
 
 // Icons expire once every 4 days
-const int iconExpirationTime = 60*60*24*4; 
+static const int iconExpirationTime = 60*60*24*4; 
 
-const int updateTimerDelay = 5; 
+static const int updateTimerDelay = 5; 
 
 static bool checkIntegrityOnOpen = false;
 
@@ -769,8 +754,8 @@ size_t IconDatabase::iconRecordCountWithData()
 }
 
 IconDatabase::IconDatabase()
-    : m_syncThreadRunning(false)
-    , m_defaultIconRecord(0)
+    : m_syncTimer(this, &IconDatabase::syncTimerFired)
+    , m_syncThreadRunning(false)
     , m_isEnabled(false)
     , m_privateBrowsingEnabled(false)
     , m_threadTerminationRequested(false)
@@ -781,9 +766,7 @@ IconDatabase::IconDatabase()
     , m_imported(false)
     , m_isImportedSet(false)
 {
-#if PLATFORM(DARWIN)
-    ASSERT(pthread_main_np());
-#endif
+    ASSERT(isMainThread());
 }
 
 IconDatabase::~IconDatabase()
@@ -816,6 +799,12 @@ void IconDatabase::notifyPendingLoadDecisions()
 
 void IconDatabase::wakeSyncThread()
 {
+    // The following is balanced by the call to enableSuddenTermination in the
+    // syncThreadMainLoop function.
+    // FIXME: It would be better to only disable sudden termination if we have
+    // something to write, not just if we have something to read.
+    disableSuddenTermination();
+
     MutexLocker locker(m_syncLock);
     m_syncCondition.signal();
 }
@@ -823,16 +812,24 @@ void IconDatabase::wakeSyncThread()
 void IconDatabase::scheduleOrDeferSyncTimer()
 {
     ASSERT_NOT_SYNC_THREAD();
-    if (!m_syncTimer)
-        m_syncTimer.set(new Timer<IconDatabase>(this, &IconDatabase::syncTimerFired));
 
-    m_syncTimer->startOneShot(updateTimerDelay);
+    if (!m_syncTimer.isActive()) {
+        // The following is balanced by the call to enableSuddenTermination in the
+        // syncTimerFired function.
+        disableSuddenTermination();
+    }
+
+    m_syncTimer.startOneShot(updateTimerDelay);
 }
 
 void IconDatabase::syncTimerFired(Timer<IconDatabase>*)
 {
     ASSERT_NOT_SYNC_THREAD();
     wakeSyncThread();
+
+    // The following is balanced by the call to disableSuddenTermination in the
+    // scheduleOrDeferSyncTimer function.
+    enableSuddenTermination();
 }
 
 // ******************
@@ -1329,7 +1326,8 @@ void IconDatabase::performURLImport()
 void* IconDatabase::syncThreadMainLoop()
 {
     ASSERT_ICON_SYNC_THREAD();
-    static bool prunedUnretainedIcons = false;
+
+    bool shouldReenableSuddenTermination = false;
 
     m_syncLock.lock();
 
@@ -1368,6 +1366,7 @@ void* IconDatabase::syncThreadMainLoop()
             // or if private browsing is enabled
             // We also don't want to prune if the m_databaseCleanupCounter count is non-zero - that means someone
             // has asked to delay pruning
+            static bool prunedUnretainedIcons = false;
             if (didWrite && !m_privateBrowsingEnabled && !prunedUnretainedIcons && !databaseCleanupCounter) {
 #ifndef NDEBUG
                 double time = currentTime();
@@ -1400,13 +1399,32 @@ void* IconDatabase::syncThreadMainLoop()
         // We handle those at the top of this main loop so continue to jump back up there
         if (shouldStopThreadActivity())
             continue;
-            
-        m_syncCondition.wait(m_syncLock); 
+
+        if (shouldReenableSuddenTermination) {
+            // The following is balanced by the call to disableSuddenTermination in the
+            // wakeSyncThread function. Any time we wait on the condition, we also have
+            // to enableSuddenTermation, after doing the next batch of work.
+            enableSuddenTermination();
+        }
+
+        m_syncCondition.wait(m_syncLock);
+
+        shouldReenableSuddenTermination = true;
     }
+
     m_syncLock.unlock();
     
     // Thread is terminating at this point
-    return cleanupSyncThread();
+    cleanupSyncThread();
+
+    if (shouldReenableSuddenTermination) {
+        // The following is balanced by the call to disableSuddenTermination in the
+        // wakeSyncThread function. Any time we wait on the condition, we also have
+        // to enableSuddenTermation, after doing the next batch of work.
+        enableSuddenTermination();
+    }
+
+    return 0;
 }
 
 bool IconDatabase::readFromDatabase()
@@ -1693,23 +1711,23 @@ void IconDatabase::removeAllIconsOnThread()
 }
 
 void IconDatabase::deleteAllPreparedStatements()
-{        
+{
     ASSERT_ICON_SYNC_THREAD();
     
-    m_setIconIDForPageURLStatement.set(0);
-    m_removePageURLStatement.set(0);
-    m_getIconIDForIconURLStatement.set(0);
-    m_getImageDataForIconURLStatement.set(0);
-    m_addIconToIconInfoStatement.set(0);
-    m_addIconToIconDataStatement.set(0);
-    m_getImageDataStatement.set(0);
-    m_deletePageURLsForIconURLStatement.set(0);
-    m_deleteIconFromIconInfoStatement.set(0);
-    m_deleteIconFromIconDataStatement.set(0);
-    m_updateIconInfoStatement.set(0);
-    m_updateIconDataStatement.set(0);
-    m_setIconInfoStatement.set(0);
-    m_setIconDataStatement.set(0);
+    m_setIconIDForPageURLStatement.clear();
+    m_removePageURLStatement.clear();
+    m_getIconIDForIconURLStatement.clear();
+    m_getImageDataForIconURLStatement.clear();
+    m_addIconToIconInfoStatement.clear();
+    m_addIconToIconDataStatement.clear();
+    m_getImageDataStatement.clear();
+    m_deletePageURLsForIconURLStatement.clear();
+    m_deleteIconFromIconInfoStatement.clear();
+    m_deleteIconFromIconDataStatement.clear();
+    m_updateIconInfoStatement.clear();
+    m_updateIconDataStatement.clear();
+    m_setIconInfoStatement.clear();
+    m_setIconDataStatement.clear();
 }
 
 void* IconDatabase::cleanupSyncThread()
