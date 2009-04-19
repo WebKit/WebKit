@@ -51,10 +51,9 @@ public:
     
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
-    const RenderObjectChildList* children() const;
-    RenderObjectChildList* children();
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
-    virtual void removeChild(RenderObject*);
     virtual void destroy();
     
     virtual void layout();
@@ -111,6 +110,7 @@ private:
     RefPtr<HTMLElement> m_timelineContainer;
     RefPtr<MediaTimeDisplayElement> m_currentTimeDisplay;
     RefPtr<MediaTimeDisplayElement> m_timeRemainingDisplay;
+    RenderObjectChildList m_children;
     Node* m_lastUnderNode;
     Node* m_nodeUnderMouse;
     

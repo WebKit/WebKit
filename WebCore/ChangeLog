@@ -1,3 +1,35 @@
+2009-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25066
+        
+        When a <video> element gained a RenderLayer via opacity, reflection etc., the
+        layer hierarchy was not correctly updated because RenderMedia skipped a level
+        when asked for its children; it skipped m_controlsShadowRoot's renderer, which
+        actually has a layer.
+
+        Test: fast/layers/video-layer.html
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        Don't manually call setParent() on the renderer. It will happen later
+        as a result of addChild().
+        
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createControlsShadowRoot):
+        Add m_controlsShadowRoot's renderer as a child. 
+
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::children):
+        Now maintain a RenderObjectChildList, m_children, and remove the unneeded
+        removeChild() method. Make the two children() methods inline.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::moveLayers):
+        Assert if moveLayers() is called with an oldParent that is not the
+        layer's actual parent (which would have revealed this bug).
+
 2009-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

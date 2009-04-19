@@ -145,28 +145,11 @@ void RenderMedia::layout()
     }
 }
 
-const RenderObjectChildList* RenderMedia::children() const
-{
-    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer()->virtualChildren() : 0; 
-}
-
-RenderObjectChildList* RenderMedia::children()
-{
-    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer()->virtualChildren() : 0; 
-}
-   
-void RenderMedia::removeChild(RenderObject* child)
-{
-    ASSERT(m_controlsShadowRoot);
-    ASSERT(child == m_controlsShadowRoot->renderer());
-    child->removeLayers(enclosingLayer());
-    static_cast<RenderMediaControlShadowRoot*>(child)->setParent(0);
-}
-    
 void RenderMedia::createControlsShadowRoot()
 {
     ASSERT(!m_controlsShadowRoot);
     m_controlsShadowRoot = new MediaControlShadowRootElement(document(), mediaElement());
+    addChild(m_controlsShadowRoot->renderer());
 }
 
 void RenderMedia::createPanel()

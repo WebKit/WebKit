@@ -61,7 +61,6 @@ MediaControlShadowRootElement::MediaControlShadowRootElement(Document* doc, HTML
     rootStyle->setDisplay(BLOCK);
     rootStyle->setPosition(RelativePosition);
     RenderMediaControlShadowRoot* renderer = new (mediaElement->renderer()->renderArena()) RenderMediaControlShadowRoot(this);
-    renderer->setParent(mediaElement->renderer());
     renderer->setStyle(rootStyle.release());
     setRenderer(renderer);
     setAttached();

@@ -461,6 +461,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
 
     if (hasLayer()) {
         RenderLayer* layer = toRenderBoxModelObject(this)->layer();
+        ASSERT(oldParent == layer->parent());
         if (oldParent)
             oldParent->removeChild(layer);
         newParent->addChild(layer);

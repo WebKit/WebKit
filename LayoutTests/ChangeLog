@@ -1,3 +1,16 @@
+2009-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25066
+        
+        Add testcase for dynamically giving <video> a layer, via opacity.
+
+        * fast/layers/video-layer.html: Added.
+        * platform/mac/fast/layers/video-layer-expected.checksum: Added.
+        * platform/mac/fast/layers/video-layer-expected.png: Added.
+        * platform/mac/fast/layers/video-layer-expected.txt: Added.
+
 2009-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
