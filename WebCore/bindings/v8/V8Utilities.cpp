@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "V8XMLHttpRequestUtilities.h"
+#include "V8Utilities.h"
 
 #include <v8.h>
 
@@ -41,24 +41,22 @@
 namespace WebCore {
 
 // Use an array to hold dependents. It works like a ref-counted scheme.
-// A value can be added more than once to the xmlHttpRequest object.
-void createHiddenXHRDependency(v8::Local<v8::Object> xmlHttpRequest, v8::Local<v8::Value> value)
+// A value can be added more than once to the DOM object.
+void createHiddenDependency(v8::Local<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)
 {
-    ASSERT(V8Proxy::GetDOMWrapperType(xmlHttpRequest) == V8ClassIndex::XMLHTTPREQUEST || V8Proxy::GetDOMWrapperType(xmlHttpRequest) == V8ClassIndex::XMLHTTPREQUESTUPLOAD);
-    v8::Local<v8::Value> cache = xmlHttpRequest->GetInternalField(V8Custom::kXMLHttpRequestCacheIndex);
+    v8::Local<v8::Value> cache = object->GetInternalField(cacheIndex);
     if (cache->IsNull() || cache->IsUndefined()) {
         cache = v8::Array::New();
-        xmlHttpRequest->SetInternalField(V8Custom::kXMLHttpRequestCacheIndex, cache);
+        object->SetInternalField(cacheIndex, cache);
     }
 
     v8::Local<v8::Array> cacheArray = v8::Local<v8::Array>::Cast(cache);
     cacheArray->Set(v8::Integer::New(cacheArray->Length()), value);
 }
 
-void removeHiddenXHRDependency(v8::Local<v8::Object> xmlHttpRequest, v8::Local<v8::Value> value)
+void removeHiddenDependency(v8::Local<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)
 {
-    ASSERT(V8Proxy::GetDOMWrapperType(xmlHttpRequest) == V8ClassIndex::XMLHTTPREQUEST || V8Proxy::GetDOMWrapperType(xmlHttpRequest) == V8ClassIndex::XMLHTTPREQUESTUPLOAD);
-    v8::Local<v8::Value> cache = xmlHttpRequest->GetInternalField(V8Custom::kXMLHttpRequestCacheIndex);
+    v8::Local<v8::Value> cache = object->GetInternalField(cacheIndex);
     ASSERT(cache->IsArray());
     v8::Local<v8::Array> cacheArray = v8::Local<v8::Array>::Cast(cache);
     for (int i = cacheArray->Length() - 1; i >= 0; --i) {

@@ -1,3 +1,21 @@
+2009-04-18  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/post_bug.cg://bugs.webkit.org/show_bug.cgi?id=25167 
+        Change createHiddenXHRDependency and removeHiddenXHRDependency so that they can be used by other custom code in V8 bindings.
+
+        * bindings/v8/V8Utilities.cpp: Renamed from WebCore/bindings/v8/V8XMLHttpRequestUtilities.cpp.
+        (WebCore::createHiddenDependency):
+        (WebCore::removeHiddenDependency):
+        * bindings/v8/V8Utilities.h: Renamed from WebCore/bindings/v8/V8XMLHttpRequestUtilities.h.
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-04-18  Drew Wilson  <amw@apple.com>
 
         <rdar://problem/6781407> VisiblePosition.characterAfter should return UChar32

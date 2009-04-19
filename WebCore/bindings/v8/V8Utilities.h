@@ -28,18 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8XMLHttpRequestUtilities_h
-#define V8XMLHttpRequestUtilities_h
+#ifndef V8Utilities_h
+#define V8Utilities_h
 
 #include <v8.h>
 
 namespace WebCore {
 
 // Use an array to hold dependents. It works like a ref-counted scheme.
-// A value can be added more than once to the xmlHttpRequest object.
-void createHiddenXHRDependency(v8::Local<v8::Object> xmlHttpRequest, v8::Local<v8::Value>);
-void removeHiddenXHRDependency(v8::Local<v8::Object> xmlHttpRequest, v8::Local<v8::Value>);
+// A value can be added more than once to the DOM object.
+void createHiddenDependency(v8::Local<v8::Object>, v8::Local<v8::Value>, int cacheIndex);
+void removeHiddenDependency(v8::Local<v8::Object>, v8::Local<v8::Value>, int cacheIndex);
 
 } // namespace WebCore
 
-#endif // V8XMLHttpRequestUtilities_h
+#endif // V8Utilities_h

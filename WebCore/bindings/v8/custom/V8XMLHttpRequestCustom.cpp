@@ -38,7 +38,7 @@
 #include "V8HTMLDocument.h"
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
-#include "V8XMLHttpRequestUtilities.h"
+#include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -79,7 +79,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnabort)
         if (xmlHttpRequest->onabort()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onabort());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         // Clear the listener.
@@ -88,7 +88,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnabort)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnabort(listener);
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -113,7 +113,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnerror)
         if (xmlHttpRequest->onerror()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onerror());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         // Clear the listener.
@@ -122,7 +122,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnerror)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnerror(listener);
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -147,7 +147,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnload)
         if (xmlHttpRequest->onload()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onload());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         xmlHttpRequest->setOnload(0);
@@ -156,7 +156,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnload)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnload(listener.get());
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -181,7 +181,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnloadstart)
         if (xmlHttpRequest->onloadstart()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onloadstart());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         // Clear the listener.
@@ -190,7 +190,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnloadstart)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnloadstart(listener);
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -215,7 +215,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnprogress)
         if (xmlHttpRequest->onprogress()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onprogress());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         // Clear the listener.
@@ -224,7 +224,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnprogress)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnprogress(listener);
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -249,7 +249,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnreadystatechange)
         if (xmlHttpRequest->onreadystatechange()) {
             V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(xmlHttpRequest->onreadystatechange());
             v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-            removeHiddenXHRDependency(info.Holder(), v8Listener);
+            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kXMLHttpRequestCacheIndex);
         }
 
         // Clear the listener.
@@ -258,7 +258,7 @@ ACCESSOR_SETTER(XMLHttpRequestOnreadystatechange)
         RefPtr<EventListener> listener = getEventListener(xmlHttpRequest, value, false);
         if (listener) {
             xmlHttpRequest->setOnreadystatechange(listener.get());
-            createHiddenXHRDependency(info.Holder(), value);
+            createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
         }
     }
 }
@@ -283,7 +283,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestAddEventListener)
         bool useCapture = args[2]->BooleanValue();
         xmlHttpRequest->addEventListener(type, listener, useCapture);
 
-        createHiddenXHRDependency(args.Holder(), args[1]);
+        createHiddenDependency(args.Holder(), args[1], V8Custom::kXMLHttpRequestCacheIndex);
     }
     return v8::Undefined();
 }
@@ -299,7 +299,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestRemoveEventListener)
         bool useCapture = args[2]->BooleanValue();
         xmlHttpRequest->removeEventListener(type, listener.get(), useCapture);
 
-        removeHiddenXHRDependency(args.Holder(), args[1]);
+        removeHiddenDependency(args.Holder(), args[1], V8Custom::kXMLHttpRequestCacheIndex);
     }
 
     return v8::Undefined();
