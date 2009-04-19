@@ -1,3 +1,18 @@
+2009-04-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/6801555> Tag JavaScript memory on SnowLeopard
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * runtime/Collector.cpp:
+        (JSC::allocateBlock):
+
 2009-04-18  Drew Wilson  <amw@apple.com>
 
         <rdar://problem/6781407> VisiblePosition.characterAfter should return UChar32

@@ -32,6 +32,10 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#if PLATFORM(DARWIN)
+#include <mach/vm_statistics.h>
+#endif
+
 namespace JSC {
 
 void ExecutableAllocator::intializePageSize()
@@ -41,7 +45,13 @@ void ExecutableAllocator::intializePageSize()
 
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t n)
 {
-    ExecutablePool::Allocation alloc = {reinterpret_cast<char*>(mmap(NULL, n, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0)), n};
+    #if PLATFORM(DARWIN) && defined(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR)
+        #define OPTIONAL_TAG VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR)
+    #else
+        #define OPTIONAL_TAG -1
+    #endif
+
+    ExecutablePool::Allocation alloc = { reinterpret_cast<char*>(mmap(NULL, n, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, OPTIONAL_TAG, 0)), n };
     return alloc;
 }
 
