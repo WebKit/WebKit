@@ -39,6 +39,10 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
+my $showHelp = 0;
+my $clean = 0;
+my $coverageSupport = 0;
+
 my $channelMessagingSupport = 0;
 my $databaseSupport = 1;
 my $domStorageSupport = 1;
@@ -48,55 +52,56 @@ my $iconDatabaseSupport = 1;
 my $offlineWebApplicationSupport = 1;
 my $svgSupport = 1;
 my $svgAnimationSupport = 1;
+my $svgAsImageSupport = 1;
 my $svgDOMObjCBindingsSupport = isAppleMacWebKit();
 my $svgFiltersSupport = 0;
+my $svgFontsSupport = 1;
 my $svgForeignObjectSupport = 1;
 my $svgUseSupport = 1;
-my $svgFontsSupport = 1;
-my $svgAsImageSupport = 1;
+my $threeDRenderingSupport = 0;
+my $videoSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds and Gtk+
+my $wmlSupport = 0;
+my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds (mac/win) and Gtk+
 my $xpathSupport = 1;
 my $xsltSupport = 1;
-my $wmlSupport = 0;
-my $coverageSupport = 0;
-my $videoSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds and Gtk+
-my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds (mac/win) and Gtk+
-my $showHelp = 0;
-my $clean = 0;
-my $threeDRenderingSupport = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
-  --help                        Show this help message
-  --cairo-win32                 Build using Cairo (rather than CoreGraphics) on Windows
-  --chromium                    Build the Chromium port on Mac/Win/Linux
-  --clean                       Cleanup the build directory
-  --gtk                         Build the GTK+ port
-  --[no-]3d-rendering           Toggle 3D rendering support (default: $threeDRenderingSupport)
+  --help                            Show this help message
+  --cairo-win32                     Build using Cairo (rather than CoreGraphics) on Windows
+  --chromium                        Build the Chromium port on Mac/Win/Linux
+  --clean                           Cleanup the build directory
+  --[no-]coverage                   Toggle code coverage support (default: $coverageSupport)
+  --gtk                             Build the GTK+ port
+
+  --[no-]3d-rendering               Toggle 3D rendering support (default: $threeDRenderingSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
-  --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
-  --[no-]database               Toggle Database Support (default: $databaseSupport)
-  --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
-  --[no-]geolocation            Toggle Geolocation support (default: $geolocationSupport)
-  --[no-]gnomekeyring           Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
-  --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
-  --[no-]svg                    Toggle SVG support (default: $svgSupport)
-  --[no-]svg-animation          Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
-  --[no-]svg-dom-objc-bindings  Toggle SVG DOM Objective-C bindings support (default: $svgDOMObjCBindingsSupport, implies SVG Support)
-  --[no-]svg-filters            Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
-  --[no-]svg-foreign-object     Toggle SVG foreign object support (default: $svgForeignObjectSupport, implies SVG Support)
-  --[no-]svg-fonts              Toggle SVG fonts support (default: $svgFontsSupport, implies SVG Support)
-  --[no-]svg-as-image           Toggle SVG as Image support (default: $svgAsImageSupport, implies SVG Support)
-  --[no-]svg-use                Toggle SVG use element support (default: $svgUseSupport, implies SVG Support)
-  --[no-]xpath                  Toggle XPath support (default: $xpathSupport)
-  --[no-]xslt                   Toggle XSLT support (default: $xsltSupport)
-  --[no-]wml                    Toggle WML support (default: $wmlSupport)
-  --[no-]video                  Toggle Video support (default: $videoSupport)
-  --[no-]workers                Toggle Web Workers support (default: $workersSupport)
-  --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
+  --[no-]database                   Toggle Database Support (default: $databaseSupport)
+  --[no-]dom-storage                Toggle DOM Storage Support (default: $domStorageSupport)
+  --[no-]geolocation                Toggle Geolocation support (default: $geolocationSupport)
+  --[no-]gnomekeyring               Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
+  --[no-]icon-database              Toggle Icon database support (default: $iconDatabaseSupport)
+  --[no-]offline-web-applications   Toggle Offline Web Application Support (default: $offlineWebApplicationSupport)
+  --[no-]svg                        Toggle SVG support (default: $svgSupport)
+  --[no-]svg-animation              Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
+  --[no-]svg-as-image               Toggle SVG as Image support (default: $svgAsImageSupport, implies SVG Support)
+  --[no-]svg-dom-objc-bindings      Toggle SVG DOM Objective-C bindings support (default: $svgDOMObjCBindingsSupport, implies SVG Support)
+  --[no-]svg-filters                Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
+  --[no-]svg-fonts                  Toggle SVG fonts support (default: $svgFontsSupport, implies SVG Support)
+  --[no-]svg-foreign-object         Toggle SVG foreign object support (default: $svgForeignObjectSupport, implies SVG Support)
+  --[no-]svg-use                    Toggle SVG use element support (default: $svgUseSupport, implies SVG Support)
+  --[no-]video                      Toggle Video support (default: $videoSupport)
+  --[no-]wml                        Toggle WML support (default: $wmlSupport)
+  --[no-]workers                    Toggle Web Workers support (default: $workersSupport)
+  --[no-]xpath                      Toggle XPath support (default: $xpathSupport)
+  --[no-]xslt                       Toggle XSLT support (default: $xsltSupport)
 EOF
 
 GetOptions(
+           'help' => \$showHelp,
+           'clean' => \$clean,
+           'coverage!' => \$coverageSupport,
            '3d-rendering!' => \$threeDRenderingSupport,
            'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
@@ -107,21 +112,22 @@ GetOptions(
            'offline-web-applications!' => \$offlineWebApplicationSupport,
            'svg!' => \$svgSupport,
            'svg-animation!' => \$svgAnimationSupport,
+           'svg-as-image!' => \$svgAsImageSupport,
            'svg-dom-objc-bindings!' => \$svgDOMObjCBindingsSupport,
            'svg-filters!' => \$svgFiltersSupport,
-           'svg-foreign-object!' => \$svgForeignObjectSupport,
            'svg-fonts!' => \$svgFontsSupport,
-           'svg-as-image!' => \$svgAsImageSupport,
+           'svg-foreign-object!' => \$svgForeignObjectSupport,
            'svg-use!' => \$svgUseSupport,
+           'video!' => \$videoSupport,
+           'wml!' => \$wmlSupport,
+           'workers!' => \$workersSupport,
            'xpath!' => \$xpathSupport,
            'xslt!' => \$xsltSupport,
-           'wml!' => \$wmlSupport,
-           'video!' => \$videoSupport,
-           'workers!' => \$workersSupport,
-           'coverage!' => \$coverageSupport,
-           'help' => \$showHelp,
-           'clean' => \$clean,
 );
+
+$svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
+    || $svgDOMObjCBindingsSupport || $svgFiltersSupport || $svgFontsSupport
+    || $svgForeignObjectSupport || $svgUseSupport;
 
 if ($showHelp) {
    print STDERR $usage;
@@ -144,41 +150,12 @@ if (isWx()) {
     exit exitStatus($?);
 }
 
-
 my $productDir = productDir();
-my @overrideFeatureDefinesOption = ();
-
-# For now this needs to be kept sorted and in sync with FEATURE_DEFINES in FeatureDefines.xcconfig in
-# JavaScriptCore, WebCore and WebKit to prevent needless rebuilding when using both Xcode and build-webkit.
-
-push @overrideFeatureDefinesOption, "ENABLE_3D_RENDERING" if $threeDRenderingSupport;
-push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
-push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
-push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;
-push @overrideFeatureDefinesOption, "ENABLE_GEOLOCATION" if $geolocationSupport;
-push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
-push @overrideFeatureDefinesOption, "ENABLE_OFFLINE_WEB_APPLICATIONS" if $offlineWebApplicationSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_AS_IMAGE" if $svgAsImageSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_DOM_OBJC_BINDINGS" if $svgDOMObjCBindingsSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FONTS" if $svgFontsSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FOREIGN_OBJECT" if $svgForeignObjectSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_USE" if $svgUseSupport;
-push @overrideFeatureDefinesOption, "ENABLE_VIDEO" if $videoSupport;
-push @overrideFeatureDefinesOption, "ENABLE_WORKERS" if $workersSupport;
-push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;
-push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
-push @overrideFeatureDefinesOption, "ENABLE_WML" if $wmlSupport;
-my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
-
-my @coverageSupportOption = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
 # Only Apple builds JavaScriptGlue, and only on the Mac
-push @projects, "JavaScriptGlue" if isAppleMacWebKit();
+splice @projects, 1, 0, "JavaScriptGlue" if isAppleMacWebKit();
 
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
@@ -191,31 +168,60 @@ my @options = ();
 
 # enable autotool options accordingly
 if (isGtk()) {
+    push @options, autotoolsFlag($coverageSupport, "coverage");
+    push @options, autotoolsFlag($threeDRenderingSupport, "3D-rendering");
+    push @options, autotoolsFlag($channelMessagingSupport, "channel-messaging");
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
+    push @options, autotoolsFlag($geolocationSupport, "geolocation");
     push @options, autotoolsFlag($gnomeKeyringSupport, "gnomekeyring");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
-    push @options, autotoolsFlag($threeDRenderingSupport, "3D-rendering");
-    push @options, autotoolsFlag($channelMessagingSupport, "channel-messaging");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
-    push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");
-    push @options, autotoolsFlag($svgForeignObjectSupport, "svg-foreign-object");
-    push @options, autotoolsFlag($svgFontsSupport, "svg-fonts");
     push @options, autotoolsFlag($svgAsImageSupport, "svg-as-image");
+    push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");
+    push @options, autotoolsFlag($svgFontsSupport, "svg-fonts");
+    push @options, autotoolsFlag($svgForeignObjectSupport, "svg-foreign-object");
     push @options, autotoolsFlag($svgUseSupport, "svg-use-element");
+    push @options, autotoolsFlag($videoSupport, "video");
+    push @options, autotoolsFlag($wmlSupport, "wml");
+    push @options, autotoolsFlag($workersSupport, "web-workers");
     push @options, autotoolsFlag($xpathSupport, "xpath");
     push @options, autotoolsFlag($xsltSupport, "xslt");
-    push @options, autotoolsFlag($wmlSupport, "wml");
-    push @options, autotoolsFlag($videoSupport, "video");
-    push @options, autotoolsFlag($workersSupport, "web-workers");
-    push @options, autotoolsFlag($coverageSupport, "coverage");
 }
 
 if (isAppleMacWebKit()) {
+    push @options, XcodeOptions();
 
-    push(@options, XcodeOptions());
+    sub option($$)
+    {
+        my ($feature, $isEnabled) = @_;
+        return $feature . "=" . ($isEnabled ? $feature : " ");
+    }
+
+    push @options, option("ENABLE_3D_RENDERING", $threeDRenderingSupport);
+    push @options, option("ENABLE_CHANNEL_MESSAGING", $channelMessagingSupport);
+    push @options, option("ENABLE_DATABASE", $databaseSupport);
+    push @options, option("ENABLE_DOM_STORAGE", $domStorageSupport);
+    push @options, option("ENABLE_GEOLOCATION", $geolocationSupport);
+    push @options, option("ENABLE_ICONDATABASE", $iconDatabaseSupport);
+    push @options, option("ENABLE_OFFLINE_WEB_APPLICATIONS", $offlineWebApplicationSupport);
+    push @options, option("ENABLE_SVG", $svgSupport);
+    push @options, option("ENABLE_SVG_ANIMATION", $svgAnimationSupport);
+    push @options, option("ENABLE_SVG_AS_IMAGE", $svgAsImageSupport);
+    push @options, option("ENABLE_SVG_DOM_OBJC_BINDINGS", $svgDOMObjCBindingsSupport);
+    push @options, option("ENABLE_SVG_FILTERS", $svgFiltersSupport);
+    push @options, option("ENABLE_SVG_FONTS", $svgFontsSupport);
+    push @options, option("ENABLE_SVG_FOREIGN_OBJECT", $svgForeignObjectSupport);
+    push @options, option("ENABLE_SVG_USE", $svgUseSupport);
+    push @options, option("ENABLE_VIDEO", $videoSupport);
+    push @options, option("ENABLE_WML", $wmlSupport);
+    push @options, option("ENABLE_WORKERS", $workersSupport);
+    push @options, option("ENABLE_XPATH", $xpathSupport);
+    push @options, option("ENABLE_XSLT", $xsltSupport);
+
+    push @options, XcodeCoverageSupportOptions() if $coverageSupport;
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my $srcLib = "WebKitLibraries/libWebKitSystemInterfaceTiger.a";
@@ -283,14 +289,7 @@ for my $dir (@projects) {
     } elsif (isQt()) {
         $result = buildQMakeQtProject($dir, $clean, @ARGV);
     } elsif (isAppleMacWebKit()) {
-        my @xcodeOptions = ();
-        push(@xcodeOptions, @options);
-        push(@xcodeOptions, "ENABLE_GEOLOCATION=" . ($geolocationSupport ? "ENABLE_GEOLOCATION" : ""));
-        push(@xcodeOptions, "ENABLE_SVG_DOM_OBJC_BINDINGS=" . ($svgDOMObjCBindingsSupport ? "ENABLE_SVG_DOM_OBJC_BINDINGS" : ""));
-        push(@xcodeOptions, $overrideFeatureDefinesString);
-        push(@xcodeOptions, @coverageSupportOption);
-        push(@xcodeOptions, @ARGV);
-        $result = buildXCodeProject($dir, $clean, @xcodeOptions);
+        $result = buildXCodeProject($dir, $clean, @options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
@@ -328,14 +327,16 @@ if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " $launcherName will have SVG viewing capabilities.\n";
 }
-if ($svgAnimationSupport or $svgDOMObjCBindingsSupport or $svgFiltersSupport or $svgForeignObjectSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
+if ($svgAnimationSupport or $svgAsImageSupport or $svgDOMObjCBindingsSupport or $svgFiltersSupport or $svgFontsSupport or $svgForeignObjectSupport or $svgUseSupport) {
     print " Your build supports the following (optional) SVG features: \n";
     print "  * Basic SVG animation.\n" if $svgAnimationSupport;
+    print "  * SVG as image.\n" if $svgAsImageSupport;
     print "  * SVG DOM Objective-C bindings.\n" if $svgDOMObjCBindingsSupport;
     print "  * SVG filters.\n" if $svgFiltersSupport;
-    print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
     print "  * SVG fonts.\n" if $svgFontsSupport;
-    print "  * SVG as image.\n" if $svgAsImageSupport;
+    print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
     print "  * SVG <use> support.\n" if $svgUseSupport;
 }
 print "===========================================================\n";
+
+exit 0;

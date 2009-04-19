@@ -1,3 +1,16 @@
+2009-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Make FEATURE_DEFINES completely dynamic
+
+        Reviewed by Darin Adler.
+
+        Make FEATURE_DEFINES depend on individual ENABLE_FEATURE_NAME
+        variables for each feature, making it possible to remove all
+        knowledge of FEATURE_DEFINES from build-webkit.
+
+        * Configurations/FeatureDefines.xcconfig: Extract a variable
+        from FEATURE_DEFINES for each feature setting.
+
 2009-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Alexey Proskuryakov.

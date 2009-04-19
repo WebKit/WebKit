@@ -1,3 +1,26 @@
+2009-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Make FEATURE_DEFINES completely dynamic
+
+        Reviewed by Darin Adler.
+
+        Make FEATURE_DEFINES depend on individual ENABLE_FEATURE_NAME
+        variables for each feature, making it possible to remove all
+        knowledge of FEATURE_DEFINES from build-webkit.
+
+        * Scripts/build-webkit: Define individual ENABLE_FEATURE_NAME
+        variables instead of the whole FEATURE_DEFINES string when
+        building with Xcode.  Miscellaneous clean up:
+        - Reordered/sorted command-line switch variables.
+        - Reordered/sorted command-line switches in $usage.
+        - Reordered/sorted command-line switches in GetOptions().
+        - Defined $svgSupport to true if any --svg-feature switch is
+          set in order to match "Implies SVG Support" claim.
+        - Build JavaScriptGlue after JavaScriptCore again!
+        - Fixed --[no-]geolocation for GTK+ port and sorted GTK+
+          command-line switches.
+        - Added "exit 0" statement at the end of the script.
+
 2009-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Simplify FEATURE_DEFINES definition
