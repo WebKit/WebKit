@@ -2,7 +2,7 @@
 
         Reviewed by Sam Weinig.
 
-        Add hoooks so sudden termination will not cause loss of icons or local storage.
+        Add hooks so sudden termination will not cause loss of icons or local storage.
         rdar://problem/5951701
 
         * loader/icon/IconDatabase.cpp: Marked various constants static to give them
