@@ -396,7 +396,7 @@ PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateEventListen
     return newListener.release();
 }
 
-PassRefPtr<V8EventListener> WorkerContextExecutionProxy::FindOrCreateEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly)
+PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly)
 {
     return findOrCreateEventListenerHelper(object, isInline, findOnly, false);
 }

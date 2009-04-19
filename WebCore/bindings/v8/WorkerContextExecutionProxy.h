@@ -56,7 +56,6 @@ namespace WebCore {
         // FIXME: following function sshould have camelCased names once V8 code-generating script is migrated.
         v8::Local<v8::Context> GetContext() { return v8::Local<v8::Context>::New(m_context); }
         v8::Local<v8::Function> GetConstructor(V8ClassIndex::V8WrapperType);
-        PassRefPtr<V8EventListener> FindOrCreateEventListener(v8::Local<v8::Value> listener, bool isInline, bool findOnly);
         void RemoveEventListener(V8EventListener*);
 
         static v8::Handle<v8::Value> ToV8Object(V8ClassIndex::V8WrapperType type, void* impl);
@@ -65,6 +64,7 @@ namespace WebCore {
         static v8::Handle<v8::Value> WorkerContextToV8Object(WorkerContext* wc);
 
         // Finds/creates event listener wrappers.
+        PassRefPtr<V8EventListener> findOrCreateEventListener(v8::Local<v8::Value> listener, bool isInline, bool findOnly);
         PassRefPtr<V8EventListener> findOrCreateObjectEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly);
 
         // Track the event so that we can detach it from the JS wrapper when a worker
