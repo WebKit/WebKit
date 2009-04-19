@@ -43,22 +43,28 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
-static int firstNonComplexContextLineBreak(const UChar* characters, int length)
+static int endOfFirstWordBoundaryContext(const UChar* characters, int length)
 {
-    for (int i = 0; i < length; ++i) {
-        if (!hasLineBreakingPropertyComplexContext(characters[i]))
-            return i;
+    for (int i = 0; i < length; ) {
+        int first = i;
+        UChar32 ch;
+        U16_NEXT(characters, i, length, ch);
+        if (!requiresContextForWordBoundary(ch))
+            return first;
     }
     return length;
 }
 
-static int lastNonComplexContextLineBreak(const UChar* characters, int length)
+static int startOfLastWordBoundaryContext(const UChar* characters, int length)
 {
-    for (int i = length - 1; i >= 0; --i) {
-        if (!hasLineBreakingPropertyComplexContext(characters[i]))
-            return i;
+    for (int i = length; i > 0; ) {
+        int last = i;
+        UChar32 ch;
+        U16_PREV(characters, 0, i, ch);
+        if (!requiresContextForWordBoundary(ch))
+            return last;
     }
-    return -1;
+    return 0;
 }
 
 enum BoundarySearchContextAvailability { DontHaveMoreContext, MayHaveMoreContext };
@@ -90,7 +96,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     unsigned suffixLength = 0;
 
     ExceptionCode ec = 0;
-    if (hasLineBreakingPropertyComplexContext(c.characterBefore())) {
+    if (requiresContextForWordBoundary(c.characterBefore())) {
         RefPtr<Range> forwardsScanRange(d->createRange());
         forwardsScanRange->setEndAfter(boundary, ec);
         forwardsScanRange->setStart(end.node(), end.m_offset, ec);
@@ -98,7 +104,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         while (!forwardsIterator.atEnd()) {
             const UChar* characters = forwardsIterator.characters();
             int length = forwardsIterator.length();
-            int i = firstNonComplexContextLineBreak(characters, length);
+            int i = endOfFirstWordBoundaryContext(characters, length);
             string.append(characters, i);
             suffixLength += i;
             if (i < length)
@@ -182,17 +188,17 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     unsigned prefixLength = 0;
 
     ExceptionCode ec = 0;
-    if (hasLineBreakingPropertyComplexContext(c.characterAfter())) {
+    if (requiresContextForWordBoundary(c.characterAfter())) {
         RefPtr<Range> backwardsScanRange(d->createRange());
         backwardsScanRange->setEnd(start.node(), start.m_offset, ec);
         SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange.get());
         while (!backwardsIterator.atEnd()) {
             const UChar* characters = backwardsIterator.characters();
             int length = backwardsIterator.length();
-            int i = lastNonComplexContextLineBreak(characters, length);
-            string.prepend(characters + i + 1, length - i - 1);
-            prefixLength += length - i - 1;
-            if (i > -1)
+            int i = startOfLastWordBoundaryContext(characters, length);
+            string.prepend(characters + i, length - i);
+            prefixLength += length - i;
+            if (i > 0)
                 break;
             backwardsIterator.advance();
         }
@@ -252,7 +258,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 static unsigned startWordBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     ASSERT(offset);
-    if (mayHaveMoreContext && lastNonComplexContextLineBreak(characters, offset) == -1) {
+    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(characters, offset)) {
         needMoreContext = true;
         return 0;
     }
@@ -282,7 +288,7 @@ VisiblePosition startOfWord(const VisiblePosition &c, EWordSide side)
 static unsigned endWordBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     ASSERT(offset <= length);
-    if (mayHaveMoreContext && firstNonComplexContextLineBreak(characters + offset, length - offset) == static_cast<int>(length - offset)) {
+    if (mayHaveMoreContext && endOfFirstWordBoundaryContext(characters + offset, length - offset) == static_cast<int>(length - offset)) {
         needMoreContext = true;
         return length;
     }
@@ -310,7 +316,7 @@ VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
 
 static unsigned previousWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
-    if (mayHaveMoreContext && lastNonComplexContextLineBreak(characters, offset) == -1) {
+    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(characters, offset)) {
         needMoreContext = true;
         return 0;
     }
@@ -326,7 +332,7 @@ VisiblePosition previousWordPosition(const VisiblePosition &c)
 
 static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
-    if (mayHaveMoreContext && firstNonComplexContextLineBreak(characters + offset, length - offset) == static_cast<int>(length - offset)) {
+    if (mayHaveMoreContext && endOfFirstWordBoundaryContext(characters + offset, length - offset) == static_cast<int>(length - offset)) {
         needMoreContext = true;
         return length;
     }

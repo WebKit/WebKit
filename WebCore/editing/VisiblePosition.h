@@ -73,8 +73,8 @@ public:
     VisiblePosition left(bool stayInEditableContent = false) const;
     VisiblePosition right(bool stayInEditableContent = false) const;
 
-    UChar characterAfter() const;
-    UChar characterBefore() const { return previous().characterAfter(); }
+    UChar32 characterAfter() const;
+    UChar32 characterBefore() const { return previous().characterAfter(); }
     
     void debugPosition(const char* msg = "") const;
     

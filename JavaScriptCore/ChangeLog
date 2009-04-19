@@ -1,3 +1,12 @@
+2009-04-18  Drew Wilson  <amw@apple.com>
+
+        <rdar://problem/6781407> VisiblePosition.characterAfter should return UChar32
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::hasLineBreakingPropertyComplexContextOrIdeographic): Added.
+
 2009-04-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

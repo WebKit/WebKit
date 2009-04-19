@@ -511,7 +511,7 @@ Position VisiblePosition::canonicalPosition(const Position& position)
     return next;
 }
 
-UChar VisiblePosition::characterAfter() const
+UChar32 VisiblePosition::characterAfter() const
 {
     // We canonicalize to the first of two equivalent candidates, but the second of the two candidates
     // is the one that will be inside the text node containing the character after this visible position.
@@ -520,10 +520,14 @@ UChar VisiblePosition::characterAfter() const
     if (!node || !node->isTextNode())
         return 0;
     Text* textNode = static_cast<Text*>(pos.node());
-    int offset = pos.m_offset;
-    if ((unsigned)offset >= textNode->length())
+    unsigned offset = pos.m_offset;
+    unsigned length = textNode->length();
+    if (offset >= length)
         return 0;
-    return textNode->data()[offset];
+
+    UChar32 ch;
+    U16_NEXT(textNode->data().characters(), offset, length, ch);
+    return ch;
 }
 
 IntRect VisiblePosition::localCaretRect(RenderObject*& renderer) const

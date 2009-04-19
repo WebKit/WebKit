@@ -1,3 +1,38 @@
+2009-04-18  Drew Wilson  <amw@apple.com>
+
+        <rdar://problem/6781407> VisiblePosition.characterAfter should return UChar32
+
+        Reviewed by Dan Bernstein.
+
+        No test case since there is no change in behavior.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter): Now handles surrogate
+        pairs correctly and returns a UChar32.
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::characterBefore): Now returns a UChar32.
+        * editing/visible_units.cpp:
+        (WebCore::endOfFirstWordBoundaryContext): Renamed
+        firstNonComplexContextLineBreak() to this. Changed it to use the
+        generic requiresContextForWordBoundary() instead of
+        hasLineBreakingPropertyComplexContext().
+        (WebCore::startOfLastWordBoundaryContext): Replaces
+        lastNonComplexContextLineBreak(), but returns the offset of
+        the character after the last character that does not require
+        context for word breaking. Also changed to use
+        requiresContextForWordBoundary().
+        (WebCore::previousBoundary): Updated for the above changes in
+        names and semantics, and changed to use
+        requiresContextForWordBoundary().
+        (WebCore::nextBoundary): Ditto.
+        (WebCore::startWordBoundary): Ditto.
+        (WebCore::endWordBoundary): Ditto.
+        (WebCore::previousWordPositionBoundary): Ditto.
+        (WebCore::nextWordPositionBoundary): Ditto.
+        * platform/text/TextBoundaries.h:
+        (WebCore::requiresContextForWordBoundary): Added.
+        * platform/text/mac/TextBoundaries.mm:
+
 2009-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

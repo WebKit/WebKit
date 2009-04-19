@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TextBoundaries.h"
 
+using namespace WTF::Unicode;
+
 namespace WebCore {
 
 void findWordBoundary(const UChar* chars, int len, int position, int* start, int* end)
