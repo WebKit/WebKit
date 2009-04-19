@@ -1,3 +1,36 @@
+2009-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        More fix for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        Removed a little more complexity from event handler creation and destruction.
+        
+        Removed the jsProtectedEventListeners, jsProtectedInlineEventListeners,
+        and jsInlineEventListeners maps, and all the code for managing them.
+        
+        ProtectedEventListeners don't exist anymore, so they're easy to nix.
+        
+        Inline EventListeners do still exist, but there's no reason to track
+        them in a map. The map exists to enable 'removeEventListener' to associate
+        a unique JSEventListener with a given JavaScript function. But the
+        'removeEventListener' API only works with non-inline event listeners!
+        
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::findJSEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSEventListener):
+        (WebCore::JSDOMGlobalObject::createJSInlineEventListener):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::clearJSFunctionInline):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::~JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-04-18  Dan Bernstein  <mitz@apple.com>
 
         - try to fix the Windows build

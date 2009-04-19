@@ -33,7 +33,6 @@ namespace WebCore {
 
     class Event;
     class JSLazyEventListener;
-    class JSProtectedEventListener;
     class JSEventListener;
     class ScriptExecutionContext;
 
@@ -55,18 +54,18 @@ namespace WebCore {
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
         // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-        JSEventListener* findJSEventListener(JSC::JSValuePtr, bool isInline = false);
+        JSEventListener* findJSEventListener(JSC::JSValuePtr);
 
         // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::JSValuePtr, bool isInline = false);
+        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::JSValuePtr);
 
-        typedef HashMap<JSC::JSObject*, JSLazyEventListener*> ProtectedListenersMap;
+        // Creates a GC-protected JS EventListener for an "onXXX" event attribute.
+        // These listeners cannot be removed through the removeEventListener API.
+        PassRefPtr<JSEventListener> createJSInlineEventListener(JSC::JSValuePtr);
+
         typedef HashMap<JSC::JSObject*, JSEventListener*> JSListenersMap;
 
-        ProtectedListenersMap& jsProtectedEventListeners();
-        ProtectedListenersMap& jsProtectedInlineEventListeners();
         JSListenersMap& jsEventListeners();
-        JSListenersMap& jsInlineEventListeners();
 
         void setCurrentEvent(Event*);
         Event* currentEvent() const;
@@ -80,10 +79,7 @@ namespace WebCore {
             JSDOMStructureMap structures;
             JSDOMConstructorMap constructors;
 
-            JSDOMGlobalObject::ProtectedListenersMap jsProtectedEventListeners;
-            JSDOMGlobalObject::ProtectedListenersMap jsProtectedInlineEventListeners;
             JSDOMGlobalObject::JSListenersMap jsEventListeners;
-            JSDOMGlobalObject::JSListenersMap jsInlineEventListeners;
 
             Event* evt;
         };

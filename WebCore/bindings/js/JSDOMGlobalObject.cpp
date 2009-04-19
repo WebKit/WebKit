@@ -53,24 +53,8 @@ JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<Structure> structure, JSDOMGloba
 
 JSDOMGlobalObject::~JSDOMGlobalObject()
 {
-    // Clear any backpointers to the window
-    ProtectedListenersMap::iterator i1 = d()->jsProtectedEventListeners.begin();
-    ProtectedListenersMap::iterator e1 = d()->jsProtectedEventListeners.end();
-    for (; i1 != e1; ++i1)
-        i1->second->clearGlobalObject();
-
-    i1 = d()->jsProtectedInlineEventListeners.begin();
-    e1 = d()->jsProtectedInlineEventListeners.end();
-    for (; i1 != e1; ++i1)
-        i1->second->clearGlobalObject();
-
     JSListenersMap::iterator i2 = d()->jsEventListeners.begin();
     JSListenersMap::iterator e2 = d()->jsEventListeners.end();
-    for (; i2 != e2; ++i2)
-        i2->second->clearGlobalObject();
-
-    i2 = d()->jsInlineEventListeners.begin();
-    e2 = d()->jsInlineEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearGlobalObject();
 }
@@ -90,45 +74,37 @@ void JSDOMGlobalObject::mark()
     }
 }
 
-JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValuePtr val, bool isInline)
+JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValuePtr val)
 {
     if (!val.isObject())
         return 0;
 
-    JSListenersMap& listeners = isInline ? d()->jsInlineEventListeners : d()->jsEventListeners;
-    return listeners.get(asObject(val));
+    return d()->jsEventListeners.get(asObject(val));
 }
 
-PassRefPtr<JSEventListener> JSDOMGlobalObject::findOrCreateJSEventListener(JSValuePtr val, bool isInline)
+PassRefPtr<JSEventListener> JSDOMGlobalObject::findOrCreateJSEventListener(JSValuePtr val)
 {
-    if (JSEventListener* listener = findJSEventListener(val, isInline))
+    if (JSEventListener* listener = findJSEventListener(val))
         return listener;
 
     if (!val.isObject())
         return 0;
 
     // The JSEventListener constructor adds it to our jsEventListeners map.
-    return JSEventListener::create(asObject(val), this, isInline).get();
+    return JSEventListener::create(asObject(val), this, false).get();
 }
 
-JSDOMGlobalObject::ProtectedListenersMap& JSDOMGlobalObject::jsProtectedEventListeners()
+PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSInlineEventListener(JSValuePtr val)
 {
-    return d()->jsProtectedEventListeners;
-}
+    if (!val.isObject())
+        return 0;
 
-JSDOMGlobalObject::ProtectedListenersMap& JSDOMGlobalObject::jsProtectedInlineEventListeners()
-{
-    return d()->jsProtectedInlineEventListeners;
+    return JSEventListener::create(asObject(val), this, true).get();
 }
 
 JSDOMGlobalObject::JSListenersMap& JSDOMGlobalObject::jsEventListeners()
 {
     return d()->jsEventListeners;
-}
-
-JSDOMGlobalObject::JSListenersMap& JSDOMGlobalObject::jsInlineEventListeners()
-{
-    return d()->jsInlineEventListeners;
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* evt)
