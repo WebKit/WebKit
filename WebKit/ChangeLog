@@ -1,3 +1,7 @@
+2009-04-19  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2009-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Simplify FEATURE_DEFINES definition
