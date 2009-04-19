@@ -1,5 +1,14 @@
 2009-04-19  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Better fix for JSStringCreateWithCFString hardening.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+
+2009-04-19  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Fix for <rdar://problem/5860954>

@@ -37,9 +37,10 @@
 JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
     JSC::initializeThreading();
-    CFIndex length = CFStringGetLength(string);
-    if (length < 0)
-        CRASH():
+
+    // We cannot use CFIndex here since CFStringGetLength can return values larger than
+    // it can hold.  (<rdar://problem/6806478>)
+    size_t length = CFStringGetLength(string);
     if (length) {
         OwnArrayPtr<UniChar> buffer(new UniChar[length]);
         CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
