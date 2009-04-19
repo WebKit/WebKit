@@ -526,7 +526,8 @@ UChar32 VisiblePosition::characterAfter() const
         return 0;
 
     UChar32 ch;
-    U16_NEXT(textNode->data().characters(), offset, length, ch);
+    const UChar* characters = textNode->data().characters();
+    U16_NEXT(characters, offset, length, ch);
     return ch;
 }
 

@@ -1,5 +1,12 @@
 2009-04-18  Dan Bernstein  <mitz@apple.com>
 
+        - try to fix the Windows build
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter):
+
+2009-04-18  Dan Bernstein  <mitz@apple.com>
+
         - revert the previous change, which was to a file that the Windows
           port does not even use
 
