@@ -38,6 +38,8 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
     JSC::initializeThreading();
     CFIndex length = CFStringGetLength(string);
+    if (length < 0)
+        CRASH():
     if (length) {
         OwnArrayPtr<UniChar> buffer(new UniChar[length]);
         CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());

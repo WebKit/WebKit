@@ -1,3 +1,13 @@
+2009-04-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/5860954>
+        Harden JSStringCreateWithCFString against malformed CFStringRefs.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+
 2009-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Make FEATURE_DEFINES completely dynamic
