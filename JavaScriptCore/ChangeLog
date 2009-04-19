@@ -1,5 +1,14 @@
 2009-04-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Fix typo.  s/VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE/VM_MEMORY_JAVASCRIPT_CORE/
+
+        * runtime/Collector.cpp:
+        (JSC::allocateBlock): Fix bozo typo.
+
+2009-04-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Fix for <rdar://problem/6801555> Tag JavaScript memory on SnowLeopard

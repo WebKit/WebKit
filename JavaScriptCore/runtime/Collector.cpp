@@ -183,7 +183,7 @@ static NEVER_INLINE CollectorBlock* allocateBlock()
 {
 #if PLATFORM(DARWIN)
     #if defined(VM_MEMORY_JAVASCRIPT_CORE)
-        #define TAG VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE)
+        #define TAG VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_CORE)
     #else
         #define TAG 0
     #endif
