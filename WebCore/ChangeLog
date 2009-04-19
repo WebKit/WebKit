@@ -1,3 +1,17 @@
+2009-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fixed a layout test failure, caused by my last check-in
+        (fast/dom/script-element-gc.html).
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::isObservableThroughDOM):
+        * html/HTMLScriptElement.h:
+        (WebCore::HTMLScriptElement::haveFiredLoadEvent): Treat script elements
+        just like image elements: if a script element is loading, mark its JS
+        wrapper, even if the element is not in the document.
+
 2009-04-18  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

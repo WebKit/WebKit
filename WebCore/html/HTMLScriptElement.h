@@ -75,6 +75,8 @@ public:
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+    bool haveFiredLoadEvent() const { return m_data.haveFiredLoadEvent(); }
+
 protected:
     virtual String sourceAttributeValue() const;
     virtual String charsetAttributeValue() const;

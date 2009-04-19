@@ -33,6 +33,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLImageElement.h"
+#include "HTMLScriptElement.h"
 #include "HTMLNames.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
@@ -278,12 +279,14 @@ static inline bool isObservableThroughDOM(JSNode* jsNode)
         if (node->eventListeners().size())
             return true; // Technically, we may overzealously mark a wrapper for a node that has only non-JS event listeners. Oh well.
     } else {
-        // 3. If a wrapper is the last reference to an image element that is loading
-        // but not in the document -- which happens in the case of "new Image" -- the
-        // wrapper is observable because it is the only thing keeping the image element
-        // alive, and if the image element is destroyed, its load event will not fire.
+        // 3. If a wrapper is the last reference to an image or script element
+        // that is loading but not in the document, the wrapper is observable
+        // because it is the only thing keeping the image element alive, and if
+        // the image element is destroyed, its load event will not fire.
         // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
         if (node->hasTagName(imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
+            return true;
+        if (node->hasTagName(scriptTag) && !static_cast<HTMLScriptElement*>(node)->haveFiredLoadEvent())
             return true;
     }
 
