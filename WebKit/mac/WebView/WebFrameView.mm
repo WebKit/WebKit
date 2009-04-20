@@ -519,31 +519,49 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return frame->eventHandler()->scrollOverflow(direction, granularity);
 }
 
+- (BOOL)_scrollToBeginningOfDocument
+{
+    if ([self _scrollOverflowInDirection:ScrollUp granularity:ScrollByDocument])
+        return YES;
+    if (![self _hasScrollBars])
+        return NO;
+    NSPoint point = [[[self _scrollView] documentView] frame].origin;
+    return [[self _contentView] _scrollTo:&point animate:YES];
+}
+
+- (BOOL)_scrollToEndOfDocument
+{
+    if ([self _scrollOverflowInDirection:ScrollDown granularity:ScrollByDocument])
+        return YES;
+    if (![self _hasScrollBars])
+        return NO;
+    NSRect frame = [[[self _scrollView] documentView] frame];
+    NSPoint point = NSMakePoint(frame.origin.x, NSMaxY(frame));
+    return [[self _contentView] _scrollTo:&point animate:YES];
+}
+
 - (void)scrollToBeginningOfDocument:(id)sender
 {
-    if (![self _scrollOverflowInDirection:ScrollUp granularity:ScrollByDocument]) {
-
-        if (![self _hasScrollBars]) {
-            [[self _largestChildWithScrollBars] scrollToBeginningOfDocument:sender];
+    if ([self _scrollToBeginningOfDocument])
+        return;
+    
+    if (WebFrameView *child = [self _largestChildWithScrollBars]) {
+        if ([child _scrollToBeginningOfDocument])
             return;
-        }
-
-        [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
     }
+    [[self nextResponder] tryToPerform:@selector(scrollToBeginningOfDocument:) with:sender];
 }
 
 - (void)scrollToEndOfDocument:(id)sender
 {
-    if (![self _scrollOverflowInDirection:ScrollDown granularity:ScrollByDocument]) {
+    if ([self _scrollToEndOfDocument])
+        return;
 
-        if (![self _hasScrollBars]) {
-            [[self _largestChildWithScrollBars] scrollToEndOfDocument:sender];
+    if (WebFrameView *child = [self _largestChildWithScrollBars]) {
+        if ([child _scrollToEndOfDocument])
             return;
-        }
-        
-        NSRect frame = [[[self _scrollView] documentView] frame];
-        [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
     }
+    [[self nextResponder] tryToPerform:@selector(scrollToEndOfDocument:) with:sender];
 }
 
 - (void)_goBack
@@ -654,12 +672,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)scrollLineUp:(id)sender
 {
-    [self _scrollLineVertically:YES];
+    if (![self _scrollLineVertically:YES])
+        [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
 }
 
 - (void)scrollLineDown:(id)sender
 {
-    [self _scrollLineVertically:NO];
+    if (![self _scrollLineVertically:NO])
+        [[self nextResponder] tryToPerform:@selector(scrollLineDown:) with:sender];
 }
 
 - (BOOL)_firstResponderIsFormControl

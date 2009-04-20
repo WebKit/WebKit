@@ -1,3 +1,20 @@
+2009-04-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6804809> REGRESSION: In Mail, Home and End do not scroll message
+
+        If no scrolling occurs, call tryToPerform on the next responder.  Then our WebResponderChainSink
+        will correctly detect if no responders handle the selector.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+        (-[WebFrameView scrollToBeginningOfDocument:]):
+        (-[WebFrameView scrollToEndOfDocument:]):
+        (-[WebFrameView scrollLineUp:]):
+        (-[WebFrameView scrollLineDown:]):
+
 2009-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Make FEATURE_DEFINES completely dynamic
