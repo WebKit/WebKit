@@ -1,3 +1,17 @@
+2009-04-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti Koivisto and Darin Adler.
+
+        <rdar://problem/6127705> Excessive memory consumption on image load failure
+
+        When we fail to decode an image we clear most of the image data, but not the
+        input data itself, which can be backed by a CFData object that itself holds onto
+        a few hundred Kbs of memory.  This patch merely ensures that this buffer gets
+        cleared.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::error):
+
 2009-04-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
