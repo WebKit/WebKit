@@ -81,6 +81,8 @@ public:
     void evaluateScript(const ScriptSourceCode&);
     void stopLoadRequest();
 
+    void execute(CachedScript*);
+
 private:
     virtual void notifyFinished(CachedResource*);
 
@@ -89,6 +91,7 @@ private:
     Element* m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
     bool m_createdByParser;
+    bool m_requested;
     bool m_evaluated;
     bool m_firedLoad;
 };

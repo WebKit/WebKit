@@ -12,8 +12,10 @@ function pass() {
 }
 
 function test() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
 
     test = "p1";
     var e1 = document.createElement("script");
@@ -38,6 +40,9 @@ function finish() {
     e3.onload = "";
     document.getElementsByTagName("head")[0].removeChild(e3);
     document.getElementsByTagName("head")[0].appendChild(e3);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 </head>

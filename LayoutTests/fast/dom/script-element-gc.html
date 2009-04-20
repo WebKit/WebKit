@@ -1,11 +1,13 @@
 <html>
 <script>
 function runTest() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-        
+        layoutTestController.waitUntilDone();
+    }
+
     var s = document.createElement('script');
-    s.setAttribute('onload', 'alert("Script onload handler called!")')
+    s.setAttribute('onload', 'alert("Script onload handler called!"); if (window.layoutTestController) layoutTestController.notifyDone()');
     s.id = "theScript";
     s.src = "resources/script-element-gc.js";
     

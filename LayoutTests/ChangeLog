@@ -1,3 +1,20 @@
+2009-04-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test and updated tests for <rdar://problem/6734365> eBay "Save this
+          search" link does nothing the second time search results are opened
+
+        * fast/dom/HTMLScriptElement/nested-execution-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/nested-execution.html: Added.
+        * fast/dom/HTMLScriptElement/resources/nested-execution.js: Added.
+        * fast/dom/HTMLScriptElement/script-reexecution.html:
+        * fast/dom/HTMLScriptElement/script-set-src.html:
+        * fast/dom/script-element-gc.html:
+        * fast/loader/local-JavaScript-from-local.html:
+        * svg/dom/SVGScriptElement/script-reexecution.svg:
+        * svg/dom/SVGScriptElement/script-set-href.svg:
+
 2009-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Antti Koivisto.

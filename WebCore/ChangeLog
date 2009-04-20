@@ -1,3 +1,44 @@
+2009-04-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/6734365> REGRESSION eBay "Save this search" link
+          does nothing the second time search results are opened
+
+        Test: fast/dom/HTMLScriptElement/nested-execution.html
+
+        Instead of executing scripts as soon as they finish loading, which may
+        happen synchronously during execution of another script, defer their
+        execution until the next run loop iteration, using a queue that is
+        similar to the HTML5 notion of the "list of scripts that will execute as
+        soon as possible", and in my testing was consistent with how Firefox
+        behaved.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_executeScriptSoonTimer.
+        (WebCore::Document::~Document): deref() script elements in
+        m_scriptsToExecuteSoon.
+        (WebCore::Document::executeScriptSoonTimerFired): Added. Executes the
+        scripts in m_scriptsToExecuteSoon and deref()s them.
+        (WebCore::Document::executeScriptSoon): Added. Appends to
+        m_scriptsToExecuteSoon and ref()s the script element, which keeps the
+        ScriptElementData alive as well.
+        * dom/Document.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::ScriptElementData): Initialize m_requested.
+        (WebCore::ScriptElementData::requestScript): Set m_requested to true, to
+        prevent further load requests.
+        (WebCore::ScriptElementData::execute): Added. Moved the code from
+        notifyFinished() which should not execute synchronously here, to be
+        called by the Document on a 0-interval timer.
+        (WebCore::ScriptElementData::notifyFinished): Moved the code to
+        dispatch events and evaluate the script, which should not execute
+        synchronously, out of here.
+        (WebCore::ScriptElementData::ignoresLoadRequest): Changed to test for
+        m_requested instead of m_cachedScript, because the latter is cleared
+        before the script is evaluated.
+        * dom/ScriptElement.h:
+
 2009-04-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti Koivisto and Darin Adler.

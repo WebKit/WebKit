@@ -1,0 +1,29 @@
+<head>
+    <script>
+        var started = false;
+        var executed = false;
+        var canPass = false;
+
+        function test()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            var script = document.createElement("script");
+            script.src = document.getElementById("cache-script").src;
+            started = true;
+            document.body.appendChild(script);
+            if (executed)
+                document.getElementById("result").innerText = "FAIL: Script executed synchronously beneath appendChild()";
+            else
+                canPass = true;
+        }
+    </script>
+</head>
+<body>
+    <div id="result">FAIL: Test did not run</div>
+    <!-- loads the script into the cache, then begins the test -->
+    <script id="cache-script" onload="test()" src="resources/nested-execution.js"></script>
+</body>

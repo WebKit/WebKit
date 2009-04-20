@@ -5,8 +5,10 @@
 var p5result = "FAIL";
 
 function test() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
 
     document.getElementById("p5").innerHTML = p5result;
     
@@ -29,6 +31,7 @@ function test() {
     
     var e3 = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
     e3.type.baseVal = "text/javascript";
+    e3.setAttribute("onload", "if (window.layoutTestController) setTimeout('layoutTestController.notifyDone()', 100)"); 
     e3.href.baseVal = "resources/script-set-href-p9failBefore.js";
     e3.href.baseVal = "resources/script-set-href-p9pass.js";
     document.getElementsByTagName("defs")[0].appendChild(e3);

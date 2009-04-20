@@ -13,8 +13,10 @@ function pass() {
 }
 
 function startTest() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
 
     test = "p1";
     var e1 = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
@@ -43,6 +45,9 @@ function finish() {
     e3.onload = "";
     document.getElementsByTagName("defs")[0].removeChild(e3);
     document.getElementsByTagName("defs")[0].appendChild(e3);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 </defs>
