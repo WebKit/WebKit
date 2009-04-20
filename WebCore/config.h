@@ -37,6 +37,7 @@
 #endif
 #else
 #define JS_EXPORTDATA
+#define WEBKIT_EXPORTDATA
 #endif
 
 #define MOBILE 0
