@@ -2,6 +2,19 @@
 
         Reviewed by Xan Lopez.
 
+        https://bugs.webkit.org/show_bug.cgi?id=24786
+        WebKitDownload sometimes suggests peculiar filenames
+
+        Remove query and ref from the URI that is to be downloaded when
+        using it to provide a file name suggestion.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_set_property):
+
+2009-04-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
         Handle the case when the plugin view is destroyed during
         didReceiveResponse, to avoid crashing.
 
