@@ -510,14 +510,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             portState = (PortState)cgPortState;
             cgPortState->context = context;
             
-            // Update the plugin's window/context
-#ifdef NP_NO_CARBON
-            nPort.cgPort.window = (NPNSWindow *)[self currentWindow];
-#else
-            nPort.cgPort.window = _eventHandler->platformWindow([self currentWindow]);
+#ifndef NP_NO_CARBON            
+            if (eventModel != NPEventModelCocoa) {
+                // Update the plugin's window/context
+                nPort.cgPort.window = windowRef;
+                nPort.cgPort.context = context;
+                window.window = &nPort.cgPort;
+            }                
 #endif /* NP_NO_CARBON */
-            nPort.cgPort.context = context;
-            window.window = &nPort.cgPort;
 
             // Save current graphics context's state; will be restored by -restorePortState:
             CGContextSaveGState(context);
@@ -542,7 +542,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         }
           
         case NPDrawingModelCoreAnimation:
-            window.window = [self currentWindow];
             // Just set the port state to a dummy value.
             portState = (PortState)1;
             break;
@@ -593,12 +592,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         }
 #endif /* NP_NO_QUICKDRAW */
         
-        case NPDrawingModelCoreGraphics:
+        case NPDrawingModelCoreGraphics: {
             ASSERT([NSView focusView] == self);
-            ASSERT(((PortState_CG *)portState)->context == nPort.cgPort.context);
-            CGContextRestoreGState(nPort.cgPort.context);
+            
+            CGContextRef context = ((PortState_CG *)portState)->context;
+            ASSERT(!nPort.cgPort.context || (context == nPort.cgPort.context));
+            CGContextRestoreGState(context);
             break;
-
+        }
+        
         case NPDrawingModelCoreAnimation:
             ASSERT(portState == (PortState)1);
             break;
@@ -688,7 +690,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(_eventHandler);
     
-    _eventHandler->drawRect(rect);
+    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+    _eventHandler->drawRect(context, rect);
 }
 
 - (void)stopTimers
@@ -2155,7 +2158,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     return NPERR_NO_ERROR;
 }
-
 @end
 
 @implementation WebNetscapePluginView (Internal)

@@ -939,4 +939,22 @@ kern_return_t WKPCGetAuthenticationInfo(mach_port_t clientPort, uint32_t pluginI
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCConvertPoint(mach_port_t clientPort, uint32_t pluginID, 
+                               double sourceX, double sourceY, uint32_t sourceSpace, 
+                               uint32_t destSpace, boolean_t *returnValue, double *destX, double *destY)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    *returnValue = instanceProxy->convertPoint(sourceX, sourceY, static_cast<NPCoordinateSpace>(sourceSpace), 
+                                               *destX, *destY, static_cast<NPCoordinateSpace>(destSpace));
+    return KERN_SUCCESS;
+}
+
+
 #endif // USE(PLUGIN_HOST_PROCESS)

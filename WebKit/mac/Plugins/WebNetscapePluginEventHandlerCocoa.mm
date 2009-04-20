@@ -46,15 +46,18 @@ static inline void initializeEvent(NPCocoaEvent* event, NPCocoaEventType type)
     event->version = 0;
 }
 
-void WebNetscapePluginEventHandlerCocoa::drawRect(const NSRect& rect)
+void WebNetscapePluginEventHandlerCocoa::drawRect(CGContextRef context, const NSRect& rect)
 {
     NPCocoaEvent event;
     
     initializeEvent(&event, NPCocoaEventDrawRect);
+    event.data.draw.context = context;
     event.data.draw.x = rect.origin.x;
     event.data.draw.y = rect.origin.y;
     event.data.draw.width = rect.size.width;
     event.data.draw.height = rect.size.height;
+    
+    RetainPtr<CGContextRef> protect(context);
     
     sendEvent(&event);
 }

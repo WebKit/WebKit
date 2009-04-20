@@ -643,8 +643,86 @@ using namespace WebCore;
     [self mouseUp:theEvent];
 }
 
-@end
 
+- (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
+                 toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace
+{
+    // Nothing to do
+    if (sourceSpace == destSpace)
+        return TRUE;
+    
+    NSPoint sourcePoint = NSMakePoint(sourceX, sourceY);
+    
+    NSPoint sourcePointInScreenSpace;
+    
+    // First convert to screen space
+    switch (sourceSpace) {
+        case NPCoordinateSpacePlugin:
+            sourcePointInScreenSpace = [self convertPoint:sourcePoint toView:nil];
+            sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePointInScreenSpace];
+            break;
+            
+        case NPCoordinateSpaceWindow:
+            sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
+            break;
+            
+        case NPCoordinateSpaceFlippedWindow:
+            sourcePoint.y = [[self currentWindow] frame].size.height - sourcePoint.y;
+            sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
+            break;
+            
+        case NPCoordinateSpaceScreen:
+            sourcePointInScreenSpace = sourcePoint;
+            break;
+            
+        case NPCoordinateSpaceFlippedScreen:
+            sourcePoint.y = [[[self currentWindow] screen] frame].size.height - sourcePoint.y;
+            sourcePointInScreenSpace = sourcePoint;
+            break;
+        default:
+            return FALSE;
+    }
+    
+    NSPoint destPoint;
+    
+    // Then convert back to the destination space
+    switch (destSpace) {
+        case NPCoordinateSpacePlugin:
+            destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+            destPoint = [self convertPoint:destPoint fromView:nil];
+            break;
+            
+        case NPCoordinateSpaceWindow:
+            destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+            break;
+            
+        case NPCoordinateSpaceFlippedWindow:
+            destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+            destPoint.y = [[self currentWindow] frame].size.height - destPoint.y;
+            break;
+            
+        case NPCoordinateSpaceScreen:
+            destPoint = sourcePointInScreenSpace;
+            break;
+            
+        case NPCoordinateSpaceFlippedScreen:
+            destPoint = sourcePointInScreenSpace;
+            destPoint.y = [[[self currentWindow] screen] frame].size.height - destPoint.y;
+            break;
+            
+        default:
+            return FALSE;
+    }
+    
+    if (destX)
+        *destX = destPoint.x;
+    if (destY)
+        *destY = destPoint.y;
+    
+    return TRUE;
+}
+
+@end
 
 namespace WebKit {
 

@@ -123,7 +123,7 @@ void WebNetscapePluginEventHandlerCarbon::sendNullEvent()
     sendEvent(&event);
 }
 
-void WebNetscapePluginEventHandlerCarbon::drawRect(const NSRect&)
+void WebNetscapePluginEventHandlerCarbon::drawRect(CGContextRef, const NSRect&)
 {
     EventRecord event;
     

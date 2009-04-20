@@ -212,4 +212,9 @@ NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char
                                                                      password:password passwordLength:plen];
 }
 
+NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace)
+{
+    return [pluginViewForInstance(instance) convertFromX:sourceX andY:sourceY space:sourceSpace toX:destX andY:destY space:destSpace];
+}
+
 #endif

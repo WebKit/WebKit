@@ -37,7 +37,7 @@ class WebNetscapePluginEventHandlerCarbon : public WebNetscapePluginEventHandler
 public:
     WebNetscapePluginEventHandlerCarbon(WebNetscapePluginView*); 
 
-    virtual void drawRect(const NSRect&);
+    virtual void drawRect(CGContextRef, const NSRect&);
 
     virtual void mouseDown(NSEvent*);
     virtual void mouseDragged(NSEvent*);

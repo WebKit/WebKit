@@ -1298,6 +1298,14 @@ bool NetscapePluginInstanceProxy::getAuthenticationInfo(data_t protocolData, dat
     return true;
 }
 
+bool NetscapePluginInstanceProxy::convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, 
+                                               double& destX, double& destY, NPCoordinateSpace destSpace)
+{
+    ASSERT(m_pluginView);
+
+    return [m_pluginView convertFromX:sourceX andY:sourceY space:sourceSpace toX:&destX andY:&destY space:destSpace];
+}
+
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)

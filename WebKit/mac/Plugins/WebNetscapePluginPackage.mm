@@ -461,6 +461,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.scheduletimer = (NPN_ScheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ScheduleTimer);
         browserFuncs.unscheduletimer = (NPN_UnscheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UnscheduleTimer);
         browserFuncs.popupcontextmenu = (NPN_PopUpContextMenuProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopUpContextMenu);
+        browserFuncs.convertpoint = (NPN_ConvertPointProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ConvertPoint);
         
         browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseVariantValue);
         browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifier);
@@ -573,6 +574,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.scheduletimer = NPN_ScheduleTimer;
         browserFuncs.unscheduletimer = NPN_UnscheduleTimer;
         browserFuncs.popupcontextmenu = NPN_PopUpContextMenu;
+        browserFuncs.convertpoint = NPN_ConvertPoint;
 
         browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
         browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;

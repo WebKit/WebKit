@@ -84,6 +84,17 @@ routine PCGetAuthenticationInfo(clientPort :mach_port_t;
                                 out returnValue :boolean_t;
                                 out username :data_t, dealloc;
                                 out password :data_t, dealloc);
+                                
+routine PCConvertPoint(clientPort :mach_port_t;
+                       pluginID :uint32_t;
+                       sourceX :double;
+                       sourceY :double;
+                       sourceSpace :uint32_t;
+                       destSpace :uint32_t;
+                       out returnValue :boolean_t;
+                       out destX :double;
+                       out destY :double);
+
 // NPRuntime
 
 routine PCGetStringIdentifier(clientPort :mach_port_t;

@@ -1,3 +1,16 @@
+2009-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6722845> In the Cocoa event model, NPWindow's window field should be null
+
+        * bridge/npapi.h:
+        (_NPCocoaEvent::):
+        Add a CGContextRef member to the draw struct. Add an NPCoordinateSpace enum.
+        
+        * plugins/npfunctions.h:
+        Add a prototype for NPN_ConvertPoint.
+
 2009-04-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.
