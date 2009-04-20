@@ -407,7 +407,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
         if (box->direction() == LTR)
             left = min(left, rootLeft + availableWidth - caretWidthRightOfOffset);
         else
-            left = max(left, cb->width());
+            left = max(left, cb->x());
     } else {
         // If there is no wrapping, the caret can leave its containing block, but not its root line box.
         if (cb->style()->direction() == LTR) {
