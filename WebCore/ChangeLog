@@ -1,3 +1,15 @@
+2009-04-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25299
+        Don't bound caret to root line box if it is still inside its containing block
+        
+        Can't yet write tests for behavior of non-standard caret widths.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+
 2009-04-20  Steve Falkenburg  <sfalken@apple.com>
 
         Separate JavaScriptCore.dll from WebKit.dll.
