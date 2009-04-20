@@ -57,27 +57,21 @@ V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isInline)
 
 void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> context, Event* event, v8::Handle<v8::Value> jsEvent, bool isWindowEvent)
 {
-    // For compatibility, we store the event object as a property on the window called "event".  Because this is the global namespace, we save away any
-    // existing "event" property, and then restore it after executing the javascript handler.
+    // We push the event being processed into the global object, so that it can be exposed by DOMWindow's bindings.
     v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
     v8::Local<v8::Value> returnValue;
 
     {
         // Catch exceptions thrown in the event handler so they do not propagate to javascript code that caused the event to fire.
-        // Setting and getting the 'event' property on the global object can throw exceptions as well (for instance if accessors that
-        // throw exceptions are defined for 'event' using __defineGetter__ and __defineSetter__ on the global object).
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
 
         // Save the old 'event' property so we can restore it later.
-        v8::Local<v8::Value> savedEvent = context->Global()->Get(eventSymbol);
+        v8::Local<v8::Value> savedEvent = context->Global()->GetHiddenValue(eventSymbol);
         tryCatch.Reset();
 
-        // Make the event available in the window object.
-        //
-        // FIXME: This does not work as it does with jsc bindings if the window.event property is already set. We need to make sure that property
-        // access is intercepted correctly.
-        context->Global()->Set(eventSymbol, jsEvent);
+        // Make the event available in the global object, so DOMWindow can expose it.
+        context->Global()->SetHiddenValue(eventSymbol, jsEvent);
         tryCatch.Reset();
 
         // Call the event handler.
@@ -86,9 +80,9 @@ void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> context
 
         // Restore the old event. This must be done for all exit paths through this method.
         if (savedEvent.IsEmpty())
-            context->Global()->Set(eventSymbol, v8::Undefined());
+            context->Global()->SetHiddenValue(eventSymbol, v8::Undefined());
         else
-            context->Global()->Set(eventSymbol, savedEvent);
+            context->Global()->SetHiddenValue(eventSymbol, savedEvent);
         tryCatch.Reset();
     }
 

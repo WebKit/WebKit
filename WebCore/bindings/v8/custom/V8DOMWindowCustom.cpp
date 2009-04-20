@@ -53,6 +53,22 @@ static const int popupTilePixels = 10;
 
 namespace WebCore {
 
+ACCESSOR_GETTER(DOMWindowEvent)
+{
+    v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
+    v8::Local<v8::Context> context = v8::Context::GetCurrent();
+    v8::Handle<v8::Value> jsEvent = context->Global()->GetHiddenValue(eventSymbol);
+    if (jsEvent.IsEmpty())
+        return v8::Undefined();
+    return jsEvent;
+}
+
+ACCESSOR_GETTER(DOMWindowCrypto)
+{
+    // TODO: Implement me.
+    return v8::Undefined();
+}
+
 ACCESSOR_SETTER(DOMWindowLocation)
 {
     v8::Handle<v8::Object> holder = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
