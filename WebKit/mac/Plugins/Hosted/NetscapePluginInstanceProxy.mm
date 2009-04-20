@@ -53,6 +53,7 @@
 #import <WebCore/runtime_object.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
+#import <WebKitSystemInterface.h>
 #import <runtime/JSLock.h>
 #import <runtime/PropertyNameArray.h>
 #import <utility>
@@ -284,7 +285,7 @@ void NetscapePluginInstanceProxy::keyEvent(NSView *pluginView, NSEvent *event, N
                                      type, [event modifierFlags], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersIgnoringModifiersData bytes])), [charactersIgnoringModifiersData length], 
-                                     [event isARepeat], [event keyCode]);
+                                     [event isARepeat], [event keyCode], WKGetNSEventKeyChar(event));
 }
 
 void NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier(int keyCode, char character)
@@ -296,7 +297,14 @@ void NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier(int keyCod
                                      NPCocoaEventKeyDown, NSCommandKeyMask,
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
-                                     false, keyCode);
+                                     false, keyCode, character);
+}
+
+void NetscapePluginInstanceProxy::flagsChanged(NSEvent *event)
+{
+    _WKPHPluginInstanceKeyboardEvent(m_pluginHostProxy->port(), m_pluginID, 
+                                     [event timestamp], NPCocoaEventFlagsChanged, 
+                                     [event modifierFlags], 0, 0, 0, 0, false, [event keyCode], 0);
 }
 
 void NetscapePluginInstanceProxy::insertText(NSString *text)

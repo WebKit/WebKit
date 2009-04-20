@@ -294,6 +294,12 @@ extern "C" {
         _proxy->keyEvent(self, event, NPCocoaEventKeyUp);
 }
 
+- (void)flagsChanged:(NSEvent *)event
+{
+    if (_isStarted && _proxy)
+        _proxy->flagsChanged(event);
+}
+
 - (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
 {
     if (_isStarted && _proxy)

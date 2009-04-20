@@ -1,3 +1,27 @@
+2009-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit side of <rdar://problem/6781302>
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::keyEvent):
+        Pass the event keyChar.
+        
+        (WebKit::NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier):
+        Ditto.
+        
+        (WebKit::NetscapePluginInstanceProxy::flagsChanged):
+        Pass a 0 keyChar.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView flagsChanged:]):
+        Call NetscapePluginInstanceProxy::flagsChanged.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add a keyChar argument.
+
 2009-04-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
