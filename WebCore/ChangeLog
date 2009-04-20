@@ -1,5 +1,12 @@
 2009-04-19  Dan Bernstein  <mitz@apple.com>
 
+        - fix release builds
+
+        * dom/Document.cpp:
+        (WebCore::Document::executeScriptSoonTimerFired):
+
+2009-04-19  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Mark Rowe.
 
         - fix <rdar://problem/6734365> REGRESSION eBay "Save this search" link

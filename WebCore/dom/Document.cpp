@@ -4106,7 +4106,7 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
 
 void Document::executeScriptSoonTimerFired(Timer<Document>* timer)
 {
-    ASSERT_ARG(timer, timer == &m_executeScriptSoonTimer);
+    ASSERT_UNUSED(timer, timer == &m_executeScriptSoonTimer);
 
     Vector<pair<ScriptElementData*, CachedResourceHandle<CachedScript> > > scripts;
     scripts.swap(m_scriptsToExecuteSoon);
