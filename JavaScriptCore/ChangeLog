@@ -1,5 +1,21 @@
 2009-04-20  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Kevin McCullough.
+
+        Always tag mmaped memory on darwin and clean up #defines
+        now that they are a little bigger.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * runtime/Collector.cpp:
+        (JSC::allocateBlock):
+
+2009-04-20  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Tim Hatcher.
 
         Add licenses for xcconfig files.
