@@ -1,6 +1,13 @@
 2009-04-19  Dan Bernstein  <mitz@apple.com>
 
-        - fix release builds
+        - maybe fix release builds
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::notifyFinished):
+
+2009-04-19  Dan Bernstein  <mitz@apple.com>
+
+        - not fix release builds
 
         * dom/Document.cpp:
         (WebCore::Document::executeScriptSoonTimerFired):

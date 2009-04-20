@@ -205,7 +205,7 @@ void ScriptElementData::execute(CachedScript* cachedScript)
 
 void ScriptElementData::notifyFinished(CachedResource* o)
 {
-    ASSERT_ARG(o, o == m_cachedScript);
+    ASSERT_UNUSED(o, o == m_cachedScript);
     m_element->document()->executeScriptSoon(this, m_cachedScript);
     stopLoadRequest();
 }
