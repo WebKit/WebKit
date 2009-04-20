@@ -274,6 +274,42 @@ void SimpleFontData::platformInit()
         m_xHeight = [m_font.font() xHeight];
 }
 
+void SimpleFontData::platformCharWidthInit()
+{
+    m_avgCharWidth = 0.f;
+
+    // If the font is a Windows font with an 'OS/2' table, extract the
+    // average character width so that we can match the text
+    // field sizes that are computed by most browsers under Windows.
+    const uint32 OS2CompatibilityTableTag = 'OS/2';
+    const int OS2CompatibilityTableMinValidLength = 68;
+    RetainPtr<CFDataRef> os2TableRef(AdoptCF,
+                                     CGFontCopyTableForTag(m_font.cgFont(), OS2CompatibilityTableTag));
+    if (os2TableRef && CFDataGetLength(os2TableRef.get()) >= OS2CompatibilityTableMinValidLength) {
+        const UInt8* buffer = CFDataGetBytePtr(os2TableRef.get());
+        // Retrieve the (big-endian) version number.
+        const int OS2VersionOffset = 0;
+        uint16 os2Version = buffer[OS2VersionOffset] * 256 + buffer[OS2VersionOffset + 1];
+        // Version 4 corresponds to OpenType 1.6, the latest version with
+        // public documentation available.  If the version is higher than that,
+        // assume nothing about the contents.
+        if (os2Version <= 4) {
+            // Retrieve the (big-endian) average character width.
+            const int OS2AvgCharWidthOffset = 2;
+            SInt16 iAvgWidth = buffer[OS2AvgCharWidthOffset] * 256 + buffer[OS2AvgCharWidthOffset + 1];
+            if (iAvgWidth > 0)
+                m_avgCharWidth = scaleEmToUnits(iAvgWidth, m_unitsPerEm) * m_font.m_size;
+        }
+    }
+
+    m_maxCharWidth = 0.f;
+    if (m_font.font())
+        m_maxCharWidth = [m_font.font() maximumAdvancement].width;
+
+    // If there was no OS/2 table or it was malformed, fallback to a cross-platform estimate.
+    initCharWidths();
+}
+
 void SimpleFontData::platformDestroy()
 {
 #ifdef BUILDING_ON_TIGER

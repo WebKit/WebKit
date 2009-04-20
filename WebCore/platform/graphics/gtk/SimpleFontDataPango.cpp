@@ -66,6 +66,13 @@ void SimpleFontData::platformInit()
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
 }
 
+void SimpleFontData::platformCharWidthInit()
+{
+    m_avgCharWidth = 0.f;
+    m_maxCharWidth = 0.f;
+    initCharWidths();
+}
+
 void SimpleFontData::platformDestroy()
 {
     delete m_smallCapsFontData;

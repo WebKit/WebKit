@@ -18,7 +18,9 @@
     <script>
         if (window.eventSender) {
             var target = document.getElementById("target");
-            eventSender.mouseMoveTo(190, 62);
+            var x = target.offsetLeft + target.offsetWidth - 4;
+            var y = target.offsetTop + target.offsetHeight / 2;
+            eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");

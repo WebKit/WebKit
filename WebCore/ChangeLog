@@ -1,3 +1,72 @@
+2009-04-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Make textarea and text input metrics more closely match IEs.
+        https://bugs.webkit.org/show_bug.cgi?id=15312
+
+        This involves:
+        -set text input width to size*avgCharWidth + maxCharWidth - avgCharWidth
+        -set textarea width to cols*avgCharWidth
+        -Make default CSS match IEs
+        -Correctly initializing m_avgCharWidth and m_maxCharWidth for each platform and SVG.
+
+        Those values for textarea and inputs were derived by doing a ton of manual
+        testing of IE's width values for various textareas and fonts.
+
+        To get the average and max character width of a font, we do the following
+        for each platform:
+        -Win: TextMetrics expose avgCharWidth and maxCharWidth
+        -SVG: avgCharWidth = width of an '0', fallback on width of a space glyph, then m_xHeight
+            maxCharWidth = width of a 'W' for roman fonts, fallback on m_ascent
+        -Linux: avgCharWidth = width of an '0', fallback on m_xHeight
+            maxCharWidth = max of avgCharWidth and m_ascent
+        -Mac: look in the OS/2 table for avgCharWidth and grab the maxCharWidth off the font.
+            If either one is not there, then calculate the value using the Linux approach.
+
+        Linux ports could probably dig into the OS/2 table as well, but I'll leave
+        that up to them to implement.
+
+        Tests: fast/forms/text-control-intrinsic-widths.html
+               fast/forms/textarea-metrics.html
+               svg/custom/svg-fonts-in-text-controls.html
+
+        * css/html4.css:
+        * css/themeWin.css:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::initCharWidths):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::maxCharWidth):
+        (WebCore::SimpleFontData::avgCharWidth):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+
 2009-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

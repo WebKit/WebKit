@@ -359,6 +359,8 @@ textarea {
     -webkit-box-orient: vertical;
     resize: auto;
     cursor: auto;
+    margin: 1px 0;
+    padding: 2px;
 }
 
 input::-webkit-input-placeholder {
