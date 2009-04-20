@@ -37,6 +37,16 @@
 #define WTF_USE_JSC 1
 #endif
 
+#if defined(WIN32) || defined(_WIN32)
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define JS_EXPORTDATA __declspec(dllexport)
+#else
+#define JS_EXPORTDATA __declspec(dllimport)
+#endif
+#else
+#define JS_EXPORTDATA
+#endif
+
 #include "WebInspectorClient.h"
 
 #include <CoreFoundation/CoreFoundation.h>

@@ -34,7 +34,7 @@ namespace JSC {
     class InternalFunction : public JSObject {
     public:
         virtual const ClassInfo* classInfo() const; 
-        static const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo info;
 
         const UString& name(JSGlobalData*);
         const UString displayName(JSGlobalData*);

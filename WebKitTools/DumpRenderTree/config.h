@@ -26,6 +26,14 @@
 
 #include <wtf/Platform.h>
 
+#if PLATFORM(WIN_OS)
+#define JS_EXPORTDATA __declspec(dllimport)
+#define WEBKIT_EXPORTDATA __declspec(dllimport)
+#else
+#define JS_EXPORTDATA
+#define WEBKIT_EXPORTDATA
+#endif
+
 #if PLATFORM(WIN)
 #define WTF_PLATFORM_CF 1 
 

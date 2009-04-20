@@ -26,6 +26,16 @@
 #include <wtf/Platform.h>
 
 #if PLATFORM(WIN_OS)
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define JS_EXPORTDATA __declspec(dllexport)
+#else
+#define JS_EXPORTDATA __declspec(dllimport)
+#endif
+#else
+#define JS_EXPORTDATA
+#endif
+
+#if PLATFORM(WIN_OS)
 
 // If we don't define these, they get defined in windef.h. 
 // We want to use std::min and std::max

@@ -7,95 +7,6 @@ EXPORTS
         DllUnregisterServer PRIVATE
         RunAsLocalServer    PRIVATE
         LocalServerDidDie   PRIVATE
-	    JSCheckScriptSyntax
-	    JSClassCreate
-	    JSClassRelease
-	    JSClassRetain
-	    JSContextGetGlobalObject
-	    JSContextGetGroup
-	    JSContextGroupCreate
-	    JSContextGroupRelease
-	    JSContextGroupRetain
-	    JSEvaluateScript
-	    JSGarbageCollect
-	    JSGlobalContextCreate
-	    JSGlobalContextCreateInGroup
-	    JSGlobalContextRelease
-	    JSGlobalContextRetain
-	    JSObjectCallAsConstructor
-	    JSObjectCallAsFunction
-	    JSObjectCopyPropertyNames
-	    JSObjectDeleteProperty
-	    JSObjectGetPrivate
-	    JSObjectGetProperty
-	    JSObjectGetPropertyAtIndex
-	    JSObjectGetPrototype
-	    JSObjectHasProperty
-	    JSObjectIsConstructor
-	    JSObjectIsFunction
-	    JSObjectMake
-	    JSObjectMakeArray
-	    JSObjectMakeConstructor
-	    JSObjectMakeDate
-	    JSObjectMakeError
-	    JSObjectMakeFunction
-	    JSObjectMakeFunctionWithCallback
-	    JSObjectMakeRegExp
-	    JSObjectSetPrivate
-	    JSObjectSetProperty
-	    JSObjectSetPropertyAtIndex
-	    JSObjectSetPrototype
-	    JSPropertyNameAccumulatorAddName
-	    JSPropertyNameArrayGetCount
-	    JSPropertyNameArrayGetNameAtIndex
-	    JSPropertyNameArrayRelease
-	    JSPropertyNameArrayRetain
-	    JSStringCopyBSTR
-	    JSStringCopyCFString
-	    JSStringCreateWithBSTR
-	    JSStringCreateWithCFString
-	    JSStringCreateWithCharacters
-	    JSStringCreateWithUTF8CString
-	    JSStringGetCharactersPtr
-	    JSStringGetLength
-	    JSStringGetMaximumUTF8CStringSize
-	    JSStringGetUTF8CString
-	    JSStringIsEqual
-	    JSStringIsEqualToUTF8CString
-	    JSStringRelease
-	    JSStringRetain
-	    JSValueGetType
-	    JSValueIsBoolean
-	    JSValueIsEqual
-	    JSValueIsInstanceOfConstructor
-	    JSValueIsNull
-	    JSValueIsNumber
-	    JSValueIsObject
-	    JSValueIsObjectOfClass
-	    JSValueIsStrictEqual
-	    JSValueIsString
-	    JSValueIsUndefined
-	    JSValueMakeBoolean
-	    JSValueMakeNull
-	    JSValueMakeNumber
-	    JSValueMakeString
-	    JSValueMakeUndefined
-	    JSValueProtect
-	    JSValueToBoolean
-	    JSValueToNumber
-	    JSValueToObject
-	    JSValueToStringCopy
-	    JSValueUnprotect
-;   	KJS_JSCreateNativeJSObject
-;   	KJS_JSObject_JSFinalize
-;   	KJS_JSObject_JSObjectCall
-;   	KJS_JSObject_JSObjectEval
-;   	KJS_JSObject_JSObjectGetMember
-;   	KJS_JSObject_JSObjectGetSlot
-;   	KJS_JSObject_JSObjectRemoveMember
-;   	KJS_JSObject_JSObjectSetMember
-;   	KJS_JSObject_JSObjectSetSlot
-;   	KJS_JSObject_JSObjectToString
         setUseOpenSourceWebKit
         shutDownWebKit
         progIDForClass
@@ -108,6 +19,92 @@ EXPORTS
         RightTruncateStringToWidth
         WebKitSetShouldUseFontSmoothing
         WebKitShouldUseFontSmoothing
+
+        ; These functions are deprecated
+        WebLocalizedString
+        WebLocalizedLPCTSTR
+        SetWebLocalizedStringMainBundle
+
+		; Deprecated re-exports from JavaScriptCore
+        JSCheckScriptSyntax
+        JSClassCreate
+        JSClassRelease
+        JSClassRetain
+        JSContextGetGlobalObject
+        JSContextGetGroup
+        JSContextGroupCreate
+        JSContextGroupRelease
+        JSContextGroupRetain
+        JSEvaluateScript
+        JSGarbageCollect
+        JSGlobalContextCreate
+        JSGlobalContextCreateInGroup
+        JSGlobalContextRelease
+        JSGlobalContextRetain
+        JSObjectCallAsConstructor
+        JSObjectCallAsFunction
+        JSObjectCopyPropertyNames
+        JSObjectDeleteProperty
+        JSObjectGetPrivate
+        JSObjectGetProperty
+        JSObjectGetPropertyAtIndex
+        JSObjectGetPrototype
+        JSObjectHasProperty
+        JSObjectIsConstructor
+        JSObjectIsFunction
+        JSObjectMake
+        JSObjectMakeArray
+        JSObjectMakeConstructor
+        JSObjectMakeDate
+        JSObjectMakeError
+        JSObjectMakeFunction
+        JSObjectMakeFunctionWithCallback
+        JSObjectMakeRegExp
+        JSObjectSetPrivate
+        JSObjectSetProperty
+        JSObjectSetPropertyAtIndex
+        JSObjectSetPrototype
+        JSPropertyNameAccumulatorAddName
+        JSPropertyNameArrayGetCount
+        JSPropertyNameArrayGetNameAtIndex
+        JSPropertyNameArrayRelease
+        JSPropertyNameArrayRetain
+        JSStringCopyBSTR
+        JSStringCopyCFString
+        JSStringCreateWithBSTR
+        JSStringCreateWithCFString
+        JSStringCreateWithCharacters
+        JSStringCreateWithUTF8CString
+        JSStringGetCharactersPtr
+        JSStringGetLength
+        JSStringGetMaximumUTF8CStringSize
+        JSStringGetUTF8CString
+        JSStringIsEqual
+        JSStringIsEqualToUTF8CString
+        JSStringRelease
+        JSStringRetain
+        JSValueGetType
+        JSValueIsBoolean
+        JSValueIsEqual
+        JSValueIsInstanceOfConstructor
+        JSValueIsNull
+        JSValueIsNumber
+        JSValueIsObject
+        JSValueIsObjectOfClass
+        JSValueIsStrictEqual
+        JSValueIsString
+        JSValueIsUndefined
+        JSValueMakeBoolean
+        JSValueMakeNull
+        JSValueMakeNumber
+        JSValueMakeString
+        JSValueMakeUndefined
+        JSValueProtect
+        JSValueToBoolean
+        JSValueToNumber
+        JSValueToObject
+        JSValueToStringCopy
+        JSValueUnprotect
         ?fastMalloc@WTF@@YAPAXI@Z
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
@@ -135,9 +132,4 @@ EXPORTS
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
-
-        ; These functions are deprecated
-        WebLocalizedString
-        WebLocalizedLPCTSTR
-        SetWebLocalizedStringMainBundle
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

@@ -49,7 +49,7 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         virtual void put(ExecState*, unsigned propertyName, JSValuePtr); // FIXME: Make protected and add setItem.
 
-        static const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo info;
 
         unsigned length() const { return m_storage->m_length; }
         void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.

@@ -165,8 +165,8 @@ namespace JSC {
 
             friend class SmallStringsStorage;
             friend void initializeUString();
-            static BaseString* nullBaseString;
-            static BaseString* emptyBaseString;
+            JS_EXPORTDATA static BaseString* nullBaseString;
+            JS_EXPORTDATA static BaseString* emptyBaseString;
         };
 
 

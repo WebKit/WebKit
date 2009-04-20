@@ -1,3 +1,17 @@
+2009-04-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Separate JavaScriptCore.dll from WebKit.dll.
+        Slight performance improvement or no change on benchmarks.
+        
+        Allows us to break a circular dependency between CFNetwork and WebKit on Windows,
+        and simplifies standalone JavaScriptCore builds.
+
+        Reviewed by Oliver Hunt.
+
+        * WebKit.vcproj/WebKit.def: Mark JavaScriptCore re-exports as deprecated.
+        * WebKit.vcproj/WebKit.vcproj: Link against JavaScriptCore.dll
+        * WebKit.vcproj/WebKit_debug.def: Mark JavaScriptCore re-exports as deprecated.
+
 2009-04-17  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/6803905> Lots of ASSERTs firing when trying to clear history
