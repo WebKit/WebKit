@@ -1,3 +1,10 @@
+2009-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/Window/window-properties.html: Added a new DumpRenderTree window
+        object property, plainText.
+
 2009-04-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.

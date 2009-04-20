@@ -38,6 +38,7 @@
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "PlainTextController.h"
 #import "TextInputController.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
@@ -252,24 +253,21 @@
     ASSERT(!exception);
 
     // Make Old-Style controllers
-    EventSendingController *esc = [[EventSendingController alloc] init];
-    [obj setValue:esc forKey:@"eventSender"];
-    [esc release];
-    
-    TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
-    [obj setValue:tic forKey:@"textInputController"];
-    [tic release];
-    
+
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
 
+    EventSendingController *esc = [[EventSendingController alloc] init];
+    [obj setValue:esc forKey:@"eventSender"];
+    [esc release];
+    
+    [obj setValue:gNavigationController forKey:@"navigationController"];
+    
     ObjCController *occ = [[ObjCController alloc] init];
     [obj setValue:occ forKey:@"objCController"];
     [occ release];
 
-    [obj setValue:gNavigationController forKey:@"navigationController"];
-    
     ObjCPlugin *plugin = [[ObjCPlugin alloc] init];
     [obj setValue:plugin forKey:@"objCPlugin"];
     [plugin release];
@@ -277,6 +275,12 @@
     ObjCPluginFunction *pluginFunction = [[ObjCPluginFunction alloc] init];
     [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
     [pluginFunction release];
+
+    [obj setValue:[PlainTextController sharedPlainTextController] forKey:@"plainText"];
+
+    TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
+    [obj setValue:tic forKey:@"textInputController"];
+    [tic release];
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame

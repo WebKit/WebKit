@@ -1,3 +1,17 @@
+2009-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added PlainTextController.h
+        and PlainTextController.mm.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]): Added PlainTextController
+        as "window.plainText".
+
+        * DumpRenderTree/mac/PlainTextController.h: Added.
+        * DumpRenderTree/mac/PlainTextController.mm: Added.
+
 2009-04-20  Steve Falkenburg  <sfalken@apple.com>
 
         Separate JavaScriptCore.dll from WebKit.dll.
