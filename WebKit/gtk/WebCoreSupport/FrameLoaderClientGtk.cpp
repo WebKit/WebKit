@@ -201,6 +201,13 @@ void FrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, 
             m_pluginView->didReceiveResponse(loader->response());
             m_hasSentResponseToPlugin = true;
         }
+
+        // FIXME: We may want to investigate refactoring our plugin loading
+        // code to be similar to mac's.
+        // Also, see http://trac.webkit.org/changeset/24118.
+        if (!m_pluginView)
+            return;
+
         m_pluginView->didReceiveData(data, length);
     }
 }
