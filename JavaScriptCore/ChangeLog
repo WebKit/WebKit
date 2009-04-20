@@ -1,5 +1,15 @@
 2009-04-20  Steve Falkenburg  <sfalken@apple.com>
 
+        More Windows build fixes.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make: Copy DLLs, PDBs.
+        * JavaScriptCore.vcproj/JavaScriptCore.resources: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore.resources/Info.plist: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.rc: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Add version stamping, resource copying.
+
+2009-04-20  Steve Falkenburg  <sfalken@apple.com>
+
         Separate JavaScriptCore.dll from WebKit.dll.
         Slight performance improvement or no change on benchmarks.
         

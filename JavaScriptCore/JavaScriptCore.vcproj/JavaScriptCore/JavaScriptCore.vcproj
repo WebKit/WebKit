@@ -23,7 +23,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -83,7 +83,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\JavaScriptCore.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -95,7 +95,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\JavaScriptCore.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -166,7 +166,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -226,7 +226,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\parser\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\runtime\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\VM\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bytecode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\interpreter\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\assembler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wrec\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\jit\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\debugger\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\profiler\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\JavaScriptCore.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -293,15 +293,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\interpreter\CachedCall.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\CallData.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\runtime\CallData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\interpreter\CachedCall.h"
 				>
 			</File>
 			<File
@@ -1430,6 +1430,14 @@
 			</File>
 			<File
 				RelativePath="..\..\jit\JITPropertyAccess.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resources"
+			>
+			<File
+				RelativePath=".\JavaScriptCore.rc"
 				>
 			</File>
 		</Filter>
