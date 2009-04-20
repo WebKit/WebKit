@@ -1,3 +1,38 @@
+2009-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Remove m_absoluteBounds hack from SVG renderers and move outlineBoundsForRepaint into RenderSVGModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=25276
+
+        This also exposed a buggy paint check in RenderSVGContainer::layout()
+        we should repaint if we are self painting OR if our kids changed, not AND.
+
+        Writing real outlineBoundsForRepaint required writing a mapLocalToContainer() function
+
+        No functional changes, thus no tests.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::localToParentTransform):
+        (WebCore::RenderPath::layout):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::localToParentTransformWithoutCSSParentOffset):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+
 2009-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel

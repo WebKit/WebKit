@@ -51,11 +51,8 @@ void RenderSVGViewportContainer::layout()
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
     
-    // FIXME: using m_absoluteBounds breaks if containerForRepaint() is not the root
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout(), &m_absoluteBounds);
-    
-    m_absoluteBounds = absoluteClippedOverflowRect();
-    
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
+
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (selfNeedsLayout())
             child->setNeedsLayout(true);

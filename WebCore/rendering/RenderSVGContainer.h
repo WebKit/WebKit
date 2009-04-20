@@ -40,9 +40,7 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    // Some containers do not want it's children
-    // to be drawn, because they may be 'referenced'
-    // Example: <marker> children in SVG
+    // <marker> uses these methods to only allow drawing children during a special marker draw time
     void setDrawsContents(bool);
     bool drawsContents() const;
 
@@ -51,7 +49,6 @@ public:
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
-
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual FloatRect objectBoundingBox() const;
@@ -64,17 +61,11 @@ protected:
     virtual void applyContentTransforms(PaintInfo&);
     virtual void applyAdditionalTransforms(PaintInfo&);
 
-    virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const;
-
 private:
-    RenderObjectChildList m_children;
-    
     bool selfWillPaint() const;
 
+    RenderObjectChildList m_children;
     bool m_drawsContents : 1;
-    
-protected:    
-    IntRect m_absoluteBounds;
 };
   
 } // namespace WebCore

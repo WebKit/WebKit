@@ -35,7 +35,9 @@
 
 #include "GraphicsContext.h"
 #include "RenderLayer.h"
+#include "RenderView.h"
 #include "SVGStyledElement.h"
+#include "TransformState.h"
 
 #if ENABLE(SVG_FILTERS)
 #include "SVGResourceFilter.h"
@@ -66,6 +68,29 @@ void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintCo
     // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
     repaintRect = localToParentTransform().mapRect(repaintRect);
     parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+}
+
+void RenderSVGModelObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
+{
+    ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
+
+    // FIXME: If we don't respect useTransforms we break SVG text rendering.
+    // Seems RenderSVGInlineText has some own broken translation hacks which depend useTransforms=false
+    // This should instead be ASSERT(useTransforms) once we fix RenderSVGInlineText
+    if (useTransforms)
+        transformState.applyTransform(localToParentTransform());
+
+    parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
+}
+
+// Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
+IntRect RenderSVGModelObject::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const
+{
+    IntRect box = enclosingIntRect(repaintRectInLocalCoordinates());
+    adjustRectForOutlineAndShadow(box);
+
+    FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
+    return containerRelativeQuad.enclosingBoundingBox();
 }
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, int, int, bool)

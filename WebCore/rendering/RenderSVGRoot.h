@@ -73,9 +73,10 @@ private:
     void calcViewport(); 
     void applyContentTransforms(PaintInfo&, int parentX, int parentY);
 
+    TransformationMatrix localToParentTransformWithoutCSSParentOffset() const;
+
     RenderObjectChildList m_children;
     FloatRect m_viewport;
-    IntRect m_absoluteBounds;
 };
 
 } // namespace WebCore

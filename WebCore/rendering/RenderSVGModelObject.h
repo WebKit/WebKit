@@ -38,7 +38,7 @@
 namespace WebCore {
 
 // Most renderers in the SVG rendering tree will inherit from this class
-// but not all. (e.g. RenderSVGForeignObject, RenderSVGBlock) thus methods
+// but not all. (e.g. RenderSVGForeignObject, RenderSVGBlock, RenderSVGImage) thus methods
 // required by SVG renders need to be declared on RenderObject, but some shared
 // logic can go in this class.
 
@@ -52,9 +52,12 @@ public:
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
+    virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const;
 
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
 
 protected:
     // Returns the bounding box for the filter associated with this object (if any)
