@@ -44,8 +44,7 @@ static const String& eventParameterName(bool isSVGEvent)
 }
 
 JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
-    : JSAbstractEventListener(true)
-    , m_globalObject(globalObject)
+    : JSEventListener(0, globalObject, true)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)
@@ -88,7 +87,7 @@ void JSLazyEventListener::parseCode() const
         return;
 
     if (m_globalObject->scriptExecutionContext()->isDocument()) {
-        JSDOMWindow* window = static_cast<JSDOMWindow*>(m_globalObject.get());
+        JSDOMWindow* window = static_cast<JSDOMWindow*>(m_globalObject);
         Frame* frame = window->impl()->frame();
         if (!frame)
             return;
@@ -111,7 +110,7 @@ void JSLazyEventListener::parseCode() const
     // have been added with setAttribute from a script, and we should pass String() in that case.
     m_jsFunction = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
 
-    JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_jsFunction.get());
+    JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_jsFunction);
 
     if (exec->hadException()) {
         exec->clearException();
@@ -136,11 +135,6 @@ void JSLazyEventListener::parseCode() const
     m_eventParameterName = String();
 }
 
-JSDOMGlobalObject* JSLazyEventListener::globalObject() const
-{
-    return m_globalObject;
-}
-
 PassRefPtr<JSLazyEventListener> createInlineEventListener(Node* node, Attribute* attr)
 {
     ASSERT(node);
@@ -156,6 +150,12 @@ PassRefPtr<JSLazyEventListener> createInlineEventListener(Node* node, Attribute*
         return 0;
 
     JSDOMWindow* globalObject = scriptController->globalObject();
+    
+    // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
+    {
+        JSLock lock(false);
+        toJS(globalObject->globalExec(), node);
+    }
 
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), globalObject, node, scriptController->eventHandlerLineNumber());
 }
@@ -169,6 +169,7 @@ PassRefPtr<JSLazyEventListener> createInlineEventListener(Frame* frame, Attribut
     if (!scriptController->isEnabled())
         return 0;
 
+    // 'globalObject' is the JavaScript wrapper that will mark the event listener we're creating.
     JSDOMWindow* globalObject = scriptController->globalObject();
 
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), globalObject, 0, scriptController->eventHandlerLineNumber());

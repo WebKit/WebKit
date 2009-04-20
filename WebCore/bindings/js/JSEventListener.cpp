@@ -31,7 +31,35 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
+JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isInline)
+    : m_jsFunction(function)
+    , m_globalObject(globalObject)
+    , m_isInline(isInline)
+{
+    if (!m_isInline && m_jsFunction)
+        globalObject->jsEventListeners().set(m_jsFunction, this);
+}
+
+JSEventListener::~JSEventListener()
+{
+    if (!m_isInline && m_jsFunction && m_globalObject)
+        m_globalObject->jsEventListeners().remove(m_jsFunction);
+}
+
+JSObject* JSEventListener::jsFunction() const
+{
+    return m_jsFunction;
+}
+
+void JSEventListener::markJSFunction()
+{
+    if (m_jsFunction && !m_jsFunction->marked())
+        m_jsFunction->mark();
+    if (m_globalObject && !m_globalObject->marked())
+        m_globalObject->mark();
+}
+
+void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
     JSLock lock(false);
 
@@ -39,7 +67,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = this->globalObject();
+    JSDOMGlobalObject* globalObject = m_globalObject;
     // Null check as clearGlobalObject() can clear this and we still get called back by
     // xmlhttprequest objects. See http://bugs.webkit.org/show_bug.cgi?id=13275
     // FIXME: Is this check still necessary? Requests are supposed to be stopped before clearGlobalObject() is called.
@@ -125,57 +153,9 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     }
 }
 
-bool JSAbstractEventListener::virtualIsInline() const
+bool JSEventListener::virtualIsInline() const
 {
     return m_isInline;
-}
-
-// -------------------------------------------------------------------------
-
-JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isInline)
-    : JSAbstractEventListener(isInline)
-    , m_jsFunction(function)
-    , m_globalObject(globalObject)
-{
-    if (!isInline && m_jsFunction)
-        globalObject->jsEventListeners().set(m_jsFunction, this);
-}
-
-inline void JSEventListener::clearJSFunctionInline()
-{
-    if (!isInline() && m_jsFunction && m_globalObject)
-        m_globalObject->jsEventListeners().remove(m_jsFunction);
-    
-    m_jsFunction = 0;
-    m_globalObject = 0;
-}
-
-JSEventListener::~JSEventListener()
-{
-    clearJSFunctionInline();
-}
-
-JSObject* JSEventListener::jsFunction() const
-{
-    return m_jsFunction;
-}
-
-void JSEventListener::clearJSFunction()
-{
-    clearJSFunctionInline();
-}
-
-JSDOMGlobalObject* JSEventListener::globalObject() const
-{
-    return m_globalObject;
-}
-
-void JSEventListener::markJSFunction()
-{
-    if (m_jsFunction && !m_jsFunction->marked())
-        m_jsFunction->mark();
-    if (m_globalObject && !m_globalObject->marked())
-        m_globalObject->mark();
 }
 
 } // namespace WebCore

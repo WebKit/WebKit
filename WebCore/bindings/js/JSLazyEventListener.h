@@ -28,7 +28,7 @@ namespace WebCore {
     class Attribute;
     class Node;
 
-    class JSLazyEventListener : public JSAbstractEventListener {
+    class JSLazyEventListener : public JSEventListener {
     public:
         static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
         {
@@ -36,19 +36,13 @@ namespace WebCore {
         }
         virtual ~JSLazyEventListener();
 
-        void clearGlobalObject() { m_globalObject = 0; }
-
     private:
         JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
 
         virtual JSC::JSObject* jsFunction() const;
-        virtual JSDOMGlobalObject* globalObject() const;
         virtual bool wasCreatedFromMarkup() const { return true; }
 
         void parseCode() const;
-
-        mutable JSC::ProtectedPtr<JSC::JSObject> m_jsFunction;
-        JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
 
         mutable String m_functionName;
         mutable String m_eventParameterName;

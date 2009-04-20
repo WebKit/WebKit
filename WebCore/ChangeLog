@@ -1,3 +1,38 @@
+2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Last patch for https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        Converted "lazy" event listeners to be unprotected, just like all the others.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::jsFunction):
+        (WebCore::JSEventListener::markJSFunction):
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::virtualIsInline):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::isInline): Merged JSAbstractEventListener
+        into JSEventListener. Now that the only difference between JSEventListener
+        and JSLazyEventListener is that JSLazyEventListener compiles lazily,
+        there's no need for an abstract base class.
+
+        * bindings/js/JSLazyEventListener.cpp: Converted JSLazyEventListener to
+        inherit from JSEventListener and match its un-GC-protected behavior.
+        (WebCore::JSLazyEventListener::JSLazyEventListener): ditto
+        (WebCore::JSLazyEventListener::parseCode): ditto
+        (WebCore::createInlineEventListener): When creating a lazy event listener,
+        ensure that the related node has a JS wrapper to mark the listener. Since
+        the parser makes these listeners, it's possible that no JS reference has
+        been made to the node yet.
+        * bindings/js/JSLazyEventListener.h: ditto
+
+        * dom/EventListener.h:
+        (WebCore::EventListener::clearJSFunction): Removed an usused function.
+
 2009-04-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

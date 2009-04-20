@@ -39,7 +39,6 @@ namespace WebCore {
 
 #if USE(JSC)
         virtual JSC::JSObject* jsFunction() const { return 0; }
-        virtual void clearJSFunction() { }
         virtual void markJSFunction() { }
 #endif
 

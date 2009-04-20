@@ -28,25 +28,7 @@ namespace WebCore {
 
     class JSDOMGlobalObject;
 
-    class JSAbstractEventListener : public EventListener {
-    public:
-        bool isInline() const { return m_isInline; }
-
-    protected:
-        JSAbstractEventListener(bool isInline)
-            : m_isInline(isInline)
-        {
-        }
-
-    private:
-        virtual void handleEvent(Event*, bool isWindowEvent);
-        virtual JSDOMGlobalObject* globalObject() const = 0;
-        virtual bool virtualIsInline() const;
-
-        bool m_isInline;
-    };
-
-    class JSEventListener : public JSAbstractEventListener {
+    class JSEventListener : public EventListener {
     public:
         static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
         {
@@ -56,19 +38,21 @@ namespace WebCore {
 
         void clearGlobalObject() { m_globalObject = 0; }
 
+        bool isInline() const { return m_isInline; }
         virtual JSC::JSObject* jsFunction() const;
-        virtual void clearJSFunction();
-        virtual void markJSFunction();
 
     private:
-        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
-
-        virtual JSDOMGlobalObject* globalObject() const;
-
+        virtual void markJSFunction();
+        virtual void handleEvent(Event*, bool isWindowEvent);
+        virtual bool virtualIsInline() const;
         void clearJSFunctionInline();
 
-        JSC::JSObject* m_jsFunction;
+    protected:
+        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
+
+        mutable JSC::JSObject* m_jsFunction;
         JSDOMGlobalObject* m_globalObject;
+        bool m_isInline;
     };
 
 } // namespace WebCore
