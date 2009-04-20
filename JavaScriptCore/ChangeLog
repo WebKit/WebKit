@@ -1,3 +1,9 @@
+2009-04-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Build fix for Qt port (after r42646). Not reviewed.
+
+        * wtf/unicode/qt4/UnicodeQt4.h: Added U16_PREV.
+
 2009-04-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
