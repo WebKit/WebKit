@@ -341,14 +341,13 @@ FloatQuad RenderBox::absoluteContentQuad() const
     return localToAbsoluteQuad(FloatRect(rect));
 }
 
-
-IntRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const
+IntRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     IntRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
 
-    FloatQuad absOutlineQuad = localToAbsoluteQuad(FloatRect(box));
-    box = absOutlineQuad.enclosingBoundingBox();
+    FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
+    box = containerRelativeQuad.enclosingBoundingBox();
 
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308

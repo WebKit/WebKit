@@ -1,3 +1,20 @@
+2009-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=25282
+        
+        outlineBoundsForRepaint() should compute a quad relative to the
+        repaintContainer. This fixes the repaint issues originally fixed in
+        https://bugs.webkit.org/show_bug.cgi?id=12885 for elements in compositing layers.
+        Failure was only apparent when building with ACCELERATED_COMPOSITING enabled.
+
+        Tests: compositing/repaint/content-into-overflow.html
+               compositing/repaint/overflow-into-content.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+
 2009-04-20  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Tim Hatcher.
