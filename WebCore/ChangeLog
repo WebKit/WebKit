@@ -1,3 +1,14 @@
+2009-04-20  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe
+
+        Clean builds are broken on case-sensitive filesystems.  Let's fix, shall we?
+
+        * platform/graphics/SimpleFontData.cpp: Remove "String.h" include.  Ojan probably intended to include
+          "PlatformString.h" which was unnecessary because it is pulled in through other headers.  This wasn't a 
+          build failure on case-insensitive file systems because those systems would find the system <string.h>, averting
+          the warning.
+
 2009-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
