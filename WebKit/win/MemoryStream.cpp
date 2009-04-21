@@ -253,7 +253,7 @@ HRESULT STDMETHODCALLTYPE MemoryStream::Stat(
 HRESULT STDMETHODCALLTYPE MemoryStream::Clone( 
     /* [out] */ IStream** ppstm)
 {
-    MemoryStream::createInstance(m_buffer).releaseRef().copyRefTo(ppstm);
+    MemoryStream::createInstance(m_buffer).copyRefTo(ppstm);
     // FIXME: MSDN says we should be returning STG_E_INSUFFICIENT_MEMORY instead of E_OUTOFMEMORY here.
     return (*ppstm) ? S_OK : E_OUTOFMEMORY;
 }

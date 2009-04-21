@@ -1,5 +1,13 @@
 2009-04-20  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * MemoryStream.cpp:
+        (MemoryStream::Clone): Fix typo introduced when implementing
+        suggestions from patch review.
+
+2009-04-20  Adam Roben  <aroben@apple.com>
+
         First part of <rdar://6395825> It takes over 20 sec to launch Safari
         with 500KB history file
 
