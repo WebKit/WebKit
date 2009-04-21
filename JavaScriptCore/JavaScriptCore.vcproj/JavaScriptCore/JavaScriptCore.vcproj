@@ -57,7 +57,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+				AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="JavaScriptCore$(WebKitDLLConfigSuffix).def"
 			/>
@@ -130,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+				AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="JavaScriptCore$(WebKitDLLConfigSuffix).def"
 			/>
@@ -202,7 +202,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+				AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="JavaScriptCore$(WebKitDLLConfigSuffix).def"
 			/>

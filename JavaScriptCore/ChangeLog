@@ -1,3 +1,12 @@
+2009-04-21  Adam Roben  <aroben@apple.com>
+
+        Fix JavaScriptCore build on VC++ Express
+
+        Reviewed by Steve Falkenburg and Sam Weinig.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Link
+        explicitly against gdi32.lib and oleaut32.lib.
+
 2009-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.
