@@ -1,3 +1,22 @@
+2009-04-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19644
+        Text copied with Select All pastes with a indent but shouldn't
+        <rdar://problem/6102483> 
+        Pasting the content of an HTML message in Mail causes addition nested <div> elements to be added
+
+        * editing/pasteboard/19644-1-expected.txt: Added.
+        * editing/pasteboard/19644-1.html: Added.
+        * editing/pasteboard/19644-2-expected.txt: Added.
+        * editing/pasteboard/19644-2.html: Added.
+        * platform/mac/editing/inserting/insert-3907422-fix-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-015-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-text-015-expected.png:
+        * platform/mac/editing/pasteboard/paste-text-015-expected.txt:
+        * platform/mac/editing/style/font-family-with-space-expected.txt:
+
 2009-04-21  Dave Moore <davemoore@google.com> and Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

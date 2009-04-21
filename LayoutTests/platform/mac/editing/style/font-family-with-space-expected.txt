@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 245x15
+      RenderInline {SPAN} at (0,0) size 490x15
         RenderText {#text} at (0,0) size 245x15
           text run at (0,0) width 245: "This text should be Times New Roman bold."
-      RenderInline {SPAN} at (0,0) size 245x15
         RenderInline {SPAN} at (0,0) size 245x15
-          RenderText {#text} at (245,0) size 245x15
-            text run at (245,0) width 245: "This text should be Times New Roman bold."
+          RenderInline {SPAN} at (0,0) size 245x15
+            RenderText {#text} at (245,0) size 245x15
+              text run at (245,0) width 245: "This text should be Times New Roman bold."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-caret: position 41 of child 0 {#text} of child 1 {SPAN} of child 0 {SPAN} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 41 of child 0 {#text} of child 0 {SPAN} of child 1 {SPAN} of child 0 {SPAN} of child 0 {BODY} of child 0 {HTML} of document
