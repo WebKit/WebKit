@@ -1,5 +1,19 @@
 2009-04-21  Adam Roben  <aroben@apple.com>
 
+        Fix running run-safari and run-webkit-tests from the paths recommended
+        on webkit.org
+
+        Reviewed by Steve Falkenburg and Sam Weinig.
+
+        * Scripts/run-webkit-nightly.cmd: Moved quotes from variable
+        definitions to variable uses. Otherwise cmd.exe can get confused about
+        the quoting.
+        * Scripts/run-webkit-tests: Changed to use an absolute path to
+        execAppWithEnv so that run-webkit-tests will work when run from
+        outside the source tree.
+
+2009-04-21  Adam Roben  <aroben@apple.com>
+
         Rename JavaScriptCore_debug.dll to JavaScriptCore.dll in the Debug
         configuration
 

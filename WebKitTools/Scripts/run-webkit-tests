@@ -1208,8 +1208,8 @@ sub launchWithCurrentEnv(@)
     my $allEnvVars = $environmentDumper->Dump();
     unshift @args, "\"$allEnvVars\"";
 
-    my $relativeScriptsPath = relativeScriptsDir();
-    unshift @args, "$relativeScriptsPath/execAppWithEnv";
+    my $execScript = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts execAppWithEnv));
+    unshift @args, $execScript;
     return @args;
 }
 
