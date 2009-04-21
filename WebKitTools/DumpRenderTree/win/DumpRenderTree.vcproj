@@ -55,7 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -130,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -204,7 +204,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"

@@ -1,3 +1,22 @@
+2009-04-21  Adam Roben  <aroben@apple.com>
+
+        Rename JavaScriptCore_debug.dll to JavaScriptCore.dll in the Debug
+        configuration
+
+        This matches the naming scheme for WebKit.dll, and will be necessary
+        once Safari links against JavaScriptCore.dll. This change also causes
+        run-safari not to fail (because the launcher printed by FindSafari was
+        always looking for JavaScriptCore.dll, never
+        JavaScriptCore_debug.dll).
+
+        Part of Bug 25305: can't run safari or drt on windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25305>
+
+        Reviewed by Steve Falkenburg and Sam Weinig.
+
+        * WebKit.vcproj/WebKit.vcproj: Use $(WebKitDLLConfigSuffix) for naming
+        JavaScriptCore.{dll,lib}.
+
 2009-04-20  Adam Roben  <aroben@apple.com>
 
         Build fix

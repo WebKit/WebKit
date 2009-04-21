@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -213,7 +213,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
