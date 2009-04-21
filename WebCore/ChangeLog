@@ -1,3 +1,43 @@
+2009-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Change pending unload and beforeunload counts to store the listeners
+        in a single data structure that can be quickly iterated for dispatch.
+
+        <rdar://problem/6383352&6383379&6383940>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.base.exp: Change what symbols are exported.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Remove count updating code
+        and move an if inside a block already checking m_frame->document().
+        * page/Chrome.cpp: Remove disableSuddenTermination/enableSuddenTermination.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h: Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::pendingUnloadEventListenerMap): Create a static map.
+        (WebCore::pendingBeforeUnloadEventListenerMap): Ditto.
+        (WebCore::addPendingEventListener): Add the event listener to the map.
+        (WebCore::removePendingEventListener): Remove the event listener from the map.
+        (WebCore::removePendingEventListeners): Remove all listeners for the window.
+        (WebCore::dispatchWindowEventToListeners): Dispatch the event to the given listeners.
+        (WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents): Send the beforeunload event.
+        (WebCore::DOMWindow::pendingUnloadEventListeners): Return a count of pending listeners.
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents): Send the unload event.
+        (WebCore::DOMWindow::~DOMWindow): Remove the window from both event listener maps.
+        (WebCore::DOMWindow::addEventListener): Call addPendingEventListener when needed.
+        (WebCore::DOMWindow::removeEventListener): Call removePendingEventListener when needed.
+        (WebCore::DOMWindow::removeAllEventListeners): Call removePendingEventListeners.
+        (WebCore::DOMWindow::removeInlineEventListenerForType): Call removePendingEventListener when needed.
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::frame): Changed to be const.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Remove count tracking code.
+        * page/EventHandler.h: Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Ditto.
+        * page/Page.h: Ditto.
+
 2009-04-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

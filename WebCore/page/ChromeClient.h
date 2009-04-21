@@ -144,9 +144,6 @@ namespace WebCore {
             
         virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
         virtual String generateReplacementFile(const String& path);
-        
-        virtual void enableSuddenTermination();
-        virtual void disableSuddenTermination();
 
         virtual bool paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
                                           ScrollbarControlState, ScrollbarPart pressedPart, bool vertical,

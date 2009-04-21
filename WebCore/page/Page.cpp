@@ -127,8 +127,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_userStyleSheetModificationTime(0)
     , m_group(0)
     , m_debugger(0)
-    , m_pendingUnloadEventCount(0)
-    , m_pendingBeforeUnloadEventCount(0)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
 {
@@ -561,46 +559,6 @@ void Page::setSessionStorage(PassRefPtr<SessionStorage> newStorage)
     m_sessionStorage = newStorage;
 }
 #endif
-    
-unsigned Page::pendingUnloadEventCount()
-{
-    return m_pendingUnloadEventCount;
-}
-    
-void Page::changePendingUnloadEventCount(int delta) 
-{
-    if (!delta)
-        return;
-    ASSERT( (delta + (int)m_pendingUnloadEventCount) >= 0 );
-    
-    if (m_pendingUnloadEventCount == 0)
-        m_chrome->disableSuddenTermination();
-    else if ((m_pendingUnloadEventCount + delta) == 0)
-        m_chrome->enableSuddenTermination();
-    
-    m_pendingUnloadEventCount += delta;
-    return; 
-}
-    
-unsigned Page::pendingBeforeUnloadEventCount()
-{
-    return m_pendingBeforeUnloadEventCount;
-}
-    
-void Page::changePendingBeforeUnloadEventCount(int delta) 
-{
-    if (!delta)
-        return;
-    ASSERT( (delta + (int)m_pendingBeforeUnloadEventCount) >= 0 );
-    
-    if (m_pendingBeforeUnloadEventCount == 0)
-        m_chrome->disableSuddenTermination();
-    else if ((m_pendingBeforeUnloadEventCount + delta) == 0)
-        m_chrome->enableSuddenTermination();
-    
-    m_pendingBeforeUnloadEventCount += delta;
-    return; 
-}
 
 #if ENABLE(WML)
 WMLPageState* Page::wmlPageState()

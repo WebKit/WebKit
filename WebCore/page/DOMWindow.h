@@ -73,7 +73,7 @@ namespace WebCore {
         static PassRefPtr<DOMWindow> create(Frame* frame) { return adoptRef(new DOMWindow(frame)); }
         virtual ~DOMWindow();
 
-        Frame* frame() { return m_frame; }
+        Frame* frame() const { return m_frame; }
         void disconnectFrame();
 
         void clear();
@@ -83,6 +83,11 @@ namespace WebCore {
 
         void setURL(const KURL& url) { m_url = url; }
         KURL url() const { return m_url; }
+
+        unsigned pendingUnloadEventListeners() const;
+
+        static bool dispatchAllPendingBeforeUnloadEvents();
+        static void dispatchAllPendingUnloadEvents();
 
         static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges);
         static void parseModalDialogFeatures(const String& featuresArg, HashMap<String, String>& map);
@@ -202,7 +207,7 @@ namespace WebCore {
         void resizeBy(float x, float y) const;
         void resizeTo(float width, float height) const;
 
-        void handleEvent(Event*, bool useCapture);
+        void handleEvent(Event*, bool useCapture, RegisteredEventListenerVector* = 0);
 
         // Used for standard DOM addEventListener / removeEventListener APIs.
         void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
@@ -300,11 +305,6 @@ namespace WebCore {
 
     private:
         DOMWindow(Frame*);
-
-        void addPendingFrameUnloadEventCount();
-        void removePendingFrameUnloadEventCount();
-        void addPendingFrameBeforeUnloadEventCount();
-        void removePendingFrameBeforeUnloadEventCount();
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;

@@ -117,9 +117,6 @@ namespace WebCore {
 
         void print(Frame*);
 
-        void enableSuddenTermination();
-        void disableSuddenTermination();
-
         void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);

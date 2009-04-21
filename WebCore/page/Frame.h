@@ -193,7 +193,7 @@ public:
 public:
     void focusWindow();
     void unfocusWindow();
-    bool shouldClose();
+    bool shouldClose(RegisteredEventListenerVector* alternateEventListeners = 0);
     void scheduleClose();
 
     void setJSStatusBarText(const String&);

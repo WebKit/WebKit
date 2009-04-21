@@ -347,11 +347,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
-#ifndef NDEBUG
-        // In Release and Production we skip a lot of object teardown during quit to speed up shutdown time.  This breaks
-        // our RefCount Leak tracking, and so for Debug we will use the full document teardown.
-        [NSNumber numberWithBool:YES],  WebKitEnableFullDocumentTeardownPreferenceKey,
-#endif
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -1122,16 +1117,6 @@ static NSString *classIBCreatorID = nil;
 - (void)willAddToWebView
 {
     ++_private->numWebViews;
-}
-
-- (void)setFullDocumentTeardownEnabled:(BOOL)fullDocumentTeardownEnabled
-{
-    [self _setBoolValue:fullDocumentTeardownEnabled forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
-}
-
-- (BOOL)fullDocumentTeardownEnabled
-{
-    return [self _boolValueForKey:WebKitEnableFullDocumentTeardownPreferenceKey];
 }
 @end
 

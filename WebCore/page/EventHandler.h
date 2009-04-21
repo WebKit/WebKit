@@ -156,15 +156,6 @@ public:
 
     void capsLockStateMayHaveChanged();
     
-    unsigned pendingFrameUnloadEventCount();
-    void addPendingFrameUnloadEventCount();
-    void removePendingFrameUnloadEventCount();
-    void clearPendingFrameUnloadEventCount();
-    unsigned pendingFrameBeforeUnloadEventCount();
-    void addPendingFrameBeforeUnloadEventCount();
-    void removePendingFrameBeforeUnloadEventCount();
-    void clearPendingFrameBeforeUnloadEventCount();
-
     void sendResizeEvent();
     void sendScrollEvent();
     
@@ -341,9 +332,6 @@ private:
     IntPoint m_mouseDownPos; // in our view's coords
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
-    
-    unsigned m_pendingFrameUnloadEventCount;
-    unsigned m_pendingFrameBeforeUnloadEventCount;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;

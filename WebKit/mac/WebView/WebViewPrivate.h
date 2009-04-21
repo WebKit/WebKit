@@ -231,6 +231,13 @@ Could be worth adding to the API.
 
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName;
 
+/*!
+    @method canCloseAllWebViews
+    @abstract Checks if all the open WebViews can be closed (by dispatching the beforeUnload event to the pages).
+    @result YES if all the WebViews can be closed.
+*/
++ (BOOL)canCloseAllWebViews;
+
 // May well become public
 - (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;

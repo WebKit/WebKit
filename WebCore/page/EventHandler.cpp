@@ -139,8 +139,6 @@ EventHandler::EventHandler(Frame* frame)
     , m_capturingMouseEventsNode(0)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
-    , m_pendingFrameUnloadEventCount(0)
-    , m_pendingFrameBeforeUnloadEventCount(0)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
@@ -2337,33 +2335,6 @@ void EventHandler::capsLockStateMayHaveChanged()
     }
 }
 
-unsigned EventHandler::pendingFrameUnloadEventCount()
-{
-    return m_pendingFrameUnloadEventCount;
-}
-
-void EventHandler::addPendingFrameUnloadEventCount() 
-{
-    ++m_pendingFrameUnloadEventCount;
-    if (Page* page = m_frame->page())
-        page->changePendingUnloadEventCount(1);
-}
-    
-void EventHandler::removePendingFrameUnloadEventCount() 
-{
-    ASSERT(m_pendingFrameUnloadEventCount>= 1);
-    --m_pendingFrameUnloadEventCount;
-    if (Page* page = m_frame->page())
-        page->changePendingUnloadEventCount(-1);
-}
-    
-void EventHandler::clearPendingFrameUnloadEventCount() 
-{
-   if (Page* page = m_frame->page())
-        page->changePendingUnloadEventCount(-(int)m_pendingFrameUnloadEventCount);
-    m_pendingFrameUnloadEventCount = 0;
-}
-
 void EventHandler::sendResizeEvent()
 {
     m_frame->document()->dispatchWindowEvent(eventNames().resizeEvent, false, false);
@@ -2376,33 +2347,6 @@ void EventHandler::sendScrollEvent()
         return;
     v->setWasScrolledByUser(true);
     m_frame->document()->dispatchEvent(eventNames().scrollEvent, true, false);
-}
-
-unsigned EventHandler::pendingFrameBeforeUnloadEventCount()
-{
-    return m_pendingFrameBeforeUnloadEventCount;
-}
-
-void EventHandler::addPendingFrameBeforeUnloadEventCount() 
-{
-    ++m_pendingFrameBeforeUnloadEventCount;
-    if (Page* page = m_frame->page())
-        page->changePendingBeforeUnloadEventCount(1);
-}
-    
-void EventHandler::removePendingFrameBeforeUnloadEventCount() 
-{
-    ASSERT(m_pendingFrameBeforeUnloadEventCount >= 1);
-    --m_pendingFrameBeforeUnloadEventCount;
-    if (Page* page = m_frame->page())
-        page->changePendingBeforeUnloadEventCount(-1);
-}
-
-void EventHandler::clearPendingFrameBeforeUnloadEventCount() 
-{
-    if (Page* page = m_frame->page())
-        page->changePendingBeforeUnloadEventCount(-(int)m_pendingFrameBeforeUnloadEventCount);
-    m_pendingFrameBeforeUnloadEventCount = 0;
 }
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, Scrollbar* scrollbar)

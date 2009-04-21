@@ -1615,7 +1615,7 @@ void Frame::unfocusWindow()
         page()->chrome()->unfocus();
 }
 
-bool Frame::shouldClose()
+bool Frame::shouldClose(RegisteredEventListenerVector* alternateEventListeners)
 {
     Chrome* chrome = page() ? page()->chrome() : 0;
     if (!chrome || !chrome->canRunBeforeUnloadConfirmPanel())
@@ -1629,7 +1629,7 @@ bool Frame::shouldClose()
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
     beforeUnloadEvent->setTarget(doc);
     if (m_domWindow)
-        m_domWindow->handleEvent(beforeUnloadEvent.get(), false);
+        m_domWindow->handleEvent(beforeUnloadEvent.get(), false, alternateEventListeners);
 
     if (!beforeUnloadEvent->defaultPrevented())
         doc->defaultEventHandler(beforeUnloadEvent.get());

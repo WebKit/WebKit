@@ -1,3 +1,24 @@
+2009-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Change how sudden termination works with WebView teardown.
+
+        <rdar://problem/6383352&6383379&6383940>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h: Remove disableSuddenTermination/enableSuddenTermination.
+        * WebCoreSupport/WebChromeClient.mm: Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _pendingFrameUnloadEventCount]): Ask the DOMWindow.
+        * WebView/WebView.mm:
+        (+[WebView canCloseAllWebViews]): Call DOMWindow::dispatchAllPendingBeforeUnloadEvents.
+        (+[WebView closeAllWebViews]): Call DOMWindow::dispatchAllPendingUnloadEvents and
+        call close on all the WebViews.
+        (-[WebView _closeWithFastTeardown]): Remove code for unload event dispatch.
+        (-[WebView _close]): Correct a comment.
+        (+[WebView _applicationWillTerminate]): Call closeAllWebViews.
+        * WebView/WebViewPrivate.h: Add canCloseAllWebViews and closeAllWebViews.
+
 2009-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.

@@ -67,6 +67,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebViewPrivate.h>
@@ -353,6 +354,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
+    [defaults setBool:YES forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
 
     // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
@@ -385,7 +387,6 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];
-    [preferences setFullDocumentTeardownEnabled:YES];
     [preferences setShouldPrintBackgrounds:YES];
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
@@ -1027,7 +1028,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
-    [preferences setFullDocumentTeardownEnabled:YES];
     [preferences setDeveloperExtrasEnabled:NO];
 
     if (persistentUserStyleSheetLocation) {

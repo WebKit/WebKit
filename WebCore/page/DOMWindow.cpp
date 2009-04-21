@@ -57,6 +57,7 @@
 #include "Screen.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
@@ -103,6 +104,159 @@ private:
     RefPtr<MessageEvent> m_event;
     RefPtr<SecurityOrigin> m_targetOrigin;
 };
+
+typedef HashMap<DOMWindow*, RegisteredEventListenerVector*> DOMWindowRegisteredEventListenerMap;
+
+static DOMWindowRegisteredEventListenerMap& pendingUnloadEventListenerMap()
+{
+    DEFINE_STATIC_LOCAL(DOMWindowRegisteredEventListenerMap, eventListenerMap, ());
+    return eventListenerMap;
+}
+
+static DOMWindowRegisteredEventListenerMap& pendingBeforeUnloadEventListenerMap()
+{
+    DEFINE_STATIC_LOCAL(DOMWindowRegisteredEventListenerMap, eventListenerMap, ());
+    return eventListenerMap;
+}
+
+static bool shouldAddPendingBeforeUnloadListener(DOMWindow* window)
+{
+    ASSERT_ARG(window, window);
+    Frame* frame = window->frame();
+    Page* page = frame->page();
+    return page && frame == page->mainFrame();
+}
+
+static void addPendingEventListener(DOMWindowRegisteredEventListenerMap& map, DOMWindow* window, RegisteredEventListener* listener)
+{
+    ASSERT_ARG(window, window);
+    ASSERT_ARG(listener, listener);
+
+    if (map.isEmpty())
+        disableSuddenTermination();
+
+    pair<DOMWindowRegisteredEventListenerMap::iterator, bool> result = map.add(window, 0);
+    if (result.second)
+        result.first->second = new RegisteredEventListenerVector;
+    result.first->second->append(listener);
+}
+
+static void removePendingEventListener(DOMWindowRegisteredEventListenerMap& map, DOMWindow* window, RegisteredEventListener* listener)
+{
+    ASSERT_ARG(window, window);
+    ASSERT_ARG(listener, listener);
+
+    DOMWindowRegisteredEventListenerMap::iterator it = map.find(window);
+    ASSERT(it != map.end());
+
+    RegisteredEventListenerVector* listeners = it->second;
+    size_t index = listeners->find(listener);
+    ASSERT(index != WTF::notFound);
+    listeners->remove(index);
+
+    if (!listeners->isEmpty())
+        return;
+
+    map.remove(it);
+    delete listeners;
+
+    if (map.isEmpty())
+        enableSuddenTermination();
+}
+
+static void removePendingEventListeners(DOMWindowRegisteredEventListenerMap& map, DOMWindow* window)
+{
+    ASSERT_ARG(window, window);
+
+    RegisteredEventListenerVector* listeners = map.take(window);
+    if (!listeners)
+        return;
+
+    delete listeners;
+
+    if (map.isEmpty())
+        enableSuddenTermination();
+}
+
+bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
+{
+    DOMWindowRegisteredEventListenerMap& map = pendingBeforeUnloadEventListenerMap();
+    if (map.isEmpty())
+        return true;
+
+    static bool alreadyDispatched = false;
+    ASSERT(!alreadyDispatched);
+    if (alreadyDispatched)
+        return true;
+
+    Vector<RefPtr<DOMWindow> > windows;
+    DOMWindowRegisteredEventListenerMap::iterator mapEnd = map.end();
+    for (DOMWindowRegisteredEventListenerMap::iterator it = map.begin(); it != mapEnd; ++it)
+        windows.append(it->first);
+
+    size_t size = windows.size();
+    for (size_t i = 0; i < size; ++i) {
+        DOMWindow* window = windows[i].get();
+        RegisteredEventListenerVector* listeners = map.get(window);
+        if (!listeners)
+            continue;
+
+        RegisteredEventListenerVector listenersCopy = *listeners;
+        Frame* frame = window->frame();
+        if (!frame->shouldClose(&listenersCopy))
+            return false;
+    }
+
+    enableSuddenTermination();
+
+    alreadyDispatched = true;
+
+    return true;
+}
+
+unsigned DOMWindow::pendingUnloadEventListeners() const
+{
+    RegisteredEventListenerVector* listeners = pendingUnloadEventListenerMap().get(const_cast<DOMWindow*>(this));
+    return listeners ? listeners->size() : 0;
+}
+
+void DOMWindow::dispatchAllPendingUnloadEvents()
+{
+    DOMWindowRegisteredEventListenerMap& map = pendingUnloadEventListenerMap();
+    if (map.isEmpty())
+        return;
+
+    static bool alreadyDispatched = false;
+    ASSERT(!alreadyDispatched);
+    if (alreadyDispatched)
+        return;
+
+    Vector<RefPtr<DOMWindow> > windows;
+    DOMWindowRegisteredEventListenerMap::iterator mapEnd = map.end();
+    for (DOMWindowRegisteredEventListenerMap::iterator it = map.begin(); it != mapEnd; ++it)
+        windows.append(it->first);
+
+    size_t size = windows.size();
+    for (size_t i = 0; i < size; ++i) {
+        DOMWindow* window = windows[i].get();
+        RegisteredEventListenerVector* listeners = map.get(window);
+        if (!listeners)
+            continue;
+
+        RegisteredEventListenerVector listenersCopy = *listeners;
+        Frame* frame = window->frame();
+
+        RefPtr<Event> unloadEvent = Event::create(eventNames().unloadEvent, false, false);
+        unloadEvent->setTarget(frame->document());
+
+        window->handleEvent(unloadEvent.get(), true, &listenersCopy);
+        window->handleEvent(unloadEvent.get(), false, &listenersCopy);
+    }
+
+    enableSuddenTermination();
+
+    alreadyDispatched = true;
+}
 
 // This function:
 // 1) Validates the pending changes are not changing to NaN
@@ -209,6 +363,9 @@ DOMWindow::~DOMWindow()
 {
     if (m_frame)
         m_frame->clearFormerDOMWindow(this);
+
+    removePendingEventListeners(pendingUnloadEventListenerMap(), this);
+    removePendingEventListeners(pendingBeforeUnloadEventListenerMap(), this);
 }
 
 void DOMWindow::disconnectFrame()
@@ -1004,13 +1161,14 @@ void DOMWindow::resizeTo(float width, float height) const
     page->chrome()->setWindowRect(fr);
 }
 
-void DOMWindow::handleEvent(Event* event, bool useCapture)
+void DOMWindow::handleEvent(Event* event, bool useCapture, RegisteredEventListenerVector* alternateListeners)
 {
-    if (m_eventListeners.isEmpty())
+    RegisteredEventListenerVector& listeners = (alternateListeners ? *alternateListeners : m_eventListeners);
+    if (listeners.isEmpty())
         return;
-        
+
     // If any HTML event listeners are registered on the window, dispatch them here.
-    RegisteredEventListenerVector listenersCopy = m_eventListeners;
+    RegisteredEventListenerVector listenersCopy = listeners;
     size_t size = listenersCopy.size();
     for (size_t i = 0; i < size; ++i) {
         RegisteredEventListener& r = *listenersCopy[i];
@@ -1021,16 +1179,19 @@ void DOMWindow::handleEvent(Event* event, bool useCapture)
 
 void DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    if (eventType == eventNames().unloadEvent)
-        addPendingFrameUnloadEventCount();
-    else if (eventType == eventNames().beforeunloadEvent)
-        addPendingFrameBeforeUnloadEventCount();
     // Remove existing identical listener set with identical arguments.
     // The DOM 2 spec says that "duplicate instances are discarded" in this case.
     removeEventListener(eventType, listener.get(), useCapture);
     if (Document* document = this->document())
         document->addListenerTypeIfNeeded(eventType);
-    m_eventListeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
+
+    RefPtr<RegisteredEventListener> registeredListener = RegisteredEventListener::create(eventType, listener, useCapture);
+    m_eventListeners.append(registeredListener);
+
+    if (eventType == eventNames().unloadEvent)
+        addPendingEventListener(pendingUnloadEventListenerMap(), this, registeredListener.get());
+    else if (eventType == eventNames().beforeunloadEvent && shouldAddPendingBeforeUnloadListener(this))
+        addPendingEventListener(pendingBeforeUnloadEventListenerMap(), this, registeredListener.get());
 }
 
 void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
@@ -1040,9 +1201,9 @@ void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         RegisteredEventListener& r = *m_eventListeners[i];
         if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
             if (eventType == eventNames().unloadEvent)
-                removePendingFrameUnloadEventCount();
+                removePendingEventListener(pendingUnloadEventListenerMap(), this, &r);
             else if (eventType == eventNames().beforeunloadEvent)
-                removePendingFrameBeforeUnloadEventCount();
+                removePendingEventListener(pendingBeforeUnloadEventListenerMap(), this, &r);
             r.setRemoved(true);
             m_eventListeners.remove(i);
             return;
@@ -1056,6 +1217,9 @@ void DOMWindow::removeAllEventListeners()
     for (size_t i = 0; i < size; ++i)
         m_eventListeners[i]->setRemoved(true);
     m_eventListeners.clear();
+
+    removePendingEventListeners(pendingUnloadEventListenerMap(), this);
+    removePendingEventListeners(pendingBeforeUnloadEventListenerMap(), this);
 }
 
 bool DOMWindow::hasEventListener(const AtomicString& eventType)
@@ -1082,9 +1246,9 @@ void DOMWindow::clearAttributeEventListener(const AtomicString& eventType)
         RegisteredEventListener& r = *m_eventListeners[i];
         if (r.eventType() == eventType && r.listener()->isAttribute()) {
             if (eventType == eventNames().unloadEvent)
-                removePendingFrameUnloadEventCount();
+                removePendingEventListener(pendingUnloadEventListenerMap(), this, &r);
             else if (eventType == eventNames().beforeunloadEvent)
-                removePendingFrameBeforeUnloadEventCount();
+                removePendingEventListener(pendingBeforeUnloadEventListenerMap(), this, &r);
             r.setRemoved(true);
             m_eventListeners.remove(i);
             return;
@@ -1101,30 +1265,6 @@ EventListener* DOMWindow::getAttributeEventListener(const AtomicString& eventTyp
             return r.listener();
     }
     return 0;
-}
-
-void DOMWindow::addPendingFrameUnloadEventCount() 
-{
-    if (m_frame)
-         m_frame->eventHandler()->addPendingFrameUnloadEventCount();
-}
-
-void DOMWindow::removePendingFrameUnloadEventCount() 
-{
-    if (m_frame)
-        m_frame->eventHandler()->removePendingFrameUnloadEventCount();
-}
-
-void DOMWindow::addPendingFrameBeforeUnloadEventCount() 
-{
-    if (m_frame)
-         m_frame->eventHandler()->addPendingFrameBeforeUnloadEventCount();
-}
-
-void DOMWindow::removePendingFrameBeforeUnloadEventCount() 
-{
-    if (m_frame)
-        m_frame->eventHandler()->removePendingFrameBeforeUnloadEventCount();
 }
 
 EventListener* DOMWindow::onabort() const

@@ -1029,7 +1029,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (unsigned)_pendingFrameUnloadEventCount
 {
-    return _private->coreFrame->eventHandler()->pendingFrameUnloadEventCount();
+    return _private->coreFrame->domWindow()->pendingUnloadEventListeners();
 }
 
 - (WebIconFetcher *)fetchApplicationIcon:(id)target

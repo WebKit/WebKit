@@ -1,3 +1,14 @@
+2009-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Stop using the fullDocumentTeardownEnabled WebPreference methods.
+        Just set the WebKitEnableFullDocumentTeardownPreferenceKey default.
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2009-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Adam Roben.

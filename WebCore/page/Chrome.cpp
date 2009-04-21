@@ -379,16 +379,6 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
-void Chrome::disableSuddenTermination()
-{
-    m_client->disableSuddenTermination();
-}
-
-void Chrome::enableSuddenTermination()
-{
-    m_client->enableSuddenTermination();
-}
-
 void Chrome::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     // Defer loads in case the client method runs a new event loop that would 
@@ -433,14 +423,6 @@ String ChromeClient::generateReplacementFile(const String&)
 {
     ASSERT_NOT_REACHED();
     return String(); 
-}
-
-void ChromeClient::disableSuddenTermination()
-{
-}
-
-void ChromeClient::enableSuddenTermination()
-{
 }
 
 bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 

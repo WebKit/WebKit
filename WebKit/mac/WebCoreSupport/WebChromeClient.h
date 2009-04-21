@@ -131,8 +131,6 @@ public:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WebCore::String& path, WebCore::String &generatedFilename);
     virtual WebCore::String generateReplacementFile(const WebCore::String& path);
 
-    virtual void enableSuddenTermination();
-    virtual void disableSuddenTermination();
     virtual void formStateDidChange(const WebCore::Node*) { }
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -141,8 +141,4 @@ extern NSString *WebPreferencesRemovedNotification;
 // For WebView's use only.
 - (void)willAddToWebView;
 - (void)didRemoveFromWebView;
-
-// Force document tear down at application quit
-- (void)setFullDocumentTeardownEnabled:(BOOL)fullDocumentTeardownEnabled;
-- (BOOL)fullDocumentTeardownEnabled;
 @end

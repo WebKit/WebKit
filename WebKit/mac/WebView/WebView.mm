@@ -1030,6 +1030,21 @@ static bool runningTigerMail()
     WebCoreSetAlwaysUsesComplexTextCodePath(f);
 }
 
++ (BOOL)canCloseAllWebViews
+{
+    return DOMWindow::dispatchAllPendingBeforeUnloadEvents();
+}
+
++ (void)closeAllWebViews
+{
+    DOMWindow::dispatchAllPendingUnloadEvents();
+
+    // This will close the WebViews in a random order. Change this if close order is important.
+    NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
+    while (WebView *webView = [enumerator nextObject])
+        [webView close];
+}
+
 + (BOOL)canShowFile:(NSString *)path
 {
     return [[self class] canShowMIMEType:[WebView _MIMETypeForFile:path]];
@@ -1070,16 +1085,28 @@ static bool runningTigerMail()
     WTF::RefCountedLeakCounter::suppressMessages("At least one WebView was closed with fast teardown.");
 #endif
 
-    // Dispatch unload events.
-    // FIXME: Shouldn't have to use a RefPtr here -- keeping the frame alive while stopping it
-    // should be WebCore's responsibility -- but we do as of the time this comment was written.
-    RefPtr<Frame> mainFrame = core([self mainFrame]);
-    if (mainFrame && mainFrame->page() && mainFrame->page()->pendingUnloadEventCount())
-        mainFrame->loader()->stopLoading(true);
-
     _private->closed = YES;
 
     [self _closePluginDatabases];
+}
+
+static bool fastDocumentTeardownEnabled()
+{
+#ifdef NDEBUG
+    static bool enabled = ![[NSUserDefaults standardUserDefaults] boolForKey:WebKitEnableFullDocumentTeardownPreferenceKey];
+#else
+    static bool initialized = false;
+    static bool enabled = false;
+    if (!initialized) {
+        // This allows debug builds to default to not have fast teardown, so leak checking still works.
+        // But still allow the WebKitEnableFullDocumentTeardown default to override it if present.
+        NSNumber *setting = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitEnableFullDocumentTeardownPreferenceKey];
+        if (setting)
+            enabled = ![setting boolValue];
+        initialized = true;
+    }
+#endif
+    return enabled;
 }
 
 // _close is here only for backward compatibility; clients and subclasses should use
@@ -1092,14 +1119,10 @@ static bool runningTigerMail()
 #ifndef NDEBUG
     WTF::RefCountedLeakCounter::cancelMessageSuppression(webViewIsOpen);
 #endif
-    
-    WebPreferences *preferences = _private->preferences;
-    BOOL fullDocumentTeardown = [preferences fullDocumentTeardownEnabled];
-     
-    // To quit the apps fast we skip document teardown.  Two exceptions: 
-    //    1) plugins need to be destroyed and unloaded
-    //    2) unload events need to be called
-    if (applicationIsTerminating && !fullDocumentTeardown) {
+
+    // To quit the apps fast we skip document teardown, except plugins
+    // need to be destroyed and unloaded.
+    if (applicationIsTerminating && fastDocumentTeardownEnabled()) {
         [self _closeWithFastTeardown];
         return;
     }
@@ -1146,6 +1169,7 @@ static bool runningTigerMail()
 
     [WebPreferences _removeReferenceForIdentifier:[self preferencesIdentifier]];
 
+    WebPreferences *preferences = _private->preferences;
     _private->preferences = nil;
     [preferences didRemoveFromWebView];
     [preferences release];
@@ -2290,6 +2314,10 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 + (void)_applicationWillTerminate
 {   
     applicationIsTerminating = YES;
+
+    if (fastDocumentTeardownEnabled())
+        [self closeAllWebViews];
+
     if (!pluginDatabaseClientCount)
         [WebPluginDatabase closeSharedDatabase];
 
