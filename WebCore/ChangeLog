@@ -1,5 +1,30 @@
 2009-04-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Approved by Mark Rowe, Cameron Zwarich, Oliver Hunt, and Ojan Vafai.
+        
+        Used svn merge to roll out revisions 42678, 42690, 42694, 42697 because
+        they broke the Tiger and Windows buildbots.
+
+        * css/html4.css:
+        * css/themeWin.css:
+        * platform/graphics/SimpleFontData.cpp:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControlMultiLine.cpp:
+        * rendering/RenderTextControlSingleLine.cpp:
+
+2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Adam Roben.
 
         One last loose end, discovered using COLLECT_ON_EVERY_ALLOCATION, for

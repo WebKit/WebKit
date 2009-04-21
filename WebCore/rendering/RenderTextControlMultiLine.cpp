@@ -118,6 +118,10 @@ PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const R
 
     textBlockStyle->setDisplay(BLOCK);
 
+    // We're adding three extra pixels of padding to line textareas up with text fields.
+    textBlockStyle->setPaddingLeft(Length(3, Fixed));
+    textBlockStyle->setPaddingRight(Length(3, Fixed));
+
     return textBlockStyle.release();
 }
 

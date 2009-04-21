@@ -91,11 +91,6 @@ void SimpleFontData::platformInit()
     ReleaseDC(0, dc);
 }
 
-void SimpleFontData::platformCharWidthInit()
-{
-    // charwidths are set in platformInit.
-}
-
 void SimpleFontData::platformDestroy()
 {
     // We don't hash this on Win32, so it's effectively owned by us.

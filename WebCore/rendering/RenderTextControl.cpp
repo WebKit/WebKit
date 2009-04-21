@@ -482,8 +482,10 @@ void RenderTextControl::calcPrefWidths()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else {
-        // Use average character width. Matches IE.
-        float charWidth = style()->font().primaryFont()->avgCharWidth();
+        // Figure out how big a text control needs to be for a given number of characters
+        // (using "0" as the nominal character).
+        const UChar ch = '0';
+        float charWidth = style()->font().floatWidth(TextRun(&ch, 1, false, 0, 0, false, false, false));
         m_maxPrefWidth = preferredContentWidth(charWidth) + m_innerText->renderBox()->paddingLeft() + m_innerText->renderBox()->paddingRight();
     }
 

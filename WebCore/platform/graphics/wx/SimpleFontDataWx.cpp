@@ -57,13 +57,6 @@ void SimpleFontData::platformInit()
     }
 }
 
-void SimpleFontData::platformCharWidthInit()
-{
-    m_avgCharWidth = 0.f;
-    m_maxCharWidth = 0.f;
-    initCharWidths();
-}
-
 void SimpleFontData::platformDestroy()
 {
     delete m_smallCapsFontData;
