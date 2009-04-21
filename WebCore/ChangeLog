@@ -1,3 +1,10 @@
+2009-04-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        !ENABLE(SVG) build fix.
+        
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::eventParameterName):
+
 2009-04-21  Dave Moore  <davemoore@google.com>
 
         Reviewed by Dimitri Glazkov.
