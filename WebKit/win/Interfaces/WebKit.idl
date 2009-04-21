@@ -106,9 +106,6 @@ import "ocidl.idl";
 #include "IWebResource.idl"
 #include "IWebResourceLoadDelegate.idl"
 #include "IWebResourceLoadDelegatePrivate.idl"
-#include "IWebScriptCallFrame.idl"
-#include "IWebScriptDebugListener.idl"
-#include "IWebScriptDebugServer.idl"
 #include "IWebScrollBarDelegatePrivate.idl"
 #include "IWebScrollBarPrivate.idl"
 #include "IWebSecurityOrigin.idl"
@@ -329,11 +326,6 @@ library WebKit
     [uuid(24A53AD5-AA9F-44e6-AA22-2C7C250B661A)]
     coclass WebScrollBar {
         [default] interface IWebScrollBarPrivate;
-    }
-
-    [uuid(715636C4-59E7-4b85-BBC5-B555888787D7)]
-    coclass WebScriptDebugServer {
-        [default] interface IWebScriptDebugServer;
     }
 
     [uuid(AB201196-8DD2-4d45-AEBD-029B6A37AA27)]

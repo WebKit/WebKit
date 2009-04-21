@@ -51,7 +51,6 @@
 #include "WebURLCredential.h"
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"
-#include "WebScriptDebugServer.h"
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <JavaScriptCore/InitializeThreading.h>

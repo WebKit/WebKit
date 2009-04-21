@@ -698,14 +698,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebScriptCallFrame.h"
-				>
-			</File>
-			<File
-				RelativePath="..\WebScriptDebugServer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\WebScriptObject.h"
 				>
 			</File>
@@ -1003,14 +995,6 @@
 			</File>
 			<File
 				RelativePath="..\WebResource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebScriptCallFrame.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebScriptDebugServer.cpp"
 				>
 			</File>
 			<File

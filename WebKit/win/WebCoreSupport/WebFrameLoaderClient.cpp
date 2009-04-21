@@ -44,7 +44,6 @@
 #include "WebHistoryItem.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
-#include "WebScriptDebugServer.h"
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLResponse.h"
 #include "WebView.h"

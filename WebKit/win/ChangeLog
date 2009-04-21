@@ -1,3 +1,36 @@
+2009-04-20  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 25295: Remove WebKit/win code that was used for Drosera
+        support
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25295>
+
+        Reviewed by Sam Weinig.
+
+        * ForEachCoClass.h: Removed WebScriptDebugServer.
+
+        * Interfaces/WebKit.idl: Removed WebScriptDebugServer and references
+        to removed IDL files.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        Removed IDL and source files for IWebScriptCallFrame,
+        IWebScriptDebugListener, IWebScriptDebugServer, WebScriptCallFrame,
+        and WebScriptDebugServer.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebKitClassFactory.cpp:
+        * WebKitDLL.cpp:
+        Removed #includes of WebScriptDebugServer.h.
+
+        * Interfaces/IWebScriptCallFrame.idl: Removed.
+        * Interfaces/IWebScriptDebugListener.idl: Removed.
+        * Interfaces/IWebScriptDebugServer.idl: Removed.
+        * WebScriptCallFrame.cpp: Removed.
+        * WebScriptCallFrame.h: Removed.
+        * WebScriptDebugServer.cpp: Removed.
+        * WebScriptDebugServer.h: Removed.
+
 2009-04-20  Steve Falkenburg  <sfalken@apple.com>
 
         Separate JavaScriptCore.dll from WebKit.dll.
