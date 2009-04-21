@@ -1,3 +1,16 @@
+2009-04-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin Adler.
+
+        Add a test for bug 3235: CSS2: Table cell coalescing in CSS broken
+        <https://bugs.webkit.org/show_bug.cgi?id=3235>
+        <rdar://3299883/>
+
+        This was fixed long ago, but we should add a test to prevent a regression.
+
+        * fast/table/cell-coalescing.html: Added.
+        * platform/mac/fast/table/cell-coalescing-expected.txt: Added.
+
 2009-04-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
