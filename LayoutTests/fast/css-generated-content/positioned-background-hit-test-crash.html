@@ -27,6 +27,7 @@
             function finishTest()
             {
                 eventSender.mouseUp();
+                getSelection().removeAllRanges();
                 layoutTestController.notifyDone();
             }
 

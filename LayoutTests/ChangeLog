@@ -1,5 +1,41 @@
 2009-04-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 25162: REGRESSION (r41176-r41242): Drag-selection above/below the line does not select to beginning/end
+        https://bugs.webkit.org/show_bug.cgi?id=25162
+        rdar://problem/6764354
+
+        * editing/selection/resources/click-in-margins-inside-editable-div.js:
+        Updated to expect different results on the Mac.
+        * editing/selection/resources/click-in-padding-with-multiple-line-boxes.js: Ditto.
+
+        * fast/css-generated-content/positioned-background-hit-test-crash.html: Clear the selection at
+        the end of the test so the result won't include a caret.
+
+        * platform/mac/editing/selection/click-in-margins-inside-editable-div-expected.txt:
+        * platform/mac/editing/selection/click-in-padding-with-multiple-line-boxes-expected.txt:
+        Copied from LayoutTests/editing/selection. Then changed to expect the different Mac results.
+
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.checksum:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        Changed to expect the different Mac results.
+
+        * platform/mac/fast/css-generated-content/positioned-background-hit-test-crash-expected.txt:
+        Changed to expect no caret.
+
+        * platform/win/editing/selection/click-in-margins-inside-editable-div-expected.txt:
+        * platform/win/editing/selection/click-in-padding-with-multiple-line-boxes-expected.txt:
+        Copied from editing/selection.
+
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.checksum:
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.txt:
+        Copied from platform/mac/editing/selection.
+
+2009-04-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele Peterson.
 
         Fix some tests that are depending on Mac vs. Windows selection quirks accidentally.

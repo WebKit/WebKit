@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@
 #include "PageCache.h"
 #include <limits>
 
+using namespace std;
+
 namespace WebCore {
 
 static void setNeedsReapplyStylesInAllFrames(Page* page)
@@ -53,6 +55,7 @@ Settings::Settings(Page* page)
     , m_minimumLogicalFontSize(0)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
+    , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)
     , m_privateBrowsingEnabled(false)
@@ -88,8 +91,14 @@ Settings::Settings(Page* page)
     , m_zoomsTextOnly(false)
     , m_enforceCSSMIMETypeInStrictMode(true)
     , m_usesEncodingDetector(false)
-    , m_maximumDecodedImageSize(std::numeric_limits<size_t>::max())
     , m_allowScriptsToCloseWindows(false)
+    , m_editingBehavior(
+#if PLATFORM(MAC)
+        EditingMacBehavior
+#else
+        EditingWindowsBehavior
+#endif
+        )
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

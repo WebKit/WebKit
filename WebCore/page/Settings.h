@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 #define Settings_h
 
 #include "AtomicString.h"
-#include "FontDescription.h"
+#include "FontRenderingMode.h"
 #include "KURL.h"
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
     class Page;
 
     enum EditableLinkBehavior {
-        EditableLinkDefaultBehavior = 0,
+        EditableLinkDefaultBehavior,
         EditableLinkAlwaysLive,
         EditableLinkOnlyLiveWithShiftKey,
         EditableLinkLiveWhenNotFocused,
@@ -48,6 +48,21 @@ namespace WebCore {
         TextDirectionSubmenuAutomaticallyIncluded,
         TextDirectionSubmenuAlwaysIncluded
     };
+
+    // There are multiple editing details that are different on Windows than Macintosh.
+    // We use a single switch for all of them. Some examples:
+    //
+    //    1) Clicking below the last line of an editable area puts the caret at the end
+    //       of the last line on Mac, but in the middle of the last line on Windows.
+    //    2) Pushing the down arrow key on the last line puts the caret at the end of the
+    //       last line on Mac, but does nothing on Windows. A similar case exists on the
+    //       top line.
+    //
+    // This setting is intended to control these sorts of behaviors. There are some other
+    // behaviors with individual function calls on EditorClient (smart copy and paste and
+    // selecting the space after a double click) that could be combined with this if
+    // if possible in the future.
+    enum EditingBehavior { EditingMacBehavior, EditingWindowsBehavior };
 
     class Settings {
     public:
@@ -214,6 +229,9 @@ namespace WebCore {
         void setAllowScriptsToCloseWindows(bool);
         bool allowScriptsToCloseWindows() const { return m_allowScriptsToCloseWindows; }
 
+        void setEditingBehavior(EditingBehavior behavior) { m_editingBehavior = behavior; }
+        EditingBehavior editingBehavior() const { return static_cast<EditingBehavior>(m_editingBehavior); }
+
     private:
         Page* m_page;
         
@@ -233,6 +251,7 @@ namespace WebCore {
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
+        size_t m_maximumDecodedImageSize;
         bool m_isJavaEnabled : 1;
         bool m_loadsImagesAutomatically : 1;
         bool m_privateBrowsingEnabled : 1;
@@ -268,8 +287,8 @@ namespace WebCore {
         bool m_zoomsTextOnly : 1;
         bool m_enforceCSSMIMETypeInStrictMode : 1;
         bool m_usesEncodingDetector : 1;
-        size_t m_maximumDecodedImageSize;
         bool m_allowScriptsToCloseWindows : 1;
+        unsigned m_editingBehavior : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

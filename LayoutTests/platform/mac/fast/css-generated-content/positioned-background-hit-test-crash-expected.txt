@@ -10,4 +10,3 @@ layer at (8,21) size 784x37
 layer at (8,21) size 202x202
   RenderBlock (positioned) at (0,0) size 202x202 [border: (1px solid #FF0000)]
     RenderText at (0,0) size 0x0
-caret: position 0 of child 0 {#text} of child 1 {H1} of child 1 {BODY} of child 1 {HTML} of document

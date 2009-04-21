@@ -1,3 +1,34 @@
+2009-04-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 25162: REGRESSION (r41176-r41242): Drag-selection above/below the line does not select to beginning/end
+        https://bugs.webkit.org/show_bug.cgi?id=25162
+        rdar://problem/6764354
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize editing behavior to Mac-style for PLATFORM(MAC).
+        Later we may want to change this default to encompass other versions running on Mac.
+
+        * page/Settings.h: Added EditingBehavior, setEditingBehavior, editingBehavior, and
+        m_editingBehavior. Also moved m_maximumDecodedImageSize out of the middle of all
+        the bit fields.
+
+        * platform/graphics/IntPoint.h: Added a constructor to turn an IntSize into an IntPoint.
+        I'm not sure the distinction here is serving us well at the moment. When converting from
+        global to local coordinates you want to do IntPoint - IntPoint and have the result be
+        another IntPoint, not an IntSize. And so on.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries): Changed to use pointers more and
+        separate coordinates less.
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): Turned into a member function.
+        Added separate cases to support the Mac and Windows behavior.
+        (WebCore::RenderBlock::positionForPoint): Updated for the change above. Also moved the
+        computation of pointInContents closer to the place it's used.
+
+        * rendering/RenderBlock.h: Updated for the new private member function.
+
 2009-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Change pending unload and beforeunload counts to store the listeners
