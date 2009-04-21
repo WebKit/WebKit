@@ -34,11 +34,12 @@ ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor);
 
 const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 
-JSOptionConstructor::JSOptionConstructor(ExecState* exec, ScriptExecutionContext* context)
+JSOptionConstructor::JSOptionConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMObject(JSOptionConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_globalObject(toJSDOMGlobalObject(context))
+    , m_globalObject(globalObject)
 {
-    ASSERT(context->isDocument());
+    ASSERT(globalObject->scriptExecutionContext());
+    ASSERT(globalObject->scriptExecutionContext()->isDocument());
 
     putDirect(exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, exec->lexicalGlobalObject()), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);

@@ -28,7 +28,7 @@ namespace WebCore {
 
     class JSOptionConstructor : public DOMObject {
     public:
-        JSOptionConstructor(JSC::ExecState*, ScriptExecutionContext*);
+        JSOptionConstructor(JSC::ExecState*, JSDOMGlobalObject*);
         Document* document() const;
 
         static const JSC::ClassInfo s_info;

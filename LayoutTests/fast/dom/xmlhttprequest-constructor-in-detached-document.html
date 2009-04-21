@@ -1,0 +1,17 @@
+<p>Text for <a  href="https://bugs.webkit.org/show_bug.cgi?id=25290">bug 25290</a>:
+Crash when constructing XMLHttpRequest in a detached document.</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function pass()
+{
+     document.getElementById("result").innerHTML = "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<div id="result">FAIL: Script did not run</div>
+<iframe src="resources/xmlhttprequest-constructor-in-detached-document-frame.html"></iframe>

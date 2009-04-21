@@ -1,3 +1,32 @@
+2009-04-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25290
+        REGRESSION(r41732): Crash when constructing XMLHttpRequest in a detached document
+
+        Test: fast/dom/xmlhttprequest-constructor-in-detached-document.html
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        Avoid accessing JSDOMGlobalObject via ScriptExecutionContext, since it may not
+        work during frame teardown.
+
 2009-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Darin Adler and Sam Weinig.

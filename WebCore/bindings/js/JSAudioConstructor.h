@@ -36,7 +36,7 @@ namespace WebCore {
 
     class JSAudioConstructor : public DOMObject {
     public:
-        JSAudioConstructor(JSC::ExecState*, ScriptExecutionContext*);
+        JSAudioConstructor(JSC::ExecState*, JSDOMGlobalObject*);
 
         Document* document() const;
 
