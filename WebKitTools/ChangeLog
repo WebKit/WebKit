@@ -1,3 +1,27 @@
+2009-04-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Use new WebKitCreateInstance API instead of CoCreateInstance
+        or COMPtr's createInstance to instantiate WebKit COM objects.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize):
+        (runTest):
+        (createWebViewAndOffscreenWindow):
+        (main):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/GCControllerWin.cpp:
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::webHistoryItemCount):
+        (LayoutTestController::setIconDatabaseEnabled):
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+        (LoadItem::invoke):
+
 2009-04-20  Timothy Hatcher  <timothy@apple.com>
 
         Stop using the fullDocumentTeardownEnabled WebPreference methods.

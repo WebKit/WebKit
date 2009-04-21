@@ -1,3 +1,24 @@
+2009-04-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Add registry-free CoCreateInstance API for WebKit clients: WebKitCreateInstance.
+
+        Manifest-based registry-free COM continues to work for clients that have embedded
+        manifests with isolated COM information.
+        
+        Reviewed by Adam Roben.
+
+        * WebKit.vcproj/WebKit.def: Added WebKitCreateInstance.
+        * WebKit.vcproj/WebKit.vcproj: Link against rpcrt4.dll for UUID hashing.
+        * WebKit.vcproj/WebKit_debug.def: Added WebKitCreateInstance.
+        * WebKitCOMAPI.cpp: Added.
+        (CLSIDHash::hash):
+        (CLSIDHash::equal):
+        (CLSIDHashTraits::constructDeletedValue):
+        (CLSIDHashTraits::isDeletedValue):
+        (classFactory):
+        (WebKitCreateInstance): New API.
+        * WebKitCOMAPI.h: Added.
+
 2009-04-21  Adam Roben  <aroben@apple.com>
 
         Rename JavaScriptCore_debug.dll to JavaScriptCore.dll in the Debug

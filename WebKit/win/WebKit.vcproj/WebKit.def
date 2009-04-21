@@ -19,7 +19,8 @@ EXPORTS
         RightTruncateStringToWidth
         WebKitSetShouldUseFontSmoothing
         WebKitShouldUseFontSmoothing
-
+        WebKitCreateInstance
+		
         ; These functions are deprecated
         WebLocalizedString
         WebLocalizedLPCTSTR

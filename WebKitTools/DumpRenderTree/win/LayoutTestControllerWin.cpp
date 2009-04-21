@@ -43,6 +43,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <string>
 #include <CoreFoundation/CoreFoundation.h>
 #include <shlwapi.h>
@@ -127,12 +128,12 @@ void LayoutTestController::display()
 
 void LayoutTestController::keepWebHistory()
 {
-    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
-    if (!history)
+    COMPtr<IWebHistory> history;
+    if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
         return;
 
-    COMPtr<IWebHistory> sharedHistory(Create, CLSID_WebHistory);
-    if (!sharedHistory)
+    COMPtr<IWebHistory> sharedHistory;
+    if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(sharedHistory), reinterpret_cast<void**>(&sharedHistory))))
         return;
 
     history->setOptionalSharedHistory(sharedHistory.get());
@@ -145,8 +146,8 @@ void LayoutTestController::waitForPolicyDelegate()
 
 size_t LayoutTestController::webHistoryItemCount()
 {
-    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
-    if (!history)
+    COMPtr<IWebHistory> history;
+    if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
         return 0;
 
     COMPtr<IWebHistory> sharedHistory;
@@ -276,7 +277,7 @@ void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
     // See also <rdar://problem/6480108>
     COMPtr<IWebIconDatabase> iconDatabase;
     COMPtr<IWebIconDatabase> tmpIconDatabase;
-    if (FAILED(CoCreateInstance(CLSID_WebIconDatabase, 0, CLSCTX_ALL, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
+    if (FAILED(WebKitCreateInstance(CLSID_WebIconDatabase, 0, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
         return;
     if (FAILED(tmpIconDatabase->sharedIconDatabase(&iconDatabase)))
         return;

@@ -32,6 +32,7 @@
 #include "DumpRenderTree.h"
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/RetainPtr.h>
@@ -66,7 +67,7 @@ bool LoadItem::invoke() const
     }
 
     COMPtr<IWebURLRequest> request;
-    if (FAILED(CoCreateInstance(CLSID_WebURLRequest, 0, CLSCTX_ALL, IID_IWebURLRequest, (void**)&request)))
+    if (FAILED(WebKitCreateInstance(CLSID_WebURLRequest, 0, IID_IWebURLRequest, (void**)&request)))
         return false;
 
     wstring urlString = jsStringRefToWString(m_url.get());

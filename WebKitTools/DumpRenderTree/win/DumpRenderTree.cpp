@@ -53,8 +53,8 @@
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <WebKit/ForEachCoClass.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 
 using namespace std;
 
@@ -231,7 +231,7 @@ static void initialize()
     wstring resourcesPath = fontsPath();
 
     COMPtr<IWebTextRenderer> textRenderer;
-    if (SUCCEEDED(CoCreateInstance(CLSID_WebTextRenderer, 0, CLSCTX_ALL, IID_IWebTextRenderer, (void**)&textRenderer)))
+    if (SUCCEEDED(WebKitCreateInstance(CLSID_WebTextRenderer, 0, IID_IWebTextRenderer, (void**)&textRenderer)))
         for (int i = 0; i < ARRAYSIZE(fontsToInstall); ++i)
             textRenderer->registerPrivateFont(wstring(resourcesPath + fontsToInstall[i]).c_str());
 
@@ -740,8 +740,8 @@ static void runTest(const string& testPathOrURL)
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
-    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
-    if (history)
+    COMPtr<IWebHistory> history;
+    if (SUCCEEDED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
         history->setOptionalSharedHistory(0);
 
     resetWebViewToConsistentStateBeforeTesting();
@@ -761,7 +761,7 @@ static void runTest(const string& testPathOrURL)
     webView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
 
     COMPtr<IWebMutableURLRequest> request;
-    HRESULT hr = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
+    HRESULT hr = WebKitCreateInstance(CLSID_WebMutableURLRequest, 0, IID_IWebMutableURLRequest, (void**)&request);
     if (FAILED(hr))
         goto exit;
 
@@ -969,7 +969,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 
     IWebView* webView;
 
-    HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&webView);
+    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&webView);
     if (FAILED(hr)) {
         fprintf(stderr, "Failed to create CLSID_WebView instance, error 0x%x\n", hr);
         return 0;
@@ -1096,7 +1096,7 @@ int main(int argc, char* argv[])
 
     COMPtr<IWebIconDatabase> iconDatabase;
     COMPtr<IWebIconDatabase> tmpIconDatabase;
-    if (FAILED(CoCreateInstance(CLSID_WebIconDatabase, 0, CLSCTX_ALL, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
+    if (FAILED(WebKitCreateInstance(CLSID_WebIconDatabase, 0, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
         return -1;
     if (FAILED(tmpIconDatabase->sharedIconDatabase(&iconDatabase)))
         return -1;
