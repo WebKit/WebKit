@@ -43,6 +43,7 @@ namespace WebKit {
     RetainPtr<CALayer> _pluginLayer;
     WKSoftwareCARendererRef _softwareRenderer;
     
+    NSSize _previousSize;
     RefPtr<WebKit::NetscapePluginInstanceProxy> _proxy;
     BOOL _pluginHostDied;
 }

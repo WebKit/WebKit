@@ -46,6 +46,7 @@ simpleroutine PHInstantiatePlugin(pluginHostPort :mach_port_t;
                                 
 simpleroutine PHResizePluginInstance(pluginHostPort :mach_port_t;
                                      pluginID :uint32_t;
+                                requestID :uint32_t;
                                      pluginX :double;
                                      pluginY :double;
                                      pluginWidth :double;

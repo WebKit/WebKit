@@ -1,3 +1,19 @@
+2009-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and Kevin Decker.
+
+        WebKit side of <rdar://problem/6781642>.
+        
+        When we call resize with an actual changed size, block until the plug-in host is done.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::resize):
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView updateAndSetWindow]):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2009-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Change how sudden termination works with WebView teardown.

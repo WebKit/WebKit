@@ -131,11 +131,19 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
     deleteAllValues(m_replies);
 }
 
-void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
+void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect, bool sync)
 {
-    _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, 
+    uint32_t requestID = 0;
+    
+    if (sync)
+        requestID = nextRequestID();
+
+    _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID,
                               size.origin.x, size.origin.y, size.size.width, size.size.height,
                               clipRect.origin.x, clipRect.origin.y, clipRect.size.width, clipRect.size.height);
+    
+    if (sync)
+        waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
 }
 
 void NetscapePluginInstanceProxy::stopAllStreams()

@@ -143,7 +143,10 @@ extern "C" {
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
 
-    _proxy->resize(boundsInWindow, visibleRectInWindow);
+    BOOL sizeChanged = !NSEqualSizes(_previousSize, boundsInWindow.size);
+    _previousSize = boundsInWindow.size;
+    
+    _proxy->resize(boundsInWindow, visibleRectInWindow, sizeChanged);
 }
 
 - (void)windowFocusChanged:(BOOL)hasFocus
