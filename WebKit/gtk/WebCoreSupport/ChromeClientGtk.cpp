@@ -334,16 +334,38 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     gdk_region_destroy(invalidRegion);
 }
 
+// FIXME: this does not take into account the WM decorations
+static IntPoint widgetScreenPosition(GtkWidget* widget)
+{
+    GtkWidget* window = gtk_widget_get_toplevel(widget);
+    int widgetX = 0, widgetY = 0;
+
+    gtk_widget_translate_coordinates(widget, window, 0, 0, &widgetX, &widgetY);
+
+    IntPoint result(widgetX, widgetY);
+    int originX, originY;
+    gdk_window_get_origin(window->window, &originX, &originY);
+    result.move(originX, originY);
+
+    return result;
+}
+
 IntRect ChromeClient::windowToScreen(const IntRect& rect) const
 {
-    notImplemented();
-    return rect;
+    IntRect result(rect);
+    IntPoint screenPosition = widgetScreenPosition(GTK_WIDGET(m_webView));
+    result.move(screenPosition.x(), screenPosition.y());
+
+    return result;
 }
 
 IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
 {
-    notImplemented();
-    return point;
+    IntPoint result(point);
+    IntPoint screenPosition = widgetScreenPosition(GTK_WIDGET(m_webView));
+    result.move(-screenPosition.x(), -screenPosition.y());
+
+    return result;
 }
 
 PlatformWidget ChromeClient::platformWindow() const
