@@ -308,7 +308,7 @@ public:
 #if ENABLE(SVG)
     virtual bool isSVGDocument() const { return false; }
 #else
-    static bool isSVGDocument() const { return false; }
+    static bool isSVGDocument() { return false; }
 #endif
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }

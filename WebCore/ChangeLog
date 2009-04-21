@@ -1,3 +1,13 @@
+2009-04-21  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Compile fix for r42633. const qualifier does not work
+        on a static method.
+
+        * dom/Document.h:
+        (WebCore::Document::isSVGDocument):
+
 2009-04-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and John Sullivan.
