@@ -1,3 +1,11 @@
+2009-04-21  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r42726
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: Touched to force a rebuild.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Delete any pre-r42726
+        manifest files during the pre-build event.
+
 2009-04-21  Steve Falkenburg  <sfalken@apple.com>
 
         Use new WebKitCreateInstance API instead of CoCreateInstance
