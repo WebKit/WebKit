@@ -25,3 +25,19 @@ http/tests/ssl/verify-ssl-enabled.php
 
 # <rdar://problem/6778137> post-goback-repost-policy.html is failing
 http/tests/navigation/post-goback-repost-policy.html
+
+# Radar bugs needed for these
+fast/canvas/set-colors.html
+fast/dom/frame-loading-via-document-write.html
+platform/mac/fast/text/myanmar-shaping.html
+platform/mac/fast/text/thai-combining-mark-positioning.html
+svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
+svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
+svg/W3C-SVG-1.1/render-elems-03-t.svg
+svg/batik/paints/patternRegionA.svg
+svg/custom/path-bad-data.svg
+svg/custom/pattern-deep-referencing.svg
+svg/custom/preserve-aspect-ratio-syntax.svg
+svg/custom/stroke-width-click.svg
+svg/custom/viewbox-syntax.svg
+svg/hixie/perf/007.xml

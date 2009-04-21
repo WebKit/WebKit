@@ -3,7 +3,7 @@ if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
 
-<iframe id="iframe" src="../resources/select-all-iframe-src.html"></iframe><br><br>
+<iframe id="iframe" src="resources/select-all-iframe-src.html"></iframe><br><br>
 <p><b>This test uses the eventSender to do a mouse click to focus the subframe.  It won't run interactively.</b>  To run it manually, click on the iframe, Select All, then hit delete.</p>
 Selecting all the content in a contenteditable iframe should select the iframe itself (to help the user delete the iframe) only if the iframe is in an editable region.  This test loads ../resources/select-all-iframe-src.html into an iframe.  That file does a Select All + Delete.  Two things should happen:
 

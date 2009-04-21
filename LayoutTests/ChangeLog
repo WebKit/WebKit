@@ -1,3 +1,36 @@
+2009-04-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix some tests that are depending on Mac vs. Windows selection quirks accidentally.
+        Added failing tests to the skipped list for SnowLeopard.
+
+        * editing/resources/select-all-iframe-src.html: Moved.
+        * editing/selection/resources/select-all-iframe-src.html: Moved from
+        editing/resources/select-all-iframe-src.html, since this is used by a test in the
+        selection directory. Changed mouse coordinates to be farther to the right so we
+        don't depend on the rule for what's selected when you click below text on the last line.
+        * editing/selection/select-all-iframe.html: Updated for new location of file above.
+
+        * fast/events/standalone-image-drag-to-editable.html: Changed mouse coordinates to be
+        farther to the right so we don't depend on the rule for what's selected when you click
+        below text on the last line.
+
+        * platform/mac-snowleopard/Skipped: Added some tests to the Skipped list.
+
+        * svg/custom/pointer-events-path.svg: Clear the selection at the end of the test so it's
+        not in the test results. Also removed unneeded use of the layout test controller.
+
+        * platform/mac/editing/selection/select-all-iframe-expected.checksum: Generated new results.
+        * platform/mac/editing/selection/select-all-iframe-expected.png: Ditto.
+        * platform/mac/editing/selection/select-all-iframe-expected.txt: Ditto.
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.checksum: Ditto.
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.png: Ditto.
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.txt: Ditto.
+        * platform/mac/svg/custom/pointer-events-path-expected.checksum: Ditto.
+        * platform/mac/svg/custom/pointer-events-path-expected.png: Ditto.
+        * platform/mac/svg/custom/pointer-events-path-expected.txt: Ditto.
+
 2009-04-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

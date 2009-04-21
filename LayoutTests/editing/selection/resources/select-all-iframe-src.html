@@ -1,4 +1,4 @@
-<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script src="../../editing.js" language="JavaScript" type="text/JavaScript"></script>
 <script>
 function editingTest() {
     if (!window.layoutTestController)
@@ -7,7 +7,7 @@ function editingTest() {
     window.layoutTestController.waitUntilDone();
     
     // Give focus to the subframe so that Select All will operate on it, and not the main frame.
-    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseMoveTo(100, 50);
     eventSender.mouseDown();
     eventSender.mouseUp();
     

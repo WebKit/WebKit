@@ -7,10 +7,6 @@
   </style>
   <script type="text/javascript">
   <![CDATA[
-    
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-  
     var visibleValues = [ 'visible', 'hidden' ];
     var fillValues = ['none', 'orange' ];
     var strokeValues = ['none', 'blue' ];
@@ -100,9 +96,7 @@
         xOffset = leftEdge;
         yOffset += rectSpacing;
       }
-      
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      getSelection().removeAllRanges();
     }
   ]]>
   </script>
