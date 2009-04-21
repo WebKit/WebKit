@@ -1,4 +1,36 @@
-2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+2009-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and John Sullivan.
+
+        - fix <rdar://problem/5914146> Crash at -[NSScrollView scrollWheel:]
+
+        -[NSScrollView scrollWheel:] runs a nested event-tracking run loop
+        in a mode that allows WebCore timers to fire and NSURLConnection
+        callbacks to be dispatched, which can release the NSScrollView and
+        cause it to be deallocated (one example is a DOM timer callback that
+        removes a subframe from the document). This leads to a crash in
+        -scrollView:.
+
+        The fix is to replace the implementation of -[NSScrollView scrollWheel:]
+        with one that optionally retains the receiver for the duration of the
+        call.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::nsScrollViewScrollWheelShouldRetainSelf): Added.
+        (WebCore::setNSScrollViewScrollWheelShouldRetainSelf): Added. Replaces
+        the implementation of -[NSScrollView scrollWheel:] with the
+        self-retaining one, and sets a static boolean that tells it whether to
+        retain the receiver around the call to the original implementation.
+        (WebCore::selfRetainingNSScrollViewScrollWheel): Added. If
+        setNSScrollViewScrollWheelShouldRetainSelf(true) was called and this
+        function is executing on the main thread, it retains the NSScrollView,
+        invokes the original -[NSScrollView scrollWheel:], then releases the
+        view. Otherwise it just calls through to the original implementation.
+        (WebCore::EventHandler::passWheelEventToWidget): Added calls to
+        setNSScrollViewScrollWheelShouldRetainSelf() around the call to
+        -scrollWheel:.
+
+2009-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.
 
