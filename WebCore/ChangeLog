@@ -1,3 +1,33 @@
+2009-04-16  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25250
+        Allow platforms to snap the scroll thumb back to the drag origin
+        during a drag.  Implement functions for Safari/Win and Chromium/Win
+        to do this snapping at distances approximating the native ones.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::setValue):
+        (WebCore::Scrollbar::scroll):
+        (WebCore::Scrollbar::moveThumb):
+        (WebCore::Scrollbar::setCurrentPos):
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseDown):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::shouldSnapBackToDragOrigin):
+        * platform/chromium/ScrollbarThemeChromium.h:
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromium::shouldSnapBackToDragOrigin):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromium::shouldSnapBackToDragOrigin):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeWin::shouldSnapBackToDragOrigin):
+        * platform/win/ScrollbarThemeWin.h:
+
 2009-04-21  Adam Roben  <aroben@apple.com>
 
         Windows build fix

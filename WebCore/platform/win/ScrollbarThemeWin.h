@@ -50,6 +50,7 @@ protected:
     virtual IntRect trackRect(Scrollbar*, bool painting = false);
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&);
 
     virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
     virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);

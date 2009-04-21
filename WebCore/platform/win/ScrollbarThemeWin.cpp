@@ -72,6 +72,13 @@ SOFT_LINK(uxtheme, DrawThemeBackground, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc
 SOFT_LINK(uxtheme, IsThemeActive, BOOL, WINAPI, (), ())
 SOFT_LINK(uxtheme, IsThemeBackgroundPartiallyTransparent, BOOL, WINAPI, (HANDLE hTheme, int iPartId, int iStateId), (hTheme, iPartId, iStateId))
 
+// Constants used to figure the drag rect outside which we should snap the
+// scrollbar thumb back to its origin.  These calculations are based on
+// observing the behavior of the MSVC8 main window scrollbar + some
+// guessing/extrapolation.
+static const int kOffEndMultiplier = 3;
+static const int kOffSideMultiplier = 8;
+
 static void checkAndInitScrollbarTheme()
 {
     if (uxthemeLibrary() && !scrollbarTheme && IsThemeActive())
@@ -178,6 +185,29 @@ IntRect ScrollbarThemeWin::trackRect(Scrollbar* scrollbar, bool)
     if (scrollbar->height() < 2 * thickness)
         return IntRect();
     return IntRect(scrollbar->x(), scrollbar->y() + thickness, thickness, scrollbar->height() - 2 * thickness);
+}
+
+bool ScrollbarThemeWin::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+{
+    return evt.shiftKey() && evt.button() == LeftButton;
+}
+
+bool ScrollbarThemeWin::shouldSnapBackToDragOrigin(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
+{
+    // Find the rect within which we shouldn't snap, by expanding the track rect
+    // in both dimensions.
+    IntRect rect = trackRect(scrollbar);
+    const bool horz = scrollbar->orientation() == HorizontalScrollbar;
+    const int thickness = scrollbarThickness(scrollbar->controlSize());
+    rect.inflateX((horz ? kOffEndMultiplier : kOffSideMultiplier) * thickness);
+    rect.inflateY((horz ? kOffSideMultiplier : kOffEndMultiplier) * thickness);
+
+    // Convert the event to local coordinates.
+    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
+    mousePosition.move(scrollbar->x(), scrollbar->y());
+
+    // We should snap iff the event is outside our calculated rect.
+    return !rect.contains(mousePosition);
 }
 
 void ScrollbarThemeWin::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
@@ -338,11 +368,6 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     } else
         ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
     context->releaseWindowsContext(hdc, rect, alphaBlend);
-}
-
-bool ScrollbarThemeWin::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
-{
-    return evt.shiftKey() && evt.button() == LeftButton;
 }
 
 }

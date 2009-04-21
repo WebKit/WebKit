@@ -72,6 +72,11 @@ static void drawBox(SkCanvas* canvas, const IntRect& rect, const SkPaint& paint)
     drawVertLine(canvas, rect.x(), rect.y(), bottom, paint);
 }
 
+bool ScrollbarThemeChromium::shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&)
+{
+    return false;
+}
+
 void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar,
                                              const IntRect& rect, ScrollbarPart partType)
 {

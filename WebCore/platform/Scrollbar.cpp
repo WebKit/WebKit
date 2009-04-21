@@ -57,6 +57,7 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
     , m_visibleSize(0)
     , m_totalSize(0)
     , m_currentPos(0)
+    , m_dragOrigin(0)
     , m_lineStep(0)
     , m_pageStep(0)
     , m_pixelStep(1)
@@ -92,13 +93,7 @@ bool Scrollbar::setValue(int v)
     v = max(min(v, m_totalSize - m_visibleSize), 0);
     if (value() == v)
         return false; // Our value stayed the same.
-    m_currentPos = v;
-
-    updateThumbPosition();
-
-    if (client())
-        client()->valueChanged(this);
-    
+    setCurrentPos(v);
     return true;
 }
 
@@ -139,20 +134,7 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
         
     float newPos = m_currentPos + step * multiplier;
     float maxPos = m_totalSize - m_visibleSize;
-    newPos = max(min(newPos, maxPos), 0.0f);
-
-    if (newPos == m_currentPos)
-        return false;
-    
-    int oldValue = value();
-    m_currentPos = newPos;
-    updateThumbPosition();
-    
-    if (value() != oldValue && client())
-        client()->valueChanged(this);
-    
-    // return true even if the integer value did not change so that scroll event gets eaten
-    return true;
+    return setCurrentPos(max(min(newPos, maxPos), 0.0f));
 }
 
 void Scrollbar::updateThumbPosition()
@@ -269,15 +251,30 @@ void Scrollbar::moveThumb(int pos)
     int thumbLen = theme()->thumbLength(this);
     int trackLen = theme()->trackLength(this);
     int maxPos = trackLen - thumbLen;
-    int delta = pos - pressedPos();
+    int delta = pos - m_pressedPos;
     if (delta > 0)
         delta = min(maxPos - thumbPos, delta);
     else if (delta < 0)
         delta = max(-thumbPos, delta);
-    if (delta) {
-        setValue(static_cast<int>(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen)));
-        setPressedPos(pressedPos() + theme()->thumbPosition(this) - thumbPos);
-    }
+    if (delta)
+        setCurrentPos(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen));
+}
+
+bool Scrollbar::setCurrentPos(float pos)
+{
+    if (pos == m_currentPos)
+        return false;
+
+    int oldValue = value();
+    int oldThumbPos = theme()->thumbPosition(this);
+    m_currentPos = pos;
+    updateThumbPosition();
+    if (m_pressedPart == ThumbPart)
+        setPressedPos(m_pressedPos + theme()->thumbPosition(this) - oldThumbPos);
+
+    if (value() != oldValue && client())
+        client()->valueChanged(this);
+    return true;
 }
 
 void Scrollbar::setHoveredPart(ScrollbarPart part)
@@ -308,9 +305,13 @@ void Scrollbar::setPressedPart(ScrollbarPart part)
 bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
-        moveThumb(m_orientation == HorizontalScrollbar ? 
-                  convertFromContainingWindow(evt.pos()).x() :
-                  convertFromContainingWindow(evt.pos()).y());
+        if (theme()->shouldSnapBackToDragOrigin(this, evt))
+            setCurrentPos(m_dragOrigin);
+        else {
+            moveThumb(m_orientation == HorizontalScrollbar ? 
+                      convertFromContainingWindow(evt.pos()).x() :
+                      convertFromContainingWindow(evt.pos()).y());
+        }
         return true;
     }
 
@@ -366,9 +367,10 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
     setPressedPart(theme()->hitTest(this, evt));
     int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
     
-    if ((pressedPart() == BackTrackPart || pressedPart() == ForwardTrackPart) && theme()->shouldCenterOnThumb(this, evt)) {
+    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && theme()->shouldCenterOnThumb(this, evt)) {
         setHoveredPart(ThumbPart);
         setPressedPart(ThumbPart);
+        m_dragOrigin = m_currentPos;
         int thumbLen = theme()->thumbLength(this);
         int desiredPos = pressedPos;
         // Set the pressed position to the middle of the thumb so that when we do the move, the delta
@@ -376,7 +378,8 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
         m_pressedPos = theme()->trackPosition(this) + theme()->thumbPosition(this) + thumbLen / 2;
         moveThumb(desiredPos);
         return true;
-    }
+    } else if (m_pressedPart == ThumbPart)
+        m_dragOrigin = m_currentPos;
     
     m_pressedPos = pressedPos;
 

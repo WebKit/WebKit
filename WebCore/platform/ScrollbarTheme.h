@@ -76,6 +76,7 @@ public:
     virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white); }
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
+    virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual int thumbPosition(Scrollbar*) { return 0; } // The position of the thumb relative to the track.
     virtual int thumbLength(Scrollbar*) { return 0; } // The length of the thumb along the axis of the scrollbar.
     virtual int trackPosition(Scrollbar*) { return 0; } // The position of the track relative to the scrollbar.

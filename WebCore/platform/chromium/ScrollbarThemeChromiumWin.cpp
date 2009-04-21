@@ -44,6 +44,13 @@ namespace WebCore {
 // Metrics obtained using [NSScroller scrollerWidthForControlSize:]
 static const int kMacScrollbarSize[3] = { 15, 11, 15 };
 
+// Constants used to figure the drag rect outside which we should snap the
+// scrollbar thumb back to its origin.  These calculations are based on
+// observing the behavior of the MSVC8 main window scrollbar + some
+// guessing/extrapolation.
+static const int kOffEndMultiplier = 3;
+static const int kOffSideMultiplier = 8;
+
 int ScrollbarThemeChromium::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     static int thickness;
@@ -58,6 +65,24 @@ int ScrollbarThemeChromium::scrollbarThickness(ScrollbarControlSize controlSize)
 bool ScrollbarThemeChromium::invalidateOnMouseEnterExit()
 {
     return isVistaOrNewer();
+}
+
+bool ScrollbarThemeChromium::shouldSnapBackToDragOrigin(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
+{
+    // Find the rect within which we shouldn't snap, by expanding the track rect
+    // in both dimensions.
+    IntRect rect = trackRect(scrollbar);
+    const bool horz = scrollbar->orientation() == HorizontalScrollbar;
+    const int thickness = scrollbarThickness(scrollbar->controlSize());
+    rect.inflateX((horz ? kOffEndMultiplier : kOffSideMultiplier) * thickness);
+    rect.inflateY((horz ? kOffSideMultiplier : kOffEndMultiplier) * thickness);
+
+    // Convert the event to local coordinates.
+    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
+    mousePosition.move(scrollbar->x(), scrollbar->y());
+
+    // We should snap iff the event is outside our calculated rect.
+    return !rect.contains(mousePosition);
 }
 
 void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
