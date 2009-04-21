@@ -5,6 +5,20 @@
         https://bugs.webkit.org/show_bug.cgi?id=21546
         [GTK] ATK accessibility enhancements
 
+        Based on a patch by Alp Toker.
+
+        Implement AtkComponent interface.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (core):
+
+2009-04-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+        [GTK] ATK accessibility enhancements
+
         Only implement AtkAction interface if we actually have an action.
 
         * page/gtk/AccessibilityObjectWrapperAtk.cpp:

@@ -107,6 +107,11 @@ static AccessibilityObject* core(AtkEditableText* text)
     return core(ATK_OBJECT(text));
 }
 
+static AccessibilityObject* core(AtkComponent* component)
+{
+    return core(ATK_OBJECT(component));
+}
+
 extern "C" {
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
@@ -662,6 +667,77 @@ static void atk_streamable_content_interface_init(AtkStreamableContentIface* ifa
     iface->get_uri = webkit_accessible_streamable_content_get_uri;
 }
 
+static void contentsToAtk(AccessibilityObject* coreObject, AtkCoordType coordType, IntRect rect, gint* x, gint* y, gint* width = 0, gint* height = 0)
+{
+    FrameView* frameView = coreObject->documentFrameView();
+
+    if (frameView) {
+        switch (coordType) {
+        case ATK_XY_WINDOW:
+            rect = frameView->contentsToWindow(rect);
+            break;
+        case ATK_XY_SCREEN:
+            rect = frameView->contentsToScreen(rect);
+            break;
+        }
+    }
+
+    if (x)
+        *x = rect.x();
+    if (y)
+        *y = rect.y();
+    if (width)
+        *width = rect.width();
+    if (height)
+        *height = rect.height();
+}
+
+static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coordType, gint x, gint y)
+{
+    IntPoint pos(x, y);
+
+    FrameView* frameView = coreObject->documentFrameView();
+    if (frameView) {
+        switch (coordType) {
+        case ATK_XY_SCREEN:
+            return frameView->screenToContents(pos);
+        case ATK_XY_WINDOW:
+            return frameView->windowToContents(pos);
+        }
+    }
+
+    return pos;
+}
+
+static AtkObject* webkit_accessible_component_ref_accessible_at_point(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
+{
+    IntPoint pos = atkToContents(core(component), coordType, x, y);
+    AccessibilityObject* target = core(component)->doAccessibilityHitTest(pos);
+    if (!target)
+        return NULL;
+    g_object_ref(target->wrapper());
+    return target->wrapper();
+}
+
+static void webkit_accessible_component_get_extents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
+{
+    IntRect rect = core(component)->elementRect();
+    contentsToAtk(core(component), coordType, rect, x, y, width, height);
+}
+
+static gboolean webkit_accessible_component_grab_focus(AtkComponent* component)
+{
+    core(component)->setFocused(true);
+    return core(component)->isFocused();
+}
+
+static void atk_component_interface_init(AtkComponentIface *iface)
+{
+    iface->ref_accessible_at_point = webkit_accessible_component_ref_accessible_at_point;
+    iface->get_extents = webkit_accessible_component_get_extents;
+    iface->grab_focus = webkit_accessible_component_grab_focus;
+}
+
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
@@ -670,14 +746,17 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_editable_text_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_text_interface_init,
-     (GInterfaceFinalizeFunc) NULL, NULL}
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_component_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
 };
 
 enum WAIType {
     WAI_ACTION,
     WAI_STREAMABLE,
     WAI_EDITABLE_TEXT,
-    WAI_TEXT
+    WAI_TEXT,
+    WAI_COMPONENT
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
@@ -691,6 +770,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
       return ATK_TYPE_EDITABLE_TEXT;
   case WAI_TEXT:
       return ATK_TYPE_TEXT;
+  case WAI_COMPONENT:
+      return ATK_TYPE_COMPONENT;
   }
 
   return G_TYPE_INVALID;
@@ -702,6 +783,9 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
 
     // Streamable is always supported (FIXME: This is wrong)
     interfaceMask |= 1 << WAI_STREAMABLE;
+
+    // Component interface is always supported
+    interfaceMask |= 1 << WAI_COMPONENT;
 
     // Action
     if (!coreObject->actionVerb().isEmpty())
