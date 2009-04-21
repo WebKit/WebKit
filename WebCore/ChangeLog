@@ -1,3 +1,11 @@
+2009-04-21  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::eventParameterName): Remove unreachable code when SVG is
+        enabled.
+
 2009-04-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         !ENABLE(SVG) build fix.

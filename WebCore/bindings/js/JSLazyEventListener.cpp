@@ -40,8 +40,9 @@ static const String& eventParameterName(bool isSVGEvent)
 #if ENABLE(SVG)
     DEFINE_STATIC_LOCAL(const String, evtString, ("evt"));
     return isSVGEvent ? evtString : eventString;
-#endif
+#else
     return eventString;
+#endif
 }
 
 JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
