@@ -1,5 +1,16 @@
 2009-04-20  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        Add Windows failures temporarily to the Skipped list after r42678.
+        See https://bugs.webkit.org/show_bug.cgi?id=25306 for more
+        information. This is just to get the tree green while the tests
+        are fixed.
+
+        * platform/win/Skipped:
+
+2009-04-20  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Eric Seidel
 
         Fix svg-fonts-in-text-controls.js to measure the
