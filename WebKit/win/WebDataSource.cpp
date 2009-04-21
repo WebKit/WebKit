@@ -171,8 +171,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::data(
     if (!m_loader)
         return E_FAIL;
 
-    *stream = MemoryStream::createInstance(m_loader->mainResourceData());
-    return S_OK;
+    return MemoryStream::createInstance(m_loader->mainResourceData()).copyRefTo(stream);
 }
 
 HRESULT STDMETHODCALLTYPE WebDataSource::representation( 

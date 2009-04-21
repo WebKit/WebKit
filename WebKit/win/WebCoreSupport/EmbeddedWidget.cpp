@@ -222,9 +222,7 @@ void EmbeddedWidget::didReceiveResponse(const ResourceResponse& response)
 
 void EmbeddedWidget::didReceiveData(const char* data, int length)
 {
-    RefPtr<SharedBuffer> buffer(SharedBuffer::create(data, length));
-
-    COMPtr<IStream> stream(AdoptCOM, MemoryStream::createInstance(buffer.release()));
+    COMPtr<MemoryStream> stream = MemoryStream::createInstance(SharedBuffer::create(data, length));
     m_view->didReceiveData(stream.get());
 }
 

@@ -46,7 +46,7 @@ public:
     {
         COMPtr<MemoryStream> memoryStream;
         if (iconData)
-            memoryStream.adoptRef(MemoryStream::createInstance(iconData));
+            memoryStream = MemoryStream::createInstance(iconData);
 
         m_delegate->finishedLoadingIcon(m_fetcher, memoryStream.get());
 

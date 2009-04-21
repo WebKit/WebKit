@@ -150,7 +150,5 @@ HRESULT STDMETHODCALLTYPE WebArchive::data(
 
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
 
-    *stream = MemoryStream::createInstance(buffer);
-
-    return S_OK;
+    return MemoryStream::createInstance(buffer).copyRefTo(stream);
 }

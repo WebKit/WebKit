@@ -28,7 +28,7 @@
 
 #include <objidl.h>
 
-#include "COMPtr.h"
+#include <WebCore/COMPtr.h>
 #include <WebCore/SharedBuffer.h>
 #include <WTF/PassRefPtr.h>
 #include <WTF/RefPtr.h>
@@ -36,7 +36,7 @@
 class MemoryStream : public IStream
 {
 public:
-    static MemoryStream* MemoryStream::createInstance(PassRefPtr<WebCore::SharedBuffer> buffer);
+    static COMPtr<MemoryStream> createInstance(PassRefPtr<WebCore::SharedBuffer> buffer);
 
 protected:
     MemoryStream(PassRefPtr<WebCore::SharedBuffer> buffer);

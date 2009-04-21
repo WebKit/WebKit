@@ -58,8 +58,7 @@ WebResource::~WebResource()
 
 WebResource* WebResource::createInstance(PassRefPtr<WebCore::SharedBuffer> data, const WebCore::ResourceResponse& response)
 {
-    COMPtr<IStream> memoryStream;
-    memoryStream.adoptRef(MemoryStream::createInstance(data));
+    COMPtr<MemoryStream> memoryStream = MemoryStream::createInstance(data);
 
     WebResource* instance = new WebResource(memoryStream.get(), response.url(), response.mimeType(), response.textEncodingName(), String());
     instance->AddRef();
