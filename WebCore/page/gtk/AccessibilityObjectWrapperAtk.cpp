@@ -700,9 +700,12 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
 {
     guint16 interfaceMask = 0;
 
-    // Action and Streamable are always supported (FIXME: Should they?)
-    interfaceMask |= 1 << WAI_ACTION;
+    // Streamable is always supported (FIXME: This is wrong)
     interfaceMask |= 1 << WAI_STREAMABLE;
+
+    // Action
+    if (!coreObject->actionVerb().isEmpty())
+        interfaceMask |= 1 << WAI_ACTION;
 
     // Text & Editable Text
     AccessibilityRole role = coreObject->roleValue();
