@@ -1,3 +1,16 @@
+2009-04-21  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25309
+        Better use AtomicStrings when calling from the V8
+        bindings into WebCore code.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+
 2009-04-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

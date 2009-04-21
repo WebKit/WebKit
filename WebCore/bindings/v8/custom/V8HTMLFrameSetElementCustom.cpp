@@ -48,7 +48,7 @@ NAMED_PROPERTY_GETTER(HTMLFrameSetElement)
 {
     INC_STATS("DOM.HTMLFrameSetElement.NamedPropertyGetter");
     HTMLFrameSetElement* imp = V8Proxy::DOMWrapperToNode<HTMLFrameSetElement>(info.Holder());
-    Node* frameNode = imp->children()->namedItem(toWebCoreString(name));
+    Node* frameNode = imp->children()->namedItem(v8StringToAtomicWebCoreString(name));
     if (frameNode && frameNode->hasTagName(HTMLNames::frameTag)) {
         Document* doc = static_cast<HTMLFrameElement*>(frameNode)->contentDocument();
         if (!doc)

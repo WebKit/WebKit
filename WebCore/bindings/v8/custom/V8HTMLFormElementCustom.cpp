@@ -42,7 +42,7 @@ NAMED_PROPERTY_GETTER(HTMLFormElement)
 {
     INC_STATS("DOM.HTMLFormElement.NamedPropertyGetter");
     HTMLFormElement* imp = V8Proxy::DOMWrapperToNode<HTMLFormElement>(info.Holder());
-    String v = toWebCoreString(name);
+    AtomicString v = v8StringToAtomicWebCoreString(name);
 
     // Call getNamedElements twice, first time check if it has a value
     // and let HTMLFormElement update its cache.

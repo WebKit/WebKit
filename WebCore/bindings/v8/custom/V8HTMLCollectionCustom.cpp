@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, String name)
+static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->namedItems(name, namedItems);
@@ -85,7 +85,7 @@ NAMED_PROPERTY_GETTER(HTMLCollection)
 
     // Finally, search the DOM structure.
     HTMLCollection* imp = V8Proxy::ToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, info.Holder());
-    return getNamedItems(imp, toWebCoreString(name));
+    return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
 }
 
 CALLBACK_FUNC_DECL(HTMLCollectionItem)
