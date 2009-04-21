@@ -1,3 +1,10 @@
+2009-04-21  Dan Bernstein  <mitz@apple.com>
+
+        - fix the Tiger build
+
+        * page/mac/EventHandlerMac.mm:
+        (method_setImplementation):
+
 2009-04-21   Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Sam Weinig.
