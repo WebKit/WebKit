@@ -1,3 +1,11 @@
+2009-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Not reviewed, typo fix.
+
+        Rename erroneous lines in Skipped to actual test URLs.
+
+        * platform/win/Skipped:
+
 2009-04-20  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Roben.

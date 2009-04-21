@@ -729,20 +729,20 @@ tables/mozilla_expected_failures/bugs/bug92647-1.html
 
 # These tests might be actual regressions. More likely the tests just need
 # to be modified to work with non-hardcoded metrics.
-editing/inserting/before-after-input-element-diffs.txt
-editing/pasteboard/drop-text-without-selection-diffs.txt
-editing/pasteboard/nested-blocks-with-text-field-diffs.txt
-editing/selection/3690703-2-diffs.txt
-editing/selection/3690703-diffs.txt
-editing/selection/3690719-diffs.txt
-editing/selection/select-from-textfield-outwards-diffs.txt
+editing/inserting/before-after-input-element.html
+editing/pasteboard/drop-text-without-selection.html
+editing/pasteboard/nested-blocks-with-text-field.html
+editing/selection/3690703-2.html
+editing/selection/3690703.html
+editing/selection/3690719.html
+editing/selection/select-from-textfield-outwards.html
 
 # These tests are doing the right thing, but the asserts in the
 # tests are wrong for Windows. Not quite sure what the best way
 # to fix this is. Presumably we don't want "FAIL" messages in
 # the expected results.
-fast/replaced/table-percent-height-diffs.txt
-svg/custom/svg-fonts-in-text-controls-diffs.txt
+fast/replaced/table-percent-height.html
+svg/custom/svg-fonts-in-text-controls.html
 
 ################################################################################
 ######################### End list of r42678 failures ##########################
