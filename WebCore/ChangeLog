@@ -1,3 +1,18 @@
+2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+
+        One last loose end, discovered using COLLECT_ON_EVERY_ALLOCATION, for
+        https://bugs.webkit.org/show_bug.cgi?id=21260
+        Unbounded memory growth when churning elements with anonymous event handler functions
+        
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::mark): Don't ASSERT that an ElementInstance's
+        correspondingElement has a JS wrapper. If a GC falls exactly between the
+        allocation of the ElementInstance wrapper and the correspondingElement
+        wrapper, the correspondingElement won't have a wrapper at the time we
+        mark the ElementInstance's wrapper.
+
 2009-04-20  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe

@@ -43,8 +43,7 @@ void JSSVGElementInstance::mark()
 
     // Mark the wrapper for our corresponding element, so it can mark its event handlers.
     JSNode* correspondingWrapper = getCachedDOMNodeWrapper(impl()->correspondingElement()->document(), impl()->correspondingElement());
-    ASSERT(correspondingWrapper);
-    if (!correspondingWrapper->marked())
+    if (correspondingWrapper && !correspondingWrapper->marked())
         correspondingWrapper->mark();
 }
 
