@@ -1,3 +1,21 @@
+2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Tiger crash fix: Put VM tags in their own header file, and fixed up the
+        #ifdefs so they're not used on Tiger.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * runtime/Collector.cpp:
+        (JSC::allocateBlock):
+        * wtf/VMTags.h: Added.
+
 2009-04-20  Steve Falkenburg  <sfalken@apple.com>
 
         More Windows build fixes.

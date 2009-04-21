@@ -31,22 +31,7 @@
 
 #include <sys/mman.h>
 #include <unistd.h>
-
-#if PLATFORM(DARWIN)
-#include <mach/vm_statistics.h>
-#endif
-
-#if PLATFORM(DARWIN)
-// On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
-// in order to aid tools that inspect system memory use. 
-#if defined(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR)
-#define TAG_FOR_EXECUTABLEALLOCATOR_MEMORY VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR)
-#else
-#define TAG_FOR_EXECUTABLEALLOCATOR_MEMORY VM_MAKE_TAG(64)
-#endif
-#else
-#define TAG_FOR_EXECUTABLEALLOCATOR_MEMORY -1
-#endif
+#include <wtf/VMTags.h>
 
 namespace JSC {
 
@@ -57,7 +42,7 @@ void ExecutableAllocator::intializePageSize()
 
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t n)
 {
-    ExecutablePool::Allocation alloc = { reinterpret_cast<char*>(mmap(NULL, n, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0)), n };
+    ExecutablePool::Allocation alloc = { reinterpret_cast<char*>(mmap(NULL, n, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0)), n };
     return alloc;
 }
 
@@ -68,7 +53,5 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
 }
 
 }
-
-#undef TAG_FOR_EXECUTABLEALLOCATOR_MEMORY
 
 #endif // HAVE(ASSEMBLER)

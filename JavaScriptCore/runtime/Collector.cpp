@@ -37,6 +37,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/VMTags.h>
 
 #if PLATFORM(DARWIN)
 
@@ -45,7 +46,6 @@
 #include <mach/task.h>
 #include <mach/thread_act.h>
 #include <mach/vm_map.h>
-#include <mach/vm_statistics.h>
 
 #elif PLATFORM(WIN_OS)
 
@@ -73,16 +73,6 @@
 
 #define DEBUG_COLLECTOR 0
 #define COLLECT_ON_EVERY_ALLOCATION 0
-
-#if PLATFORM(DARWIN)
-// On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
-// in order to aid tools that inspect system memory use. 
-#if defined(VM_MEMORY_JAVASCRIPT_CORE)
-#define TAG_FOR_COLLECTOR_MEMORY VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_CORE)
-#else
-#define TAG_FOR_COLLECTOR_MEMORY VM_MAKE_TAG(63)
-#endif
-#endif
 
 using std::max;
 
@@ -194,7 +184,7 @@ static NEVER_INLINE CollectorBlock* allocateBlock()
 #if PLATFORM(DARWIN)
     vm_address_t address = 0;
     // FIXME: tag the region as a JavaScriptCore heap when we get a registered VM tag: <rdar://problem/6054788>.
-    vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE | TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
+    vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE | VM_TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
 #elif PLATFORM(SYMBIAN)
     // no memory map in symbian, need to hack with fastMalloc
     void* address = fastMalloc(BLOCK_SIZE);
@@ -1135,7 +1125,3 @@ Heap::iterator Heap::primaryHeapEnd()
 }
 
 } // namespace JSC
-
-#if PLATFORM(DARWIN)
-#undef TAG_FOR_COLLECTOR_MEMORY
-#endif
