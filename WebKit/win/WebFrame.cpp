@@ -873,7 +873,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = coreFrame->eventHandler()->pendingFrameUnloadEventCount();
+    *result = coreFrame->domWindow()->pendingFrameUnloadEventCount();
     return S_OK;
 }
 
