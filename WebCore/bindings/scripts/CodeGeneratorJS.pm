@@ -1255,7 +1255,7 @@ sub GenerateImplementation
                                 push(@implContent, "    if (!globalObject)\n");
                                 push(@implContent, "        return;\n");
                             }
-                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->createJSInlineEventListener(value));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->createJSAttributeEventListener(value));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

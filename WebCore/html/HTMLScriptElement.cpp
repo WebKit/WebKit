@@ -68,7 +68,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
     if (attrName == srcAttr)
         handleSourceAttribute(m_data, attr->value());
     else if (attrName == onloadAttr)
-        setInlineEventListener(eventNames().loadEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else
         HTMLElement::parseMappedAttribute(attr);
 }

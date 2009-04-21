@@ -30,29 +30,30 @@ namespace WebCore {
 
     class JSEventListener : public EventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
+        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isAttribute)
         {
-            return adoptRef(new JSEventListener(listener, globalObject, isInline));
+            return adoptRef(new JSEventListener(listener, globalObject, isAttribute));
         }
         virtual ~JSEventListener();
-
         void clearGlobalObject() { m_globalObject = 0; }
 
-        bool isInline() const { return m_isInline; }
+        // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
+        bool isAttribute() const { return m_isAttribute; }
+
         virtual JSC::JSObject* jsFunction() const;
 
     private:
         virtual void markJSFunction();
         virtual void handleEvent(Event*, bool isWindowEvent);
-        virtual bool virtualIsInline() const;
+        virtual bool virtualisAttribute() const;
         void clearJSFunctionInline();
 
     protected:
-        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isInline);
+        JSEventListener(JSC::JSObject* function, JSDOMGlobalObject*, bool isAttribute);
 
         mutable JSC::JSObject* m_jsFunction;
         JSDOMGlobalObject* m_globalObject;
-        bool m_isInline;
+        bool m_isAttribute;
     };
 
 } // namespace WebCore

@@ -94,7 +94,7 @@ PassRefPtr<JSEventListener> JSDOMGlobalObject::findOrCreateJSEventListener(JSVal
     return JSEventListener::create(asObject(val), this, false).get();
 }
 
-PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSInlineEventListener(JSValuePtr val)
+PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSAttributeEventListener(JSValuePtr val)
 {
     if (!val.isObject())
         return 0;

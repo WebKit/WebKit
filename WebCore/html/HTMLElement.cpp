@@ -142,75 +142,75 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
     }
 // standard events
     else if (attr->name() == onclickAttr) {
-        setInlineEventListener(eventNames().clickEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == oncontextmenuAttr) {
-        setInlineEventListener(eventNames().contextmenuEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().contextmenuEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondblclickAttr) {
-        setInlineEventListener(eventNames().dblclickEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dblclickEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmousedownAttr) {
-        setInlineEventListener(eventNames().mousedownEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmousemoveAttr) {
-        setInlineEventListener(eventNames().mousemoveEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmouseoutAttr) {
-        setInlineEventListener(eventNames().mouseoutEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmouseoverAttr) {
-        setInlineEventListener(eventNames().mouseoverEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmouseupAttr) {
-        setInlineEventListener(eventNames().mouseupEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onmousewheelAttr) {
-        setInlineEventListener(eventNames().mousewheelEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().mousewheelEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onkeydownAttr) {
-        setInlineEventListener(eventNames().keydownEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().keydownEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onkeypressAttr) {
-        setInlineEventListener(eventNames().keypressEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().keypressEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onkeyupAttr) {
-        setInlineEventListener(eventNames().keyupEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().keyupEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onscrollAttr) {
-        setInlineEventListener(eventNames().scrollEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onbeforecutAttr) {
-        setInlineEventListener(eventNames().beforecutEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().beforecutEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == oncutAttr) {
-        setInlineEventListener(eventNames().cutEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().cutEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onbeforecopyAttr) {
-        setInlineEventListener(eventNames().beforecopyEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().beforecopyEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == oncopyAttr) {
-        setInlineEventListener(eventNames().copyEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().copyEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onbeforepasteAttr) {
-        setInlineEventListener(eventNames().beforepasteEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().beforepasteEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onpasteAttr) {
-        setInlineEventListener(eventNames().pasteEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().pasteEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragenterAttr) {
-        setInlineEventListener(eventNames().dragenterEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragenterEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragoverAttr) {
-        setInlineEventListener(eventNames().dragoverEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragoverEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragleaveAttr) {
-        setInlineEventListener(eventNames().dragleaveEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragleaveEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondropAttr) {
-        setInlineEventListener(eventNames().dropEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dropEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragstartAttr) {
-        setInlineEventListener(eventNames().dragstartEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragstartEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragAttr) {
-        setInlineEventListener(eventNames().dragEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ondragendAttr) {
-        setInlineEventListener(eventNames().dragendEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().dragendEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onselectstartAttr) {
-        setInlineEventListener(eventNames().selectstartEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().selectstartEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onsubmitAttr) {
-        setInlineEventListener(eventNames().submitEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onerrorAttr) {
-        setInlineEventListener(eventNames().errorEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onwebkitanimationstartAttr) {
-        setInlineEventListener(eventNames().webkitAnimationStartEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().webkitAnimationStartEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onwebkitanimationiterationAttr) {
-        setInlineEventListener(eventNames().webkitAnimationIterationEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().webkitAnimationIterationEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onwebkitanimationendAttr) {
-        setInlineEventListener(eventNames().webkitAnimationEndEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().webkitAnimationEndEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onwebkittransitionendAttr) {
-        setInlineEventListener(eventNames().webkitTransitionEndEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().webkitTransitionEndEvent, createAttributeEventListener(this, attr));
     }
 }
 

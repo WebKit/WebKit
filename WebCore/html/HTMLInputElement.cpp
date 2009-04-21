@@ -588,20 +588,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onselectAttr) {
-        setInlineEventListener(eventNames().selectEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onchangeAttr) {
-        setInlineEventListener(eventNames().changeEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == oninputAttr) {
-        setInlineEventListener(eventNames().inputEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().inputEvent, createAttributeEventListener(this, attr));
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setInlineEventListener(eventNames().searchEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().searchEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;

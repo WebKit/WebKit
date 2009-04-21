@@ -31,18 +31,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isInline)
+JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isAttribute)
     : m_jsFunction(function)
     , m_globalObject(globalObject)
-    , m_isInline(isInline)
+    , m_isAttribute(isAttribute)
 {
-    if (!m_isInline && m_jsFunction)
+    if (!m_isAttribute && m_jsFunction)
         globalObject->jsEventListeners().set(m_jsFunction, this);
 }
 
 JSEventListener::~JSEventListener()
 {
-    if (!m_isInline && m_jsFunction && m_globalObject)
+    if (!m_isAttribute && m_jsFunction && m_globalObject)
         m_globalObject->jsEventListeners().remove(m_jsFunction);
 }
 
@@ -140,7 +140,7 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
         else {
             if (!retval.isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval.toString(exec));
-            if (m_isInline) {
+            if (m_isAttribute) {
                 bool retvalbool;
                 if (retval.getBoolean(retvalbool) && !retvalbool)
                     event->preventDefault();
@@ -153,9 +153,9 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
     }
 }
 
-bool JSEventListener::virtualIsInline() const
+bool JSEventListener::virtualisAttribute() const
 {
-    return m_isInline;
+    return m_isAttribute;
 }
 
 } // namespace WebCore

@@ -90,9 +90,9 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute* attr)
         // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
         // See http://bugs.webkit.org/show_bug.cgi?id=12071
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListener(eventNames().focusEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListener(eventNames().blurEvent, createInlineEventListener(this, attr));
+        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
     } else
         HTMLFormControlElement::parseMappedAttribute(attr);
 }

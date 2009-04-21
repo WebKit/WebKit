@@ -61,7 +61,7 @@ namespace WebCore {
 
         // Creates a GC-protected JS EventListener for an "onXXX" event attribute.
         // These listeners cannot be removed through the removeEventListener API.
-        PassRefPtr<JSEventListener> createJSInlineEventListener(JSC::JSValuePtr);
+        PassRefPtr<JSEventListener> createJSAttributeEventListener(JSC::JSValuePtr);
 
         typedef HashMap<JSC::JSObject*, JSEventListener*> JSListenersMap;
 

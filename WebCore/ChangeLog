@@ -1,5 +1,294 @@
 2009-04-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Rubber stamped by Darin Adler and Sam Weinig.
+
+        Renamed "*InlineEventListener*" => "*AttributeEventListener*", and
+        "isInline" => "isAttribute".
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::createJSAttributeEventListener):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::virtualisAttribute):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        (WebCore::JSEventListener::isAttribute):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/JSLazyEventListener.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Element.cpp:
+        (WebCore::Element::setWindowAttributeEventListener):
+        * dom/Element.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::isAttribute):
+        (WebCore::EventListener::virtualisAttribute):
+        * dom/Node.cpp:
+        (WebCore::Node::clearAttributeEventListener):
+        (WebCore::Node::setAttributeEventListener):
+        (WebCore::Node::getAttributeEventListener):
+        (WebCore::Node::onabort):
+        (WebCore::Node::setOnabort):
+        (WebCore::Node::onblur):
+        (WebCore::Node::setOnblur):
+        (WebCore::Node::onchange):
+        (WebCore::Node::setOnchange):
+        (WebCore::Node::onclick):
+        (WebCore::Node::setOnclick):
+        (WebCore::Node::oncontextmenu):
+        (WebCore::Node::setOncontextmenu):
+        (WebCore::Node::ondblclick):
+        (WebCore::Node::setOndblclick):
+        (WebCore::Node::onerror):
+        (WebCore::Node::setOnerror):
+        (WebCore::Node::onfocus):
+        (WebCore::Node::setOnfocus):
+        (WebCore::Node::oninput):
+        (WebCore::Node::setOninput):
+        (WebCore::Node::onkeydown):
+        (WebCore::Node::setOnkeydown):
+        (WebCore::Node::onkeypress):
+        (WebCore::Node::setOnkeypress):
+        (WebCore::Node::onkeyup):
+        (WebCore::Node::setOnkeyup):
+        (WebCore::Node::onload):
+        (WebCore::Node::setOnload):
+        (WebCore::Node::onmousedown):
+        (WebCore::Node::setOnmousedown):
+        (WebCore::Node::onmousemove):
+        (WebCore::Node::setOnmousemove):
+        (WebCore::Node::onmouseout):
+        (WebCore::Node::setOnmouseout):
+        (WebCore::Node::onmouseover):
+        (WebCore::Node::setOnmouseover):
+        (WebCore::Node::onmouseup):
+        (WebCore::Node::setOnmouseup):
+        (WebCore::Node::onmousewheel):
+        (WebCore::Node::setOnmousewheel):
+        (WebCore::Node::onbeforecut):
+        (WebCore::Node::setOnbeforecut):
+        (WebCore::Node::oncut):
+        (WebCore::Node::setOncut):
+        (WebCore::Node::onbeforecopy):
+        (WebCore::Node::setOnbeforecopy):
+        (WebCore::Node::oncopy):
+        (WebCore::Node::setOncopy):
+        (WebCore::Node::onbeforepaste):
+        (WebCore::Node::setOnbeforepaste):
+        (WebCore::Node::onpaste):
+        (WebCore::Node::setOnpaste):
+        (WebCore::Node::ondragenter):
+        (WebCore::Node::setOndragenter):
+        (WebCore::Node::ondragover):
+        (WebCore::Node::setOndragover):
+        (WebCore::Node::ondragleave):
+        (WebCore::Node::setOndragleave):
+        (WebCore::Node::ondrop):
+        (WebCore::Node::setOndrop):
+        (WebCore::Node::ondragstart):
+        (WebCore::Node::setOndragstart):
+        (WebCore::Node::ondrag):
+        (WebCore::Node::setOndrag):
+        (WebCore::Node::ondragend):
+        (WebCore::Node::setOndragend):
+        (WebCore::Node::onreset):
+        (WebCore::Node::setOnreset):
+        (WebCore::Node::onresize):
+        (WebCore::Node::setOnresize):
+        (WebCore::Node::onscroll):
+        (WebCore::Node::setOnscroll):
+        (WebCore::Node::onsearch):
+        (WebCore::Node::setOnsearch):
+        (WebCore::Node::onselect):
+        (WebCore::Node::setOnselect):
+        (WebCore::Node::onselectstart):
+        (WebCore::Node::setOnselectstart):
+        (WebCore::Node::onsubmit):
+        (WebCore::Node::setOnsubmit):
+        (WebCore::Node::onunload):
+        (WebCore::Node::setOnunload):
+        * dom/Node.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setAttributeEventListener):
+        (WebCore::DOMWindow::clearAttributeEventListener):
+        (WebCore::DOMWindow::getAttributeEventListener):
+        (WebCore::DOMWindow::onabort):
+        (WebCore::DOMWindow::setOnabort):
+        (WebCore::DOMWindow::onblur):
+        (WebCore::DOMWindow::setOnblur):
+        (WebCore::DOMWindow::onchange):
+        (WebCore::DOMWindow::setOnchange):
+        (WebCore::DOMWindow::onclick):
+        (WebCore::DOMWindow::setOnclick):
+        (WebCore::DOMWindow::ondblclick):
+        (WebCore::DOMWindow::setOndblclick):
+        (WebCore::DOMWindow::onerror):
+        (WebCore::DOMWindow::setOnerror):
+        (WebCore::DOMWindow::onfocus):
+        (WebCore::DOMWindow::setOnfocus):
+        (WebCore::DOMWindow::onkeydown):
+        (WebCore::DOMWindow::setOnkeydown):
+        (WebCore::DOMWindow::onkeypress):
+        (WebCore::DOMWindow::setOnkeypress):
+        (WebCore::DOMWindow::onkeyup):
+        (WebCore::DOMWindow::setOnkeyup):
+        (WebCore::DOMWindow::onload):
+        (WebCore::DOMWindow::setOnload):
+        (WebCore::DOMWindow::onmousedown):
+        (WebCore::DOMWindow::setOnmousedown):
+        (WebCore::DOMWindow::onmousemove):
+        (WebCore::DOMWindow::setOnmousemove):
+        (WebCore::DOMWindow::onmouseout):
+        (WebCore::DOMWindow::setOnmouseout):
+        (WebCore::DOMWindow::onmouseover):
+        (WebCore::DOMWindow::setOnmouseover):
+        (WebCore::DOMWindow::onmouseup):
+        (WebCore::DOMWindow::setOnmouseup):
+        (WebCore::DOMWindow::onmousewheel):
+        (WebCore::DOMWindow::setOnmousewheel):
+        (WebCore::DOMWindow::onreset):
+        (WebCore::DOMWindow::setOnreset):
+        (WebCore::DOMWindow::onresize):
+        (WebCore::DOMWindow::setOnresize):
+        (WebCore::DOMWindow::onscroll):
+        (WebCore::DOMWindow::setOnscroll):
+        (WebCore::DOMWindow::onsearch):
+        (WebCore::DOMWindow::setOnsearch):
+        (WebCore::DOMWindow::onselect):
+        (WebCore::DOMWindow::setOnselect):
+        (WebCore::DOMWindow::onsubmit):
+        (WebCore::DOMWindow::setOnsubmit):
+        (WebCore::DOMWindow::onunload):
+        (WebCore::DOMWindow::setOnunload):
+        (WebCore::DOMWindow::onbeforeunload):
+        (WebCore::DOMWindow::setOnbeforeunload):
+        (WebCore::DOMWindow::onwebkitanimationstart):
+        (WebCore::DOMWindow::setOnwebkitanimationstart):
+        (WebCore::DOMWindow::onwebkitanimationiteration):
+        (WebCore::DOMWindow::setOnwebkitanimationiteration):
+        (WebCore::DOMWindow::onwebkitanimationend):
+        (WebCore::DOMWindow::setOnwebkitanimationend):
+        (WebCore::DOMWindow::onwebkittransitionend):
+        (WebCore::DOMWindow::setOnwebkittransitionend):
+        * page/DOMWindow.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::onabort):
+        (WebCore::SVGElementInstance::setOnabort):
+        (WebCore::SVGElementInstance::onblur):
+        (WebCore::SVGElementInstance::setOnblur):
+        (WebCore::SVGElementInstance::onchange):
+        (WebCore::SVGElementInstance::setOnchange):
+        (WebCore::SVGElementInstance::onclick):
+        (WebCore::SVGElementInstance::setOnclick):
+        (WebCore::SVGElementInstance::oncontextmenu):
+        (WebCore::SVGElementInstance::setOncontextmenu):
+        (WebCore::SVGElementInstance::ondblclick):
+        (WebCore::SVGElementInstance::setOndblclick):
+        (WebCore::SVGElementInstance::onerror):
+        (WebCore::SVGElementInstance::setOnerror):
+        (WebCore::SVGElementInstance::onfocus):
+        (WebCore::SVGElementInstance::setOnfocus):
+        (WebCore::SVGElementInstance::oninput):
+        (WebCore::SVGElementInstance::setOninput):
+        (WebCore::SVGElementInstance::onkeydown):
+        (WebCore::SVGElementInstance::setOnkeydown):
+        (WebCore::SVGElementInstance::onkeypress):
+        (WebCore::SVGElementInstance::setOnkeypress):
+        (WebCore::SVGElementInstance::onkeyup):
+        (WebCore::SVGElementInstance::setOnkeyup):
+        (WebCore::SVGElementInstance::onload):
+        (WebCore::SVGElementInstance::setOnload):
+        (WebCore::SVGElementInstance::onmousedown):
+        (WebCore::SVGElementInstance::setOnmousedown):
+        (WebCore::SVGElementInstance::onmousemove):
+        (WebCore::SVGElementInstance::setOnmousemove):
+        (WebCore::SVGElementInstance::onmouseout):
+        (WebCore::SVGElementInstance::setOnmouseout):
+        (WebCore::SVGElementInstance::onmouseover):
+        (WebCore::SVGElementInstance::setOnmouseover):
+        (WebCore::SVGElementInstance::onmouseup):
+        (WebCore::SVGElementInstance::setOnmouseup):
+        (WebCore::SVGElementInstance::onmousewheel):
+        (WebCore::SVGElementInstance::setOnmousewheel):
+        (WebCore::SVGElementInstance::onbeforecut):
+        (WebCore::SVGElementInstance::setOnbeforecut):
+        (WebCore::SVGElementInstance::oncut):
+        (WebCore::SVGElementInstance::setOncut):
+        (WebCore::SVGElementInstance::onbeforecopy):
+        (WebCore::SVGElementInstance::setOnbeforecopy):
+        (WebCore::SVGElementInstance::oncopy):
+        (WebCore::SVGElementInstance::setOncopy):
+        (WebCore::SVGElementInstance::onbeforepaste):
+        (WebCore::SVGElementInstance::setOnbeforepaste):
+        (WebCore::SVGElementInstance::onpaste):
+        (WebCore::SVGElementInstance::setOnpaste):
+        (WebCore::SVGElementInstance::ondragenter):
+        (WebCore::SVGElementInstance::setOndragenter):
+        (WebCore::SVGElementInstance::ondragover):
+        (WebCore::SVGElementInstance::setOndragover):
+        (WebCore::SVGElementInstance::ondragleave):
+        (WebCore::SVGElementInstance::setOndragleave):
+        (WebCore::SVGElementInstance::ondrop):
+        (WebCore::SVGElementInstance::setOndrop):
+        (WebCore::SVGElementInstance::ondragstart):
+        (WebCore::SVGElementInstance::setOndragstart):
+        (WebCore::SVGElementInstance::ondrag):
+        (WebCore::SVGElementInstance::setOndrag):
+        (WebCore::SVGElementInstance::ondragend):
+        (WebCore::SVGElementInstance::setOndragend):
+        (WebCore::SVGElementInstance::onreset):
+        (WebCore::SVGElementInstance::setOnreset):
+        (WebCore::SVGElementInstance::onresize):
+        (WebCore::SVGElementInstance::setOnresize):
+        (WebCore::SVGElementInstance::onscroll):
+        (WebCore::SVGElementInstance::setOnscroll):
+        (WebCore::SVGElementInstance::onsearch):
+        (WebCore::SVGElementInstance::setOnsearch):
+        (WebCore::SVGElementInstance::onselect):
+        (WebCore::SVGElementInstance::setOnselect):
+        (WebCore::SVGElementInstance::onselectstart):
+        (WebCore::SVGElementInstance::setOnselectstart):
+        (WebCore::SVGElementInstance::onsubmit):
+        (WebCore::SVGElementInstance::setOnsubmit):
+        (WebCore::SVGElementInstance::onunload):
+        (WebCore::SVGElementInstance::setOnunload):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+
+2009-04-20  Geoffrey Garen  <ggaren@apple.com>
+
         Approved by Mark Rowe, Cameron Zwarich, Oliver Hunt, and Ojan Vafai.
         
         Used svn merge to roll out revisions 42678, 42690, 42694, 42697 because

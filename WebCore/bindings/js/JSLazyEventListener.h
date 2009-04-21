@@ -52,8 +52,8 @@ namespace WebCore {
         Node* m_originalNode;
     };
 
-    PassRefPtr<JSLazyEventListener> createInlineEventListener(Node*, Attribute*);
-    PassRefPtr<JSLazyEventListener> createInlineEventListener(Frame*, Attribute*);
+    PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node*, Attribute*);
+    PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame*, Attribute*);
 
 } // namespace WebCore
 

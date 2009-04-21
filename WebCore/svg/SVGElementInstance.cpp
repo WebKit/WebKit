@@ -174,402 +174,402 @@ bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
 
 EventListener* SVGElementInstance::onabort() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().abortEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().abortEvent);
 }
 
 void SVGElementInstance::setOnabort(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().abortEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().abortEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onblur() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().blurEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().blurEvent);
 }
 
 void SVGElementInstance::setOnblur(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().blurEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().blurEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onchange() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().changeEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().changeEvent);
 }
 
 void SVGElementInstance::setOnchange(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().changeEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().changeEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onclick() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().clickEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().clickEvent);
 }
 
 void SVGElementInstance::setOnclick(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().clickEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().clickEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::oncontextmenu() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().contextmenuEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().contextmenuEvent);
 }
 
 void SVGElementInstance::setOncontextmenu(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().contextmenuEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().contextmenuEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondblclick() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dblclickEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dblclickEvent);
 }
 
 void SVGElementInstance::setOndblclick(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dblclickEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dblclickEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onerror() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().errorEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().errorEvent);
 }
 
 void SVGElementInstance::setOnerror(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().errorEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().errorEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onfocus() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().focusEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().focusEvent);
 }
 
 void SVGElementInstance::setOnfocus(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().focusEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().focusEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::oninput() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().inputEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().inputEvent);
 }
 
 void SVGElementInstance::setOninput(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().inputEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().inputEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onkeydown() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().keydownEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().keydownEvent);
 }
 
 void SVGElementInstance::setOnkeydown(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().keydownEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().keydownEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onkeypress() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().keypressEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().keypressEvent);
 }
 
 void SVGElementInstance::setOnkeypress(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().keypressEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().keypressEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onkeyup() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().keyupEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().keyupEvent);
 }
 
 void SVGElementInstance::setOnkeyup(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().keyupEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().keyupEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onload() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().loadEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().loadEvent);
 }
 
 void SVGElementInstance::setOnload(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().loadEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().loadEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmousedown() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mousedownEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mousedownEvent);
 }
 
 void SVGElementInstance::setOnmousedown(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mousedownEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mousedownEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmousemove() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mousemoveEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mousemoveEvent);
 }
 
 void SVGElementInstance::setOnmousemove(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mousemoveEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mousemoveEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmouseout() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mouseoutEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mouseoutEvent);
 }
 
 void SVGElementInstance::setOnmouseout(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mouseoutEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mouseoutEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmouseover() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mouseoverEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mouseoverEvent);
 }
 
 void SVGElementInstance::setOnmouseover(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mouseoverEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mouseoverEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmouseup() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mouseupEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mouseupEvent);
 }
 
 void SVGElementInstance::setOnmouseup(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mouseupEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mouseupEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onmousewheel() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().mousewheelEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().mousewheelEvent);
 }
 
 void SVGElementInstance::setOnmousewheel(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().mousewheelEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().mousewheelEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onbeforecut() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().beforecutEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().beforecutEvent);
 }
 
 void SVGElementInstance::setOnbeforecut(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().beforecutEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().beforecutEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::oncut() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().cutEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().cutEvent);
 }
 
 void SVGElementInstance::setOncut(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().cutEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().cutEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onbeforecopy() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().beforecopyEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().beforecopyEvent);
 }
 
 void SVGElementInstance::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().beforecopyEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().beforecopyEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::oncopy() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().copyEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().copyEvent);
 }
 
 void SVGElementInstance::setOncopy(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().copyEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().copyEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onbeforepaste() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().beforepasteEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().beforepasteEvent);
 }
 
 void SVGElementInstance::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().beforepasteEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().beforepasteEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onpaste() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().pasteEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().pasteEvent);
 }
 
 void SVGElementInstance::setOnpaste(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().pasteEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().pasteEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondragenter() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragenterEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragenterEvent);
 }
 
 void SVGElementInstance::setOndragenter(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragenterEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragenterEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondragover() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragoverEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragoverEvent);
 }
 
 void SVGElementInstance::setOndragover(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragoverEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragoverEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondragleave() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragleaveEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragleaveEvent);
 }
 
 void SVGElementInstance::setOndragleave(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragleaveEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragleaveEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondrop() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dropEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dropEvent);
 }
 
 void SVGElementInstance::setOndrop(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dropEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dropEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondragstart() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragstartEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragstartEvent);
 }
 
 void SVGElementInstance::setOndragstart(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragstartEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragstartEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondrag() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragEvent);
 }
 
 void SVGElementInstance::setOndrag(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::ondragend() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().dragendEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().dragendEvent);
 }
 
 void SVGElementInstance::setOndragend(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().dragendEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().dragendEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onreset() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().resetEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().resetEvent);
 }
 
 void SVGElementInstance::setOnreset(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().resetEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().resetEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onresize() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().resizeEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().resizeEvent);
 }
 
 void SVGElementInstance::setOnresize(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().resizeEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().resizeEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onscroll() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().scrollEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().scrollEvent);
 }
 
 void SVGElementInstance::setOnscroll(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().scrollEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().scrollEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onsearch() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().searchEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().searchEvent);
 }
 
 void SVGElementInstance::setOnsearch(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().searchEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().searchEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onselect() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().selectEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().selectEvent);
 }
 
 void SVGElementInstance::setOnselect(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().selectEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().selectEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onselectstart() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().selectstartEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().selectstartEvent);
 }
 
 void SVGElementInstance::setOnselectstart(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().selectstartEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().selectstartEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onsubmit() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().submitEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().submitEvent);
 }
 
 void SVGElementInstance::setOnsubmit(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().submitEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().submitEvent, eventListener);
 }
 
 EventListener* SVGElementInstance::onunload() const
 {
-    return correspondingElement()->getInlineEventListener(eventNames().unloadEvent);
+    return correspondingElement()->getAttributeEventListener(eventNames().unloadEvent);
 }
 
 void SVGElementInstance::setOnunload(PassRefPtr<EventListener> eventListener)
 {
-    correspondingElement()->setInlineEventListener(eventNames().unloadEvent, eventListener);
+    correspondingElement()->setAttributeEventListener(eventNames().unloadEvent, eventListener);
 }
 
 }

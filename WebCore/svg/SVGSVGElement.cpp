@@ -221,13 +221,13 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
-            setWindowInlineEventListener(eventNames().unloadEvent, createInlineEventListener(document()->frame(), attr));
+            setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
         else if (attr->name() == onresizeAttr)
-            setWindowInlineEventListener(eventNames().resizeEvent, createInlineEventListener(document()->frame(), attr));
+            setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
         else if (attr->name() == onscrollAttr)
-            setWindowInlineEventListener(eventNames().scrollEvent, createInlineEventListener(document()->frame(), attr));
+            setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
         else if (attr->name() == SVGNames::onzoomAttr)
-            setWindowInlineEventListener(eventNames().zoomEvent, createInlineEventListener(document()->frame(), attr));
+            setWindowAttributeEventListener(eventNames().zoomEvent, createAttributeEventListener(document()->frame(), attr));
         else
             setListener = false;
  
@@ -236,9 +236,9 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
     }
 
     if (attr->name() == onabortAttr)
-        setWindowInlineEventListener(eventNames().abortEvent, createInlineEventListener(document()->frame(), attr));
+        setWindowAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onerrorAttr)
-        setWindowInlineEventListener(eventNames().errorEvent, createInlineEventListener(document()->frame(), attr));
+        setWindowAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)

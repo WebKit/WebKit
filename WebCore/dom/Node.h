@@ -520,9 +520,9 @@ public:
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
 
     // Used for legacy "onEvent" property APIs.
-    void setInlineEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
-    void clearInlineEventListener(const AtomicString& eventType);
-    EventListener* getInlineEventListener(const AtomicString& eventType) const;
+    void setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
+    void clearAttributeEventListener(const AtomicString& eventType);
+    EventListener* getAttributeEventListener(const AtomicString& eventType) const;
 
     virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
     bool dispatchEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
