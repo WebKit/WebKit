@@ -1,3 +1,34 @@
+2009-04-21  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        QWebElementSelection renamed to QWebElementCollection.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::findAll):
+        (QWebElementCollectionPrivate::QWebElementCollectionPrivate):
+        (QWebElementCollectionPrivate::create):
+        (QWebElementCollection::QWebElementCollection):
+        (QWebElementCollection::operator=):
+        (QWebElementCollection::~QWebElementCollection):
+        (QWebElementCollection::operator+):
+        (QWebElementCollection::append):
+        (QWebElementCollection::count):
+        (QWebElementCollection::at):
+        (QWebElementCollection::toList):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::findAllElements):
+        * Api/qwebframe.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::selectElements):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::simpleCollection):
+        (tst_QWebElement::iteration):
+        (tst_QWebElement::emptyCollection):
+        (tst_QWebElement::appendCollection):
+        (tst_QWebElement::nullSelect):
+
 2009-04-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

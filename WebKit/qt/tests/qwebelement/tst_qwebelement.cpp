@@ -65,7 +65,7 @@ public slots:
 
 private slots:
     void textHtml();
-    void simpleSelection();
+    void simpleCollection();
     void attributes();
     void attributesNS();
     void classes();
@@ -77,9 +77,9 @@ private slots:
     void functionNames();
     void documentElement();
     void frame();
-    void emptySelection();
+    void emptyCollection();
     void style();
-    void appendSelection();
+    void appendCollection();
     void properties();
     void appendAndPrepend();
     void insertBeforeAndAfter();
@@ -132,13 +132,13 @@ void tst_QWebElement::textHtml()
     QCOMPARE(body.toXml(QWebElement::InnerXml), html);
 }
 
-void tst_QWebElement::simpleSelection()
+void tst_QWebElement::simpleCollection()
 {
     QString html = "<body><p>first para</p><p>second para</p></body>";
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection paras = body.findAll("p");
+    QWebElementCollection paras = body.findAll("p");
     QCOMPARE(paras.count(), 2);
 
     QList<QWebElement> list = paras.toList();
@@ -294,7 +294,7 @@ void tst_QWebElement::iteration()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection paras = body.findAll("p");
+    QWebElementCollection paras = body.findAll("p");
     QList<QWebElement> referenceList = paras.toList();
 
     QList<QWebElement> foreachList;
@@ -410,10 +410,10 @@ void tst_QWebElement::frame()
     QVERIFY(secondPara.webFrame() == secondFrame);
 }
 
-void tst_QWebElement::emptySelection()
+void tst_QWebElement::emptyCollection()
 {
-    QWebElementSelection emptySelection;
-    QCOMPARE(emptySelection.count(), 0);
+    QWebElementCollection emptyCollection;
+    QCOMPARE(emptyCollection.count(), 0);
 }
 
 void tst_QWebElement::style()
@@ -432,34 +432,34 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
 }
 
-void tst_QWebElement::appendSelection()
+void tst_QWebElement::appendCollection()
 {
     QString html = "<body><span class='a'>aaa</span><p>first para</p><div>foo</div>"
         "<span class='b'>bbb</span><p>second para</p><div>bar</div></body>";
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementSelection selection = body.findAll("p");
-    QCOMPARE(selection.count(), 2);
+    QWebElementCollection collection = body.findAll("p");
+    QCOMPARE(collection.count(), 2);
 
-    selection.append(body.findAll("div"));
-    QCOMPARE(selection.count(), 4);
+    collection.append(body.findAll("div"));
+    QCOMPARE(collection.count(), 4);
 
-    selection += body.findAll("span.a");
-    QCOMPARE(selection.count(), 5);
+    collection += body.findAll("span.a");
+    QCOMPARE(collection.count(), 5);
 
-    QWebElementSelection all = selection + body.findAll("span.b");
+    QWebElementCollection all = collection + body.findAll("span.b");
     QCOMPARE(all.count(), 6);
-    QCOMPARE(selection.count(), 5);
+    QCOMPARE(collection.count(), 5);
 
-    all += selection;
+    all += collection;
     QCOMPARE(all.count(), 11);
 
-    QCOMPARE(selection.count(), 5);
-    QWebElementSelection test;
-    test.append(selection);
+    QCOMPARE(collection.count(), 5);
+    QWebElementCollection test;
+    test.append(collection);
     QCOMPARE(test.count(), 5);
-    test.append(QWebElementSelection());
+    test.append(QWebElementCollection());
     QCOMPARE(test.count(), 5);
 }
 
@@ -696,8 +696,8 @@ void tst_QWebElement::nullSelect()
 {
     m_mainFrame->setHtml("<body><p>Test");
 
-    QWebElementSelection selection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
-    QVERIFY(selection.count() == 0);
+    QWebElementCollection collection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
+    QVERIFY(collection.count() == 0);
 }
 
 void tst_QWebElement::firstChildNextSibling()

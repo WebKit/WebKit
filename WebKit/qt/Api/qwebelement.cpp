@@ -141,12 +141,12 @@ bool QWebElement::isNull() const
 }
 
 /*!
-    Returns a new selection of elements that are children of this element
+    Returns a new collection of elements that are children of this element
     and that match the given CSS selector \a query.
 */
-QWebElementSelection QWebElement::findAll(const QString &query) const
+QWebElementCollection QWebElement::findAll(const QString &query) const
 {
-    return QWebElementSelection(*this, query);
+    return QWebElementCollection(*this, query);
 }
 
 /*!
@@ -1225,18 +1225,18 @@ void QWebElement::replaceWith(const QString &html)
     Returns true if this element points to a different underlying DOM object than \a o; otherwise returns false.
 */
 
-class QWebElementSelectionPrivate : public QSharedData
+class QWebElementCollectionPrivate : public QSharedData
 {
 public:
-    static QWebElementSelectionPrivate* create(const PassRefPtr<Node> &context, const QString &query);
+    static QWebElementCollectionPrivate* create(const PassRefPtr<Node> &context, const QString &query);
 
     RefPtr<NodeList> m_result;
 
 private:
-    inline QWebElementSelectionPrivate() {}
+    inline QWebElementCollectionPrivate() {}
 };
 
-QWebElementSelectionPrivate* QWebElementSelectionPrivate::create(const PassRefPtr<Node> &context, const QString &query)
+QWebElementCollectionPrivate* QWebElementCollectionPrivate::create(const PassRefPtr<Node> &context, const QString &query)
 {
     if (!context)
         return 0;
@@ -1247,76 +1247,76 @@ QWebElementSelectionPrivate* QWebElementSelectionPrivate::create(const PassRefPt
     if (!nodes)
         return 0;
 
-    QWebElementSelectionPrivate* priv = new QWebElementSelectionPrivate;
+    QWebElementCollectionPrivate* priv = new QWebElementCollectionPrivate;
     priv->m_result = nodes;
     return priv;
 }
 
 /*!
-    \class QWebElementSelection
+    \class QWebElementCollection
     \since 4.6
-    \brief The QWebElementSelection class represents a selection of web elements.
+    \brief The QWebElementCollection class represents a collection of web elements.
     \preliminary
 
     Elements in a document can be selected using QWebElement::findAll() or using the
-    QWebElement constructor. The selection is composed by choosing all elements in the
+    QWebElement constructor. The collection is composed by choosing all elements in the
     document that match a specified CSS selector expression.
 
     The number of selected elements is provided through the count() property. Individual
     elements can be retrieved by index using at().
 
-    It is also possible to iterate through all elements in the selection using Qt's foreach
+    It is also possible to iterate through all elements in the collection using Qt's foreach
     macro:
 
     \code
-        QWebElementSelection selection = document.findAll("p");
-        foreach (QWebElement paraElement, selection) {
+        QWebElementCollection collection = document.findAll("p");
+        foreach (QWebElement paraElement, collection) {
             ...
         }
     \endcode
 */
 
 /*!
-    Constructs an empty selection.
+    Constructs an empty collection.
 */
-QWebElementSelection::QWebElementSelection()
+QWebElementCollection::QWebElementCollection()
 {
 }
 
 /*!
     Constructs a copy of \a other.
 */
-QWebElementSelection::QWebElementSelection(const QWebElementSelection &other)
+QWebElementCollection::QWebElementCollection(const QWebElementCollection &other)
     : d(other.d)
 {
 }
 
 /*!
-    Constructs a selection of elements from the list of child elements of \a contextElement that
+    Constructs a collection of elements from the list of child elements of \a contextElement that
     match the specified CSS selector \a query.
 */
-QWebElementSelection::QWebElementSelection(const QWebElement &contextElement, const QString &query)
+QWebElementCollection::QWebElementCollection(const QWebElement &contextElement, const QString &query)
 {
-    d = QExplicitlySharedDataPointer<QWebElementSelectionPrivate>(QWebElementSelectionPrivate::create(contextElement.m_element, query));
+    d = QExplicitlySharedDataPointer<QWebElementCollectionPrivate>(QWebElementCollectionPrivate::create(contextElement.m_element, query));
 }
 
 /*!
-    Assigns \a other to this selection and returns a reference to this selection.
+    Assigns \a other to this collection and returns a reference to this collection.
 */
-QWebElementSelection &QWebElementSelection::operator=(const QWebElementSelection &other)
+QWebElementCollection &QWebElementCollection::operator=(const QWebElementCollection &other)
 {
     d = other.d;
     return *this;
 }
 
 /*!
-    Destroys the selection.
+    Destroys the collection.
 */
-QWebElementSelection::~QWebElementSelection()
+QWebElementCollection::~QWebElementCollection()
 {
 }
 
-/*! \fn QWebElementSelection &QWebElementSelection::operator+=(const QWebElementSelection &other)
+/*! \fn QWebElementCollection &QWebElementCollection::operator+=(const QWebElementCollection &other)
 
     Appends the items of the \a other list to this list and returns a
     reference to this list.
@@ -1325,24 +1325,24 @@ QWebElementSelection::~QWebElementSelection()
 */
 
 /*!
-    Returns a selection that contains all the elements of this selection followed
-    by all the elements in the \a other selection. Duplicates may occur in the result.
+    Returns a collection that contains all the elements of this collection followed
+    by all the elements in the \a other collection. Duplicates may occur in the result.
 
     \sa operator+=()
 */
-QWebElementSelection QWebElementSelection::operator+(const QWebElementSelection &other) const
+QWebElementCollection QWebElementCollection::operator+(const QWebElementCollection &other) const
 {
-    QWebElementSelection n = *this; n.d.detach(); n += other; return n;
+    QWebElementCollection n = *this; n.d.detach(); n += other; return n;
 }
 
 /*!
-    Extends the selection by appending all items of \a other.
+    Extends the collection by appending all items of \a other.
 
-    The resulting selection may include duplicate elements.
+    The resulting collection may include duplicate elements.
 
     \sa operator+=()
 */
-void QWebElementSelection::append(const QWebElementSelection &other)
+void QWebElementCollection::append(const QWebElementCollection &other)
 {
     if (!d) {
         *this = other;
@@ -1367,9 +1367,9 @@ void QWebElementSelection::append(const QWebElementSelection &other)
 }
 
 /*!
-    Returns the number of elements in the selection.
+    Returns the number of elements in the collection.
 */
-int QWebElementSelection::count() const
+int QWebElementCollection::count() const
 {
     if (!d)
         return 0;
@@ -1377,9 +1377,9 @@ int QWebElementSelection::count() const
 }
 
 /*!
-    Returns the element at index position \a i in the selection.
+    Returns the element at index position \a i in the collection.
 */
-QWebElement QWebElementSelection::at(int i) const
+QWebElement QWebElementCollection::at(int i) const
 {
     if (!d)
         return QWebElement();
@@ -1388,29 +1388,29 @@ QWebElement QWebElementSelection::at(int i) const
 }
 
 /*!
-    \fn const QWebElement QWebElementSelection::operator[](int position) const
+    \fn const QWebElement QWebElementCollection::operator[](int position) const
 
-    Returns the element at the specified \a position in the selection.
+    Returns the element at the specified \a position in the collection.
 */
 
-/*! \fn QWebElement QWebElementSelection::first() const
+/*! \fn QWebElement QWebElementCollection::first() const
 
-    Returns the first element in the selection.
+    Returns the first element in the collection.
 
     \sa last(), operator[](), at(), count()
 */
 
-/*! \fn QWebElement QWebElementSelection::last() const
+/*! \fn QWebElement QWebElementCollection::last() const
 
-    Returns the last element in the selection.
+    Returns the last element in the collection.
 
     \sa first(), operator[](), at(), count()
 */
 
 /*!
-    Returns a QList object with the elements contained in this selection.
+    Returns a QList object with the elements contained in this collection.
 */
-QList<QWebElement> QWebElementSelection::toList() const
+QList<QWebElement> QWebElementCollection::toList() const
 {
     if (!d)
         return QList<QWebElement>();
@@ -1426,15 +1426,15 @@ QList<QWebElement> QWebElementSelection::toList() const
 }
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::begin() const
+    \fn QWebElementCollection::const_iterator QWebElementCollection::begin() const
 
-    Returns an STL-style iterator pointing to the first element in the selection.
+    Returns an STL-style iterator pointing to the first element in the collection.
 
     \sa end()
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::end() const
+    \fn QWebElementCollection::const_iterator QWebElementCollection::end() const
 
     Returns an STL-style iterator pointing to the imaginary element after the
     last element in the list.
@@ -1443,21 +1443,21 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \class QWebElementSelection::const_iterator
+    \class QWebElementCollection::const_iterator
     \since 4.6
-    \brief The QWebElementSelection::const_iterator class provides an STL-style const iterator for QWebElementSelection.
+    \brief The QWebElementCollection::const_iterator class provides an STL-style const iterator for QWebElementCollection.
 
-    QWebElementSelection provides STL style const iterators for fast low-level access to the elements.
+    QWebElementCollection provides STL style const iterators for fast low-level access to the elements.
 
-    QWebElementSelection::const_iterator allows you to iterate over a QWebElementSelection.
+    QWebElementCollection::const_iterator allows you to iterate over a QWebElementCollection.
 
-    The default QWebElementSelection::const_iterator constructors creates an uninitialized iterator. You must initialize
-    it using a QWebElementSelection function like QWebElementSelection::begin() or QWebElementSelection::end() before you
+    The default QWebElementCollection::const_iterator constructors creates an uninitialized iterator. You must initialize
+    it using a QWebElementCollection function like QWebElementCollection::begin() or QWebElementCollection::end() before you
     can start iterating.
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator::const_iterator()
+    \fn QWebElementCollection::const_iterator::const_iterator()
 
     Constructs an uninitialized iterator.
 
@@ -1465,28 +1465,28 @@ QList<QWebElement> QWebElementSelection::toList() const
     an uninitialized iterator. Use operator=() to assign a value
     to it before using it.
 
-    \sa QWebElementSelection::begin()
+    \sa QWebElementCollection::begin()
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator::const_iterator(const const_iterator &other)
+    \fn QWebElementCollection::const_iterator::const_iterator(const const_iterator &other)
 
     Constructs a copy of \a other.
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator::const_iterator(const QWebElementSelection *selection, int index)
+    \fn QWebElementCollection::const_iterator::const_iterator(const QWebElementCollection *collection, int index)
     \internal
 */
 
 /*!
-    \fn const QWebElement QWebElementSelection::const_iterator::operator*() const
+    \fn const QWebElement QWebElementCollection::const_iterator::operator*() const
 
     Returns the current element.
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator==(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator==(const const_iterator &other) const
 
     Returns true if \a other points to the same item as this iterator;
     otherwise returns false.
@@ -1495,7 +1495,7 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator!=(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator!=(const const_iterator &other) const
 
     Returns true if \a other points to a different element than this;
     iterator; otherwise returns false.
@@ -1504,40 +1504,40 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator &QWebElementSelection::const_iterator::operator++()
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator++()
 
-    The prefix ++ operator (\c{++it}) advances the iterator to the next element in the selection
+    The prefix ++ operator (\c{++it}) advances the iterator to the next element in the collection
     and returns an iterator to the new current element.
 
-    Calling this function on QWebElementSelection::end() leads to undefined results.
+    Calling this function on QWebElementCollection::end() leads to undefined results.
 
     \sa operator--()
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::const_iterator::operator++(int)
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator++(int)
 
     \overload
 
-    The postfix ++ operator (\c{it++}) advances the iterator to the next element in the selection
+    The postfix ++ operator (\c{it++}) advances the iterator to the next element in the collection
     and returns an iterator to the previously current element.
 
-    Calling this function on QWebElementSelection::end() leads to undefined results.
+    Calling this function on QWebElementCollection::end() leads to undefined results.
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator &QWebElementSelection::const_iterator::operator--()
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator--()
 
     The prefix -- operator (\c{--it}) makes the preceding element current and returns an
     iterator to the new current element.
 
-    Calling this function on QWebElementSelection::begin() leads to undefined results.
+    Calling this function on QWebElementCollection::begin() leads to undefined results.
 
     \sa operator++()
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::const_iterator::operator--(int)
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator--(int)
 
     \overload
 
@@ -1546,7 +1546,7 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator &QWebElementSelection::const_iterator::operator+=(int j)
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator+=(int j)
 
     Advances the iterator by \a j elements. If \a j is negative, the iterator goes backward.
 
@@ -1554,7 +1554,7 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator &QWebElementSelection::const_iterator::operator-=(int j)
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator-=(int j)
 
     Makes the iterator go back by \a j elements. If \a j is negative, the iterator goes forward.
 
@@ -1562,7 +1562,7 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::const_iterator::operator+(int j) const
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator+(int j) const
 
     Returns an iterator to the element at \a j positions forward from this iterator. If \a j
     is negative, the iterator goes backward.
@@ -1571,7 +1571,7 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn QWebElementSelection::const_iterator QWebElementSelection::const_iterator::operator-(int j) const
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator-(int j) const
 
     Returns an iterator to the element at \a j positiosn backward from this iterator.
     If \a j is negative, the iterator goes forward.
@@ -1580,35 +1580,35 @@ QList<QWebElement> QWebElementSelection::toList() const
 */
 
 /*!
-    \fn int QWebElementSelection::const_iterator::operator-(const_iterator other) const
+    \fn int QWebElementCollection::const_iterator::operator-(const_iterator other) const
 
     Returns the number of elements between the item point to by \a other
     and the element pointed to by this iterator.
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator<(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator<(const const_iterator &other) const
 
     Returns true if the element pointed to by this iterator is less than the element pointed to
     by the \a other iterator.
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator<=(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator<=(const const_iterator &other) const
 
     Returns true if the element pointed to by this iterator is less than or equal to the
     element pointed to by the \a other iterator.
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator>(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator>(const const_iterator &other) const
 
     Returns true if the element pointed to by this iterator is greater than the element pointed to
     by the \a other iterator.
 */
 
 /*!
-    \fn bool QWebElementSelection::const_iterator::operator>=(const const_iterator &other) const
+    \fn bool QWebElementCollection::const_iterator::operator>=(const const_iterator &other) const
 
     Returns true if the element pointed to by this iterator is greater than or equal to the
     element pointed to by the \a other iterator.

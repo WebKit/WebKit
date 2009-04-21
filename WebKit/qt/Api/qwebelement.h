@@ -31,7 +31,7 @@ namespace WebCore {
 }
 
 class QWebFrame;
-class QWebElementSelection;
+class QWebElementCollection;
 class QWebElementPrivate;
 
 class QWEBKIT_EXPORT QWebElement
@@ -47,7 +47,7 @@ public:
 
     bool isNull() const;
 
-    QWebElementSelection findAll(const QString &query) const;
+    QWebElementCollection findAll(const QString &query) const;
     QWebElement findFirst(const QString &query) const;
 
     void setPlainText(const QString &text);
@@ -93,7 +93,7 @@ public:
     QWebElement document() const;
     QWebFrame *webFrame() const;
 
-    // TODO: Add QWebElementSelection overloads
+    // TODO: Add QWebElementCollection overloads
     void append(const QString &html);
     void append(QWebElement element);
 
@@ -130,31 +130,31 @@ private:
     QWebElement(WebCore::Element *domElement);
 
     friend class QWebFrame;
-    friend class QWebElementSelection;
+    friend class QWebElementCollection;
     friend class QWebHitTestResult;
 
     QWebElementPrivate *d;
     WebCore::Element *m_element;
 };
 
-class QWebElementSelectionPrivate;
+class QWebElementCollectionPrivate;
 
-class QWEBKIT_EXPORT QWebElementSelection
+class QWEBKIT_EXPORT QWebElementCollection
 {
 public:
-    QWebElementSelection();
-    QWebElementSelection(const QWebElement &contextElement, const QString &query);
-    QWebElementSelection(const QWebElementSelection &);
-    QWebElementSelection &operator=(const QWebElementSelection &);
-    ~QWebElementSelection();
+    QWebElementCollection();
+    QWebElementCollection(const QWebElement &contextElement, const QString &query);
+    QWebElementCollection(const QWebElementCollection &);
+    QWebElementCollection &operator=(const QWebElementCollection &);
+    ~QWebElementCollection();
 
-    QWebElementSelection operator+(const QWebElementSelection &other) const;
-    inline QWebElementSelection &operator+=(const QWebElementSelection &other)
+    QWebElementCollection operator+(const QWebElementCollection &other) const;
+    inline QWebElementCollection &operator+=(const QWebElementCollection &other)
     {
         append(other); return *this;
     }
 
-    void append(const QWebElementSelection &selection);
+    void append(const QWebElementCollection &collection);
 
     int count() const;
     QWebElement at(int i) const;
@@ -167,9 +167,9 @@ public:
     class const_iterator {
        public:
            int i;
-           const QWebElementSelection *s;
+           const QWebElementCollection *s;
 
-           inline const_iterator(const QWebElementSelection *selection, int index) : i(index), s(selection) {}
+           inline const_iterator(const QWebElementCollection *collection, int index) : i(index), s(collection) {}
            inline const_iterator(const const_iterator &o) : i(o.i), s(o.s) {}
 
            inline const QWebElement operator*() const { return s->at(i); }
@@ -200,7 +200,7 @@ public:
     inline const QWebElement operator[](int i) const { return at(i); }
 
 private:
-    QExplicitlySharedDataPointer<QWebElementSelectionPrivate> d;
+    QExplicitlySharedDataPointer<QWebElementCollectionPrivate> d;
 };
 
 #endif // QWEBELEMENT_H
