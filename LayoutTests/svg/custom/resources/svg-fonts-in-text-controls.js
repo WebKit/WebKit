@@ -9,12 +9,21 @@ var textarea = document.createElement('textarea');
 textarea.style.fontFamily = 'SVGraffiti';
 textarea.cols = 20;
 document.body.appendChild(textarea);
-shouldBe(String(textarea.offsetWidth), '141');
 
 var input = document.createElement('input');
 input.style.fontFamily = 'SVGraffiti';
 input.size = 20;
 document.body.appendChild(input);
-shouldBe(String(input.offsetWidth), '140');
+
+// Force a layout to ensure SVGGraffiti gets loaded.
+// Needs to happen before onLoad.
+document.body.offsetWidth;
+
+// Need to wait for the load event to make sure the font is loaded.
+window.addEventListener('load', function()
+{
+    shouldBe(String(textarea.offsetWidth), '116');
+    shouldBe(String(input.offsetWidth), '103');
+}, true);
 
 var successfullyParsed = true;

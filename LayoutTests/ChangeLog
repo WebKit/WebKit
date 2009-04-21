@@ -1,3 +1,19 @@
+2009-04-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        Fix svg-fonts-in-text-controls.js to measure the
+        widths after the SVG font has loaded.
+
+        For now the expected results have the success line
+        printed before the metrics being measured. I'll fix
+        this in a following commit. See
+        https://bugs.webkit.org/show_bug.cgi?id=25302
+        for more details.
+
+        * svg/custom/resources/svg-fonts-in-text-controls.js:
+        * svg/custom/svg-fonts-in-text-controls-expected.txt:
+
 2009-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
