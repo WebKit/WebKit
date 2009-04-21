@@ -1,3 +1,13 @@
+2009-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 25304: AX: Safari not identifying a secure text field
+        https://bugs.webkit.org/show_bug.cgi?id=25304
+
+        * accessibility/secure-textfield-title-ui-expected.txt: Added.
+        * accessibility/secure-textfield-title-ui.html: Added.
+
 2009-04-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin Adler.
