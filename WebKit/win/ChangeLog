@@ -1,5 +1,78 @@
 2009-04-20  Adam Roben  <aroben@apple.com>
 
+        First part of <rdar://6395825> It takes over 20 sec to launch Safari
+        with 500KB history file
+
+        This ports the changes that were made to WebKit/mac's WebHistory
+        implementation in r25275 to WebKit/win. WebHistory now stores a
+        HashMap from CFAbsoluteTime (stored as int64_t) to CFArray of
+        IWebHistoryItem*. The HashMap lets us look up the CFArray for a
+        particular day's history in constant time rather than linear time. The
+        precise reasons why we store the CFAbsoluteTime as an int64_t are lost
+        to the mists of time, but it is likely because these CFAbsoluteTimes
+        never have a decimal part, and integer comparisons are faster than
+        floating-point comparisons, so storing them as int64_t should improve
+        performance without losing precision. We also now use a binary search
+        instead of a linear search when determining the index at which to
+        insert a WebHistoryItem into its day's CFArray.
+
+        This patch reduces the time needed to load a 100,000-item
+        History.plist from ~15 seconds to ~7.5 seconds. Further improvements
+        could likely be made by reducing the number of string conversions,
+        reducing calls to CFTimeZone functions, and removing all the
+        WebHistoryItemsAdded notifications that are sent (Mac doesn't send any
+        while loading history).
+
+        Reviewed by Darin Adler.
+
+        * WebHistory.cpp:
+        (WebHistoryWriter::WebHistoryWriter): Changed to take a
+        DateToEntriesMap instead of a CFArrayRef. Initialize m_dateKeys to
+        contain the keys from m_entriesByDate in ascending order.
+        (WebHistoryWriter::writeHistoryItems): Now loops through m_dateKeys in
+        reverse order and gets the entries array from the DateToEntriesMap.
+        (WebHistory::WebHistory): Removed code to initialize
+        m_datesWithEntries (which has been removed) and m_entriesByDate (which
+        has been converted to a HashMap).
+        (WebHistory::removeAllItems): Clear out m_entriesByDate and
+        m_orderedLastVisitedDays.
+        (WebHistory::orderedLastVisitedDays): If we don't already have a
+        cached m_orderedLastVisitedDays array, create one by converting the
+        keys from m_entriesByDate to DATEs and sorting them in descending
+        order. Then copy m_orderedLastVisitedDays to the output buffer.
+        (WebHistory::orderedItemsLastVisitedOnDay): Updated to use findKey
+        instead of findIndex and to treat m_entriesByDate as a HashMap.
+        Now that the items in each day's CFArray are stored in descending
+        order (newest to oldest), we don't have to reverse them when filling
+        in the output buffer. (The old comment about putting the items in
+        oldest-to-newest order was incorrect -- it was putting them in
+        newest-to-oldest order.)
+
+        (WebHistory::addItemToDateCaches):
+        (WebHistory::removeItemFromDateCaches):
+        Changed to use findKey instead of findIndex and to treat
+        m_entriesByDate as a HashMap. If we're adding a key to or removing a
+        key from m_entriesByDate, also clear m_orderedLastVisitedDays so that
+        we will regenerate it for the current set of keys the next time it is
+        needed.
+
+        (timeIntervalForBeginningOfDay): Added. Returns the CFAbsoluteTime
+        that corresponds to the beginning of the day in which the passed-in
+        DATE occurs.
+        (WebHistory::findKey): Returns the key used in m_entriesByDate to
+        store the CFArray that should contain the IWebHistoryItem that
+        corresponds to the passed-in DATE. Replaces findIndex.
+        (WebHistory::insertItem): Changed to treat m_entriesByDate as a
+        HashMap rather than a CFArray. We now optimize for inserting at the
+        beginning and end of the array, and use a binary rather than linear
+        search when inserting into the middle of the array.
+        (WebHistory::data): Changed to treat m_entriesByDate as a HashMap.
+
+        * WebHistory.h: Changed m_entriesByDate to a DateToEntriesMap, removed
+        m_datesWithEntries, added m_orderedLastVisitedDays.
+
+2009-04-20  Adam Roben  <aroben@apple.com>
+
         Change MemoryStream::createInstance to return a COMPtr
 
         Part of Bug 25294: All WebKit/win classes should return COMPtrs from
