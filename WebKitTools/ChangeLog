@@ -1,3 +1,15 @@
+2009-04-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Update FindSafari for JavaScriptCore DLL changes.
+        Also removed code previously needed to support running nightlies against Safari 3 on Windows.
+        
+        Reviewed by Mark Rowe.
+
+        * FindSafari/FindSafari.cpp:
+        (getStringValue):
+        (getInstalledWebKitDirectory):
+        (_tmain):
+
 2009-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
         return 0;
 
     TCHAR* buffer = (TCHAR*)malloc(bufferSize);
-    if (RegQueryValueEx(key, 0, 0, &type, reinterpret_cast<LPBYTE>(buffer), &bufferSize) != ERROR_SUCCESS) {
+    if (RegQueryValueEx(key, valueName, 0, &type, reinterpret_cast<LPBYTE>(buffer), &bufferSize) != ERROR_SUCCESS) {
         free(buffer);
         return 0;
     }
@@ -57,125 +57,22 @@ static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
     return buffer;
 }
 
-static LPOLESTR getWebViewCLSID()
-{
-    LPCTSTR webViewProgID = TEXT("WebKit.WebView");
-
-    CLSID clsid = CLSID_NULL;
-    HRESULT hr = CLSIDFromProgID(webViewProgID, &clsid);
-    if (FAILED(hr)) {
-        LOG_WARNING(TEXT("Failed to get CLSID for %s\n"), webViewProgID);
-        return 0;
-    }
-
-    LPOLESTR clsidString = 0;
-    if (FAILED(StringFromCLSID(clsid, &clsidString))) {
-        LOG_WARNING(TEXT("Failed to get string representation of CLSID for WebView\n"));
-        return 0;
-    }
-
-    return clsidString;
-}
-
 static TCHAR* getInstalledWebKitDirectory()
 {
-    LPCTSTR keyPrefix = TEXT("SOFTWARE\\Classes\\CLSID\\");
-    LPCTSTR keySuffix = TEXT("\\InprocServer32");
-
-    LPOLESTR clsid = getWebViewCLSID();
-    if (!clsid)
-        return 0;
-
-    size_t keyBufferLength = _tcslen(keyPrefix) + _tcslen(clsid) + _tcslen(keySuffix) + 1;
-    TCHAR* keyString = (TCHAR*)malloc(keyBufferLength * sizeof(TCHAR));
-
-    int ret = _sntprintf_s(keyString, keyBufferLength, keyBufferLength - 1, TEXT("%s%s%s"), keyPrefix, clsid, keySuffix);
-    CoTaskMemFree(clsid);
-    if (ret == -1) {
-        LOG_WARNING(TEXT("Failed to construct InprocServer32 key\n"));
-        return 0;
-    }
-
-    HKEY serverKey = 0;
-    LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyString, 0, KEY_READ, &serverKey);
-    free(keyString);
+    LPCTSTR installPathKeyString = TEXT("SOFTWARE\\Apple Computer, Inc.\\Safari");
+    HKEY installPathKey = 0;
+    LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, installPathKeyString, 0, KEY_READ, &installPathKey);
     if (error != ERROR_SUCCESS) {
-        LOG_WARNING(TEXT("Failed to open registry key %s\n"), keyString);
+        LOG_WARNING(TEXT("Failed to open registry key %s\n"), installPathKeyString);
         return 0;
     }
-
-    TCHAR* webKitPath = getStringValue(serverKey, 0);
-    RegCloseKey(serverKey);
+    LPTSTR webKitPath = getStringValue(installPathKey, TEXT("InstallDir"));
+    RegCloseKey(installPathKey);
     if (!webKitPath) {
-        LOG_WARNING(TEXT("Couldn't retrieve value for registry key %s\n"), keyString);
+        LOG_WARNING(TEXT("Couldn't retrieve value for registry key %s\n"), installPathKeyString);
         return 0;
     }
-
-    TCHAR* startOfFileName = PathFindFileName(webKitPath);
-    if (startOfFileName == webKitPath) {
-        LOG_WARNING(TEXT("Couldn't find filename from path %s\n"), webKitPath);
-        free(webKitPath);
-        return 0;
-    }
-
-    *startOfFileName = '\0';
     return webKitPath;
-}
-
-static char* copyManifest(HMODULE module, LPCTSTR id)
-{
-    HRSRC resHandle = FindResource(module, id, MAKEINTRESOURCE(RT_MANIFEST));
-    if (!resHandle)
-        return 0;
-    DWORD manifestSize = SizeofResource(module, resHandle);
-    if (!manifestSize)
-        return 0;
-    HGLOBAL resData = LoadResource(module, resHandle);
-    if (!resData)
-        return 0;
-    void* data = LockResource(resData);
-    if (!data)
-        return 0;
-
-    char* dataCopy = static_cast<char*>(malloc(manifestSize + 1));
-    if (!dataCopy)
-        return 0;
-    memcpy(dataCopy, data, manifestSize);
-    dataCopy[manifestSize] = 0;
-    return dataCopy;
-}
-
-static void replaceManifest()
-{
-    TCHAR safariPath[MAX_PATH];
-    ::ExpandEnvironmentStrings(TEXT("%TMP%\\WebKitNightly\\Safari.exe"), safariPath, ARRAYSIZE(safariPath));
-    
-    // get the existing manifest out of Safari.exe
-    HMODULE safariModule = LoadLibraryEx(safariPath, 0, LOAD_LIBRARY_AS_DATAFILE);
-    if (!safariModule)
-        return;
-    char* safariManifest = copyManifest(safariModule, MAKEINTRESOURCE(1));
-    FreeLibrary(safariModule);
-    if (!safariManifest)
-        return;
-
-    // see if the existing Safari manifest contains registry free COM info
-    // (we only need to update if it is not registry free COM-aware)
-    bool needsUpdate = !strstr(safariManifest, "<comClass");
-    free(safariManifest);
-    if (!needsUpdate)
-        return;
-
-    // replace the manifest with the extra manifest stashed in FindSafar.exe (ID 100)
-    char* replacementManifest = copyManifest(0, MAKEINTRESOURCE(IDR_SAFARI_MANIFEST));
-    if (!replacementManifest)
-        return;
-    if (HANDLE h = BeginUpdateResource(safariPath, FALSE)) {
-        UpdateResource(h, MAKEINTRESOURCE(RT_MANIFEST), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), replacementManifest, strlen(replacementManifest));
-        EndUpdateResource(h, FALSE);
-    }
-
-    free(replacementManifest);
 }
 
 int _tmain(int argc, TCHAR* argv[])
@@ -189,7 +86,6 @@ int _tmain(int argc, TCHAR* argv[])
     bool printLauncher = false;
     bool printEnvironment = false;
     bool debugger = false;
-    bool updateManifest = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!_tcscmp(argv[i], TEXT("/printSafariLauncher"))) {
@@ -204,16 +100,6 @@ int _tmain(int argc, TCHAR* argv[])
             debugger = true;
             continue;
         }
-
-        if (!_tcscmp(argv[i], TEXT("/updateManifest"))) {
-            updateManifest = true;
-            continue;
-        }
-    }
-
-    if (updateManifest) {
-        replaceManifest();
-        return 0;
     }
 
     // printLauncher is inclusive of printEnvironment, so do not
@@ -232,13 +118,16 @@ int _tmain(int argc, TCHAR* argv[])
         TEXT("del /s /q \"%%TMP%%\\WebKitNightly\""),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\WebKit.resources\""),
+        TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\JavaScriptCore.resources\""),
         TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d /e \"%sSafari.resources\" \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("xcopy /y /i /d /e \"%splugins\" \"%%TMP%%\\WebKitNightly\\plugins\""),
         TEXT("xcopy /y /i /d WebKit.dll \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d WebKit.pdb \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d /e WebKit.resources \"%%TMP%%\\WebKitNightly\\WebKit.resources\""),
-        TEXT("FindSafari.exe /updateManifest"),
+        TEXT("xcopy /y /i /d JavaScriptCore.dll \"%%TMP%%\\WebKitNightly\""),
+        TEXT("xcopy /y /i /d JavaScriptCore.pdb \"%%TMP%%\\WebKitNightly\""),
+        TEXT("xcopy /y /i /d /e JavaScriptCore.resources \"%%TMP%%\\WebKitNightly\\JavaScriptCore.resources\""),
         TEXT("set PATH=%%CD%%;%s;%%PATH%%"),
     };
 
