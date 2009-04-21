@@ -1,3 +1,18 @@
+2009-04-21  Dave Moore <davemoore@google.com> and Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add test for (as of yet not implemented) HTML5 named option access.
+        https://bugs.webkit.org/show_bug.cgi?id=25191
+
+        I believe this will require separate implementations
+        for V8 and JSC the way our current bindings are designed.
+
+        * fast/dom/HTMLSelectElement/named-options-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/named-options.html: Added.
+        * fast/dom/HTMLSelectElement/resources/TEMPLATE.html: Copied from LayoutTests/fast/dom/CSSStyleDeclaration/resources/TEMPLATE.html.
+        * fast/dom/HTMLSelectElement/resources/named-options.js: Added.
+
 2009-04-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
