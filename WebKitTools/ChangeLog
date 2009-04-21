@@ -1,3 +1,12 @@
+2009-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Adam Roben.
+        
+        Disabled one more Mozilla JS test because it fails intermittently on Windows.
+        (See https://bugs.webkit.org/show_bug.cgi?id=25160.)
+
+        * Scripts/run-javascriptcore-tests:
+
 2009-04-21  Adam Roben  <aroben@apple.com>
 
         Fix running run-safari and run-webkit-tests from the paths recommended
