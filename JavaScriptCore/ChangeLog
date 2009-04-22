@@ -1,3 +1,12 @@
+2009-04-22  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Fix for <rdar://problem/6816957>
+        Turn off Geolocation by default
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).
