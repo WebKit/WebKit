@@ -119,7 +119,7 @@ static DOMWindowRegisteredEventListenerMap& pendingBeforeUnloadEventListenerMap(
     return eventListenerMap;
 }
 
-static bool shouldAddPendingBeforeUnloadListener(DOMWindow* window)
+static bool allowsPendingBeforeUnloadListeners(DOMWindow* window)
 {
     ASSERT_ARG(window, window);
     Frame* frame = window->frame();
@@ -1190,7 +1190,7 @@ void DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
 
     if (eventType == eventNames().unloadEvent)
         addPendingEventListener(pendingUnloadEventListenerMap(), this, registeredListener.get());
-    else if (eventType == eventNames().beforeunloadEvent && shouldAddPendingBeforeUnloadListener(this))
+    else if (eventType == eventNames().beforeunloadEvent && allowsPendingBeforeUnloadListeners(this))
         addPendingEventListener(pendingBeforeUnloadEventListenerMap(), this, registeredListener.get());
 }
 
@@ -1202,7 +1202,7 @@ void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
             if (eventType == eventNames().unloadEvent)
                 removePendingEventListener(pendingUnloadEventListenerMap(), this, &r);
-            else if (eventType == eventNames().beforeunloadEvent)
+            else if (eventType == eventNames().beforeunloadEvent && allowsPendingBeforeUnloadListeners(this))
                 removePendingEventListener(pendingBeforeUnloadEventListenerMap(), this, &r);
             r.setRemoved(true);
             m_eventListeners.remove(i);
@@ -1247,7 +1247,7 @@ void DOMWindow::clearAttributeEventListener(const AtomicString& eventType)
         if (r.eventType() == eventType && r.listener()->isAttribute()) {
             if (eventType == eventNames().unloadEvent)
                 removePendingEventListener(pendingUnloadEventListenerMap(), this, &r);
-            else if (eventType == eventNames().beforeunloadEvent)
+            else if (eventType == eventNames().beforeunloadEvent && allowsPendingBeforeUnloadListeners(this))
                 removePendingEventListener(pendingBeforeUnloadEventListenerMap(), this, &r);
             r.setRemoved(true);
             m_eventListeners.remove(i);

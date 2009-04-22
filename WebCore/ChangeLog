@@ -1,3 +1,19 @@
+2009-04-21  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a crash on Gmail when they remove a "before unload" event listener when
+        it was never added to the pending map in the first place.
+
+        <rdar://problem/6814144>
+
+        Reviewed by Darin Adler.
+
+        * page/DOMWindow.cpp:
+        (WebCore::allowsPendingBeforeUnloadListeners): Renamed from shouldAddPendingBeforeUnloadListener.
+        (WebCore::DOMWindow::addEventListener): Call allowsPendingBeforeUnloadListeners now.
+        (WebCore::DOMWindow::removeEventListener): Call allowsPendingBeforeUnloadListeners before
+        removing the before unload listener.
+        (WebCore::DOMWindow::clearAttributeEventListener): Ditto.
+
 2009-04-22  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.
