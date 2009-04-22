@@ -1,5 +1,15 @@
 2009-04-21  Steve Falkenburg  <sfalken@apple.com>
 
+        Minor clean-ups to WebKitCreateInstance change.
+        
+        Reviewed by Jon Honeycutt.
+
+        * WebKitCOMAPI.cpp:
+        (classFactory):
+        (WebKitCreateInstance):
+
+2009-04-21  Steve Falkenburg  <sfalken@apple.com>
+
         Add registry-free CoCreateInstance API for WebKit clients: WebKitCreateInstance.
 
         Manifest-based registry-free COM continues to work for clients that have embedded

@@ -51,14 +51,16 @@ static COMPtr<IClassFactory> classFactory(const CLSID& clsid)
     typedef HashMap<CLSID, COMPtr<IClassFactory>, CLSIDHash, CLSIDHashTraits> FactoryMap;
     static FactoryMap& factories = *new FactoryMap;
 
-    COMPtr<IClassFactory>& factory = factories.add(clsid, 0).first->second;
-    if (!factory && FAILED(DllGetClassObject(clsid, __uuidof(factory), reinterpret_cast<void**>(&factory))))
+    pair<FactoryMap::iterator, bool> result = factories.add(clsid, 0);
+    COMPtr<IClassFactory>& factory = result.first->second;
+    bool added = result.second;
+    if (added && FAILED(DllGetClassObject(clsid, __uuidof(factory), reinterpret_cast<void**>(&factory))))
         factory = 0;
 
     return factory;
 }
 
-HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown *pUnkOuter, REFIID riid, void **ppvObject)
+HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown* pUnkOuter, REFIID riid, void** ppvObject)
 {
     COMPtr<IClassFactory> factory = classFactory(rclsid);
     if (!factory)
