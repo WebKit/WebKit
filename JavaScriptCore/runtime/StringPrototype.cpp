@@ -231,50 +231,96 @@ JSValuePtr stringProtoFuncReplace(ExecState* exec, JSObject*, JSValuePtr thisVal
         Vector<UString, 16> replacements;
 
         // This is either a loop (if global is set) or a one-way (if not).
-        do {
-            int matchIndex;
-            int matchLen;
-            int* ovector;
-            regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
-            if (matchIndex < 0)
-                break;
+        if (global && callType == CallTypeJS) {
+            // reg->numSubpatterns() + 1 for pattern args, + 2 for match start and sourceValue
+            int argCount = reg->numSubpatterns() + 1 + 2;
+            JSFunction* func = asFunction(replacement);
+            CachedCall cachedCall(exec, func, argCount, exec->exceptionSlot());
+            while (true) {
+                int matchIndex;
+                int matchLen;
+                int* ovector;
+                regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+                if (matchIndex < 0)
+                    break;
+                
+                sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
 
-            sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
-
-            if (callType != CallTypeNone) {
                 int completeMatchStart = ovector[0];
-                ArgList args;
-
-                for (unsigned i = 0; i < reg->numSubpatterns() + 1; ++i) {
+                unsigned i = 0;
+                for (; i < reg->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
                     if (matchStart < 0)
-                        args.append(jsUndefined());
+                        cachedCall.setArgument(i, jsUndefined());
                     else
-                        args.append(jsSubstring(exec, source, matchStart, matchLen));
+                        cachedCall.setArgument(i, jsSubstring(exec, source, matchStart, matchLen));
                 }
 
-                args.append(jsNumber(exec, completeMatchStart));
-                args.append(sourceVal);
-
-                replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args).toString(exec));
-                if (exec->hadException())
+                cachedCall.setArgument(i++, jsNumber(exec, completeMatchStart));
+                cachedCall.setArgument(i++, sourceVal);
+                
+                cachedCall.setThis(exec->globalThisValue());
+                replacements.append(cachedCall.call().toString(cachedCall.newCallFrame()));
+                if (exec->hadException() || cachedCall.newCallFrame()->hadException())
                     break;
-            } else
-                replacements.append(substituteBackreferences(replacementString, source, ovector, reg));
 
-            lastIndex = matchIndex + matchLen;
-            startPosition = lastIndex;
+                lastIndex = matchIndex + matchLen;
+                startPosition = lastIndex;
 
-            // special case of empty match
-            if (matchLen == 0) {
-                startPosition++;
-                if (startPosition > source.size())
+                // special case of empty match
+                if (matchLen == 0) {
+                    startPosition++;
+                    if (startPosition > source.size())
+                        break;
+                }
+            }            
+        } else {
+            do {
+                int matchIndex;
+                int matchLen;
+                int* ovector;
+                regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+                if (matchIndex < 0)
                     break;
-            }
-        } while (global);
 
+                sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
+
+                if (callType != CallTypeNone) {
+                    int completeMatchStart = ovector[0];
+                    ArgList args;
+
+                    for (unsigned i = 0; i < reg->numSubpatterns() + 1; ++i) {
+                        int matchStart = ovector[i * 2];
+                        int matchLen = ovector[i * 2 + 1] - matchStart;
+
+                        if (matchStart < 0)
+                            args.append(jsUndefined());
+                        else
+                            args.append(jsSubstring(exec, source, matchStart, matchLen));
+                    }
+
+                    args.append(jsNumber(exec, completeMatchStart));
+                    args.append(sourceVal);
+
+                    replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args).toString(exec));
+                    if (exec->hadException())
+                        break;
+                } else
+                    replacements.append(substituteBackreferences(replacementString, source, ovector, reg));
+
+                lastIndex = matchIndex + matchLen;
+                startPosition = lastIndex;
+
+                // special case of empty match
+                if (matchLen == 0) {
+                    startPosition++;
+                    if (startPosition > source.size())
+                        break;
+                }
+            } while (global);
+        }
         if (lastIndex < source.size())
             sourceRanges.append(UString::Range(lastIndex, source.size() - lastIndex));
 
