@@ -1,3 +1,57 @@
+2009-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam "Blackbeard" Weinig.
+
+        Improvements to YARR JIT.  This patch expands support in three key areas:
+            * Add (temporary) support for falling back to PCRE for expressions not supported.
+            * Add support for x86_64 and Windows.
+            * Add support for singly quantified parentheses (? and ??), alternatives within
+              parentheses, and parenthetical assertions.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::storeToFrame):
+        (JSC::Yarr::RegexGenerator::storeToFrameWithPatch):
+        (JSC::Yarr::RegexGenerator::loadFromFrameAndJump):
+        (JSC::Yarr::RegexGenerator::AlternativeBacktrackRecord::AlternativeBacktrackRecord):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::resetAlternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::resetTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::jumpToBacktrack):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::plantJumpToBacktrackIfExists):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::addBacktrackJump):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::linkAlternativeBacktracks):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::propagateBacktrackingFrom):
+        (JSC::Yarr::RegexGenerator::genertateAssertionBOL):
+        (JSC::Yarr::RegexGenerator::genertateAssertionEOL):
+        (JSC::Yarr::RegexGenerator::matchAssertionWordchar):
+        (JSC::Yarr::RegexGenerator::genertateAssertionWordBoundary):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterSingle):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterPair):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterFixed):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::genertatePatternCharacterNonGreedy):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassSingle):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassFixed):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassGreedy):
+        (JSC::Yarr::RegexGenerator::genertateCharacterClassNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateParenthesesDisjunction):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+        (JSC::Yarr::RegexGenerator::generateParentheticalAssertion):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+        (JSC::Yarr::RegexGenerator::RegexGenerator):
+        (JSC::Yarr::RegexGenerator::generate):
+        (JSC::Yarr::RegexGenerator::compile):
+        (JSC::Yarr::RegexGenerator::generationFailed):
+        (JSC::Yarr::jitCompileRegex):
+        (JSC::Yarr::executeRegex):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::RegexCodeBlock):
+        (JSC::Yarr::RegexCodeBlock::~RegexCodeBlock):
+
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

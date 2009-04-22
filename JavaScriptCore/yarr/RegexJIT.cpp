@@ -31,6 +31,8 @@
 #include "MacroAssembler.h"
 #include "RegexCompiler.h"
 
+#include "pcre.h" // temporary, remove when fallback is removed.
+
 #if ENABLE(YARR_JIT)
 
 using namespace WTF;
@@ -41,11 +43,28 @@ namespace JSC { namespace Yarr {
 class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
-    static const RegisterID returnRegister = X86::eax;
+#if PLATFORM(X86)
     static const RegisterID input = X86::eax;
     static const RegisterID index = X86::edx;
     static const RegisterID length = X86::ecx;
     static const RegisterID output = X86::edi;
+
+    static const RegisterID regT0 = X86::ebx;
+    static const RegisterID regT1 = X86::esi;
+
+    static const RegisterID returnRegister = X86::eax;
+#endif
+#if PLATFORM(X86_64)
+    static const RegisterID input = X86::edi;
+    static const RegisterID index = X86::esi;
+    static const RegisterID length = X86::edx;
+    static const RegisterID output = X86::ecx;
+
+    static const RegisterID regT0 = X86::eax;
+    static const RegisterID regT1 = X86::ebx;
+
+    static const RegisterID returnRegister = X86::eax;
+#endif
 
     void optimizeAlternative(PatternAlternative* alternative)
     {
@@ -226,10 +245,36 @@ class RegexGenerator : private MacroAssembler {
         poke(reg, frameLocation);
     }
 
+    void storeToFrame(Imm32 imm, unsigned frameLocation)
+    {
+        poke(imm, frameLocation);
+    }
+
+    DataLabelPtr storeToFrameWithPatch(unsigned frameLocation)
+    {
+        return storePtrWithPatch(Address(stackPointerRegister, frameLocation));
+    }
+
     void loadFromFrame(unsigned frameLocation, RegisterID reg)
     {
         peek(reg, frameLocation);
     }
+
+    void loadFromFrameAndJump(unsigned frameLocation)
+    {
+        jump(Address(stackPointerRegister, frameLocation));
+    }
+
+    struct AlternativeBacktrackRecord {
+        DataLabelPtr dataLabel;
+        Label backtrackLocation;
+
+        AlternativeBacktrackRecord(DataLabelPtr dataLabel, Label backtrackLocation)
+            : dataLabel(dataLabel)
+            , backtrackLocation(backtrackLocation)
+        {
+        }
+    };
 
     struct TermGenerationState {
         TermGenerationState(PatternDisjunction* disjunction, unsigned checkedTotal)
@@ -240,6 +285,7 @@ class RegexGenerator : private MacroAssembler {
 
         void resetAlternative()
         {
+            isBackTrackGenerated = false;
             alt = 0;
         }
         bool alternativeValid()
@@ -259,7 +305,6 @@ class RegexGenerator : private MacroAssembler {
         {
             ASSERT(alternativeValid());
             t = 0;
-            isBackTrackGenerated = false;
         }
         bool termValid()
         {
@@ -299,49 +344,63 @@ class RegexGenerator : private MacroAssembler {
 
         void jumpToBacktrack(Jump jump, MacroAssembler* masm)
         {
-           if (isBackTrackGenerated)
+            if (isBackTrackGenerated)
                 jump.linkTo(backtrackLabel, masm);
             else
-                jumpsToNextAlternative.append(jump);
+                backTrackJumps.append(jump);
         }
         void jumpToBacktrack(JumpList& jumps, MacroAssembler* masm)
         {
-           if (isBackTrackGenerated)
+            if (isBackTrackGenerated)
                 jumps.linkTo(backtrackLabel, masm);
             else
-                jumpsToNextAlternative.append(jumps);
+                backTrackJumps.append(jumps);
+        }
+        bool plantJumpToBacktrackIfExists(MacroAssembler* masm)
+        {
+            if (isBackTrackGenerated) {
+                masm->jump(backtrackLabel);
+                return true;
+            }
+            return false;
+        }
+        void addBacktrackJump(Jump jump)
+        {
+            backTrackJumps.append(jump);
         }
         void setBacktrackGenerated(Label label)
         {
             isBackTrackGenerated = true;
             backtrackLabel = label;
         }
+        void linkAlternativeBacktracks(MacroAssembler* masm)
+        {
+            isBackTrackGenerated = false;
+            backTrackJumps.link(masm);
+        }
+        void propagateBacktrackingFrom(TermGenerationState& nestedParenthesesState, MacroAssembler* masm)
+        {
+            jumpToBacktrack(nestedParenthesesState.backTrackJumps, masm);
+            if (nestedParenthesesState.isBackTrackGenerated)
+                setBacktrackGenerated(nestedParenthesesState.backtrackLabel);
+        }
 
         PatternDisjunction* disjunction;
         int checkedTotal;
+    private:
         unsigned alt;
         unsigned t;
-        JumpList jumpsToNextAlternative;
+        JumpList backTrackJumps;
         Label backtrackLabel;
         bool isBackTrackGenerated;
     };
-
-    void jumpToBacktrackCheckEmitPending(TermGenerationState& state, Jump backtrackMe)
-    {
-        state.jumpToBacktrack(backtrackMe, this);
-    }
-
-    void jumpToBacktrackCheckEmitPending(TermGenerationState& state, JumpList& backtrackMe)
-    {
-        state.jumpToBacktrack(backtrackMe, this);
-    }
 
     void genertateAssertionBOL(TermGenerationState& state)
     {
         PatternTerm& term = state.term();
 
         if (m_pattern.m_multiline) {
-            const RegisterID character = X86::esi;
+            const RegisterID character = regT0;
 
             JumpList matchDest;
             if (!term.inputPosition)
@@ -349,15 +408,15 @@ class RegexGenerator : private MacroAssembler {
 
             readCharacter(state.inputOffset() - 1, character);
             matchCharacterClass(character, matchDest, m_pattern.newlineCharacterClass());
-            jumpToBacktrackCheckEmitPending(state, jump());
+            state.jumpToBacktrack(jump(), this);
 
             matchDest.link(this);
         } else {
             // Erk, really should poison out these alternatives early. :-/
             if (term.inputPosition)
-                jumpToBacktrackCheckEmitPending(state, jump());
+                state.jumpToBacktrack(jump(), this);
             else
-                jumpToBacktrackCheckEmitPending(state, branch32(NotEqual, index, Imm32(state.checkedTotal)));
+                state.jumpToBacktrack(branch32(NotEqual, index, Imm32(state.checkedTotal)), this);
         }
     }
 
@@ -366,7 +425,7 @@ class RegexGenerator : private MacroAssembler {
         PatternTerm& term = state.term();
 
         if (m_pattern.m_multiline) {
-            const RegisterID character = X86::esi;
+            const RegisterID character = regT0;
 
             JumpList matchDest;
             if (term.inputPosition == state.checkedTotal)
@@ -374,22 +433,22 @@ class RegexGenerator : private MacroAssembler {
 
             readCharacter(state.inputOffset(), character);
             matchCharacterClass(character, matchDest, m_pattern.newlineCharacterClass());
-            jumpToBacktrackCheckEmitPending(state, jump());
+            state.jumpToBacktrack(jump(), this);
 
             matchDest.link(this);
         } else {
             if (term.inputPosition == state.checkedTotal)
-                jumpToBacktrackCheckEmitPending(state, notAtEndOfInput());
+                state.jumpToBacktrack(notAtEndOfInput(), this);
             // Erk, really should poison out these alternatives early. :-/
             else
-                jumpToBacktrackCheckEmitPending(state, jump());
+                state.jumpToBacktrack(jump(), this);
         }
     }
 
     // Also falls though on nextIsNotWordChar.
     void matchAssertionWordchar(TermGenerationState& state, JumpList& nextIsWordChar, JumpList& nextIsNotWordChar)
     {
-        const RegisterID character = X86::esi;
+        const RegisterID character = regT0;
         PatternTerm& term = state.term();
 
         if (term.inputPosition == state.checkedTotal)
@@ -401,7 +460,7 @@ class RegexGenerator : private MacroAssembler {
 
     void genertateAssertionWordBoundary(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
+        const RegisterID character = regT0;
         PatternTerm& term = state.term();
 
         Jump atBegin;
@@ -423,7 +482,7 @@ class RegexGenerator : private MacroAssembler {
             matchAssertionWordchar(state, nonWordCharThenWordChar, nonWordCharThenNonWordChar);
             nonWordCharThenNonWordChar.append(jump());
         }
-        jumpToBacktrackCheckEmitPending(state, nonWordCharThenNonWordChar);
+        state.jumpToBacktrack(nonWordCharThenNonWordChar, this);
 
         // We jump here if the last character was a wordchar.
         matchDest.link(this);
@@ -437,7 +496,7 @@ class RegexGenerator : private MacroAssembler {
             // This can fall-though!
         }
 
-        jumpToBacktrackCheckEmitPending(state, wordCharThenWordChar);
+        state.jumpToBacktrack(wordCharThenWordChar, this);
         
         nonWordCharThenWordChar.link(this);
         wordCharThenNonWordChar.link(this);
@@ -445,22 +504,22 @@ class RegexGenerator : private MacroAssembler {
 
     void genertatePatternCharacterSingle(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
+        const RegisterID character = regT0;
         UChar ch = state.term().patternCharacter;
 
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(state.inputOffset(), character);
             or32(Imm32(32), character);
-            jumpToBacktrackCheckEmitPending(state, branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
+            state.jumpToBacktrack(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))), this);
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-            jumpToBacktrackCheckEmitPending(state, jumpIfCharNotEquals(ch, state.inputOffset()));
+            state.jumpToBacktrack(jumpIfCharNotEquals(ch, state.inputOffset()), this);
         }
     }
 
     void genertatePatternCharacterPair(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
+        const RegisterID character = regT0;
         UChar ch1 = state.term().patternCharacter;
         UChar ch2 = state.lookaheadTerm().patternCharacter;
 
@@ -477,15 +536,15 @@ class RegexGenerator : private MacroAssembler {
         if (mask) {
             load32(BaseIndex(input, index, TimesTwo, state.inputOffset() * sizeof(UChar)), character);
             or32(Imm32(mask), character);
-            jumpToBacktrackCheckEmitPending(state, branch32(NotEqual, character, Imm32(chPair | mask)));
+            state.jumpToBacktrack(branch32(NotEqual, character, Imm32(chPair | mask)), this);
         } else
-            jumpToBacktrackCheckEmitPending(state, branch32(NotEqual, BaseIndex(input, index, TimesTwo, state.inputOffset() * sizeof(UChar)), Imm32(chPair)));
+            state.jumpToBacktrack(branch32(NotEqual, BaseIndex(input, index, TimesTwo, state.inputOffset() * sizeof(UChar)), Imm32(chPair)), this);
     }
 
     void genertatePatternCharacterFixed(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
 
@@ -496,10 +555,10 @@ class RegexGenerator : private MacroAssembler {
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             load16(BaseIndex(input, countRegister, TimesTwo, (state.inputOffset() + term.quantityCount) * sizeof(UChar)), character);
             or32(Imm32(32), character);
-            jumpToBacktrackCheckEmitPending(state, branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
+            state.jumpToBacktrack(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))), this);
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-            jumpToBacktrackCheckEmitPending(state, branch16(NotEqual, BaseIndex(input, countRegister, TimesTwo, (state.inputOffset() + term.quantityCount) * sizeof(UChar)), Imm32(ch)));
+            state.jumpToBacktrack(branch16(NotEqual, BaseIndex(input, countRegister, TimesTwo, (state.inputOffset() + term.quantityCount) * sizeof(UChar)), Imm32(ch)), this);
         }
         add32(Imm32(1), countRegister);
         branch32(NotEqual, countRegister, index).linkTo(loop, this);
@@ -507,8 +566,8 @@ class RegexGenerator : private MacroAssembler {
 
     void genertatePatternCharacterGreedy(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
     
@@ -532,7 +591,7 @@ class RegexGenerator : private MacroAssembler {
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
-        jumpToBacktrackCheckEmitPending(state, branchTest32(Zero, countRegister));
+        state.jumpToBacktrack(branchTest32(Zero, countRegister), this);
         sub32(Imm32(1), countRegister);
         sub32(Imm32(1), index);
 
@@ -545,8 +604,8 @@ class RegexGenerator : private MacroAssembler {
 
     void genertatePatternCharacterNonGreedy(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
     
@@ -556,7 +615,7 @@ class RegexGenerator : private MacroAssembler {
 
         Label hardFail(this);
         sub32(countRegister, index);
-        jumpToBacktrackCheckEmitPending(state, jump());
+        state.jumpToBacktrack(jump(), this);
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
@@ -583,7 +642,7 @@ class RegexGenerator : private MacroAssembler {
 
     void genertateCharacterClassSingle(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
+        const RegisterID character = regT0;
         PatternTerm& term = state.term();
 
         JumpList matchDest;
@@ -591,17 +650,17 @@ class RegexGenerator : private MacroAssembler {
         matchCharacterClass(character, matchDest, term.characterClass);
 
         if (term.invertOrCapture)
-            jumpToBacktrackCheckEmitPending(state, matchDest);
+            state.jumpToBacktrack(matchDest, this);
         else {
-            jumpToBacktrackCheckEmitPending(state, jump());
+            state.jumpToBacktrack(jump(), this);
             matchDest.link(this);
         }
     }
 
     void genertateCharacterClassFixed(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
 
         move(index, countRegister);
@@ -613,9 +672,9 @@ class RegexGenerator : private MacroAssembler {
         matchCharacterClass(character, matchDest, term.characterClass);
 
         if (term.invertOrCapture)
-            jumpToBacktrackCheckEmitPending(state, matchDest);
+            state.jumpToBacktrack(matchDest, this);
         else {
-            jumpToBacktrackCheckEmitPending(state, jump());
+            state.jumpToBacktrack(jump(), this);
             matchDest.link(this);
         }
 
@@ -625,8 +684,8 @@ class RegexGenerator : private MacroAssembler {
 
     void genertateCharacterClassGreedy(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
     
         move(Imm32(0), countRegister);
@@ -653,7 +712,7 @@ class RegexGenerator : private MacroAssembler {
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
-        jumpToBacktrackCheckEmitPending(state, branchTest32(Zero, countRegister));
+        state.jumpToBacktrack(branchTest32(Zero, countRegister), this);
         sub32(Imm32(1), countRegister);
         sub32(Imm32(1), index);
 
@@ -666,8 +725,8 @@ class RegexGenerator : private MacroAssembler {
 
     void genertateCharacterClassNonGreedy(TermGenerationState& state)
     {
-        const RegisterID character = X86::esi;
-        const RegisterID countRegister = X86::ebx;
+        const RegisterID character = regT0;
+        const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
     
         move(Imm32(0), countRegister);
@@ -676,7 +735,7 @@ class RegexGenerator : private MacroAssembler {
 
         Label hardFail(this);
         sub32(countRegister, index);
-        jumpToBacktrackCheckEmitPending(state, jump());
+        state.jumpToBacktrack(jump(), this);
 
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
@@ -704,63 +763,243 @@ class RegexGenerator : private MacroAssembler {
         state.setBacktrackGenerated(backtrackBegin);
     }
 
-    void generateParenthesesSingleDisjunctionOneAlternative(TermGenerationState& outterState)
+    void generateParenthesesDisjunction(PatternTerm& parenthesesTerm, TermGenerationState& state, unsigned alternativeFrameLocation)
     {
-        PatternTerm& parenthesesTerm = outterState.term();
+        ASSERT((parenthesesTerm.type == PatternTerm::TypeParenthesesSubpattern) || (parenthesesTerm.type == PatternTerm::TypeParentheticalAssertion));
+        ASSERT(parenthesesTerm.quantityCount == 1);
+    
         PatternDisjunction* disjunction = parenthesesTerm.parentheses.disjunction;
+        unsigned preCheckedCount = ((parenthesesTerm.quantityType == QuantifierFixedCount) && (parenthesesTerm.type != PatternTerm::TypeParentheticalAssertion)) ? disjunction->m_minimumSize : 0;
 
-        if (parenthesesTerm.invertOrCapture) {
-            move(index, X86::esi);
-            add32(Imm32(outterState.inputOffset() - disjunction->m_minimumSize), X86::esi);
-            store32(X86::esi, Address(output, (parenthesesTerm.parentheses.subpatternId << 1) * sizeof(int)));
-        }
+        if (disjunction->m_alternatives.size() == 1) {
+            state.resetAlternative();
+            ASSERT(state.alternativeValid());
+            PatternAlternative* alternative = state.alternative();
+            optimizeAlternative(alternative);
 
-        TermGenerationState state(disjunction, outterState.checkedTotal);
+            int countToCheck = alternative->m_minimumSize - preCheckedCount;
+            if (countToCheck) {
+                ASSERT((parenthesesTerm.type == PatternTerm::TypeParentheticalAssertion) || (parenthesesTerm.quantityType != QuantifierFixedCount));
 
-        state.resetAlternative();
-        ASSERT(state.alternativeValid());
-        PatternAlternative* alternative = state.alternative();
-        optimizeAlternative(alternative);
+                // FIXME: This is quite horrible.  The call to 'plantJumpToBacktrackIfExists'
+                // will be forced to always trampoline into here, just to decrement the index.
+                // Ick. 
+                Jump skip = jump();
 
-        // Nothing to check!
-        ASSERT(alternative->m_minimumSize == parenthesesTerm.parentheses.disjunction->m_minimumSize);
+                Label backtrackBegin(this);
+                sub32(Imm32(countToCheck), index);
+                state.addBacktrackJump(jump());
+                
+                skip.link(this);
 
-        for (state.resetTerm(); state.termValid(); state.nextTerm())
-            generateTerm(state);
-        // if we fall through to here, the parenthese were successfully matched.
+                state.setBacktrackGenerated(backtrackBegin);
 
-        if (parenthesesTerm.invertOrCapture) {
-            move(index, X86::esi);
-            add32(Imm32(outterState.inputOffset()), X86::esi);
-            store32(X86::esi, Address(output, ((parenthesesTerm.parentheses.subpatternId << 1) + 1) * sizeof(int)));
-            Jump overBacktrack = jump();
-            
-            Label backtrackFromAfterParens(this);
-            store32(Imm32(-1), Address(output, ((parenthesesTerm.parentheses.subpatternId << 1) + 1) * sizeof(int)));
-            if (state.isBackTrackGenerated)
-                jump(state.backtrackLabel);
-            state.jumpsToNextAlternative.link(this);
-            store32(Imm32(-1), Address(output, (parenthesesTerm.parentheses.subpatternId << 1) * sizeof(int)));
+                state.jumpToBacktrack(jumpIfNoAvailableInput(countToCheck), this);
+                state.checkedTotal += countToCheck;
+            }
 
-            outterState.setBacktrackGenerated(backtrackFromAfterParens);
-            overBacktrack.link(this);
+            for (state.resetTerm(); state.termValid(); state.nextTerm())
+                generateTerm(state);
+
+            state.checkedTotal -= countToCheck;
         } else {
-            // If these parens don't capture, just sew the chain of backtracking into the outter alternative.
-            jumpToBacktrackCheckEmitPending(outterState, state.jumpsToNextAlternative);
-            if (state.isBackTrackGenerated)
-                outterState.setBacktrackGenerated(state.backtrackLabel);
+            JumpList successes;
+
+            for (state.resetAlternative(); state.alternativeValid(); state.nextAlternative()) {
+
+                PatternAlternative* alternative = state.alternative();
+                optimizeAlternative(alternative);
+
+                ASSERT(alternative->m_minimumSize >= preCheckedCount);
+                int countToCheck = alternative->m_minimumSize - preCheckedCount;
+                if (countToCheck) {
+                    state.addBacktrackJump(jumpIfNoAvailableInput(countToCheck));
+                    state.checkedTotal += countToCheck;
+                }
+
+                for (state.resetTerm(); state.termValid(); state.nextTerm())
+                    generateTerm(state);
+
+                // Matched an alternative.
+                DataLabelPtr dataLabel = storeToFrameWithPatch(alternativeFrameLocation);
+                successes.append(jump());
+
+                // Alternative did not match.
+                Label backtrackLocation(this);
+                state.linkAlternativeBacktracks(this);
+
+                if (countToCheck) {
+                    sub32(Imm32(countToCheck), index);
+                    state.checkedTotal -= countToCheck;
+                }
+
+                m_backtrackRecords.append(AlternativeBacktrackRecord(dataLabel, backtrackLocation));
+            }
+            // We fall through to here when the last alternative fails.
+            // Add a backtrack out of here for the parenthese handling code to link up.
+            state.addBacktrackJump(jump());
+
+            // Generate a trampoline for the parens code to backtrack to, to retry the
+            // next alternative.
+            state.setBacktrackGenerated(label());
+            loadFromFrameAndJump(alternativeFrameLocation);
+
+            // FIXME: both of the above hooks are a little inefficient, in that you
+            // may end up trampolining here, just to trampoline back out to the
+            // parentheses code, or vice versa.  We can probably eliminate a jump
+            // by restructuring, but coding this way for now for simplicity during
+            // development.
+
+            successes.link(this);
         }
     }
 
     void generateParenthesesSingle(TermGenerationState& state)
     {
+        const RegisterID indexTemporary = regT0;
         PatternTerm& term = state.term();
+        PatternDisjunction* disjunction = term.parentheses.disjunction;
         ASSERT(term.quantityCount == 1);
-        
-        if ((term.quantityType == QuantifierFixedCount) && (term.parentheses.disjunction->m_alternatives.size() == 1))
-            generateParenthesesSingleDisjunctionOneAlternative(state);
-        else {
-            ASSERT_NOT_REACHED();
+
+        unsigned preCheckedCount = ((term.quantityCount == 1) && (term.quantityType == QuantifierFixedCount)) ? disjunction->m_minimumSize : 0;
+
+        unsigned parenthesesFrameLocation = term.frameLocation;
+        unsigned alternativeFrameLocation = parenthesesFrameLocation;
+        if (term.quantityType != QuantifierFixedCount)
+            alternativeFrameLocation += RegexStackSpaceForBackTrackInfoParenthesesOnce;
+
+        // optimized case - no capture & no quantifier can be handled in a light-weight manner.
+        if (!term.invertOrCapture && (term.quantityType == QuantifierFixedCount)) {
+            TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
+            // this expects that any backtracks back out of the parentheses will be in the
+            // parenthesesState's backTrackJumps vector, and that if they need backtracking
+            // they will have set an entry point on the parenthesesState's backtrackLabel.
+            state.propagateBacktrackingFrom(parenthesesState, this);
+        } else {
+            Jump nonGreedySkipParentheses;
+            Label nonGreedyTryParentheses;
+            if (term.quantityType == QuantifierGreedy)
+                storeToFrame(Imm32(1), parenthesesFrameLocation);
+            else if (term.quantityType == QuantifierNonGreedy) {
+                storeToFrame(Imm32(0), parenthesesFrameLocation);
+                nonGreedySkipParentheses = jump();
+                nonGreedyTryParentheses = label();
+                storeToFrame(Imm32(1), parenthesesFrameLocation);
+            }
+
+            // store the match start index
+            if (term.invertOrCapture) {
+                int inputOffset = state.inputOffset() - preCheckedCount;
+                if (inputOffset) {
+                    move(index, indexTemporary);
+                    add32(Imm32(inputOffset), indexTemporary);
+                    store32(indexTemporary, Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
+                } else
+                    store32(index, Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
+            }
+
+            // generate the body of the parentheses
+            TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
+
+            // store the match end index
+            if (term.invertOrCapture) {
+                int inputOffset = state.inputOffset();
+                if (inputOffset) {
+                    move(index, indexTemporary);
+                    add32(Imm32(state.inputOffset()), indexTemporary);
+                    store32(indexTemporary, Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
+                } else
+                    store32(index, Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
+            }
+            Jump success = jump();
+
+            // A failure AFTER the parens jumps here
+            Label backtrackFromAfterParens(this);
+
+            if (term.quantityType == QuantifierGreedy) {
+                // If this is zero we have now tested with both with and without the parens.
+                loadFromFrame(parenthesesFrameLocation, indexTemporary);
+                state.jumpToBacktrack(branchTest32(Zero, indexTemporary), this);
+            } else if (term.quantityType == QuantifierNonGreedy) {
+                // If this is zero we have now tested with both with and without the parens.
+                loadFromFrame(parenthesesFrameLocation, indexTemporary);
+                branchTest32(Zero, indexTemporary).linkTo(nonGreedyTryParentheses, this);
+            }
+
+            parenthesesState.plantJumpToBacktrackIfExists(this);
+            // A failure WITHIN the parens jumps here
+            parenthesesState.linkAlternativeBacktracks(this);
+            if (term.invertOrCapture) {
+                store32(Imm32(-1), Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
+                store32(Imm32(-1), Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
+            }
+
+            if (term.quantityType == QuantifierGreedy)
+                storeToFrame(Imm32(0), parenthesesFrameLocation);
+            else
+                state.jumpToBacktrack(jump(), this);
+
+            state.setBacktrackGenerated(backtrackFromAfterParens);
+            if (term.quantityType == QuantifierNonGreedy)
+                nonGreedySkipParentheses.link(this);
+            success.link(this);
+        }
+    }
+
+    void generateParentheticalAssertion(TermGenerationState& state)
+    {
+        PatternTerm& term = state.term();
+        PatternDisjunction* disjunction = term.parentheses.disjunction;
+        ASSERT(term.quantityCount == 1);
+        ASSERT(term.quantityType == QuantifierFixedCount);
+
+        unsigned parenthesesFrameLocation = term.frameLocation;
+        unsigned alternativeFrameLocation = parenthesesFrameLocation += RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce;
+
+        int countCheckedAfterAssertion = state.checkedTotal - term.inputPosition;
+
+        if (term.invertOrCapture) {
+            // Inverted case
+            storeToFrame(index, parenthesesFrameLocation);
+
+            state.checkedTotal -= countCheckedAfterAssertion;
+            if (countCheckedAfterAssertion)
+                sub32(Imm32(countCheckedAfterAssertion), index);
+
+            TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
+            // Success! - which means - Fail!
+            loadFromFrame(parenthesesFrameLocation, index);
+            state.jumpToBacktrack(jump(), this);
+
+            // And fail means success.
+            parenthesesState.linkAlternativeBacktracks(this);
+            loadFromFrame(parenthesesFrameLocation, index);
+
+            state.checkedTotal += countCheckedAfterAssertion;
+        } else {
+            // Normal case
+            storeToFrame(index, parenthesesFrameLocation);
+
+            state.checkedTotal -= countCheckedAfterAssertion;
+            if (countCheckedAfterAssertion)
+                sub32(Imm32(countCheckedAfterAssertion), index);
+
+            TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
+            // Success! - which means - Success!
+            loadFromFrame(parenthesesFrameLocation, index);
+            Jump success = jump();
+
+            parenthesesState.linkAlternativeBacktracks(this);
+            loadFromFrame(parenthesesFrameLocation, index);
+            state.jumpToBacktrack(jump(), this);
+
+            success.link(this);
+
+            state.checkedTotal += countCheckedAfterAssertion;
         }
     }
 
@@ -820,16 +1059,19 @@ class RegexGenerator : private MacroAssembler {
             break;
 
         case PatternTerm::TypeBackReference:
-            ASSERT_NOT_REACHED();
+            m_generationFailed = true;
+            break;
 
         case PatternTerm::TypeParenthesesSubpattern:
             if (term.quantityCount == 1)
                 generateParenthesesSingle(state);
             else
-                ASSERT_NOT_REACHED();
+                m_generationFailed = true;
+            break;
 
         case PatternTerm::TypeParentheticalAssertion:
-            ASSERT_NOT_REACHED();
+            generateParentheticalAssertion(state);
+            break;
         }
     }
 
@@ -845,39 +1087,32 @@ class RegexGenerator : private MacroAssembler {
             optimizeAlternative(alternative);
 
             // check availability for the first alternative
-            int countToCheck = (alternative->m_minimumSize);
-            ASSERT(countToCheck >= 0);
+            int countToCheck = alternative->m_minimumSize;
             if (countToCheck) {
-                state.jumpsToNextAlternative.append(jumpIfNoAvailableInput(countToCheck));
+                state.addBacktrackJump(jumpIfNoAvailableInput(countToCheck));
                 state.checkedTotal += countToCheck;
             }
 
             for (state.resetTerm(); state.termValid(); state.nextTerm())
                 generateTerm(state);
 
+            // If we get here, the alternative matched.
             if (m_pattern.m_body->m_callFrameSize)
                 addPtr(Imm32(m_pattern.m_body->m_callFrameSize * sizeof(void*)), stackPointerRegister);
             
-            // If we get here, the alternative matched.
             ASSERT(index != returnRegister);
             if (m_pattern.m_body->m_hasFixedSize) {
-                store32(index, Address(output, 4)); // match end
-                sub32(Imm32(alternative->m_minimumSize), index);
-                store32(index, output);
-            } else {
+                move(index, returnRegister);
+                if (alternative->m_minimumSize)
+                    sub32(Imm32(alternative->m_minimumSize), returnRegister);
+            } else
                 pop(returnRegister);
-                store32(returnRegister, output);
-                store32(index, Address(output, 4)); // match end
-            }
+            store32(index, Address(output, 4));
+            store32(returnRegister, output);
 
-            // Restore callee save registers.
-            pop(X86::esi);
-            pop(X86::edi);
-            pop(X86::ebx);
-            pop(X86::ebp);
-            ret();
+            generateReturn();
 
-            state.jumpsToNextAlternative.link(this);
+            state.linkAlternativeBacktracks(this);
 
             if (countToCheck) {
                 sub32(Imm32(countToCheck), index);
@@ -900,9 +1135,38 @@ class RegexGenerator : private MacroAssembler {
 
         move(Imm32(-1), returnRegister);
 
+        generateReturn();
+    }
+
+    void generateEnter()
+    {
+        // On x86 edi & esi are callee preserved registers.
+        push(X86::ebp);
+        move(stackPointerRegister, X86::ebp);
+#if PLATFORM(X86)
+        // TODO: do we need spill registers to fill the output pointer if there are no sub captures?
+        push(X86::ebx);
+        push(X86::edi);
+        push(X86::esi);
+        // load output into edi (2 = saved ebp + return address).
+#if COMPILER(MSVC)
+        loadPtr(Address(X86::ebp, 2 * sizeof(void*)), input);
+        loadPtr(Address(X86::ebp, 3 * sizeof(void*)), index);
+        loadPtr(Address(X86::ebp, 4 * sizeof(void*)), length);
+        loadPtr(Address(X86::ebp, 5 * sizeof(void*)), output);
+#else
+        loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
+#endif
+#endif
+    }
+
+    void generateReturn()
+    {
+#if PLATFORM(X86)
         pop(X86::esi);
         pop(X86::edi);
         pop(X86::ebx);
+#endif
         pop(X86::ebp);
         ret();
     }
@@ -910,21 +1174,13 @@ class RegexGenerator : private MacroAssembler {
 public:
     RegexGenerator(RegexPattern& pattern)
         : m_pattern(pattern)
+        , m_generationFailed(false)
     {
     }
 
     void generate()
     {
-        // On x86 edi & esi are callee preserved registers.
-        push(X86::ebp);
-        move(X86::esp, X86::ebp);
-        push(X86::ebx);
-        push(X86::edi);
-        push(X86::esi);
-        // load output into edi (2 = saved ebp + return address).
-        loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
-        // TODO: do we need spill registers to fill the output pointer if
-        // there are no sub captures? - we should not need 
+        generateEnter();
 
         // TODO: do I really want this on the stack?
         if (!m_pattern.m_body->m_hasFixedSize)
@@ -936,7 +1192,29 @@ public:
         generateDisjunction(m_pattern.m_body);
     }
 
+    void compile(JSGlobalData* globalData, RegexCodeBlock& jitObject)
+    {
+        generate();
+
+        jitObject.m_executablePool = globalData->executableAllocator.poolForSize(size());
+        void* code = copyCode(jitObject.m_executablePool.get());
+
+        PatchBuffer patchBuffer(code);
+        for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
+            patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.trampolineAt(m_backtrackRecords[i].backtrackLocation));
+
+        jitObject.m_jitCode = code;
+    }
+
+    bool generationFailed()
+    {
+        return m_generationFailed;
+    }
+
+private:
     RegexPattern& m_pattern;
+    Vector<AlternativeBacktrackRecord> m_backtrackRecords;
+    bool m_generationFailed;
 };
 
 void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& patternString, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline)
@@ -949,19 +1227,28 @@ void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const 
     numSubpatterns = pattern.m_numSubpatterns;
 
     RegexGenerator generator(pattern);
-    generator.generate();
+    generator.compile(globalData, jitObject);
 
-    jitObject.m_executablePool = globalData->executableAllocator.poolForSize(generator.size());
-    jitObject.m_jitCode = generator.copyCode(jitObject.m_executablePool.get());
+    if (generator.generationFailed()) {
+        JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
+        JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
+        jitObject.m_pcreFallback = jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error);
+    }
 }
 
-int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
+int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output, int outputArraySize)
 {
-    typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output) __attribute__ ((regparm (3)));
-
-    int result = reinterpret_cast<RegexJITCode>(jitObject.m_jitCode)(input, start, length, output);
-
-    return result;
+    if (jitObject.m_pcreFallback) {
+        int result = jsRegExpExecute(jitObject.m_pcreFallback, input, length, start, output, outputArraySize);
+        return (result < 0) ? result : output[0];
+    } else {
+#if PLATFORM(X86) && !COMPILER(MSVC)
+        typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output) __attribute__ ((regparm (3)));
+#else
+        typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output);
+#endif
+        return reinterpret_cast<RegexJITCode>(jitObject.m_jitCode)(input, start, length, output);
+    }
 }
 
 }}

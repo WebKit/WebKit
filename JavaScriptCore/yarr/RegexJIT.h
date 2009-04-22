@@ -33,6 +33,9 @@
 #include "RegexPattern.h"
 #include <UString.h>
 
+#include <pcre.h>
+struct JSRegExp; // temporary, remove when fallback is removed.
+
 namespace JSC {
 
 class JSGlobalData;
@@ -43,15 +46,23 @@ namespace Yarr {
 struct RegexCodeBlock {
     void* m_jitCode;
     RefPtr<ExecutablePool> m_executablePool;
+    JSRegExp* m_pcreFallback;
 
     RegexCodeBlock()
         : m_jitCode(0)
+        , m_pcreFallback(0)
     {
+    }
+
+    ~RegexCodeBlock()
+    {
+        if (m_pcreFallback)
+            jsRegExpFree(m_pcreFallback);
     }
 };
 
 void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase = false, bool multiline = false);
-int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
+int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output, int outputArraySize);
 
 } } // namespace JSC::Yarr
 
