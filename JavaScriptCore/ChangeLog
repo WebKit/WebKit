@@ -1,5 +1,33 @@
 2009-04-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Cameron Zwarich and Oliver Hunt.
+        
+        Re-Fixed <rdar://problem/6406045> REGRESSION: Stack overflow on PowerPC on
+        fast/workers/use-machine-stack.html (22531)
+        
+        SunSpider reports no change.
+        
+        Use a larger recursion limit on the main thread (because we can, and
+        there's some evidence that it may improve compatibility), and a smaller
+        recursion limit on secondary threads (because they tend to have smaller
+        stacks).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC::): Ditto. I wrote the recursion test slightly funny, so that the
+        common case remains a simple compare to constant.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin): Conservatively, set the array recursion limits
+        to the lower, secondary thread limit. We can do something fancier if
+        compatibility moves us, but this seems sufficient for now.
+
+2009-04-21  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber-stamped by Adam Roben.
         
         Disabled one more Mozilla JS test because it fails intermittently on Windows.

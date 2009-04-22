@@ -148,7 +148,7 @@ JSValuePtr arrayProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisVal
     JSObject* thisObj = asArray(thisValue);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() > MaxReentryDepth)
+    if (arrayVisitedElements.size() > MaxSecondaryThreadReentryDepth)
         return throwError(exec, RangeError, "Maximum call stack size exceeded.");
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
@@ -192,7 +192,7 @@ JSValuePtr arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValuePtr t
     JSObject* thisObj = asArray(thisValue);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() > MaxReentryDepth)
+    if (arrayVisitedElements.size() > MaxSecondaryThreadReentryDepth)
         return throwError(exec, RangeError, "Maximum call stack size exceeded.");
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
@@ -242,7 +242,7 @@ JSValuePtr arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValuePtr thisValue, 
     JSObject* thisObj = thisValue.toThisObject(exec);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() > MaxReentryDepth)
+    if (arrayVisitedElements.size() > MaxSecondaryThreadReentryDepth)
         return throwError(exec, RangeError, "Maximum call stack size exceeded.");
 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
