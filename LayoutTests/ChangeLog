@@ -1,5 +1,11 @@
 2009-04-21  Dan Bernstein  <mitz@apple.com>
 
+        - updated another result with action element information
+
+        * fast/encoding/mailto-always-utf-8-expected.txt:
+
+2009-04-21  Dan Bernstein  <mitz@apple.com>
+
         - test for <rdar://problem/6755137> Action dictionary for policy
           decision is missing keys when full-page zoom is used
 
