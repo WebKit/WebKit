@@ -1,5 +1,11 @@
 2009-04-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        * runtime/StringPrototype.cpp:
+
+2009-04-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Improve String.replace performance slightly

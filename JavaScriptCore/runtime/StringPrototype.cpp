@@ -21,6 +21,7 @@
 #include "config.h"
 #include "StringPrototype.h"
 
+#include "CachedCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "ObjectPrototype.h"
