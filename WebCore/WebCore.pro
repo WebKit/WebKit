@@ -1250,8 +1250,11 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         } else {
             !embedded: CONFIG += x11
             SOURCES += \
+                plugins/qt/PluginContainerQt.cpp \
                 plugins/qt/PluginPackageQt.cpp \
                 plugins/qt/PluginViewQt.cpp
+            HEADERS += \
+                plugins/qt/PluginContainerQt.h
             DEFINES += XP_UNIX
         }
     }

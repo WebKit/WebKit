@@ -173,6 +173,10 @@ namespace WebCore {
 
         virtual bool isPluginView() const { return true; }
 
+        Frame* parentFrame() const { return m_parentFrame; }
+
+        void focusPluginElement();
+
 #if PLATFORM(WIN_OS) && !PLATFORM(WX) && ENABLE(NETSCAPE_PLUGIN_API)
         static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

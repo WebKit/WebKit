@@ -1,3 +1,29 @@
+2009-04-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Fix various bugs in the X11 Qt plugin focus handling.
+
+        Notify the focus controller on activation/deactivation of the plugin and
+        set focus on the plugin's element when it receives the window system
+        focus.
+
+        * WebCore.pro: Added PluginContainerQt to the Qt build.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::focusPluginElement): New helper function, moved from PluginViewWin.
+        * plugins/PluginView.h:
+        (WebCore::PluginView::parentFrame): Added parent frame accessor.
+        * plugins/qt/PluginContainerQt.cpp: Added.
+        (PluginContainerQt::PluginContainerQt):
+        (PluginContainerQt::focusInEvent): Set the focus controller active on focus in events.
+        (PluginContainerQt::focusOutEvent): Deactivate the focus controller when loosing the focus.
+        * plugins/qt/PluginContainerQt.h: Added.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::init): Allocate a PluginContainerQt instead of QX11EmbedContainer.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleMouseEvent): Moved the code to set focus on the plugin element
+        to PluginView::focusPluginElement.
+
 2009-04-22  Tamas Szirbucz  <szirbucz.tamas@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

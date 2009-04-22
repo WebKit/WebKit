@@ -27,39 +27,37 @@
 #include "config.h"
 #include "PluginView.h"
 
-#include <QWidget>
-#include <QX11EmbedContainer>
-#include <QX11Info>
-
-#include "NotImplemented.h"
-#include "PluginDebug.h"
-#include "PluginPackage.h"
-#include "npruntime_impl.h"
-#include "runtime.h"
-#include "runtime_root.h"
-#include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
-#include "JSDOMBinding.h"
-#include "ScriptController.h"
-
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
-#include "FrameLoader.h"
-#include "FrameLoadRequest.h"
-#include "FrameTree.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoader.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "Image.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "Image.h"
+#include "JSDOMBinding.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PluginContainerQt.h"
+#include "PluginDebug.h"
+#include "PluginPackage.h"
 #include "RenderLayer.h"
+#include "ScriptController.h"
 #include "Settings.h"
+#include "npruntime_impl.h"
+#include "runtime.h"
+#include "runtime_root.h"
+#include <QWidget>
+#include <QX11Info>
+#include <runtime/JSLock.h>
+#include <runtime/JSValue.h>
 
 using JSC::ExecState;
 using JSC::Interpreter;
@@ -458,7 +456,7 @@ void PluginView::init()
     }
 
     if (m_needsXEmbed) {
-        setPlatformWidget(new QX11EmbedContainer(m_parentFrame->view()->hostWindow()->platformWindow()));
+        setPlatformWidget(new PluginContainerQt(this, m_parentFrame->view()->hostWindow()->platformWindow()));
     } else {
         notImplemented();
         m_status = PluginStatusCanNotLoadPlugin;
