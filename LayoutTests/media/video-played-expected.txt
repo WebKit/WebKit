@@ -1,0 +1,143 @@
+Test of the media element 'played' attribute
+
+
+Test playing when there are no ranges
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(canplay)
+Test 1 OK
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 2 OK
+Test 3 OK
+Test 4 OK
+
+Test jumping forward into a new range and play
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 5 OK
+Test 6 OK
+Test 7 OK
+Test 8 OK
+Test 9 OK
+
+Test jumping backwards into a new range and play, should insert new range
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 10 OK
+Test 11 OK
+Test 12 OK
+Test 13 OK
+Test 14 OK
+Test 15 OK
+Test 16 OK
+
+Test jumping into an existing range and play beyond end, should extend range end
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 17 OK
+Test 18 OK
+Test 19 OK
+Test 20 OK
+Test 21 OK
+Test 22 OK
+Test 23 OK
+
+Test playing into an existing range, should extend range start
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 24 OK
+Test 25 OK
+Test 26 OK
+Test 27 OK
+Test 28 OK
+Test 29 OK
+Test 30 OK
+
+Test jumping forward without playing, should not create new range
+Test 31 OK
+Test 32 OK
+Test 33 OK
+Test 34 OK
+Test 35 OK
+Test 36 OK
+Test 37 OK
+
+Test jumping back without playing, should not create new range
+Test 38 OK
+Test 39 OK
+Test 40 OK
+Test 41 OK
+Test 42 OK
+Test 43 OK
+Test 44 OK
+
+Test jumping before an existing range and play beyond its end, should extend start and end
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 45 OK
+Test 46 OK
+Test 47 OK
+Test 48 OK
+Test 49 OK
+Test 50 OK
+Test 51 OK
+
+Test looping
+RUN(video.loop = true)
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 52 OK
+Test 53 OK
+Test 54 OK
+Test 55 OK
+Test 56 OK
+Test 57 OK
+Test 58 OK
+Test 59 OK
+Test 60 OK
+
+Test playing from one range into another, should collapse the two ranges
+RUN(video.loop = false)
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 61 OK
+Test 62 OK
+Test 63 OK
+Test 64 OK
+Test 65 OK
+Test 66 OK
+Test 67 OK
+
+Test to reset to non empty video source
+RUN(video.src = "content/test.mp4")
+RUN(video.load())
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(canplay)
+Test 68 OK
+
+Test jumping forward into a new range and play
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 69 OK
+Test 70 OK
+Test 71 OK
+
+Test to reset to an empty video source
+RUN(video.src = "")
+RUN(video.load())
+EVENT(loadstart)
+EVENT(loadstart)
+Test 72 OK
+END OF TEST
+

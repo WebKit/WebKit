@@ -1,0 +1,276 @@
+<html>
+    <head>
+        <title>Test of 'played' attribute</title>
+        <script src=video-test.js></script>
+
+        <script>
+    
+            var testFunctions = 
+            [ 
+                PlayWithNoRanges,
+                JumpAndPlayFwd,
+                JumpBackAndPlayToNewRange, 
+                JumpAndExtendRangeEnd,
+                JumpAndExtendRangeStart,
+                JumpFwdWithoutPlaying, 
+                JumpBackWithoutPlaying,
+                JumpAndExtendRangeStartAndEnd,
+                TestLoopingAndPassToTheEnd,
+                JumpAndCollapseTwoRanges,
+                ResetToAVideoSource,
+                JumpAndPlayFwd,
+                ResetToAnEmptyVideoSource
+            ];
+    
+            var expectedStartTimes = new Array();
+            var expectedEndTimes = new Array();
+            var timeRangeCount = 0;
+            var currentTimeRange = 0;
+            var currentTest = 0;
+            var willPauseInExistingRange = false;
+            var willExtendAnExistingRange = false;
+    
+            // NOTE: Result details are not printed for this test because time values are different from machine
+            // to machine and run to run. Commenting out the following line turns on detailed logging back on, which
+            // can be useful for debugging test failure.
+            disableFullTestDetailsPrinting(); 
+
+            function PlayWithNoRanges()
+            {
+                consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
+
+                timeRangeCount = currentTimeRange = 0;
+                setTimeout(startPlayingInNewRange, 100);
+            }
+    
+            function JumpAndPlayFwd()
+            {
+                consoleWrite("<br><b><em>Test jumping forward into a new range and play</em></b>");
+
+                var newTime = video.duration - .5;
+                runSilently("video.currentTime = " + (newTime.toFixed(2)));
+                currentTimeRange = 1;
+                setTimeout(startPlayingInNewRange, 10);
+            }
+    
+            function JumpBackAndPlayToNewRange()
+            {
+                consoleWrite("<br><b><em>Test jumping backwards into a new range and play, should insert new range</em></b>");
+    
+                var newTime = 3.00;
+                runSilently("video.currentTime = " + newTime);
+    
+                currentTimeRange = 1;
+                setTimeout(startPlayingInNewRange, 10);
+            }
+            
+            function JumpFwdWithoutPlaying()
+            {
+                consoleWrite("<br><b><em>Test jumping forward without playing, should not create new range</em></b>");
+    
+                var newTime = (video.played.end(1) + 0.5).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                setTimeout(function () { testRanges(); nextTest(); } , 10);
+            }
+    
+            function JumpBackWithoutPlaying()
+            {
+                consoleWrite("<br><b><em>Test jumping back without playing, should not create new range</em></b>");
+    
+                var newTime = (video.played.start(1) - 0.5).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                setTimeout(function () { testRanges(); nextTest(); } , 10);
+            }
+            
+            function JumpAndExtendRangeStart()
+            {
+                consoleWrite("<br><b><em>Test playing into an existing range, should extend range start</em></b>");
+    
+                currentTimeRange = 1;
+                var newTime = (video.played.start(currentTimeRange) - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                expectedStartTimes[currentTimeRange] = newTime;
+                willPauseInExistingRange = true;
+                setTimeout(startPlaying, 10);
+            }
+    
+            function JumpAndExtendRangeEnd()
+            {
+                consoleWrite("<br><b><em>Test jumping into an existing range and play beyond end, should extend range end</em></b>");
+    
+                currentTimeRange = 1;
+    
+                var newTime = (video.played.end(currentTimeRange) - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                willExtendAnExistingRange = true;
+                setTimeout(startPlaying, 10);
+            }
+
+            function JumpAndExtendRangeStartAndEnd()
+            {
+                consoleWrite("<br><b><em>Test jumping before an existing range and play beyond its end, should extend start and end</em></b>");
+    
+                currentTimeRange = 1;
+    
+                var newTime = (video.played.start(currentTimeRange) - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+                expectedStartTimes[currentTimeRange] = newTime;
+
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = true;
+                run("video.play()");
+                setTimeout(function () { run("video.pause()") } , 1000);
+            }
+
+            function TestLoopingAndPassToTheEnd()
+            {
+                consoleWrite("<br><b><em>Test looping</em></b>");
+    
+                var newTime = (video.duration - 0.04).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+                run("video.loop = true");
+                
+                currentTimeRange = 0; // We'll end in the very first time range
+
+                timeRangeCount++;
+                expectedStartTimes[timeRangeCount-1] = newTime;
+                expectedEndTimes[timeRangeCount-1] = video.duration.toFixed(2);
+
+                willPauseInExistingRange = true;
+                willExtendAnExistingRange = true;
+                run("video.play()");
+                setTimeout(function () { run("video.pause()") } , 150);
+            }
+
+            function JumpAndCollapseTwoRanges()
+            {
+                consoleWrite("<br><b><em>Test playing from one range into another, should collapse the two ranges</em></b>");
+    
+                run("video.loop = false");
+
+                timeRangeCount--;
+                currentTimeRange = timeRangeCount - 1;
+                var startTime = expectedStartTimes[currentTimeRange];
+                expectedEndTimes[currentTimeRange] = expectedEndTimes[currentTimeRange+1];
+
+                willPauseInExistingRange = false;
+                runSilently("video.currentTime = " + startTime);
+                run("video.play()");
+                setTimeout(function () { run("video.pause()") } , (video.duration - startTime) * 1000);
+            }
+
+            function ResetToAVideoSource()
+            {
+                consoleWrite("<br><b><em>Test to reset to non empty video source</em></b>");
+    
+                timeRangeCount = currentTimeRange = 0;
+                expectedStartTimes = new Array();
+                expectedEndTimes = new Array();
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
+                run("video.src = \"content/test.mp4\"");
+                run("video.load()"); // Triggers canplay()
+            }
+
+            function ResetToAnEmptyVideoSource()
+            {
+                consoleWrite("<br><b><em>Test to reset to an empty video source</em></b>");
+    
+                timeRangeCount = currentTimeRange = 0;
+                expectedStartTimes = new Array();
+                expectedEndTimes = new Array();
+
+                run("video.src = \"\"");
+                waitForEvent("loadstart", function () { testRanges(); nextTest(); });
+                run("video.load()"); // Triggers loadstart()
+            }
+
+            function testRanges()
+            {
+                testExpected("video.played.length", timeRangeCount);
+                
+                for (i = 0; i < timeRangeCount; i++) {
+                    testExpected("video.played.start(" + (i) + ").toFixed(2)", expectedStartTimes[i]);
+                    testExpected("video.played.end("   + (i) + ").toFixed(2)", expectedEndTimes[i]);
+                }
+            }
+            
+            function nextTest()
+            {
+                if (currentTest >= testFunctions.length)
+                    endTest();
+                else
+                    (testFunctions[currentTest])();
+                currentTest++;
+            }
+    
+            function pause(evt)
+            {
+                currentTime = video.currentTime.toFixed(2);
+
+                if (!willExtendAnExistingRange)
+                    expectedEndTimes.splice(currentTimeRange, 0, currentTime)
+                else if(expectedEndTimes[currentTimeRange] < currentTime || expectedEndTimes[currentTimeRange] == undefined)
+                    expectedEndTimes[currentTimeRange] = currentTime;
+
+                testRanges();
+                nextTest();
+            }
+
+            function canplay(event) 
+            {
+                testRanges();
+                if (currentTest > 1)
+                    nextTest();
+            }
+
+            function willCreateNewRange()
+            {
+                expectedStartTimes.splice(currentTimeRange, 0, video.currentTime.toFixed(2))
+                ++timeRangeCount;
+            }
+            
+            function startPlayingInNewRange()
+            {
+                willCreateNewRange();
+                startPlaying();
+            }
+    
+            function startPlaying()
+            {
+                run("video.play()");
+                setTimeout(function () { run("video.pause()") } , 250);
+            }
+
+            function test()
+            {
+                findMediaElement();
+
+                video.src = 'content/test.mp4';
+
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("ratechange");
+                waitForEvent("loadedmetadata");
+                waitForEvent("canplay", canplay);
+                waitForEvent("pause", pause);
+
+                video.load();
+
+                nextTest();
+            }
+        </script>
+     </head>
+
+<body onload="test()">
+
+    <video controls></video>
+    <p>Test of the media element 'played' attribute</p>
+
+</body>
+</html>

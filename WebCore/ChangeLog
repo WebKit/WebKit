@@ -1654,6 +1654,8 @@
 2009-04-17  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24849
 
         Add support for the media element 'played' attribute.
         This involves support of "normalized TimeRanges" as described by
