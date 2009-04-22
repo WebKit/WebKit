@@ -1,3 +1,10 @@
+2009-04-22  Mark Rowe  <mrowe@apple.com>
+
+        Update test results after Blackbeard's change in r42752 to disable geolocation.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+
 2009-04-22  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
