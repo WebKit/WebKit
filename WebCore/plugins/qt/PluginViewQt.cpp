@@ -88,11 +88,19 @@ void PluginView::updatePluginWidget()
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
-    if (platformPluginWidget()) {
-        platformPluginWidget()->move(m_windowRect.x(), m_windowRect.y());
-        platformPluginWidget()->resize(m_windowRect.width(), m_windowRect.height());
-        platformPluginWidget()->setMask(QRegion(m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height()));
-    }
+    if (!platformPluginWidget())
+        return;
+
+    PluginContainerQt* container = static_cast<PluginContainerQt*>(platformPluginWidget());
+
+    container->requestGeometry(m_windowRect, QRegion(m_clipRect));
+
+    // in order to move/resize the plugin window at the same time as the rest of frame
+    // during e.g. scrolling, we set the mask and geometry in the paint() function, but
+    // as paint() isn't called when the plugin window is outside the frame which can
+    // be caused by a scroll, we need to move/resize immediately.
+    if (!m_windowRect.intersects(frameView->frameRect()))
+        container->adjustGeometry();
 }
 
 void PluginView::setFocus()
@@ -130,10 +138,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    if (m_isWindowed || context->paintingDisabled())
+    if (context->paintingDisabled())
         return;
 
-    notImplemented();
+    if (m_isWindowed && platformPluginWidget())
+        static_cast<PluginContainerQt*>(platformPluginWidget())->adjustGeometry();
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)

@@ -24,13 +24,34 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "PluginView.h"
 
 using namespace WebCore;
 
 PluginContainerQt::PluginContainerQt(PluginView* view, QWidget* parent)
-    : QX11EmbedContainer(parent), m_pluginView(view)
+    : QX11EmbedContainer(parent)
+    , m_pluginView(view)
+    , m_hasPendingGeometryChange(false)
 {
+}
+
+void PluginContainerQt::requestGeometry(const QRect& rect, const QRegion& clip)
+{
+    if (m_windowRect != rect || m_clipRegion != clip) {
+        m_windowRect = rect;
+        m_clipRegion = clip;
+        m_hasPendingGeometryChange = true;
+    }
+}
+
+void PluginContainerQt::adjustGeometry()
+{
+    if (m_hasPendingGeometryChange) {
+        setGeometry(m_windowRect);
+        setMask(m_clipRegion);
+        m_hasPendingGeometryChange = false;
+    }
 }
 
 void PluginContainerQt::focusInEvent(QFocusEvent* event)

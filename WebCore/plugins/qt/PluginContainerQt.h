@@ -31,12 +31,20 @@ namespace WebCore {
     public:
         PluginContainerQt(PluginView*, QWidget* parent);
 
+        void requestGeometry(const QRect&, const QRegion& clip = QRegion());
+        void adjustGeometry();
+
     protected:
         virtual void focusInEvent(QFocusEvent*);
         virtual void focusOutEvent(QFocusEvent*);
 
     private:
         PluginView* m_pluginView;
+
+        QRect m_windowRect;
+        QRegion m_clipRegion;
+
+        bool m_hasPendingGeometryChange;
     };
 
 }

@@ -1,3 +1,20 @@
+2009-04-22  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Made windowed plugins move/resize synchronized with the painting, so
+        that windowed plugins are not moved before the rest of the parent
+        frame during scrolling.
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginContainerQt::PluginContainerQt):
+        (PluginContainerQt::requestGeometry):
+        (PluginContainerQt::adjustGeometry):
+        * plugins/qt/PluginContainerQt.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+
 2009-04-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
