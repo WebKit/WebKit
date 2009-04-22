@@ -27,6 +27,8 @@
 #define CachedCall_h
 
 #include "CallFrameClosure.h"
+#include "JSFunction.h"
+#include "JSGlobalObject.h"
 #include "Interpreter.h"
 
 namespace JSC {

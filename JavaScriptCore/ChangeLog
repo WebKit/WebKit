@@ -1,3 +1,9 @@
+2009-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Buildfix).
+
+        * interpreter/CachedCall.h:
+
 2009-04-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
