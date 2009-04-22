@@ -1,3 +1,13 @@
+2009-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/5874009>
+        Add port 3659 (apple-sasl / PasswordServer) to the list of blocked ports.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::portAllowed):
+
 2009-04-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

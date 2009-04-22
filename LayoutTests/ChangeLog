@@ -1,3 +1,14 @@
+2009-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Update test and results for <rdar://problem/5874009>
+        Add port 3659 (apple-sasl / PasswordServer) to the list of blocked ports.
+
+        * platform/mac-tiger/security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+        * security/block-test.html:
+
 2009-04-21  Justin Garcia  <justin.garcia@apple.com>
         
         Reviewed by Dan Bernstein.

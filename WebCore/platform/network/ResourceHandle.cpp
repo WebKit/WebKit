@@ -178,6 +178,7 @@ static bool portAllowed(const ResourceRequest& request)
         993,  // IMAP+SSL
         995,  // POP3+SSL
         2049, // NFS
+        3659, // apple-sasl / PasswordServer [Apple addition]
         4045, // lockd
         6000, // X11
     };
