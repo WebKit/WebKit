@@ -229,6 +229,9 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     uint32_t requestID = instance->nextRequestID();
     kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     if (kr == MACH_SEND_INVALID_DEST) {
+        // Invalidate the instance.
+        instance->invalidate();
+        
         // The plug-in host must have died, but we haven't received the death notification yet.
         pluginHostDied(hostProxy);
 

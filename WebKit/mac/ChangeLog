@@ -1,3 +1,15 @@
+2009-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix <rdar://problem/6792694>
+        
+        When we're trying to instantiate a plug-in and the plug-in host has died, we need to invalidate the
+        instance so that it doesn't stick around and do bad things.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.
