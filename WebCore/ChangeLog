@@ -1,3 +1,17 @@
+2009-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a crash in Mail when forwarding a specific HTML email.
+        Caused by the fix for <rdar://problem/6512520> (r42096).
+        Unable to create a test case that works outside of Mail.
+
+        <rdar://problem/6796069>
+
+        Reviewed by Ada Chan.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Null check pastEnd before trying to
+        call Range::compareBoundaryPoints.
+
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

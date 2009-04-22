@@ -808,7 +808,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         markups.append(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().node();
 
-        if (Range::compareBoundaryPoints(startNode, 0, pastEnd, 0) >= 0) {
+        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0) >= 0) {
             if (deleteButton)
                 deleteButton->enable();
             return interchangeNewlineString;
