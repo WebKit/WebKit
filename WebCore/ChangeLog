@@ -1,3 +1,13 @@
+2009-04-22  Tamas Szirbucz  <szirbucz.tamas@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25023
+        Delete reply in QNetworkReplyHandler::abort() to avoid leak.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+
 2009-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Allow the UI delegate to control cursor-setting.
