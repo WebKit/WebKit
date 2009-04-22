@@ -116,6 +116,8 @@ public:
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
 
+    virtual bool setCursor(WebCore::PlatformCursorHandle cursor);
+
     WebView* webView() const { return m_webView; }
 
     virtual void formStateDidChange(const WebCore::Node*) { }

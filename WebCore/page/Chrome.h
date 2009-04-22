@@ -20,6 +20,7 @@
 #ifndef Chrome_h
 #define Chrome_h
 
+#include "Cursor.h"
 #include "FileChooser.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
@@ -120,6 +121,8 @@ namespace WebCore {
         void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
+
+        bool setCursor(PlatformCursorHandle);
 
 #if PLATFORM(MAC)
         void focusNSView(NSView*);

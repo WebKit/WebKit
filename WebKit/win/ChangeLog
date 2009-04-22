@@ -1,3 +1,23 @@
+2009-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Allow the UI delegate to control cursor-setting.
+
+        Reviewed by Ada Chan.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        Added a function to the IWebUIDelegatePrivate5 interface.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::setCursor):
+        Try to call the UI delegate's webViewSetCursor() method. If it fails,
+        fall back to calling SetCursor() with the passed cursor.
+
+        * WebCoreSupport/WebChromeClient.h:
+
+        * WebView.cpp:
+        (WebViewWndProc):
+        Call the Chrome's setCursor() method with the last set cursor.
+
 2009-04-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt.

@@ -29,10 +29,12 @@
 #include "Cursor.h"
 #include "Document.h"
 #include "Element.h"
-#include "GraphicsContext.h"
-#include "FrameWin.h"
-#include "IntRect.h"
 #include "FrameView.h"
+#include "FrameWin.h"
+#include "GraphicsContext.h"
+#include "IntRect.h"
+#include "Page.h"
+
 #include <winsock2.h>
 #include <windows.h>
 
@@ -61,17 +63,37 @@ bool ignoreNextSetCursor = false;
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    // This is set by PluginViewWin so it can ignore set setCursor call made by
+    // This is set by PluginViewWin so it can ignore the setCursor call made by
     // EventHandler.cpp.
     if (ignoreNextSetCursor) {
         ignoreNextSetCursor = false;
         return;
     }
 
-    if (HCURSOR c = cursor.impl()->nativeCursor()) {
-        lastSetCursor = c;
-        SetCursor(c);
+    if (!cursor.impl()->nativeCursor())
+        return;
+
+    lastSetCursor = cursor.impl()->nativeCursor();
+
+    ScrollView* view = root();
+    if (!view || !view->isFrameView()) {
+        SetCursor(lastSetCursor);
+        return;
     }
+
+    Frame* frame = static_cast<FrameView*>(view)->frame();
+    if (!frame) {
+        SetCursor(lastSetCursor);
+        return;
+    }
+
+    Page* page = frame->page();
+    if (!page) {
+        SetCursor(lastSetCursor);
+        return;
+    }
+
+    page->chrome()->setCursor(lastSetCursor);
 }
 
 void Widget::paint(GraphicsContext*, const IntRect&)

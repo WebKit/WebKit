@@ -70,18 +70,25 @@ namespace WebCore {
         HCURSOR m_nativeCursor;
     };
     typedef RefPtr<SharedCursor> PlatformCursor;
+    typedef HCURSOR PlatformCursorHandle;
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
+    typedef NSCursor* PlatformCursorHandle;
 #elif PLATFORM(GTK)
     typedef GdkCursor* PlatformCursor;
+    typedef GdkCursor* PlatformCursorHandle;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;
+    typedef QCursor* PlatformCursorHandle;
 #elif PLATFORM(WX)
     typedef wxCursor* PlatformCursor;
+    typedef wxCursor* PlatformCursorHandle;
 #elif PLATFORM(CHROMIUM)
     // See PlatformCursor.h
+    typedef void* PlatformCursorHandle;
 #else
     typedef void* PlatformCursor;
+    typedef void* PlatformCursorHandle;
 #endif
 
     class Cursor {

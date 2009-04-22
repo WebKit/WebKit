@@ -1915,10 +1915,9 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             }
             break;
         case WM_SETCURSOR:
-            if (lastSetCursor) {
-                SetCursor(lastSetCursor);
+            if (handled = webView->page()->chrome()->setCursor(lastSetCursor))
                 break;
-            }
+
             __fallthrough;
         default:
             handled = false;

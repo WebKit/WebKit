@@ -1,3 +1,33 @@
+2009-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Allow the UI delegate to control cursor-setting.
+
+        Reviewed by Ada Chan.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setCursor):
+        Pass the call to the client.
+
+        * page/Chrome.h:
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::setCursor):
+        Stubbed; returns false.
+
+        * platform/Cursor.h:
+        Define PlatformCursorHandle for each platform.
+
+        * platform/win/WidgetWin.cpp:
+        Reordered some includes. Added an include of Page.h.
+        (WebCore::Widget::setCursor):
+        Fixed a typo in the comment about ignoreNextSetCursor. Get the Page, and
+        call its Chrome's setCursor() method with the passed cursor. Fall back
+        to SetCursor() if the Page is not available.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleMouseEvent):
+        Remove an unused variable. Cleaned up some whitespace.
+
 2009-04-21  John Abd-El-Malek  <jam@google.com>
 
         Reviewed by Dimitri Glazkov.

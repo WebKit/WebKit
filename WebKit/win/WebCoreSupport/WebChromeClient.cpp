@@ -35,6 +35,7 @@
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/ContextMenu.h>
+#include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -690,6 +691,23 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
         fileChooser->chooseFiles(fileList);
     }
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
+}
+
+bool WebChromeClient::setCursor(PlatformCursorHandle cursor)
+{
+    if (!cursor)
+        return false;
+
+    if (COMPtr<IWebUIDelegate> delegate = uiDelegate()) {
+        COMPtr<IWebUIDelegatePrivate5> delegatePrivate(Query, delegate);
+        if (delegatePrivate) {
+            if (SUCCEEDED(delegatePrivate->webViewSetCursor(m_webView, reinterpret_cast<OLE_HANDLE>(cursor))))
+                return true;
+        }
+    }
+
+    ::SetCursor(cursor);
+    return true;
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
