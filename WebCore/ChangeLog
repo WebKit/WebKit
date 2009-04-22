@@ -1,3 +1,13 @@
+2009-04-21  John Abd-El-Malek  <jam@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a method to purge the Chromium plugin list cache.
+        https://bugs.webkit.org/show_bug.cgi?id=25318
+
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::resetChromiumPluginCache):
+
 2009-04-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
