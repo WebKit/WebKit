@@ -1,3 +1,15 @@
+2009-04-21  Justin Garcia  <justin.garcia@apple.com>
+        
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25320
+        Crash when changing block styles in a root that contains no visible content (but contains nodes with renderers)
+
+        * editing/execCommand/25320-expected.txt: Added.
+        * editing/execCommand/25320.html: Added.
+        * platform/mac/fast/forms/caret-rtl-expected.checksum: Replaced.
+        * platform/mac/fast/forms/caret-rtl-expected.txt: Replaced.
+
 2009-04-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

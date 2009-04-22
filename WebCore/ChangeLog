@@ -1,3 +1,16 @@
+2009-04-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25320
+        Crash when changing block styles in a root that contains no visible content (but contains nodes with renderers)
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): If the enclosing block is the 
+        root editable element and it contains no visible content, create a new block but don't try and move 
+        content into it, since there's nothing for moveParagraphs to move.
+        
+
 2009-04-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
