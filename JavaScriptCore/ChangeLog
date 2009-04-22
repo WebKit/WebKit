@@ -1,5 +1,27 @@
 2009-04-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam "Blackbeard" Weinig.
+
+        Although pirates do spell the word 'generate' as 'genertate',
+        webkit developers do not.  Fixerate.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateAssertionBOL):
+        (JSC::Yarr::RegexGenerator::generateAssertionEOL):
+        (JSC::Yarr::RegexGenerator::generateAssertionWordBoundary):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterSingle):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterPair):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassSingle):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+
+2009-04-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam "Blackbeard" Weinig.
 
         Improvements to YARR JIT.  This patch expands support in three key areas:
