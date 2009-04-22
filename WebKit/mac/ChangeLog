@@ -1,3 +1,14 @@
+2009-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        - Mac part of fixing for <rdar://problem/6755137> Action dictionary for
+          policy decision is missing keys when full-page zoom is used
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary): Use absoluteLocation() instead
+        of pageX() and pageY(), which are adjusted for zoom.
+
 2009-04-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Kevin Decker.

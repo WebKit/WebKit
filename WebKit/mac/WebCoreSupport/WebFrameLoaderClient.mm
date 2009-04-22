@@ -1158,9 +1158,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
         nil];
 
     if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
-        IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation(), false)];
         [result setObject:element forKey:WebActionElementKey];
         [element release];
 

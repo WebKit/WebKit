@@ -1,0 +1,6 @@
+Policy delegate: attempt to load about:blank with navigation type 'link clicked' originating from #text > A > BODY > HTML > #document
+This is a test for rdar://problem/6755137 Action dictionary for policy decision is missing keys when full-page zoom is used.
+
+Link
+The policy delegate message should indicate that the originating node is the text child of an anchor element.
+
