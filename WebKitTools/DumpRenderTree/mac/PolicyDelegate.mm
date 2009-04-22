@@ -30,10 +30,16 @@
 
 #import "DumpRenderTree.h"
 #import "LayoutTestController.h"
+#import <WebKit/DOMElement.h>
 #import <WebKit/WebPolicyDelegate.h>
+#import <WebKit/WebView.h>
 
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
+@end
+
+@interface DOMNode (dumpPath)
+- (NSString *)dumpPath;
 @end
 
 @implementation PolicyDelegate
@@ -68,9 +74,14 @@
         default:
             typeDescription = "illegal value";
     }
-    
-    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", [[[request URL] _drt_descriptionSuitableForTestResult] UTF8String], typeDescription);
-    
+
+    NSString *message = [NSString stringWithFormat:@"Policy delegate: attempt to load %@ with navigation type '%s'", [[request URL] _drt_descriptionSuitableForTestResult], typeDescription];
+
+    if (DOMElement *originatingNode = [[actionInformation objectForKey:WebActionElementKey] objectForKey:WebElementDOMNodeKey])
+        message = [message stringByAppendingFormat:@" originating from %@", [originatingNode dumpPath]];
+
+    printf("%s\n", [message UTF8String]);
+
     if (permissiveDelegate)
         [listener use];
     else

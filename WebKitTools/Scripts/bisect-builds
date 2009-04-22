@@ -273,7 +273,7 @@ sub findSafariVersion($)
     while (<PLIST>) {
         if (m#^\s*<key>CFBundleShortVersionString</key>#) {
             $version = <PLIST>;
-            $version =~ s#^\s*<string>(.+)</string>\s*[\r\n]*#$1#;
+            $version =~ s#^\s*<string>([0-9.]+)[^<]*</string>\s*[\r\n]*#$1#;
         }
     }
     close(PLIST);

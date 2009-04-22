@@ -101,10 +101,16 @@ HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
 // DOMNode --------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE DOMNode::nodeName( 
-    /* [retval][out] */ BSTR* /*result*/)
+    /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    if (!m_node)
+        return E_FAIL;
+
+    *result = BString(m_node->nodeName()).release();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE DOMNode::nodeValue( 

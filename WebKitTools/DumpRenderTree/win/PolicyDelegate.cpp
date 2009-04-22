@@ -35,6 +35,25 @@
 
 using std::wstring;
 
+static wstring dumpPath(IDOMNode* node)
+{
+    ASSERT(node);
+
+    wstring result;
+
+    BSTR name;
+    if (FAILED(node->nodeName(&name)))
+        return result;
+    result.assign(name, SysStringLen(name));
+    SysFreeString(name);
+
+    COMPtr<IDOMNode> parent;
+    if (SUCCEEDED(node->parentNode(&parent)))
+        result += TEXT(" > ") + dumpPath(parent.get());
+
+    return result;
+}
+
 PolicyDelegate::PolicyDelegate()
     : m_refCount(1)
     , m_permissiveDelegate(false)
@@ -89,31 +108,43 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
         navType = V_I4(&var);
     }
 
-    const char* typeDescription;
+    LPCTSTR typeDescription;
     switch (navType) {
         case WebNavigationTypeLinkClicked:
-            typeDescription = "link clicked";
+            typeDescription = TEXT("link clicked");
             break;
         case WebNavigationTypeFormSubmitted:
-            typeDescription = "form submitted";
+            typeDescription = TEXT("form submitted");
             break;
         case WebNavigationTypeBackForward:
-            typeDescription = "back/forward";
+            typeDescription = TEXT("back/forward");
             break;
         case WebNavigationTypeReload:
-            typeDescription = "reload";
+            typeDescription = TEXT("reload");
             break;
         case WebNavigationTypeFormResubmitted:
-            typeDescription = "form resubmitted";
+            typeDescription = TEXT("form resubmitted");
             break;
         case WebNavigationTypeOther:
-            typeDescription = "other";
+            typeDescription = TEXT("other");
             break;
         default:
-            typeDescription = "illegal value";
+            typeDescription = TEXT("illegal value");
     }
-    
-    printf("Policy delegate: attempt to load %S with navigation type '%s'\n", wurl.c_str(), typeDescription);
+
+    wstring message = TEXT("Policy delegate: attempt to load ") + wurl + TEXT(" with navigation type '") + typeDescription + TEXT("'");
+
+    VARIANT actionElementVar;
+    if (SUCCEEDED(actionInformation->Read(WebActionElementKey, &actionElementVar, 0))) {
+        COMPtr<IPropertyBag> actionElement(Query, V_UNKNOWN(&actionElementVar));
+        VARIANT originatingNodeVar;
+        if (SUCCEEDED(actionElement->Read(WebElementDOMNodeKey, &originatingNodeVar, 0))) {
+            COMPtr<IDOMNode> originatingNode(Query, V_UNKNOWN(&originatingNodeVar));
+            message += TEXT(" originating from ") + dumpPath(originatingNode.get());
+        }
+    }
+
+    printf("%S\n", message.c_str());
 
     SysFreeString(url);
 

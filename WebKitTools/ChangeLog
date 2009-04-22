@@ -1,3 +1,16 @@
+2009-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        - dump the node in the element dictionary in the action information
+          passed to the policy delegate
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (dumpPath):
+        (PolicyDelegate::decidePolicyForNavigationAction):
+
 2009-04-21  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r42726
