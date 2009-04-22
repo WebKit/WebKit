@@ -9283,6 +9283,14 @@
 				RelativePath="..\dom\XMLTokenizerLibxml2.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\dom\XMLTokenizerScope.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\XMLTokenizerScope.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="workers"

@@ -653,6 +653,7 @@ SOURCES += \
     dom/WheelEvent.cpp \
     dom/XMLTokenizer.cpp \
     dom/XMLTokenizerQt.cpp \
+    dom/XMLTokenizerScope.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
     editing/BreakBlockquoteCommand.cpp \

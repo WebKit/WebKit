@@ -1,3 +1,46 @@
+2009-04-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=25164> / <rdar://problem/6786319>.
+
+        We need to ensure that XMLTokenizer sets the current DocLoader before calling in to
+        any libxml2 methods that may trigger a load.  The presence of a DocLoader indicates
+        that the load was originated by WebCore's use of libxml2 and that we should enforce
+        the same-origin policy on it.  XMLTokenizer::initializeParserContext,
+        XMLTokenizer::doWrite and XMLTokenizer::doEnd were three methods that were not setting
+        the current DocLoader when they should have.
+
+        The XMLTokenizerScope class is introduced to simplify the pattern of saving, setting and
+        restoring the current DocLoader and libxml2 error handlers.  The DocLoader and error handlers
+        are saved and set when the scope is allocated, and restored to their previous values when
+        the scope is exited.
+
+        Test: http/tests/security/xss-DENIED-xml-external-entity.xhtml
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::matchFunc):
+        (WebCore::shouldAllowExternalLoad):
+        (WebCore::openFunc):
+        (WebCore::XMLTokenizer::doWrite):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::doEnd):
+        (WebCore::xmlDocPtrForString):
+        * dom/XMLTokenizerScope.cpp:
+        (WebCore::XMLTokenizerScope::XMLTokenizerScope):
+        (WebCore::XMLTokenizerScope::~XMLTokenizerScope):
+        * dom/XMLTokenizerScope.h:
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessor.cpp:
+
 2009-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

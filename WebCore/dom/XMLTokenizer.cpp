@@ -320,4 +320,3 @@ void XMLTokenizer::pauseParsing()
 }
 
 }
-

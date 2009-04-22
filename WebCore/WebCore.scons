@@ -143,6 +143,7 @@ sources['dom'] = [
     'dom/WheelEvent.cpp',
     'dom/XMLTokenizer.cpp',
     'dom/XMLTokenizerLibxml2.cpp',
+    'dom/XMLTokenizerScope.cpp',
 ]
 sources['editing'] = [
     'editing/AppendNodeCommand.cpp',

@@ -50,6 +50,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
+#include "XMLTokenizerScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/Platform.h>
@@ -325,14 +326,13 @@ private:
 // --------------------------------
 
 static int globalDescriptor = 0;
-static DocLoader* globalDocLoader = 0;
 static ThreadIdentifier libxmlLoaderThread = 0;
 
 static int matchFunc(const char*)
 {
     // Only match loads initiated due to uses of libxml2 from within XMLTokenizer to avoid
     // interfering with client applications that also use libxml2.  http://bugs.webkit.org/show_bug.cgi?id=17353
-    return globalDocLoader && currentThread() == libxmlLoaderThread;
+    return XMLTokenizerScope::currentDocLoader && currentThread() == libxmlLoaderThread;
 }
 
 class OffsetBuffer {
@@ -382,8 +382,8 @@ static bool shouldAllowExternalLoad(const KURL& url)
     // retrieved content.  If we had more context, we could potentially allow
     // the parser to load a DTD.  As things stand, we take the conservative
     // route and allow same-origin requests only.
-    if (!globalDocLoader->doc()->securityOrigin()->canRequest(url)) {
-        globalDocLoader->printAccessDeniedMessage(url);
+    if (!XMLTokenizerScope::currentDocLoader->doc()->securityOrigin()->canRequest(url)) {
+        XMLTokenizerScope::currentDocLoader->printAccessDeniedMessage(url);
         return false;
     }
 
@@ -392,7 +392,7 @@ static bool shouldAllowExternalLoad(const KURL& url)
 
 static void* openFunc(const char* uri)
 {
-    ASSERT(globalDocLoader);
+    ASSERT(XMLTokenizerScope::currentDocLoader);
     ASSERT(currentThread() == libxmlLoaderThread);
 
     KURL url(KURL(), uri);
@@ -403,15 +403,16 @@ static void* openFunc(const char* uri)
     ResourceError error;
     ResourceResponse response;
     Vector<char> data;
-    
-    DocLoader* docLoader = globalDocLoader;
-    globalDocLoader = 0;
-    // FIXME: We should restore the original global error handler as well.
 
-    if (docLoader->frame()) 
-        docLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, error, response, data);
 
-    globalDocLoader = docLoader;
+    {
+        DocLoader* docLoader = XMLTokenizerScope::currentDocLoader;
+        XMLTokenizerScope scope(0);
+        // FIXME: We should restore the original global error handler as well.
+
+        if (docLoader->frame()) 
+            docLoader->frame()->loader()->loadResourceSynchronously(url, AllowStoredCredentials, error, response, data);
+    }
 
     // We have to check the URL again after the load to catch redirects.
     // See <https://bugs.webkit.org/show_bug.cgi?id=21963>.
@@ -452,11 +453,6 @@ static void errorFunc(void*, const char*, ...)
     // FIXME: It would be nice to display error messages somewhere.
 }
 #endif
-
-void setLoaderForLibXMLCallbacks(DocLoader* docLoader)
-{
-    globalDocLoader = docLoader;
-}
 
 static bool didInit = false;
 
@@ -625,6 +621,7 @@ void XMLTokenizer::doWrite(const String& parseString)
         const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
         xmlSwitchEncoding(m_context, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
 
+        XMLTokenizerScope scope(m_doc->docLoader());
         xmlParseChunk(m_context, reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
     }
     
@@ -1186,6 +1183,7 @@ void XMLTokenizer::initializeParserContext(const char* chunk)
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 
+    XMLTokenizerScope scope(m_doc->docLoader());
     if (m_parsingFragment)
         m_context = createMemoryParser(&sax, this, chunk);
     else
@@ -1207,8 +1205,11 @@ void XMLTokenizer::doEnd()
 
     if (m_context) {
         // Tell libxml we're done.
-        xmlParseChunk(m_context, 0, 0, 1);
-        
+        {
+            XMLTokenizerScope scope(m_doc->docLoader());
+            xmlParseChunk(m_context, 0, 0, 1);
+        }
+
         if (m_context->myDoc)
             xmlFreeDoc(m_context->myDoc);
         xmlFreeParserCtxt(m_context);
@@ -1228,21 +1229,12 @@ void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const Strin
     const UChar BOM = 0xFEFF;
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
 
-    xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
-    void* oldErrorContext = xmlGenericErrorContext;
-    
-    setLoaderForLibXMLCallbacks(docLoader);        
-    xmlSetGenericErrorFunc(0, errorFunc);
-    
+    XMLTokenizerScope scope(docLoader, errorFunc, 0);
     xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char*>(source.characters()),
                                         source.length() * sizeof(UChar),
                                         url.latin1().data(),
                                         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
                                         XSLT_PARSE_OPTIONS);
-    
-    setLoaderForLibXMLCallbacks(0);
-    xmlSetGenericErrorFunc(oldErrorContext, oldErrorFunc);
-    
     return sourceDoc;
 }
 #endif
