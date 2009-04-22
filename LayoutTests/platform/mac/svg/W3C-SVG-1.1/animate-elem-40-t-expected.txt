@@ -41,7 +41,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 84x18
             chunk 1 (middle anchor) text run 1 at (-41.50,60.00) startOffset 0 endOffset 12 width 83.00: "x/y on <use>"
       RenderSVGContainer {g} at (130,71.50) size 100x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
-        RenderImage {image} at (0,0) size 50x50
+        RenderSVGImage {image} at (0,0) size 50x50
         RenderSVGContainer {use} at (161.50,71.50) size 37x37
           RenderSVGContainer {g} at (161.50,71.50) size 37x37
             RenderSVGContainer {g} at (161.50,71.50) size 37x37
@@ -152,7 +152,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 104x18
             chunk 1 (middle anchor) text run 1 at (-51.50,60.00) startOffset 0 endOffset 16 width 103.00: "x/y on <text>(2)"
       RenderSVGContainer {g} at (138,168) size 82x121 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
-        RenderImage {image} at (0,0) size 50x50
+        RenderSVGImage {image} at (0,0) size 50x50
         RenderPath {rect} at (138,168) size 54x54 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-40.00,-40.00 L10.00,-40.00 L10.00,10.00 L-40.00,10.00 Z"]
         RenderPath {rect} at (140,170) size 80x20 [stroke={[type=SOLID] [color=#FFB400] [stroke width=0.00]}] [data="M-40.00,-40.00 L40.00,-40.00 L40.00,-20.00 L-40.00,-20.00 Z"]
         RenderPath {rect} at (140,170) size 20x80 [stroke={[type=SOLID] [color=#FFB400] [stroke width=0.00]}] [data="M-40.00,-40.00 L-20.00,-40.00 L-20.00,40.00 L-40.00,40.00 Z"]

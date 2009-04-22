@@ -38,7 +38,7 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderPath {polygon} at (239,19) size 22x22 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M240.00,20.00 L240.00,40.00 L260.00,40.00 L260.00,20.00 Z"]
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderImage {image} at (0,0) size 40x80
+        RenderSVGImage {image} at (0,0) size 40x80
       RenderSVGContainer {use} at (44.26,12.13) size 29.49x53.74
         RenderSVGContainer {g} at (44.26,12.13) size 29.49x53.74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
           RenderPath {line} at (44.26,12.13) size 29.49x53.74 [stroke={[type=SOLID] [color=#105D8C] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,50.00 L10.00,10.00"]
@@ -56,7 +56,7 @@ layer at (0,0) size 480x360
           RenderPath {polygon} at (408.70,11.70) size 28.60x28.60 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M240.00,20.00 L240.00,40.00 L260.00,40.00 L260.00,20.00 Z"]
       RenderSVGContainer {use} at (319,1.62) size 52x26.00 [transform={m=((1.00,0.00)(0.00,0.25)) t=(0.00,0.00)}]
         RenderSVGContainer {g} at (319,1.62) size 52x26.00
-          RenderImage {image} at (0,0) size 40x80
+          RenderSVGImage {image} at (0,0) size 40x80
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"

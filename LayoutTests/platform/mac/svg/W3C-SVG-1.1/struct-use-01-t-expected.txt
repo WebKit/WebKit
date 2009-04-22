@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
           RenderSVGContainer {use} at (-1.50,-1.50) size 23x23
             RenderSVGContainer {g} at (-1.50,-1.50) size 23x23
               RenderPath {rect} at (-1.50,-1.50) size 23x23 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
-          RenderImage {image} at (0,0) size 20x20
+          RenderSVGImage {image} at (0,0) size 20x20
           RenderSVGText {text} at (0,0) size 29x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 29x18
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 29.00: "Text"
@@ -82,7 +82,7 @@ layer at (0,0) size 480x360
             RenderPath {path} at (150,205) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {use} at (150,235) size 20x20
           RenderSVGContainer {g} at (150,235) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
-            RenderImage {image} at (0,0) size 20x20
+            RenderSVGImage {image} at (0,0) size 20x20
         RenderSVGContainer {use} at (150,262) size 46x29
           RenderSVGContainer {g} at (150,262) size 46x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
             RenderSVGText {text} at (0,0) size 46x29 contains 1 chunk(s)

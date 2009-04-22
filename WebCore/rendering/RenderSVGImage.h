@@ -2,8 +2,7 @@
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
     Copyright (C) 2007 Rob Buis <buis@kde.org>
-
-    This file is part of the WebKit project.
+    Copyright (C) 2009 Google, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -39,7 +38,9 @@ namespace WebCore {
     public:
         RenderSVGImage(SVGImageElement*);
         virtual ~RenderSVGImage();
-        
+
+        virtual const char* renderName() const { return "RenderSVGImage"; }
+
         virtual TransformationMatrix localTransform() const { return m_localTransform; }
 
         virtual FloatRect objectBoundingBox() const;

@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 75x75
         RenderForeignObject {foreignObject} at (0,0) size 580x380
-        RenderImage {image} at (0,0) size 75x75
+        RenderSVGImage {image} at (0,0) size 75x75
     RenderSVGContainer {use} at (25,25) size 75x75
       RenderSVGContainer {g} at (25,25) size 75x75 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
         RenderSVGContainer {g} at (25,25) size 75x75
-          RenderImage {image} at (0,0) size 75x75
+          RenderSVGImage {image} at (0,0) size 75x75

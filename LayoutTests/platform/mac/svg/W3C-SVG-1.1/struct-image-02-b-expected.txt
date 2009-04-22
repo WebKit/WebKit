@@ -4,13 +4,13 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x359.50
     RenderSVGContainer {g} at (0,0) size 480x300
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderImage {image} at (0,0) size 240x150
+        RenderSVGImage {image} at (0,0) size 240x150
         RenderSVGViewportContainer {svg} at (240,0) size 240x225
           RenderPath {rect} at (240,0) size 240x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L240.00,0.00 L240.00,225.00 L0.00,225.00 Z"]
       RenderSVGContainer {g} at (0,0) size 240x150
         RenderSVGContainer {use} at (0,0) size 240x150
           RenderSVGContainer {g} at (0,0) size 240x150
-            RenderImage {image} at (0,0) size 240x150
+            RenderSVGImage {image} at (0,0) size 240x150
       RenderSVGContainer {g} at (240,0) size 240x225
         RenderSVGContainer {use} at (240,0) size 240x225
           RenderSVGContainer {g} at (240,0) size 240x225

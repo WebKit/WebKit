@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
       RenderPath {rect} at (350,5) size 110x110 [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)] [opacity=0.50] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#008000)]] [start=(0,0)] [end=(1,0)] [opacity=0.50]}] [data="M345.00,0.00 L445.00,0.00 L445.00,100.00 L345.00,100.00 Z"]
       RenderPath {rect} at (465,5) size 110x110 [opacity=0.50] [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#008000)]] [start=(0,0)] [end=(1,0)]}] [data="M460.00,0.00 L560.00,0.00 L560.00,100.00 L460.00,100.00 Z"]
     RenderSVGContainer {g} at (5,120) size 570x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,120.00)}]
-      RenderImage {image} at (0,0) size 110x110
-      RenderImage {image} at (0,0) size 110x110
-      RenderImage {image} at (0,0) size 110x110
-      RenderImage {image} at (0,0) size 110x110
-      RenderImage {image} at (0,0) size 110x110
+      RenderSVGImage {image} at (0,0) size 110x110
+      RenderSVGImage {image} at (0,0) size 110x110
+      RenderSVGImage {image} at (0,0) size 110x110
+      RenderSVGImage {image} at (0,0) size 110x110
+      RenderSVGImage {image} at (0,0) size 110x110

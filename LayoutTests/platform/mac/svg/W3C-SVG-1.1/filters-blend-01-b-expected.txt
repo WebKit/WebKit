@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (2.25,2.25) size 475.50x355.50
     RenderSVGContainer {g} at (15,15) size 435x294
-      RenderImage {image} at (0,0) size 100x98
+      RenderSVGImage {image} at (0,0) size 100x98
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderPath {rect} at (90,30) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendNormal] [data="M30.00,10.00 L150.00,10.00 L150.00,20.00 L30.00,20.00 Z"]
       RenderPath {rect} at (90,69) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendMultiply] [data="M30.00,23.00 L150.00,23.00 L150.00,33.00 L30.00,33.00 Z"]

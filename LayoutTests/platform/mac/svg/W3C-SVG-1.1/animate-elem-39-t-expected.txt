@@ -24,7 +24,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 26x18
             chunk 1 (middle anchor) text run 1 at (-12.50,60.00) startOffset 0 endOffset 3 width 25.00: "<a>"
       RenderSVGContainer {g} at (270,60) size 60x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
-        RenderImage {image} at (0,0) size 60x60
+        RenderSVGImage {image} at (0,0) size 60x60
         RenderSVGText {text} at (-28,60) size 56x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 56x18
             chunk 1 (middle anchor) text run 1 at (-28.00,60.00) startOffset 0 endOffset 7 width 56.00: "<image>"
@@ -61,7 +61,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 26x18
             chunk 1 (middle anchor) text run 1 at (-12.50,60.00) startOffset 0 endOffset 3 width 25.00: "<a>"
       RenderSVGContainer {g} at (270,180) size 60x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
-        RenderImage {image} at (0,0) size 60x60
+        RenderSVGImage {image} at (0,0) size 60x60
         RenderSVGText {text} at (-28,60) size 56x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 56x18
             chunk 1 (middle anchor) text run 1 at (-28.00,60.00) startOffset 0 endOffset 7 width 56.00: "<image>"

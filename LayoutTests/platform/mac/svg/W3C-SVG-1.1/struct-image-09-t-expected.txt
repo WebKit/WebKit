@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (10,50) size 472x162
       RenderPath {rect} at (150,50) size 162x162 [fill={[type=SOLID] [color=#AAFF44]}] [data="M150.00,50.00 L312.00,50.00 L312.00,212.00 L150.00,212.00 Z"]
       RenderPath {rect} at (310,50) size 162x162 [fill={[type=SOLID] [color=#FFAA66]}] [data="M310.00,50.00 L472.00,50.00 L472.00,212.00 L310.00,212.00 Z"]
-      RenderImage {image} at (0,0) size 162x150
-      RenderImage {image} at (0,0) size 162x150
-      RenderImage {image} at (0,0) size 162x150
+      RenderSVGImage {image} at (0,0) size 162x150
+      RenderSVGImage {image} at (0,0) size 162x150
+      RenderSVGImage {image} at (0,0) size 162x150
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.3 $"

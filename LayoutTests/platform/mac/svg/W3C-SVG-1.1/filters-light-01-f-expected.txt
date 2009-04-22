@@ -23,10 +23,10 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (355,25) size 50x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 50x18
             chunk 1 text run 1 at (355.00,25.00) startOffset 0 endOffset 8 width 50.00: "(45, 45)"
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
       RenderSVGContainer {g} at (70,116) size 359x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
         RenderSVGText {text} at (70,10) size 274x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 274x18
@@ -44,10 +44,10 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 74x18
             chunk 1 text run 1 at (355.00,25.00) startOffset 0 endOffset 12 width 74.00: "(50, 30, 10)"
       RenderSVGContainer {g} at (70,150) size 335x30
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
-        RenderImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (0,0) size 50x30
       RenderSVGContainer {g} at (70,196) size 467x48 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
         RenderSVGText {text} at (70,0) size 467x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 467x18
