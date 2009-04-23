@@ -113,7 +113,7 @@ static int reverseSortCommonSizedAllocations(const void* leftPtr, const void* ri
 
 class FixedVMPoolAllocator
 {
-    // The freeList is stored in a sorted tree.
+    // The free list is stored in a sorted tree.
     typedef AVLTree<AVLTreeAbstractorForFreeList, 40> SizeSortedFreeTree;
 
     // Use madvise as apropriate to prevent freed pages from being spilled,
@@ -148,30 +148,30 @@ class FixedVMPoolAllocator
     {
         ASSERT(!entry->nextEntry);
 
-        if (entry->size == commonSize) {
-            commonSizedAllocations.append(entry->pointer);
+        if (entry->size == m_commonSize) {
+            m_commonSizedAllocations.append(entry->pointer);
             delete entry;
-        } else if (FreeListEntry* entryInFreeList = freeList.search(entry->size, freeList.EQUAL)) {
-            // The freeList already contain an entry for this size - insert this node into the chain.
+        } else if (FreeListEntry* entryInFreeList = m_freeList.search(entry->size, m_freeList.EQUAL)) {
+            // m_freeList already contain an entry for this size - insert this node into the chain.
             entry->nextEntry = entryInFreeList->nextEntry;
             entryInFreeList->nextEntry = entry;
         } else
-            freeList.insert(entry);
+            m_freeList.insert(entry);
     }
 
     // We do not attempt to coalesce addition, which may lead to fragmentation;
     // instead we periodically perform a sweep to try to coalesce neigboring
-    // entries in the freeList.  Presently this is triggered at the point 16Mb
+    // entries in m_freeList.  Presently this is triggered at the point 16MB
     // of memory has been released.
     void coalesceFreeSpace()
     {
         Vector<FreeListEntry*> freeListEntries;
         SizeSortedFreeTree::Iterator iter;
-        iter.start_iter_least(freeList);
+        iter.start_iter_least(m_freeList);
 
-        // Empty the freeList into a Vector.
+        // Empty m_freeList into a Vector.
         for (FreeListEntry* entry; (entry = *iter); ++iter) {
-            // Each entry in the freeList might correspond to multiple
+            // Each entry in m_freeList might correspond to multiple
             // free chunks of memory (of the same size).  Walk the chain
             // (this is likely of couse only be one entry long!) adding
             // each entry to the Vector (at reseting the next in chain
@@ -184,57 +184,57 @@ class FixedVMPoolAllocator
             } while ((entry = next));
         }
         // All entries are now in the Vector; purge the tree.
-        freeList.purge();
+        m_freeList.purge();
 
-        // Reverse-sort the freeListEntries and commonSizedAllocations Vectors.
+        // Reverse-sort the freeListEntries and m_commonSizedAllocations Vectors.
         // We reverse-sort so that we can logically work forwards through memory,
         // whilst popping items off the end of the Vectors using last() and removeLast().
         qsort(freeListEntries.begin(), freeListEntries.size(), sizeof(FreeListEntry*), reverseSortFreeListEntriesByPointer);
-        qsort(commonSizedAllocations.begin(), commonSizedAllocations.size(), sizeof(void*), reverseSortCommonSizedAllocations);
+        qsort(m_commonSizedAllocations.begin(), m_commonSizedAllocations.size(), sizeof(void*), reverseSortCommonSizedAllocations);
 
-        // The entries from commonSizedAllocations that cannot be
+        // The entries from m_commonSizedAllocations that cannot be
         // coalesced into larger chunks will be temporarily stored here.
         Vector<void*> newCommonSizedAllocations;
 
         // Keep processing so long as entries remain in either of the vectors.
-        while (freeListEntries.size() || commonSizedAllocations.size()) {
+        while (freeListEntries.size() || m_commonSizedAllocations.size()) {
             // We're going to try to find a FreeListEntry node that we can coalesce onto.
             FreeListEntry* coalescionEntry = 0;
 
             // Is the lowest addressed chunk of free memory of common-size, or is it in the free list?
-            if (commonSizedAllocations.size() && (!freeListEntries.size() || (commonSizedAllocations.last() < freeListEntries.last()->pointer))) {
-                // Pop an item from the commonSizedAllocations vector - this is the lowest
+            if (m_commonSizedAllocations.size() && (!freeListEntries.size() || (m_commonSizedAllocations.last() < freeListEntries.last()->pointer))) {
+                // Pop an item from the m_commonSizedAllocations vector - this is the lowest
                 // addressed free chunk.  Find out the begin and end addresses of the memory chunk.
-                void* begin = commonSizedAllocations.last();
-                void* end = (void*)((intptr_t)begin + commonSize);
-                commonSizedAllocations.removeLast();
+                void* begin = m_commonSizedAllocations.last();
+                void* end = (void*)((intptr_t)begin + m_commonSize);
+                m_commonSizedAllocations.removeLast();
 
                 // Try to find another free chunk abutting onto the end of the one we have already found.
                 if (freeListEntries.size() && (freeListEntries.last()->pointer == end)) {
                     // There is an existing FreeListEntry for the next chunk of memory!
-                    // we can reuse this.  Pop it off the end of the freeList.
+                    // we can reuse this.  Pop it off the end of m_freeList.
                     coalescionEntry = freeListEntries.last();
                     freeListEntries.removeLast();
                     // Update the existing node to include the common-sized chunk that we also found. 
-                    coalescionEntry->pointer = (void*)((intptr_t)coalescionEntry->pointer - commonSize);
-                    coalescionEntry->size += commonSize;
-                } else if (commonSizedAllocations.size() && (commonSizedAllocations.last() == end)) {
+                    coalescionEntry->pointer = (void*)((intptr_t)coalescionEntry->pointer - m_commonSize);
+                    coalescionEntry->size += m_commonSize;
+                } else if (m_commonSizedAllocations.size() && (m_commonSizedAllocations.last() == end)) {
                     // There is a second common-sized chunk that can be coalesced.
                     // Allocate a new node.
-                    commonSizedAllocations.removeLast();
-                    coalescionEntry = new FreeListEntry(begin, 2 * commonSize);
+                    m_commonSizedAllocations.removeLast();
+                    coalescionEntry = new FreeListEntry(begin, 2 * m_commonSize);
                 } else {
                     // Nope - this poor little guy is all on his own. :-(
                     // Add him into the newCommonSizedAllocations vector for now, we're
-                    // going to end up adding him back into the commonSizedAllocations
+                    // going to end up adding him back into the m_commonSizedAllocations
                     // list when we're done.
                     newCommonSizedAllocations.append(begin);
                     continue;
                 }
             } else {
                 ASSERT(freeListEntries.size());
-                ASSERT(!commonSizedAllocations.size() || (freeListEntries.last()->pointer < commonSizedAllocations.last()));
-                // The lowest addressed item is from the freeList; pop it from the Vector.
+                ASSERT(!m_commonSizedAllocations.size() || (freeListEntries.last()->pointer < m_commonSizedAllocations.last()));
+                // The lowest addressed item is from m_freeList; pop it from the Vector.
                 coalescionEntry = freeListEntries.last();
                 freeListEntries.removeLast();
             }
@@ -254,46 +254,46 @@ class FixedVMPoolAllocator
                     // Add it's size onto our existing node.
                     coalescionEntry->size += coalescee->size;
                     delete coalescee;
-                } else if (commonSizedAllocations.size() && (commonSizedAllocations.last() == end)) {
+                } else if (m_commonSizedAllocations.size() && (m_commonSizedAllocations.last() == end)) {
                     // We can coalesce the next common-sized chunk.
-                    commonSizedAllocations.removeLast();
-                    coalescionEntry->size += commonSize;
+                    m_commonSizedAllocations.removeLast();
+                    coalescionEntry->size += m_commonSize;
                 } else
                     break; // Nope, nothing to be added - stop here.
             }
 
             // We've coalesced everything we can onto the current chunk.
-            // Add it back into the freeList.
+            // Add it back into m_freeList.
             addToFreeList(coalescionEntry);
         }
 
-        // All chunks of free memory larger than the commonSize should be
-        // back in the freeList by now.  All that remains to be done is to
+        // All chunks of free memory larger than m_commonSize should be
+        // back in m_freeList by now.  All that remains to be done is to
         // copy the contents on the newCommonSizedAllocations back into
-        // the commonSizedAllocations Vector.
-        ASSERT(commonSizedAllocations.size() == 0);
-        commonSizedAllocations.append(newCommonSizedAllocations);
+        // the m_commonSizedAllocations Vector.
+        ASSERT(m_commonSizedAllocations.size() == 0);
+        m_commonSizedAllocations.append(newCommonSizedAllocations);
     }
 
 public:
 
     FixedVMPoolAllocator(size_t commonSize, size_t totalHeapSize)
-        : commonSize(commonSize)
-        , countFreedSinceLastCoalesce(0)
-        , totalHeapSize(totalHeapSize)
+        : m_commonSize(commonSize)
+        , m_countFreedSinceLastCoalesce(0)
+        , m_totalHeapSize(totalHeapSize)
     {
         // Allocate two gigabytes of memory.
-        base = mmap(NULL, totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
-        if (!base)
+        m_base = mmap(NULL, m_totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
+        if (!m_base)
             CRASH();
 
-        // For simplicity, we keep all memory in the freeList in a 'released' state.
+        // For simplicity, we keep all memory in m_freeList in a 'released' state.
         // This means that we can simply reuse all memory when allocating, without
-        // worrying about it's previous state, and also makes coalescing the freeList
+        // worrying about it's previous state, and also makes coalescing m_freeList
         // simpler since we need not worry about the possibility of coalescing released
         // chunks with non-released ones.
-        release(base, totalHeapSize);
-        freeList.insert(new FreeListEntry(base, totalHeapSize));
+        release(m_base, m_totalHeapSize);
+        m_freeList.insert(new FreeListEntry(m_base, m_totalHeapSize));
     }
 
     void* alloc(size_t size)
@@ -301,28 +301,28 @@ public:
         void* result;
 
         // Freed allocations of the common size are not stored back into the main
-        // freeList, but are instead stored in a separate vector.  If the request
-        // if for a common sized allocation, check this list.
-        if ((size == commonSize) && commonSizedAllocations.size()) {
-            result = commonSizedAllocations.last();
-            commonSizedAllocations.removeLast();
+        // m_freeList, but are instead stored in a separate vector.  If the request
+        // is for a common sized allocation, check this list.
+        if ((size == m_commonSize) && m_commonSizedAllocations.size()) {
+            result = m_commonSizedAllocations.last();
+            m_commonSizedAllocations.removeLast();
         } else {
-            // Serach the freeList for a suitable sized chunk to allocate memory from.
-            FreeListEntry* entry = freeList.search(size, freeList.GREATER_EQUAL);
+            // Serach m_freeList for a suitable sized chunk to allocate memory from.
+            FreeListEntry* entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
 
             // This would be bad news.
             if (!entry) {
                 // Errk!  Lets take a last-ditch desparation attempt at defragmentation...
                 coalesceFreeSpace();
                 // Did that free up a large enough chunk?
-                entry = freeList.search(size, freeList.GREATER_EQUAL);
+                entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
                 // No?...  *BOOM!*
                 if (!entry)
                     CRASH();
             }
-            ASSERT(entry->size != commonSize);
+            ASSERT(entry->size != m_commonSize);
 
-            // Remove the entry from the freeList.  But! -
+            // Remove the entry from m_freeList.  But! -
             // Each entry in the tree may represent a chain of multiple chunks of the
             // same size, and we only want to remove one on them.  So, if this entry
             // does have a chain, just remove the first-but-one item from the chain.
@@ -332,20 +332,20 @@ public:
                 next->nextEntry = 0;
                 entry = next;
             } else
-                freeList.remove(entry->size);
+                m_freeList.remove(entry->size);
 
             // Whoo!, we have a result!
             ASSERT(entry->size >= size);
             result = entry->pointer;
 
-            // If the allcation exactly fits the chunk we found in the,
-            // freeList then the FreeListEntry node is no longer needed.
+            // If the allocation exactly fits the chunk we found in the,
+            // m_freeList then the FreeListEntry node is no longer needed.
             if (entry->size == size)
                 delete entry;
             else {
                 // There is memory left over, and it is not of the common size.
                 // We can reuse the existing FreeListEntry node to add this back
-                // into the freeList.
+                // into m_freeList.
                 entry->pointer = (void*)((intptr_t)entry->pointer + size);
                 entry->size -= size;
                 addToFreeList(entry);
@@ -365,19 +365,19 @@ public:
         ASSERT(isWithinVMPool(pointer, size));
         release(pointer, size);
 
-        // Common-sized allocations are stored in the commonSizedAllocations
-        // vector; all other freed chunks are added to the freeList.
-        if (size == commonSize)
-            commonSizedAllocations.append(pointer);
+        // Common-sized allocations are stored in the m_commonSizedAllocations
+        // vector; all other freed chunks are added to m_freeList.
+        if (size == m_commonSize)
+            m_commonSizedAllocations.append(pointer);
         else
             addToFreeList(new FreeListEntry(pointer, size));
 
         // Do some housekeeping.  Every time we reach a point that
-        // 16Mb of allocations have been freed, sweep the freeList
+        // 16MB of allocations have been freed, sweep m_freeList
         // coalescing any neighboring fragments.
-        countFreedSinceLastCoalesce += size;
-        if (countFreedSinceLastCoalesce >= SIXTEEN_MB) {
-            countFreedSinceLastCoalesce = 0;
+        m_countFreedSinceLastCoalesce += size;
+        if (m_countFreedSinceLastCoalesce >= SIXTEEN_MB) {
+            m_countFreedSinceLastCoalesce = 0;
             coalesceFreeSpace();
         }
     }
@@ -387,22 +387,22 @@ private:
 #ifndef NDEBUG
     bool isWithinVMPool(void* pointer, size_t size)
     {
-        return pointer >= base && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(base) + totalHeapSize);
+        return pointer >= m_base && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(m_base) + m_totalHeapSize);
     }
 #endif
 
     // Freed space from the most common sized allocations will be held in this list, ...
-    const size_t commonSize;
-    Vector<void*> commonSizedAllocations;
+    const size_t m_commonSize;
+    Vector<void*> m_commonSizedAllocations;
 
-    // ... and all other freed allocations are held in the freeList.
-    SizeSortedFreeTree freeList;
+    // ... and all other freed allocations are held in m_freeList.
+    SizeSortedFreeTree m_freeList;
 
     // This is used for housekeeping, to trigger defragmentation of the freed lists.
-    size_t countFreedSinceLastCoalesce;
+    size_t m_countFreedSinceLastCoalesce;
 
-    void* base;
-    size_t totalHeapSize;
+    void* m_base;
+    size_t m_totalHeapSize;
 };
 
 void ExecutableAllocator::intializePageSize()
