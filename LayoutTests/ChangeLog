@@ -1,3 +1,12 @@
+2009-04-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6791439> REGRESSION: Get an error page instead of login page navigating back in gmail
+
+        * http/tests/history/back-to-post-expected.txt: Added.
+        * http/tests/history/back-to-post.php: Added.
+
 2009-04-23  Adam Roben  <aroben@apple.com>
 
         Skip a newly-added test that fails on Windows

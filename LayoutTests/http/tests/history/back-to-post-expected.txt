@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame "finish" - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+Test for rdar://problem/6791439 Getting an error page instead of login page navigating back in gmail.
+
+PASS
+ 

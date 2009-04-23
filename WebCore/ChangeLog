@@ -1,3 +1,15 @@
+2009-04-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6791439> REGRESSION: Get an error page instead of login page navigating back in gmail
+
+        Test: http/tests/history/back-to-post.php
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        Apply a new cache policy if it changed after the platform request was first created.
+        While at it, also made sure to update timeout.
+
 2009-04-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
