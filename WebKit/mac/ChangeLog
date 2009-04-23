@@ -1,5 +1,19 @@
 2009-04-23  Kevin Decker  <kdecker@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Second part of the fix for <rdar://problem/6352982>
+
+        * Plugins/WebBaseNetscapePluginView.h: Make this class conform to WebPluginContainerCheckController
+        * Plugins/WebBaseNetscapePluginView.mm: Likewise.
+        (-[WebBaseNetscapePluginView _webPluginContainerCancelCheckIfAllowedToLoadRequest:]): Added skeleton method.
+        * Plugins/WebPluginContainerCheck.h: Added protocol for <WebPluginContainerCheckController>
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck initWithRequest:target:resultObject:selector:controller:]):
+        * Plugins/WebPluginController.h: Make this class conform to WebPluginContainerCheckController
+
+2009-04-23  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Anders Carlsson.
         
         First part of <rdar://problem/6352982>

@@ -27,6 +27,7 @@
  */
 
 #import <WebKit/WebBasePluginPackage.h>
+#import "WebPluginContainerCheck.h"
 
 @class WebFrame;
 @class WebHTMLView;
@@ -34,7 +35,7 @@
 @class WebView;
 @class WebDataSource;
 
-@interface WebPluginController : NSObject <WebPluginManualLoader>
+@interface WebPluginController : NSObject <WebPluginManualLoader, WebPluginContainerCheckController>
 {
     NSView *_documentView;
     WebDataSource *_dataSource;

@@ -733,6 +733,11 @@ using namespace WebCore;
 {
     // Not yet implemented
 }
+   
+- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
+{
+  // Not yet implemented   
+}
 
 @end
 

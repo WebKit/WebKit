@@ -47,12 +47,12 @@ using namespace WebCore;
 
 @implementation WebPluginContainerCheck
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(WebPluginController *)controller
++ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller
 {
     return [[[self alloc] initWithRequest:request target:target resultObject:obj selector:selector controller:controller] autorelease];
 }
 
-- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(WebPluginController *)controller
+- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller
 {
     if (!(self = [super init]))
         return nil;

@@ -30,7 +30,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "WebNetscapePluginPackage.h"
-
+#import "WebPluginContainerCheck.h"
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -44,7 +44,7 @@ namespace WebCore {
     class HTMLPlugInElement;
 }
 
-@interface WebBaseNetscapePluginView : NSView
+@interface WebBaseNetscapePluginView : NSView <WebPluginContainerCheckController>
 {
     RetainPtr<WebNetscapePluginPackage> _pluginPackage;
     
