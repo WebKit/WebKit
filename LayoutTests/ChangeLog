@@ -1,3 +1,9 @@
+2009-04-23  Brady Eidson  <beidson@apple.com>
+
+        Update my just-landed layout test to agree with Tiger's CFNetwork
+
+        * http/tests/misc/resources/redirect-to-external-url.php:
+
 2009-04-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak
