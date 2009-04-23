@@ -773,8 +773,6 @@ QString QWebElement::styleProperty(const QString &name) const
     if (!propID || !style)
         return QString();
 
-    // TODO: use computed style for fallback
-
     return style->getPropertyValue(propID);
 }
 
@@ -791,10 +789,25 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
     if (!propID || !style)
         return;
 
-    // TODO: what about computed style?
-
     ExceptionCode exception = 0;
     style->setProperty(name, value, exception);
+}
+
+/*!
+    Returns the computed value for style named \a name or an empty string if the style has no such name.
+*/
+QString QWebElement::computedStyleProperty(const QString &name) const
+{
+    if (!m_element || !m_element->isStyledElement())
+        return QString();
+
+    int propID = cssPropertyID(name);
+
+    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(m_element);
+    if (!propID || !style)
+        return QString();
+
+    return style->getPropertyValue(propID);
 }
 
 /*!

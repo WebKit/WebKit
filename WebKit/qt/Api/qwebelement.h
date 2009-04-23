@@ -126,6 +126,8 @@ public:
     QString styleProperty(const QString &name) const;
     void setStyleProperty(const QString &name, const QString &value);
 
+    QString computedStyleProperty(const QString &name) const;
+
 private:
     QWebElement(WebCore::Element *domElement);
 

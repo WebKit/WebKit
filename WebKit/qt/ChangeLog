@@ -1,3 +1,15 @@
+2009-04-23  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Added QWebElement::computedStyleProperty method.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::computedStyleProperty):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::computedStyle):
+
 2009-04-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.

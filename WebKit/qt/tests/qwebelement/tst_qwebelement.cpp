@@ -79,6 +79,7 @@ private slots:
     void frame();
     void emptyCollection();
     void style();
+    void computedStyle();
     void appendCollection();
     void properties();
     void appendAndPrepend();
@@ -430,6 +431,24 @@ void tst_QWebElement::style()
 
     QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
     QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
+}
+
+void tst_QWebElement::computedStyle()
+{
+    QString html = "<body><p>some text</p></body>";
+    m_mainFrame->setHtml(html);
+
+    QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
+    QCOMPARE(p.computedStyleProperty("cursor"), QLatin1String("auto"));
+    QVERIFY(!p.computedStyleProperty("cursor").isEmpty());
+    QVERIFY(p.styleProperty("cursor").isEmpty());
+
+    p.setStyleProperty("cursor", "text");
+    p.setStyleProperty("color", "red");
+
+    QCOMPARE(p.computedStyleProperty("cursor"), QLatin1String("text"));
+    QCOMPARE(p.computedStyleProperty("color"), QLatin1String("rgb(255, 0, 0)"));
+    QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
 }
 
 void tst_QWebElement::appendCollection()
