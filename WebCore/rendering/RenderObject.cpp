@@ -2303,7 +2303,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
 
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
 {
-    // If is is a non-anonymous renderer, then it's simple.
+    // If this is a non-anonymous renderer, then it's simple.
     if (Node* node = this->node())
         return VisiblePosition(node, offset, affinity);
 

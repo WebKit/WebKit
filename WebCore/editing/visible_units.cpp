@@ -600,15 +600,15 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject* renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
-        if (editingIgnoresContent(node))
+        if (node && editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());
-        return renderer->positionForCoordinates(x - absPos.x(), root->topOverflow());
+        return renderer->positionForPoint(IntPoint(x - absPos.x(), root->topOverflow()));
     }
     
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
-    Node* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
     return VisiblePosition(rootElement, 0, DOWNSTREAM);
 }
 
@@ -701,9 +701,9 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject* renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
-        if (editingIgnoresContent(node))
+        if (node && editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());
-        return renderer->positionForCoordinates(x - absPos.x(), root->topOverflow());
+        return renderer->positionForPoint(IntPoint(x - absPos.x(), root->topOverflow()));
     }    
 
     // Could not find a next line. This means we must already be on the last line.

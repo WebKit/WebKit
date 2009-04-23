@@ -1,3 +1,22 @@
+2009-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - fix <rdar://problem/6081309> Mail crash when pressing down arrow in
+          some messages in WebCore::canHaveChildrenForEditing
+
+        Test: editing/selection/extend-by-line-anonymous-content-crash.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition): Null-check node. If p is not an
+        editable position, then closestLeafChildForXPos() may have returned a
+        non-editable box, and in particular one belonging to anonymous content.
+        If node is 0, fall back on RenderObject::positionForPoint, which
+        finds the closest position in non-anonymous content.
+        (WebCore::nextLinePosition): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition): Fixed a typo.
+
 2009-04-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele Peterson.

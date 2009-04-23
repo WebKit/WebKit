@@ -1,3 +1,13 @@
+2009-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - test for <rdar://problem/6081309> Mail crash when pressing down arrow
+          in some messages in WebCore::canHaveChildrenForEditing
+
+        * editing/selection/extend-by-line-anonymous-content-crash-expected.txt: Added.
+        * editing/selection/extend-by-line-anonymous-content-crash.html: Added.
+
 2009-04-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele Peterson.
