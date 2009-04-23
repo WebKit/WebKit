@@ -31,6 +31,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSEventListener.h"
+#include "JSXMLHttpRequestConstructor.h"
 #include "ScheduledAction.h"
 #include "WorkerContext.h"
 #include <interpreter/Interpreter.h>
@@ -39,7 +40,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSWorkerContext::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
+bool JSWorkerContext::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Look for overrides before looking at any of our own properties.
     if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))
@@ -72,6 +73,11 @@ JSValuePtr JSWorkerContext::self(ExecState*) const
 void JSWorkerContext::setSelf(ExecState* exec, JSValuePtr value)
 {
     putDirect(Identifier(exec, "self"), value);
+}
+
+JSValuePtr JSWorkerContext::xmlHttpRequest(ExecState* exec) const
+{
+    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
 }
 
 JSValuePtr JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)

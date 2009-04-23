@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,14 +41,11 @@ namespace WebCore {
         JSWorkerContextBase(PassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
         virtual ~JSWorkerContextBase();
 
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
         WorkerContext* impl() const { return m_impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
-
-        bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
 
     private:
         RefPtr<WorkerContext> m_impl;

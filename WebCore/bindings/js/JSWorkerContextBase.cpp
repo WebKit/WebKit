@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,35 +31,15 @@
 
 #include "JSWorkerContextBase.h"
 
-#include "Event.h"
-#include "JSDOMBinding.h"
-#include "JSEventListener.h"
-#include "JSMessageChannelConstructor.h"
-#include "JSMessageEvent.h"
-#include "JSMessagePort.h"
-#include "JSWorkerLocation.h"
-#include "JSWorkerNavigator.h"
-#include "JSXMLHttpRequestConstructor.h"
 #include "WorkerContext.h"
-#include "WorkerLocation.h"
 
 using namespace JSC;
-
-/*
-@begin JSWorkerContextBaseTable
-# -- Constructors --
-  XMLHttpRequest                jsWorkerContextBaseXMLHttpRequest               DontDelete
-@end
-*/
-
-static JSValuePtr jsWorkerContextBaseXMLHttpRequest(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSWorkerContextBaseXMLHttpRequest(ExecState*, JSObject*, JSValuePtr);
-
-#include "JSWorkerContextBase.lut.h"
 
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSWorkerContextBase);
+
+const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", 0, 0, 0 };
 
 JSWorkerContextBase::JSWorkerContextBase(PassRefPtr<JSC::Structure> structure, PassRefPtr<WorkerContext> impl)
     : JSDOMGlobalObject(structure, new JSDOMGlobalObjectData, this)
@@ -76,45 +56,6 @@ ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const
     return m_impl.get();
 }
 
-static const HashTable* getJSWorkerContextBaseTable(ExecState* exec)
-{
-    return getHashTableForGlobalData(exec->globalData(), &JSWorkerContextBaseTable);
-}
-
-const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", 0, 0, getJSWorkerContextBaseTable };
-
-void JSWorkerContextBase::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
-{
-    lookupPut<JSWorkerContextBase, Base>(exec, propertyName, value, getJSWorkerContextBaseTable(exec), this, slot);
-}
-
-bool JSWorkerContextBase::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    const HashEntry* entry = getJSWorkerContextBaseTable(exec)->entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & Function)
-            setUpStaticFunctionSlot(exec, entry, this, propertyName, slot);
-        else
-            slot.setCustom(this, entry->propertyGetter());
-        return true;
-    }
-
-    return Base::getOwnPropertySlot(exec, propertyName, slot);
-}
-
 } // namespace WebCore
-
-using namespace WebCore;
-
-JSValuePtr jsWorkerContextBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, static_cast<JSWorkerContextBase*>(asObject(slot.slotBase())));
-}
-
-void setJSWorkerContextBaseXMLHttpRequest(ExecState* exec, JSObject* thisObject, JSValuePtr value)
-{
-    // Shadowing a built-in constructor
-    static_cast<JSWorkerContextBase*>(thisObject)->putDirect(Identifier(exec, "XMLHttpRequest"), value);
-}
 
 #endif // ENABLE(WORKERS)

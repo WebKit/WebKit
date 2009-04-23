@@ -387,7 +387,6 @@ all : \
     $(filter-out JSEventListener.h JSEventTarget.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSRGBColor.lut.h \
-    JSWorkerContextBase.lut.h \
     \
     JSJavaScriptCallFrame.h \
     \

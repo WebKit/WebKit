@@ -1,3 +1,25 @@
+2009-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Autogenerate the XMLHttpRequest constructor getter/setter for the
+        WorkerContext and remove the now no longer needed JSWorkerContextBase.lut.h
+        file.
+
+        * DerivedSources.make: Remove JSWorkerContextBase.lut.h
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/JSWorkerContextBase.h: Remove code to support hand written
+        code for XMLHttpRequest constructor lookup and shadowing.
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::customGetOwnPropertySlot): Remove JSC prefixes.
+        (WebCore::JSWorkerContext::xmlHttpRequest): Added. Custom implementation of
+        cached constructor lookup.
+        * workers/WorkerContext.idl: Make the XMLHttpRequestConstructor accessor not
+        V8 specific.
+
 2009-04-22  Darin Adler  <darin@apple.com>
 
         * page/Navigator.idl: Touch this file to fix build since Geolocation

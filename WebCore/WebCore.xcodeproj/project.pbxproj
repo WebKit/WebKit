@@ -4334,7 +4334,6 @@
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerContext.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */; };
-		E18259E70EF3E34B00933242 /* JSWorkerContextBase.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E18259E60EF3E34B00933242 /* JSWorkerContextBase.lut.h */; };
 		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
 		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
 		E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */; };
@@ -9146,7 +9145,6 @@
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
-		E18259E60EF3E34B00933242 /* JSWorkerContextBase.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextBase.lut.h; sourceTree = "<group>"; };
 		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelCustom.cpp; sourceTree = "<group>"; };
@@ -13872,7 +13870,6 @@
 				E1CAA5C50E8BD23600A73ECA /* JSWorker.h */,
 				E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */,
 				E182568E0EF2B02D00933242 /* JSWorkerContext.h */,
-				E18259E60EF3E34B00933242 /* JSWorkerContextBase.lut.h */,
 				E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */,
 				E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */,
 				E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */,
@@ -16086,7 +16083,6 @@
 				E1CA5CD30E8CDE8000E8EF90 /* JSWorkerConstructor.h in Headers */,
 				E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerContextBase.h in Headers */,
-				E18259E70EF3E34B00933242 /* JSWorkerContextBase.lut.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,

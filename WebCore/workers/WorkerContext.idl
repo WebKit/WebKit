@@ -48,9 +48,7 @@ module threads {
         attribute MessageEventConstructor MessageEvent;
         attribute WorkerLocationConstructor WorkerLocation;
 
-#if defined(V8_BINDING)        
-        attribute XMLHttpRequestConstructor XMLHttpRequest;
-#endif  // V8_BINDING
+        attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
