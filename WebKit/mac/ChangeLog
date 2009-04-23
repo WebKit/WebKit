@@ -1,3 +1,13 @@
+2009-04-23  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6822479> Assertion failure after Reset Safari in new history-writing code
+
+        Reviewed by Oliver Hunt
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]):
+        Return nil immediately if there are no entries; this matches a recent Windows-platform fix.
+
 2009-04-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

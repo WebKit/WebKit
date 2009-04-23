@@ -581,6 +581,9 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 - (NSData *)data
 {
+    if (_entriesByDate->isEmpty())
+        return nil;
+    
     // Ignores the date and item count limits; these are respected when loading instead of when saving, so
     // that clients can learn of discarded items by listening to WebHistoryItemsDiscardedWhileLoadingNotification.
     WebHistoryWriter writer(_entriesByDate);
