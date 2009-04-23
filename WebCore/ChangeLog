@@ -1,3 +1,25 @@
+2009-04-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25322
+        Can't delete empty paragraph after a block image
+        
+        Empty paragraph removal would have been handled by mergeParagraphs, but we stopped short
+        because of some code that avoided problems that would arise from Positions that would go
+        bad during deletion.  
+        
+        We have several checks that prevent us from using bad Positions, this one in particular
+        was added to avoid bad Positions that result from text removal.  So, I removed the check
+        and started correctly updating m_downstreamEnd during text removal so that it doesn't go
+        bad.  m_upstreamStart doesn't need to be updated during text removal, since only text
+        after it will ever be removed.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::deleteTextFromNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+
 2009-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

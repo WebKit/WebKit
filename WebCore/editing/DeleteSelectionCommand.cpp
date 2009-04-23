@@ -390,6 +390,7 @@ void DeleteSelectionCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned 
     updatePositionForTextRemoval(node.get(), offset, count, m_endingPosition);
     updatePositionForTextRemoval(node.get(), offset, count, m_leadingWhitespace);
     updatePositionForTextRemoval(node.get(), offset, count, m_trailingWhitespace);
+    updatePositionForTextRemoval(node.get(), offset, count, m_downstreamEnd);
     
     CompositeEditCommand::deleteTextFromNode(node, offset, count);
 }
@@ -487,7 +488,6 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     Text *text = static_cast<Text *>(m_downstreamEnd.node());
                     if (m_downstreamEnd.m_offset > 0) {
                         deleteTextFromNode(text, 0, m_downstreamEnd.m_offset);
-                        m_downstreamEnd = Position(text, 0);
                     }
                 // Remove children of m_downstreamEnd.node() that come after m_upstreamStart.
                 // Don't try to remove children if m_upstreamStart was inside m_downstreamEnd.node()
@@ -556,9 +556,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (Range::compareBoundaryPoints(m_upstreamStart, m_downstreamEnd) > 0)
         return;
         
-    // FIXME: Merging will always be unnecessary in this case, but we really bail here because this is a case where
-    // deletion commonly fails to adjust its endpoints, which would cause the visible position comparison below to false negative.
-    if (m_endBlock == m_startBlock)
+    // There's nothing to merge.
+    if (m_upstreamStart == m_downstreamEnd)
         return;
         
     VisiblePosition startOfParagraphToMove(m_downstreamEnd);
