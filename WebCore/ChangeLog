@@ -1,3 +1,9 @@
+2009-04-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding XMLTokenizerScope.cpp to the build.
+
+        * WebCoreSources.bkl:
+
 2009-04-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
