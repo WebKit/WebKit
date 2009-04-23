@@ -232,6 +232,8 @@ QString QWebElement::toXml(XmlScope scope) const
         return static_cast<HTMLElement*>(m_element)->innerHTML();
     case OuterXml:
         return static_cast<HTMLElement*>(m_element)->outerHTML();
+    default:
+        return QString();
     }
 }
 
