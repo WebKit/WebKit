@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.4\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
-"POT-Creation-Date: 2009-04-09 19:09-0300\n"
-"PO-Revision-Date: 2009-04-06 15:58-0300\n"
+"POT-Creation-Date: 2009-04-23 15:57-0300\n"
+"PO-Revision-Date: 2009-04-15 21:39-0300\n"
 "Last-Translator: Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>\n"
 "Language-Team: Brazilian Portuguese\n"
 "MIME-Version: 1.0\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:425
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:454
 msgid "Upload File"
 msgstr "Enviar Arquivo"
 
@@ -68,463 +68,463 @@ msgstr "ZWNJ _Não-união de largura zero"
 msgid "_Insert Unicode Control Character"
 msgstr "_Inserir caractere de controle Unicode"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:250
+#: WebKit/gtk/webkit/webkitdownload.cpp:254
 msgid "Network Request"
 msgstr "Requisição de Rede"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:251
+#: WebKit/gtk/webkit/webkitdownload.cpp:255
 msgid "The network request for the URI that should be downloaded"
 msgstr "A requisição de rede para a URI que deve ser baixada"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:265
+#: WebKit/gtk/webkit/webkitdownload.cpp:269
 msgid "Destination URI"
 msgstr "URI de Destino"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:266
+#: WebKit/gtk/webkit/webkitdownload.cpp:270
 msgid "The destination URI where to save the file"
 msgstr "A URI de destino, onde deve ser salvo o arquivo"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:280
+#: WebKit/gtk/webkit/webkitdownload.cpp:284
 msgid "Suggested Filename"
 msgstr "Nome de Arquivo Sugerido"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:281
+#: WebKit/gtk/webkit/webkitdownload.cpp:285
 msgid "The filename suggested as default when saving"
 msgstr "O nome de arquivo que deve ser usado como padrão ao salvar"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:294
+#: WebKit/gtk/webkit/webkitdownload.cpp:298
 msgid "Progress"
 msgstr "Progresso"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:295
+#: WebKit/gtk/webkit/webkitdownload.cpp:299
 msgid "Determines the current progress of the download"
 msgstr "Determina o progresso atual do download"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:308
+#: WebKit/gtk/webkit/webkitdownload.cpp:312
 msgid "Status"
 msgstr "Estado"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:309
+#: WebKit/gtk/webkit/webkitdownload.cpp:313
 msgid "Determines the current status of the download"
 msgstr "Determina o estado atual do download"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:324
+#: WebKit/gtk/webkit/webkitdownload.cpp:328
 msgid "Current Size"
 msgstr "Tamanho Atual"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:325
+#: WebKit/gtk/webkit/webkitdownload.cpp:329
 msgid "The length of the data already downloaded"
 msgstr "A quantidade de dados já baixados"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:339
+#: WebKit/gtk/webkit/webkitdownload.cpp:343
 msgid "Total Size"
 msgstr "Tamanho total"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:340
+#: WebKit/gtk/webkit/webkitdownload.cpp:344
 msgid "The total size of the file"
 msgstr "O tamanho total do arquivo"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:469
+#: WebKit/gtk/webkit/webkitdownload.cpp:473
 msgid "User cancelled the download"
-msgstr ""
+msgstr "Usuário cancelou o download"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:244
 #, c-format
 msgid "A username and password are being requested by the site %s"
-msgstr ""
+msgstr "Usuário e senha estão sendo pedidos pelo sítio %s"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:269
 msgid "Username:"
-msgstr ""
+msgstr "Usuário:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:271
 msgid "Password:"
-msgstr ""
+msgstr "Senha:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:281
 msgid "Remember password"
-msgstr ""
+msgstr "Lembrar senha"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:211
+#: WebKit/gtk/webkit/webkitwebframe.cpp:212
 msgid "Name"
 msgstr "Nome"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:212
+#: WebKit/gtk/webkit/webkitwebframe.cpp:213
 msgid "The name of the frame"
 msgstr "O nome do quadro"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:218
+#: WebKit/gtk/webkit/webkitwebframe.cpp:219
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:154
-#: WebKit/gtk/webkit/webkitwebview.cpp:1715
+#: WebKit/gtk/webkit/webkitwebview.cpp:1745
 msgid "Title"
 msgstr "Título"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:219
+#: WebKit/gtk/webkit/webkitwebframe.cpp:220
 msgid "The document title of the frame"
 msgstr "O título do documento do quadro"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:225
+#: WebKit/gtk/webkit/webkitwebframe.cpp:226
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:186
-#: WebKit/gtk/webkit/webkitwebview.cpp:1729
+#: WebKit/gtk/webkit/webkitwebview.cpp:1759
 msgid "URI"
 msgstr "URI"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:226
+#: WebKit/gtk/webkit/webkitwebframe.cpp:227
 msgid "The current URI of the contents displayed by the frame"
 msgstr "A URI atual do conteúdo que está sendo exibido pelo quadro"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:155
-#, fuzzy
 msgid "The title of the history item"
-msgstr "O tamanho total do arquivo"
+msgstr "O título do item do histórico"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:170
 msgid "Alternate Title"
-msgstr ""
+msgstr "Título Alternativo"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:171
-#, fuzzy
 msgid "The alternate title of the history item"
-msgstr "O título do documento do quadro"
+msgstr "O título alternativo do item do histórico"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:187
 msgid "The URI of the history item"
-msgstr ""
+msgstr "A URI do item do histórico"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:202
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:167
 msgid "Original URI"
-msgstr ""
+msgstr "URI Original"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:203
 msgid "The original URI of the history item"
-msgstr ""
+msgstr "A URI original do item do histórico"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:218
 msgid "Last visited Time"
-msgstr ""
+msgstr "Hora da Última Visita"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:219
 msgid "The time at which the history item was last visited"
-msgstr ""
+msgstr "Quando o item do histórico foi visitado pela última vez"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:260
 msgid "Web View"
-msgstr ""
+msgstr "Visão Web"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:261
 msgid "The Web View that renders the Web Inspector itself"
-msgstr ""
+msgstr "A visão web que exibe o inspetor web"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:274
 msgid "Inspected URI"
-msgstr ""
+msgstr "URI Inspecionada"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:275
 msgid "The URI that is currently being inspected"
-msgstr ""
+msgstr "A URI que está sendo atualmente inspecionada"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:291
 msgid "Enable JavaScript profiling"
-msgstr ""
+msgstr "Habilitar análise de desempenho de JavaScript"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:292
 msgid "Profile the executed JavaScript."
-msgstr ""
+msgstr "Analisar desempenho de JavaScript em execução."
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:152
 msgid "Reason"
-msgstr ""
+msgstr "Razão"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:153
 msgid "The reason why this navigation is occurring"
-msgstr ""
+msgstr "A razão pela qual essa navegação ocorre"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:168
 msgid "The URI that was requested as the target for the navigation"
-msgstr ""
+msgstr "A URI que foi requisitada como alvo para a navegação"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:180
 msgid "Button"
-msgstr ""
+msgstr "Botão"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:181
 msgid "The button used to click"
-msgstr ""
+msgstr "O botão usado no clique"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:196
 msgid "Modifier state"
-msgstr ""
+msgstr "Estado do modificador"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:197
 msgid "A bitmask representing the state of the modifier keys"
-msgstr ""
+msgstr "Uma máscara de bits representando o estado das teclas modificadoras"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:129
 msgid "Default Encoding"
-msgstr ""
+msgstr "Codificação Padrão"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:130
 msgid "The default encoding used to display text."
-msgstr ""
+msgstr "A codificação padrão usada para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:138
 msgid "Cursive Font Family"
-msgstr ""
+msgstr "Família de Fontes Cursivas"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:139
 msgid "The default Cursive font family used to display text."
-msgstr ""
+msgstr "A família de fontes cursivas padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:147
 msgid "Default Font Family"
-msgstr ""
+msgstr "Família de Fontes Padrão"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:148
 msgid "The default font family used to display text."
-msgstr ""
+msgstr "A família de fontes padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:156
 msgid "Fantasy Font Family"
-msgstr ""
+msgstr "Família de Fontes Fantasia"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:157
 msgid "The default Fantasy font family used to display text."
-msgstr ""
+msgstr "A família de fontes fantasia padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:165
 msgid "Monospace Font Family"
-msgstr ""
+msgstr "Família de Fontes Mono-espaçadas"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:166
 msgid "The default font family used to display monospace text."
-msgstr ""
+msgstr "A família de fontes mono-espaçadas padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:174
 msgid "Sans Serif Font Family"
-msgstr ""
+msgstr "Família de Fontes Sem Serifa"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:175
 msgid "The default Sans Serif font family used to display text."
-msgstr ""
+msgstr "A família de fontes sem serifa padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:183
 msgid "Serif Font Family"
-msgstr ""
+msgstr "Família de Fontes Com Serifa"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:184
 msgid "The default Serif font family used to display text."
-msgstr ""
+msgstr "A família de fontes com serifa padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:192
 msgid "Default Font Size"
-msgstr ""
+msgstr "Tamanho de Fonte Padrão"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:193
 msgid "The default font size used to display text."
-msgstr ""
+msgstr "O tamanho de fonte padrão para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:201
 msgid "Default Monospace Font Size"
-msgstr ""
+msgstr "Tamanho de fonte mono-espaçada padrão"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:202
 msgid "The default font size used to display monospace text."
-msgstr ""
+msgstr "O tamanho de fonte padrão para exibir texto com fonte mono-espaçada."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:210
 msgid "Minimum Font Size"
-msgstr ""
+msgstr "Tamanho Mínimo de Fonte"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:211
 msgid "The minimum font size used to display text."
-msgstr ""
+msgstr "O tamanho mínimo de fontes usadas para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:219
 msgid "Minimum Logical Font Size"
-msgstr ""
+msgstr "Tamanho de Fonte Mínimo Lógico"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:220
 msgid "The minimum logical font size used to display text."
-msgstr ""
+msgstr "O tamanho lógico mínimo de fontes usadas para exibir texto."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:239
 msgid "Enforce 96 DPI"
-msgstr ""
+msgstr "Forçar 96 DPI"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:240
 msgid "Enforce a resolution of 96 DPI"
-msgstr ""
+msgstr "Força uma resolução de 96 DPI"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:248
 msgid "Auto Load Images"
-msgstr ""
+msgstr "Auto-carregamento de Imagens"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:249
 msgid "Load images automatically."
-msgstr ""
+msgstr "Carregar imagens automaticamente."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:257
 msgid "Auto Shrink Images"
-msgstr ""
+msgstr "Auto-Diminuição de Imagens"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:258
 msgid "Automatically shrink standalone images to fit."
-msgstr ""
+msgstr "Automaticamente diminuir imagens sozinhas para caber na tela."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:266
 msgid "Print Backgrounds"
-msgstr ""
+msgstr "Imprimir Fundos"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:267
 msgid "Whether background images should be printed."
-msgstr ""
+msgstr "Se as imagens de fundo devem ser impressas."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:275
 msgid "Enable Scripts"
-msgstr ""
+msgstr "Habilitar Scripts"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:276
 msgid "Enable embedded scripting languages."
-msgstr ""
+msgstr "Habilitar linguagens de script embutidas."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:284
 msgid "Enable Plugins"
-msgstr ""
+msgstr "Habilitar Plugins"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:285
 msgid "Enable embedded plugin objects."
-msgstr ""
+msgstr "Habilitar objetos de plugins embutidos."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:293
 msgid "Resizable Text Areas"
-msgstr ""
+msgstr "Áreas de Texto Redimensionáveis"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:294
 msgid "Whether text areas are resizable."
-msgstr ""
+msgstr "Se as áreas de texto devem ser redimensionáveis."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:301
 msgid "User Stylesheet URI"
-msgstr ""
+msgstr "URI da Folha de Estilo do Usuário"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:302
 msgid "The URI of a stylesheet that is applied to every page."
-msgstr ""
+msgstr "A URI de uma folha de estilo que é aplicada a todas as páginas."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:317
 msgid "Zoom Stepping Value"
-msgstr ""
+msgstr "Valor de Passo do Zoom"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:318
 msgid "The value by which the zoom level is changed when zooming in or out."
-msgstr ""
+msgstr "O valor da variação do zoom ao aproximar ou distanciar."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:336
 msgid "Enable Developer Extras"
-msgstr ""
+msgstr "Habilitar Extas de Desenvolvimento"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:337
 msgid "Enables special extensions that help developers"
-msgstr ""
+msgstr "Habilita extensões especiais que auxiliam desenvolvedores"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:357
 msgid "Enable Private Browsing"
-msgstr ""
+msgstr "Habilitar Navegação Privativa"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:358
 msgid "Enables private browsing mode"
-msgstr ""
+msgstr "Habilita o modo de navegação privativa"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1716
+#: WebKit/gtk/webkit/webkitwebview.cpp:1746
 msgid "Returns the @web_view's document title"
-msgstr ""
+msgstr "Retorna o título da visão web"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1730
-#, fuzzy
+#: WebKit/gtk/webkit/webkitwebview.cpp:1760
 msgid "Returns the current URI of the contents displayed by the @web_view"
-msgstr "A URI atual do conteúdo que está sendo exibido pelo quadro"
+msgstr "Retorna a URI do conteúdo atualmente exibido pela visão web"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1743
+#: WebKit/gtk/webkit/webkitwebview.cpp:1773
 msgid "Copy target list"
-msgstr ""
+msgstr "Lista de alvos de cópia"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1744
+#: WebKit/gtk/webkit/webkitwebview.cpp:1774
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr ""
+"A lista de alvos que essa visão web suporta para cópia para área de "
+"transferência"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1757
+#: WebKit/gtk/webkit/webkitwebview.cpp:1787
 msgid "Paste target list"
-msgstr ""
+msgstr "Lista de alvos de cola"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1758
+#: WebKit/gtk/webkit/webkitwebview.cpp:1788
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr ""
+"A lista de alvos que essa visão web suporta para cola da área de "
+"transferência"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1764
+#: WebKit/gtk/webkit/webkitwebview.cpp:1794
 msgid "Settings"
-msgstr ""
+msgstr "Configurações"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1765
+#: WebKit/gtk/webkit/webkitwebview.cpp:1795
 msgid "An associated WebKitWebSettings instance"
-msgstr ""
+msgstr "Uma instância de WebKitWebSettings associada"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1778
+#: WebKit/gtk/webkit/webkitwebview.cpp:1808
 msgid "Web Inspector"
-msgstr ""
+msgstr "Inspetor Web"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1779
+#: WebKit/gtk/webkit/webkitwebview.cpp:1809
 msgid "The associated WebKitWebInspector instance"
-msgstr ""
+msgstr "A instância de WebKitWebInspector que está associada a essa visão"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1799
-#, fuzzy
+#: WebKit/gtk/webkit/webkitwebview.cpp:1829
 msgid "Editable"
-msgstr "Título"
+msgstr "Editável"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1800
+#: WebKit/gtk/webkit/webkitwebview.cpp:1830
 msgid "Whether content can be modified by the user"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:1806
-msgid "Transparent"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:1807
-msgid "Whether content has a transparent background"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:1820
-msgid "Zoom level"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:1821
-msgid "The level of zoom of the content"
-msgstr ""
+msgstr "Se o conteúdo pode ser modificado pelo usuário"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:1836
-msgid "Full content zoom"
-msgstr ""
+msgid "Transparent"
+msgstr "Transparente"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:1837
-msgid "Whether the full content is scaled when zooming"
-msgstr ""
+msgid "Whether content has a transparent background"
+msgstr "Se o conteúdo tem um fundo transparente"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:1850
-msgid "Encoding"
-msgstr ""
+msgid "Zoom level"
+msgstr "Nível de Zoom"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:1851
+msgid "The level of zoom of the content"
+msgstr "O nível de zoom do conteúdo"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1866
+msgid "Full content zoom"
+msgstr "Zoom Completo do Conteúdo"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1867
+msgid "Whether the full content is scaled when zooming"
+msgstr "Se todo o conteúdo é redimensionado no zoom"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1880
+msgid "Encoding"
+msgstr "Codificação"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1881
 msgid "The default encoding of the web view"
-msgstr ""
+msgstr "A codificação padrão da visão web"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1864
+#: WebKit/gtk/webkit/webkitwebview.cpp:1894
 msgid "Custom Encoding"
-msgstr ""
+msgstr "Codificação Customizada"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:1865
+#: WebKit/gtk/webkit/webkitwebview.cpp:1895
 msgid "The custom encoding of the web view"
-msgstr ""
+msgstr "A codificação customizada da visão web"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:51
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
