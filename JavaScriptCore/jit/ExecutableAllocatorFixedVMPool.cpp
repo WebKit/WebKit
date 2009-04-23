@@ -129,7 +129,7 @@ class FixedVMPoolAllocator
         while (madvise(position, size, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }
     }
 #elif HAVE(MADV_DONTNEED)
-    void release(void*, size_t)
+    void release(void* position, size_t size)
     {
         while (madvise(position, size, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
     }
@@ -280,9 +280,10 @@ public:
     FixedVMPoolAllocator(size_t commonSize, size_t totalHeapSize)
         : commonSize(commonSize)
         , countFreedSinceLastCoalesce(0)
+        , totalHeapSize(totalHeapSize)
     {
         // Allocate two gigabytes of memory.
-        void* base = mmap(NULL, totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
+        base = mmap(NULL, totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
         if (!base)
             CRASH();
 
@@ -352,6 +353,7 @@ public:
         }
 
         // Call reuse to report to the operating system that this memory is in use.
+        ASSERT(isWithinVMPool(result, size));
         reuse(result, size);
         return result;
     }
@@ -360,6 +362,7 @@ public:
     {
         // Call release to report to the operating system that this
         // memory is no longer in use, and need not be paged out.
+        ASSERT(isWithinVMPool(pointer, size));
         release(pointer, size);
 
         // Common-sized allocations are stored in the commonSizedAllocations
@@ -380,6 +383,14 @@ public:
     }
 
 private:
+
+#ifndef NDEBUG
+    bool isWithinVMPool(void* pointer, size_t size)
+    {
+        return pointer >= base && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(base) + totalHeapSize);
+    }
+#endif
+
     // Freed space from the most common sized allocations will be held in this list, ...
     const size_t commonSize;
     Vector<void*> commonSizedAllocations;
@@ -389,6 +400,9 @@ private:
 
     // This is used for housekeeping, to trigger defragmentation of the freed lists.
     size_t countFreedSinceLastCoalesce;
+
+    void* base;
+    size_t totalHeapSize;
 };
 
 void ExecutableAllocator::intializePageSize()

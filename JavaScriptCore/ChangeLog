@@ -1,3 +1,18 @@
+2009-04-22  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Gavin Barraclough.
+
+        Add some assertions to FixedVMPoolAllocator to guard against cases where we
+        attempt to free memory that didn't originate from the pool, or we attempt to
+        hand out a bogus address from alloc.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::release):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::isWithinVMPool):
+
 2009-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam "Blackbeard" Weinig.
