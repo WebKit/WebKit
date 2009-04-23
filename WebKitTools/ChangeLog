@@ -1,3 +1,10 @@
+2009-04-23  Brady Eidson  <beidson@apple.com>
+
+        Fix Windows DRT build.
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::unableToImplementPolicyWithError):
+
 2009-04-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak

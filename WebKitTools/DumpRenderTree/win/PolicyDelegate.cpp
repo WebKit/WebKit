@@ -168,7 +168,7 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::unableToImplementPolicyWithError(
     /*[in]*/ IWebFrame* frame)
 {
     BSTR domainStr;
-    error->domain(&errorStr);
+    error->domain(&domainStr);
     wstring domainMessage = domainStr;
 
     int code;
