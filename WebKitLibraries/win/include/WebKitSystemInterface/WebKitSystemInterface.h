@@ -76,4 +76,6 @@ void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bo
 
 unsigned wkInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 
+CFStringRef wkCFNetworkErrorGetLocalizedDescription(CFIndex errorCode);
+
 #endif // WebKitSystemInterface_h

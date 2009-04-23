@@ -1,3 +1,14 @@
+2009-04-22  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5115298> Don't get error msg when download is interrupted and cannot resume due to server unavailability
+        If we fail to get an error description back from CFNetwork, try to get the localized description
+        based on the error code.
+
+        Reviewed by Darin Adler.
+
+        * WebError.cpp:
+        (WebError::localizedDescription):
+
 2009-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Allow the UI delegate to control cursor-setting.
