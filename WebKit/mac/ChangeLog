@@ -1,3 +1,14 @@
+2009-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6757346> SAP: Prevent default on mouseDown does not stop iframe from capturing subsequent mouse moves
+        
+        Make mouseDragged forward to the root view as we do for mouseMoves.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView mouseDragged:]):
+
 2009-04-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -3332,9 +3332,12 @@ done:
 
     [self retain];
 
-    if (!_private->ignoringMouseDraggedEvents)
-        if (Frame* coreframe = core([self _frame]))
-            coreframe->eventHandler()->mouseDragged(event);
+    if (!_private->ignoringMouseDraggedEvents) {
+        if (Frame* frame = core([self _frame])) {
+            if (Page* page = frame->page())
+                page->mainFrame()->eventHandler()->mouseDragged(event);
+        }
+    }
 
     [self release];
 }

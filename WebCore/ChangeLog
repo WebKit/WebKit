@@ -1,3 +1,19 @@
+2009-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6757346> SAP: Prevent default on mouseDown does not stop iframe from capturing subsequent mouse moves
+
+        This is the first step of allowing drag events to match the behaviour
+        of mouse move events when the default action of the initial mouse down
+        is prevented.  Remaining issue is that the final mouse up event still
+        targets the original root frame.
+
+        Test: fast/events/mouse-drag-from-frame-to-other-frame.html
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+
 2009-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson

@@ -1,3 +1,16 @@
+2009-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6757346> SAP: Prevent default on mouseDown does not stop iframe from capturing subsequent mouse moves
+
+        Partial correctness test for non-capturing drag.  Doesn't log the
+        final mouse up, as that's still not targetting the correct frame.
+
+        * fast/events/mouse-drag-from-frame-to-other-frame-expected.txt: Added.
+        * fast/events/mouse-drag-from-frame-to-other-frame.html: Added.
+        * fast/events/resources/mouse-drag-from-frame-target-subframe.html: Added.
+
 2009-04-22  Mark Rowe  <mrowe@apple.com>
 
         Update test results after Blackbeard's change in r42752 to disable geolocation.

@@ -30,6 +30,7 @@
 #include "BlockExceptions.h"
 #include "ChromeClient.h"
 #include "ClipboardMac.h"
+#include "DragController.h"
 #include "EventNames.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
@@ -399,6 +400,15 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     switch ([currentEvent().get() type]) {
+        case NSLeftMouseDragged:
+        case NSOtherMouseDragged:
+        case NSRightMouseDragged:
+            // This check is bogus and results in <rdar://6813830>, but removing it breaks a number of
+            // layout tests.
+            if (!m_mouseDownWasInSubframe)
+                return false;
+            if (subframe->page()->dragController()->didInitiateDrag())
+                return false;
         case NSMouseMoved:
             // Since we're passing in currentEvent() here, we can call
             // handleMouseMoveEvent() directly, since the save/restore of
@@ -430,18 +440,6 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
             [view mouseUp:currentEvent().get()];
-            m_sendingEventToSubview = false;
-            return true;
-        }
-        case NSLeftMouseDragged: {
-            if (!m_mouseDownWasInSubframe)
-                return false;
-            NSView *view = mouseDownViewIfStillGood();
-            if (!view)
-                return false;
-            ASSERT(!m_sendingEventToSubview);
-            m_sendingEventToSubview = true;
-            [view mouseDragged:currentEvent().get()];
             m_sendingEventToSubview = false;
             return true;
         }
