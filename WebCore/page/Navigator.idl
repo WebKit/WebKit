@@ -38,6 +38,7 @@ module window {
         boolean javaEnabled();
         
         readonly attribute boolean onLine;
+
 #if ENABLE_GEOLOCATION
         readonly attribute Geolocation geolocation;
 #endif

@@ -1,3 +1,8 @@
+2009-04-22  Darin Adler  <darin@apple.com>
+
+        * page/Navigator.idl: Touch this file to fix build since Geolocation
+        configuration was recently turned off.
+
 2009-04-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
