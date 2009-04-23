@@ -68,7 +68,10 @@ static bool isDeletableElement(const Node* node)
 
     const int minimumWidth = 25;
     const int minimumHeight = 25;
-    const unsigned minimumVisibleBorders = 3;
+    // In general we want to only draw the UI arround object of a certain area, but we still keep the min width/height to
+    // make sure we don't end up with very thin or very short elements getting the UI.
+    const int minimumArea = 2500;
+    const unsigned minimumVisibleBorders = 1;   // To increase the number of elements which get the UI we keep low the number of visible borders required
 
     RenderObject* renderer = node->renderer();
     if (!renderer || !renderer->isBox())
@@ -76,7 +79,8 @@ static bool isDeletableElement(const Node* node)
 
     RenderBox* box = toRenderBox(renderer);
     IntRect borderBoundingBox = box->borderBoundingBox();
-    if (borderBoundingBox.width() < minimumWidth || borderBoundingBox.height() < minimumHeight)
+    if ((borderBoundingBox.width() < minimumWidth || borderBoundingBox.height() < minimumHeight)
+     || (borderBoundingBox.width() * borderBoundingBox.height()) < minimumArea)
         return false;
 
     if (renderer->isTable())
@@ -91,11 +95,36 @@ static bool isDeletableElement(const Node* node)
     // allow block elements (excluding table cells) that have some non-transparent borders
     if (renderer->isRenderBlock() && !renderer->isTableCell()) {
         RenderStyle* style = renderer->style();
-        if (style && style->hasBorder()) {
+        if (!style)
+            return false;
+
+        if (style->hasBackgroundImage() && style->backgroundImage()->canRender(1.0f))
+            return true;
+
+        if (style->hasBorder()) {
             unsigned visibleBorders = style->borderTop().isVisible() + style->borderBottom().isVisible() + style->borderLeft().isVisible() + style->borderRight().isVisible();
             if (visibleBorders >= minimumVisibleBorders)
                 return true;
         }
+
+        // Background comparison to parent
+        Node* parentNode = node->parentNode();
+        if (!parentNode)
+            return false;
+
+        RenderObject* parentRenderer = parentNode->renderer();
+        if (!parentRenderer)
+            return false;
+
+        RenderStyle* parentStyle = parentRenderer->style();
+        if (!parentStyle)
+            return false;
+
+        if (style->backgroundColor().isValid()
+            && style->backgroundColor().alpha()    // not fully transparent
+            && ((!parentStyle->backgroundColor().isValid() || parentStyle->backgroundColor().alpha() == 0) // if parent if invalid or transparent
+                || (style->backgroundColor() != parentStyle->backgroundColor())))
+            return true;
     }
 
     return false;

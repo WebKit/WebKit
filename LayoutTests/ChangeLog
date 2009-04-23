@@ -1,3 +1,29 @@
+2009-04-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6808109> "Deletion UI" is not available for many
+        portions of HTML content
+
+        This patch makes the deletion UI show up in some new situations:
+        1) If a block's background color is different from its parent's
+        2) If a block has a background image.
+        3) If a block has a single visible border.
+        However the block must now not only be at least a minimum width and
+        height, but also exceed a minimum area.  In practice this has led to
+        much better element selection.
+
+        * editing/deleting/deletionUI-borders.html: Added.
+        * editing/deleting/deletionUI-differing-background.html: Added.
+        * editing/deleting/deletionUI-minimum-size.html: Added.
+        * editing/deleting/resources: Added.
+        * editing/deleting/resources/deletionUI-helpers.js: Added.
+        (debug):
+        (determineDeletionUIExistence):
+        * platform/mac/editing/deleting/deletionUI-borders-expected.txt: Added.
+        * platform/mac/editing/deleting/deletionUI-differing-background-expected.txt: Added.
+        * platform/mac/editing/deleting/deletionUI-minimum-size-expected.txt: Added.
+
 2009-04-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

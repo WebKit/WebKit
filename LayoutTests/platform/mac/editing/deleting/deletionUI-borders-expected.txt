@@ -1,0 +1,12 @@
+This tests if the deletion UI will show on elements with different numbers of visible borders. This test can be run by DRT but not in the browser.
+
+oneBorder HAS deletion UI
+twoBorder HAS deletion UI
+threeBorder HAS deletion UI
+fourBorder HAS deletion UI
+
+
+
+
+
+
