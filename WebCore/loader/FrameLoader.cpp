@@ -2161,6 +2161,21 @@ void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
 }
 
+// This is a hack to allow keep navigation to http/https feeds working. To remove this
+// we need to introduce new API akin to registerURLSchemeAsLocal, that registers a
+// protocols navigation policy.
+static bool isFeedWithNestedProtocolInHTTPFamily(const KURL& url)
+{
+    const String& urlString = url.string();
+    if (!urlString.startsWith("feed", false))
+        return false;
+
+    return urlString.startsWith("feed://", false) 
+        || urlString.startsWith("feed:http:", false) || urlString.startsWith("feed:https:", false)
+        || urlString.startsWith("feeds:http:", false) || urlString.startsWith("feeds:https:", false)
+        || urlString.startsWith("feedsearch:http:", false) || urlString.startsWith("feedsearch:https:", false);
+}
+
 void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList,
     PassRefPtr<Event> event, PassRefPtr<FormState> formState)
 {    
@@ -2174,7 +2189,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
         referrer = m_outgoingReferrer;
 
     ASSERT(frame()->document());
-    if (url.protocolIs("file")) {
+    if (shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
         if (!canLoad(url, String(), frame()->document()) && !canLoad(url, referrer)) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return;

@@ -1,5 +1,20 @@
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Fix for <rdar://problem/6800695>
+
+        Add a hack to only allow navigating (via a link from a http page)
+        to feed: urls (same for feeds: and feedsearch:) that map to http:
+        or https: via their nested protocol. This includes both feed://example.com
+        and feed:http://example.com.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::isFeedWithNestedProtocolInHTTPFamily):
+        (WebCore::FrameLoader::loadFrameRequest):
+
+2009-04-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Autogenerate the XMLHttpRequest constructor getter/setter for the
