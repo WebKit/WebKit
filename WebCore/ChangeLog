@@ -1,3 +1,15 @@
+2009-04-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6788905> REGRESSION (41928?): hang in Position::upstream
+        https://bugs.webkit.org/show_bug.cgi?id=25312
+
+        I was unable to reproduce the problem, but I'm pretty sure this will fix it.
+
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::createVisiblePosition):
+        Since VisiblePosition doesn't ensure the offset is good, we shouldn't pass max int as an offset.
+
 2009-04-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
