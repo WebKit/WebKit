@@ -51,9 +51,9 @@
     WebPolicyDecisionListener *_listener;
 }
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id <WebPluginContainerCheckController>)obj selector:(SEL)selector controller:(id)controller;
++ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller;
 
-- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id <WebPluginContainerCheckController>)obj selector:(SEL)selector controller:(id)controller;
+- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller;
 
 - (void)start;
 

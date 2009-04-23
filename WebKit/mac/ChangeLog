@@ -1,3 +1,7 @@
+2009-04-23  Kevin Decker  <kdecker@apple.com>
+
+        * Plugins/WebPluginContainerCheck.h: Fix the Tiger build.
+
 2009-04-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.
