@@ -1,3 +1,11 @@
+2009-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Modify test to only record the important mouse events
+
+        * fast/events/resources/mouse-drag-from-frame-target-subframe.html:
+
 2009-04-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
