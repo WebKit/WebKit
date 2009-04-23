@@ -1,3 +1,26 @@
+2009-04-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        First part of <rdar://problem/6352982>
+
+        * Plugins/WebBaseNetscapePluginView.h: Imported #WebNetscapeContainerCheckPrivate.h; Added two new method:
+        checkIfAllowedToLoadURL:url:frame:callbackFunc: and cancelCheckIfAllowedToLoadURL:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView checkIfAllowedToLoadURL:frame:callbackFunc:]): Added skeleton method, does nothing interesting
+        yet.
+        (-[WebBaseNetscapePluginView cancelCheckIfAllowedToLoadURL:]): Likewise.
+        * Plugins/WebNetscapeContainerCheckPrivate.h: Added.
+        * Plugins/WebNetscapeContainerCheckPrivate.mm: Added.
+        (browserContainerCheckFuncs): Added. 
+        * Plugins/WebNetscapePluginView.h: Imported #WebNetscapeContainerCheckPrivate.h;
+        * Plugins/WebNetscapePluginView.mm: Imported #WebNetscapeContainerCheckPrivate.h; added WKN_CheckIfAllowedToLoadURL
+        and WKN_CancelCheckIfAllowedToLoadURL functions.
+        (-[WebNetscapePluginView getVariable:value:]): Return vtable for container check functions.
+        * Plugins/npapi.mm:
+        (WKN_CheckIfAllowedToLoadURL): Added new private function.
+        (WKN_CancelCheckIfAllowedToLoadURL): Ditto.
+
 2009-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

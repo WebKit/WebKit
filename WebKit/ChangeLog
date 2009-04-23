@@ -1,3 +1,9 @@
+2009-04-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebNetscapeContainerCheckPrivate.mm and header to the project.
+
 2009-04-21  Adam Roben  <aroben@apple.com>
 
         Update StringsNotToBeLocalized.txt for recent changes

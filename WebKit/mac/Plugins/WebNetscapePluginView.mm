@@ -37,6 +37,7 @@
 #import "WebGraphicsExtras.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
+#import "WebNetscapeContainerCheckPrivate.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSDataExtras.h"
@@ -1947,6 +1948,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_NO_ERROR;
         }
 
+        case WKNVBrowserContainerCheckFuncs:
+        {
+            *(WKNBrowserContainerCheckFuncs **)value = browserContainerCheckFuncs();
+            return NPERR_NO_ERROR;
+        }
         default:
             break;
     }

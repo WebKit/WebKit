@@ -217,4 +217,14 @@ NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordina
     return [pluginViewForInstance(instance) convertFromX:sourceX andY:sourceY space:sourceSpace toX:destX andY:destY space:destSpace];
 }
 
+uint32 WKN_CheckIfAllowedToLoadURL(NPP instance, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool))
+{
+    return [pluginViewForInstance(instance) checkIfAllowedToLoadURL:url frame:frame callbackFunc:callbackFunc];
+}
+
+void WKN_CancelCheckIfAllowedToLoadURL(NPP instance, uint32 checkID)
+{
+    [pluginViewForInstance(instance) cancelCheckIfAllowedToLoadURL:checkID];
+}
+
 #endif

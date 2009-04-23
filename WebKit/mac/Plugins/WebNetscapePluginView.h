@@ -30,6 +30,7 @@
 
 #import "WebBaseNetscapePluginView.h"
 
+#import "WebNetscapeContainerCheckPrivate.h"
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 #import <wtf/HashMap.h>
@@ -170,6 +171,8 @@ typedef union PluginPort {
                                     username:(char**)username usernameLength:(uint32*)usernameLength 
                                     password:(char**)password passwordLength:(uint32*)passwordLength;
 @end
+
+WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs();
 
 #endif
 
