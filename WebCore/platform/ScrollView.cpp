@@ -330,11 +330,12 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     ScrollbarMode hScroll = m_horizontalScrollbarMode;
     ScrollbarMode vScroll = m_verticalScrollbarMode;
 
+    if (hScroll != ScrollbarAuto)
+        newHasHorizontalScrollbar = (hScroll == ScrollbarAlwaysOn);
+    if (vScroll != ScrollbarAuto)
+        newHasVerticalScrollbar = (vScroll == ScrollbarAlwaysOn);
+
     if (m_scrollbarsSuppressed || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
-        if (hScroll != ScrollbarAuto)
-            newHasHorizontalScrollbar = (hScroll == ScrollbarAlwaysOn);
-        if (vScroll != ScrollbarAuto)
-            newHasVerticalScrollbar = (vScroll == ScrollbarAlwaysOn);
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar)
             setHasHorizontalScrollbar(newHasHorizontalScrollbar);
         if (hasVerticalScrollbar != newHasVerticalScrollbar)
@@ -355,19 +356,19 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
         if (vScroll == ScrollbarAuto)
             newHasVerticalScrollbar = docSize.height() > visibleHeight();
-        
+
         // If we ever turn one scrollbar off, always turn the other one off too.  Never ever
         // try to both gain/lose a scrollbar in the same pass.
-        if (!newHasHorizontalScrollbar && hasHorizontalScrollbar)
+        if (!newHasHorizontalScrollbar && hasHorizontalScrollbar && vScroll != ScrollbarAlwaysOn)
             newHasVerticalScrollbar = false;
-        if (!newHasVerticalScrollbar && hasVerticalScrollbar)
+        if (!newHasVerticalScrollbar && hasVerticalScrollbar && hScroll != ScrollbarAlwaysOn)
             newHasHorizontalScrollbar = false;
 
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar) {
             setHasHorizontalScrollbar(newHasHorizontalScrollbar);
             sendContentResizedNotification = true;
         }
- 
+
         if (hasVerticalScrollbar != newHasVerticalScrollbar) {
             setHasVerticalScrollbar(newHasVerticalScrollbar);
             sendContentResizedNotification = true;

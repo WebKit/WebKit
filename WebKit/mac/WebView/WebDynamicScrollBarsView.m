@@ -102,13 +102,14 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         newHasHorizontalScroller = NO;
         newHasVerticalScroller = NO;
     } 
+
+    if (hScroll != ScrollbarAuto)
+        newHasHorizontalScroller = (hScroll == ScrollbarAlwaysOn);
+    if (vScroll != ScrollbarAuto)
+        newHasVerticalScroller = (vScroll == ScrollbarAlwaysOn);
     
     if (!documentView || suppressLayout || suppressScrollers || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
         inUpdateScrollers = YES;
-        if (hScroll != ScrollbarAuto)
-            newHasHorizontalScroller = (hScroll == ScrollbarAlwaysOn);
-        if (vScroll != ScrollbarAuto)
-            newHasVerticalScroller = (vScroll == ScrollbarAlwaysOn);
         if (hasHorizontalScroller != newHasHorizontalScroller)
             [self setHasHorizontalScroller:newHasHorizontalScroller];
         if (hasVerticalScroller != newHasVerticalScroller)
@@ -142,12 +143,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         newHasHorizontalScroller = documentSize.width > visibleSize.width;
     if (vScroll == ScrollbarAuto)
         newHasVerticalScroller = documentSize.height > visibleSize.height;
-    
-    // If we ever turn one scrollbar off, always turn the other one off too.  Never ever
-    // try to both gain/lose a scrollbar in the same pass.
-    if (!newHasHorizontalScroller && hasHorizontalScroller)
+
+    // Unless in ScrollbarsAlwaysOn mode, if we ever turn one scrollbar off, always turn the other one off too.
+    // Never ever try to both gain/lose a scrollbar in the same pass.
+    if (!newHasHorizontalScroller && hasHorizontalScroller && vScroll != ScrollbarAlwaysOn)
         newHasVerticalScroller = NO;
-    if (!newHasVerticalScroller && hasVerticalScroller)
+    if (!newHasVerticalScroller && hasVerticalScroller && hScroll != ScrollbarAlwaysOn)
         newHasHorizontalScroller = NO;
 
     if (hasHorizontalScroller != newHasHorizontalScroller) {

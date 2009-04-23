@@ -1,3 +1,16 @@
+2009-04-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25313
+        Missing scroll bars in GMail.
+
+        Test: fast/overflow/overflow-y-scroll.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Added check for the ScrollbarAlwaysOn
+        scroll mode.
+
 2009-04-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.
