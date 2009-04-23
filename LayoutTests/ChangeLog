@@ -1,3 +1,16 @@
+2009-04-23  Adam Roben  <aroben@apple.com>
+
+        Skip a newly-added test that fails on Windows
+
+        See Bug 25344: http/tests/misc/redirect-to-external-url.html fails on
+        Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25344>
+
+        Reviewed by Brady Eidson.
+
+        * platform/win/Skipped: Added
+        http/tests/misc/redirect-to-external-url.html.
+
 2009-04-23  Brady Eidson  <beidson@apple.com>
 
         Update my just-landed layout test to agree with Tiger's CFNetwork

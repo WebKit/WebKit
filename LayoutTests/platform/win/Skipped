@@ -579,3 +579,6 @@ http/tests/incremental/slow-utf8-text.pl
 
 # dom/html/level2/html/table29.html sometimes times out on Windows <https://bugs.webkit.org/show_bug.cgi?id=25190>
 dom/html/level2/html/table29.html
+
+# http/tests/misc/redirect-to-external-url.html fails on Windows <https://bugs.webkit.org/show_bug.cgi?id=25344>
+http/tests/misc/redirect-to-external-url.html
