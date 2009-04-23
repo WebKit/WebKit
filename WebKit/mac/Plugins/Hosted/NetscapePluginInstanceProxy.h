@@ -297,6 +297,7 @@ private:
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;
     uint32_t m_currentRequestID;
+    bool m_inDestroy;
     
     RefPtr<HostedNetscapePluginStream> m_manualStream;
 };

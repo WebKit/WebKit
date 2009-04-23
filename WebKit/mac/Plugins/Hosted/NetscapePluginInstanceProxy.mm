@@ -106,6 +106,7 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_pluginFunctionCallDepth(0)
     , m_shouldStopSoon(false)
     , m_currentRequestID(0)
+    , m_inDestroy(false)
 {
     ASSERT(m_pluginView);
     
@@ -192,11 +193,15 @@ void NetscapePluginInstanceProxy::destroy()
 {
     uint32_t requestID = nextRequestID();
     
+    m_inDestroy = true;
+    
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID);
     
     // We don't care about the reply here - we just want to block until the plug-in instance has been torn down.
     waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
 
+    m_inDestroy = false;
+    
     cleanup();
     invalidate();
 }
@@ -704,6 +709,9 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     resultData = 0;
     resultLength = 0;
     
+    if (m_inDestroy)
+        return false;
+    
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -735,6 +743,9 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
 
 bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -765,6 +776,9 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
 
 bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -796,6 +810,9 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
 
 bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifier& propertyName, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -834,6 +851,9 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned proper
 
 bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifier& propertyName, data_t valueData, mach_msg_type_number_t valueLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -855,6 +875,9 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
 
 bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned propertyName, data_t valueData, mach_msg_type_number_t valueLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -875,6 +898,9 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
 
 bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identifier& propertyName)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -897,6 +923,9 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
     
 bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned propertyName)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -919,6 +948,9 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
 
 bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const Identifier& propertyName)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -936,6 +968,9 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const Identifie
 
 bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned propertyName)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -953,6 +988,9 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned proper
     
 bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier& methodName)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
@@ -970,6 +1008,9 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
 
 bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    if (m_inDestroy)
+        return false;
+
     JSObject* object = m_objects.get(objectID);
     if (!object)
         return false;
