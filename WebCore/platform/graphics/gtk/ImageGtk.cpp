@@ -27,6 +27,9 @@
 
 #include "BitmapImage.h"
 
+#include <cairo.h>
+#include <gtk/gtk.h>
+
 // This function loads resources from WebKit
 Vector<char> loadResourceIntoArray(const char*);
 
@@ -47,6 +50,23 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(arr.data(), arr.size());
     img->setData(buffer, true);
     return img.release();
+}
+
+GdkPixbuf* BitmapImage::getGdkPixbuf()
+{
+    int width = cairo_image_surface_get_width(frameAtIndex(currentFrame()));
+    int height = cairo_image_surface_get_height(frameAtIndex(currentFrame()));
+
+    GdkPixmap* pixmap = gdk_pixmap_new(0, width, height, 32);
+    cairo_t* cr = gdk_cairo_create(GDK_DRAWABLE(pixmap));
+    cairo_set_source_surface(cr, frameAtIndex(currentFrame()), 0, 0);
+    cairo_paint(cr);
+    cairo_destroy(cr);
+
+    GdkPixbuf* pixbuf = gdk_pixbuf_get_from_drawable(0, GDK_DRAWABLE(pixmap), 0, 0, 0, 0, 0, width, height);
+    g_object_unref(pixmap);
+
+    return pixbuf;
 }
 
 }

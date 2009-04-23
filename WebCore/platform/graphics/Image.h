@@ -61,6 +61,10 @@ class NativeImageSkia;
 #include <QPixmap>
 #endif
 
+#if PLATFORM(GTK)
+typedef struct _GdkPixbuf GdkPixbuf;
+#endif
+
 namespace WebCore {
 
 class TransformationMatrix;
@@ -140,6 +144,10 @@ public:
 #if PLATFORM(WIN)
     virtual bool getHBITMAP(HBITMAP) { return false; }
     virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE) { return false; }
+#endif
+
+#if PLATFORM(GTK)
+    virtual GdkPixbuf* getGdkPixbuf() { return 0; }
 #endif
 
 protected:
