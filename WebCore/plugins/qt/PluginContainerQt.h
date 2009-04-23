@@ -30,16 +30,24 @@ namespace WebCore {
         Q_OBJECT
     public:
         PluginContainerQt(PluginView*, QWidget* parent);
+        ~PluginContainerQt();
 
         void requestGeometry(const QRect&, const QRegion& clip = QRegion());
         void adjustGeometry();
+        void redirectWheelEventsToParent(bool enable = true);
 
     protected:
+        virtual bool x11Event(XEvent*);
         virtual void focusInEvent(QFocusEvent*);
         virtual void focusOutEvent(QFocusEvent*);
 
+    public slots:
+        void on_clientClosed();
+        void on_clientIsEmbedded();
+
     private:
         PluginView* m_pluginView;
+        QWidget* m_clientWrapper;
 
         QRect m_windowRect;
         QRegion m_clipRegion;
@@ -47,6 +55,16 @@ namespace WebCore {
         bool m_hasPendingGeometryChange;
     };
 
+    class PluginClientWrapper : public QWidget
+    {
+    public:
+        PluginClientWrapper(QWidget* parent, WId client);
+        ~PluginClientWrapper();
+        bool x11Event(XEvent*);
+
+    private:
+        QWidget* m_parent;
+    };
 }
 
 #endif // PluginContainerQt_H

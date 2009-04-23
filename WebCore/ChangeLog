@@ -1,3 +1,29 @@
+2009-04-23  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make windowed plugins (on X11, Qt) behave nicer with wheel scrolling.
+
+        Basically, what we want is to send wheel events to the plugin *only*
+        when it has focus, or else send it to the parent frame.
+
+        This is a work around, and basically what we do, is to steal the
+        wheel events from the plugin, modify the window ID, and put the
+        event back into the Qt event loop.
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginClientWrapper::PluginClientWrapper):
+        (PluginClientWrapper::~PluginClientWrapper):
+        (PluginClientWrapper::x11Event):
+        (PluginContainerQt::PluginContainerQt):
+        (PluginContainerQt::~PluginContainerQt):
+        (PluginContainerQt::on_clientClosed):
+        (PluginContainerQt::on_clientIsEmbedded):
+        (PluginContainerQt::redirectWheelEventsToParent):
+        (PluginContainerQt::x11Event):
+        (PluginContainerQt::focusInEvent):
+        * plugins/qt/PluginContainerQt.h:
+
 2009-04-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak
