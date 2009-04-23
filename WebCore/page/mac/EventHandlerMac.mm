@@ -434,12 +434,9 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         case NSLeftMouseUp: {
             if (!m_mouseDownWasInSubframe)
                 return false;
-            NSView *view = mouseDownViewIfStillGood();
-            if (!view)
-                return false;
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
-            [view mouseUp:currentEvent().get()];
+            subframe->eventHandler()->handleMouseReleaseEvent(currentEvent().get());
             m_sendingEventToSubview = false;
             return true;
         }

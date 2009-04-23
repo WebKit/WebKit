@@ -3471,8 +3471,10 @@ noPromisedData:
     [self retain];
 
     [self _stopAutoscrollTimer];
-    if (Frame* coreframe = core([self _frame]))
-        coreframe->eventHandler()->mouseUp(event);
+    if (Frame* frame = core([self _frame])) {
+        if (Page* page = frame->page())
+            page->mainFrame()->eventHandler()->mouseUp(event);
+    }
     [self _updateMouseoverWithFakeEvent];
 
     [self release];

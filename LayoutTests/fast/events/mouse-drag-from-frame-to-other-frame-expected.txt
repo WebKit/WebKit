@@ -2,4 +2,5 @@ This tests that dragging from an element that returns false from its mousedown h
   
 Drag Started
 received mousemove
+received mouseup
 received mousemove
