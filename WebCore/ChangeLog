@@ -1,3 +1,18 @@
+2009-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson
+        
+        <rdar://problem/6702882> QT movie's video fails to be displayed after switching between tabs
+        <rdar://problem/6754957> Resizing Web browser window and hitting play will cause video blocks and artifacting
+
+        When in a media document, MediaPlayerPrivateQTKit uses a QTMovieView which may get
+        layer backing under some circumstances. However, drawing the view via
+        displayRectIgnoringOpacity:inContext: bypasses any layer setup that AppKit normally performs.
+        So when in the media document, we draw via displayRectIgnoringOpacity:.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::paint):
+
 2009-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Fix a crash in Mail when forwarding a specific HTML email.

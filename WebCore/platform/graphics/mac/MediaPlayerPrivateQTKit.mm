@@ -867,7 +867,13 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
             }
         }
 
-        [view displayRectIgnoringOpacity:paintRect inContext:newContext];
+        if (m_player->inMediaDocument()) {
+            // If we're using a QTMovieView in a media document, the view may get layer-backed. AppKit won't update
+            // the layer hosting correctly if we call displayRectIgnoringOpacity:inContext:, so use displayRectIgnoringOpacity:
+            // in this case. See <rdar://problem/6702882>.
+            [view displayRectIgnoringOpacity:paintRect];
+        } else
+            [view displayRectIgnoringOpacity:paintRect inContext:newContext];
     }
 
 #if DRAW_FRAME_RATE
