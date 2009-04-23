@@ -94,22 +94,22 @@ public:
     QWebFrame *webFrame() const;
 
     // TODO: Add QWebElementCollection overloads
-    void append(const QString &html);
+    void append(const QString &markup);
     void append(QWebElement element);
 
-    void prepend(const QString &html);
+    void prepend(const QString &markup);
     void prepend(QWebElement element);
 
-    void insertBefore(const QString &html);
+    void insertBefore(const QString &markup);
     void insertBefore(QWebElement element);
 
-    void insertAfter(const QString &html);
+    void insertAfter(const QString &markup);
     void insertAfter(QWebElement element);
 
-    void wrap(const QString &html);
+    void wrap(const QString &markup);
     void wrap(QWebElement element);
 
-    void replaceWith(const QString &html);
+    void replaceWith(const QString &markup);
     void replaceWith(QWebElement element);
 
     QWebElement clone();
