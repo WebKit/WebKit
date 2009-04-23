@@ -1,3 +1,8 @@
+2009-04-22  Darin Adler  <darin@apple.com>
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt: Fixed one
+        case Eric seems to have missed earlier today of RenderImage -> RenderSVGImage.
+
 2009-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
