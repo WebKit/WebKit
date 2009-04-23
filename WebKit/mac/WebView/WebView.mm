@@ -430,6 +430,8 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 #endif
 
     NSPasteboard *insertionPasteboard;
+            
+    NSSize lastLayoutSize;
 }
 @end
 
@@ -844,11 +846,13 @@ static bool runningTigerMail()
 
 - (void)_boundsChanged
 {
-    Frame* frame = core([self mainFrame]);
-    IntSize oldSize = frame->view()->frameRect().size();
-    frame->view()->resize([self bounds].size.width, [self bounds].size.height);
-    if (oldSize != frame->view()->frameRect().size())
-        [self setNeedsDisplay: YES];
+    if (!NSEqualSizes(_private->lastLayoutSize, [self bounds].size)) {
+        Frame* frame = core([self mainFrame]);
+        frame->view()->resize([self bounds].size.width, [self bounds].size.height);
+        frame->view()->setNeedsLayout();
+        [self setNeedsDisplay:YES];
+        _private->lastLayoutSize = [[self superview] bounds].size;
+    }
 }
 
 - (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count
@@ -2619,7 +2623,7 @@ static bool needsWebViewInitThreadWorkaround()
 {
     // -removeSizeObservers can be called from -viewWillMoveToSuperview: below -[NSView initWithCoder:], before
     // we've had a chance to initialize _private
-    if (_private && !_private->useDocumentViews && [self window]) {
+    if (_private && [self window]) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSViewFrameDidChangeNotification object:self];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -2631,7 +2635,7 @@ static bool needsWebViewInitThreadWorkaround()
 {
     // -addSizeObservers can be called from -viewDidMoveToSuperview: below -[NSView initWithCoder:], before
     // we've had a chance to initialize _private
-    if (_private && !_private->useDocumentViews && [self window]) {
+    if (_private && [self window]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
             name:NSViewFrameDidChangeNotification object:self];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 

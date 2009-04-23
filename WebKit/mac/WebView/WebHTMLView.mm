@@ -419,8 +419,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     NSEvent *mouseDownEvent; // Kept after handling the event.
     BOOL handlingMouseDownEvent;
     NSEvent *keyDownEvent; // Kept after handling the event.
-    
-    NSSize lastLayoutSize;
 
     NSPoint lastScrollPosition;
 
@@ -1151,13 +1149,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)_frameOrBoundsChanged
 {
-    if (!NSEqualSizes(_private->lastLayoutSize, [[self superview] bounds].size)) {
-        [self setNeedsLayout:YES];
-        [self setNeedsDisplay:YES];
-        _private->lastLayoutSize = [[self superview] bounds].size;
-        [_private->compController endRevertingChange:NO moveLeft:NO];
-    }
-
     NSPoint origin = [[self superview] bounds].origin;
     if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
         if (Frame* coreFrame = core([self _frame]))
@@ -2757,14 +2748,6 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)addSuperviewObservers
 {
-    // We watch the bounds of our superview, so that we can do a layout when the size
-    // of the superview changes. This is different from other scrollable things that don't
-    // need this kind of thing because their layout doesn't change.
-    
-    // We need to pay attention to both height and width because our "layout" has to change
-    // to extend the background the full height of the space and because some elements have
-    // sizes that are based on the total size of the view.
-    
     if (_private->observingSuperviewNotifications)
         return;
 
@@ -2777,7 +2760,7 @@ WEBCORE_COMMAND(yankAndSelect)
     [notificationCenter addObserver:self selector:@selector(_frameOrBoundsChanged) name:NSViewBoundsDidChangeNotification object:superview];
     
     // In addition to registering for frame/bounds change notifications, call -_frameOrBoundsChanged.
-    // It will check the current size/scroll against the previous layout's size/scroll.  We need to
+    // It will check the current scroll against the previous layout's scroll.  We need to
     // do this here to catch the case where the WebView is laid out at one size, removed from its
     // window, resized, and inserted into another window.  Our frame/bounds changed notifications
     // will not be sent in that situation, since we only watch for changes while in the view hierarchy.

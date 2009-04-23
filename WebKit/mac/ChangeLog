@@ -1,3 +1,20 @@
+2009-04-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/6789879> REGRESSION (42464): Hitting assertion when loading message in Mail + TOT WebKit
+        
+        Make the Mac platform the same as all the other platforms.  Instead of (incorrectly) marking a FrameView for layout
+        when its underlying document view changes, just mark the outermost frame view for layout when the WebView's size changes.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        (-[WebHTMLView addSuperviewObservers]):
+        * WebView/WebView.mm:
+        (-[WebView _boundsChanged]):
+        (-[WebView removeSizeObservers]):
+        (-[WebView addSizeObservers]):
+
 2009-04-23  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Tim Hatcher.
