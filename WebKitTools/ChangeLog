@@ -1,3 +1,18 @@
+2009-04-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        Add additional support for test:
+        <rdar://problem/5689748> - Cannot redirect to protocols handled by external applications.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:unableToImplementPolicyWithError:frame:]): Dump formatted information when
+          a policy cannot be implemented.
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::unableToImplementPolicyWithError): Ditto.
+        * DumpRenderTree/win/PolicyDelegate.h:
+
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

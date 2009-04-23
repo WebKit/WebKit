@@ -93,6 +93,12 @@
     }
 }
 
+- (void)webView:(WebView *)webView unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame
+{
+    NSString *message = [NSString stringWithFormat:@"Policy delegate: unable to implement policy with error domain '%@', error code %d, in frame '%@'", [error domain], [error code], [frame name]];
+    printf("%s\n", [message UTF8String]);
+}
+
 - (void)setPermissive:(BOOL)permissive
 {
     permissiveDelegate = permissive;

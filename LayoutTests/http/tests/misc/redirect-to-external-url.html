@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+
+</script>
+
+</head>
+<body>
+This page has an iframe.  It loads then navigates to an http url which redirects to an externally handled url.<br>
+The navigation policy delegate should be consulted about the http url and the external url.<br>
+<iframe src="resources/redirect-to-external-url-iframe.html"></iframe>
+</body>
+</html>

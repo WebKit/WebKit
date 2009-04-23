@@ -67,7 +67,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE unableToImplementPolicyWithError( 
         /* [in] */ IWebView *webView,
         /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame *frame){ return E_NOTIMPL; }
+        /* [in] */ IWebFrame *frame)
 
     // PolicyDelegate
     void setPermissive(bool permissive) { m_permissiveDelegate = permissive; }

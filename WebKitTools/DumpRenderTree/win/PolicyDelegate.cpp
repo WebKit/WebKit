@@ -160,3 +160,28 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
 
     return S_OK;
 }
+
+
+HRESULT STDMETHODCALLTYPE PolicyDelegate::unableToImplementPolicyWithError(
+    /*[in]*/ IWebView* /*webView*/, 
+    /*[in]*/ IWebError* error, 
+    /*[in]*/ IWebFrame* frame)
+{
+    BSTR domainStr;
+    error->domain(&errorStr);
+    wstring domainMessage = domainStr;
+
+    int code;
+    error->code(&code);
+    
+    BSTR frameName;
+    frame->name(&frameName);
+    wstring frameNameMessage = frameName;
+    
+    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'", domainMessage.c_str(), code, frameNameMessage.c_str());
+    
+    SysFreeString(domainStr);
+    SysFreeString(frameName);
+    
+    return S_OK;
+}

@@ -181,9 +181,10 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // listener. But there's no way to do that in practice. So instead we cancel later if the
     // listener tells us to. In practice that means the navigation policy needs to be decided
     // synchronously for these redirect cases.
-
-    ref(); // balanced by deref in continueAfterNavigationPolicy
-    frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
+    if (!redirectResponse.isNull()) {
+        ref(); // balanced by deref in continueAfterNavigationPolicy
+        frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
+    }
 }
 
 static bool shouldLoadAsEmptyDocument(const KURL& url)

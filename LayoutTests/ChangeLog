@@ -1,3 +1,22 @@
+2009-04-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        With the fix for:
+        <rdar://problem/6786961> - "Are you sure you want to resubmit this form?" nag displays twice.
+        And also to make sure we never rebreak:
+        <rdar://problem/5689748> - Cannot redirect to protocols handled by external applications.
+
+        * http/tests/misc/redirect-to-external-url-expected.txt: Added.
+        * http/tests/misc/redirect-to-external-url.html: Added.
+        * http/tests/misc/resources/redirect-to-external-url-iframe.html: Added.
+        * http/tests/misc/resources/redirect-to-external-url.php: Added.
+
+        * http/tests/misc/policy-delegate-called-twice-expected.txt: Added.
+        * http/tests/misc/policy-delegate-called-twice.html: Added.
+        * http/tests/misc/resources/iframe-policy-1.html: Added.
+        * http/tests/misc/resources/iframe-policy-2.html: Added.
+
 2009-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Missed file from prior patch).

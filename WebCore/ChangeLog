@@ -1,3 +1,25 @@
+2009-04-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        <rdar://problem/6786961> - "Are you sure you want to resubmit this form?" nag displays twice.
+
+        For most loads, we were consulting the navigation policy delegate twice.  Once from FrameLoader before
+        the load started and once from MainResourceLoader in its willSendRequest callback.
+
+        In the past we tried removing MainResourceLoader's call altogether.  This caused a regression where urls 
+        that redirect to a url handled by an external application would no longer work in Safari.  It probably 
+        also broke other WebKit apps in subtle ways.
+
+        Changing MainResourceLoader to make the check only on redirects fixes both bugs.  We now only call the 
+        policy delegate once for most standard loads, but we do correctly call it a second time for redirects.
+
+        Tests: http/tests/misc/policy-delegate-called-twice.html
+               http/tests/misc/redirect-to-external-url.html
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): Call the navigation policy delegate only for redirects.
+
 2009-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
