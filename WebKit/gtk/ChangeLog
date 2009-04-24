@@ -5,6 +5,22 @@
         https://bugs.webkit.org/show_bug.cgi?id=15616
         [GTK] Add spell checking
 
+        Implement EditorClient::ignoreWordInSpellDocument,
+        EditorClient::learnWord and EditorClient::getGuessesForWord. This
+        enables the corresponding user actions.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::ignoreWordInSpellDocument):
+        (WebKit::EditorClient::learnWord):
+        (WebKit::EditorClient::getGuessesForWord):
+
+2009-04-24  Diego Escalante Urrelo  <diegoe@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15616
+        [GTK] Add spell checking
+
         Implement EditorClient::checkSpellingOfString; enabling spell checking
         to actually happen, this is the basis for other spelling functions.
 

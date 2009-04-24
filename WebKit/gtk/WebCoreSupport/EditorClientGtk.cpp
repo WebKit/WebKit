@@ -517,14 +517,26 @@ void EditorClient::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
-void EditorClient::ignoreWordInSpellDocument(const String&)
+void EditorClient::ignoreWordInSpellDocument(const String& text)
 {
-    notImplemented();
+    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+
+    for (; langs; langs = langs->next) {
+        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+
+        enchant_dict_add_to_session(lang->speller, text.utf8().data(), -1);
+    }
 }
 
-void EditorClient::learnWord(const String&)
+void EditorClient::learnWord(const String& text)
 {
-    notImplemented();
+    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+
+    for (; langs; langs = langs->next) {
+        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+
+        enchant_dict_add_to_personal(lang->speller, text.utf8().data(), -1);
+    }
 }
 
 void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
@@ -606,9 +618,24 @@ bool EditorClient::spellingUIIsShowing()
     return false;
 }
 
-void EditorClient::getGuessesForWord(const String&, Vector<String>&)
+void EditorClient::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
 {
-    notImplemented();
+    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+    guesses.clear();
+
+    for (; langs; langs = langs->next) {
+        size_t numberOfSuggestions;
+        size_t i;
+
+        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+        gchar** suggestions = enchant_dict_suggest(lang->speller, word.utf8().data(), -1, &numberOfSuggestions);
+
+        for (i = 0; i < numberOfSuggestions && i < 10; i++)
+            guesses.append(String::fromUTF8(suggestions[i]));
+
+        if (numberOfSuggestions > 0)
+            enchant_dict_free_suggestions(lang->speller, suggestions);
+    }
 }
 
 }
