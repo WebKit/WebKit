@@ -1,5 +1,12 @@
 2009-04-23  Mark Rowe  <mrowe@apple.com>
 
+        With great sadness and a heavy heart I switch us back from YARR to WREC in
+        order to restore greenness to the world once more.
+
+        * wtf/Platform.h:
+
+2009-04-23  Mark Rowe  <mrowe@apple.com>
+
         More Windows build fixage.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

@@ -499,20 +499,21 @@
 #endif
 #endif
 
-/* Yet Another Regex Runtime. */
-/* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
-#if (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(MAC)) \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)) \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(WIN))
-#define ENABLE_YARR 1
-#define ENABLE_YARR_JIT 1
+/* WREC supports x86 & x86-64, and has been tested on Mac and Windows ('cept on 64-bit on Mac). */
+#if (!defined(ENABLE_WREC) && PLATFORM(X86) && PLATFORM(MAC)) \
+ || (!defined(ENABLE_WREC) && PLATFORM(X86_64) && PLATFORM(MAC)) \
+ || (!defined(ENABLE_WREC) && PLATFORM(X86) && PLATFORM(WIN))
+#define ENABLE_WREC 1
 #endif
-/* Sanity Check */
+
+/* Yet Another Regex Runtime. */
+#define ENABLE_YARR 0
+#define ENABLE_YARR_JIT 0
 #if ENABLE(YARR_JIT) && !ENABLE(YARR)
 #error "YARR_JIT requires YARR"
 #endif
 
-#if ENABLE(JIT) || ENABLE(YARR_JIT)
+#if ENABLE(JIT) || ENABLE(WREC)
 #define ENABLE_ASSEMBLER 1
 #endif
 
