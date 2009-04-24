@@ -1,3 +1,11 @@
+2009-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Eric Seidel.
+        
+        Updated test to turn the buildbot green after Eric's last check-in.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+
 2009-04-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
