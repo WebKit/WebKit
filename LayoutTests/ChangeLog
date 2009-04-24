@@ -1,3 +1,14 @@
+2009-04-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Updating test to make it easier to see the blockquote in the results.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote-3.html:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-3-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-3-expected.png:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-3-expected.txt:
+
 2009-04-23  Mark Rowe  <mrowe@apple.com>
 
         Move deletionUI-helpers.js in to the correct location so that the

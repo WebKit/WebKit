@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x174
-        RenderBlock {DIV} at (0,0) size 784x140
+      RenderBlock {DIV} at (0,0) size 784x142
+        RenderBlock {DIV} at (0,0) size 784x124
           RenderBlock {P} at (0,0) size 784x18
             RenderText {#text} at (0,0) size 608x18
               text run at (0,0) width 608: "This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted."
-          RenderBlock {BLOCKQUOTE} at (40,34) size 704x72
-            RenderText {#text} at (0,0) size 23x18
-              text run at (0,0) width 23: "one"
-            RenderBR {BR} at (23,14) size 0x0
-            RenderText {#text} at (0,18) size 24x18
-              text run at (0,18) width 24: "two"
-            RenderBR {BR} at (24,32) size 0x0
-            RenderText {#text} at (0,36) size 31x18
-              text run at (0,36) width 31: "three"
-            RenderBR {BR} at (31,50) size 0x0
-            RenderText {#text} at (0,54) size 24x18
-              text run at (0,54) width 24: "two"
-          RenderBlock (anonymous) at (0,122) size 784x0
-          RenderBlock {BLOCKQUOTE} at (40,122) size 704x18
-            RenderBR {BR} at (0,0) size 0x18
-        RenderBlock (anonymous) at (0,156) size 784x18
+          RenderBlock {BLOCKQUOTE} at (0,34) size 784x72 [color=#0000FF] [border: (2px solid #0000FF)]
+            RenderText {#text} at (22,0) size 23x18
+              text run at (22,0) width 23: "one"
+            RenderBR {BR} at (45,14) size 0x0
+            RenderText {#text} at (22,18) size 24x18
+              text run at (22,18) width 24: "two"
+            RenderBR {BR} at (46,32) size 0x0
+            RenderText {#text} at (22,36) size 31x18
+              text run at (22,36) width 31: "three"
+            RenderBR {BR} at (53,50) size 0x0
+            RenderText {#text} at (22,54) size 24x18
+              text run at (22,54) width 24: "two"
+          RenderBlock (anonymous) at (0,106) size 784x0
+          RenderBlock {BLOCKQUOTE} at (0,106) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+            RenderBR {BR} at (22,0) size 0x18
+        RenderBlock (anonymous) at (0,124) size 784x18
           RenderBR {BR} at (0,0) size 0x18
 caret: position 3 of child 6 {#text} of child 3 {BLOCKQUOTE} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
