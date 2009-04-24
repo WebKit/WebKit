@@ -69,7 +69,7 @@ namespace WebCore {
         v8::Persistent<v8::Object> m_listener;
 
         // Indicates if this is an HTML type listener.
-        bool m_isInline;
+        bool m_isAttribute;
 
     private:
         V8AbstractEventListener(Frame*, bool isInline);

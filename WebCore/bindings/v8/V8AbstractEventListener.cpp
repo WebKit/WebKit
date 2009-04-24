@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isInline)
-    : m_isInline(isInline)
+V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isAttribute)
+    : m_isAttribute(isAttribute)
     , m_frame(frame)
     , m_lineNumber(0)
     , m_columnNumber(0)
@@ -49,7 +49,7 @@ V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isInline)
         return;
 
     // Get the position in the source if any.
-    if (m_isInline && m_frame->document()->tokenizer()) {
+    if (m_isAttribute && m_frame->document()->tokenizer()) {
         m_lineNumber = m_frame->document()->tokenizer()->lineNumber();
         m_columnNumber = m_frame->document()->tokenizer()->columnNumber();
     }
@@ -96,7 +96,7 @@ void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> context
 
     // Prevent default action if the return value is false;
     // FIXME: Add example, and reference to bug entry.
-    if (m_isInline && returnValue->IsBoolean() && !returnValue->BooleanValue())
+    if (m_isAttribute && returnValue->IsBoolean() && !returnValue->BooleanValue())
         event->preventDefault();
 }
 

@@ -1,3 +1,25 @@
+2009-04-24  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (chromium build fix).
+
+        Rename "isInline" => "isAttribute" in v8 bindings (jsc was done in r42699).
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/V8AbstractEventListener.h:
+        * bindings/v8/V8EventListenerList.cpp:
+        (WebCore::V8EventListenerList::add):
+        (WebCore::V8EventListenerList::remove):
+        (WebCore::V8EventListenerList::clear):
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::virtualisAttribute):
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+        * bindings/v8/custom/V8CustomEventListener.h:
+        (WebCore::V8EventListener::create):
+        (WebCore::V8EventListener::virtualisAttribute):
+
 2009-04-24  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.
