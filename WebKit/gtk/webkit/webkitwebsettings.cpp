@@ -367,7 +367,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     /**
     * WebKitWebSettings:enable-spell-checking:
     *
-    * Whether to enable check-as-you-type spell checking.
+    * Whether to enable spell checking while typing.
     *
     * Since 1.1.6
     */
@@ -376,7 +376,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     g_param_spec_boolean(
                                     "enable-spell-checking",
                                     _("Enable Spell Checking"),
-                                    _("Enables check-as-you-type spell checking"),
+                                    _("Enables spell checking while typing"),
                                     FALSE,
                                     flags));
 
@@ -390,8 +390,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     * For instance, sv_FI for Swedish as written in Finland or pt_BR
     * for Portuguese as written in Brazil.
     *
-    * If no value is specified then the value returned by 
-    * pango_language_get_default will be used.
+    * If no value is specified then the value returned by
+    * gtk_get_default_language will be used.
     *
     * Since 1.1.6
     */

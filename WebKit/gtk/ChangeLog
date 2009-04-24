@@ -1,3 +1,12 @@
+2009-04-24  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init): Reword the
+        description of the enable-spell-checking property and correct the
+        mentioning of the default language used.
+
 2009-04-24  Diego Escalante Urrelo  <diegoe@gnome.org>
 
         Reviewed by Gustavo Noronha.
