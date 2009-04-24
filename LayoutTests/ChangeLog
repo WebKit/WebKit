@@ -1,5 +1,18 @@
 2009-04-24  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Updating these pixel results to the generated results on Leopard.
+
+        * platform/mac/editing/inserting/5510537-expected.checksum:
+        * platform/mac/editing/inserting/5510537-expected.png:
+        * platform/mac/editing/inserting/6703873-expected.checksum:
+        * platform/mac/editing/inserting/6703873-expected.png:
+        * platform/mac/editing/selection/select-all-iframe-expected.checksum:
+        * platform/mac/editing/selection/select-all-iframe-expected.png:
+
+2009-04-24  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin Adler.
 
         Test for <rdar://problem/5089327> Newline gets stripped when pasting whole lines in certain markup
