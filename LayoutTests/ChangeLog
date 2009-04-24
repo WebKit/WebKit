@@ -1,3 +1,14 @@
+2009-04-23  Kevin McCullough  <kmccullough@apple.com>
+
+        - Windows build fix.  Mac only tests go in platform/mac
+
+        * editing/deleting/deletionUI-borders.html: Removed.
+        * editing/deleting/deletionUI-differing-background.html: Removed.
+        * editing/deleting/deletionUI-minimum-size.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-borders.html: Copied from editing/deleting/deletionUI-borders.html.
+        * platform/mac/editing/deleting/deletionUI-differing-background.html: Copied from editing/deleting/deletionUI-differing-background.html.
+        * platform/mac/editing/deleting/deletionUI-minimum-size.html: Copied from editing/deleting/deletionUI-minimum-size.html.
+
 2009-04-23  Darin Adler  <darin@apple.com>
 
         Removed some stray files that Geoff missed when rolling out changes.
