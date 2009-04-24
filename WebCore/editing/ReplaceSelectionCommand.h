@@ -58,7 +58,7 @@ private:
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);
     
-    bool shouldMergeStart(bool, bool);
+    bool shouldMergeStart(bool, bool, bool);
     bool shouldMergeEnd(bool selectEndWasEndOfParagraph);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
     

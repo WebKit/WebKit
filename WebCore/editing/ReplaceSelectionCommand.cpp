@@ -343,14 +343,22 @@ static bool hasMatchingQuoteLevel(VisiblePosition endOfExistingContent, VisibleP
     return isInsideMailBlockquote && (numEnclosingMailBlockquotes(existing) == numEnclosingMailBlockquotes(inserted));
 }
 
-bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfParagraph, bool fragmentHasInterchangeNewlineAtStart)
+bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfParagraph, bool fragmentHasInterchangeNewlineAtStart, bool selectionStartWasInsideMailBlockquote)
 {
+    if (m_movingParagraph)
+        return false;
+    
     VisiblePosition startOfInsertedContent(positionAtStartOfInsertedContent());
     VisiblePosition prev = startOfInsertedContent.previous(true);
     if (prev.isNull())
         return false;
     
-    if (!m_movingParagraph && isStartOfParagraph(startOfInsertedContent) && hasMatchingQuoteLevel(prev, positionAtEndOfInsertedContent()))
+    // When we have matching quote levels, its ok to merge more frequently.
+    // For a successful merge, we still need to make sure that the inserted content starts with the beginning of a paragraph.
+    // And we should only merge here if the selection start was inside a mail blockquote.  This prevents against removing a 
+    // blockquote from newly pasted quoted content that was pasted into an unquoted position.  If that unquoted position happens 
+    // to be right after another blockquote, we don't want to merge and risk stripping a valid block (and newline) from the pasted content.
+    if (isStartOfParagraph(startOfInsertedContent) && selectionStartWasInsideMailBlockquote && hasMatchingQuoteLevel(prev, positionAtEndOfInsertedContent()))
         return true;
 
     return !selectionStartWasStartOfParagraph && 
@@ -898,13 +906,7 @@ void ReplaceSelectionCommand::doApply()
     // the start merge so that the start merge doesn't effect our decision.
     m_shouldMergeEnd = shouldMergeEnd(selectionEndWasEndOfParagraph);
     
-    if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
-        // Bail to avoid infinite recursion.
-        if (m_movingParagraph) {
-            // setting display:inline does not work for td elements in quirks mode
-            ASSERT(m_firstNodeInserted->hasTagName(tdTag));
-            return;
-        }
+    if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart(), startIsInsideMailBlockquote)) {
         VisiblePosition destination = startOfInsertedContent.previous();
         VisiblePosition startOfParagraphToMove = startOfInsertedContent;
         

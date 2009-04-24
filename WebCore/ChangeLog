@@ -1,3 +1,21 @@
+2009-04-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5089327> Newline gets stripped when pasting whole lines in certain markup
+
+        Test: editing/pasteboard/paste-blockquote-after-blockquote.html
+
+        When we have matching quote levels, its ok to merge the starts of the inserted and existing blocks more frequently.
+        But we should only merge here if the selection start was inside a mail blockquote.  This prevents against removing a 
+        blockquote from newly pasted quoted content that was pasted into an unquoted position.  If that unquoted position happens 
+        to be right after another blockquote, we don't want to merge and risk stripping a valid block (and newline) from the pasted content.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): Also added an early return to always return false when we're already moving paragraphs.
+        (WebCore::ReplaceSelectionCommand::doApply): Removed redundant check for when we're moving paragraphs.
+        * editing/ReplaceSelectionCommand.h:
+
 2009-04-23  Francisco Tolmasky  <francisco@280north.com>
 
         BUG 24604: WebKit profiler reports incorrect total times

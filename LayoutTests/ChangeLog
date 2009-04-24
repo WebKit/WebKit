@@ -1,3 +1,14 @@
+2009-04-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/5089327> Newline gets stripped when pasting whole lines in certain markup
+
+        * editing/pasteboard/paste-blockquote-after-blockquote.html: Added.
+        * platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt: Added.
+
 2009-04-24  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.
