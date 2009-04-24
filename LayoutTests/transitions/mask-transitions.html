@@ -1,0 +1,65 @@
+<!DOCTYPE>
+
+<html lang="en">
+<head>
+  <title>mask transitions</title>
+  <style type="text/css" media="screen">
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-mask: url('../fast/backgrounds/resources/mask-left.png') no-repeat 0 0;
+      -webkit-mask-size: 100px 100px;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+    
+    #box {
+      -webkit-transition-property: -webkit-mask;
+    }
+    
+    #box.final {
+      -webkit-mask-position: 20px 20px;
+    }
+
+    #box2 {
+      -webkit-transition-property: -webkit-mask-size;
+    }
+    
+    #box2.final {
+      -webkit-mask-size: 200px 200px;
+    }
+    
+  </style>
+  <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box', '-webkit-mask-position', [10, 10], 2],
+      [0.5, 'box2', '-webkit-mask-size', [150, 150], 10],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('box').className = 'box final';
+      document.getElementById('box2').className = 'box final';
+    }
+  
+    // We can't use the pause API because it only works for individual properties, and
+    // -webkit-mask-position is a compound property.
+    runTransitionTest(expectedValues, setupTest, false);
+    
+  </script>
+</head>
+<body>
+
+  <div id="box" class="box"></div>
+  <div id="box2" class="box"></div>
+
+  <div id="result">
+  </div>
+
+</body>
+</html>

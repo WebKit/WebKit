@@ -1,3 +1,38 @@
+2009-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23219
+
+        Add support for transtions and animations of background-position, -webkit-background-size,
+        -webkit-mask-position and -webkit-mask-size.
+
+        Tests: transitions/background-transitions.html
+               transitions/mask-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        Add a blend func for LengthSize.
+        
+        (WebCore::ensurePropertyMap):
+        Add wrappers for the new properties.
+        
+        (WebCore::addShorthandProperties):
+        Add a shorthand property for CSSPropertyBackgroundPosition to map to
+        CSSPropertyBackgroundPositionX and CSSPropertyBackgroundPositionY, 
+        add CSSPropertyWebkitMask for CSSPropertyWebkitMaskPosition, and add
+        CSSPropertyWebkitMaskPosition for CSSPropertyWebkitMaskPositionX and
+        CSSPropertyWebkitMaskPositionY.
+        
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBackgroundXPosition):
+        (WebCore::InheritedFlags::setBackgroundYPosition):
+        (WebCore::InheritedFlags::setBackgroundSize):
+        (WebCore::InheritedFlags::setMaskXPosition):
+        (WebCore::InheritedFlags::setMaskYPosition):
+        (WebCore::InheritedFlags::setMaskSize):
+        Add setters for the properties that can be animated now.
+
 2009-04-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

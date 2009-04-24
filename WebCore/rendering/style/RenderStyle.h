@@ -736,6 +736,10 @@ public:
 
     void setBackgroundColor(const Color& v) { SET_VAR(background, m_color, v) }
 
+    void setBackgroundXPosition(Length l) { SET_VAR(background, m_background.m_xPosition, l) }
+    void setBackgroundYPosition(Length l) { SET_VAR(background, m_background.m_yPosition, l) }
+    void setBackgroundSize(LengthSize l) { SET_VAR(background, m_background.m_size, l) }
+    
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.image, b) }
 
     void setBorderTopLeftRadius(const IntSize& s) { SET_VAR(surround, border.topLeft, s) }
@@ -843,6 +847,9 @@ public:
     }
 
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(rareNonInheritedData, m_maskBoxImage, b) }
+    void setMaskXPosition(Length l) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, l) }
+    void setMaskYPosition(Length l) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, l) }
+    void setMaskSize(LengthSize l) { SET_VAR(rareNonInheritedData, m_mask.m_size, l) }
 
     void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v) }
