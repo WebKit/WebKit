@@ -1,3 +1,23 @@
+2009-04-24  Fumitoshi Ukai  <ukai@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25257
+        Use null for unspecified event listener attributes of XMLHttpRequest
+        and XMLHttpRequestUpload in v8 binding.
+
+        cf. http://www.whatwg.org/specs/web-apps/current-work/#event-handler-attributes
+        An event handler attribute, unless otherwise specified, can either
+        have the value null or be set to a Function object.
+        Initially, an event handler attribute must be set to null.
+
+        Test: fast/xmlhttprequest/xmlhttprequest-default-attributes.html
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::ACCESSOR_GETTER): Changed to use v8::Null().
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+        (WebCore::ACCESSOR_GETTER): Ditto.
+
 2009-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.

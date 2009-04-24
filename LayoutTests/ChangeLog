@@ -1,3 +1,14 @@
+2009-04-24  Fumitoshi Ukai  <ukai@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25257
+        Verify XMLHttpRequest has correct attribute value by default.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-default-attributes.js: Added.
+        * fast/xmlhttprequest/xmlhttprequest-default-attributes-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-default-attributes.html: Added.
+
 2009-04-24  Kevin McCullough  <kmccullough@apple.com>
 
         Speculative fix for leopard build-bot until I have a fix on leopard.
