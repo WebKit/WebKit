@@ -1,3 +1,9 @@
+2009-04-23  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:  Remove a symbol that no longer exists.
+
 2009-04-23  Francisco Tolmasky  <francisco@280north.com>
 
         BUG 24604: WebKit profiler reports incorrect total times
