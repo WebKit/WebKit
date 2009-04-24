@@ -40,21 +40,32 @@ class ByteDisjunction;
 
 struct ByteTerm {
     enum Type {
+        TypeBodyAlternativeBegin,
+        TypeBodyAlternativeDisjunction,
+        TypeBodyAlternativeEnd,
         TypeAlternativeBegin,
         TypeAlternativeDisjunction,
         TypeAlternativeEnd,
-        TypePatternEnd,
+        TypeSubpatternBegin,
+        TypeSubpatternEnd,
         TypeAssertionBOL,
         TypeAssertionEOL,
         TypeAssertionWordBoundary,
-        TypePatternCharacter,
+        TypePatternCharacterOnce,
+        TypePatternCharacterFixed,
+        TypePatternCharacterGreedy,
+        TypePatternCharacterNonGreedy,
+        TypePatternCasedCharacterOnce,
+        TypePatternCasedCharacterFixed,
+        TypePatternCasedCharacterGreedy,
+        TypePatternCasedCharacterNonGreedy,
         TypeCharacterClass,
         TypeBackReference,
         TypeParenthesesSubpattern,
         TypeParenthesesSubpatternOnceBegin,
         TypeParenthesesSubpatternOnceEnd,
-        TypeParentheticalAssertionOnceBegin,
-        TypeParentheticalAssertionOnceEnd,
+        TypeParentheticalAssertionBegin,
+        TypeParentheticalAssertionEnd,
         TypeCheckInput,
     } type;
     bool invertOrCapture;
@@ -62,6 +73,10 @@ struct ByteTerm {
         struct {
             union {
                 UChar patternCharacter;
+                struct {
+                    UChar lo;
+                    UChar hi;
+                } casedCharacter;
                 CharacterClass* characterClass;
                 unsigned subpatternId;
             };
@@ -73,7 +88,6 @@ struct ByteTerm {
             unsigned quantityCount;
         } atom;
         struct {
-            bool isParentheses;
             int next;
             int end;
         } alternative;
@@ -82,12 +96,46 @@ struct ByteTerm {
     unsigned frameLocation;
     int inputPosition;
 
-    ByteTerm(UChar ch, int inputPos)
-        : type(ByteTerm::TypePatternCharacter)
+    ByteTerm(UChar ch, int inputPos, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
+        : frameLocation(frameLocation)
     {
+        switch (quantityType) {
+        case QuantifierFixedCount:
+            type = (quantityCount == 1) ? ByteTerm::TypePatternCharacterOnce : ByteTerm::TypePatternCharacterFixed;
+            break;
+        case QuantifierGreedy:
+            type = ByteTerm::TypePatternCharacterGreedy;
+            break;
+        case QuantifierNonGreedy:
+            type = ByteTerm::TypePatternCharacterNonGreedy;
+            break;
+        }
+
         atom.patternCharacter = ch;
-        atom.quantityType = QuantifierFixedCount;
-        atom.quantityCount = 1;
+        atom.quantityType = quantityType;
+        atom.quantityCount = quantityCount;
+        inputPosition = inputPos;
+    }
+
+    ByteTerm(UChar lo, UChar hi, int inputPos, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
+        : frameLocation(frameLocation)
+    {
+        switch (quantityType) {
+        case QuantifierFixedCount:
+            type = (quantityCount == 1) ? ByteTerm::TypePatternCasedCharacterOnce : ByteTerm::TypePatternCasedCharacterFixed;
+            break;
+        case QuantifierGreedy:
+            type = ByteTerm::TypePatternCasedCharacterGreedy;
+            break;
+        case QuantifierNonGreedy:
+            type = ByteTerm::TypePatternCasedCharacterNonGreedy;
+            break;
+        }
+
+        atom.casedCharacter.lo = lo;
+        atom.casedCharacter.hi = hi;
+        atom.quantityType = quantityType;
+        atom.quantityCount = quantityCount;
         inputPosition = inputPos;
     }
 
@@ -163,36 +211,62 @@ struct ByteTerm {
         return ByteTerm(TypeBackReference, subpatternId, false, inputPos);
     }
 
-    static ByteTerm AlternativeBegin(bool isParentheses)
+    static ByteTerm BodyAlternativeBegin()
+    {
+        ByteTerm term(TypeBodyAlternativeBegin);
+        term.alternative.next = 0;
+        term.alternative.end = 0;
+        return term;
+    }
+
+    static ByteTerm BodyAlternativeDisjunction()
+    {
+        ByteTerm term(TypeBodyAlternativeDisjunction);
+        term.alternative.next = 0;
+        term.alternative.end = 0;
+        return term;
+    }
+
+    static ByteTerm BodyAlternativeEnd()
+    {
+        ByteTerm term(TypeBodyAlternativeEnd);
+        term.alternative.next = 0;
+        term.alternative.end = 0;
+        return term;
+    }
+
+    static ByteTerm AlternativeBegin()
     {
         ByteTerm term(TypeAlternativeBegin);
-        term.alternative.isParentheses = isParentheses;
         term.alternative.next = 0;
         term.alternative.end = 0;
         return term;
     }
 
-    static ByteTerm AlternativeDisjunction(bool isParentheses)
+    static ByteTerm AlternativeDisjunction()
     {
         ByteTerm term(TypeAlternativeDisjunction);
-        term.alternative.isParentheses = isParentheses;
         term.alternative.next = 0;
         term.alternative.end = 0;
         return term;
     }
 
-    static ByteTerm AlternativeEnd(bool isParentheses)
+    static ByteTerm AlternativeEnd()
     {
         ByteTerm term(TypeAlternativeEnd);
-        term.alternative.isParentheses = isParentheses;
         term.alternative.next = 0;
         term.alternative.end = 0;
         return term;
     }
 
-    static ByteTerm PatternEnd()
+    static ByteTerm SubpatternBegin()
     {
-        return ByteTerm(TypePatternEnd);
+        return ByteTerm(TypeSubpatternBegin);
+    }
+
+    static ByteTerm SubpatternEnd()
+    {
+        return ByteTerm(TypeSubpatternEnd);
     }
 
     bool invert()

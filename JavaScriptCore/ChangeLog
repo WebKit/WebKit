@@ -1,3 +1,49 @@
+2009-04-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam "Wesley" Weinig.
+
+        Improve performance to YARR interpreter.
+        (From about 3x slower than PCRE on regex-dna to about 30% slower).
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeOffsets):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::checkCharacter):
+        (JSC::Yarr::Interpreter::checkCasedCharacter):
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::backtrackPatternCasedCharacter):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::interpret):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::closeAlternative):
+        (JSC::Yarr::ByteCompiler::closeBodyAlternative):
+        (JSC::Yarr::ByteCompiler::atomParenthesesEnd):
+        (JSC::Yarr::ByteCompiler::regexBegin):
+        (JSC::Yarr::ByteCompiler::regexEnd):
+        (JSC::Yarr::ByteCompiler::alterantiveBodyDisjunction):
+        (JSC::Yarr::ByteCompiler::alterantiveDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::ByteTerm::):
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::BodyAlternativeBegin):
+        (JSC::Yarr::ByteTerm::BodyAlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::BodyAlternativeEnd):
+        (JSC::Yarr::ByteTerm::AlternativeBegin):
+        (JSC::Yarr::ByteTerm::AlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::AlternativeEnd):
+        (JSC::Yarr::ByteTerm::SubpatternBegin):
+        (JSC::Yarr::ByteTerm::SubpatternEnd):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateParentheticalAssertion):
+        * yarr/RegexPattern.h:
+
 2009-04-24  Rob Raguet-Schofield  <ragfield@gmail.com>
 
         Rubber-stamped by Mark Rowe.

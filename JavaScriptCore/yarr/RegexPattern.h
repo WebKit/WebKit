@@ -40,7 +40,7 @@ namespace JSC { namespace Yarr {
 #define RegexStackSpaceForBackTrackInfoCharacterClass 1 // Only for !fixed quantifiers.
 #define RegexStackSpaceForBackTrackInfoBackReference 2
 #define RegexStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
-#define RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce 1
+#define RegexStackSpaceForBackTrackInfoParentheticalAssertion 1
 #define RegexStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
 #define RegexStackSpaceForBackTrackInfoParentheses 4
 

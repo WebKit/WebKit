@@ -960,7 +960,7 @@ class RegexGenerator : private MacroAssembler {
         ASSERT(term.quantityType == QuantifierFixedCount);
 
         unsigned parenthesesFrameLocation = term.frameLocation;
-        unsigned alternativeFrameLocation = parenthesesFrameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce;
+        unsigned alternativeFrameLocation = parenthesesFrameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
 
         int countCheckedAfterAssertion = state.checkedTotal - term.inputPosition;
 

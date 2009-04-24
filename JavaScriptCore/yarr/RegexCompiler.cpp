@@ -630,7 +630,7 @@ public:
             case PatternTerm::TypeParentheticalAssertion:
                 term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
-                currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce, currentInputPosition);
+                currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + RegexStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition);
                 break;
             }
         }
