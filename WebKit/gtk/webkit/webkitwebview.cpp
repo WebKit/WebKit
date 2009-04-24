@@ -168,13 +168,6 @@ G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
 static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 
-static void webkit_web_view_context_menu_position_func(GtkMenu*, gint* x, gint* y, gboolean* pushIn, WebKitWebViewPrivate* data)
-{
-    *pushIn = FALSE;
-    *x = data->lastPopupXPosition;
-    *y = data->lastPopupYPosition;
-}
-
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
 {
     Page* page = core(webView);
@@ -209,7 +202,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     priv->lastPopupXPosition = event.globalX();
     priv->lastPopupYPosition = event.globalY();
     gtk_menu_popup(menu, NULL, NULL,
-                   reinterpret_cast<GtkMenuPositionFunc>(webkit_web_view_context_menu_position_func),
+                   NULL,
                    priv, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
 }

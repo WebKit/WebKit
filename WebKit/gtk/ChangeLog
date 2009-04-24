@@ -1,3 +1,15 @@
+2009-04-24  Johan Bilien  <jobi@via.ecp.fr>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25373
+        Popup menu has the wrong size when popped up near the edge
+        of the screen
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_forward_context_menu_event): Let GTK place
+        the popup menu instead of trying to do better and failing
+
 2009-04-24  Christian Dywan  <christian@twotoasts.de>
 
         Rubber-stamped by Gustavo Noronha.
