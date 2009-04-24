@@ -89,6 +89,9 @@ static bool isDeletableElement(const Node* node)
     if (node->hasTagName(ulTag) || node->hasTagName(olTag))
         return true;
 
+    if (isMailBlockquote(node))
+        return false;
+
     if (renderer->isPositioned())
         return true;
 

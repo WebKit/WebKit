@@ -1,3 +1,13 @@
+2009-04-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        We should not show the deletion UI for blockquotes in mail but they do 
+        show now that we only check for one visible border.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+
 2009-04-24  Dan Bernstein  <mitz@apple.com>
 
         - address Hyatt's review comments on the last patch
