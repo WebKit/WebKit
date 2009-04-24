@@ -1,5 +1,12 @@
 2009-04-24  Kevin McCullough  <kmccullough@apple.com>
 
+        When I moved the files I forgot to update the location of the image!
+
+        * platform/mac/editing/deleting/deletionUI-differing-background-expected.txt: Added.
+        * platform/mac/editing/deleting/deletionUI-differing-background.html: Added.
+
+2009-04-24  Kevin McCullough  <kmccullough@apple.com>
+
         - Build fix.  Removed this test until I can figure out why it's failing.
 
         * platform/mac-leopard/editing/deleting/deletionUI-differing-background-expected.txt: Removed.
