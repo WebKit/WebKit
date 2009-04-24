@@ -5,6 +5,6 @@ EXPECTED (event.loaded == '0') OK
 EVENT(load)
 EXPECTED (event.lengthComputable == 'true') OK
 EXPECTED (event.loaded > '0') OK
-EXPECTED (event.total == '239528') OK
+EXPECTED (event.total == '188483') OK
 END OF TEST
 

@@ -1,3 +1,33 @@
+2009-04-24  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser
+
+        <rdar://problem/6805928> Re-export layout test MPEG-4 file to remove unusual edit
+
+        Use better mp4 test file for media tests. The original mp4 file had an unusual
+        edit (non-zero start time) which is not supported by all media engines. The new
+        movie should also give more useful pixel test results.
+
+        * media/content/test.mp4: Update the movie.
+        * media/progress-event-total-expected.txt: Update test results to match movie duration and
+        content changes.
+        * media/progress-event-total.html: Ditto.
+        * media/video-currentTime-set-expected.txt: Ditto.
+        * media/video-loop-expected.txt: Ditto.
+        * platform/mac/media/video-aspect-ratio-expected.checksum: Ditto.
+        * platform/mac/media/video-aspect-ratio-expected.png: Ditto.
+        * platform/mac/media/video-controls-rendering-expected.checksum: Ditto.
+        * platform/mac/media/video-controls-rendering-expected.png: Ditto.
+        * platform/mac/media/video-display-toggle-expected.checksum: Ditto.
+        * platform/mac/media/video-display-toggle-expected.png: Ditto.
+        * platform/mac/media/video-empty-source-expected.checksum: Ditto.
+        * platform/mac/media/video-layer-crash-expected.checksum: Ditto.
+        * platform/mac/media/video-layer-crash-expected.png: Ditto.
+        * platform/mac/media/video-transformed-expected.checksum: Ditto.
+        * platform/mac/media/video-transformed-expected.png: Ditto.
+        * platform/mac/media/video-zoom-expected.checksum: Ditto.
+        * platform/mac/media/video-zoom-expected.png: Ditto.
+
 2009-04-24  Kevin McCullough  <kmccullough@apple.com>
 
         When I moved the files I forgot to update the location of the image!
