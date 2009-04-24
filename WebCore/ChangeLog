@@ -1,3 +1,26 @@
+2009-04-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25383
+        Changing SVG size via JS does not update CSS width/height
+
+        Add an ugly hack to fix CSS width/height updates from JS.
+
+        We can't easily call setAttribute when width/height changes
+        as that would cause infinite recursion (as we'd try to set
+        the animation storage from the attributes)
+
+        For now, when we get notification that JS changed width/height
+        we copy what parseMappedAttribute does and update the CSS values as well.
+
+        A better fix for this would be:
+        https://bugs.webkit.org/show_bug.cgi?id=25383
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::updateCSSForAttribute):
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2009-04-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan Bernstein.

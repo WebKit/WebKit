@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" x="-100px" y="-100px" width="300px" height="300px">
+<svg style="border: 5px solid black" xmlns="http://www.w3.org/2000/svg" x="-100px" y="-100px" width="300px" height="300px">
 <script type="text/javascript">
 document.rootElement.x.baseVal.value = 0;
 document.rootElement.y.baseVal.value = 0;

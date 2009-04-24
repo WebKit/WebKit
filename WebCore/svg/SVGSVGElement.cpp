@@ -269,15 +269,34 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+// This hack will not handle the case where we're setting a width/height
+// on a root <svg> via svg.width.baseValue = when it has none.
+static void updateCSSForAttribute(SVGSVGElement* element, const QualifiedName& attrName, CSSPropertyID property, const SVGLength& value)
+{
+    Attribute* attribute = element->attributes(false)->getAttributeItem(attrName);
+    if (!attribute || !attribute->isMappedAttribute())
+        return;
+    element->addCSSProperty(static_cast<MappedAttribute*>(attribute), property, value.valueAsString());
+}
+
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
+
+    // FIXME: Ugly, ugly hack to around that parseMappedAttribute is not called
+    // when svg.width.baseValue = 100 is evaluated.
+    // Thus the CSS length value for width is not updated, and width() calcWidth()
+    // calculations on RenderSVGRoot will be wrong.
+    // https://bugs.webkit.org/show_bug.cgi?id=25387
+    if (attrName == SVGNames::widthAttr)
+        updateCSSForAttribute(this, attrName, CSSPropertyWidth, widthBaseValue());
+    else if (attrName == SVGNames::heightAttr)
+        updateCSSForAttribute(this, attrName, CSSPropertyHeight, heightBaseValue());
 
     if (!renderer())
         return;
 
     if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
         SVGTests::isKnownAttribute(attrName) ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||

@@ -25,6 +25,21 @@
 
         Reviewed by Simon Fraser.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25383
+        Changing SVG size via JS does not update CSS width/height
+
+        Update viewport-update2.svg to include a border
+        (and thus make the bug visually obvious)
+
+        * platform/mac/svg/custom/viewport-update2-expected.checksum:
+        * platform/mac/svg/custom/viewport-update2-expected.png:
+        * platform/mac/svg/custom/viewport-update2-expected.txt:
+        * svg/custom/viewport-update2.svg:
+
+2009-04-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Fix RenderSVGImage to dump with full bounds and style information
         https://bugs.webkit.org/show_bug.cgi?id=25377
 
