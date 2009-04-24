@@ -1561,8 +1561,6 @@ webcore_sources += \
 	WebCore/rendering/InlineTextBox.h \
 	WebCore/rendering/LayoutState.cpp \
 	WebCore/rendering/LayoutState.h \
-	WebCore/rendering/ListMarkerBox.cpp \
-	WebCore/rendering/ListMarkerBox.h \
 	WebCore/rendering/MediaControlElements.h \
 	WebCore/rendering/RenderApplet.cpp \
 	WebCore/rendering/RenderApplet.h \

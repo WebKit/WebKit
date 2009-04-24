@@ -45,8 +45,6 @@ public:
 
     virtual bool isRootInlineBox() const { return true; }
 
-    virtual int height() const;
-
     virtual void destroy(RenderArena*);
     void detachEllipsisBox(RenderArena*);
 

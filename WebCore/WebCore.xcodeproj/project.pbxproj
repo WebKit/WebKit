@@ -2792,11 +2792,9 @@
 		A8EA79FB0A1916DF00A8EF5F /* HTMLOListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA79EF0A1916DF00A8EF5F /* HTMLOListElement.cpp */; };
 		A8EA79FC0A1916DF00A8EF5F /* HTMLLIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA79F00A1916DF00A8EF5F /* HTMLLIElement.cpp */; };
 		A8EA7A4E0A191A5200A8EF5F /* RenderListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7A480A191A5200A8EF5F /* RenderListItem.cpp */; };
-		A8EA7A4F0A191A5200A8EF5F /* ListMarkerBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7A490A191A5200A8EF5F /* ListMarkerBox.h */; };
 		A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7A4A0A191A5200A8EF5F /* RenderListMarker.h */; };
 		A8EA7A510A191A5200A8EF5F /* RenderListMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7A4B0A191A5200A8EF5F /* RenderListMarker.cpp */; };
 		A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7A4C0A191A5200A8EF5F /* RenderListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8EA7A530A191A5200A8EF5F /* ListMarkerBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7A4D0A191A5200A8EF5F /* ListMarkerBox.cpp */; };
 		A8EA7CAB0A192B9C00A8EF5F /* HTMLMarqueeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7C9D0A192B9C00A8EF5F /* HTMLMarqueeElement.h */; };
 		A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7C9E0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp */; };
 		A8EA7CAD0A192B9C00A8EF5F /* HTMLPreElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7C9F0A192B9C00A8EF5F /* HTMLPreElement.cpp */; };
@@ -7540,11 +7538,9 @@
 		A8EA79EF0A1916DF00A8EF5F /* HTMLOListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOListElement.cpp; sourceTree = "<group>"; };
 		A8EA79F00A1916DF00A8EF5F /* HTMLLIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLIElement.cpp; sourceTree = "<group>"; };
 		A8EA7A480A191A5200A8EF5F /* RenderListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderListItem.cpp; sourceTree = "<group>"; };
-		A8EA7A490A191A5200A8EF5F /* ListMarkerBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListMarkerBox.h; sourceTree = "<group>"; };
 		A8EA7A4A0A191A5200A8EF5F /* RenderListMarker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderListMarker.h; sourceTree = "<group>"; };
 		A8EA7A4B0A191A5200A8EF5F /* RenderListMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderListMarker.cpp; sourceTree = "<group>"; };
 		A8EA7A4C0A191A5200A8EF5F /* RenderListItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderListItem.h; sourceTree = "<group>"; };
-		A8EA7A4D0A191A5200A8EF5F /* ListMarkerBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ListMarkerBox.cpp; sourceTree = "<group>"; };
 		A8EA7C9D0A192B9C00A8EF5F /* HTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLMarqueeElement.h; sourceTree = "<group>"; };
 		A8EA7C9E0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMarqueeElement.cpp; sourceTree = "<group>"; };
 		A8EA7C9F0A192B9C00A8EF5F /* HTMLPreElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPreElement.cpp; sourceTree = "<group>"; };
@@ -14187,8 +14183,6 @@
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
 				2D9066050BE141D400956998 /* LayoutState.h */,
-				A8EA7A4D0A191A5200A8EF5F /* ListMarkerBox.cpp */,
-				A8EA7A490A191A5200A8EF5F /* ListMarkerBox.h */,
 				ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */,
 				ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */,
 				B2B1F7140D00CAA8004AEA64 /* PointerEventsHitRules.cpp */,
@@ -16123,7 +16117,6 @@
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
-				A8EA7A4F0A191A5200A8EF5F /* ListMarkerBox.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */,
@@ -18207,7 +18200,6 @@
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
-				A8EA7A530A191A5200A8EF5F /* ListMarkerBox.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
 				51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */,

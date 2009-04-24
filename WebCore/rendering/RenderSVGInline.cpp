@@ -38,7 +38,9 @@ RenderSVGInline::RenderSVGInline(Node* n)
 
 InlineFlowBox* RenderSVGInline::createFlowBox()
 {
-    return new (renderArena()) SVGInlineFlowBox(this);
+    InlineFlowBox* box = new (renderArena()) SVGInlineFlowBox(this);
+    box->setIsSVG(true);
+    return box;
 }
 
 }

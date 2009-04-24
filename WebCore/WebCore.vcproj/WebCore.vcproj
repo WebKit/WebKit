@@ -7360,14 +7360,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\ListMarkerBox.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\ListMarkerBox.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\MediaControlElements.cpp"
 				>
 			</File>

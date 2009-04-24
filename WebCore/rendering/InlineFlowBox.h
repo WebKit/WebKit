@@ -55,8 +55,6 @@ public:
     virtual ~InlineFlowBox();
 #endif
 
-    virtual int height() const;
-
     InlineFlowBox* prevFlowBox() const { return static_cast<InlineFlowBox*>(m_prevLine); }
     InlineFlowBox* nextFlowBox() const { return static_cast<InlineFlowBox*>(m_nextLine); }
 

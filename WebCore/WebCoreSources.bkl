@@ -902,7 +902,6 @@ This file contains the list of files needed to build WebCore.
         rendering/InlineFlowBox.cpp
         rendering/InlineTextBox.cpp
         rendering/LayoutState.cpp
-        rendering/ListMarkerBox.cpp
         rendering/MediaControlElements.cpp
         rendering/RenderApplet.cpp
         rendering/RenderArena.cpp

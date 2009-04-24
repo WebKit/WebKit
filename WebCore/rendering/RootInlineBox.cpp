@@ -74,19 +74,6 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
-int RootInlineBox::height() const
-{
-    const Font& font = renderer()->style(m_firstLine)->font();
-    int result = font.height();
-    bool strictMode = renderer()->document()->inStrictMode();
-    if (!strictMode && !hasTextChildren() && !boxModelObject()->hasHorizontalBordersOrPadding()) {
-        int bottom = bottomOverflow();
-        if (y() + result > bottom)
-            result = bottom - y();
-    }
-    return result;
-}
-
 RenderLineBoxList* RootInlineBox::rendererLineBoxes() const
 {
     return block()->lineBoxes();

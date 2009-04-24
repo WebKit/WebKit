@@ -41,11 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-int InlineTextBox::height() const
-{
-    return m_treatAsText ? renderer()->style(m_firstLine)->font().height() : 0;
-}
-
 int InlineTextBox::selectionTop()
 {
     return root()->selectionTop();

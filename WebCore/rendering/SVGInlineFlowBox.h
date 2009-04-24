@@ -37,7 +37,7 @@ public:
     {
     }
 
-    virtual int height() const { return m_height; }
+    virtual int svgBoxHeight() const { return m_height; }
     void setHeight(int h) { m_height = h; }
 
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);

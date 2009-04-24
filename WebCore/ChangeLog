@@ -1,3 +1,59 @@
+2009-04-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser, Dan Bernstein.
+
+        Speed up the PLT by devirtualizing the height() function on InlineBox.  virtualizing it in order to make the height() computation dynamic caused
+        a ~0.5% slowdown.  This patch does the following to get the speed back:
+        
+        (a) Devirtualizes isText and forces inline box creators to set the bit as needed.  This actually resulted in simplified code, since ListMarkerBox could
+        then be removed.
+        (b) Reduces the height() call count.  In some cases the code was repeatedly calling height(), which used to be fine when the function was just an inline
+        member variable access.  The call sites have been patched to cut down on extra height() calls now that it is more expensive.
+        (c) Devirtualize height() except on SVG boxes.  For all non-SVG, the height() function on InlineBox handles the computation.  For SVG boxes, a new bit has
+        been set on InlineBoxes (isSVG()) that indicates that the virtual svgBoxHeight() function should be called to retrieve the height instead.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::height):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::isSVG):
+        (WebCore::InlineBox::setIsSVG):
+        (WebCore::InlineBox::isText):
+        (WebCore::InlineBox::setIsText):
+        (WebCore::InlineBox::svgBoxHeight):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        * rendering/InlineTextBox.h:
+        * rendering/ListMarkerBox.cpp: Removed.
+        * rendering/ListMarkerBox.h: Removed.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::createInlineBox):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createFlowBox):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createRootBox):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::createInlineTextBox):
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::svgBoxHeight):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::svgBoxHeight):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::svgBoxHeight):
+
 2009-04-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
