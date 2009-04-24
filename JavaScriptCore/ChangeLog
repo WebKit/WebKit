@@ -1,3 +1,9 @@
+2009-04-24  Rob Raguet-Schofield  <ragfield@gmail.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * wtf/CurrentTime.h: Fix a typo in a comment.
+
 2009-04-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
