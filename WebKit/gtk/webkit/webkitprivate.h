@@ -38,6 +38,7 @@
 #include <webkit/webkitwebbackforwardlist.h>
 
 #include "BackForwardList.h"
+#include <enchant.h>
 #include "HistoryItem.h"
 #include "Settings.h"
 #include "Page.h"
@@ -69,6 +70,11 @@ namespace WebKit {
     WebKitWebNavigationReason kit(WebCore::NavigationType type);
     WebCore::NavigationType core(WebKitWebNavigationReason reason);
 }
+
+typedef struct {
+    EnchantBroker* config;
+    EnchantDict* speller;
+} SpellLanguage;
 
 extern "C" {
     void webkit_init();
@@ -193,6 +199,9 @@ extern "C" {
 
     WEBKIT_API void
     webkit_web_settings_add_extra_plugin_directory (WebKitWebView *web_view, const gchar* directory);
+
+    GSList*
+    webkit_web_settings_get_spell_languages(WebKitWebView* web_view);
 }
 
 #endif

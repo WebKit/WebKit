@@ -188,6 +188,7 @@ libWebCore_la_CFLAGS = \
 	$(LIBXSLT_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(HILDON_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
 	$(GEOCLUE_CFLAGS)
 
 libWebCore_la_CPPFLAGS = \
@@ -257,6 +258,7 @@ libwebkit_1_0_la_LDFLAGS = \
 
 libwebkit_1_0_la_LIBADD = \
 	libWebCore.la \
+	$(ENCHANT_LIBS) \
 	$(GNOMEKEYRING_LIBS)
 
 #

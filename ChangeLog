@@ -1,3 +1,16 @@
+2009-04-24  Diego Escalante Urrelo  <diegoe@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15616
+        [GTK] Add spell checking
+
+        Add enchant support for spell-checking-languages property to work
+        properly.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-04-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.

@@ -5,6 +5,26 @@
         https://bugs.webkit.org/show_bug.cgi?id=15616
         [GTK] Add spell checking
 
+        Add spell-checking-languages property to WebKitWebSettings.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_finalize):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_set_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_copy):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_spell_languages):
+
+2009-04-24  Diego Escalante Urrelo  <diegoe@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15616
+        [GTK] Add spell checking
+
         Add enable-spell-checking property to WebKitWebSettings and implement
         EditorClient::isContinuousSpellCheckingEnabled and
         EditorClient::toggleContinuousSpellChecking to allow the UI to
