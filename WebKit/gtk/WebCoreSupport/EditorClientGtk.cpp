@@ -102,8 +102,12 @@ bool EditorClient::shouldShowDeleteInterface(HTMLElement*)
 
 bool EditorClient::isContinuousSpellCheckingEnabled()
 {
-    notImplemented();
-    return false;
+    WebKitWebSettings* settings = webkit_web_view_get_settings(m_webView);
+
+    gboolean enabled;
+    g_object_get(settings, "enable-spell-checking", &enabled, NULL);
+
+    return enabled;
 }
 
 bool EditorClient::isGrammarCheckingEnabled()
@@ -305,7 +309,12 @@ bool EditorClient::isSelectTrailingWhitespaceEnabled()
 
 void EditorClient::toggleContinuousSpellChecking()
 {
-    notImplemented();
+    WebKitWebSettings* settings = webkit_web_view_get_settings(m_webView);
+
+    gboolean enabled;
+    g_object_get(settings, "enable-spell-checking", &enabled, NULL);
+
+    g_object_set(settings, "enable-spell-checking", !enabled, NULL);
 }
 
 void EditorClient::toggleGrammarChecking()

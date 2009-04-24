@@ -76,6 +76,7 @@ struct _WebKitWebSettingsPrivate {
     gfloat zoom_step;
     gboolean enable_developer_extras;
     gboolean enable_private_browsing;
+    gboolean enable_spell_checking;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -104,7 +105,8 @@ enum {
     PROP_USER_STYLESHEET_URI,
     PROP_ZOOM_STEP,
     PROP_ENABLE_DEVELOPER_EXTRAS,
-    PROP_ENABLE_PRIVATE_BROWSING
+    PROP_ENABLE_PRIVATE_BROWSING,
+    PROP_ENABLE_SPELL_CHECKING
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -359,6 +361,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     FALSE,
                                     flags));
 
+    /**
+    * WebKitWebSettings:enable-spell-checking:
+    *
+    * Whether to enable check-as-you-type spell checking.
+    *
+    * Since 1.1.6
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_SPELL_CHECKING,
+                                    g_param_spec_boolean(
+                                    "enable-spell-checking",
+                                    _("Enable Spell Checking"),
+                                    _("Enables check-as-you-type spell checking"),
+                                    FALSE,
+                                    flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -464,6 +482,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_PRIVATE_BROWSING:
         priv->enable_private_browsing = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_SPELL_CHECKING:
+        priv->enable_spell_checking = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -542,6 +563,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_PRIVATE_BROWSING:
         g_value_set_boolean(value, priv->enable_private_browsing);
         break;
+    case PROP_ENABLE_SPELL_CHECKING:
+        g_value_set_boolean(value, priv->enable_spell_checking);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -594,6 +618,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "zoom-step", priv->zoom_step,
                  "enable-developer-extras", priv->enable_developer_extras,
                  "enable-private-browsing", priv->enable_private_browsing,
+                 "enable-spell-checking", priv->enable_spell_checking,
                  NULL));
 
     return copy;
