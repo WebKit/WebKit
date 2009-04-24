@@ -2,6 +2,15 @@
 
         Reviewed by Dimitri Glazkov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25329
+        Add indexed access method in v8 binding of ClientRectList.
+
+        * bindings/v8/custom/V8ClientRectListCustom.cpp: Added.
+
+2009-04-24  Fumitoshi Ukai  <ukai@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         https://bugs.webkit.org/show_bug.cgi?id=25257
         Use null for unspecified event listener attributes of XMLHttpRequest
         and XMLHttpRequestUpload in v8 binding.
