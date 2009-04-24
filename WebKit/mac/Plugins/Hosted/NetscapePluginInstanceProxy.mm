@@ -196,6 +196,10 @@ void NetscapePluginInstanceProxy::destroy()
     m_inDestroy = true;
     
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID);
+ 
+    // If the plug-in host crashes while we're waiting for a reply, the last reference to the instance proxy
+    // will go away. Prevent this by protecting it here.
+    RefPtr<NetscapePluginInstanceProxy> protect(this);
     
     // We don't care about the reply here - we just want to block until the plug-in instance has been torn down.
     waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
