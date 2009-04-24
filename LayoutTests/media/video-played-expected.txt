@@ -1,11 +1,11 @@
 Test of the media element 'played' attribute
 
-
-Test playing when there are no ranges
 EVENT(loadstart)
 EVENT(loadedmetadata)
 EVENT(canplay)
 Test 1 OK
+
+Test playing when there are no ranges
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)

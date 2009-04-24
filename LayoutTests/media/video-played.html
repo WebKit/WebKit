@@ -225,8 +225,7 @@
             function canplay(event) 
             {
                 testRanges();
-                if (currentTest > 1)
-                    nextTest();
+                nextTest();
             }
 
             function willCreateNewRange()
@@ -257,12 +256,10 @@
                 waitForEvent("loadstart");
                 waitForEvent("ratechange");
                 waitForEvent("loadedmetadata");
-                waitForEvent("canplay", canplay);
+                waitForEvent("canplay", canplay); // Will triggers nextTest() which launches the tests.
                 waitForEvent("pause", pause);
 
                 video.load();
-
-                nextTest();
             }
         </script>
      </head>
