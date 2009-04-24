@@ -92,7 +92,7 @@ public:
             return where;
         }
 
-        unsigned term;
+        int term;
         unsigned matchBegin;
         unsigned matchEnd;
         uintptr_t frame[1];
@@ -1077,7 +1077,7 @@ public:
         while (true) {
             do {
                 ++context->term;
-                ASSERT(context->term < disjunction->terms.size());
+                ASSERT(context->term < static_cast<int>(disjunction->terms.size()));
                 if (disjunction->terms[context->term].type == ByteTerm::TypePatternEnd)
                     return true;
             } while (matchTerm(disjunction, context));

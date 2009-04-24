@@ -2,6 +2,14 @@
 
         Not Reviewed.
 
+        Speculative Windows build fix II.
+
+        * yarr/RegexInterpreter.cpp:
+
+2009-04-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Not Reviewed.
+
         Speculative Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
