@@ -257,6 +257,9 @@ HistoryItem* core(WebHistoryItem *item)
 {
     if (!item)
         return 0;
+    
+    ASSERT(historyItemWrappers().get(core(item->_private)) == item);
+
     return core(item->_private);
 }
 

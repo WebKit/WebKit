@@ -1,3 +1,15 @@
+2009-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Currently working on a bug where a WebHistoryItem was being used after being dealloc'ed.
+        I added this assertion to help catch the case as soon as it happens instead of random
+        issues downstream.  Figured it's worth checking in by itself.
+
+        * History/WebHistoryItem.mm:
+        (core): ASSERT that the WebCore::HistoryItem inside this WebHistoryItem is supposed to have
+          this WebHistoryItem as a wrapper.
+
 2009-04-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
