@@ -1,3 +1,10 @@
+2009-04-23  Mark Rowe  <mrowe@apple.com>
+
+        Move deletionUI-helpers.js in to the correct location so that the
+        tests that use it can find it.
+
+        * platform/mac/editing/deleting/resources/deletionUI-helpers.js: Renamed from LayoutTests/editing/deleting/resources/deletionUI-helpers.js.
+
 2009-04-23  Francisco Tolmasky  <francisco@280north.com>
 
         BUG 24604: WebKit profiler reports incorrect total times
