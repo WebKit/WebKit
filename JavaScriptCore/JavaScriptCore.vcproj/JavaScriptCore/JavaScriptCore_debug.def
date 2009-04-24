@@ -62,6 +62,7 @@ EXPORTS
         ?className@JSObject@JSC@@UBE?AVUString@2@XZ
         ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
         ?collect@Heap@JSC@@QAE_NXZ
+        ?computeHash@Rep@UString@JSC@@SAIPBDH@Z
         ?computeHash@Rep@UString@JSC@@SAIPB_WH@Z
         ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValuePtr@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
         ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z

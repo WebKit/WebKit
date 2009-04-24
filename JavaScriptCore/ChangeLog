@@ -1,5 +1,12 @@
 2009-04-23  Mark Rowe  <mrowe@apple.com>
 
+        More Windows build fixage.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-04-23  Mark Rowe  <mrowe@apple.com>
+
         Attempt to fix the Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:  Remove a symbol that no longer exists.
