@@ -204,12 +204,6 @@ ProfileNode* ProfileNode::traverseNextNodePreOrder(bool processChildren) const
     return next;
 }
 
-void ProfileNode::sort(bool comparator(const RefPtr<ProfileNode>& , const RefPtr<ProfileNode>& ))
-{
-    std::sort(childrenBegin(), childrenEnd(), comparator);    
-    resetChildrensSiblings();
-}
-
 void ProfileNode::setTreeVisible(ProfileNode* node, bool visible)
 {
     ProfileNode* nodeParent = node->parent();

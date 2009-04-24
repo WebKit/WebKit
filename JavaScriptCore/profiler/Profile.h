@@ -45,21 +45,10 @@ namespace JSC {
         unsigned int uid() const { return m_uid; }
 
         void forEach(void (ProfileNode::*)());
-        void sortTotalTimeDescending() { forEach(&ProfileNode::sortTotalTimeDescending); }
-        void sortTotalTimeAscending() { forEach(&ProfileNode::sortTotalTimeAscending); }
-        void sortSelfTimeDescending() { forEach(&ProfileNode::sortSelfTimeDescending); }
-        void sortSelfTimeAscending() { forEach(&ProfileNode::sortSelfTimeAscending); }
-        void sortCallsDescending() { forEach(&ProfileNode::sortCallsDescending); }
-        void sortCallsAscending() { forEach(&ProfileNode::sortCallsAscending); }
-        void sortFunctionNameDescending() { forEach(&ProfileNode::sortFunctionNameDescending); }
-        void sortFunctionNameAscending() { forEach(&ProfileNode::sortFunctionNameAscending); }
 
         void focus(const ProfileNode*);
         void exclude(const ProfileNode*);
         void restoreAll();
-
-        virtual Profile* heavyProfile() = 0;
-        virtual Profile* treeProfile() = 0; 
 
 #ifndef NDEBUG
         void debugPrintData() const;

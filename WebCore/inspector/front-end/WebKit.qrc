@@ -3,6 +3,7 @@
     <file>inspector.html</file>
     <file>Breakpoint.js</file>
     <file>BreakpointsSidebarPane.js</file>
+    <file>BottomUpProfileDataGridTree.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>Console.js</file>
     <file>Database.js</file>
@@ -25,6 +26,7 @@
     <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
     <file>ProfilesPanel.js</file>
+    <file>ProfileDataGridTree.js</file>
     <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
@@ -42,6 +44,7 @@
     <file>SourceView.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TextPrompt.js</file>
+    <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
     <file>View.js</file>

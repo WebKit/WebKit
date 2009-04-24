@@ -169,32 +169,19 @@ WebInspector.DataGrid.prototype = {
     insertChild: function(child, index)
     {
         if (!child)
-            throw("Node can't be undefined or null.");
+            throw("insertChild: Node can't be undefined or null.");
         if (child.parent === this)
-            throw("Node is already a child of this node.");
+            throw("insertChild: Node is already a child of this node.");
 
         if (child.parent)
             child.parent.removeChild(child);
-
-        var previousChild = (index > 0 ? this.children[index - 1] : null);
-        if (previousChild) {
-            previousChild.nextSibling = child;
-            child.previousSibling = previousChild;
-        } else
-            child.previousSibling = null;
-
-        var nextChild = this.children[index];
-        if (nextChild) {
-            nextChild.previousSibling = child;
-            child.nextSibling = nextChild;
-        } else
-            child.nextSibling = null;
 
         this.children.splice(index, 0, child);
         this.hasChildren = true;
 
         child.parent = this;
         child.dataGrid = this.dataGrid;
+        child._recalculateSiblings(index);
 
         delete child._depth;
         delete child._revealed;
@@ -216,9 +203,9 @@ WebInspector.DataGrid.prototype = {
     removeChild: function(child)
     {
         if (!child)
-            throw("Node can't be undefined or null.");
+            throw("removeChild: Node can't be undefined or null.");
         if (child.parent !== this)
-            throw("Node is not a child of this node.");
+            throw("removeChild: Node is not a child of this node.");
 
         child.deselect();
 
@@ -233,6 +220,9 @@ WebInspector.DataGrid.prototype = {
         child.parent = null;
         child.nextSibling = null;
         child.previousSibling = null;
+
+        if (this.children.length <= 0)
+            this.hasChildren = false;
     },
 
     removeChildren: function()
@@ -249,6 +239,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         this.children = [];
+        this.hasChildren = false;
     },
 
     removeChildrenRecursive: function()
@@ -405,7 +396,7 @@ WebInspector.DataGrid.prototype = {
         var gridNode = this.dataGridNodeFromEvent(event);
         if (!gridNode || !gridNode.selectable)
             return;
-    
+
         if (gridNode.isEventWithinDisclosureTriangle(event))
             return;
 
@@ -519,6 +510,34 @@ WebInspector.DataGridNode.prototype = {
         return true;
     },
 
+    set hasChildren(x)
+    {
+        if (this._hasChildren === x)
+            return;
+
+        this._hasChildren = x;
+
+        if (!this._element)
+            return;
+
+        if (this._hasChildren)
+        {
+            this._element.addStyleClass("parent");
+            if (this.expanded)
+                this._element.addStyleClass("expanded");
+        }
+        else
+        {
+            this._element.removeStyleClass("parent");
+            this._element.removeStyleClass("expanded");
+        }
+    },
+
+    get hasChildren()
+    {
+        return this._hasChildren;
+    },
+
     set revealed(x)
     {
         if (this._revealed === x)
@@ -623,6 +642,28 @@ WebInspector.DataGridNode.prototype = {
     removeChild: WebInspector.DataGrid.prototype.removeChild,
     removeChildren: WebInspector.DataGrid.prototype.removeChildren,
     removeChildrenRecursive: WebInspector.DataGrid.prototype.removeChildrenRecursive,
+
+    _recalculateSiblings: function(myIndex)
+    {
+        if (!this.parent)
+            return;
+
+        var previousChild = (myIndex > 0 ? this.parent.children[myIndex - 1] : null);
+
+        if (previousChild) {
+            previousChild.nextSibling = this;
+            this.previousSibling = previousChild;
+        } else
+            this.previousSibling = null;
+
+        var nextChild = this.parent.children[myIndex + 1];
+
+        if (nextChild) {
+            nextChild.previousSibling = this;
+            this.nextSibling = nextChild;
+        } else
+            this.nextSibling = null;
+    },
 
     collapse: function()
     {

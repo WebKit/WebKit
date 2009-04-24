@@ -1,3 +1,19 @@
+2009-04-23  Francisco Tolmasky  <francisco@280north.com>
+
+        BUG 24604: WebKit profiler reports incorrect total times
+        <https://bugs.webkit.org/show_bug.cgi?id=24604>
+
+        Reviewed by Timothy Hatcher and Kevin McCullough.
+
+        Changed profile.treeProfile to just profile, since these aren't generated in C++ anymore.
+        Removed heavy-view test since heavy-view isn't an actual tree that is generated in C++ land anymore,
+        but rather just a different display of the normal treeProfile in the JS data grid.
+
+        * fast/profiler/heavy-view-expected.txt: Removed.
+        * fast/profiler/heavy-view.html: Removed.
+        * fast/profiler/resources/profiler-test-JS-resources.js: profiles[i].treeProfile -> profiles[i].treeProfile
+        (printProfilesDataWithoutTime):
+
 2009-04-23  Kevin McCullough  <kmccullough@apple.com>
 
         - Windows build fix.  Mac only tests go in platform/mac

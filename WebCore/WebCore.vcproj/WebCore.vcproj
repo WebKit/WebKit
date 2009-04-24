@@ -15647,6 +15647,10 @@
 				Name="front-end"
 				>
 				<File
+					RelativePath="..\inspector\front-end\BottomUpProfileDataGridTree.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Breakpoint.js"
 					>
 				</File>
@@ -15743,6 +15747,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ProfileDataGridTree.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\PropertiesSection.js"
 					>
 				</File>
@@ -15796,6 +15804,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\StylesSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TopDownProfileDataGridTree.js"
 					>
 				</File>
 				<File

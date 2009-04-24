@@ -1,3 +1,27 @@
+2009-04-23  Francisco Tolmasky  <francisco@280north.com>
+
+        BUG 24604: WebKit profiler reports incorrect total times
+        <https://bugs.webkit.org/show_bug.cgi?id=24604>
+
+        Reviewed by Timothy Hatcher and Kevin McCullough.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::Hash::hash):
+        (JSC::CallIdentifier::Hash::equal):
+        (JSC::CallIdentifier::hash):
+        (WTF::):
+        * profiler/HeavyProfile.cpp: Removed.
+        * profiler/HeavyProfile.h: Removed.
+        * profiler/Profile.cpp: No more need for TreeProfile/HeavyProfile
+        (JSC::Profile::create):
+        * profiler/Profile.h:
+        * profiler/ProfileNode.cpp:
+        * profiler/ProfileNode.h:
+        * profiler/TreeProfile.cpp: Removed.
+        * profiler/TreeProfile.h: Removed.
+
 2009-04-23  Gavin Barraclough  <barraclough@apple.com>
 
         Not Reviewed.

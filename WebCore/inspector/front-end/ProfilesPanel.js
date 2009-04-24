@@ -218,7 +218,7 @@ WebInspector.ProfilesPanel.prototype = {
         view.show(this.profileViews);
 
         profile._profilesTreeElement.select(true);
-        profile._profilesTreeElement.reveal()
+        profile._profilesTreeElement.reveal();
 
         this.visibleView = view;
 
@@ -231,8 +231,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     showView: function(view)
     {
-        // Always use the treeProfile, since the heavy profile might be showing.
-        this.showProfile(view.profile.treeProfile);
+        this.showProfile(view.profile);
     },
 
     profileViewForProfile: function(profile)
@@ -295,8 +294,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     searchMatchFound: function(view, matches)
     {
-        // Always use the treeProfile, since the heavy profile might be showing.
-        view.profile.treeProfile._profilesTreeElement.searchMatches = matches;
+        view.profile._profilesTreeElement.searchMatches = matches;
     },
 
     searchCanceled: function(startingNewSearch)

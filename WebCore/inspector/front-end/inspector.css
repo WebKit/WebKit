@@ -2930,6 +2930,14 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     height: 100%;
 }
 
+.profile-view .data-grid th.average-column {
+    text-align: center;
+}
+
+.profile-view .data-grid td.average-column {
+    text-align: right;
+}
+
 .profile-view .data-grid th.self-column {
     text-align: center;
 }

@@ -1,3 +1,123 @@
+2009-04-23  Francisco Tolmasky  <francisco@280north.com>
+
+        BUG 24604: WebKit profiler reports incorrect total times
+        <https://bugs.webkit.org/show_bug.cgi?id=24604>
+
+        Reviewed by Timothy Hatcher and Kevin McCullough.
+
+        Made it so that most of the profiler functions now match the behavior of Shark. Most notably, in the
+        heavy view, child nodes now represent the statistics of the root node. Each root node of heavy view
+        displays flattened statistics for a particular function that ran during the profile, and each child
+        of these root nodes represents a callpath that lead to it. Thus, the statistics for each of these child
+        nodes should show how much of the root nodes values came from it. For example, if you had the following to
+        stacks take place during the profile:
+
+        A ->calls 1 times-> B ->calls 2 times-> C
+        D ->calls 4 times-> C
+
+        The tree for the C root node would look like this:
+
+        C -> B -> A
+          -> D
+
+        The number of calls values would look like this:
+
+        C (6) -> B (2) -> A(2)
+              -> D (4)
+
+        What this means is that "2 of the total 6 C calls came from B", "2 of the total C calls came from A", and
+        "4 of the total C calls came from D".  Notice that the "A ->calls 2 time->" is completely ignored. This becomes
+        particularly tricky during recursive calls, because each child note can represent multiple possible paths. This
+        is the reason that we would get things like 40000% previously with recursion.
+
+        This is also the way gprof works, and as close as we can get to Shark's behavior (Shark is not instrumented so it
+        can't know exactly how many calls came from where, etc).
+
+        * English.lproj/localizedStrings.js: Added "Average" for average times in the profile.
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::ProfileClass):
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::getParent):
+        (WebCore::getHead):
+        (WebCore::getCallUID):
+        (WebCore::ProfileNodeClass):
+        * inspector/front-end/BottomUpProfileDataGridTree.js: Added.
+        (WebInspector.BottomUpProfileDataGridTree):
+        (WebInspector.BottomUpProfileDataGridTree.prototype.focus):
+        (WebInspector.BottomUpProfileDataGridNode):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._takePropertiesFromProfileDataGridNode):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._keepOnlyChild):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._exclude):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._merge):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._populate):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertChild):
+        (WebInspector.DataGrid.prototype.removeChild):
+        (WebInspector.DataGrid.prototype.removeChildren):
+        (WebInspector.DataGridNode.prototype.set hasChildren):
+        (WebInspector.DataGridNode.prototype.get hasChildren):
+        * inspector/front-end/ProfileDataGridTree.js: Added.
+        (WebInspector.ProfileDataGridNode):
+        (WebInspector.ProfileDataGridNode.prototype.get data.formatMilliseconds):
+        (WebInspector.ProfileDataGridNode.prototype.get data):
+        (WebInspector.ProfileDataGridNode.prototype.createCell):
+        (WebInspector.ProfileDataGridNode.prototype.select):
+        (WebInspector.ProfileDataGridNode.prototype.deselect):
+        (WebInspector.ProfileDataGridNode.prototype.expand):
+        (WebInspector.ProfileDataGridNode.prototype.insertChild):
+        (WebInspector.ProfileDataGridNode.prototype.removeChild):
+        (WebInspector.ProfileDataGridNode.prototype.removeChildren):
+        (WebInspector.ProfileDataGridNode.prototype.findChild):
+        (WebInspector.ProfileDataGridNode.prototype.get averageTime):
+        (WebInspector.ProfileDataGridNode.prototype.get averagePercent):
+        (WebInspector.ProfileDataGridNode.prototype.get selfPercent):
+        (WebInspector.ProfileDataGridNode.prototype.get totalPercent):
+        (WebInspector.ProfileDataGridNode.prototype._save):
+        (WebInspector.ProfileDataGridNode.prototype._restore):
+        (WebInspector.ProfileDataGridNode.prototype._merge):
+        (WebInspector.ProfileDataGridTree):
+        (WebInspector.ProfileDataGridTree.prototype.get expanded):
+        (WebInspector.ProfileDataGridTree.prototype.appendChild):
+        (WebInspector.ProfileDataGridTree.prototype.insertChild):
+        (WebInspector.ProfileDataGridTree.prototype.removeChildren):
+        (WebInspector.ProfileDataGridTree.prototype.findChild.WebInspector.ProfileDataGridNode.prototype.findChild.sort.WebInspector.ProfileDataGridNode.prototype.sort._save):
+        (WebInspector.ProfileDataGridTree.propertyComparator.comparator):
+        (WebInspector.ProfileDataGridTree.propertyComparator.else.comparator):
+        (WebInspector.ProfileDataGridTree.propertyComparator):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.ProfileView):
+        (WebInspector.ProfileView.prototype.set profile):
+        (WebInspector.ProfileView.prototype.get bottomUpProfileDataGridTree):
+        (WebInspector.ProfileView.prototype.get topDownProfileDataGridTree):
+        (WebInspector.ProfileView.prototype.get currentTree):
+        (WebInspector.ProfileView.prototype.set currentTree):
+        (WebInspector.ProfileView.prototype.get topDownTree):
+        (WebInspector.ProfileView.prototype.get bottomUpTree):
+        (WebInspector.ProfileView.prototype.refresh):
+        (WebInspector.ProfileView.prototype.refreshVisibleData):
+        (WebInspector.ProfileView.prototype.refreshShowAsPercents):
+        (WebInspector.ProfileView.prototype.performSearch.matchesQuery):
+        (WebInspector.ProfileView.prototype.performSearch):
+        (WebInspector.ProfileView.prototype._changeView):
+        (WebInspector.ProfileView.prototype._focusClicked):
+        (WebInspector.ProfileView.prototype._excludeClicked):
+        (WebInspector.ProfileView.prototype._resetClicked):
+        (WebInspector.ProfileView.prototype._sortProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.showProfile):
+        (WebInspector.ProfilesPanel.prototype.showView):
+        (WebInspector.ProfilesPanel.prototype.searchMatchFound):
+        * inspector/front-end/TopDownProfileDataGridTree.js: Added.
+        (WebInspector.TopDownProfileDataGridNode):
+        (WebInspector.TopDownProfileDataGridNode.prototype._populate):
+        (WebInspector.TopDownProfileDataGridNode.prototype._exclude):
+        (WebInspector.TopDownProfileDataGridTree):
+        (WebInspector.TopDownProfileDataGridTree.prototype.focus):
+        (WebInspector.TopDownProfileDataGridTree.prototype.exclude):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-04-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.

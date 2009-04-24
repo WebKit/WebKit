@@ -67,7 +67,7 @@ function printProfilesDataWithoutTime()
     var profiles = console.profiles;
     for (var i = 0; i < profiles.length; ++i) {
         preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
-        printProfileNodeWithoutTime(preElement, profiles[i].treeProfile.head, 0);
+        printProfileNodeWithoutTime(preElement, profiles[i].head, 0);
         preElement.appendChild(document.createTextNode("\n"));
     }
 

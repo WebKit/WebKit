@@ -154,14 +154,10 @@
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
-		95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CD41B10E1BF6560085358E /* TreeProfile.cpp */; };
-		95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CD41B20E1BF6560085358E /* TreeProfile.h */; };
 		95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */; };
 		95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CD45750E1C4FDD0085358E /* ProfileGenerator.h */; settings = {ATTRIBUTES = (); }; };
 		95E3BC050E1AE68200B2D1C1 /* CallIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */; };
-		95FDFA140E22998F0006FB00 /* HeavyProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */; };
-		95FDFA160E2299980006FB00 /* HeavyProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95FDFA150E2299980006FB00 /* HeavyProfile.h */; };
 		960097A60EBABB58007A7297 /* LabelScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 960097A50EBABB58007A7297 /* LabelScope.h */; };
 		9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB130ED12B4E001D649F /* AssemblerBuffer.h */; };
 		9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D649F /* X86Assembler.h */; };
@@ -672,13 +668,9 @@
 		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
 		95AB83550DA43B4400BC83F3 /* ProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileNode.h; path = profiler/ProfileNode.h; sourceTree = "<group>"; };
 		95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRetainPtr.h; sourceTree = "<group>"; };
-		95CD41B10E1BF6560085358E /* TreeProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeProfile.cpp; path = profiler/TreeProfile.cpp; sourceTree = "<group>"; };
-		95CD41B20E1BF6560085358E /* TreeProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeProfile.h; path = profiler/TreeProfile.h; sourceTree = "<group>"; };
 		95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileGenerator.cpp; path = profiler/ProfileGenerator.cpp; sourceTree = "<group>"; };
 		95CD45750E1C4FDD0085358E /* ProfileGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileGenerator.h; path = profiler/ProfileGenerator.h; sourceTree = "<group>"; };
 		95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallIdentifier.h; path = profiler/CallIdentifier.h; sourceTree = "<group>"; };
-		95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeavyProfile.cpp; path = profiler/HeavyProfile.cpp; sourceTree = "<group>"; };
-		95FDFA150E2299980006FB00 /* HeavyProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeavyProfile.h; path = profiler/HeavyProfile.h; sourceTree = "<group>"; };
 		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelScope.h; sourceTree = "<group>"; };
 		9688CB130ED12B4E001D649F /* AssemblerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBuffer.h; sourceTree = "<group>"; };
 		9688CB140ED12B4E001D649F /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
@@ -1481,8 +1473,6 @@
 			isa = PBXGroup;
 			children = (
 				95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */,
-				95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */,
-				95FDFA150E2299980006FB00 /* HeavyProfile.h */,
 				95742F630DD11F5A000917FB /* Profile.cpp */,
 				95742F640DD11F5A000917FB /* Profile.h */,
 				95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */,
@@ -1493,8 +1483,6 @@
 				95AB832F0DA42CAD00BC83F3 /* Profiler.h */,
 				1C61516B0EBAC7A00031376F /* ProfilerServer.h */,
 				1C61516A0EBAC7A00031376F /* ProfilerServer.mm */,
-				95CD41B10E1BF6560085358E /* TreeProfile.cpp */,
-				95CD41B20E1BF6560085358E /* TreeProfile.h */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
@@ -1633,7 +1621,6 @@
 				BC18C40C0E16F5CD00B34460 /* HashSet.h in Headers */,
 				BC18C40D0E16F5CD00B34460 /* HashTable.h in Headers */,
 				BC18C40E0E16F5CD00B34460 /* HashTraits.h in Headers */,
-				95FDFA160E2299980006FB00 /* HeavyProfile.h in Headers */,
 				BC18C40F0E16F5CD00B34460 /* Identifier.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
@@ -1765,7 +1752,6 @@
 				BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */,
 				BC18C4700E16F5CD00B34460 /* Threading.h in Headers */,
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
-				95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */,
 				6507D29E0E871E5E00D7D896 /* TypeInfo.h in Headers */,
 				0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */,
 				BC18C4760E16F5CD00B34460 /* UString.h in Headers */,
@@ -2101,7 +2087,6 @@
 				A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */,
 				A782F1A50EEC9FA20036273F /* ExecutableAllocatorPosix.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
-				95FDFA140E22998F0006FB00 /* HeavyProfile.cpp in Sources */,
 				E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */,
 				1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
@@ -2144,7 +2129,6 @@
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				5D6A566B0F05995500266145 /* Threading.cpp in Sources */,
 				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
-				95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				869083150E6518D7000D36ED /* WREC.cpp in Sources */,
 				1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */,

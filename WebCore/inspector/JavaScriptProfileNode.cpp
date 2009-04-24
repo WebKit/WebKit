@@ -46,7 +46,7 @@ namespace WebCore {
 typedef HashMap<ProfileNode*, JSObject*> ProfileNodeMap;
 
 static ProfileNodeMap& profileNodeCache()
-{ 
+{
     DEFINE_STATIC_LOCAL(ProfileNodeMap, staticProfileNodes, ());
     return staticProfileNodes;
 }
@@ -162,7 +162,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
         return JSValueMakeUndefined(ctx);
 
     JSRetainPtr<JSStringRef> pushString(Adopt, JSStringCreateWithUTF8CString("push"));
-    
+
     JSValueRef pushProperty = JSObjectGetProperty(ctx, result, pushString.get(), exception);
     if (exception && *exception)
         return JSValueMakeUndefined(ctx);
@@ -181,6 +181,29 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     return result;
 }
 
+static JSValueRef getParent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    JSC::JSLock lock(false);
+
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return toRef(toJS(toJS(ctx), profileNode->parent())
+    );
+}
+
+static JSValueRef getHead(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    JSC::JSLock lock(false);
+
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return toRef(toJS(toJS(ctx), profileNode->head()));
+}
+
 static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
@@ -190,6 +213,17 @@ static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringR
 
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeBoolean(ctx, profileNode->visible());
+}
+
+static JSValueRef getCallUID(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    JSC::JSLock lock(false);
+
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(ctx, profileNode->callIdentifier().hash());
 }
 
 static void finalize(JSObjectRef object)
@@ -211,7 +245,10 @@ JSClassRef ProfileNodeClass()
         { "selfPercent", getSelfPercent, 0, kJSPropertyAttributeNone },
         { "numberOfCalls", getNumberOfCalls, 0, kJSPropertyAttributeNone },
         { "children", getChildren, 0, kJSPropertyAttributeNone },
+        { "parent", getParent, 0, kJSPropertyAttributeNone },
+        { "head", getHead, 0, kJSClassAttributeNone },
         { "visible", getVisible, 0, kJSPropertyAttributeNone },
+        { "callUID", getCallUID, 0, kJSPropertyAttributeNone },
         { 0, 0, 0, 0 }
     };
 

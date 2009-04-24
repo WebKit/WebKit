@@ -112,16 +112,6 @@ namespace JSC {
         ProfileNode* traverseNextNodePostOrder() const;
         ProfileNode* traverseNextNodePreOrder(bool processChildren = true) const;
 
-        void sort(bool (*)(const RefPtr<ProfileNode>&, const RefPtr<ProfileNode>&));
-        void sortTotalTimeDescending() { sort(totalTimeDescendingComparator); }
-        void sortTotalTimeAscending() { sort(totalTimeAscendingComparator); }
-        void sortSelfTimeDescending() { sort(selfTimeDescendingComparator); }
-        void sortSelfTimeAscending() { sort(selfTimeAscendingComparator); }
-        void sortCallsDescending() { sort(callsDescendingComparator); }
-        void sortCallsAscending() { sort(callsAscendingComparator); }
-        void sortFunctionNameDescending() { sort(functionNameDescendingComparator); }
-        void sortFunctionNameAscending() { sort(functionNameAscendingComparator); }
-
         // Views
         void calculateVisibleTotalTime();
         bool focus(const CallIdentifier&);
