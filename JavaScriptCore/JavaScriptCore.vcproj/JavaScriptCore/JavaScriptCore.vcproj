@@ -1397,6 +1397,42 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="yarr"
+			>
+			<File
+				RelativePath="..\..\yarr\RegexCompiler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexCompiler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexJIT.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexJIT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexInterpreter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexInterpreter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexPattern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexParser.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="jit"
 			>
 			<File

@@ -1,5 +1,14 @@
 2009-04-23  Gavin Barraclough  <barraclough@apple.com>
 
+        Not Reviewed.
+
+        Speculative Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * runtime/RegExp.cpp:
+
+2009-04-23  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by salty sea dogs Sam & Geoff.
 
         Enable YARR_JIT by default (where supported), replacing WREC.

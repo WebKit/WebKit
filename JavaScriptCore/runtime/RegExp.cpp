@@ -30,11 +30,11 @@
 
 #if ENABLE(YARR)
 
-#include "RegexCompiler.h"
+#include "yarr/RegexCompiler.h"
 #if ENABLE(YARR_JIT)
-#include "RegexJIT.h"
+#include "yarr/RegexJIT.h"
 #else
-#include "RegexInterpreter.h"
+#include "yarr/RegexInterpreter.h"
 #endif
 
 #else
