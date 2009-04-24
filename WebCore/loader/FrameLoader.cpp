@@ -4458,8 +4458,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form or navigating from
     // a page that was resulted from a form post.
-
-    bool shouldScroll = !formData && !m_currentHistoryItem->formData() && urlsMatchItem(item);
+    bool shouldScroll = m_currentHistoryItem && !formData && !m_currentHistoryItem->formData() && urlsMatchItem(item);
 
 #if ENABLE(WML)
     if (m_frame->document()->isWMLDocument())
