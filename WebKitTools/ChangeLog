@@ -1,3 +1,11 @@
+2009-04-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix nightly for Windows x64 users.
+        Installed browser location is written to a slightly different registry key in that case.
+        
+        * FindSafari/FindSafari.cpp:
+        (getInstalledWebKitDirectory):
+
 2009-04-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows DRT build.

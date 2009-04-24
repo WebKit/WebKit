@@ -60,8 +60,11 @@ static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
 static TCHAR* getInstalledWebKitDirectory()
 {
     LPCTSTR installPathKeyString = TEXT("SOFTWARE\\Apple Computer, Inc.\\Safari");
+    LPCTSTR installPathWin64KeyString = TEXT("SOFTWARE\\Wow6432Node\\Apple Computer, Inc.\\Safari");
     HKEY installPathKey = 0;
     LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, installPathKeyString, 0, KEY_READ, &installPathKey);
+    if (error != ERROR_SUCCESS)
+        error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, installPathWin64KeyString, 0, KEY_READ, &installPathKey);
     if (error != ERROR_SUCCESS) {
         LOG_WARNING(TEXT("Failed to open registry key %s\n"), installPathKeyString);
         return 0;
