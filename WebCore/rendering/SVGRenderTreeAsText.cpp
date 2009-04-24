@@ -448,92 +448,54 @@ static inline void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText&
         writeSVGInlineTextBox(ts, static_cast<SVGInlineTextBox*>(box), indent);
 }
 
-static String getTagName(SVGStyledElement* elem)
+static void writeStandardPrefix(TextStream& ts, const RenderObject& object, int indent)
 {
-    if (elem)
-        return elem->nodeName();
-    return "";
+    writeIndent(ts, indent);
+    ts << object.renderName();
+
+    if (object.node())
+        ts << " {" << object.node()->nodeName() << "}";
+}
+
+static void writeChildren(TextStream& ts, const RenderObject& object, int indent)
+{
+    for (RenderObject* child = object.firstChild(); child; child = child->nextSibling())
+        write(ts, *child, indent + 1);
 }
 
 void write(TextStream& ts, const RenderSVGContainer& container, int indent)
 {
-    writeIndent(ts, indent);
-    ts << container.renderName();
-
-    if (container.node()) {
-        String tagName = getTagName(static_cast<SVGStyledElement*>(container.node()));
-        if (!tagName.isEmpty())
-            ts << " {" << tagName << "}";
-    }
-
+    writeStandardPrefix(ts, container, indent);
     ts << container << "\n";
-
-    for (RenderObject* child = container.firstChild(); child; child = child->nextSibling())
-        write(ts, *child, indent + 1);
+    writeChildren(ts, container, indent);
 }
 
 void write(TextStream& ts, const RenderSVGRoot& root, int indent)
 {
-    writeIndent(ts, indent);
-    ts << root.renderName();
-
-    if (root.node()) {
-        String tagName = getTagName(static_cast<SVGStyledElement*>(root.node()));
-        if (!tagName.isEmpty())
-            ts << " {" << tagName << "}";
-    }
-
+    writeStandardPrefix(ts, root, indent);
     ts << root << "\n";
-
-    for (RenderObject* child = root.firstChild(); child; child = child->nextSibling())
-        write(ts, *child, indent + 1);
+    writeChildren(ts, root, indent);
 }
 
 void write(TextStream& ts, const RenderSVGText& text, int indent)
 {
-    writeIndent(ts, indent);
-    ts << text.renderName();
-
-    if (text.node()) {
-        String tagName = getTagName(static_cast<SVGStyledElement*>(text.node()));
-        if (!tagName.isEmpty())
-            ts << " {" << tagName << "}";
-    }
-
+    writeStandardPrefix(ts, text, indent);
     ts << text << "\n";
-
-    for (RenderObject* child = text.firstChild(); child; child = child->nextSibling())
-        write(ts, *child, indent + 1);
+    writeChildren(ts, text, indent);
 }
 
 void write(TextStream& ts, const RenderSVGInlineText& text, int indent)
 {
-    writeIndent(ts, indent);
-    ts << text.renderName();
+    writeStandardPrefix(ts, text, indent);
 
-    if (text.node()) {
-        String tagName = getTagName(static_cast<SVGStyledElement*>(text.node()));
-        if (!tagName.isEmpty())
-            ts << " {" << tagName << "}";
-    }
-
-    IntRect linesBox = text.linesBoundingBox();
-
-    ts << " at (" << text.firstRunX() << "," << text.firstRunY() << ") size " << linesBox.width() << "x" << linesBox.height() << "\n";
+    // Why not just linesBoundingBox()?
+    ts << " " << FloatRect(text.firstRunOrigin(), text.linesBoundingBox().size()) << "\n";
     writeSVGInlineText(ts, text, indent);
 }
 
 void write(TextStream& ts, const RenderPath& path, int indent)
 {
-    writeIndent(ts, indent);
-    ts << path.renderName();
-
-    if (path.node()) {
-        String tagName = getTagName(static_cast<SVGStyledElement*>(path.node()));
-        if (!tagName.isEmpty())
-            ts << " {" << tagName << "}";
-    }
-
+    writeStandardPrefix(ts, path, indent);
     ts << path << "\n";
 }
 
@@ -554,6 +516,7 @@ void writeRenderResources(TextStream& ts, Node* parent)
             continue;
 
         String elementId = svgElement->getAttribute(HTMLNames::idAttr);
+        // FIXME: These names are lies!
         if (resource->isPaintServer()) {
             RefPtr<SVGPaintServer> paintServer = WTF::static_pointer_cast<SVGPaintServer>(resource);
             ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *paintServer << "}" << "\n";

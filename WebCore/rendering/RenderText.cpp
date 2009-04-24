@@ -763,6 +763,11 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
     return currPos >= (from + len);
 }
 
+IntPoint RenderText::firstRunOrigin() const
+{
+    return IntPoint(firstRunX(), firstRunY());
+}
+
 int RenderText::firstRunX() const
 {
     return m_firstTextBox ? m_firstTextBox->m_x : 0;

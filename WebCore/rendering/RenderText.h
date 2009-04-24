@@ -84,6 +84,7 @@ public:
 
     IntRect linesBoundingBox() const;
 
+    IntPoint firstRunOrigin() const;
     int firstRunX() const;
     int firstRunY() const;
 

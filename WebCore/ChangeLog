@@ -1,3 +1,20 @@
+2009-04-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        SVGRenderTreeAsText cleanup/code sharing.
+
+        No test changes, only code cleanup.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::firstRunOrigin):
+        * rendering/RenderText.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStandardPrefix):
+        (WebCore::writeChildren):
+        (WebCore::write):
+        (WebCore::writeRenderResources):
+
 2009-04-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
