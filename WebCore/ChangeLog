@@ -1,5 +1,13 @@
 2009-04-24  Dan Bernstein  <mitz@apple.com>
 
+        - address Hyatt's review comments on the last patch
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::performOverlapTests):
+        (WebCore::RenderLayer::paintLayer):
+
+2009-04-24  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=5909

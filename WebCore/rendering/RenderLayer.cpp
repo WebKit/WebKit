@@ -1911,8 +1911,22 @@ static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const
     p->restore();
 }
 
-void
-RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
+static void performOverlapTests(RenderObject::OverlapTestRequestMap& overlapTestRequests, const IntRect& layerBounds)
+{
+    Vector<OverlapTestRequestClient*> overlappedRequestClients;
+    RenderObject::OverlapTestRequestMap::iterator end = overlapTestRequests.end();
+    for (RenderObject::OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it) {
+        if (!layerBounds.intersects(it->second))
+            continue;
+
+        it->first->setOverlapTestResult(true);
+        overlappedRequestClients.append(it->first);
+    }
+    for (size_t i = 0; i < overlappedRequestClients.size(); ++i)
+        overlapTestRequests.remove(overlappedRequestClients[i]);
+}
+
+void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const IntRect& paintDirtyRect, bool haveTransparency, PaintRestriction paintRestriction,
                         RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
                         bool appliedTransform, bool temporaryClipRects)
@@ -2013,19 +2027,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    if (overlapTestRequests) {
-         Vector<OverlapTestRequestClient*> overlappedRequestClients;
-        RenderObject::OverlapTestRequestMap::iterator end = overlapTestRequests->end();
-        for (RenderObject::OverlapTestRequestMap::iterator it = overlapTestRequests->begin(); it != end; ++it) {
-            if (!layerBounds.intersects(it->second))
-                continue;
-
-            it->first->setOverlapTestResult(true);
-            overlappedRequestClients.append(it->first);
-        }
-        for (size_t i = 0; i < overlappedRequestClients.size(); ++i)
-            overlapTestRequests->remove(overlappedRequestClients[i]);
-    }
+    if (overlapTestRequests)
+        performOverlapTests(*overlapTestRequests, layerBounds);
 
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect, rootLayer) && m_hasVisibleContent;
