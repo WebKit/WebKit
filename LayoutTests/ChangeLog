@@ -1,3 +1,15 @@
+2009-04-24  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added Qt-specific expected result for color conversion.
+
+        This is to compensate the lack of color profile in Qt to do
+        color conversion, hence CMYK 0,0,0,1 always give pure black (#000)
+        instead of very dark black.
+
+        * platform/qt/fast/canvas/set-colors-expected.txt: Added.
+
 2009-04-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
