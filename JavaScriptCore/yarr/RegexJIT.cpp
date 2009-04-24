@@ -252,7 +252,7 @@ class RegexGenerator : private MacroAssembler {
 
     DataLabelPtr storeToFrameWithPatch(unsigned frameLocation)
     {
-        return storePtrWithPatch(Address(stackPointerRegister, frameLocation));
+        return storePtrWithPatch(Address(stackPointerRegister, frameLocation * sizeof(void*)));
     }
 
     void loadFromFrame(unsigned frameLocation, RegisterID reg)
@@ -262,7 +262,7 @@ class RegexGenerator : private MacroAssembler {
 
     void loadFromFrameAndJump(unsigned frameLocation)
     {
-        jump(Address(stackPointerRegister, frameLocation));
+        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)));
     }
 
     struct AlternativeBacktrackRecord {
@@ -826,6 +826,10 @@ class RegexGenerator : private MacroAssembler {
 
                 // Alternative did not match.
                 Label backtrackLocation(this);
+                
+                // Can we backtrack the alternative? - if so, do so.  If not, just fall through to the next one.
+                state.plantJumpToBacktrackIfExists(this);
+                
                 state.linkAlternativeBacktracks(this);
 
                 if (countToCheck) {
@@ -956,7 +960,7 @@ class RegexGenerator : private MacroAssembler {
         ASSERT(term.quantityType == QuantifierFixedCount);
 
         unsigned parenthesesFrameLocation = term.frameLocation;
-        unsigned alternativeFrameLocation = parenthesesFrameLocation += RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce;
+        unsigned alternativeFrameLocation = parenthesesFrameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertionOnce;
 
         int countCheckedAfterAssertion = state.checkedTotal - term.inputPosition;
 
@@ -1063,7 +1067,7 @@ class RegexGenerator : private MacroAssembler {
             break;
 
         case PatternTerm::TypeParenthesesSubpattern:
-            if (term.quantityCount == 1)
+            if ((term.quantityCount == 1) && !term.parentheses.isCopy)
                 generateParenthesesSingle(state);
             else
                 m_generationFailed = true;
@@ -1240,7 +1244,7 @@ int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, 
 {
     if (jitObject.m_pcreFallback) {
         int result = jsRegExpExecute(jitObject.m_pcreFallback, input, length, start, output, outputArraySize);
-        return (result < 0) ? result : output[0];
+        return (result < 0) ? -1 : output[0];
     } else {
 #if PLATFORM(X86) && !COMPILER(MSVC)
         typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output) __attribute__ ((regparm (3)));

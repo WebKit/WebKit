@@ -90,6 +90,7 @@ struct PatternTerm {
             PatternDisjunction* disjunction;
             unsigned subpatternId;
             unsigned lastSubpatternId;
+            bool isCopy;
         } parentheses;
     };
     QuantifierType quantityType;
@@ -120,6 +121,7 @@ struct PatternTerm {
     {
         parentheses.disjunction = disjunction;
         parentheses.subpatternId = subpatternId;
+        parentheses.isCopy = false;
         quantityType = QuantifierFixedCount;
         quantityCount = 1;
     }

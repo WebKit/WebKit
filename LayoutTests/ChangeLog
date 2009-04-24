@@ -1,3 +1,13 @@
+2009-04-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff "Dread Pirate Roberts" Garen.
+
+        This test tries to force itself into PCRE; modify the
+        test so that as well as dodging WREC it can also avoid
+        YARR!
+
+        * fast/js/resources/regexp-overflow-too-big.js:
+
 2009-04-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam Roben.

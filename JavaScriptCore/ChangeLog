@@ -1,3 +1,42 @@
+2009-04-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff "Dread Pirate Roberts" Garen.
+
+        Various small fixes to YARR JIT, in preparation for enabling it by default.
+
+        * Correctly index into the callframe when storing restart addresses for
+          nested alternatives.
+        * Allow backtracking back into matched alternatives of parentheses.
+        * Fix callframe offset calculation for parenthetical assertions.
+        * When a set of parenthese are quantified with a fixed and variable portion,
+          and the variable portion is quantified once, this should not reset the
+          pattern match on failure to match (the last match from the firxed portion
+          should be preserved).
+        * Up the pattern size limit to match PCRE's new limit.
+        * Unlclosed parentheses should be reported with the message "missing )".
+
+        * wtf/Platform.h:
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::quantifyAtom):
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeOffsets):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::loadFromFrameAndJump):
+        (JSC::Yarr::RegexGenerator::generateParenthesesDisjunction):
+        (JSC::Yarr::RegexGenerator::generateParentheticalAssertion):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::executeRegex):
+        * yarr/RegexParser.h:
+        (JSC::Yarr::Parser::):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::parse):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternTerm::):
+        (JSC::Yarr::PatternTerm::PatternTerm):
+
 2009-04-22  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Gavin Barraclough.

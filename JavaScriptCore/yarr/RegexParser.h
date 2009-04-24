@@ -55,6 +55,7 @@ private:
         PatternTooLarge,
         QuantifierOutOfOrder,
         QuantifierWithoutAtom,
+        MissingParentheses,
         ParenthesesUnmatched,
         ParenthesesTypeInvalid,
         CharacterClassUnmatched,
@@ -624,7 +625,7 @@ private:
         }
 
         if (m_parenthesesNestingDepth > 0)
-            m_err = ParenthesesUnmatched;
+            m_err = MissingParentheses;
     }
 
     /*
@@ -655,6 +656,7 @@ private:
             "regular expression too large",
             "numbers out of order in {} quantifier",
             "nothing to repeat",
+            "missing )",
             "unmatched parentheses",
             "unrecognized character after (?",
             "missing terminating ] for character class",
@@ -767,7 +769,8 @@ private:
     unsigned m_index;
     unsigned m_parenthesesNestingDepth;
 
-    static const unsigned MAX_PATTERN_SIZE = (1 << 13);
+    // Derived by empirical testing of compile time in PCRE and WREC.
+    static const unsigned MAX_PATTERN_SIZE = 1024 * 1024;
 };
 
 /*

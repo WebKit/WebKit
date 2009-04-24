@@ -541,6 +541,8 @@ public:
             m_alternative->m_terms.append(copyTerm(term));
             // NOTE: this term is interesting from an analysis perspective, in that it can be ignored.....
             m_alternative->lastTerm().quantify((max == UINT_MAX) ? max : max - min, greedy ? QuantifierGreedy : QuantifierNonGreedy);
+            if (m_alternative->lastTerm().type == PatternTerm::TypeParenthesesSubpattern)
+                m_alternative->lastTerm().parentheses.isCopy = true;
         }
     }
 
@@ -607,7 +609,7 @@ public:
             case PatternTerm::TypeParenthesesSubpattern:
                 // Note: for fixed once parentheses we will ensure at least the minimum is available; others are on their own.
                 term.frameLocation = currentCallFrameSize;
-                if (term.quantityCount == 1) {
+                if ((term.quantityCount == 1) && !term.parentheses.isCopy) {
                     if (term.quantityType == QuantifierFixedCount) {
                         currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
                         currentInputPosition += term.parentheses.disjunction->m_minimumSize;
