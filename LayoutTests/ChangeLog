@@ -1,3 +1,10 @@
+2009-04-23  Darin Adler  <darin@apple.com>
+
+        Removed some stray files that Geoff missed when rolling out changes.
+
+        * svg/custom/resources/svg-fonts-in-text-controls.js: Removed.
+        * svg/custom/svg-fonts-in-text-controls-expected.txt: Removed.
+
 2009-04-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff "Dread Pirate Roberts" Garen.
