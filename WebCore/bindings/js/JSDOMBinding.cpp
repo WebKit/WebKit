@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -419,7 +419,7 @@ UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValuePtr value)
     return value.toString(exec);
 }
 
-void reportException(JSC::ExecState* exec, JSValuePtr exception)
+void reportException(ExecState* exec, JSValuePtr exception)
 {
     UString errorMessage = exception.toString(exec);
     JSObject* exceptionObject = exception.toObject(exec);
@@ -428,10 +428,17 @@ void reportException(JSC::ExecState* exec, JSValuePtr exception)
     exec->clearException();
 
     ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    ASSERT(scriptExecutionContext);
+
+    // Crash data indicates null-dereference crashes at this point in the Safari 4 Public Beta.
+    // It's harmless to return here without reporting the exception to the log and the debugger in this case.
+    if (!scriptExecutionContext)
+        return;
+
     scriptExecutionContext->reportException(errorMessage, lineNumber, exceptionSourceURL);
 }
 
-void reportCurrentException(JSC::ExecState* exec)
+void reportCurrentException(ExecState* exec)
 {
     JSValuePtr exception = exec->exception();
     exec->clearException();

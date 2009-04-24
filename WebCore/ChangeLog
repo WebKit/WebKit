@@ -1,3 +1,12 @@
+2009-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6663836> CrashTracer: crashes in Safari at com.apple.WebCore • WebCore::reportException + 1513
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException): Added a null check.
+
 2009-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
