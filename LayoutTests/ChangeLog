@@ -1,3 +1,11 @@
+2009-04-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Speculative fix for leopard build-bot until I have a fix on leopard.
+
+        * platform/mac-leopard/editing: Added.
+        * platform/mac-leopard/editing/deleting: Added.
+        * platform/mac-leopard/editing/deleting/deletionUI-differing-background-expected.txt: Added.
+
 2009-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

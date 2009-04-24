@@ -1,0 +1,18 @@
+This tests if the deletion UI will show on elements with different background colors or images. This test can be run by DRT but not in the browser.
+
+sameBackground HAS deletion UI
+differentBackgroundColor HAS deletion UI
+differentBackgroundImage has NO deletion UI
+fullyTransparentChildWithNonTransparentParent has NO deletion UI
+nonTransparentChildWithSemiTransparentParent HAS deletion UI
+fullyTransparentChildWithSemiTransparentParent has NO deletion UI
+nonTransparentChildWithFullyTransparentParent HAS deletion UI
+fullyTransparentChildWithFullyTransparentParent has NO deletion UI
+
+
+
+
+
+
+
+
