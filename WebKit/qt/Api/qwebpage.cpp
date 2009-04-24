@@ -1137,7 +1137,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     This enum describes the types of action which can be performed on the web page.
 
     Actions only have an effect when they are applicable. The availability of
-    actions can be be determined by checking \l{QAction::}{enabled()} on the
+    actions can be be determined by checking \l{QAction::}{isEnabled()} on the
     action returned by \l{QWebPage::}{action()}.
 
     One method of enabling the text editing, cursor movement, and text selection actions
