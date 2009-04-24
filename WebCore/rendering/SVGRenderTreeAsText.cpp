@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "RenderSVGRoot.h"
@@ -330,6 +331,11 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
     return writePositionAndStyle(ts, root);
 }
 
+static TextStream& operator<<(TextStream& ts, const RenderSVGImage& root)
+{
+    return writePositionAndStyle(ts, root);
+}
+
 static TextStream& operator<<(TextStream& ts, const RenderSVGText& text)
 {
     SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
@@ -503,6 +509,12 @@ void write(TextStream& ts, const RenderPath& path, int indent)
 {
     writeStandardPrefix(ts, path, indent);
     ts << path << "\n";
+}
+
+void write(TextStream& ts, const RenderSVGImage& image, int indent)
+{
+    writeStandardPrefix(ts, image, indent);
+    ts << image << "\n";
 }
 
 void writeRenderResources(TextStream& ts, Node* parent)

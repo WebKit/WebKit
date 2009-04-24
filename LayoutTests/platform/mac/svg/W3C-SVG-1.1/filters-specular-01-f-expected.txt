@@ -15,9 +15,9 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
           RenderPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
           RenderPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (90,50) size 50x30 [filter=surfaceScaleA]
+        RenderSVGImage {image} at (205,50) size 50x30 [filter=surfaceScaleB]
+        RenderSVGImage {image} at (320,50) size 50x30 [filter=surfaceScaleC]
       RenderSVGContainer {g} at (90,101) size 305x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
         RenderSVGText {text} at (90,25) size 305x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 305x18
@@ -26,9 +26,9 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
           RenderPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
           RenderPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (90,120) size 50x30 [filter=specularConstantA]
+        RenderSVGImage {image} at (205,120) size 50x30 [filter=specularConstantB]
+        RenderSVGImage {image} at (320,120) size 50x30 [filter=specularConstantC]
       RenderSVGContainer {g} at (90,171) size 310x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
         RenderSVGText {text} at (90,25) size 310x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 310x18
@@ -37,9 +37,9 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
           RenderPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
           RenderPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (90,190) size 50x30 [filter=specularExponentA]
+        RenderSVGImage {image} at (205,190) size 50x30 [filter=specularExponentB]
+        RenderSVGImage {image} at (320,190) size 50x30 [filter=specularExponentC]
       RenderSVGContainer {g} at (90,241) size 341x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
         RenderSVGText {text} at (90,25) size 341x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 341x18
@@ -48,9 +48,9 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
           RenderPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
           RenderPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
-        RenderSVGImage {image} at (0,0) size 50x30
+        RenderSVGImage {image} at (90,260) size 50x30 [filter=lightingColorA]
+        RenderSVGImage {image} at (205,260) size 50x30 [filter=lightingColorB]
+        RenderSVGImage {image} at (320,260) size 50x30 [filter=lightingColorC]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"

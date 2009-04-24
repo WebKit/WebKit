@@ -47,6 +47,7 @@
 #include "RenderPath.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
@@ -373,6 +374,10 @@ void write(TextStream& ts, const RenderObject& o, int indent)
             write(ts, static_cast<const RenderSVGText&>(o), indent);
         else
             write(ts, static_cast<const RenderSVGInlineText&>(o), indent);
+        return;
+    }
+    if (o.isSVGImage()) {
+        write(ts, static_cast<const RenderSVGImage&>(o), indent);
         return;
     }
 #endif

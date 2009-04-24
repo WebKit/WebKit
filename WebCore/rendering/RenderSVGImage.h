@@ -40,6 +40,7 @@ namespace WebCore {
         virtual ~RenderSVGImage();
 
         virtual const char* renderName() const { return "RenderSVGImage"; }
+        virtual bool isSVGImage() const { return true; }
 
         virtual TransformationMatrix localTransform() const { return m_localTransform; }
 

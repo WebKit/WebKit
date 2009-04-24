@@ -1,3 +1,48 @@
+2009-04-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix RenderSVGImage to dump with full bounds and style information
+        https://bugs.webkit.org/show_bug.cgi?id=25377
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/color-prof-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-09-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-10-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * platform/mac/svg/carto.net/scrollbar-expected.txt:
+        * platform/mac/svg/carto.net/selectionlist-expected.txt:
+        * platform/mac/svg/custom/focus-ring-expected.txt:
+        * platform/mac/svg/custom/group-opacity-expected.txt:
+        * platform/mac/svg/custom/image-clipped-hit-expected.txt:
+        * platform/mac/svg/custom/image-parent-translation-expected.txt:
+        * platform/mac/svg/custom/image-small-width-height-expected.txt:
+        * platform/mac/svg/custom/image-with-aspect-ratio-stretch-expected.txt:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/mac/svg/custom/pointer-events-image-expected.txt:
+        * platform/mac/svg/custom/repaint-on-image-bounds-change-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/text-image-opacity-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt:
+
 2009-04-24  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser

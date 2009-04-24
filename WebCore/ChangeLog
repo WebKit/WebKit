@@ -1,3 +1,23 @@
+2009-04-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix RenderSVGImage to dump with full bounds and style information.
+        https://bugs.webkit.org/show_bug.cgi?id=25377
+        
+        No functional changes, we're just now including more info in render tree dumps.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGImage):
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::isSVGImage):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::write):
+        * rendering/SVGRenderTreeAsText.h:
+
 2009-04-24  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (chromium build fix).

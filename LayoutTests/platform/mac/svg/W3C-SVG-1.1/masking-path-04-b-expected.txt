@@ -6,12 +6,12 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (20,20) size 420x310
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (30,20) size 410x140
-        RenderSVGImage {image} at (0,0) size 410x140
+        RenderSVGImage {image} at (30,20) size 410x140
         RenderSVGText {text} at (55,130) size 353x122 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-101) size 353x122
             chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 353.00: "Clip Test"
       RenderSVGContainer {g} at (20,170) size 410x160
-        RenderSVGImage {image} at (0,0) size 410x160
+        RenderSVGImage {image} at (20,170) size 410x160 [clip path="sample"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"

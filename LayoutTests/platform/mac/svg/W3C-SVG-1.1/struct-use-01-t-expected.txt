@@ -82,7 +82,7 @@ layer at (0,0) size 480x360
             RenderPath {path} at (150,205) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {use} at (150,235) size 20x20
           RenderSVGContainer {g} at (150,235) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
-            RenderSVGImage {image} at (0,0) size 20x20
+            RenderSVGImage {image} at (150,235) size 20x20
         RenderSVGContainer {use} at (150,262) size 46x29
           RenderSVGContainer {g} at (150,262) size 46x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
             RenderSVGText {text} at (0,0) size 46x29 contains 1 chunk(s)

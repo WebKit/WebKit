@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (0,0) size 240x150
           RenderSVGContainer {g} at (0,0) size 240x150
             RenderSVGViewportContainer {svg} at (0,0) size 240x150
-              RenderSVGImage {image} at (0,0) size 1000x1000
+              RenderSVGImage {image} at (0,0) size 240x150
         RenderSVGContainer {use} at (240,150) size 240x150
           RenderSVGContainer {g} at (240,150) size 240x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
             RenderSVGViewportContainer {svg} at (240,150) size 240x150

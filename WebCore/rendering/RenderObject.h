@@ -293,6 +293,7 @@ public:
     virtual bool isSVGHiddenContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
     virtual bool isSVGText() const { return false; }
+    virtual bool isSVGImage() const { return false; }
 
     // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
     // This is used for all computation of objectBoundingBox relative units and by SVGLocateable::getBBox().

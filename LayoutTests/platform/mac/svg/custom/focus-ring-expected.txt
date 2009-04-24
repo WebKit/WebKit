@@ -22,7 +22,7 @@ layer at (0,0) size 800x1000
       RenderSVGText {text} at (0,0) size 76x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 76x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 76.00: "focused text"
-    RenderSVGImage {image} at (0,0) size 530x410
-    RenderSVGImage {image} at (0,0) size 530x410
+    RenderSVGImage {image} at (10,400) size 530x410 [clip path="clip"]
+    RenderSVGImage {image} at (-5,400) size 663.99x620.07 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,400.00)}] [clip path="clip"]
     RenderSVGContainer {g} at (155,400) size 663.99x620.07 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,400.00)}]
-      RenderSVGImage {image} at (0,0) size 530x410
+      RenderSVGImage {image} at (155,400) size 663.99x620.07 [clip path="clip"]
