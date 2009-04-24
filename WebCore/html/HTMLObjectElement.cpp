@@ -32,7 +32,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "MIMETypeRegistry.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"

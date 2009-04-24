@@ -30,7 +30,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
 #include <wtf/StdLibExtras.h>

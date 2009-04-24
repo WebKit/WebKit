@@ -29,7 +29,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "Length.h"
 #include "Length.h"
 #include "MouseEvent.h"

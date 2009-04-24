@@ -34,7 +34,7 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"

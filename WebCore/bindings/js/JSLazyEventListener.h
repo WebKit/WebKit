@@ -25,7 +25,6 @@
 
 namespace WebCore {
 
-    class Attribute;
     class Node;
 
     class JSLazyEventListener : public JSEventListener {
@@ -51,9 +50,6 @@ namespace WebCore {
         int m_lineNumber;
         Node* m_originalNode;
     };
-
-    PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node*, Attribute*);
-    PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame*, Attribute*);
 
 } // namespace WebCore
 

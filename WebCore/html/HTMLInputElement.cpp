@@ -41,7 +41,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"

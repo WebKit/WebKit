@@ -13807,6 +13807,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptEventListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptEventListener.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptFunctionCall.cpp"
 					>
 				</File>

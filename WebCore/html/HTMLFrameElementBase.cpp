@@ -34,7 +34,7 @@
 #include "FrameView.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "KURL.h"
 #include "Page.h"
 #include "RenderFrame.h"

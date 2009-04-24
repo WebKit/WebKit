@@ -30,7 +30,7 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "RenderImage.h"
 
 using namespace std;

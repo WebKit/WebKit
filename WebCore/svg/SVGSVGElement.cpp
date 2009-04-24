@@ -34,7 +34,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderSVGRoot.h"
 #include "SVGAngle.h"

@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
-#include "JSLazyEventListener.h"
 
 #if ENABLE(WORKERS)
 #include "JSWorkerContext.h"

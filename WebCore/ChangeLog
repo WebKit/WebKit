@@ -1,3 +1,40 @@
+2009-04-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25370
+        Introduce ScriptEventListener to refactor away direct references to
+        JSLazyEventListener in WebCore code.
+
+        * GNUmakefile.am: Added ScriptEventListener to project.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSDOMGlobalObject.cpp: Removed unused JSLazyEventListener include.
+        * bindings/js/JSLazyEventListener.cpp: Moved createAttributeEventListener helpers
+            to ScriptEventListener.
+        * bindings/js/JSLazyEventListener.h: Ditto.
+        * bindings/js/ScriptController.cpp: Removed unused JSLazyEventListener include.
+        * bindings/js/ScriptEventListener.cpp: Added.
+        * bindings/js/ScriptEventListener.h: Added.
+        * bindings/v8/ScriptEventListener.cpp: Added.
+        * bindings/v8/ScriptEventListener.h: Added.
+        * dom/Document.cpp: Renamed JSLazyEventListener include to ScriptEventListener.
+        * html/HTMLBodyElement.cpp: Ditto.
+        * html/HTMLButtonElement.cpp: Ditto.
+        * html/HTMLElement.cpp: Ditto.
+        * html/HTMLFormElement.cpp: Ditto.
+        * html/HTMLFrameElementBase.cpp: Ditto.
+        * html/HTMLFrameSetElement.cpp: Ditto.
+        * html/HTMLImageElement.cpp: Ditto.
+        * html/HTMLInputElement.cpp: Ditto.
+        * html/HTMLObjectElement.cpp: Ditto.
+        * html/HTMLScriptElement.cpp: Ditto.
+        * html/HTMLSelectElement.cpp: Ditto.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+        * svg/SVGElement.cpp: Ditto.
+        * svg/SVGSVGElement.cpp: Ditto.
+
 2009-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

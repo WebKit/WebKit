@@ -42,7 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"

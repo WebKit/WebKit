@@ -26,7 +26,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "Text.h"
 
 namespace WebCore {

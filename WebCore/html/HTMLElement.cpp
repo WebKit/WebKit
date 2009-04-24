@@ -37,7 +37,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "RenderWordBreak.h"
 #include "Settings.h"
 #include "Text.h"

@@ -27,7 +27,6 @@
 #include "GCController.h"
 #include "HTMLPlugInElement.h"
 #include "JSDocument.h"
-#include "JSLazyEventListener.h"
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageGroup.h"

@@ -33,7 +33,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "JSLazyEventListener.h"
+#include "ScriptEventListener.h"
 #include "PlatformString.h"
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
