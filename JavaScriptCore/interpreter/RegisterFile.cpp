@@ -42,4 +42,17 @@ RegisterFile::~RegisterFile()
 #endif
 }
 
+void RegisterFile::releaseExcessCapacity()
+{
+    m_maxUsed = m_start;
+    void* memoryToRelease = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(reinterpret_cast<char*>(m_start) + commitSize * 2 - 1) & ~(commitSize - 1));
+    ptrdiff_t size = reinterpret_cast<char*>(m_end) - reinterpret_cast<char*>(memoryToRelease);
+#if HAVE(MMAP) && !HAVE(VIRTUALALLOC)
+    while (madvise(memoryToRelease, size, MADV_FREE) == -1 && errno == EAGAIN) { }
+#elif HAVE(VIRTUALALLOC)
+    VirtualFree(memoryToRelease, size, MEM_DECOMMIT);
+    m_commitEnd = memoryToRelease;
+#endif
+}
+
 } // namespace JSC

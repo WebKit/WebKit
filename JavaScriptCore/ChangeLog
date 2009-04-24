@@ -1,3 +1,21 @@
+2009-04-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6050421> JavaScript register file should remap to release physical pages accumulated during deep recursion
+
+        We now track the maximum extent of the RegisterFile, and when we reach the final
+        return from JS (so the stack portion of the registerfile becomes empty) we see
+        if that extent is greater than maxExcessCapacity.  If it is we use madvise or
+        VirtualFree to release the physical pages that were backing the excess.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::releaseExcessCapacity):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::shrink):
+        (JSC::RegisterFile::grow):
+
 2009-04-23  Mark Rowe  <mrowe@apple.com>
 
         With great sadness and a heavy heart I switch us back from YARR to WREC in
