@@ -1,3 +1,57 @@
+2009-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=5909
+          <rdar://problem/5863349> overlapping element leaves trail when
+          scrolling iframe
+
+        * WebCore.xcodeproj/project.pbxproj: Added OverlapTestRequestClient.h.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset): Initialize m_isOverlapped.
+        (WebCore::FrameView::useSlowRepaints): Also check m_isOverlapped.
+        (WebCore::FrameView::removeSlowRepaintObject): Use useSlowRepaints()
+        so overlapping is taken into account.
+        (WebCore::FrameView::setIsOverlapped): Added. Sets m_isOverlapped and
+        enables or disables copy-on-scroll accordingly.
+
+        * page/FrameView.h:
+        Added setIsOverlapped() and m_isOverlapped.
+
+        * rendering/OverlapTestRequestClient.h: Added. During foreground painting,
+        an OverlapTestRequestClient can make a request to test if any subsequently-
+        painted layers overlap a rect. The test result is delivered to the
+        requestClient via setOverlapTestResult().
+        (WebCore::OverlapTestRequestClient::~OverlapTestRequestClient):
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint): Pass an OverlapTestRequestMap to
+        paintLayer(). When done painting, inform any remaining requestClients that
+        they are not overlapped.
+
+        (WebCore::RenderLayer::paintLayer): Take an OverlapTestRequestMap and
+        pass it down to child and reflection layers. Inform requestClients if this
+        layer overlaps their requested rects.
+
+        * rendering/RenderLayer.h:
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::PaintInfo::PaintInfo): Added an
+        OverlapTestRequestMap member.
+
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint): For now, pass a 0 OverlapTestRequestMap
+        to paintLayer().
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): For FrameViews, request an overlap test
+        with the frame.
+        (WebCore::RenderWidget::setOverlapTestResult): Call
+        FrameView::setIsOverlapped() with the result of the overlap test.
+
+        * rendering/RenderWidget.h: Made RenderWidget an OverlapTestRequestClient.
+
 2009-04-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser, Dan Bernstein.

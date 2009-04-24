@@ -143,6 +143,7 @@ public:
     void setMediaType(const String&);
 
     void setUseSlowRepaints();
+    void setIsOverlapped(bool);
 
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
@@ -193,6 +194,7 @@ private:
 
     virtual bool isFrameView() const;
 
+    friend class RenderWidget;
     bool useSlowRepaints() const;
 
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
@@ -230,6 +232,7 @@ private:
     ScrollbarMode m_vmode;
     ScrollbarMode m_hmode;
     bool m_useSlowRepaints;
+    bool m_isOverlapped;
     unsigned m_slowRepaintObjectCount;
 
     int m_borderX, m_borderY;

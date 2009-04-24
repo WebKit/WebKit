@@ -441,6 +441,7 @@ private:
     
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
                     bool haveTransparency, PaintRestriction, RenderObject* paintingRoot,
+                    RenderObject::OverlapTestRequestMap* = 0,
                     bool appliedTransform = false, bool temporaryClipRects = false);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,

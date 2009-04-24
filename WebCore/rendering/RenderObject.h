@@ -41,6 +41,7 @@ class AnimationController;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
+class OverlapTestRequestClient;
 class Position;
 class RenderBoxModelObject;
 class RenderInline;
@@ -433,19 +434,23 @@ public:
     // the offset of baseline from the top of the object.
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
+    typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
+
     /*
      * Paint the object and its children, clipped by (x|y|w|h).
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
         PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceBlackText,
-                  RenderObject* newPaintingRoot, ListHashSet<RenderInline*>* newOutlineObjects)
+                  RenderObject* newPaintingRoot, ListHashSet<RenderInline*>* newOutlineObjects,
+                  OverlapTestRequestMap* overlapTestRequests = 0)
             : context(newContext)
             , rect(newRect)
             , phase(newPhase)
             , forceBlackText(newForceBlackText)
             , paintingRoot(newPaintingRoot)
             , outlineObjects(newOutlineObjects)
+            , overlapTestRequests(overlapTestRequests)
         {
         }
 
@@ -455,6 +460,7 @@ public:
         bool forceBlackText;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
         ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
+        OverlapTestRequestMap* overlapTestRequests;
     };
 
     virtual void paint(PaintInfo&, int tx, int ty);

@@ -610,6 +610,7 @@
 		3724CA590E68A7E400DB4384 /* FontMacATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */; };
 		3724CA7E0E68B20500DB4384 /* FontMacCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA7D0E68B20500DB4384 /* FontMacCoreText.cpp */; };
 		3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */; };
+		3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */ = {isa = PBXBuildFile; fileRef = 3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
@@ -5524,6 +5525,7 @@
 		3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMacATSUI.mm; sourceTree = "<group>"; };
 		3724CA7D0E68B20500DB4384 /* FontMacCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontMacCoreText.cpp; sourceTree = "<group>"; };
 		3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyphMap.h; sourceTree = "<group>"; };
+		3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlapTestRequestClient.h; sourceTree = "<group>"; };
 		3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontTraitsMask.h; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
@@ -14353,6 +14355,7 @@
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */,
 				A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */,
+				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -16847,6 +16850,7 @@
 				93D3C1590F97A9D70053C013 /* DOMHTMLCanvasElement.h in Headers */,
 				93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */,
 				5D15E3AC0F9E6AC1009E0E3F /* XMLTokenizerScope.h in Headers */,
+				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

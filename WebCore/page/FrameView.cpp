@@ -167,6 +167,7 @@ FrameView::~FrameView()
 void FrameView::reset()
 {
     m_useSlowRepaints = false;
+    m_isOverlapped = false;
     m_borderX = 30;
     m_borderY = 30;
     m_layoutTimer.stop();
@@ -671,7 +672,7 @@ String FrameView::mediaType() const
 
 bool FrameView::useSlowRepaints() const
 {
-    return m_useSlowRepaints || m_slowRepaintObjectCount > 0;
+    return m_useSlowRepaints || m_slowRepaintObjectCount > 0 || m_isOverlapped;
 }
 
 void FrameView::setUseSlowRepaints()
@@ -692,7 +693,16 @@ void FrameView::removeSlowRepaintObject()
     ASSERT(m_slowRepaintObjectCount > 0);
     m_slowRepaintObjectCount--;
     if (!m_slowRepaintObjectCount)
-        setCanBlitOnScroll(!m_useSlowRepaints);
+        setCanBlitOnScroll(!useSlowRepaints());
+}
+
+void FrameView::setIsOverlapped(bool isOverlapped)
+{
+    if (isOverlapped == m_isOverlapped)
+        return;
+
+    m_isOverlapped = isOverlapped;
+    setCanBlitOnScroll(!useSlowRepaints());
 }
 
 void FrameView::restoreScrollbar()
