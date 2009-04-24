@@ -1,0 +1,8 @@
+//! [0]
+QT += webkit
+//! [0]
+
+
+//! [1]
+#include <QtWebKit>
+//! [1]

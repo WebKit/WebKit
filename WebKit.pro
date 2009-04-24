@@ -9,3 +9,4 @@ SUBDIRS += \
 
 !win32: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 
+include(WebKit/qt/docs/docs.pri)

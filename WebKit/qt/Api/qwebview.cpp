@@ -86,7 +86,7 @@ public:
     Qt Widgets, the show() function must be invoked in order to display
     QWebView. The snippet below illustrates this:
 
-    \snippet doc/src/snippets/webkit/simple/main.cpp Using QWebView
+    \snippet webkitsnippets/simple/main.cpp Using QWebView
 
     Alternatively, setUrl() can also be used to load a web site. If you have
     the HTML content readily available, you can use setHtml() instead.
@@ -325,7 +325,7 @@ void QWebView::setContent(const QByteArray &data, const QString &mimeType, const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 0
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 0
 */
 QWebHistory *QWebView::history() const
 {
@@ -337,7 +337,7 @@ QWebHistory *QWebView::history() const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 1
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 1
 
     \sa QWebSettings::globalSettings()
 */
@@ -429,7 +429,7 @@ QAction *QWebView::pageAction(QWebPage::WebAction action) const
     The following example triggers the copy action and therefore copies any
     selected text to the clipboard.
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 2
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 2
 
     \sa pageAction()
 */
@@ -606,7 +606,7 @@ void QWebView::print(QPrinter *printer) const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 3
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 3
 
     \sa reload(), pageAction(), loadFinished()
 */
@@ -622,7 +622,7 @@ void QWebView::stop()
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 4
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 4
 
     \sa forward(), pageAction()
 */
@@ -638,7 +638,7 @@ void QWebView::back()
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 5
+    \snippet webkitsnippets/qtwebkit_qwebview_snippet.cpp 5
 
     \sa back(), pageAction()
 */

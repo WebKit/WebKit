@@ -1,3 +1,11 @@
+2009-04-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Added support for generating API docs in the Qt build using "make docs"
+
+        * WebKit.pro: Include docs.pri for "make docs" target.
+
 2009-04-14  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed version bump in preparation for 1.1.5 release.
