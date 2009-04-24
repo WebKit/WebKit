@@ -147,6 +147,7 @@ $testHTTP = 0 if (isQt() || isGtk() || isWx());
 
 my $expectedTag = "expected";
 my $actualTag = "actual";
+my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
@@ -1666,7 +1667,8 @@ sub linksForExpectedAndActualResults($)
 
     push @links, { href => "$base-$expectedTag$expectedResultExtension", text => "expected" };
     push @links, { href => "$base-$actualTag$expectedResultExtension", text => "actual" };
-    push @links, { href => "$base-$diffsTag.txt", text => "diffs" };
+    push @links, { href => "$base-$diffsTag.txt", text => "diff" };
+    push @links, { href => "$base-$prettyDiffTag.html", text => "pretty diff" };
 
     return \@links;
 }
@@ -1743,7 +1745,14 @@ sub recordActualResultsAndDiff($$)
     writeToFile("$actualResultsPath", $actualResults);
     copy("$expectedResultPath", "$copiedExpectedResultsPath");
 
-    system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+    my $diffOuputBasePath = "$testResultsDirectory/$base";
+    my $diffOutputPath = "$diffOuputBasePath-$diffsTag.txt";
+    system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$diffOutputPath\"";
+
+    my $prettyDiffOutputPath = "$diffOuputBasePath-$prettyDiffTag.html";
+    my $prettyPatchPath = "BugsSite/PrettyPatch/";
+    my $prettifyPath = "$prettyPatchPath/prettify.rb";
+    system "ruby -I \"$prettyPatchPath\" \"$prettifyPath\" \"$diffOutputPath\" > \"$prettyDiffOutputPath\"";
 }
 
 sub buildPlatformResultHierarchy()
