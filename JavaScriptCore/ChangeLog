@@ -1,5 +1,13 @@
 2009-04-23  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by salty sea dogs Sam & Geoff.
+
+        Enable YARR_JIT by default (where supported), replacing WREC.
+
+        * wtf/Platform.h:
+
+2009-04-23  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff "Dread Pirate Roberts" Garen.
 
         Various small fixes to YARR JIT, in preparation for enabling it by default.
