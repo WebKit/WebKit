@@ -128,6 +128,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/Widget.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -1815,42 +1816,72 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 #define DASHBOARD_CONTROL_LABEL @"control"
 
+- (void)_addControlRect:(NSRect)bounds clip:(NSRect)clip fromView:(NSView *)view toDashboardRegions:(NSMutableDictionary *)regions
+{
+    NSRect adjustedBounds = bounds;
+    adjustedBounds.origin = [self convertPoint:bounds.origin fromView:view];
+    adjustedBounds.origin.y = [self bounds].size.height - adjustedBounds.origin.y;
+    adjustedBounds.size = bounds.size;
+
+    NSRect adjustedClip;
+    adjustedClip.origin = [self convertPoint:clip.origin fromView:view];
+    adjustedClip.origin.y = [self bounds].size.height - adjustedClip.origin.y;
+    adjustedClip.size = clip.size;
+
+    WebDashboardRegion *region = [[WebDashboardRegion alloc] initWithRect:adjustedBounds 
+        clip:adjustedClip type:WebDashboardRegionTypeScrollerRectangle];
+    NSMutableArray *scrollerRegions = [regions objectForKey:DASHBOARD_CONTROL_LABEL];
+    if (!scrollerRegions) {
+        scrollerRegions = [[NSMutableArray alloc] init];
+        [regions setObject:scrollerRegions forKey:DASHBOARD_CONTROL_LABEL];
+        [scrollerRegions release];
+    }
+    [scrollerRegions addObject:region];
+    [region release];
+}
+
+- (void)_addScrollerDashboardRegionsForFrameView:(FrameView*)frameView dashboardRegions:(NSMutableDictionary *)regions
+{    
+    NSView *documentView = [[kit(frameView->frame()) frameView] documentView];
+
+    const HashSet<Widget*>* children = frameView->children();
+    HashSet<Widget*>::const_iterator end = children->end();
+    for (HashSet<Widget*>::const_iterator it = children->begin(); it != end; ++it) {
+        Widget* widget = *it;
+        if (widget->isFrameView()) {
+            [self _addScrollerDashboardRegionsForFrameView:static_cast<FrameView*>(widget) dashboardRegions:regions];
+            continue;
+        }
+
+        if (!widget->isScrollbar())
+            continue;
+
+        // FIXME: This should really pass an appropriate clip, but our first try got it wrong, and
+        // it's not common to need this to be correct in Dashboard widgets.
+        NSRect bounds = widget->frameRect();
+        [self _addControlRect:bounds clip:bounds fromView:documentView toDashboardRegions:regions];
+    }
+}
+
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions from:(NSArray *)views
 {
-    // Add scroller regions for NSScroller and KWQScrollBar
-    int i, count = [views count];
-    
-    for (i = 0; i < count; i++) {
-        NSView *aView = [views objectAtIndex:i];
+    // Add scroller regions for NSScroller and WebCore scrollbars
+    NSUInteger count = [views count];
+    for (NSUInteger i = 0; i < count; i++) {
+        NSView *view = [views objectAtIndex:i];
         
-        if ([aView isKindOfClass:[NSScroller class]] ||
-            [aView isKindOfClass:NSClassFromString (@"KWQScrollBar")]) {
-            NSRect bounds = [aView bounds];
-            NSRect adjustedBounds;
-            adjustedBounds.origin = [self convertPoint:bounds.origin fromView:aView];
-            adjustedBounds.origin.y = [self bounds].size.height - adjustedBounds.origin.y;
-            
-            // AppKit has horrible hack of placing absent scrollers at -100,-100
-            if (adjustedBounds.origin.y == -100)
-                continue;
-            adjustedBounds.size = bounds.size;
-            NSRect clip = [aView visibleRect];
-            NSRect adjustedClip;
-            adjustedClip.origin = [self convertPoint:clip.origin fromView:aView];
-            adjustedClip.origin.y = [self bounds].size.height - adjustedClip.origin.y;
-            adjustedClip.size = clip.size;
-            WebDashboardRegion *aRegion = 
-                        [[[WebDashboardRegion alloc] initWithRect:adjustedBounds 
-                                    clip:adjustedClip type:WebDashboardRegionTypeScrollerRectangle] autorelease];
-            NSMutableArray *scrollerRegions;
-            scrollerRegions = [regions objectForKey:DASHBOARD_CONTROL_LABEL];
-            if (!scrollerRegions) {
-                scrollerRegions = [NSMutableArray array];
-                [regions setObject:scrollerRegions forKey:DASHBOARD_CONTROL_LABEL];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            if (Frame* coreFrame = core([(WebHTMLView*)view _frame])) {
+                if (FrameView* coreView = coreFrame->view())
+                    [self _addScrollerDashboardRegionsForFrameView:coreView dashboardRegions:regions];
             }
-            [scrollerRegions addObject:aRegion];
+        } else if ([view isKindOfClass:[NSScroller class]]) {
+            // AppKit places absent scrollers at -100,-100
+            if ([view frame].origin.y < 0)
+                continue;
+            [self _addControlRect:[view bounds] clip:[view visibleRect] fromView:view toDashboardRegions:regions];
         }
-        [self _addScrollerDashboardRegions:regions from:[aView subviews]];
+        [self _addScrollerDashboardRegions:regions from:[view subviews]];
     }
 }
 

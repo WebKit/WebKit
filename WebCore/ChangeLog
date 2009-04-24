@@ -1,3 +1,16 @@
+2009-04-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore part of fix for <rdar://problem/6333461> REGRESSION 
+        (r36864-r36869): Dragging stocks widget scrollbar drags the whole 
+        widget
+
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::isScrollbar):
+        * platform/Widget.h:
+        (WebCore::Widget::isScrollbar):
+
 2009-04-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam Roben.

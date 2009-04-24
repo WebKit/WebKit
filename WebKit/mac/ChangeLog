@@ -1,3 +1,17 @@
+2009-04-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6333461> REGRESSION (r36864-r36869): 
+        Dragging stocks widget scrollbar drags the whole widget
+
+        Look for our new WebCore scrollbars in the WebHTMLView and add 
+        proper Dashboard regions for them.
+
+        * WebView/WebView.mm:
+        (-[WebView _addScrollerDashboardRegionsForFrameView:dashboardRegions:]):
+        (-[WebView _addScrollerDashboardRegions:from:]):
+
 2009-04-23  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6822479> Assertion failure after Reset Safari in new history-writing code

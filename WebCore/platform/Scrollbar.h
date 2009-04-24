@@ -125,6 +125,9 @@ public:
 
     virtual void styleChanged() { }
 
+private:
+    virtual bool isScrollbar() const { return true; }
+
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
