@@ -1,5 +1,23 @@
 2009-04-23  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Use static functions (and a couple templates)
+        to further reduce the amount of copy/paste code in SVGRenderTreeAsText
+
+        No test changes, only code cleanup.
+
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeNameValuePair):
+        (WebCore::writeNameAndQuotedValue):
+        (WebCore::writeIfNotEmpty):
+        (WebCore::writeIfNotDefault):
+        (WebCore::writeStyle):
+        (WebCore::writePositionAndStyle):
+        (WebCore::operator<<):
+
+2009-04-23  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         SVGRenderTreeAsText cleanup/code sharing.
