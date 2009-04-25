@@ -167,6 +167,15 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
+    /**
+     * WebKitWebFrame::load-done
+     * @web_frame: the object on which the signal is emitted
+     *
+     * Emitted when frame loading is done.
+     *
+     * Deprecated: Use WebKitWebView::load-finished instead, and/or
+     * WebKitWebView::load-error to be notified of load errors
+     */
     webkit_web_frame_signals[LOAD_DONE] = g_signal_new("load-done",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
@@ -398,6 +407,25 @@ void webkit_web_frame_load_uri(WebKitWebFrame* frame, const gchar* uri)
     coreFrame->loader()->load(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))), false);
 }
 
+static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* content, const gchar* mimeType, const gchar* encoding, const gchar* baseURL, const gchar* unreachableURL)
+{
+    Frame* coreFrame = core(frame);
+    ASSERT(coreFrame);
+
+    KURL baseKURL = baseURL ? KURL(KURL(), String::fromUTF8(baseURL)) : blankURL();
+
+    ResourceRequest request(baseKURL);
+
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(content, g_utf8_strlen(content, -1));
+    SubstituteData substituteData(sharedBuffer.release(),
+                                  mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+                                  encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"),
+                                  baseKURL,
+                                  KURL(KURL(), String::fromUTF8(unreachableURL)));
+
+    coreFrame->loader()->load(request, substituteData, false);
+}
+
 /**
  * webkit_web_frame_load_string:
  * @frame: a #WebKitWebFrame
@@ -420,15 +448,28 @@ void webkit_web_frame_load_string(WebKitWebFrame* frame, const gchar* content, c
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
     g_return_if_fail(content);
 
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return;
+    webkit_web_frame_load_data(frame, content, contentMimeType, contentEncoding, baseUri, NULL);
+}
 
-    KURL url(KURL(), baseUri ? String::fromUTF8(baseUri) : "");
-    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(content, strlen(content));
-    SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", blankURL(), url);
+/**
+ * webkit_web_frame_load_alternate_string:
+ * @frame: a #WebKitWebFrame
+ * @content: the alternate content to display as the main page of the @frame
+ * @base_url: the base URI for relative locations
+ * @unreachable_url: the URL for the alternate page content
+ *
+ * Request loading of an alternate content for a URL that is unreachable.
+ * Using this method will preserve the back-forward list. The URI passed in
+ * @base_url has to be an absolute URI.
+ *
+ * Since: 1.1.6
+ */
+void webkit_web_frame_load_alternate_string(WebKitWebFrame* frame, const gchar* content, const gchar* baseURL, const gchar* unreachableURL)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+    g_return_if_fail(content);
 
-    coreFrame->loader()->load(ResourceRequest(url), substituteData, false);
+    webkit_web_frame_load_data(frame, content, NULL, NULL, baseURL, unreachableURL);
 }
 
 /**

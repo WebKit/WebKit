@@ -57,6 +57,7 @@
 #include "webkitprivate.h"
 
 #include <JavaScriptCore/APICast.h>
+#include <glib.h>
 #include <stdio.h>
 #if PLATFORM(UNIX)
 #include <sys/utsname.h>
@@ -811,8 +812,9 @@ void FrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long 
     notImplemented();
 }
 
-void FrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&)
+void FrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& error)
 {
+    // FIXME: when does this occur and what should happen?
     notImplemented();
 }
 
@@ -822,13 +824,35 @@ bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, 
     return false;
 }
 
-void FrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&)
+void FrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
+    dispatchDidFailLoad(error);
+
+    // FIXME: load-done is deprecated. Please remove when signal's been removed.
     g_signal_emit_by_name(m_frame, "load-done", false);
 }
 
-void FrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
+void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GError* webError = g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
+                                           error.errorCode(),
+                                           error.localizedDescription().utf8().data());
+    gboolean isHandled = false;
+    g_signal_emit_by_name(webView, "load-error", m_frame, error.failingURL().utf8().data(), webError, &isHandled);
+
+    if (isHandled) {
+        g_error_free(webError);
+        return;
+    }
+
+    String content = String::format("<html><head><title>%d</title></head><body>%s</body></html>",
+                                    error.errorCode(), webError->message);
+    webkit_web_frame_load_alternate_string(m_frame, content.utf8().data(),
+                                           NULL, error.failingURL().utf8().data());
+    g_error_free(webError);
+
+    // FIXME: load-done is deprecated. Please remove when signal's been removed.
     g_signal_emit_by_name(m_frame, "load-done", false);
 }
 

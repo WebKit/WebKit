@@ -122,6 +122,7 @@ enum {
     LOAD_STARTED,
     LOAD_COMMITTED,
     LOAD_PROGRESS_CHANGED,
+    LOAD_ERROR,
     LOAD_FINISHED,
     TITLE_CHANGED,
     HOVERING_OVER_LINK,
@@ -1299,6 +1300,31 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_cclosure_marshal_VOID__INT,
             G_TYPE_NONE, 1,
             G_TYPE_INT);
+
+    /**
+     * WebKitWebView::load-error
+     * @web_view: the object on which the signal is emitted
+     * @web_frame: the #WebKitWebFrame
+     * @uri: the URI that triggered the error
+     * @web_error: the #GError that was triggered
+     *
+     * An error occurred while loading. By default, if the signal is not
+     * handled, the @web_view will display a stock error page. You need to
+     * handle the signal if you want to provide your own error page.
+     *
+     * Since: 1.1.6
+     */
+    webkit_web_view_signals[LOAD_ERROR] = g_signal_new("load-error",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_STRING_POINTER,
+            G_TYPE_BOOLEAN, 3,
+            WEBKIT_TYPE_WEB_FRAME,
+            G_TYPE_STRING,
+            G_TYPE_POINTER);
 
     webkit_web_view_signals[LOAD_FINISHED] = g_signal_new("load-finished",
             G_TYPE_FROM_CLASS(webViewClass),

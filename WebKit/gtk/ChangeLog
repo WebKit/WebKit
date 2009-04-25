@@ -1,3 +1,22 @@
+2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+         Reviewed by Xan Lopez.
+
+         [GTK] Error reporting
+         https://bugs.webkit.org/show_bug.cgi?id=18344
+
+         Add a WebKitWebFrame API to load alternate content for unreachable URLs.
+         Also add a new signal "load-error" for handling load errors.
+
+         * WebCoreSupport/FrameLoaderClientGtk.cpp:
+         (WebKit::FrameLoaderClient::postProgressFinishedNotification):
+         (WebKit::FrameLoaderClient::dispatchDidFailLoading):
+         (WebKit::FrameLoaderClient::dispatchDidFailProvisionalLoad):
+         (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+         * webkit/webkitwebframe.cpp:
+         * webkit/webkitwebframe.h:
+         * webkit/webkitwebview.cpp:
+
 2009-04-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Gustavo Noronha.
