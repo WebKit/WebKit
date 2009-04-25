@@ -1,3 +1,16 @@
+2009-04-24  Sergio García-Cuevas  <sergio_gcg@telefonica.net>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17267
+        [GTK] Primary selection/clipboard support
+
+        Add a method for getting the primary selection.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::PasteboardHelperGtk::getPrimary):
+        * WebCoreSupport/PasteboardHelperGtk.h:
+
 2009-04-24  Johan Bilien  <jobi@via.ecp.fr>
 
         Reviewed by Xan Lopez.

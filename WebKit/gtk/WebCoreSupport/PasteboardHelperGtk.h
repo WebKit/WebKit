@@ -40,6 +40,7 @@ class PasteboardHelperGtk : public PasteboardHelper {
 public:
     PasteboardHelperGtk() { }
     virtual GtkClipboard* getClipboard(Frame*) const;
+    virtual GtkClipboard* getPrimary(Frame*) const;
     virtual GtkTargetList* getCopyTargetList(Frame*) const;
     virtual GtkTargetList* getPasteTargetList(Frame*) const;
 };

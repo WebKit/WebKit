@@ -120,7 +120,9 @@ void Pasteboard::writeURL(const KURL& url, const String&, Frame* frame)
         return;
 
     GtkClipboard* clipboard = m_helper->getClipboard(frame);
+    GtkClipboard* primary = m_helper->getPrimary(frame);
     gtk_clipboard_set_text(clipboard, url.string().utf8().data(), url.string().utf8().length());
+    gtk_clipboard_set_text(primary, url.string().utf8().data(), url.string().utf8().length());
 }
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String&)

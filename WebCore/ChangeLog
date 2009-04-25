@@ -1,3 +1,18 @@
+2009-04-24  Sergio GarcÃ­a-Cuevas  <sergio_gcg@telefonica.net>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17267
+        [GTK] Primary selection/clipboard support
+
+        Copy the link location to the primary selection as well as the
+        clipboard selection when using the "copy link selection" context
+        menu entry.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeURL):
+        * platform/gtk/PasteboardHelper.h:
+
 2009-04-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

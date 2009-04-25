@@ -37,6 +37,13 @@ GtkClipboard* PasteboardHelperGtk::getClipboard(Frame* frame) const {
                                     GDK_SELECTION_CLIPBOARD);
 }
 
+GtkClipboard* PasteboardHelperGtk::getPrimary(Frame* frame) const
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
+    return gtk_widget_get_clipboard(GTK_WIDGET (webView),
+                                    GDK_SELECTION_PRIMARY);
+}
+
 GtkTargetList* PasteboardHelperGtk::getCopyTargetList(Frame* frame) const {
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
     return webkit_web_view_get_copy_target_list(webView);
