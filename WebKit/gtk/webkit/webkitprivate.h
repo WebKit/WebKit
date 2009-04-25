@@ -29,6 +29,7 @@
 
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitdownload.h>
+#include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebpolicydecision.h>
@@ -163,6 +164,9 @@ extern "C" {
 
     void
     webkit_web_view_notify_ready (WebKitWebView* web_view);
+
+    void
+    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request);
 
     WebKitWebPolicyDecision*
     webkit_web_policy_decision_new (WebKitWebFrame*, WebCore::FramePolicyFunction);

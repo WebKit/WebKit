@@ -972,20 +972,10 @@ void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceErro
 void FrameLoaderClient::startDownload(const ResourceRequest& request)
 {
     WebKitNetworkRequest* networkRequest = webkit_network_request_new(request.url().string().utf8().data());
-    WebKitDownload* download = webkit_download_new(networkRequest);
-    g_object_unref(networkRequest);
-
     WebKitWebView* view = getViewFromFrame(m_frame);
-    gboolean handled;
-    g_signal_emit_by_name(view, "download-requested", download, &handled);
 
-    if (!handled) {
-        webkit_download_cancel(download);
-        g_object_unref(download);
-        return;
-    }
-
-    webkit_download_start(download);
+    webkit_web_view_request_download(view, networkRequest);
+    g_object_unref(networkRequest);
 }
 
 void FrameLoaderClient::updateGlobalHistory()
