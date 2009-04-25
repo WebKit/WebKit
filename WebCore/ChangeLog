@@ -1,3 +1,14 @@
+2009-04-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Mark Rowe.
+
+        Only set the new URL once for the request. Doing it a second time
+        after the call to willSendRequest was causing crashes when
+        redirected requests got cancelled.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+
 2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Adding ScriptEventListener.cpp.

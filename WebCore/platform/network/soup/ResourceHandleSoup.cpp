@@ -235,8 +235,6 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     fillResponseFromMessage(msg, &response);
     if (d->client())
         d->client()->willSendRequest(handle, request, response);
-
-    d->m_request.setURL(newURL);
 }
 
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
