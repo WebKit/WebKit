@@ -1,3 +1,22 @@
+2009-04-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        <rdar://problem/6817607> BumperCar 2.2 crashes going back (invalid WebHistoryItem)
+
+        BumperCar was holding a pointer to a WebHistoryItem they never retain, then later
+        tried to go to it.  In some cases it would be dealloc'ed first.
+        When WebHistoryItems were pure Objective-C they probably got away with this more often.
+        With the WebCore/Obj-C mixed WebHistoryItems it's more likely to crash.
+
+        * History/WebBackForwardList.mm:
+        (bumperCarBackForwardHackNeeded):
+        (-[WebBackForwardList backListWithLimit:]):  If this is BumperCar, hang on to the
+          NSArray of WebHistoryItems until the next time this method is called.
+        (-[WebBackForwardList forwardListWithLimit:]):  Ditto.
+
+        * Misc/WebKitVersionChecks.h: Added WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK.
+
 2009-04-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

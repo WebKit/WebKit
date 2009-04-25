@@ -33,6 +33,7 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
@@ -204,18 +205,47 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
     return result;
 }
 
+static bool bumperCarBackForwardHackNeeded() {
+    static bool initialized = false;
+    static bool hackNeeded = false;
+    
+    if (!initialized) {
+        hackNeeded = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.freeverse.bumpercar"] && 
+                     !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK);
+        initialized = true;
+    }
+    
+    return hackNeeded;
+}
+
 - (NSArray *)backListWithLimit:(int)limit
 {
     HistoryItemVector list;
     core(self)->backListWithLimit(limit, list);
-    return vectorToNSArray(list);
+    NSArray *result = vectorToNSArray(list);
+    
+    if (bumperCarBackForwardHackNeeded()) {
+        static NSArray *lastBackListArray = nil;
+        [lastBackListArray release];
+        lastBackListArray = [result retain];
+    }
+    
+    return result;
 }
 
 - (NSArray *)forwardListWithLimit:(int)limit
 {
     HistoryItemVector list;
     core(self)->forwardListWithLimit(limit, list);
-    return vectorToNSArray(list);
+    NSArray *result = vectorToNSArray(list);
+    
+    if (bumperCarBackForwardHackNeeded()) {
+        static NSArray *lastForwardListArray = nil;
+        [lastForwardListArray release];
+        lastForwardListArray = [result retain];
+    }
+    
+    return result;
 }
 
 - (int)capacity
