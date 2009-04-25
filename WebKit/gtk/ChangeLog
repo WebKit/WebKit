@@ -2,6 +2,16 @@
 
          Reviewed by Xan Lopez.
 
+         Display a default error page for load errors.
+
+         * WebCoreSupport/FrameLoaderClientGtk.cpp:
+         (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+         * resources/error.html: Added.
+
+2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+         Reviewed by Xan Lopez.
+
          [GTK] Error reporting
          https://bugs.webkit.org/show_bug.cgi?id=18344
 

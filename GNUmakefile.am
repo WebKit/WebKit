@@ -451,8 +451,6 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
-# END WEBKIT GTK+
-#
 # Files that will be distributed
 EXTRA_DIST = \
 	WebKit/LICENSE \
@@ -467,7 +465,15 @@ EXTRA_DIST = \
 	$(srcdir)/WebKit/gtk/docs/webkitgtk-docs.sgml \
 	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
 	$(srcdir)/WebKit/gtk/docs/version.xml.in \
-	$(srcdir)/WebKit/gtk/po/*
+	$(srcdir)/WebKit/gtk/po/* \
+	$(srcdir)/WebKit/gtk/resources/*
+
+# extra resource files
+resourcesdir = ${datadir}/webkit-1.0/resources
+dist_resources_DATA = \
+	$(shell ls $(srcdir)/WebKit/gtk/resources/*.html)
+
+# END WEBKIT GTK+
 
 # Files that will be cleaned
 MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile

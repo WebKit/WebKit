@@ -1,3 +1,14 @@
+2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+         Reviewed by Xan Lopez.
+
+         [GTK] Error reporting
+         https://bugs.webkit.org/show_bug.cgi?id=18344
+
+         Add the default error page for installation.
+
+         * GNUmakefile.am:
+
 2009-04-24  Diego Escalante Urrelo  <diegoe@gnome.org>
 
         Reviewed by Gustavo Noronha.

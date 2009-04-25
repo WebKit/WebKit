@@ -57,6 +57,7 @@
 #include "webkitprivate.h"
 
 #include <JavaScriptCore/APICast.h>
+#include <gio/gio.h>
 #include <glib.h>
 #include <stdio.h>
 #if PLATFORM(UNIX)
@@ -846,10 +847,28 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
         return;
     }
 
-    String content = String::format("<html><head><title>%d</title></head><body>%s</body></html>",
-                                    error.errorCode(), webError->message);
-    webkit_web_frame_load_alternate_string(m_frame, content.utf8().data(),
-                                           NULL, error.failingURL().utf8().data());
+    String content;
+    gchar* fileContent = 0;
+    gchar* errorURI = g_filename_to_uri(DATA_DIR"/webkit-1.0/resources/error.html", NULL, NULL);
+    GFile* errorFile = g_file_new_for_uri(errorURI);
+
+    if (!errorFile)
+        content = String::format("<html><body>%s</body></html>", webError->message);
+    else {
+        gboolean loaded = g_file_load_contents(errorFile, 0, &fileContent, 0, 0, 0);
+        if (!loaded)
+            content = String::format("<html><body>%s</body></html>", webError->message);
+        else
+            content = String::format(fileContent, error.failingURL().utf8().data(), webError->message);
+    }
+
+    webkit_web_frame_load_alternate_string(m_frame, content.utf8().data(), 0, error.failingURL().utf8().data());
+
+    g_free(fileContent);
+
+    if (errorFile)
+        g_object_unref(errorFile);
+
     g_error_free(webError);
 
     // FIXME: load-done is deprecated. Please remove when signal's been removed.
