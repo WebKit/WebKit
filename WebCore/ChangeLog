@@ -1,3 +1,9 @@
+2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding ScriptEventListener.cpp.
+
+        * WebCoreSources.bkl:
+
 2009-04-24  Sergio GarcÃ­a-Cuevas  <sergio_gcg@telefonica.net>
 
         Reviewed by Gustavo Noronha.
