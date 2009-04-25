@@ -37,7 +37,7 @@ This file builds the wxWebKit library.
     <dll id="wxwebkit-dynamic" template="wxwk,jscore,webcore,xml2,iconv,xslt,icu,curl,sqlite3,gtk,pthreads">
         <!-- make sure we relink wxwebkit if either webcore or jscore change -->
         <if cond="FORMAT=='gnu'">
-            <depends-on-file>$(WKOUTPUTDIR)/libjscore.a</depends-on-file>
+            <depends-on-file>$(WKOUTPUTDIR)/libjscore.dylib</depends-on-file>
             <depends-on-file>$(WKOUTPUTDIR)/libwebcore-wx.a</depends-on-file>
         </if>
         <if cond="FORMAT=='msvc'">

@@ -217,6 +217,12 @@ if [ $do_clean != 1 ]; then
         # platform it's running on with GNU format, and so it defaults
         # to the standard Unix file endings and linker args.
         if [ "${OSTYPE:0:6}" = "darwin" ]; then    
+            sed "s/libjscore.so/libjscore.dylib/" < $WK_ROOT/JavaScriptCore/GNUmakefile > temp
+            mv temp $WK_ROOT/JavaScriptCore/GNUmakefile
+            
+            sed "s/\-shared/\-dynamiclib/" < $WK_ROOT/JavaScriptCore/GNUmakefile > temp
+            mv temp $WK_ROOT/JavaScriptCore/GNUmakefile
+            
             sed "s/\-shared/\-dynamiclib/" < $WK_ROOT/WebCore/GNUmakefile > temp
             mv temp $WK_ROOT/WebCore/GNUmakefile
             

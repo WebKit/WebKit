@@ -98,6 +98,8 @@ and WebCore. Include this file to use these settings.
             <include>$(WK_ROOT)/JavaScriptCore/os-win32</include><!-- stdint.h is here -->
             <include>$(WKOUTPUTDIR)</include>
         </if>
+        <lib-path>$(WKOUTPUTDIR)</lib-path>
+        <sys-lib>jscore</sys-lib>
     </template>
 
     <template id="webcore">

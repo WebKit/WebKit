@@ -1,3 +1,12 @@
+2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Switching JSCore from a static lib to a dynamic lib
+        to match the Apple build and fix symbol exports.
+
+        * bindings/python/wxwebkit-py.bkl:
+        * presets/wxwebkit.bkl:
+        * wxwebkit.bkl:
+
 2009-04-15  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

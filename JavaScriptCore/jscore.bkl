@@ -93,7 +93,7 @@ JavaScriptCore Bakefile project file.
             <!-- FIXME: we need proper configure checks -->
             <define>HAVE_FUNC_ISNAN</define>
             <!-- check for undefined symbols for debugging reasons -->
-            <ldflags>-Wl,--no-undefined</ldflags>
+            <ldflags>-Wl</ldflags>
         </if>
 
         <if cond="PLATFORM_WIN32=='1'">
@@ -126,9 +126,6 @@ JavaScriptCore Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
         <dirname>$(WKOUTPUTDIR)</dirname>
         <sources>$(SRCDIR)/jsc.cpp</sources>
-        <if cond="FORMAT=='gnu'">
-            <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
-        </if>
         <set var="READLINE_LIB">
             <if cond="WX_PORT=='mac'">edit</if>
         </set>
@@ -148,7 +145,10 @@ JavaScriptCore Bakefile project file.
         <command>bash make-generated-sources.sh</command>
     </action>
 
-    <lib id="jscore" template="jscore_base,wx-lib">
-
-    </lib>
+    <dll id="jscore" template="jscore_base,wxwk">
+        <define>BUILDING_JavaScriptCore</define>
+        <runtime-libs>dynamic</runtime-libs>
+        <dllname>jscore</dllname>
+        <libname>jscore</libname>
+    </dll>
 </makefile>
