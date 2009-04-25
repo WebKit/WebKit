@@ -361,6 +361,8 @@
 #define HAVE_MADV_FREE_REUSE 1
 #endif
 
+#define HAVE_MADV_FREE 1
+
 #elif PLATFORM(WIN_OS)
 
 #define HAVE_FLOAT_H 1
@@ -396,10 +398,6 @@
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
 
-#endif
-
-#if defined(MADV_FREE)
-#define HAVE_MADV_FREE 1
 #endif
 
 /* ENABLE macro defaults */

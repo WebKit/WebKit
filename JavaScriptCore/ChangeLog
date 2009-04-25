@@ -1,3 +1,11 @@
+2009-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Buildfix).
+
+        Make HAVE_MADV_FREE darwin only for now
+
+        * wtf/Platform.h:
+
 2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Oliver Hunt.
