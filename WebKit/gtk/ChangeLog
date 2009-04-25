@@ -1,12 +1,36 @@
 2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
-         Reviewed by Xan Lopez.
+        Reviewed by Xan Lopez.
 
-         Display a default error page for load errors.
+        [GTK] Error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=18344
 
-         * WebCoreSupport/FrameLoaderClientGtk.cpp:
-         (WebKit::FrameLoaderClient::dispatchDidFailLoad):
-         * resources/error.html: Added.
+        Update FrameLoad errors to use WebKitErrors.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::cancelledError):
+        (WebKit::FrameLoaderClient::blockedError):
+        (WebKit::FrameLoaderClient::cannotShowURLError):
+        (WebKit::FrameLoaderClient::interruptForPolicyChangeError):
+        (WebKit::FrameLoaderClient::cannotShowMIMETypeError):
+        (WebKit::FrameLoaderClient::fileDoesNotExistError):
+        (WebKit::FrameLoaderClient::pluginWillHandleLoadError):
+        (WebKit::FrameLoaderClient::shouldFallBack):
+        * webkit/webkiterror.h: Added.
+        * webkit/webkiterror.cpp: Added.
+
+2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=18344
+
+        Display a default error page for load errors.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * resources/error.html: Added.
 
 2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 

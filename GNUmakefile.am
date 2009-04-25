@@ -315,6 +315,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkit.h \
 	WebKit/gtk/webkit/webkitdefines.h \
 	WebKit/gtk/webkit/webkitdownload.h \
+	WebKit/gtk/webkit/webkiterror.h \
 	WebKit/gtk/webkit/webkitnetworkrequest.h \
 	WebKit/gtk/webkit/webkitsoupauthdialog.h \
 	WebKit/gtk/webkit/webkitversion.h \
@@ -349,6 +350,8 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
+	WebKit/gtk/webkit/webkitdownload.cpp \
+	WebKit/gtk/webkit/webkiterror.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
 	WebKit/gtk/webkit/webkitprivate.cpp \
 	WebKit/gtk/webkit/webkitprivate.h \
@@ -361,7 +364,6 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
-	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
 

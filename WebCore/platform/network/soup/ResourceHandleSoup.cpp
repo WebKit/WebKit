@@ -121,14 +121,6 @@ void WebCoreSynchronousLoader::run()
         g_main_loop_run(m_mainLoop);
 }
 
-enum
-{
-    ERROR_TRANSPORT,
-    ERROR_UNKNOWN_PROTOCOL,
-    ERROR_BAD_NON_HTTP_METHOD,
-    ERROR_UNABLE_TO_OPEN_FILE,
-};
-
 static void cleanupGioOperation(ResourceHandleInternal* handle);
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -337,9 +329,10 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         return;
 
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)) {
-        char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
-        ResourceError error("webkit-network-error", ERROR_TRANSPORT, uri, String::fromUTF8(msg->reason_phrase));
-        g_free(uri);
+        ResourceError error(g_quark_to_string(SOUP_HTTP_ERROR),
+                            msg->status_code,
+                            soup_uri_to_string(soup_message_get_uri(msg), false),
+                            String::fromUTF8(msg->reason_phrase));
         client->didFail(handle.get(), error);
         return;
     }
@@ -532,7 +525,10 @@ bool ResourceHandle::startHttp(String urlString)
                     g_free(fileName);
 
                     if (error) {
-                        ResourceError resourceError("webkit-network-error", ERROR_UNABLE_TO_OPEN_FILE, urlString, error->message);
+                        ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR),
+                                                    msg->status_code,
+                                                    urlString,
+                                                    String::fromUTF8(error->message));
                         g_error_free(error);
 
                         d->client()->didFail(this, resourceError);
@@ -558,25 +554,6 @@ bool ResourceHandle::startHttp(String urlString)
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;
-}
-
-static gboolean reportUnknownProtocolError(gpointer callback_data)
-{
-    ResourceHandle* handle = static_cast<ResourceHandle*>(callback_data);
-    ResourceHandleInternal* d = handle->getInternal();
-    ResourceHandleClient* client = handle->client();
-
-    if (d->m_cancelled || !client) {
-        handle->deref();
-        return false;
-    }
-
-    KURL url = handle->request().url();
-    ResourceError error("webkit-network-error", ERROR_UNKNOWN_PROTOCOL, url.string(), url.protocol());
-    client->didFail(handle, error);
-
-    handle->deref();
-    return false;
 }
 
 bool ResourceHandle::start(Frame* frame)
@@ -608,11 +585,9 @@ bool ResourceHandle::start(Frame* frame)
         // FIXME: should we be doing any other protocols here?
         return startGio(url);
 
-    // Error must not be reported immediately, but through an idle function.
-    // Despite error, we should return true so a proper handle is created,
-    // to which this failure can be reported.
-    ref();
-    d->m_idleHandler = g_idle_add(reportUnknownProtocolError, this);
+    // Error must not be reported immediately
+    this->scheduleFailure(InvalidURLFailure);
+
     return true;
 }
 
@@ -665,15 +640,6 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 }
 
 // GIO-based loader
-
-static inline ResourceError networkErrorForFile(GFile* file, GError* error)
-{
-    // FIXME: Map gio errors to a more detailed error code when we have it in WebKit.
-    gchar* uri = g_file_get_uri(file);
-    ResourceError resourceError("webkit-network-error", ERROR_TRANSPORT, uri, error ? String::fromUTF8(error->message) : String());
-    g_free(uri);
-    return resourceError;
-}
 
 static void cleanupGioOperation(ResourceHandleInternal* d)
 {
@@ -733,7 +699,10 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
 
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream, res, &error);
     if (error) {
-        ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
+                                    error->code,
+                                    g_file_get_uri(d->m_gfile),
+                                    error ? String::fromUTF8(error->message) : String());
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle.get(), resourceError);
@@ -776,7 +745,11 @@ static void openCallback(GObject* source, GAsyncResult* res, gpointer)
     GError *error = 0;
     GFileInputStream* in = g_file_read_finish(G_FILE(source), res, &error);
     if (error) {
-        ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
+                                    error->code,
+                                    g_file_get_uri(d->m_gfile),
+                                    error ? String::fromUTF8(error->message) : String());
+
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
@@ -823,8 +796,10 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
         // server (and then keep track of the fact that we mounted it,
         // and set a timeout to unmount it later after it's been idle
         // for a while).
-
-        ResourceError resourceError = networkErrorForFile(d->m_gfile, error);
+        ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
+                                    error->code,
+                                    g_file_get_uri(d->m_gfile),
+                                    error ? String::fromUTF8(error->message) : String());
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
@@ -834,8 +809,10 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
     if (g_file_info_get_file_type(info) != G_FILE_TYPE_REGULAR) {
         // FIXME: what if the URI points to a directory? Should we
         // generate a listing? How? What do other backends do here?
-
-        ResourceError resourceError = networkErrorForFile(d->m_gfile, 0);
+        ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
+                                    G_IO_ERROR_FAILED,
+                                    g_file_get_uri(d->m_gfile),
+                                    String());
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
         return;
@@ -857,7 +834,9 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
 bool ResourceHandle::startGio(KURL url)
 {
     if (request().httpMethod() != "GET" && request().httpMethod() != "POST") {
-        ResourceError error("webkit-network-error", ERROR_BAD_NON_HTTP_METHOD, url.string(), request().httpMethod());
+        ResourceError error(g_quark_to_string(SOUP_HTTP_ERROR),
+                            SOUP_STATUS_METHOD_NOT_ALLOWED,
+                            url.string(), request().httpMethod());
         d->client()->didFail(this, error);
         return false;
     }
