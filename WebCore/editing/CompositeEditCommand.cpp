@@ -850,8 +850,10 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     
     setEndingSelection(destination);
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, true, false, !preserveStyle, false, true));
-    // Restore styles from an empty paragraph to the new empty paragraph.
-    if (styleInEmptyParagraph)
+    
+    // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
+    bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());
+    if (styleInEmptyParagraph && selectionIsEmptyParagraph)
         applyStyle(styleInEmptyParagraph.get());
     
     if (preserveSelection && startIndex != -1) {

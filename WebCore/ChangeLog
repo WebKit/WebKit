@@ -1,3 +1,17 @@
+2009-04-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/6712771> REGRESSION(34681): Text is no longer underlined after delete
+        https://bugs.webkit.org/show_bug.cgi?id=25396
+
+        Test: editing/deleting/delete-br-013.html
+
+        * editing/CompositeEditCommand.cpp: (WebCore::CompositeEditCommand::moveParagraphs):
+         Only preserve an empty paragraph's style when moving paragraphs around if the selection is still 
+         in an empty paragraph after the move occurs.  This was causing the empty paragraph's style to overwrite
+         the previous paragraph's style during a delete of an empty paragraph.
+
 2009-04-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,15 @@
+2009-04-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Test for <rdar://problem/6712771> REGRESSION(34681): Text is no longer underlined after delete
+        https://bugs.webkit.org/show_bug.cgi?id=25396
+
+        * editing/deleting/delete-br-013.html: Added.
+        * platform/mac/editing/deleting/delete-br-013-expected.checksum: Added.
+        * platform/mac/editing/deleting/delete-br-013-expected.png: Added.
+        * platform/mac/editing/deleting/delete-br-013-expected.txt: Added.
+
 2009-04-24  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser
