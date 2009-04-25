@@ -84,7 +84,8 @@ public:
     void setVisible(bool);
     void paint(HDC, int x, int y);
 
-    void disableUnsupportedTracks(unsigned& enabledTrackCount);
+    void disableUnsupportedTracks(unsigned& enabledTrackCount, unsigned& totalTrackCount);
+    void setDisabled(bool);
 
     bool hasVideo() const;
 
@@ -93,6 +94,7 @@ public:
 
 private:
     QTMovieWinPrivate* m_private;
+    bool m_disabled;
     friend class QTMovieWinPrivate;
 };
 

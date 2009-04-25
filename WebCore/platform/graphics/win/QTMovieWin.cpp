@@ -206,6 +206,10 @@ void QTMovieWinPrivate::task()
             if (!m_movieController && m_loadState >= kMovieLoadStateLoaded)
                 createMovieController();
             m_client->movieLoadStateChanged(m_movieWin);
+            if (m_movieWin->m_disabled) {
+                endTask();
+                return;
+            }
         }
         m_lastLoadStateCheckTime = systemTime();
     }
@@ -259,7 +263,7 @@ void QTMovieWinPrivate::registerDrawingCallback()
 
 void QTMovieWinPrivate::drawingComplete()
 {
-    if (!m_gWorld || m_loadState < kMovieLoadStateLoaded)
+    if (!m_gWorld || m_movieWin->m_disabled || m_loadState < kMovieLoadStateLoaded)
         return;
     m_client->movieNewImageAvailable(m_movieWin);
 }
@@ -364,6 +368,7 @@ void QTMovieWinPrivate::deleteGWorld()
 
 QTMovieWin::QTMovieWin(QTMovieWinClient* client)
     : m_private(new QTMovieWinPrivate())
+    , m_disabled(false)
 {
     m_private->m_movieWin = this;
     m_private->m_client = client;
@@ -607,9 +612,10 @@ end:
     CFRelease(urlStringRef);
 }
 
-void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
+void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount, unsigned& totalTrackCount)
 {
     if (!m_private->m_movie) {
+        totalTrackCount = 0;
         enabledTrackCount = 0;
         return;
     }
@@ -627,7 +633,8 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
 
     long trackCount = GetMovieTrackCount(m_private->m_movie);
     enabledTrackCount = trackCount;
-    
+    totalTrackCount = trackCount;
+
     // Track indexes are 1-based. yuck. These things must descend from old-
     // school mac resources or something.
     for (long trackIndex = 1; trackIndex <= trackCount; trackIndex++) {
@@ -714,6 +721,11 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
             --enabledTrackCount;
         }
     }
+}
+
+void QTMovieWin::setDisabled(bool b)
+{
+    m_disabled = b;
 }
 
 

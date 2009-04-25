@@ -752,14 +752,17 @@ void MediaPlayerPrivate::updateStates()
 
 void MediaPlayerPrivate::loadStateChanged()
 {
-    updateStates();
+    if (!m_hasUnsupportedTracks)
+        updateStates();
 }
 
 void MediaPlayerPrivate::rateChanged()
 {
+    if (m_hasUnsupportedTracks)
+        return;
+
     updateStates();
-    if (!m_hasUnsupportedTracks)
-        m_player->rateChanged();
+    m_player->rateChanged();
 }
 
 void MediaPlayerPrivate::sizeChanged()
@@ -770,20 +773,24 @@ void MediaPlayerPrivate::sizeChanged()
 
 void MediaPlayerPrivate::timeChanged()
 {
+    if (m_hasUnsupportedTracks)
+        return;
+
     updateStates();
-    if (!m_hasUnsupportedTracks)
-        m_player->timeChanged();
+    m_player->timeChanged();
 }
 
 void MediaPlayerPrivate::didEnd()
 {
+    if (m_hasUnsupportedTracks)
+        return;
+
     m_startedPlaying = false;
 #if DRAW_FRAME_RATE
     m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
 #endif
     updateStates();
-    if (!m_hasUnsupportedTracks)
-        m_player->timeChanged();
+    m_player->timeChanged();
 }
 
 void MediaPlayerPrivate::setSize(const IntSize&) 
@@ -811,6 +818,9 @@ void MediaPlayerPrivate::setVisible(bool b)
 
 void MediaPlayerPrivate::repaint()
 {
+    if (m_hasUnsupportedTracks)
+        return;
+
 #if DRAW_FRAME_RATE
     if (m_startedPlaying) {
         m_frameCountWhilePlaying++;
@@ -825,7 +835,7 @@ void MediaPlayerPrivate::repaint()
 
 void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
 {
-    if (context->paintingDisabled())
+    if (context->paintingDisabled() || m_hasUnsupportedTracks)
         return;
     NSView *view = m_qtMovieView.get();
     id qtVideoRenderer = m_qtVideoRenderer.get();
@@ -1071,8 +1081,8 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
 
 void MediaPlayerPrivate::sawUnsupportedTracks()
 {
-    m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
     m_hasUnsupportedTracks = true;
+    m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
 }
 
 }

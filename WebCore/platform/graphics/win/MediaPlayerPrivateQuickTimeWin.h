@@ -98,6 +98,7 @@ private:
     void cancelSeek();
     void seekTimerFired(Timer<MediaPlayerPrivate>*);
     float maxTimeLoaded() const;
+    void sawUnsupportedTracks();
 
     virtual void movieEnded(QTMovieWin*);
     virtual void movieLoadStateChanged(QTMovieWin*);
@@ -118,6 +119,8 @@ private:
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     unsigned m_enabledTrackCount;
+    unsigned m_totalTrackCount;
+    bool m_hasUnsupportedTracks;
     bool m_startedPlaying;
     bool m_isStreaming;
 #if DRAW_FRAME_RATE

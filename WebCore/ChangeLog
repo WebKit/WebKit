@@ -1,3 +1,64 @@
+2009-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6808171> REGRESSION (3-4): Standalone media documents don't 
+        properly display non-linear media
+
+        If a media engine claims it can support the MIME type, WebCore now creates a <video>
+        element for document mode media files instead of an <embed> element. Because WebCore's 
+        QuickTime backed media players do not support every kind of media the QuickTime plug-in
+        supports, and because it is not always possible to tell what type of media is in a file 
+        without opening and parsing it, some types of media that used to be displayed properly
+        by a plug-in are no longer supported properly. To fix this, if the media engine
+        sees that it can not completely support a media file it now informs the media 
+        document, which replaces the <video> element with an <embed>.
+        
+        r42301 landed support for OSX. This patch modifies those changes slighly and adds support
+        for Windows.
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::MediaDocument): Initialize m_replaceMediaElementTimer.
+        (WebCore::MediaDocument::mediaElementSawUnsupportedTracks): Don't replace the <video> 
+        element immediately.
+        (WebCore::MediaDocument::replaceMediaElementTimerFired): Renamed from replaceVideoWithEmbed.
+        Set body margin-width and margin-height to 0 as that is what a PluginDocument uses.
+        * loader/MediaDocument.h:
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::loadStateChanged): Don't do anything if m_hasUnsupportedTracks.
+        (WebCore::MediaPlayerPrivate::rateChanged): Ditto.
+        (WebCore::MediaPlayerPrivate::timeChanged): Ditto.
+        (WebCore::MediaPlayerPrivate::didEnd): Ditto.
+        (WebCore::MediaPlayerPrivate::repaint): Ditto.
+        (WebCore::MediaPlayerPrivate::paint): Ditto.
+        (WebCore::MediaPlayerPrivate::sawUnsupportedTracks): Set m_hasUnsupportedTracks before callback.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_totalTrackCount and m_hasUnsupportedTracks.
+        (WebCore::MediaPlayerPrivate::updateStates): Call sawUnsupportedTracks if the movie has unsupported
+        media type(s) or if it fails completely.
+        (WebCore::MediaPlayerPrivate::sawUnsupportedTracks): New, disable the movie object and tell the
+        media player client we won't play this movie correctly.
+        (WebCore::MediaPlayerPrivate::didEnd): Don't do anything if m_hasUnsupportedTracks.
+        (WebCore::MediaPlayerPrivate::setSize): Ditto.
+        (WebCore::MediaPlayerPrivate::setVisible): Ditto.
+        (WebCore::MediaPlayerPrivate::paint): Ditto.
+        (WebCore::MediaPlayerPrivate::movieEnded): Ditto.
+        (WebCore::MediaPlayerPrivate::movieLoadStateChanged): Ditto.
+        (WebCore::MediaPlayerPrivate::movieTimeChanged): Ditto.
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable): Ditto.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWinPrivate::task): Stop the task timer if we were disabled during the load state
+        change callback.
+        (QTMovieWinPrivate::drawingComplete): Don't do anything if disabled.
+        (QTMovieWin::QTMovieWin): Initialize m_disabled.
+        (QTMovieWin::disableUnsupportedTracks): Return total number of tracks.
+        (QTMovieWin::setDisabled): New, set m_disabled flag.
+        * platform/graphics/win/QTMovieWin.h:
+
 2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
