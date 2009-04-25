@@ -1,3 +1,13 @@
+2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Gtk build fix - check if we have MADV_FREE before using it.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::releaseExcessCapacity):
+        * wtf/Platform.h:
+
 2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Switching JSCore from a static lib to a dynamic lib
