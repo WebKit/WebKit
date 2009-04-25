@@ -184,7 +184,7 @@ SOURCES += \
     profiler/TreeProfile.cpp \
     wtf/FastMalloc.cpp \
     wtf/Threading.cpp \
-    wtf/ThreadingQt.cpp \
+    wtf/qt/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp
 
 # GENERATOR 1-A: LUT creator
