@@ -254,7 +254,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/ThreadSpecific.h \
 	JavaScriptCore/wtf/Threading.h \
 	JavaScriptCore/wtf/Threading.cpp \
-	JavaScriptCore/wtf/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/ThreadingPthreads.cpp \
 	JavaScriptCore/wtf/TypeTraits.cpp \
 	JavaScriptCore/wtf/TypeTraits.h \
@@ -262,6 +261,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Vector.h \
 	JavaScriptCore/wtf/VectorTraits.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
+	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/unicode/Collator.h \
 	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.cpp \

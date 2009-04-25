@@ -1,3 +1,14 @@
+2009-04-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25338
+        Move ThreadingGtk.cpp under the gtk directory.
+
+        * GNUmakefile.am:
+        * wtf/ThreadingGtk.cpp: Removed.
+        * wtf/gtk/ThreadingGtk.cpp: Copied from JavaScriptCore/wtf/ThreadingGtk.cpp.
+
 2009-04-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam "Wesley" Weinig.
