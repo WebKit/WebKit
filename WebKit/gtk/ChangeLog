@@ -1,3 +1,14 @@
+2009-04-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Fix braces to comply with style guidelines.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::PasteboardHelperGtk::getClipboard):
+        (WebKit::PasteboardHelperGtk::getCopyTargetList):
+        (WebKit::PasteboardHelperGtk::getPasteTargetList):
+
 2009-04-24  Sergio García-Cuevas  <sergio_gcg@telefonica.net>
 
         Reviewed by Gustavo Noronha.
