@@ -1,5 +1,14 @@
 2009-04-25  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig
+
+        Some *obvious* style cleanup in my last patch.
+
+        * History/WebBackForwardList.mm:
+        (bumperCarBackForwardHackNeeded):
+
+2009-04-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Oliver Hunt
 
         <rdar://problem/6817607> BumperCar 2.2 crashes going back (invalid WebHistoryItem)

@@ -205,16 +205,11 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
     return result;
 }
 
-static bool bumperCarBackForwardHackNeeded() {
-    static bool initialized = false;
-    static bool hackNeeded = false;
-    
-    if (!initialized) {
-        hackNeeded = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.freeverse.bumpercar"] && 
-                     !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK);
-        initialized = true;
-    }
-    
+static bool bumperCarBackForwardHackNeeded() 
+{
+    static bool hackNeeded = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.freeverse.bumpercar"] && 
+        !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK);
+
     return hackNeeded;
 }
 
