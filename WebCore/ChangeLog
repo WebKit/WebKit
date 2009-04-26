@@ -1,3 +1,33 @@
+2009-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25390
+        
+        Fix point mapping and hit testing through transforms and perspective
+        with ENABLE_3D_RENDERING. Previously the code did the more efficient
+        move(), rather than getTransformFromContainer(), when the object had
+        no transform. However, this skipped the application of perspective
+        when the immediate child of the perspective element had no transform
+        itself.
+
+        Test: transforms/3d/point-mapping/3d-point-mapping-3.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createLocalTransformState):
+        Call shouldUseTransformFromContainer() to determine if we need to
+        go through the more expensive getTransformFromContainer() code
+        path.
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldUseTransformFromContainer):
+        New method that indicates whether we need use getTransformFromContainer()
+        when mapping points through renderers, and hit testing.
+
 2009-04-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver Hunt.

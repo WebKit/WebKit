@@ -1701,6 +1701,18 @@ void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Trans
     }
 }
 
+bool RenderObject::shouldUseTransformFromContainer(const RenderObject* containerObject) const
+{
+#if ENABLE(3D_RENDERING)
+    // hasTransform() indicates whether the object has transform, transform-style or perspective. We just care about transform,
+    // so check the layer's transform directly.
+    return (hasLayer() && toRenderBoxModelObject(this)->layer()->transform()) || (containerObject && containerObject->style()->hasPerspective());
+#else
+    UNUSED_PARAM(containerObject);
+    return hasTransform();
+#endif
+}
+
 void RenderObject::getTransformFromContainer(const RenderObject* containerObject, const IntSize& offsetInContainer, TransformationMatrix& transform) const
 {
     transform.makeIdentity();
