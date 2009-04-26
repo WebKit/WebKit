@@ -1,3 +1,13 @@
+2009-04-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Resolve relative URLs when queueing loads. This fixes
+        post-goback-same-url.html timing out.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::queueLoad):
+
 2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Switching JSCore from a static lib to a dynamic lib

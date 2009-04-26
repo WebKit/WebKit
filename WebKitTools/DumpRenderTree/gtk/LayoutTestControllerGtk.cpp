@@ -117,8 +117,19 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
-    // FIXME: We need to resolve relative URLs here
-    WorkQueue::shared()->queue(new LoadItem(url, target));
+    const gchar* baseURI = webkit_web_frame_get_uri(mainFrame);
+    gchar* lastSlash = g_strrstr(baseURI, "/");
+
+    GString* absoluteURLCString = g_string_new_len(baseURI, static_cast<gssize>(lastSlash - baseURI + 1));
+
+    gchar* relativeURL = JSStringCopyUTF8CString(url);
+    g_string_append(absoluteURLCString, relativeURL);
+    g_free(relativeURL);
+
+    JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString(absoluteURLCString->str));
+    g_string_free(absoluteURLCString, true);
+
+    WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
 }
 
 void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
