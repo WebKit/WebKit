@@ -68,12 +68,14 @@ editing/selection/after-line-break.html
 editing/selection/anchor-focus1.html
 editing/selection/anchor-focus2.html
 editing/selection/anchor-focus3.html
+editing/selection/click-after-nested-block.html
 editing/selection/click-before-and-after-table.html
 editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/click-outside-editable-div.html
 editing/selection/crash-on-drag-with-mutation-events.html
 editing/selection/doubleclick-whitespace-crash.html
+editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
 editing/selection/drag-text-delay.html
 editing/selection/extend-selection-bidi.html
@@ -173,6 +175,7 @@ fast/events/keypress-focus-change.html
 fast/events/keypress-insert-tab.html
 fast/events/keypress-removed-node.html
 fast/events/mouse-click-events.html
+fast/events/mouse-drag-from-frame-to-other-frame.html
 fast/events/mouse-drag-from-frame.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mousemove-after-drag-over-scrollbar.html
@@ -311,6 +314,7 @@ fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
+fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
 fast/parser/tabindex-parsing.html
@@ -594,6 +598,7 @@ media/unsupported-rtsp.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
+media/video-controls-zoomed.html
 media/video-error-does-not-exist.html
 media/video-loop.html
 media/video-seek-past-end-playing.html

@@ -1,3 +1,10 @@
+2009-04-25  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Disable tests that need eventSender, not yet implemented in our
+        DumpRenderTree.
+
+        * platform/gtk/Skipped:
+
 2009-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
