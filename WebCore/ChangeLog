@@ -1,3 +1,16 @@
+2009-04-26  Darin Adler  <darin@apple.com>
+
+        Suggested by Darin Fisher.
+
+        Improve the fix for bug 25355: Crash when Creating New Tab or New Window when set to open Same Page
+        https://bugs.webkit.org/show_bug.cgi?id=25355
+        rdar://problem/6823543
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): Allow shouldScroll to be true even if m_currentHistoryItem is 0.
+        Not sure if when this case can really arise in practice, but it's good to match the original
+        logic more closely.
+
 2009-04-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
