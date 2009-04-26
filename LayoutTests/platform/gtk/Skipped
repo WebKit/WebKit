@@ -12,20 +12,12 @@
 #
 #     grep -v '^#' | grep -v '^$'
 
+# We have no accessibilityController implemenation, yet, and no
+# programatic ways of checking accessibility, so disable these tests
+# completely
+accessibility
+
 # failing tests
-accessibility/aria-link-supports-press.html
-accessibility/button-press-action.html
-accessibility/iframe-bastardization.html
-accessibility/input-image-alt.html
-accessibility/nochildren-elements.html
-accessibility/radio-button-checkbox-size.html
-accessibility/table-modification-crash.html
-accessibility/table-nofirstbody.html
-accessibility/table-notbody.html
-accessibility/textarea-insertion-point-line-number.html
-accessibility/textarea-line-for-index.html
-accessibility/textarea-selected-text-range.html
-accessibility/th-as-title-ui.html
 dom/xhtml/level3/core/canonicalform08.xhtml
 dom/xhtml/level3/core/canonicalform09.xhtml
 editing/deleting/5546763.html
