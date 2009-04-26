@@ -1,3 +1,11 @@
+2009-04-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove scons-based build system.
+
+        * WebCore.scons: Removed.
+
 2009-04-26  Darin Adler  <darin@apple.com>
 
         Suggested by Darin Fisher.

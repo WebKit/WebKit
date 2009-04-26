@@ -1,3 +1,11 @@
+2009-04-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove scons-based build system.
+
+        * JavaScriptCore.scons: Removed.
+
 2009-04-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).
@@ -266,7 +274,7 @@
         Rubber stamped by Sam "Blackbeard" Weinig.
 
         Although pirates do spell the word 'generate' as 'genertate',
-        webkit developers do not.  Fixerate.
+        webkit developers do not.  Fixertate.
 
         * yarr/RegexJIT.cpp:
         (JSC::Yarr::RegexGenerator::generateAssertionBOL):
