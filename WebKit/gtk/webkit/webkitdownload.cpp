@@ -229,7 +229,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      */
     webkit_download_signals[ERROR] = g_signal_new("error",
             G_TYPE_FROM_CLASS(downloadClass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             g_signal_accumulator_true_handled,
             NULL,

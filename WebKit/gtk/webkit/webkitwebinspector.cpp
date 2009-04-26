@@ -133,7 +133,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[INSPECT_WEB_VIEW] = g_signal_new("inspect-web-view",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             webkit_inspect_web_view_request_handled,
             NULL,
@@ -154,7 +154,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[SHOW_WINDOW] = g_signal_new("show-window",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             g_signal_accumulator_true_handled,
             NULL,
@@ -173,7 +173,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[ATTACH_WINDOW] = g_signal_new("attach-window",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             g_signal_accumulator_true_handled,
             NULL,
@@ -191,7 +191,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[DETACH_WINDOW] = g_signal_new("detach-window",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             g_signal_accumulator_true_handled,
             NULL,
@@ -218,7 +218,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[CLOSE_WINDOW] = g_signal_new("close-window",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             g_signal_accumulator_true_handled,
             NULL,
@@ -237,7 +237,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      */
     webkit_web_inspector_signals[FINISHED] = g_signal_new("finished",
             G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
             NULL,
             NULL,

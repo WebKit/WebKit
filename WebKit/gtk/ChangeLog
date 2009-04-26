@@ -1,5 +1,25 @@
 2009-04-26  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25391
+        G_SIGNAL_ACTION flag in WebKitWebView signals
+
+        Most of the signals in WebKitGTK+ have the G_SIGNAL_ACTION flag,
+        but I don't think this makes sense. The flag is meant for those
+        signals that can be emitted by the user to trigger some action in
+        the view, as if it were a normal API, which is not the case for
+        most of them.
+
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_class_init):
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebinspector.cpp:
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+        * webkit/webkitwebview.cpp:
+
+2009-04-26  Xan Lopez  <xlopez@igalia.com>
+
         Unreviewed, actually apply the right patch.
 
         * webkit/webkitwebview.cpp:
