@@ -1,5 +1,12 @@
 2009-04-26  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed, actually apply the right patch.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_move_cursor):
+
+2009-04-26  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Pass a variable to hold the return value of the 'move-cursor'

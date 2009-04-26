@@ -3202,5 +3202,5 @@ void webkit_web_view_move_cursor(WebKitWebView* webView, GtkMovementStep step, g
     g_return_if_fail(count == 1 || count == -1);
 
     gboolean handled;
-    g_signal_emit(webView, webkit_web_view_signals[MOVE_CURSOR], 0, step, &handled);
+    g_signal_emit(webView, webkit_web_view_signals[MOVE_CURSOR], 0, step, count, &handled);
 }
