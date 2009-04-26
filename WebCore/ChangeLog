@@ -1,3 +1,16 @@
+2009-04-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        A width or height of zero for the destination or source rect of an
+        image causes a not invertible pattern matrix.
+        This crahes newer versions of Cairo and give some graphic gliches in
+        Canvas.
+        With this patch we check if there is something to draw and return if not.
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+
 2009-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
