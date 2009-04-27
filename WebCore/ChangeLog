@@ -1,3 +1,22 @@
+2009-04-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - make BidiContext a RefCounted class, starting with a refcount of 1,
+          and share the root BidiContexts.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText): Use BidiContext::create().
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::create): Added. For the four "root" contexts,
+        returns a reference to a shared static BidiContext.
+        * platform/text/BidiContext.h:
+        (WebCore::BidiContext::BidiContext):
+        * platform/text/BidiResolver.h:
+        (WebCore::::commitExplicitEmbedding): Use BidiContext::create().
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition): Ditto.
+
 2009-04-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Gustavo Noronha.

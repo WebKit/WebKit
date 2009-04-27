@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007 Apple Inc.  All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2009 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,31 +23,17 @@
 #define BidiContext_h
 
 #include <wtf/Assertions.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 // Used to keep track of explicit embeddings.
-class BidiContext {
+class BidiContext : public RefCounted<BidiContext> {
 public:
-    BidiContext(unsigned char level, WTF::Unicode::Direction direction, bool override = false, BidiContext* parent = 0)
-        : m_level(level)
-        , m_direction(direction)
-        , m_override(override)
-        , m_parent(parent)
-        , m_refCount(0)
-    {
-        ASSERT(direction == WTF::Unicode::LeftToRight || direction == WTF::Unicode::RightToLeft);
-    }
-
-    void ref() const { m_refCount++; }
-    void deref() const
-    {
-        m_refCount--;
-        if (m_refCount <= 0)
-            delete this;
-    }
+    static PassRefPtr<BidiContext> create(unsigned char level, WTF::Unicode::Direction direction, bool override = false, BidiContext* parent = 0);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }
@@ -55,11 +41,18 @@ public:
     bool override() const { return m_override; }
 
 private:
+    BidiContext(unsigned char level, WTF::Unicode::Direction direction, bool override, BidiContext* parent)
+        : m_level(level)
+        , m_direction(direction)
+        , m_override(override)
+        , m_parent(parent)
+    {
+    }
+
     unsigned char m_level;
     unsigned m_direction : 5; // Direction
     bool m_override : 1;
     RefPtr<BidiContext> m_parent;
-    mutable int m_refCount;
 };
 
 bool operator==(const BidiContext&, const BidiContext&);

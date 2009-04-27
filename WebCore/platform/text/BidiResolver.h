@@ -402,7 +402,7 @@ void BidiResolver<Iterator, Run>::commitExplicitEmbedding()
                 level &= ~1;
             }
             if (level < 61)
-                toContext = new BidiContext(level, direction, override, toContext.get());
+                toContext = BidiContext::create(level, direction, override, toContext.get());
         }
     }
 

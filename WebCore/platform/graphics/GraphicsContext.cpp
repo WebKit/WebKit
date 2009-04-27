@@ -336,7 +336,7 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
     WTF::Unicode::Direction paragraphDirection = run.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
 
-    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, new BidiContext(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
+    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, BidiContext::create(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
 
     bidiResolver.setPosition(TextRunIterator(&run, 0));
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));

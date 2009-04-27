@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007 Apple Inc.  All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2009 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,36 @@
 #include "config.h"
 #include "BidiContext.h"
 
+#include <wtf/StdLibExtras.h>
+
 namespace WebCore {
+
+using namespace WTF::Unicode;
+
+PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direction, bool override, BidiContext* parent)
+{
+    ASSERT(direction == level % 2 ? RightToLeft : LeftToRight);
+
+    if (parent)
+        return adoptRef(new BidiContext(level, direction, override, parent));
+
+    ASSERT(level <= 1);
+    if (!level) {
+        DEFINE_STATIC_LOCAL(BidiContext, ltrContext, (0, LeftToRight, false, 0));
+        if (!override)
+            return &ltrContext;
+
+        DEFINE_STATIC_LOCAL(BidiContext, ltrOverrideContext, (0, LeftToRight, true, 0));
+        return &ltrOverrideContext;
+    }
+
+    DEFINE_STATIC_LOCAL(BidiContext, rtlContext, (1, RightToLeft, false, 0));
+    if (!override)
+        return &rtlContext;
+
+    DEFINE_STATIC_LOCAL(BidiContext, rtlOverrideContext, (1, RightToLeft, true, 0));
+    return &rtlOverrideContext;
+}
 
 bool operator==(const BidiContext& c1, const BidiContext& c2)
 {

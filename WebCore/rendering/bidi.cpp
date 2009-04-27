@@ -1264,12 +1264,12 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
     #endif
             ;
 
-        BidiContext* context = new BidiContext(ltr ? 0 : 1, ltr ? LeftToRight : RightToLeft, style()->unicodeBidi() == Override);
+        Direction direction = ltr ? LeftToRight : RightToLeft;
+        resolver.setLastStrongDir(direction);
+        resolver.setLastDir(direction);
+        resolver.setEorDir(direction);
+        resolver.setContext(BidiContext::create(ltr ? 0 : 1, direction, style()->unicodeBidi() == Override));
 
-        resolver.setLastStrongDir(context->dir());
-        resolver.setLastDir(context->dir());
-        resolver.setEorDir(context->dir());
-        resolver.setContext(context);
         startObj = bidiFirst(this, &resolver);
     }
 
