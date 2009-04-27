@@ -1,5 +1,31 @@
 2009-04-26  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25412
+        The Window object should be an EventTarget
+
+        Test: fast/dom/Window/dispatchEvent.html
+
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS): Add DOMWindow case.
+        (WebCore::toEventTarget): Ditto.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toDOMWindow): Added.
+        * dom/EventTarget.h:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scriptExecutionContext): Added. Returns the document.
+        (WebCore::DOMWindow::dispatchEvent): Added.
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::toDOMWindow):
+        (WebCore::DOMWindow::refEventTarget):
+        (WebCore::DOMWindow::derefEventTarget):
+        * page/DOMWindow.idl:
+
+2009-04-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove scons-based build system.

@@ -38,12 +38,13 @@ namespace WebCore {
 
     class AtomicString;
     class DOMApplicationCache;
+    class DOMWindow;
     class Event;
     class EventListener;
     class MessagePort;
     class Node;
-    class ScriptExecutionContext;
     class SVGElementInstance;
+    class ScriptExecutionContext;
     class Worker;
     class WorkerContext;
     class XMLHttpRequest;
@@ -55,6 +56,7 @@ namespace WebCore {
     public:
         virtual MessagePort* toMessagePort();
         virtual Node* toNode();
+        virtual DOMWindow* toDOMWindow();
         virtual XMLHttpRequest* toXMLHttpRequest();
         virtual XMLHttpRequestUpload* toXMLHttpRequestUpload();
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

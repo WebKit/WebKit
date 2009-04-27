@@ -1,3 +1,16 @@
+2009-04-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=25412
+        The Window object should be an EventTarget
+
+        * fast/dom/Window/dispatchEvent-expected.txt: Added.
+        * fast/dom/Window/dispatchEvent.html: Added.
+        * fast/dom/Window/resources/dispatchEvent.js: Added.
+        * fast/dom/Window/window-properties-expected.txt
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-04-25  Gustavo Noronha Silva  <gns@gnome.org>
 
         Go back to disabling accessibility tests as a whole, since we have

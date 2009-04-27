@@ -36,6 +36,7 @@
 #include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
+#include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -366,6 +367,11 @@ DOMWindow::~DOMWindow()
 
     removePendingEventListeners(pendingUnloadEventListenerMap(), this);
     removePendingEventListeners(pendingBeforeUnloadEventListenerMap(), this);
+}
+
+ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
+{
+    return document();
 }
 
 void DOMWindow::disconnectFrame()
@@ -1209,6 +1215,27 @@ void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
             return;
         }
     }
+}
+
+bool DOMWindow::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
+{
+    ASSERT(!eventDispatchForbidden());
+
+    RefPtr<Event> event = e;
+    if (!event || event->type().isEmpty()) {
+        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
+        return true;
+    }
+
+    RefPtr<DOMWindow> protect(this);
+
+    event->setTarget(this);
+    event->setCurrentTarget(this);
+
+    handleEvent(event.get(), true);
+    handleEvent(event.get(), false);
+
+    return !event->defaultPrevented();
 }
 
 void DOMWindow::removeAllEventListeners()
