@@ -171,8 +171,12 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
 
     if (value != text() || !m_innerText->hasChildNodes()) {
         if (value != text()) {
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document()->frame()) {
                 frame->editor()->clearUndoRedoOperations();
+                
+                VisibleSelection newSelection(frame->selection()->end());
+                frame->editor()->respondToChangedContents(newSelection);
+            }
         }
 
         ExceptionCode ec = 0;

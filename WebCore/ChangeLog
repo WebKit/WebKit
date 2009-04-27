@@ -1,3 +1,15 @@
+2009-04-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25374: AX: No AXValue change sent when text is auto-inserted
+        https://bugs.webkit.org/show_bug.cgi?id=25374
+
+        When an input's text value is changed through the DOM, no AXValueChange notification is being sent.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue):
+
 2009-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
