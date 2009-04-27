@@ -741,6 +741,10 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     if (isHovered(o))
         option.state |= QStyle::State_MouseOver;
 
+    option.direction = Qt::LeftToRight;
+    if (o->style() && o->style()->direction() == WebCore::RTL)
+        option.direction = Qt::RightToLeft;
+
     ControlPart result = o->style()->appearance();
 
     switch (result) {

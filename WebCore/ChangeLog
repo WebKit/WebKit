@@ -1,3 +1,15 @@
+2009-04-27  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18475
+
+        [Qt] Widget painting should follow the layout direction (LTR, RTL)
+        of the element style, not the application layout direction.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::applyTheme):
+
 2009-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
