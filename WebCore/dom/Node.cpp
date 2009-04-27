@@ -2509,38 +2509,6 @@ void Node::dispatchSubtreeModifiedEvent()
     dispatchMutationEvent(eventNames().DOMSubtreeModifiedEvent, true, 0, String(), String(), ec); 
 }
 
-void Node::dispatchWindowEvent(PassRefPtr<Event> e)
-{
-    ASSERT(!eventDispatchForbidden());
-    RefPtr<Event> evt(e);
-    RefPtr<Document> doc = document();
-    evt->setTarget(doc); // FIXME: The window should be the event target.
-    DOMWindow* domWindow = doc->domWindow();
-    if (!domWindow)
-        return;
-    domWindow->handleEvent(evt.get(), true);
-    domWindow->handleEvent(evt.get(), false);
-}
-
-void Node::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
-{
-    ASSERT(!eventDispatchForbidden());
-    RefPtr<Document> doc = document();
-    dispatchWindowEvent(Event::create(eventType, canBubbleArg, cancelableArg));
-    
-    if (eventType == eventNames().loadEvent) {
-        // For onload events, send a separate load event to the enclosing frame only.
-        // This is a DOM extension and is independent of bubbling/capturing rules of
-        // the DOM.
-        Element* ownerElement = doc->ownerElement();
-        if (ownerElement) {
-            RefPtr<Event> ownerEvent = Event::create(eventType, false, cancelableArg);
-            ownerEvent->setTarget(ownerElement);
-            ownerElement->dispatchGenericEvent(ownerEvent.release());
-        }
-    }
-}
-
 void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());

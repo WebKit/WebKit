@@ -530,8 +530,6 @@ public:
     void removeAllEventListeners() { if (hasRareData()) removeAllEventListenersSlowCase(); }
 
     void dispatchSubtreeModifiedEvent();
-    void dispatchWindowEvent(PassRefPtr<Event>);
-    void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     void dispatchUIEvent(const AtomicString& eventType, int detail = 0, PassRefPtr<Event> underlyingEvent = 0);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchWheelEvent(PlatformWheelEvent&);

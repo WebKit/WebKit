@@ -1,3 +1,39 @@
+2009-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Move more window event related code into DOMWindow.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::setWindowAttributeEventListener):
+        (WebCore::Document::dispatchWindowEvent):
+        (WebCore::Document::dispatchLoadEvent):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::dispatchEvent):
+        (WebCore::DOMWindow::dispatchEventWithDocumentAsTarget):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::dispatchUnloadEvent):
+        (WebCore::DOMWindow::dispatchBeforeUnloadEvent):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldClose):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+
 2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
 
         Implement the editing mechanisms and add context menu items for

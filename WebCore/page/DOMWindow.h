@@ -38,6 +38,7 @@
 namespace WebCore {
 
     class BarInfo;
+    class BeforeUnloadEvent;
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
@@ -53,10 +54,10 @@ namespace WebCore {
     class Location;
     class MessagePort;
     class Navigator;
+    class Node;
     class PostMessageTimer;
     class Screen;
     class WebKitPoint;
-    class Node;
 
 #if ENABLE(DOM_STORAGE)
     class SessionStorage;
@@ -213,9 +214,15 @@ namespace WebCore {
 
         void handleEvent(Event*, bool useCapture, RegisteredEventListenerVector* = 0);
 
+        // EventTarget API
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+
+        void dispatchEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
+        void dispatchLoadEvent();
+        void dispatchUnloadEvent(RegisteredEventListenerVector* = 0);
+        PassRefPtr<BeforeUnloadEvent> dispatchBeforeUnloadEvent(RegisteredEventListenerVector* = 0);
 
         // Used for legacy "onEvent" property APIs.
         void setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
@@ -315,6 +322,8 @@ namespace WebCore {
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
+
+        void dispatchEventWithDocumentAsTarget(PassRefPtr<Event>, RegisteredEventListenerVector* = 0);
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;

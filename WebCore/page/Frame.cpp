@@ -1621,15 +1621,15 @@ bool Frame::shouldClose(RegisteredEventListenerVector* alternateEventListeners)
     if (!chrome || !chrome->canRunBeforeUnloadConfirmPanel())
         return true;
 
+    if (!m_domWindow)
+        return true;
+
     RefPtr<Document> doc = document();
     HTMLElement* body = doc->body();
     if (!body)
         return true;
 
-    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
-    beforeUnloadEvent->setTarget(doc);
-    if (m_domWindow)
-        m_domWindow->handleEvent(beforeUnloadEvent.get(), false, alternateEventListeners);
+    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = m_domWindow->dispatchBeforeUnloadEvent(alternateEventListeners);
 
     if (!beforeUnloadEvent->defaultPrevented())
         doc->defaultEventHandler(beforeUnloadEvent.get());

@@ -609,7 +609,8 @@ void FrameLoader::stopLoading(bool sendUnload)
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
                 m_unloadEventBeingDispatched = true;
-                m_frame->document()->dispatchWindowEvent(eventNames().unloadEvent, false, false);
+                if (m_frame->domWindow())
+                    m_frame->domWindow()->dispatchUnloadEvent();
                 m_unloadEventBeingDispatched = false;
                 if (m_frame->document())
                     m_frame->document()->updateStyleIfNeeded();

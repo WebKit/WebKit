@@ -229,7 +229,6 @@ private:
 protected:
     ElementRareData* rareData() const;
     ElementRareData* ensureRareData();
-    void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     
     mutable RefPtr<NamedNodeMap> namedAttrMap;
 };

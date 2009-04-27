@@ -126,11 +126,11 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
             m_borderColorSet = true;
         }
     } else if (attr->name() == onloadAttr) {
-        setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
     } else if (attr->name() == onbeforeunloadAttr) {
-        setWindowAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(document()->frame(), attr));
     } else if (attr->name() == onunloadAttr) {
-        setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

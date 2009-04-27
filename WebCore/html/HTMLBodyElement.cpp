@@ -133,19 +133,19 @@ void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
         if (attached())
             document()->recalcStyle(Force);
     } else if (attr->name() == onloadAttr)
-        setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onbeforeunloadAttr)
-        setWindowAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onunloadAttr)
-        setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onblurAttr)
-        setWindowAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onfocusAttr)
-        setWindowAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onresizeAttr)
-        setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onscrollAttr)
-        setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
+        document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onstorageAttr) {
         // The HTML5 spec currently specifies that storage events are fired only at the body element of
         // an HTMLDocument, which is why the onstorage attribute differs from the ones before it.
