@@ -1,3 +1,13 @@
+2009-04-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Adam Roben.
+
+        Use libsoup's facilities to resolve relative URLs, instead, since
+        it is a more robust method.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::queueLoad):
+
 2009-04-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
