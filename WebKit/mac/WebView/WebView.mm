@@ -508,6 +508,13 @@ static BOOL continuousSpellCheckingEnabled;
 #ifndef BUILDING_ON_TIGER
 static BOOL grammarCheckingEnabled;
 #endif
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+static BOOL automaticQuoteSubstitutionEnabled;
+static BOOL automaticLinkDetectionEnabled;
+static BOOL automaticDashSubstitutionEnabled;
+static BOOL automaticTextReplacementEnabled;
+static BOOL automaticSpellingCorrectionEnabled;
+#endif
 
 @implementation WebViewPrivate
 
@@ -535,6 +542,13 @@ static BOOL grammarCheckingEnabled;
 
 #ifndef BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+#endif
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
+    automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
+    automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
+    automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
+    automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
     
     usesPageCache = YES;
@@ -3741,6 +3755,43 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         }
         return YES;
 #endif
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    } else if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
+        BOOL checkMark = [self isAutomaticQuoteSubstitutionEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+    } else if (action == @selector(toggleAutomaticLinkDetection:)) {
+        BOOL checkMark = [self isAutomaticLinkDetectionEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+    } else if (action == @selector(toggleAutomaticDashSubstitution:)) {
+        BOOL checkMark = [self isAutomaticDashSubstitutionEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+    } else if (action == @selector(toggleAutomaticTextReplacement:)) {
+        BOOL checkMark = [self isAutomaticTextReplacementEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+    } else if (action == @selector(toggleAutomaticSpellingCorrection:)) {
+        BOOL checkMark = [self isAutomaticSpellingCorrectionEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+#endif
     }
     FOR_EACH_RESPONDER_SELECTOR(VALIDATE)
 
@@ -4498,10 +4549,13 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
     grammarCheckingEnabled = flag;
     [[NSUserDefaults standardUserDefaults] setBool:grammarCheckingEnabled forKey:WebGrammarCheckingEnabled];    
     
-    // FIXME 4811447: workaround for lack of API
+#ifndef BUILDING_ON_LEOPARD
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+#else
     NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
     if ([spellChecker respondsToSelector:@selector(_updateGrammar)])
         [spellChecker performSelector:@selector(_updateGrammar)];
+#endif
     
     // We call _preflightSpellChecker when turning continuous spell checking on, but we don't need to do that here
     // because grammar checking only occurs on code paths that already preflight spell checking appropriately.
@@ -4515,6 +4569,129 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
 {
     [self setGrammarCheckingEnabled:![self isGrammarCheckingEnabled]];
 }
+#endif
+
+@end
+
+@implementation WebView (WebViewTextChecking)
+
+- (BOOL)isAutomaticQuoteSubstitutionEnabled
+{
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    return NO;
+#else
+    return automaticQuoteSubstitutionEnabled;
+#endif
+}
+
+- (BOOL)isAutomaticLinkDetectionEnabled
+{
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    return NO;
+#else
+    return automaticLinkDetectionEnabled;
+#endif
+}
+
+- (BOOL)isAutomaticDashSubstitutionEnabled
+{
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    return NO;
+#else
+    return automaticDashSubstitutionEnabled;
+#endif
+}
+
+- (BOOL)isAutomaticTextReplacementEnabled
+{
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    return NO;
+#else
+    return automaticTextReplacementEnabled;
+#endif
+}
+
+- (BOOL)isAutomaticSpellingCorrectionEnabled
+{
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    return NO;
+#else
+    return automaticSpellingCorrectionEnabled;
+#endif
+}
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+- (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
+{
+    if (automaticQuoteSubstitutionEnabled == flag)
+        return;
+    automaticQuoteSubstitutionEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:automaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+- (void)toggleAutomaticQuoteSubstitution:(id)sender
+{
+    [self setAutomaticQuoteSubstitutionEnabled:![self isAutomaticQuoteSubstitutionEnabled]];
+}
+
+- (void)setAutomaticLinkDetectionEnabled:(BOOL)flag
+{
+    if (automaticLinkDetectionEnabled == flag)
+        return;
+    automaticLinkDetectionEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:automaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+- (void)toggleAutomaticLinkDetection:(id)sender
+{
+    [self setAutomaticLinkDetectionEnabled:![self isAutomaticLinkDetectionEnabled]];
+}
+
+- (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag
+{
+    if (automaticDashSubstitutionEnabled == flag)
+        return;
+    automaticDashSubstitutionEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:automaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+- (void)toggleAutomaticDashSubstitution:(id)sender
+{
+    [self setAutomaticDashSubstitutionEnabled:![self isAutomaticDashSubstitutionEnabled]];
+}
+
+- (void)setAutomaticTextReplacementEnabled:(BOOL)flag
+{
+    if (automaticTextReplacementEnabled == flag)
+        return;
+    automaticTextReplacementEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:automaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+- (void)toggleAutomaticTextReplacement:(id)sender
+{
+    [self setAutomaticTextReplacementEnabled:![self isAutomaticTextReplacementEnabled]];
+}
+
+- (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag
+{
+    if (automaticSpellingCorrectionEnabled == flag)
+        return;
+    automaticSpellingCorrectionEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:automaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+- (void)toggleAutomaticSpellingCorrection:(id)sender
+{
+    [self setAutomaticSpellingCorrectionEnabled:![self isAutomaticSpellingCorrectionEnabled]];
+}
+
 #endif
 
 @end

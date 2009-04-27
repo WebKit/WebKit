@@ -61,11 +61,22 @@ struct GrammarDetail {
     String userDescription;
 };
 
+enum TextCheckingType {
+    TextCheckingTypeSpelling    = 1 << 1,
+    TextCheckingTypeGrammar     = 1 << 2,
+    TextCheckingTypeLink        = 1 << 5,
+    TextCheckingTypeQuote       = 1 << 6,
+    TextCheckingTypeDash        = 1 << 7,
+    TextCheckingTypeReplacement = 1 << 8,
+    TextCheckingTypeCorrection  = 1 << 9
+};
+
 struct TextCheckingResult {
-    int resultType; // 1 for spelling, 2 for grammar
+    TextCheckingType type;
     int location;
     int length;
     Vector<GrammarDetail> details;
+    String replacement;
 };
  
 class EditorClient {
@@ -133,12 +144,31 @@ public:
 #endif
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    virtual void uppercaseWord() = 0;
+    virtual void lowercaseWord() = 0;
+    virtual void capitalizeWord() = 0;
+    virtual void showSubstitutionsPanel(bool show) = 0;
+    virtual bool substitutionsPanelIsShowing() = 0;
+    virtual void toggleSmartInsertDelete() = 0;
+    virtual bool isAutomaticQuoteSubstitutionEnabled() = 0;
+    virtual void toggleAutomaticQuoteSubstitution() = 0;
+    virtual bool isAutomaticLinkDetectionEnabled() = 0;
+    virtual void toggleAutomaticLinkDetection() = 0;
+    virtual bool isAutomaticDashSubstitutionEnabled() = 0;
+    virtual void toggleAutomaticDashSubstitution() = 0;
+    virtual bool isAutomaticTextReplacementEnabled() = 0;
+    virtual void toggleAutomaticTextReplacement() = 0;
+    virtual bool isAutomaticSpellingCorrectionEnabled() = 0;
+    virtual void toggleAutomaticSpellingCorrection() = 0;
+#endif
+
     virtual void ignoreWordInSpellDocument(const String&) = 0;
     virtual void learnWord(const String&) = 0;
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) = 0;
     virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    virtual void checkSpellingAndGrammarOfParagraph(const UChar* text, int length, bool checkGrammar, Vector<TextCheckingResult>& results) = 0;
+    virtual void checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<TextCheckingResult>& results) = 0;
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail& detail) = 0;
     virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;

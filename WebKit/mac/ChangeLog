@@ -1,3 +1,87 @@
+2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Add the various switches and context menu items needed for
+        <rdar://problem/6724106> WebViews need to implement text checking
+        and adopt updatePanels in place of old SPI _updateGrammar.
+
+        Reviewed by Justin Garcia.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusReceivedFromOldClients):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::uppercaseWord):
+        (WebEditorClient::lowercaseWord):
+        (WebEditorClient::capitalizeWord):
+        (WebEditorClient::showSubstitutionsPanel):
+        (WebEditorClient::substitutionsPanelIsShowing):
+        (WebEditorClient::toggleSmartInsertDelete):
+        (WebEditorClient::isAutomaticQuoteSubstitutionEnabled):
+        (WebEditorClient::toggleAutomaticQuoteSubstitution):
+        (WebEditorClient::isAutomaticLinkDetectionEnabled):
+        (WebEditorClient::toggleAutomaticLinkDetection):
+        (WebEditorClient::isAutomaticDashSubstitutionEnabled):
+        (WebEditorClient::toggleAutomaticDashSubstitution):
+        (WebEditorClient::isAutomaticTextReplacementEnabled):
+        (WebEditorClient::toggleAutomaticTextReplacement):
+        (WebEditorClient::isAutomaticSpellingCorrectionEnabled):
+        (WebEditorClient::toggleAutomaticSpellingCorrection):
+        (WebEditorClient::checkTextOfParagraph):
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory contextMenuItemTagShowColors]):
+        (-[WebViewFactory contextMenuItemTagCorrectSpellingAutomatically]):
+        (-[WebViewFactory contextMenuItemTagSubstitutionsMenu]):
+        (-[WebViewFactory contextMenuItemTagShowSubstitutions:]):
+        (-[WebViewFactory contextMenuItemTagSmartCopyPaste]):
+        (-[WebViewFactory contextMenuItemTagSmartQuotes]):
+        (-[WebViewFactory contextMenuItemTagSmartDashes]):
+        (-[WebViewFactory contextMenuItemTagSmartLinks]):
+        (-[WebViewFactory contextMenuItemTagTextReplacement]):
+        (-[WebViewFactory contextMenuItemTagTransformationsMenu]):
+        (-[WebViewFactory contextMenuItemTagMakeUpperCase]):
+        (-[WebViewFactory contextMenuItemTagMakeLowerCase]):
+        (-[WebViewFactory contextMenuItemTagCapitalize]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WebHTMLView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WebHTMLView toggleAutomaticQuoteSubstitution:]):
+        (-[WebHTMLView isAutomaticLinkDetectionEnabled]):
+        (-[WebHTMLView setAutomaticLinkDetectionEnabled:]):
+        (-[WebHTMLView toggleAutomaticLinkDetection:]):
+        (-[WebHTMLView isAutomaticDashSubstitutionEnabled]):
+        (-[WebHTMLView setAutomaticDashSubstitutionEnabled:]):
+        (-[WebHTMLView toggleAutomaticDashSubstitution:]):
+        (-[WebHTMLView isAutomaticTextReplacementEnabled]):
+        (-[WebHTMLView setAutomaticTextReplacementEnabled:]):
+        (-[WebHTMLView toggleAutomaticTextReplacement:]):
+        (-[WebHTMLView isAutomaticSpellingCorrectionEnabled]):
+        (-[WebHTMLView setAutomaticSpellingCorrectionEnabled:]):
+        (-[WebHTMLView toggleAutomaticSpellingCorrection:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebView setGrammarCheckingEnabled:]):
+        (-[WebView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WebView isAutomaticLinkDetectionEnabled]):
+        (-[WebView isAutomaticDashSubstitutionEnabled]):
+        (-[WebView isAutomaticTextReplacementEnabled]):
+        (-[WebView isAutomaticSpellingCorrectionEnabled]):
+        (-[WebView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WebView toggleAutomaticQuoteSubstitution:]):
+        (-[WebView setAutomaticLinkDetectionEnabled:]):
+        (-[WebView toggleAutomaticLinkDetection:]):
+        (-[WebView setAutomaticDashSubstitutionEnabled:]):
+        (-[WebView toggleAutomaticDashSubstitution:]):
+        (-[WebView setAutomaticTextReplacementEnabled:]):
+        (-[WebView toggleAutomaticTextReplacement:]):
+        (-[WebView setAutomaticSpellingCorrectionEnabled:]):
+        (-[WebView toggleAutomaticSpellingCorrection:]):
+        * WebView/WebViewPrivate.h:
+
 2009-04-27  David Kilzer  <ddkilzer@apple.com>
 
         Consolidate runtime application checks for Apple Mail and Safari

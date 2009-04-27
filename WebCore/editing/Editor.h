@@ -200,6 +200,25 @@ public:
     void markMisspellings(const VisibleSelection&);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
+    void showSubstitutionsPanel();
+    bool substitutionsPanelIsShowing();
+    void toggleSmartInsertDelete();
+    bool isAutomaticQuoteSubstitutionEnabled();
+    void toggleAutomaticQuoteSubstitution();
+    bool isAutomaticLinkDetectionEnabled();
+    void toggleAutomaticLinkDetection();
+    bool isAutomaticDashSubstitutionEnabled();
+    void toggleAutomaticDashSubstitution();
+    bool isAutomaticTextReplacementEnabled();
+    void toggleAutomaticTextReplacement();
+    bool isAutomaticSpellingCorrectionEnabled();
+    void toggleAutomaticSpellingCorrection();
+    void markAllMisspellingsAndBadGrammarInRanges(Range* spellingRange, bool markGrammar, Range* grammarRange, bool performTextCheckingReplacements);
+#endif
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();

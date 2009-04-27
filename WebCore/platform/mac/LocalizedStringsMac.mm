@@ -433,6 +433,102 @@ String contextMenuItemTagRightToLeft()
     return String();
 }
 
+String contextMenuItemTagCorrectSpellingAutomatically()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCorrectSpellingAutomatically];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSubstitutionsMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSubstitutionsMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagShowSubstitutions(bool show)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:show];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSmartCopyPaste()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartCopyPaste];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSmartQuotes()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartQuotes];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSmartDashes()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartDashes];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSmartLinks()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSmartLinks];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagTextReplacement()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTextReplacement];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagTransformationsMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTransformationsMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagMakeUpperCase()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagMakeUpperCase];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagMakeLowerCase()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagMakeLowerCase];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCapitalize()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCapitalize];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String contextMenuItemTagInspectElement()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

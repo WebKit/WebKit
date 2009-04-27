@@ -212,6 +212,31 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
                 modernTag = WebMenuItemTagLeftToRight;
             else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
                 modernTag = WebMenuItemTagRightToLeft;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCorrectSpellingAutomatically]])
+                modernTag = WebMenuItemTagCorrectSpellingAutomatically;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSubstitutionsMenu]])
+                modernTag = WebMenuItemTagSubstitutionsMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:true]]
+                     || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSubstitutions:false]])
+                modernTag = WebMenuItemTagShowSubstitutions;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartCopyPaste]])
+                modernTag = WebMenuItemTagSmartCopyPaste;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartQuotes]])
+                modernTag = WebMenuItemTagSmartQuotes;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartDashes]])
+                modernTag = WebMenuItemTagSmartDashes;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSmartLinks]])
+                modernTag = WebMenuItemTagSmartLinks;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagTextReplacement]])
+                modernTag = WebMenuItemTagTextReplacement;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagTransformationsMenu]])
+                modernTag = WebMenuItemTagTransformationsMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagMakeUpperCase]])
+                modernTag = WebMenuItemTagMakeUpperCase;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagMakeLowerCase]])
+                modernTag = WebMenuItemTagMakeLowerCase;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCapitalize]])
+                modernTag = WebMenuItemTagCapitalize;
             else {
             // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle.
             // There's nothing to prevent an app from applying this tag, but they are supposed to only

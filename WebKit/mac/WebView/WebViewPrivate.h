@@ -464,6 +464,29 @@ Could be worth adding to the API.
 // FIXME: This method should be merged into WebIBActions when we're not in API freeze
 - (void)toggleGrammarChecking:(id)sender;
 #endif
+
+@end
+
+@interface WebView (WebViewTextChecking)
+
+- (BOOL)isAutomaticQuoteSubstitutionEnabled;
+- (BOOL)isAutomaticLinkDetectionEnabled;
+- (BOOL)isAutomaticDashSubstitutionEnabled;
+- (BOOL)isAutomaticTextReplacementEnabled;
+- (BOOL)isAutomaticSpellingCorrectionEnabled;
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+- (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag;
+- (void)toggleAutomaticQuoteSubstitution:(id)sender;
+- (void)setAutomaticLinkDetectionEnabled:(BOOL)flag;
+- (void)toggleAutomaticLinkDetection:(id)sender;
+- (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag;
+- (void)toggleAutomaticDashSubstitution:(id)sender;
+- (void)setAutomaticTextReplacementEnabled:(BOOL)flag;
+- (void)toggleAutomaticTextReplacement:(id)sender;
+- (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
+- (void)toggleAutomaticSpellingCorrection:(id)sender;
+#endif
+
 @end
 
 @interface WebView (WebViewEditingInMail)

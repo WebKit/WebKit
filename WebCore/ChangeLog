@@ -1,3 +1,22 @@
+2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Implement the editing mechanisms and add context menu items for
+        <rdar://problem/6724106> WebViews need to implement text checking
+
+        Reviewed by Justin Garcia.
+
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        * loader/EmptyClients.h:
+        * page/ContextMenuController.cpp:
+        * page/EditorClient.h:
+        * page/mac/WebCoreViewFactory.h:
+        * platform/ContextMenu.cpp:
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm:
+
 2009-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

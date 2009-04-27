@@ -295,6 +295,38 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             frame->editor()->showColorPanel();
             break;
 #endif
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+        case ContextMenuItemTagMakeUpperCase:
+            frame->editor()->uppercaseWord();
+            break;
+        case ContextMenuItemTagMakeLowerCase:
+            frame->editor()->lowercaseWord();
+            break;
+        case ContextMenuItemTagCapitalize:
+            frame->editor()->capitalizeWord();
+            break;
+        case ContextMenuItemTagShowSubstitutions:
+            frame->editor()->showSubstitutionsPanel();
+            break;
+        case ContextMenuItemTagSmartCopyPaste:
+            frame->editor()->toggleSmartInsertDelete();
+            break;
+        case ContextMenuItemTagSmartQuotes:
+            frame->editor()->toggleAutomaticQuoteSubstitution();
+            break;
+        case ContextMenuItemTagSmartDashes:
+            frame->editor()->toggleAutomaticDashSubstitution();
+            break;
+        case ContextMenuItemTagSmartLinks:
+            frame->editor()->toggleAutomaticLinkDetection();
+            break;
+        case ContextMenuItemTagTextReplacement:
+            frame->editor()->toggleAutomaticTextReplacement();
+            break;
+        case ContextMenuItemTagCorrectSpellingAutomatically:
+            frame->editor()->toggleAutomaticSpellingCorrection();
+            break;
+#endif
         case ContextMenuItemTagInspectElement:
             if (Page* page = frame->page())
                 page->inspectorController()->inspect(result.innerNonSharedNode());

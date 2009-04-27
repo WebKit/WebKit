@@ -72,6 +72,18 @@ enum {
     WebMenuItemTagTextDirectionDefault,
     WebMenuItemTagTextDirectionLeftToRight,
     WebMenuItemTagTextDirectionRightToLeft,
+    WebMenuItemTagCorrectSpellingAutomatically,
+    WebMenuItemTagSubstitutionsMenu,
+    WebMenuItemTagShowSubstitutions,
+    WebMenuItemTagSmartCopyPaste,
+    WebMenuItemTagSmartQuotes,
+    WebMenuItemTagSmartDashes,
+    WebMenuItemTagSmartLinks,
+    WebMenuItemTagTextReplacement,
+    WebMenuItemTagTransformationsMenu,
+    WebMenuItemTagMakeUpperCase,
+    WebMenuItemTagMakeLowerCase,
+    WebMenuItemTagCapitalize,
     WebMenuItemTagBaseApplication = 10000
 };
 @class WebGeolocation;

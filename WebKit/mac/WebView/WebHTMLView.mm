@@ -2640,6 +2640,42 @@ WEBCORE_COMMAND(yankAndSelect)
         return YES;
     }
 #endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    // FIXME 4799134: WebView is the bottleneck for this logic, but we must validate 
+    // the selector here because we implement it here, and we must implement it here because the AppKit 
+    // code checks the first responder.
+    if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isAutomaticQuoteSubstitutionEnabled] ? NSOnState : NSOffState];
+        return YES;
+    }
+    if (action == @selector(toggleAutomaticLinkDetection:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isAutomaticLinkDetectionEnabled] ? NSOnState : NSOffState];
+        return YES;
+    }
+    if (action == @selector(toggleAutomaticDashSubstitution:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isAutomaticDashSubstitutionEnabled] ? NSOnState : NSOffState];
+        return YES;
+    }
+    if (action == @selector(toggleAutomaticTextReplacement:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isAutomaticTextReplacementEnabled] ? NSOnState : NSOffState];
+        return YES;
+    }
+    if (action == @selector(toggleAutomaticSpellingCorrection:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isAutomaticSpellingCorrectionEnabled] ? NSOnState : NSOffState];
+        return YES;
+    }
+#endif
     
     Editor::Command command = [self coreCommandBySelector:action];
     if (command.isSupported()) {
@@ -4933,6 +4969,88 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     
     // Flip the y coordinate from the top of the menu bar screen -- see 4636390
     return CGPointMake(point.x, NSMaxY([[screens objectAtIndex:0] frame]) - point.y);
+}
+
+#endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+// FIXME 4799134: WebView is the bottleneck for this logic, but we must implement these methods here because
+// the AppKit code checks the first responder.
+
+- (BOOL)isAutomaticQuoteSubstitutionEnabled
+{
+    return [[self _webView] isAutomaticQuoteSubstitutionEnabled];
+}
+
+- (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
+{
+    [[self _webView] setAutomaticQuoteSubstitutionEnabled:flag];
+}
+
+- (void)toggleAutomaticQuoteSubstitution:(id)sender
+{
+    [[self _webView] toggleAutomaticQuoteSubstitution:sender];
+}
+
+- (BOOL)isAutomaticLinkDetectionEnabled
+{
+    return [[self _webView] isAutomaticLinkDetectionEnabled];
+}
+
+- (void)setAutomaticLinkDetectionEnabled:(BOOL)flag
+{
+    [[self _webView] setAutomaticLinkDetectionEnabled:flag];
+}
+
+- (void)toggleAutomaticLinkDetection:(id)sender
+{
+    [[self _webView] toggleAutomaticLinkDetection:sender];
+}
+
+- (BOOL)isAutomaticDashSubstitutionEnabled
+{
+    return [[self _webView] isAutomaticDashSubstitutionEnabled];
+}
+
+- (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag
+{
+    [[self _webView] setAutomaticDashSubstitutionEnabled:flag];
+}
+
+- (void)toggleAutomaticDashSubstitution:(id)sender
+{
+    [[self _webView] toggleAutomaticDashSubstitution:sender];
+}
+
+- (BOOL)isAutomaticTextReplacementEnabled
+{
+    return [[self _webView] isAutomaticTextReplacementEnabled];
+}
+
+- (void)setAutomaticTextReplacementEnabled:(BOOL)flag
+{
+    [[self _webView] setAutomaticTextReplacementEnabled:flag];
+}
+
+- (void)toggleAutomaticTextReplacement:(id)sender
+{
+    [[self _webView] toggleAutomaticTextReplacement:sender];
+}
+
+- (BOOL)isAutomaticSpellingCorrectionEnabled
+{
+    return [[self _webView] isAutomaticSpellingCorrectionEnabled];
+}
+
+- (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag
+{
+    [[self _webView] setAutomaticSpellingCorrectionEnabled:flag];
+}
+
+- (void)toggleAutomaticSpellingCorrection:(id)sender
+{
+    [[self _webView] toggleAutomaticSpellingCorrection:sender];
 }
 
 #endif

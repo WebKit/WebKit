@@ -319,6 +319,92 @@ NSArray* WebEditorClient::pasteboardTypesForSelection(Frame* selectedFrame)
 }
 #endif
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+void WebEditorClient::uppercaseWord()
+{
+    [m_webView uppercaseWord:nil];
+}
+
+void WebEditorClient::lowercaseWord()
+{
+    [m_webView lowercaseWord:nil];
+}
+
+void WebEditorClient::capitalizeWord()
+{
+    [m_webView capitalizeWord:nil];
+}
+
+void WebEditorClient::showSubstitutionsPanel(bool show)
+{
+    NSPanel *spellingPanel = [[NSSpellChecker sharedSpellChecker] substitutionsPanel];
+    if (show)
+        [spellingPanel orderFront:nil];
+    else
+        [spellingPanel orderOut:nil];
+}
+
+bool WebEditorClient::substitutionsPanelIsShowing()
+{
+    return [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
+}
+
+void WebEditorClient::toggleSmartInsertDelete()
+{
+    [m_webView toggleSmartInsertDelete:nil];
+}
+
+bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
+{
+    return [m_webView isAutomaticQuoteSubstitutionEnabled];
+}
+
+void WebEditorClient::toggleAutomaticQuoteSubstitution()
+{
+    [m_webView toggleAutomaticQuoteSubstitution:nil];
+}
+
+bool WebEditorClient::isAutomaticLinkDetectionEnabled()
+{
+    return [m_webView isAutomaticLinkDetectionEnabled];
+}
+
+void WebEditorClient::toggleAutomaticLinkDetection()
+{
+    [m_webView toggleAutomaticLinkDetection:nil];
+}
+
+bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
+{
+    return [m_webView isAutomaticDashSubstitutionEnabled];
+}
+
+void WebEditorClient::toggleAutomaticDashSubstitution()
+{
+    [m_webView toggleAutomaticDashSubstitution:nil];
+}
+
+bool WebEditorClient::isAutomaticTextReplacementEnabled()
+{
+    return [m_webView isAutomaticTextReplacementEnabled];
+}
+
+void WebEditorClient::toggleAutomaticTextReplacement()
+{
+    [m_webView toggleAutomaticTextReplacement:nil];
+}
+
+bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
+{
+    return [m_webView isAutomaticSpellingCorrectionEnabled];
+}
+
+void WebEditorClient::toggleAutomaticSpellingCorrection()
+{
+    [m_webView toggleAutomaticSpellingCorrection:nil];
+}
+#endif
+
 bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, EditorInsertAction givenAction)
 { 
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
@@ -595,27 +681,26 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 #endif
 }
 
-void WebEditorClient::checkSpellingAndGrammarOfParagraph(const UChar* text, int length, bool checkGrammar, Vector<TextCheckingResult>& results)
+void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
 {
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
-    NSTextCheckingTypes checkingTypes = checkGrammar ? (NSTextCheckingTypeOrthography | NSTextCheckingTypeSpelling | NSTextCheckingTypeGrammar) : (NSTextCheckingTypeOrthography | NSTextCheckingTypeSpelling);
-    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
     [textString release];
     for (NSTextCheckingResult *incomingResult in incomingResults) {
         NSRange resultRange = [incomingResult range];
         NSTextCheckingType resultType = [incomingResult resultType];
         ASSERT(resultRange.location != NSNotFound && resultRange.length > 0);
-        if (NSTextCheckingTypeSpelling == resultType) {
+        if (NSTextCheckingTypeSpelling == resultType && 0 != (checkingTypes & NSTextCheckingTypeSpelling)) {
             TextCheckingResult result;
-            result.resultType = 1;
+            result.type = TextCheckingTypeSpelling;
             result.location = resultRange.location;
             result.length = resultRange.length;
             results.append(result);
-        } else if (checkGrammar && NSTextCheckingTypeGrammar == resultType) {
+        } else if (NSTextCheckingTypeGrammar == resultType && 0 != (checkingTypes & NSTextCheckingTypeGrammar)) {
             TextCheckingResult result;
             NSArray *details = [incomingResult grammarDetails];
-            result.resultType = 2;
+            result.type = TextCheckingTypeGrammar;
             result.location = resultRange.location;
             result.length = resultRange.length;
             for (NSDictionary *incomingDetail in details) {
@@ -633,6 +718,41 @@ void WebEditorClient::checkSpellingAndGrammarOfParagraph(const UChar* text, int 
                     detail.guesses.append(String(guess));
                 result.details.append(detail);
             }
+            results.append(result);
+        } else if (NSTextCheckingTypeLink == resultType && 0 != (checkingTypes & NSTextCheckingTypeLink)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeLink;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [[incomingResult URL] absoluteString];
+            results.append(result);
+        } else if (NSTextCheckingTypeQuote == resultType && 0 != (checkingTypes & NSTextCheckingTypeQuote)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeQuote;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (NSTextCheckingTypeDash == resultType && 0 != (checkingTypes & NSTextCheckingTypeDash)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeDash;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (NSTextCheckingTypeReplacement == resultType && 0 != (checkingTypes & NSTextCheckingTypeReplacement)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeReplacement;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (NSTextCheckingTypeCorrection == resultType && 0 != (checkingTypes & NSTextCheckingTypeCorrection)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeCorrection;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
             results.append(result);
         }
     }
