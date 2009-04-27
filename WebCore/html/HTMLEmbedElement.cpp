@@ -35,6 +35,7 @@
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -136,6 +137,14 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
         ASSERT(p->renderer());
         return false;
     }
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    // Workaround for <rdar://problem/6642221>. 
+    if (Settings* settings = frame->settings()) {
+        if (settings->usesDashboardBackwardCompatibilityMode())
+            return true;
+    }
+#endif
 
     return HTMLPlugInElement::rendererIsNeeded(style);
 }

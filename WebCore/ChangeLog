@@ -1,3 +1,18 @@
+2009-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6642221> REGRESSION: With the Movie widget, movie trailer fails to
+        load if movie had been previously viewed
+        
+        Fix the Dashboard quirk for display:none plug-ins by moving the code from HTMLObjectElement
+        to HTMLEmebedElement. It has to be in HTMLEmbedElement because the content we care about uses <embed>.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+
 2009-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

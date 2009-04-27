@@ -38,7 +38,6 @@
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -123,14 +122,6 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
     Frame* frame = document()->frame();
     if (!frame)
         return false;
-    
-#if ENABLE(DASHBOARD_SUPPORT)
-    // Workaround for <rdar://problem/6642221>. 
-    if (Settings* settings = frame->settings()) {
-        if (settings->usesDashboardBackwardCompatibilityMode())
-            return true;
-    }
-#endif
     
     // Temporary Workaround for Gears plugin - see bug 24215 for details and bug 24346 to track removal.
     // Gears expects the plugin to be instantiated even if display:none is set
