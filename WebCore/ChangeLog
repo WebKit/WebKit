@@ -1,3 +1,10 @@
+2009-04-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed debug build fix.
+
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_toggle_paint):
+
 2009-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Build fix.

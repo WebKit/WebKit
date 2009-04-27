@@ -986,7 +986,10 @@ moz_gtk_toggle_paint(GdkDrawable* drawable, GdkRectangle* rect,
     }
 
     // "GetMinimumWidgetSize was ignored"
-    ASSERT(rect->width == indicator_size);
+    // FIXME: This assert causes a build failure in WebKitGTK+ debug
+    // builds, because it uses 'false' in its definition. We may want
+    // to force this file to be built with g++, by renaming it.
+    // ASSERT(rect->width == indicator_size);
 
     /*
      * vertically center in the box, since XUL sometimes ignores our
