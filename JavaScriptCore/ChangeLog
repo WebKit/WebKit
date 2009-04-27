@@ -1,3 +1,17 @@
+2009-04-27  Adam Roben  <aroben@apple.com>
+
+        Windows Debug build fix
+
+        Not sure why the buildbots weren't affected by this problem.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Let VS
+        re-order the file list, and added JavaScriptCore[_debug].def to the
+        project. This was not necessary for the fix, but made making the fix
+        easier.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        Removed a function that no longer exists.
+
 2009-04-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Weinig Sam.

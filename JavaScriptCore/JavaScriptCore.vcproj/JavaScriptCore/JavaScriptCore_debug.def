@@ -214,7 +214,6 @@ EXPORTS
         ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
         ?signal@ThreadCondition@WTF@@QAEXXZ
         ?slowAppend@ArgList@JSC@@AAEXVJSValuePtr@2@@Z
-        ?sort@ProfileNode@JSC@@QAEXP6A_NABV?$RefPtr@VProfileNode@JSC@@@WTF@@0@Z@Z
         ?startIgnoringLeaks@Structure@JSC@@SAXXZ
         ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z
         ?stopIgnoringLeaks@Structure@JSC@@SAXXZ
