@@ -1,5 +1,20 @@
 2009-04-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Weinig Sam.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25416
+        "Cached prototype accesses unsafely hoist property storage load above structure checks."
+        
+        Do not hoist the load of the pointer to the property storage array.
+
+        No performance impact.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+
+2009-04-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoffrey "Gaffe or energy?" Garen.
 
         Randomize address requested by ExecutableAllocatorFixedVMPool.

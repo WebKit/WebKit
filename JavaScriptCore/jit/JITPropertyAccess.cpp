@@ -370,8 +370,6 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(static_cast<void*>(protoPropertyStorage), regT1);
 
     // Check eax is an object of the right Structure.
     Jump failureCases1 = checkStructure(regT0, structure);
@@ -386,6 +384,8 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 #endif
 
     // Checks out okay! - getDirectOffset
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
+    loadPtr(static_cast<void*>(protoPropertyStorage), regT1);
     loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     Jump success = jump();
@@ -412,8 +412,6 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, regT1);
 
     // Check eax is an object of the right Structure.
     Jump failureCases1 = emitJumpIfNotJSCell(regT0);
@@ -424,6 +422,8 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases3 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 
     // Checks out okay! - getDirectOffset
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
+    loadPtr(protoPropertyStorage, regT1);
     loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     ret();
@@ -478,8 +478,6 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, regT1);
 
     // Check eax is an object of the right Structure.
     Jump failureCases1 = checkStructure(regT0, structure);
@@ -494,6 +492,8 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 #endif
 
     // Checks out okay! - getDirectOffset
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
+    loadPtr(protoPropertyStorage, regT1);
     loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     Jump success = jump();
