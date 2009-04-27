@@ -1,5 +1,14 @@
 2009-04-26  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Mark Rowe.
+
+        Plug memory leak.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+
+2009-04-26  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         https://bugs.webkit.org/show_bug.cgi?id=25391

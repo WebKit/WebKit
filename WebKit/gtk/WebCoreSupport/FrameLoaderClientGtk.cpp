@@ -853,6 +853,7 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     gchar* fileContent = 0;
     gchar* errorURI = g_filename_to_uri(DATA_DIR"/webkit-1.0/resources/error.html", NULL, NULL);
     GFile* errorFile = g_file_new_for_uri(errorURI);
+    g_free(errorURI);
 
     if (!errorFile)
         content = String::format("<html><body>%s</body></html>", webError->message);
