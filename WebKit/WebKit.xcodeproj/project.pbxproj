@@ -11,7 +11,9 @@
 		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
 		06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 06693DDA0BFBA85200216072 /* WebInspectorClient.h */; };
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
-		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; };
+		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
+		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
+		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
@@ -327,6 +329,8 @@
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
 		06693DDA0BFBA85200216072 /* WebInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspectorClient.h; sourceTree = "<group>"; };
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
+		0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeContainerCheckContextInfo.h; sourceTree = "<group>"; };
+		0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckContextInfo.mm; sourceTree = "<group>"; };
 		0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = WebNetscapeContainerCheckPrivate.h; sourceTree = "<group>"; };
 		0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckPrivate.mm; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
@@ -979,6 +983,8 @@
 				1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */,
 				F5F717230288493C018635CA /* npapi.mm */,
 				0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */,
+				0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */,
+				0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */,
 				0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */,
 			);
 			name = "Netscape Plug-ins";
@@ -1409,6 +1415,7 @@
 				FEF52DFC0F6748F200FF70EE /* WebGeolocationPrivate.h in Headers */,
 				AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */,
 				0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */,
+				0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1718,6 +1725,7 @@
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
 				FEF52DFA0F6748F200FF70EE /* WebGeolocation.mm in Sources */,
 				0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */,
+				0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -47,25 +47,26 @@ using namespace WebCore;
 
 @implementation WebPluginContainerCheck
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller
-{
-    return [[[self alloc] initWithRequest:request target:target resultObject:obj selector:selector controller:controller] autorelease];
-}
-
-- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller
+- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
 {
     if (!(self = [super init]))
         return nil;
-
+    
     _request = [request copy];
     _target = [target copy];
     _resultObject = [obj retain];
     _resultSelector = selector;
-
+    _contextInfo = [contextInfo retain];
+    
     // controller owns us so don't retain, to avoid cycle
     _controller = controller;
-
+    
     return self;
+}
+
++ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
+{
+    return [[[self alloc] initWithRequest:request target:target resultObject:obj selector:selector controller:controller contextInfo:contextInfo] autorelease];
 }
 
 - (void)finalize
@@ -84,7 +85,10 @@ using namespace WebCore;
 
 - (void)_continueWithPolicy:(PolicyAction)policy
 {
-    ((void (*)(id, SEL, BOOL))objc_msgSend)(_resultObject, _resultSelector, (policy == PolicyUse));
+    if (_contextInfo)
+        ((void (*)(id, SEL, BOOL, id))objc_msgSend)(_resultObject, _resultSelector, (policy == PolicyUse), _contextInfo);
+    else     
+        ((void (*)(id, SEL, BOOL))objc_msgSend)(_resultObject, _resultSelector, (policy == PolicyUse));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
@@ -173,8 +177,16 @@ using namespace WebCore;
     _resultObject = nil;
 
     _controller = nil;
+    
+    [_contextInfo release];
+    _contextInfo = nil;
 
     _done = YES;
+}
+
+- (id)contextInfo
+{
+    return _contextInfo;   
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "WebBaseNetscapePluginView.h"
 
-@class NSURLRequest;
-@class NSString;
-@class WebFrame;
-@class WebView;
-@class WebPolicyDecisionListener;
-
-@protocol WebPluginContainerCheckController <NSObject>
-- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier;
-- (WebFrame *)webFrame;
-- (WebView *)webView;
-@end
-
-@interface WebPluginContainerCheck : NSObject
-{
-    NSURLRequest *_request;
-    NSString *_target;
-    id <WebPluginContainerCheckController> _controller;
-    id _resultObject;
-    SEL _resultSelector;
-    id _contextInfo;
-    BOOL _done;
-    WebPolicyDecisionListener *_listener;
+@interface WebNetscapeContainerCheckContextInfo : NSObject {
+    uint32 _checkRequestID;
+    void (*_callback)(NPP npp, uint32, NPBool);
 }
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)/*optional*/contextInfo; 
-- (void)start;
-- (void)cancel;
-- (id)contextInfo;
+- (id)initWithCheckRequestID:(uint32)checkRequestID callbackFunc:(void (*)(NPP npp, uint32 checkID, NPBool allowed))callbackFunc;
+- (uint32)checkRequestID;
+- (void (*)(NPP npp, uint32, NPBool))callback;
 
 @end

@@ -1,3 +1,11 @@
+2009-04-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+                
+        <rdar://problem/6352982>
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebNetscapeContainerCheckContextInfo.mm to the project.
+
 2009-04-23  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.

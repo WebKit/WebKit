@@ -34,6 +34,8 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemInterface.h"
+#import "WebPluginContainerCheck.h"
+#import "WebNetscapeContainerCheckContextInfo.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebView.h"
@@ -95,7 +97,7 @@ using namespace WebCore;
         _mode = NP_EMBED;
     
     _loadManually = loadManually;
-    
+
     return self;
 }
 
@@ -720,23 +722,6 @@ using namespace WebCore;
         *destY = destPoint.y;
     
     return TRUE;
-}
-
-
-- (uint32)checkIfAllowedToLoadURL:(const char*) url frame:(const char*) frame callbackFunc:(void (*)(NPP npp, uint32 checkID, NPBool allowed))callbackFunc
-{
-    // Not yet implemented
-    return 0;
-}
-
-- (void)cancelCheckIfAllowedToLoadURL:(uint32)checkID
-{
-    // Not yet implemented
-}
-   
-- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
-{
-  // Not yet implemented   
 }
 
 @end

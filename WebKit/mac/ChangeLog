@@ -1,3 +1,48 @@
+2009-04-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6352982>
+        
+        * Plugins/WebBaseNetscapePluginView.mm: Removed checkIfAllowedToLoadURL:frame:callbackFunc, cancelCheckIfAllowedToLoadURL, and 
+        _webPluginContainerCancelCheckIfAllowedToLoadRequest from the base class. These methods now exist in the subclass WebNetscapePluginView.
+        
+        Added WebNetscapeContainerCheckContextInfo, which is used as a "contextInfo" object in 
+        -[WebNetscapePluginView checkIfAllowedToLoadURL:frame:callbackFunc:]
+        * Plugins/WebNetscapeContainerCheckContextInfo.h: Added.
+        * Plugins/WebNetscapeContainerCheckContextInfo.mm: Added.
+        (-[WebNetscapeContainerCheckContextInfo initWithCheckRequestID:callbackFunc:]): Added desiginated initializer.
+        (-[WebNetscapeContainerCheckContextInfo checkRequestID]): Added. Returns the checkRequestID.
+        (-[WebNetscapeContainerCheckContextInfo callback]): Added. Returns the callback.
+        
+        * Plugins/WebNetscapePluginView.h: Added two new ivars: _containerChecksInProgress and _currentContainerCheckRequestID.
+        * Plugins/WebNetscapePluginView.mm: #import both WebPluginContainerCheck.h and WebNetscapeContainerCheckContextInfo.h
+        
+        (-[WebNetscapePluginView checkIfAllowedToLoadURL:frame:callbackFunc:]): Added. This is the implementation of WKN_CheckIfAllowedToLoadURL.
+        Here, we increment the request ID and start the container check.
+        
+        (-[WebNetscapePluginView _containerCheckResult:contextInfo:]): Added. This is a callback method for WebPluginContainerCheck.
+        It's where we actually call into the plug-in and provide the allow-or-deny result.
+    
+        (-[WebNetscapePluginView cancelCheckIfAllowedToLoadURL:]): Added. This is the implementation of WKN_CancelCheckIfAllowedToLoadURL. 
+        Here we lookup the check, cancel it, and remove it from _containerChecksInProgress.
+        
+        (-[WebNetscapePluginView _webPluginContainerCancelCheckIfAllowedToLoadRequest:]): Added. WebPluginContainerCheck automatically calls
+        this method after invoking our _containerCheckResult: selector. It works this way because calling -[WebPluginContainerCheck cancel] allows
+        it to do it's teardown process.
+        
+        (-[WebNetscapePluginView fini]): Release _containerChecksInProgress ivar.
+        
+        * Plugins/WebPluginContainerCheck.h: Removed initWithRequest: method from header; no client was using this method directly.
+        * Plugins/WebPluginContainerCheck.mm: 
+        (+[WebPluginContainerCheck checkWithRequest:target:resultObject:selector:controller:contextInfo:]): Added optional contextInfo parameter.
+        (-[WebPluginContainerCheck _continueWithPolicy:]): If there's a contextInfo object, pass it as a parameter to resultSelector.
+        (-[WebPluginContainerCheck cancel]): Release _contextInfo ivar.
+        (-[WebPluginContainerCheck contextInfo]): Added new method. Returns the contextInfo object, if one so exists.
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController _webPluginContainerCheckIfAllowedToLoadRequest:inFrame:resultObject:selector:]): Pass nil for contextInfo. WebKit-style
+        plug-ins do not need additional context information.
+
 2009-04-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
