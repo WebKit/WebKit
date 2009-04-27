@@ -1,3 +1,17 @@
+2009-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/6772944> REGRESSION (r42223): PLT 2% slower, i-Bench 3% slower
+
+        Be slightly less eager in collecting after page close/navigation by increasing
+        the time before collection from 0 seconds to .5 seconds.
+
+        3% speedup on the PLT.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectSoon):
+
 2009-04-27  David Kilzer  <ddkilzer@apple.com>
 
         Consolidate runtime application checks for Apple Mail and Safari
