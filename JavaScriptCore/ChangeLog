@@ -1,3 +1,12 @@
+2009-04-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey "Gaffe or energy?" Garen.
+
+        Randomize address requested by ExecutableAllocatorFixedVMPool.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+
 2009-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.

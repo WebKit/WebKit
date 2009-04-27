@@ -282,8 +282,19 @@ public:
         , m_countFreedSinceLastCoalesce(0)
         , m_totalHeapSize(totalHeapSize)
     {
-        // Allocate two gigabytes of memory.
-        m_base = mmap(NULL, m_totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
+        // Cook up an address to allocate at, using the following recipe:
+        //   17 bits of zero, stay in userspace kids.
+        //   26 bits of randomness for ASLR.
+        //   21 bits of zero, at least stay aligned within one level of the pagetables.
+        //
+        // But! - as a temporary workaround for some plugin problems (rdar://problem/6812854),
+        // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
+        // 2^24, which should put up somewhere in the middle of usespace (in the address range
+        // 0x200000000000 .. 0x5fffffffffff).
+        intptr_t randomLocation = arc4random() & ((1 << 25) - 1);
+        randomLocation += (1 << 24);
+        randomLocation <<= 21;
+        m_base = mmap(reinterpret_cast<void*>(randomLocation), m_totalHeapSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
         if (!m_base)
             CRASH();
 
