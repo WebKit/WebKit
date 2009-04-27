@@ -112,6 +112,11 @@ static AccessibilityObject* core(AtkComponent* component)
     return core(ATK_OBJECT(component));
 }
 
+static AccessibilityObject* core(AtkImage* image)
+{
+    return core(ATK_OBJECT(image));
+}
+
 extern "C" {
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
@@ -738,6 +743,36 @@ static void atk_component_interface_init(AtkComponentIface *iface)
     iface->grab_focus = webkit_accessible_component_grab_focus;
 }
 
+// Image
+
+static void webkit_accessible_image_get_image_position(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
+{
+    IntRect rect = core(image)->elementRect();
+    contentsToAtk(core(image), coordType, rect, x, y);
+}
+
+static const gchar* webkit_accessible_image_get_image_description(AtkImage* image)
+{
+    return returnString(core(image)->accessibilityDescription());
+}
+
+static void webkit_accessible_image_get_image_size(AtkImage* image, gint* width, gint* height)
+{
+    IntSize size = core(image)->size();
+
+    if (width)
+        *width = size.width();
+    if (height)
+        *height = size.height();
+}
+
+static void atk_image_interface_init(AtkImageIface* iface)
+{
+    iface->get_image_position = webkit_accessible_image_get_image_position;
+    iface->get_image_description = webkit_accessible_image_get_image_description;
+    iface->get_image_size = webkit_accessible_image_get_image_size;
+}
+
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
@@ -749,6 +784,8 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_component_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_image_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL}
 };
 
 enum WAIType {
@@ -756,7 +793,8 @@ enum WAIType {
     WAI_STREAMABLE,
     WAI_EDITABLE_TEXT,
     WAI_TEXT,
-    WAI_COMPONENT
+    WAI_COMPONENT,
+    WAI_IMAGE
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
@@ -772,6 +810,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
       return ATK_TYPE_TEXT;
   case WAI_COMPONENT:
       return ATK_TYPE_COMPONENT;
+  case WAI_IMAGE:
+      return ATK_TYPE_IMAGE;
   }
 
   return G_TYPE_INVALID;
@@ -803,6 +843,10 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         else
             interfaceMask |= 1 << WAI_EDITABLE_TEXT;
     }
+
+    // Image
+    if (coreObject->isImage())
+        interfaceMask |= 1 << WAI_IMAGE;
 
     return interfaceMask;
 }
