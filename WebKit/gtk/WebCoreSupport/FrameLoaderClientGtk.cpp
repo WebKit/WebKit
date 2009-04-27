@@ -931,10 +931,9 @@ ResourceError FrameLoaderClient::pluginWillHandleLoadError(const ResourceRespons
 
 bool FrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
-    // FIXME: Needs to check domain.
     // FIXME: Mac checks for WebKitErrorPlugInWillHandleLoad here to avoid
     // loading plugin content twice. Do we need it?
-    return error.errorCode() != WEBKIT_NETWORK_ERROR_CANCELLED;
+    return !(error.isCancellation() || error.errorCode() == WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE);
 }
 
 bool FrameLoaderClient::canCachePage() const

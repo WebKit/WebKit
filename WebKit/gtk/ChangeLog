@@ -1,3 +1,17 @@
+2009-04-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25409
+        [GTK] incorrectly fallsback on cancellation
+
+        Correctly handle cancellation and frame loading interruption
+        caused by policy change.  This also fixes
+        fast/frames/location-change.html.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::shouldFallBack):
+
 2009-04-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.
