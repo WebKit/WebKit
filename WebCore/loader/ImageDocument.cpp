@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "SegmentedString.h"
 #include "Settings.h"
@@ -93,7 +94,8 @@ private:
 
 void ImageTokenizer::write(const SegmentedString&, bool)
 {
-    ASSERT_NOT_REACHED();
+    // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
+    notImplemented();
 }
 
 bool ImageTokenizer::writeRawData(const char*, int)

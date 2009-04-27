@@ -1,3 +1,48 @@
+2009-04-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25399
+        <rdar://problem/6633943> REGRESSION: Many crashes reported accessing Lexis/Nexis database,
+        beneath WebCore::Cache::evict
+
+        The crash happened because a cached resource handle was removed from a document's cached
+        resources map twice recursively, so a destructor was called for a value in a deleted bucket.
+        The first call was from Cache::evict, and when destroying CachedResourceHandle destroyed
+        CachedResource, DocLoader::removeCachedResource() was called again, with HashMap being in
+        an inconsistent state.
+
+        I couldn't fully reconstruct the loading sequence to make a test.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidateResource): Assert that the resource being revalidated is in cache
+        (it makes no sense to revalidate one that isn't).
+        (WebCore::Cache::evict): Don't remove the resource from document's map. Removing a resource
+        from the cache in no way implies that documents no longer use the old version. This fixes the
+        crash, and also fixes many cases of resource content being unavailable in Web Inspector.
+
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::setInCache): When bringing a revalidated resource back to cache,
+        reset m_isBeingRevalidated to maintain the invariant of resources being revalidated never
+        being in cache. This fixes another assertion I saw on LexisNexis search: in rare cases,
+        switchClientsToRevalidatedResource() results in the same resource being requested again,
+        but we were only enforcing CachedResource invariants after calling this function.
+        (WebCore::CachedResource::unregisterHandle): Assert that the counter doesn't underflow.
+
+        * loader/DocLoader.cpp: (WebCore::DocLoader::removeCachedResource): Assert that the passed
+        resource is removed, not some other resource that happens to have the same URL (this used to
+        fail on LexisNexis search before this patch).
+
+        * loader/ImageDocument.cpp: (WebCore::ImageTokenizer::write): Replaced ASSERT_NOT_REACHED
+        with notImplemented(). This method can be legally called via document.write(), and should
+        work. LexisNexis takes this code path, but apparently has a fallback for Safari, so it
+        doesn't affect site functionality.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::clearResourceToRevalidate): Don't assert that m_resourceToRevalidate
+        is being revalidated - this may no longer be true, because we now reset this member in
+        CachedResource::setInCache().
+
 2009-04-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

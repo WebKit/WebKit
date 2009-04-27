@@ -127,7 +127,8 @@ public:
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself
     // if the number of clients observing it ever drops to 0.
-    void setInCache(bool b) { m_inCache = b; }
+    // The resource can be brought back to cache after successful revalidation.
+    void setInCache(bool b) { m_inCache = b; if (b) m_isBeingRevalidated = false; }
     bool inCache() const { return m_inCache; }
     
     void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
@@ -163,7 +164,7 @@ public:
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     
     void registerHandle(CachedResourceHandleBase* h) { ++m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.add(h); }
-    void unregisterHandle(CachedResourceHandleBase* h) { --m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.remove(h); if (!m_handleCount) deleteIfPossible(); }
+    void unregisterHandle(CachedResourceHandleBase* h) { ASSERT(m_handleCount > 0); --m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.remove(h); if (!m_handleCount) deleteIfPossible(); }
     
     bool canUseCacheValidator() const;
     bool mustRevalidate(CachePolicy) const;

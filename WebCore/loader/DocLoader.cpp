@@ -276,6 +276,11 @@ CachePolicy DocLoader::cachePolicy() const
 
 void DocLoader::removeCachedResource(CachedResource* resource) const
 {
+#ifndef NDEBUG
+    DocumentResourceMap::iterator it = m_documentResources.find(resource->url());
+    if (it != m_documentResources.end())
+        ASSERT(it->second.get() == resource);
+#endif
     m_documentResources.remove(resource->url());
 }
 

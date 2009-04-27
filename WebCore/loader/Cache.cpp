@@ -181,6 +181,7 @@ CachedCSSStyleSheet* Cache::requestUserCSSStyleSheet(DocLoader* docLoader, const
 void Cache::revalidateResource(CachedResource* resource, DocLoader* docLoader)
 {
     ASSERT(resource);
+    ASSERT(resource->inCache());
     ASSERT(!disabled());
     if (resource->resourceToRevalidate())
         return;
@@ -390,15 +391,6 @@ void Cache::evict(CachedResource* resource)
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (resource->inCache()) {
-        if (!resource->isCacheValidator()) {
-            // Notify all doc loaders that might be observing this object still that it has been
-            // extracted from the set of resources.
-            // No need to do this for cache validator resources, they are replaced automatically by using CachedResourceHandles.
-            HashSet<DocLoader*>::iterator end = m_docLoaders.end();
-            for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
-                (*itr)->removeCachedResource(resource);
-        }
-        
         // Remove from the resource map.
         m_resources.remove(resource->url());
         resource->setInCache(false);
