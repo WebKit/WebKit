@@ -260,7 +260,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
         case GDK_parenright:
             return VK_0;    //  (30) 0) key
         case GDK_1:
-        case GDK_exclaim:
+        case GDK_exclam:
             return VK_1; //  (31) 1 ! key
         case GDK_2:
         case GDK_at:

@@ -153,7 +153,7 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
     case GDK_parenright:
         return VKEY_0;    //  (30) 0) key
     case GDK_1:
-    case GDK_exclaim:
+    case GDK_exclam:
         return VKEY_1; //  (31) 1 ! key
     case GDK_2:
     case GDK_at:

@@ -1,3 +1,14 @@
+2009-04-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Build fix for r42893: change GDK_exclaim to GDK_exclam
+
+        * platform/chromium/KeyCodeConversionGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2009-04-27  Fumitoshi Ukai  <ukai@google.com>
 
         Reviewed by Xan Lopez.
