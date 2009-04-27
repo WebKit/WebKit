@@ -1,3 +1,13 @@
+2009-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25382
+        Remove direct reference to CallFrame.h include to pacify Win build.
+
+        * bindings/js/JSDOMBinding.h: Removed ScriptState.h include.
+        * bindings/js/ScriptState.h: Replaced CallFrame.h with JSDOMBinding.h
+
 2009-04-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

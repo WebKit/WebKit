@@ -32,7 +32,7 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-#include <interpreter/CallFrame.h>
+#include "JSDOMBinding.h"
 
 namespace WebCore {
     class Node;
