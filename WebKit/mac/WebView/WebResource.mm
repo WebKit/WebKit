@@ -38,6 +38,7 @@
 #import <JavaScriptCore/PassRefPtr.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TextEncoding.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -441,8 +442,7 @@ static const double newMailBundleVersion = 1050.0;
 
 + (BOOL)_needMailThreadWorkaroundIfCalledOffMainThread
 {
-    static BOOL isOldMail = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"]
-        && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue] < newMailBundleVersion;
+    static BOOL isOldMail = applicationIsAppleMail() && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue] < newMailBundleVersion;
     return isOldMail;
 }
 

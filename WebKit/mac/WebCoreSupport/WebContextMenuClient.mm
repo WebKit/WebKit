@@ -42,6 +42,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/KURL.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/DOMPrivate.h>
 
 using namespace WebCore;
@@ -58,11 +59,6 @@ WebContextMenuClient::WebContextMenuClient(WebView *webView)
 void WebContextMenuClient::contextMenuDestroyed()
 {
     delete this;
-}
-
-static BOOL isAppleMail(void)
-{
-    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
 }
 
 static BOOL isPreVersion3Client(void)
@@ -102,7 +98,7 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
     if (!preVersion3Client)
         return savedItems;
         
-    BOOL isMail = isAppleMail();
+    BOOL isMail = applicationIsAppleMail();
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
         int tag = [item tag];

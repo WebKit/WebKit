@@ -1,3 +1,26 @@
+2009-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Consolidate runtime application checks for Apple Mail and Safari
+
+        Reviewed by Mark Rowe and Darin Adler.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (isAppleMail): Removed.
+        (fixMenusToSendToOldClients): Switched to use
+        applicationIsAppleMail().
+        * WebView/WebFrame.mm:
+        (-[WebFrame reload]): Switched to use applicationIsSafari().
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]): Ditto.
+        * WebView/WebResource.mm:
+        (+[WebResource _needMailThreadWorkaroundIfCalledOffMainThread]):
+        Switched to use applicationIsAppleMail().
+        * WebView/WebView.mm:
+        (runningLeopardMail): Ditto.
+        (runningTigerMail): Ditto.
+        (-[WebView _needsKeyboardEventDisambiguationQuirks]): Switched
+        to use applicationIsSafari().
+
 2009-04-27  Kevin Decker  <kdecker@apple.com>
 
         Fix the Tiger build.

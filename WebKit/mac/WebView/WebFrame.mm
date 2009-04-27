@@ -73,6 +73,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/ReplaceSelectionCommand.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
@@ -1310,8 +1311,7 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)reload
 {
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_RELOAD_FROM_ORIGIN) &&
-        [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"])
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_RELOAD_FROM_ORIGIN) && applicationIsSafari())
         _private->coreFrame->loader()->reload(GetCurrentKeyModifiers() & shiftKey);
     else
         _private->coreFrame->loader()->reload(false);

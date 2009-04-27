@@ -42,6 +42,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
+#include "RuntimeApplicationChecks.h"
 #include "Scrollbar.h"
 #include "Settings.h"
 #include <objc/objc-runtime.h>
@@ -142,18 +143,10 @@ bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 
 bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
-    static BOOL checkedSafari = NO;
-    static BOOL isSafari = NO;
-
-    if (!checkedSafari) {
-        isSafari = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
-        checkedSafari = YES;
-    }
-    
     Document* document = m_frame->document();
 
     // RSS view needs arrow key keypress events.
-    if (isSafari && document->url().protocolIs("feed") || document->url().protocolIs("feeds"))
+    if (applicationIsSafari() && document->url().protocolIs("feed") || document->url().protocolIs("feeds"))
         return true;
     Settings* settings = m_frame->settings();
     if (!settings)

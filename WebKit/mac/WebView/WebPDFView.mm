@@ -56,6 +56,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
@@ -374,7 +375,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // (1) the symptom is fairly minor, and (2) we suspect that non-Safari clients are probably using the entire
     // set of default items, rather than manually choosing from them. We can remove this code entirely when we
     // ship a version of Safari that includes the fix for radar 3796579.
-    if (![self _anyPDFTagsFoundInMenu:menu] && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"]) {
+    if (![self _anyPDFTagsFoundInMenu:menu] && applicationIsSafari()) {
         [menu addItem:[NSMenuItem separatorItem]];
         NSEnumerator *e = [items objectEnumerator];
         NSMenuItem *menuItem;

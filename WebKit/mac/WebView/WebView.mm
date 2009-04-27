@@ -119,6 +119,7 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SelectionController.h>
@@ -704,7 +705,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 static bool runningLeopardMail()
 {
 #ifdef BUILDING_ON_LEOPARD
-    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+    return applicationIsAppleMail();
 #endif
     return NO;
 }
@@ -712,7 +713,7 @@ static bool runningLeopardMail()
 static bool runningTigerMail()
 {
 #ifdef BUILDING_ON_TIGER
-    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+    return applicationIsAppleMail();
 #endif
     return NO;    
 }
@@ -1364,8 +1365,7 @@ static bool fastDocumentTeardownEnabled()
     if (checked)
         return needsQuirks;
 
-    needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH)
-        && ![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
+    needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !applicationIsSafari();
     checked = YES;
 
     return needsQuirks;

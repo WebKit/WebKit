@@ -1,3 +1,23 @@
+2009-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Consolidate runtime application checks for Apple Mail and Safari
+
+        Reviewed by Mark Rowe and Darin Adler.
+
+        * WebCore.base.exp: Added exports.
+        * WebCore.xcodeproj/project.pbxproj: Added
+        RuntimeApplicationChecks.{h|mm} source files to the project.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        Removed local checkedSafari and isSafari variables and switched
+        to use applicationIsSafari().
+        * platform/mac/RuntimeApplicationChecks.h: Added.
+        * platform/mac/RuntimeApplicationChecks.mm: Added.
+        (WebCore::applicationIsAppleMail): Runtime application check for
+        Apple Mail.
+        (WebCore::applicationIsSafari): Runtime application check for
+        Safari.
+
 2009-04-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
