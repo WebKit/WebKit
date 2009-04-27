@@ -121,21 +121,14 @@ extern "C" {
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
-    // TODO: Deal with later changes.
-    if (!object->name)
-        atk_object_set_name(object, core(object)->stringValue().utf8().data());
-    return object->name;
+    return returnString(core(object)->stringValue());
 }
 
 static const gchar* webkit_accessible_get_description(AtkObject* object)
 {
     // TODO: the Mozilla MSAA implementation prepends "Description: "
     // Should we do this too?
-
-    // TODO: Deal with later changes.
-    if (!object->description)
-        atk_object_set_description(object, core(object)->accessibilityDescription().utf8().data());
-    return object->description;
+    return returnString(core(object)->accessibilityDescription());
 }
 
 static AtkObject* webkit_accessible_get_parent(AtkObject* object)
