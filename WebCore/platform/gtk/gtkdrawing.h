@@ -110,6 +110,10 @@ typedef gint (*style_prop_t)(GtkStyle*, const gchar*, gint);
 #define MOZ_GTK_UNKNOWN_WIDGET -1
 #define MOZ_GTK_UNSAFE_THEME -2
 
+/*** checkbox/radio flags ***/
+#define MOZ_GTK_WIDGET_CHECKED 1
+#define MOZ_GTK_WIDGET_INCONSISTENT (1 << 1)
+
 /*** widget type constants ***/
 typedef enum {
   /* Paints a GtkButton. flags is a GtkReliefStyle. */

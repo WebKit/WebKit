@@ -1,3 +1,35 @@
+2009-04-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] gtkdrawing update
+        https://bugs.webkit.org/show_bug.cgi?id=25408
+
+        Update to the 25 Apr 2009 version of gtk2drawing.c and
+        gtkdrawing.h from Mozilla (http://hg.mozilla.org/mozilla-central)
+
+        * platform/gtk/gtk2drawing.c:
+        (setup_widget_prototype):
+        (moz_gtk_get_combo_box_entry_arrow):
+        (ensure_toolbar_widget):
+        (ensure_tree_header_cell_widget):
+        (moz_gtk_init):
+        (moz_gtk_button_get_inner_border):
+        (moz_gtk_toggle_paint):
+        (moz_gtk_caret_paint):
+        (moz_gtk_entry_paint):
+        (moz_gtk_tree_header_cell_paint):
+        (moz_gtk_combo_box_paint):
+        (moz_gtk_toolbar_separator_paint):
+        (moz_gtk_menu_separator_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_tab_scroll_arrow_size):
+        (moz_gtk_get_toolbar_separator_width):
+        (moz_gtk_get_menu_separator_height):
+        (moz_gtk_widget_paint):
+        (moz_gtk_shutdown):
+        * platform/gtk/gtkdrawing.h:
+
 2009-04-27  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
