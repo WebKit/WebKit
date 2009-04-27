@@ -1272,6 +1272,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self cancelCheckIfAllowedToLoadURL:[[check contextInfo] checkRequestID]];
 }
 
+#ifdef BUILDING_ON_TIGER
+// The Tiger compiler requires these two methods be present. Otherwise it doesn't think WebNetscapePluginView
+// conforms to the WebPluginContainerCheckController protocol.
+- (WebView *)webView
+{
+    return [super webView];   
+}
+
+- (WebFrame *)webFrame
+{
+    return [super webFrame];   
+}
+#endif
+
 #pragma mark NSVIEW
 
 - (id)initWithFrame:(NSRect)frame

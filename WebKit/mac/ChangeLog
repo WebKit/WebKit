@@ -1,5 +1,14 @@
 2009-04-27  Kevin Decker  <kdecker@apple.com>
 
+        Fix the Tiger build.
+        
+        * Plugins/WebNetscapePluginView.mm: The base class of WebNetscapePluginView.mm, WebBaseNetscapePluginView, already implemented 
+        the two methods below. But the Tiger compiler didn't know that. 
+        (-[WebNetscapePluginView webView]): 
+        (-[WebNetscapePluginView webFrame]):
+
+2009-04-27  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/6352982>
