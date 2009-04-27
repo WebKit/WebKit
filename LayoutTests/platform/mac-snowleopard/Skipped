@@ -1,6 +1,3 @@
-# <rdar://problem/6687808> Crash when running accessibility/table-modification-crash.html
-accessibility/table-modification-crash.html
-
 # <rdar://problem/6530010> NPN_SetException is not working
 plugins/netscape-throw-exception.html
 

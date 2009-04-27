@@ -1,3 +1,14 @@
+2009-04-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25428: 5 crashes in DumpRenderTree at com.apple.WebCore • -[AccessibilityObjectWrapper accessibilityAttributeValue:] + 830
+        https://bugs.webkit.org/show_bug.cgi?id=25428
+
+        Re-enable test that was crashing
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

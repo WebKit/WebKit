@@ -2276,16 +2276,14 @@ void AccessibilityRenderObject::childrenChanged()
     
     markChildrenDirty();
     
-    // This object may not be accessible (and thus may not appear
-    // in the hierarchy), which means we need to go up the parent
-    // chain and mark the parent's dirty. Ideally, we would want
-    // to only access the next object that is not ignored, but
-    // asking an element if it's ignored can lead to an examination of the
-    // render tree which is dangerous. 
-    // Only parents that already exist must be retrieved, otherwise objects can be created
-    // at bad times
-    for (AccessibilityObject* parent = parentObjectIfExists(); parent; parent = parent->parentObjectIfExists()) {
-        if (parent->isAccessibilityRenderObject())
+    if (!m_renderer)
+        return;
+    
+    // Go up the render parent chain, marking children as dirty.
+    // We can't rely on the accessibilityParent() because it may not exist and we must not create an AX object here either
+    for (RenderObject* renderParent = m_renderer->parent(); renderParent; renderParent = renderParent->parent()) {
+        AccessibilityObject* parent = m_renderer->document()->axObjectCache()->get(renderParent);
+        if (parent && parent->isAccessibilityRenderObject())
             static_cast<AccessibilityRenderObject *>(parent)->markChildrenDirty();
     }
 }
