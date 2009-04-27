@@ -228,7 +228,15 @@ sub determineConfigurationProductDir
     if (isAppleWinWebKit() && !isWx()) {
         $configurationProductDir = "$baseProductDir/bin";
     } else {
-        $configurationProductDir = "$baseProductDir/$configuration";
+        # [Gtk] We don't have Release/Debug configurations in straight
+        # autotool builds (non build-webkit). In this case and if
+        # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
+        # allows us to run run-webkit-tests without using build-webkit.
+        if ($ENV{"WEBKITOUTPUTDIR"} && isGtk()) {
+            $configurationProductDir = "$baseProductDir";
+        } else {
+            $configurationProductDir = "$baseProductDir/$configuration";
+        }
     }
 }
 

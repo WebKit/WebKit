@@ -1,3 +1,16 @@
+2009-04-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Make layout tests / jsc tests usable without build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=21784
+
+        This requires WEBKITOUTPUTDIR to be set to the build directory.
+        Set the location of the product dir to the location pointed to by
+        WEBKITOUTPUTDIR.
+
+        * Scripts/webkitdirs.pm:
+
 2009-04-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Adam Roben.
