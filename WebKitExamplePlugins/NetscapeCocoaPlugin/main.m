@@ -194,13 +194,12 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 
 }
 
-static void handleDraw(PluginObject *obj)
+static void handleDraw(PluginObject *obj, NPCocoaEvent *event)
 {
     NSGraphicsContext *oldContext = [[NSGraphicsContext currentContext] retain];
     
-    NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithGraphicsPort:((NP_CGContext *)obj->window.window)->context
+    NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithGraphicsPort:event->data.draw.context
                                                                             flipped:YES];
-
 
     [NSGraphicsContext setCurrentContext:context];
     
@@ -289,7 +288,6 @@ static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
             obj->menuHandler = [[MenuHandler alloc] initWithBrowserFuncs:browser instance:obj->npp];
         
         browser->popupcontextmenu(obj->npp, (NPNSMenu *)[obj->menuHandler menu]);
-        NSLog(@"foo");
     }
 }
 
@@ -328,7 +326,7 @@ int16 NPP_HandleEvent(NPP instance, void* event)
             return 1;
             
         case NPCocoaEventDrawRect:
-            handleDraw(obj);
+            handleDraw(obj, cocoaEvent);
             return 1;
         
         case NPCocoaEventKeyDown:

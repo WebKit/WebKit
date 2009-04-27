@@ -1,3 +1,14 @@
+2009-04-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Update the example plug-in for new changes to the Cocoa event model.
+        
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+
 2009-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
