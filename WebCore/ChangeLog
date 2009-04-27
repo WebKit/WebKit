@@ -1,3 +1,19 @@
+2009-04-27  Fumitoshi Ukai  <ukai@google.com>
+
+        Reviewed by Xan Lopez.
+
+        Fix wrong key code conversion.
+
+        Missing conversion for GDK_exlaim ('!').
+        Parens are opposite: GDK_parenleft is open paren '('
+        and GDK_parenright is close paren ')'.
+        https://bugs.webkit.org/show_bug.cgi?id=25367
+
+        * platform/chromium/KeyCodeConversionGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2009-04-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

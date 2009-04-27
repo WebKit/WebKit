@@ -150,9 +150,10 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
     case GDK_Help:
         return VKEY_HELP; // (2F) HELP key
     case GDK_0:
-    case GDK_parenleft:
+    case GDK_parenright:
         return VKEY_0;    //  (30) 0) key
     case GDK_1:
+    case GDK_exclaim:
         return VKEY_1; //  (31) 1 ! key
     case GDK_2:
     case GDK_at:
@@ -176,7 +177,7 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
     case GDK_asterisk:
         return VKEY_8; //  (38) 8 key  '*'
     case GDK_9:
-    case GDK_parenright:
+    case GDK_parenleft:
         return VKEY_9; //  (39) 9 key '('
     case GDK_a:
     case GDK_A:
