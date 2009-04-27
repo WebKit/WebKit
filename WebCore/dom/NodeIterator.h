@@ -25,7 +25,6 @@
 #ifndef NodeIterator_h
 #define NodeIterator_h
 
-#include "JSDOMBinding.h"
 #include "NodeFilter.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>

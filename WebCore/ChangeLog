@@ -1,3 +1,22 @@
+2009-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25382
+        Move scriptStateFromNode to ScriptState.
+
+        * bindings/js/JSDOMBinding.cpp: Moved scriptStateFromNode to ScriptState.
+        * bindings/js/JSDOMBinding.h: Ditto.
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromNode): Added.
+        * bindings/js/ScriptState.h: Ditto.
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::scriptStateFromNode): Added.
+        * bindings/v8/ScriptState.h: Ditto.
+        * dom/NodeFilter.h: Removed JSDOMBinding header include.
+        * dom/NodeIterator.h: Ditto.
+        * dom/TreeWalker.h: Ditto.
+
 2009-04-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

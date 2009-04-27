@@ -187,8 +187,6 @@ namespace WebCore {
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValuePtr objectToStringFunctionGetter(JSC::ExecState*, const JSC::Identifier& propertyName, const JSC::PropertySlot&);
 
-    ScriptState* scriptStateFromNode(Node*);
-
 } // namespace WebCore
 
 #endif // JSDOMBinding_h

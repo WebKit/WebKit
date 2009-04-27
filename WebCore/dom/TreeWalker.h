@@ -25,7 +25,6 @@
 #ifndef TreeWalker_h
 #define TreeWalker_h
 
-#include "JSDOMBinding.h"
 #include "NodeFilter.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>

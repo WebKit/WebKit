@@ -34,6 +34,7 @@
 #include <v8.h>
 
 namespace WebCore {
+    class Node;
     class Page;
     class Frame;
 
@@ -56,7 +57,8 @@ namespace WebCore {
         Frame* m_frame;
     };
 
-    ScriptState* scriptStateFromPage(Page* page);
+    ScriptState* scriptStateFromNode(Node*);
+    ScriptState* scriptStateFromPage(Page*);
 }
 
 #endif // ScriptState_h

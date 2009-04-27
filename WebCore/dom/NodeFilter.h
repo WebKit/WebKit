@@ -25,7 +25,6 @@
 #ifndef NodeFilter_h
 #define NodeFilter_h
 
-#include "JSDOMBinding.h"
 #include "NodeFilterCondition.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

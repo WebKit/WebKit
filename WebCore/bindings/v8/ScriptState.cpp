@@ -32,14 +32,25 @@
 #include "ScriptState.h"
 
 #include "Frame.h"
+#include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"
+
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
 ScriptState::ScriptState(Frame* frame)
     : m_frame(frame)
 {
+}
+
+ScriptState* scriptStateFromNode(Node* node)
+{
+    // This should be never reached with V8 bindings (WebKit only uses it
+    // for non-JS bindings)
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 ScriptState* scriptStateFromPage(Page* page)

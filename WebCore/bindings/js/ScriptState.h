@@ -32,11 +32,10 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-namespace JSC {
-    class ExecState;
-}
+#include <interpreter/CallFrame.h>
 
 namespace WebCore {
+    class Node;
     class Page;
 
     // The idea is to expose "state-like" methods (hadException, and any other
@@ -45,7 +44,8 @@ namespace WebCore {
     // For now, the separation is purely by convention.
     typedef JSC::ExecState ScriptState;
 
-    ScriptState* scriptStateFromPage(Page* page);
+    ScriptState* scriptStateFromNode(Node*);
+    ScriptState* scriptStateFromPage(Page*);
 
 } // namespace WebCore
 
