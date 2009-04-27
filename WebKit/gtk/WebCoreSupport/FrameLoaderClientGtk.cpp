@@ -849,6 +849,13 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
         return;
     }
 
+    if (!shouldFallBack(error)) {
+        g_error_free(webError);
+        // FIXME: load-done is deprecated. Please remove when signal's been removed.
+        g_signal_emit_by_name(m_frame, "load-done", false);
+        return;
+    }
+
     String content;
     gchar* fileContent = 0;
     gchar* errorURI = g_filename_to_uri(DATA_DIR"/webkit-1.0/resources/error.html", NULL, NULL);
