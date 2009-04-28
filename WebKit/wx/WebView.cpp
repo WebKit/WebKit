@@ -465,6 +465,12 @@ void wxWebView::DecreaseTextSize()
         m_mainFrame->DecreaseTextSize();
 }
 
+void wxWebView::ResetTextSize()
+{
+    if (m_mainFrame)
+        m_mainFrame->ResetTextSize();    
+}
+
 void wxWebView::MakeEditable(bool enable)
 {
     m_isEditable = enable;

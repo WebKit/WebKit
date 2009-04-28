@@ -143,6 +143,7 @@ public:
     void IncreaseTextSize();
     bool CanDecreaseTextSize() const;
     void DecreaseTextSize();
+    void ResetTextSize();
     void MakeEditable(bool enable);
     bool IsEditable() const { return m_isEditable; }
 

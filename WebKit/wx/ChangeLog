@@ -1,3 +1,18 @@
+2009-04-28  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Add a function for resetting the zoom factor to 1.0.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25447
+
+        * WebFrame.cpp:
+        (wxWebFrame::ResetTextSize):
+        * WebFrame.h:
+        * WebView.cpp:
+        (wxWebView::ResetTextSize):
+        * WebView.h:
+
 2009-04-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Switching JSCore from a static lib to a dynamic lib

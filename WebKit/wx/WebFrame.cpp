@@ -308,6 +308,13 @@ void wxWebFrame::DecreaseTextSize()
     }
 }
 
+void wxWebFrame::ResetTextSize()
+{
+    m_textMagnifier = 1.0;
+    if (m_impl->frame)
+        m_impl->frame->setZoomFactor(m_textMagnifier, true);
+}
+
 void wxWebFrame::MakeEditable(bool enable)
 {
     m_isEditable = enable;
