@@ -83,8 +83,11 @@ namespace WebCore {
         void postMessage(const String& message);
         virtual void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
 
-        int installTimeout(ScheduledAction*, int timeout, bool singleShot);
-        void removeTimeout(int timeoutId);
+        // Timers
+        int setTimeout(ScheduledAction*, int timeout);
+        void clearTimeout(int timeoutId);
+        int setInterval(ScheduledAction*, int timeout);
+        void clearInterval(int timeoutId);
 
         void dispatchMessage(const String&);
 

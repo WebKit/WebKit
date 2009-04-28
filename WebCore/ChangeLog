@@ -1,3 +1,29 @@
+2009-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Consolidate ScheduleAction creation into ScheduledAction::create.
+        Autogenerate JSWorkerContext.clearTimeout and clearInterval.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::DOMWindow::setTimeout):
+        (WebCore::DOMWindow::clearTimeout):
+        (WebCore::DOMWindow::setInterval):
+        (WebCore::DOMWindow::clearInterval):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+
 2009-04-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

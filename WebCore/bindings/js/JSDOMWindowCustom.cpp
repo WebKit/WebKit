@@ -495,22 +495,9 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-static ScheduledAction* createScheduledAction(ExecState* exec, const ArgList& args)
-{
-    JSValuePtr v = args.at(exec, 0);
-    if (v.isString())
-        return new ScheduledAction(asString(v)->value());
-    CallData callData;
-    if (v.getCallData(callData) == CallTypeNone)
-        return 0;
-    ArgList argsTail;
-    args.getSlice(2, argsTail);
-    return new ScheduledAction(exec, v, argsTail);
-}
-
 JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = createScheduledAction(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args);
     if (!action)
         return jsUndefined();
     int delay = args.at(exec, 1).toInt32(exec);
@@ -519,7 +506,7 @@ JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = createScheduledAction(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args);
     if (!action)
         return jsUndefined();
     int delay = args.at(exec, 1).toInt32(exec);

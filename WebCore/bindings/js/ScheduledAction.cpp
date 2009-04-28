@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *  Copyright (C) 2009 Google Inc. All rights reseved.
  *
@@ -47,13 +47,25 @@ using namespace JSC;
 
 namespace WebCore {
 
+ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args)
+{
+    JSValuePtr v = args.at(exec, 0);
+    if (v.isString())
+        return new ScheduledAction(asString(v)->value());
+    CallData callData;
+    if (v.getCallData(callData) == CallTypeNone)
+        return 0;
+    ArgList argsTail;
+    args.getSlice(2, argsTail);
+    return new ScheduledAction(exec, v, argsTail);
+}
+
 ScheduledAction::ScheduledAction(ExecState* exec, JSValuePtr function, const ArgList& args)
     : m_function(function)
 {
     ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it) {
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         m_args.append((*it).jsValue(exec));
-    }
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
@@ -95,24 +107,6 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         reportCurrentException(exec);
 }
 
-#if ENABLE(WORKERS)
-void ScheduledAction::execute(WorkerContext* workerContext)
-{
-    // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerContext->thread()->threadID() == currentThread());
-
-    WorkerScriptController* scriptController = workerContext->script();
-
-    if (m_function) {
-        JSWorkerContext* contextWrapper = scriptController->workerContextWrapper();
-        executeFunctionInContext(contextWrapper, contextWrapper);
-    } else {
-        ScriptSourceCode code(m_code, workerContext->url());
-        scriptController->evaluate(code);
-    }
-}
-#endif // ENABLE(WORKERS)
-
 void ScheduledAction::execute(Document* document)
 {
     JSDOMWindow* window = toJSDOMWindow(document->frame());
@@ -133,5 +127,23 @@ void ScheduledAction::execute(Document* document)
 
     frame->script()->setProcessingTimerCallback(false);
 }
+
+#if ENABLE(WORKERS)
+void ScheduledAction::execute(WorkerContext* workerContext)
+{
+    // In a Worker, the execution should always happen on a worker thread.
+    ASSERT(workerContext->thread()->threadID() == currentThread());
+
+    WorkerScriptController* scriptController = workerContext->script();
+
+    if (m_function) {
+        JSWorkerContext* contextWrapper = scriptController->workerContextWrapper();
+        executeFunctionInContext(contextWrapper, contextWrapper);
+    } else {
+        ScriptSourceCode code(m_code, workerContext->url());
+        scriptController->evaluate(code);
+    }
+}
+#endif // ENABLE(WORKERS)
 
 } // namespace WebCore

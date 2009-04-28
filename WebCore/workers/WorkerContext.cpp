@@ -201,12 +201,22 @@ void WorkerContext::postTask(PassRefPtr<Task> task)
     thread()->runLoop().postTask(task);
 }
 
-int WorkerContext::installTimeout(ScheduledAction* action, int timeout, bool singleShot)
+int WorkerContext::setTimeout(ScheduledAction* action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), action, timeout, singleShot);
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, true);
 }
 
-void WorkerContext::removeTimeout(int timeoutId)
+void WorkerContext::clearTimeout(int timeoutId)
+{
+    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
+}
+
+int WorkerContext::setInterval(ScheduledAction* action, int timeout)
+{
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, false);
+}
+
+void WorkerContext::clearInterval(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }

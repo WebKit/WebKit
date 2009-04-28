@@ -53,11 +53,11 @@ module threads {
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        [Custom] void clearTimeout(in long handle);
+        void clearTimeout(in long handle);
 
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        [Custom] void clearInterval(in long handle);
+        void clearInterval(in long handle);
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 
