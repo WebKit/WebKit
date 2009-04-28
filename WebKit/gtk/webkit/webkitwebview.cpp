@@ -827,9 +827,9 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
         break;
     case GTK_MOVEMENT_PAGES:
         if (count == 1)
-            view->scrollBy(IntSize(0, view->visibleHeight()));
+            view->scrollBy(IntSize(0, view->visibleHeight() * 0.9));
         else if (count == -1)
-            view->scrollBy(IntSize(0, -view->visibleHeight()));
+            view->scrollBy(IntSize(0, -view->visibleHeight() * 0.9));
         break;
     case GTK_MOVEMENT_BUFFER_ENDS:
         if (count == 1)

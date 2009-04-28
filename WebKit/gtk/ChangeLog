@@ -1,5 +1,15 @@
 2009-04-28  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Leave a bit of space from the previous page when advacing a whole
+        page. This matches the behavior of our scrollbar scrolling code
+        and is just nicer in general.
+
+        * webkit/webkitwebview.cpp:
+
+2009-04-28  Xan Lopez  <xlopez@igalia.com>
+
         Unreviewed: committed a few bits by mistake, remove them.
 
         * WebCoreSupport/EditorClientGtk.cpp:
