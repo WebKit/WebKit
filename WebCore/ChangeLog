@@ -1,3 +1,22 @@
+2009-04-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6822344> Use of QTMovieCurrentSizeAttribute generates exception and will crash
+
+        QTMovieCurrentSizeAttribute generates an exception with some versions of QTKit, so calculate a 
+        multiplier to scale from natural size to current size when a movie is opened and use that to 
+        return the correct value from the naturalSize() method.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_scaleFactor.
+        (WebCore::MediaPlayerPrivate::naturalSize): Return naturalSize transformed by initial scale.
+        (WebCore::MediaPlayerPrivate::cacheMovieScale): New, calculate difference between initial
+        size and natural size so naturalSize() accounts for non-identity movie matrix.
+        (WebCore::MediaPlayerPrivate::updateStates): Call cacheMovieScale when load state reaches
+        QTMovieLoadStateLoaded for the first time.
+
 2009-04-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

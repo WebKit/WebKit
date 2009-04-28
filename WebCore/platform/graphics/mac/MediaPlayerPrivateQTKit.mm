@@ -188,6 +188,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isStreaming(false)
     , m_visible(false)
     , m_rect()
+    , m_scaleFactor(1, 1)
     , m_enabledTrackCount(0)
     , m_totalTrackCount(0)
     , m_hasUnsupportedTracks(false)
@@ -563,7 +564,15 @@ IntSize MediaPlayerPrivate::naturalSize() const
     if (!metaDataAvailable())
         return IntSize();
 
-    return IntSize([[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue]);
+    // In spite of the name of this method, return QTMovieNaturalSizeAttribute transformed by the 
+    // initial movie scale because the spec says intrinsic size is:
+    //
+    //    ... the dimensions of the resource in CSS pixels after taking into account the resource's 
+    //    dimensions, aspect ratio, clean aperture, resolution, and so forth, as defined for the 
+    //    format used by the resource
+    
+    NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+    return IntSize(naturalSize.width * m_scaleFactor.width(), naturalSize.height * m_scaleFactor.height());
 }
 
 bool MediaPlayerPrivate::hasVideo() const
@@ -653,6 +662,28 @@ void MediaPlayerPrivate::cancelLoad()
     updateStates();
 }
 
+void MediaPlayerPrivate::cacheMovieScale()
+{
+    NSSize initialSize = NSZeroSize;
+    NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+
+    // QTMovieCurrentSizeAttribute is not allowed with some versions of QuickTime so ask for the display
+    // transform attribute first. If it is supported we don't need QTMovieCurrentSizeAttribute.
+    NSAffineTransform *displayTransform = [m_qtMovie.get() attributeForKey:@"QTMoviePreferredTransformAttribute"];
+    if (displayTransform)
+        initialSize = [displayTransform transformSize:naturalSize];
+    else {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
+    if (naturalSize.width)
+        m_scaleFactor.setWidth(initialSize.width / naturalSize.width);
+    if (naturalSize.height)
+        m_scaleFactor.setHeight(initialSize.height / naturalSize.height);
+}
+
 void MediaPlayerPrivate::updateStates()
 {
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
@@ -673,6 +704,9 @@ void MediaPlayerPrivate::updateStates()
         } else if (!m_enabledTrackCount) {
             loadState = QTMovieLoadStateError;
         }
+        
+        if (loadState != QTMovieLoadStateError)
+            cacheMovieScale();
     }
 
     BOOL completelyLoaded = !m_isStreaming && (loadState >= QTMovieLoadStateComplete);
