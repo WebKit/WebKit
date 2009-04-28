@@ -162,6 +162,7 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/Profiler.h \
 	JavaScriptCore/profiler/TreeProfile.cpp \
 	JavaScriptCore/profiler/TreeProfile.h \
+	JavaScriptCore/interpreter/CachedCall.h \
 	JavaScriptCore/interpreter/CallFrame.cpp \
 	JavaScriptCore/interpreter/CallFrame.h \
 	JavaScriptCore/interpreter/CallFrameClosure.h \
