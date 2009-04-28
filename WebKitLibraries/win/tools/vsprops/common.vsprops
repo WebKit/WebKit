@@ -48,4 +48,8 @@
 		Name="ProductionBuild"
 		Value="$(PRODUCTION)"
 	/>
+	<UserMacro
+		Name="AnalyzeWithLargeStack"
+		Value=""
+	/>
 </VisualStudioPropertySheet>
