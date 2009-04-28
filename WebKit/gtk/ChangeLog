@@ -1,3 +1,22 @@
+2009-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16135
+        [GTK] Support caret browsing
+
+        Based on a patch by Alp Toker.
+
+        Add enable-caret-browsing setting to WebKitWebView.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_set_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+
 2009-04-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

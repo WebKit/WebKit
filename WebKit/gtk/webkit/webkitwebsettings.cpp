@@ -79,6 +79,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_spell_checking;
     gchar* spell_checking_languages;
     GSList* spell_checking_languages_list;
+    gboolean enable_caret_browsing;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -109,7 +110,8 @@ enum {
     PROP_ENABLE_DEVELOPER_EXTRAS,
     PROP_ENABLE_PRIVATE_BROWSING,
     PROP_ENABLE_SPELL_CHECKING,
-    PROP_SPELL_CHECKING_LANGUAGES
+    PROP_SPELL_CHECKING_LANGUAGES,
+    PROP_ENABLE_CARET_BROWSING
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -404,6 +406,21 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     0,
                                     flags));
 
+    /**
+    * WebKitWebSettings:enable-caret-browsing:
+    *
+    * Whether to enable caret browsing mode.
+    *
+    * Since 1.1.6
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_CARET_BROWSING,
+                                    g_param_spec_boolean("enable-caret-browsing",
+                                                         _("Enable Caret Browsing"),
+                                                         _("Whether to enable accesibility enhanced keyboard navigation"),
+                                                         FALSE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -513,6 +530,8 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
         priv->enable_private_browsing = g_value_get_boolean(value);
+    case PROP_ENABLE_CARET_BROWSING:
+        priv->enable_caret_browsing = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_SPELL_CHECKING:
         priv->enable_spell_checking = g_value_get_boolean(value);
@@ -620,6 +639,8 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
         g_value_set_boolean(value, priv->enable_private_browsing);
+    case PROP_ENABLE_CARET_BROWSING:
+        g_value_set_boolean(value, priv->enable_caret_browsing);
         break;
     case PROP_ENABLE_SPELL_CHECKING:
         g_value_set_boolean(value, priv->enable_spell_checking);
@@ -682,6 +703,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-spell-checking", priv->enable_spell_checking,
                  "spell-checking-languages", priv->spell_checking_languages,
                  "spell-checking-languages-list", priv->spell_checking_languages_list,
+                 "enable-caret-browsing", priv->enable_caret_browsing,
                  NULL));
 
     return copy;
