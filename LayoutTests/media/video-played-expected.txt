@@ -35,7 +35,7 @@ Test 14 OK
 Test 15 OK
 Test 16 OK
 
-Test jumping into an existing range and play beyond end, should extend range end
+Test playing into an existing range, should extend range start
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
@@ -47,7 +47,7 @@ Test 21 OK
 Test 22 OK
 Test 23 OK
 
-Test playing into an existing range, should extend range start
+Test jumping into an existing range and play beyond end, should extend range end
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
@@ -88,56 +88,5 @@ Test 48 OK
 Test 49 OK
 Test 50 OK
 Test 51 OK
-
-Test looping
-RUN(video.loop = true)
-RUN(video.play())
-RUN(video.pause())
-EVENT(pause)
-Test 52 OK
-Test 53 OK
-Test 54 OK
-Test 55 OK
-Test 56 OK
-Test 57 OK
-Test 58 OK
-Test 59 OK
-Test 60 OK
-
-Test playing from one range into another, should collapse the two ranges
-RUN(video.loop = false)
-RUN(video.play())
-RUN(video.pause())
-EVENT(pause)
-Test 61 OK
-Test 62 OK
-Test 63 OK
-Test 64 OK
-Test 65 OK
-Test 66 OK
-Test 67 OK
-
-Test to reset to non empty video source
-RUN(video.src = "content/test.mp4")
-RUN(video.load())
-EVENT(loadstart)
-EVENT(loadedmetadata)
-EVENT(canplay)
-Test 68 OK
-
-Test jumping forward into a new range and play
-RUN(video.play())
-RUN(video.pause())
-EVENT(pause)
-Test 69 OK
-Test 70 OK
-Test 71 OK
-
-Test to reset to an empty video source
-RUN(video.src = "")
-RUN(video.load())
-EVENT(loadstart)
-EVENT(loadstart)
-Test 72 OK
 END OF TEST
 

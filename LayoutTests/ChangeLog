@@ -1,3 +1,45 @@
+2009-04-27  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Fix video-played.html layout test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25424
+
+        We implement playForMillisecs() which makes sure the video
+        will have been playing for a minimum time.
+
+        Note, this does not ensure a strict synchronization between the time
+        asked and the media playback. But given that media playback is the
+        slow part we just need to compensate for the delay involved by playback.
+        (And not the other way around.)
+
+        Moreover, we split the test in 3 in order to be more gentle which
+        slower machines that may tend to timeout more easily on those tests.
+
+        * media/video-played-collapse-expected.txt: Added.
+        * media/video-played-collapse.html: Added.
+        * media/video-played-expected.txt:
+        * media/video-played-reset-expected.txt: Added.
+        * media/video-played-reset.html: Added.
+        * media/video-played.html:
+        - Split tests in multiple files.
+        - Makes sure we always play as much as requested by using
+        playForMillisecs();
+        * media/video-played.js: Added.
+        (testRanges):
+        (nextTest):
+        (pause):
+        (canplay):
+        (willCreateNewRange):
+        (startPlayingInNewRange):
+        (startPlaying):
+        (secToMilli):
+        (milliToSecs):
+        (playForMillisecs.callPauseIfTimeIsReached):
+        (playForMillisecs):
+        (videoPlayedMain):
+
 2009-04-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

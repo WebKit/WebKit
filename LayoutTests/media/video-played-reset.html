@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <title>Test of 'played' attribute</title>
+        <script src=video-test.js></script>
+        <script src=video-played.js></script>
+        <script>
+    
+            var testFunctions = 
+            [ 
+                PlayWithNoRanges,
+                ResetToAVideoSource,
+                JumpAndPlayFwd,
+                ResetToAnEmptyVideoSource
+            ];
+    
+            // NOTE: Result details are not printed for this test because time values are different from machine
+            // to machine and run to run. Commenting out the following line turns on detailed logging back on, which
+            // can be useful for debugging test failure.
+            disableFullTestDetailsPrinting(); 
+
+            function PlayWithNoRanges()
+            {
+                consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
+
+                timeRangeCount = currentTimeRange = 0;
+                startPlayingInNewRange();
+            }
+        
+            function ResetToAVideoSource()
+            {
+                consoleWrite("<br><b><em>Test to reset to non empty video source</em></b>");
+    
+                timeRangeCount = currentTimeRange = 0;
+                expectedStartTimes = new Array();
+                expectedEndTimes = new Array();
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
+                run("video.src = \"content/test.mp4\"");
+                run("video.load()"); // Triggers canplay()
+            }
+
+            function JumpAndPlayFwd()
+            {
+                consoleWrite("<br><b><em>Test jumping forward into a new range and play</em></b>");
+
+                var newTime = video.duration - 0.5;
+                runSilently("video.currentTime = " + (newTime.toFixed(2)));
+                currentTimeRange = 1;
+                startPlayingInNewRange();
+            }
+
+            function ResetToAnEmptyVideoSource()
+            {
+                consoleWrite("<br><b><em>Test to reset to an empty video source</em></b>");
+    
+                timeRangeCount = currentTimeRange = 0;
+                expectedStartTimes = new Array();
+                expectedEndTimes = new Array();
+
+                run("video.src = \"\"");
+                waitForEvent("loadstart", function () { testRanges(); nextTest(); });
+                run("video.load()"); // Triggers loadstart()
+            }
+        </script>
+     </head>
+
+<body onload="videoPlayedMain()">
+
+    <video controls></video>
+    <p>Test of the media element 'played' attribute</p>
+
+</body>
+</html>
