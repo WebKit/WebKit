@@ -1,3 +1,16 @@
+2009-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+         Reviewed by Darin Adler.
+        
+        <rdar://problem/6834876> Don't use BlockExceptions macros until QTKit supports 
+        QTMoviePreferredTransformAttribute
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::cacheMovieScale): use @try and @catch instead of 
+        BEGIN_BLOCK_OBJC_EXCEPTIONS and END_BLOCK_OBJC_EXCEPTIONS for builds of QTKit 
+        that throw an exception on QTMovieCurrentSizeAttribute but don't support 
+        QTMoviePreferredTransformAttribute
+
 2009-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

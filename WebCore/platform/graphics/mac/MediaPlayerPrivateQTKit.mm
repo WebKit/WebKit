@@ -673,9 +673,11 @@ void MediaPlayerPrivate::cacheMovieScale()
     if (displayTransform)
         initialSize = [displayTransform transformSize:naturalSize];
     else {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        @try {
+            initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
+        } @catch (id) {
+            initialSize = naturalSize;
+        }
     }
 
     if (naturalSize.width)
