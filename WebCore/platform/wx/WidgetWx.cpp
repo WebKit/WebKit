@@ -45,8 +45,8 @@ Widget::~Widget()
 
 void Widget::setFocus()
 {
-    if (platformWidget())
-        platformWidget()->SetFocus();
+    if (PlatformWidget widget = platformWidget())
+        widget->SetFocus();
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -57,38 +57,43 @@ void Widget::setCursor(const Cursor& cursor)
 
 void Widget::show()
 {
-    if (platformWidget())
-        platformWidget()->Show();
+    if (PlatformWidget widget = platformWidget())
+        widget->Show();
 }
 
 void Widget::hide()
 {
-    if (platformWidget())
-        platformWidget()->Hide();
+    if (PlatformWidget widget = platformWidget())
+        widget->Hide();
 }
 
 IntRect Widget::frameRect() const
 {
-    if (platformWidget())
-        return platformWidget()->GetRect();
+    if (PlatformWidget widget = platformWidget())
+        return widget->GetRect();
+    
     return m_frame;
 }
 
 void Widget::setFrameRect(const IntRect& rect)
 {
-    if (platformWidget())
-        platformWidget()->SetSize(rect);
+    if (PlatformWidget widget = platformWidget())
+        widget->SetSize(rect);
+    
     m_frame = rect;
 }
 
 void Widget::invalidateRect(const IntRect& r)
 {
-    if (platformWidget())
-        platformWidget()->RefreshRect(r);
+    if (PlatformWidget widget = platformWidget())
+        widget->RefreshRect(r);
 }
 
 void Widget::paint(GraphicsContext*,const IntRect& r)
 {
+    invalidateRect(r);
+    if (PlatformWidget widget = platformWidget())
+        widget->Update();
 }
 
 }
