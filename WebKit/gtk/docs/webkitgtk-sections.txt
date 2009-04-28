@@ -89,6 +89,7 @@ webkit_web_frame_get_parent
 webkit_web_frame_get_title
 webkit_web_frame_get_uri
 webkit_web_frame_get_web_view
+webkit_web_frame_load_alternate_string
 webkit_web_frame_load_request
 webkit_web_frame_load_string
 webkit_web_frame_load_uri
@@ -372,6 +373,19 @@ webkit_web_history_item_new_with_core_item
 webkit_web_inspector_set_inspector_client
 webkit_web_inspector_set_web_view
 webkit_web_inspector_set_inspected_uri
+</SECTION>
+
+<SECTION>
+<FILE>webkiterror</FILE>
+WEBKIT_NETWORK_ERROR
+WEBKIT_PLUGIN_ERROR
+WEBKIT_POLICY_ERROR
+WebKitNetworkError
+WebKitPluginError
+WebKitPolicyError
+webkit_network_error_quark
+webkit_plugin_error_quark
+webkit_policy_error_quark
 </SECTION>
 
 <SECTION>
