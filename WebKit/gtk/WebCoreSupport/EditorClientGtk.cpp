@@ -449,9 +449,8 @@ static bool handleEditingKeyboardEvent(KeyboardEvent* evt)
     if (!keyEvent)
         return false;
 
-    Node* start = frame->selection()->start().node();
     bool caretBrowsing = frame->settings()->caretBrowsingEnabled();
-    if (caretBrowsing || (start && start->isContentEditable())) {
+    if (caretBrowsing) {
         switch (keyEvent->windowsVirtualKeyCode()) {
             case VK_LEFT:
                 frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
@@ -480,7 +479,6 @@ static bool handleEditingKeyboardEvent(KeyboardEvent* evt)
         }
     }
 
-
     Editor::Command command = frame->editor()->command(interpretKeyEvent(evt));
 
     if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
@@ -490,7 +488,7 @@ static bool handleEditingKeyboardEvent(KeyboardEvent* evt)
         return !command.isTextInsertion() && command.execute(evt);
     }
 
-     if (command.execute(evt))
+    if (command.execute(evt))
         return true;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
