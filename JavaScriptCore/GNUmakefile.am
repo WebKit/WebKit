@@ -164,6 +164,7 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/TreeProfile.h \
 	JavaScriptCore/interpreter/CallFrame.cpp \
 	JavaScriptCore/interpreter/CallFrame.h \
+	JavaScriptCore/interpreter/CallFrameClosure.h \
 	JavaScriptCore/runtime/TimeoutChecker.cpp \
 	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/InitializeThreading.cpp \
