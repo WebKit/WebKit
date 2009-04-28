@@ -1,4 +1,21 @@
 ================
+WebKitGTK+ 1.1.6
+================
+
+What's new in WebKitGTK+ 1.1.6?
+
+  - Several ATK support additions and fixes got landed, with many
+    roles being now implemented, providing better accessibility.
+  - Caret browsing is now available.
+  - Spelling check has been implemented using Enchant; the API is
+    still lacking, and some of the functionality still needs to be
+    improved, though.
+  - Error reporting is now available, with default error pages, and
+    API that allows the application to override the default behavior;
+    localization of those pages is still not supported, but planned.
+  - More crashes and other bugs fixed.
+
+================
 WebKitGTK+ 1.1.5
 ================
 
