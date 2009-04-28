@@ -1,5 +1,19 @@
 2009-04-27  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Fix foreignObject transform order
+        https://bugs.webkit.org/show_bug.cgi?id=25433
+
+        Transforms were being applied in the wrong order.
+        When mapping from local to parent, first apply the viewport transform
+        then map from the viewport box to the parent box.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::localToParentTransform):
+
+2009-04-27  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         Simplify nodeAtPoint for SVG

@@ -100,11 +100,7 @@ bool RenderForeignObject::calculateLocalTransform()
 
 TransformationMatrix RenderForeignObject::localToParentTransform() const
 {
-    // FIXME: This trasition is backwards!
-    // It should be localTransform() * translationForAttributes()
-    // but leaving it backwards for now for LayoutTest result compatibility
-    // https://bugs.webkit.org/show_bug.cgi?id=25433
-    return translationForAttributes() * localTransform();
+    return localTransform() * translationForAttributes();
 }
 
 void RenderForeignObject::layout()

@@ -19,6 +19,30 @@
 
 2009-04-27  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Fix foreignObject transform order
+        https://bugs.webkit.org/show_bug.cgi?id=25433
+
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.png:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.checksum:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.png:
+
+2009-04-27  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         Simplify how SVG containers paint
