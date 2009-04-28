@@ -1,3 +1,12 @@
+2009-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText): Streamline code path to avoid a bit of reference count
+        churn and remove a strange unneeeded PassRefPtr typecast. Also added a comment.
+        (WebCore::RenderText::setTextInternal): Ditto.
+
 2009-04-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
