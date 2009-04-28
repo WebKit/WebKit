@@ -1,5 +1,23 @@
 2009-04-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adele Peterson
+        
+        <rdar://problem/6822225> Full page zooming of <video> element in the browser window doesn't work well
+        
+        Fix a 'size changed' notification thrash that caused standalone video elements
+        to continually resize after full page zooming, by using the movie's natual size (which is independent
+        of zooming), rather than its current size (which is not).
+        
+        Note that this regresses <https://bugs.webkit.org/show_bug.cgi?id=25029>, so we have to
+        disable the media/video-size-intrinsic-scale.html test. However, we have to stop using
+        QTMovieCurrentSizeAttribute anyway; this will be addressed, and the test re-enabled via
+        <rdar://problem/6822344>.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::naturalSize):
+
+2009-04-27  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         <rdar://problem/6642221> REGRESSION: With the Movie widget, movie trailer fails to

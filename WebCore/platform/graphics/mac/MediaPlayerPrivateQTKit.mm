@@ -563,14 +563,7 @@ IntSize MediaPlayerPrivate::naturalSize() const
     if (!metaDataAvailable())
         return IntSize();
 
-    // In spite of the name of this method, return QTMovieCurrentSizeAttribute rather than
-    // QTMovieNaturalSizeAttribute because we need to return:
-    //
-    //    ... the dimensions of the resource in CSS pixels after taking into account the resource's 
-    //    dimensions, aspect ratio, clean aperture, resolution, and so forth, as defined for the 
-    //    format used by the resource
-
-    return IntSize([[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue]);
+    return IntSize([[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue]);
 }
 
 bool MediaPlayerPrivate::hasVideo() const
