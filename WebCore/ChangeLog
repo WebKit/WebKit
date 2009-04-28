@@ -1,3 +1,12 @@
+2009-04-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
+        - fix initialization order to match declaration order to fix release build
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2009-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Justin Garcia.
