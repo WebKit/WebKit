@@ -278,26 +278,6 @@ void JSDOMWindowBase::setReturnValueSlot(JSValuePtr* slot)
     d()->returnValueSlot = slot;
 }
 
-int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
-{
-    return DOMTimer::install(scriptExecutionContext(), a, t, singleShot);
-}
-
-int JSDOMWindowBase::installTimeout(const UString& handler, int t, bool singleShot)
-{
-    return installTimeout(new ScheduledAction(handler), t, singleShot);
-}
-
-int JSDOMWindowBase::installTimeout(ExecState* exec, JSValuePtr func, const ArgList& args, int t, bool singleShot)
-{
-    return installTimeout(new ScheduledAction(exec, func, args), t, singleShot);
-}
-
-void JSDOMWindowBase::removeTimeout(int timeoutId)
-{
-    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
-}
-
 void JSDOMWindowBase::disconnectFrame()
 {
 }

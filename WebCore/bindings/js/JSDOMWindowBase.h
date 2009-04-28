@@ -62,10 +62,6 @@ namespace WebCore {
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
 
-        int installTimeout(const JSC::UString& handler, int t, bool singleShot);
-        int installTimeout(JSC::ExecState*, JSC::JSValuePtr function, const JSC::ArgList& args, int t, bool singleShot);
-        void removeTimeout(int timeoutId);
-
         void clear();
 
         // Set a place to put a dialog return value when the window is cleared.
@@ -109,7 +105,6 @@ namespace WebCore {
         static JSC::JSValuePtr namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         void clearHelperObjectProperties();
-        int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
         bool allowsAccessFromPrivate(const JSC::JSGlobalObject*) const;
         String crossDomainAccessErrorMessage(const JSC::JSGlobalObject*) const;

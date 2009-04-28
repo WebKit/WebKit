@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "Console.h"
 #include "DOMSelection.h"
+#include "DOMTimer.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventException.h"
@@ -1160,6 +1161,26 @@ void DOMWindow::resizeTo(float width, float height) const
     FloatRect update(fr.location(), dest);
     adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
     page->chrome()->setWindowRect(fr);
+}
+
+int DOMWindow::setTimeout(ScheduledAction* action, int timeout)
+{
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, true);
+}
+
+void DOMWindow::clearTimeout(int timeoutId)
+{
+    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
+}
+
+int DOMWindow::setInterval(ScheduledAction* action, int timeout)
+{
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, false);
+}
+
+void DOMWindow::clearInterval(int timeoutId)
+{
+    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
 void DOMWindow::handleEvent(Event* event, bool useCapture, RegisteredEventListenerVector* alternateListeners)

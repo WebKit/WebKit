@@ -172,12 +172,13 @@ module window {
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
+        // [Custom] long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        [Custom] void clearTimeout(in long handle);
-
+        void clearTimeout(in long handle);
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
+        // [Custom] long setInterval(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        [Custom] void clearInterval(in long handle);
+        void clearInterval(in long handle);
 
         // Base64
         [Custom] DOMString atob(in DOMString string)
@@ -475,10 +476,9 @@ module window {
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING)
-    // window.toString() requires special handling in V8
-    [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
+        // window.toString() requires special handling in V8
+        [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
 #endif // defined(V8_BINDING)
-  };
+    };
+
 }
-
-

@@ -53,6 +53,7 @@
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "RegisteredEventListener.h"
+#include "ScheduledAction.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
@@ -494,40 +495,35 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-static JSValuePtr setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, const ArgList& args, bool timeout)
+static ScheduledAction* createScheduledAction(ExecState* exec, const ArgList& args)
 {
     JSValuePtr v = args.at(exec, 0);
-    int delay = args.at(exec, 1).toInt32(exec);
     if (v.isString())
-        return jsNumber(exec, window->installTimeout(asString(v)->value(), delay, timeout));
+        return new ScheduledAction(asString(v)->value());
     CallData callData;
     if (v.getCallData(callData) == CallTypeNone)
-        return jsUndefined();
+        return 0;
     ArgList argsTail;
     args.getSlice(2, argsTail);
-    return jsNumber(exec, window->installTimeout(exec, v, argsTail, delay, timeout));
+    return new ScheduledAction(exec, v, argsTail);
 }
 
 JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
-    return setTimeoutOrInterval(exec, this, args, true);
-}
-
-JSValuePtr JSDOMWindow::clearTimeout(ExecState* exec, const ArgList& args)
-{
-    removeTimeout(args.at(exec, 0).toInt32(exec));
-    return jsUndefined();
+    ScheduledAction* action = createScheduledAction(exec, args);
+    if (!action)
+        return jsUndefined();
+    int delay = args.at(exec, 1).toInt32(exec);
+    return jsNumber(exec, impl()->setTimeout(action, delay));
 }
 
 JSValuePtr JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
-    return setTimeoutOrInterval(exec, this, args, false);
-}
-
-JSValuePtr JSDOMWindow::clearInterval(ExecState* exec, const ArgList& args)
-{
-    removeTimeout(args.at(exec, 0).toInt32(exec));
-    return jsUndefined();
+    ScheduledAction* action = createScheduledAction(exec, args);
+    if (!action)
+        return jsUndefined();
+    int delay = args.at(exec, 1).toInt32(exec);
+    return jsNumber(exec, impl()->setInterval(action, delay));
 }
 
 JSValuePtr JSDOMWindow::atob(ExecState* exec, const ArgList& args)
