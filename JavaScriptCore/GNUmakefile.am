@@ -269,6 +269,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/Unicode.h \
 	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
 	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h \
+	JavaScriptCore/wtf/VMTags.h \
 	JavaScriptCore/yarr/RegexCompiler.h \
 	JavaScriptCore/yarr/RegexInterpreter.h \
 	JavaScriptCore/yarr/RegexJIT.h \

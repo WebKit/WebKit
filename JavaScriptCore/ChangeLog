@@ -1,3 +1,9 @@
+2009-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed: fix distcheck build, add missing header to file list.
+
+        * GNUmakefile.am:
+
 2009-04-28  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Maciej "Henry Morgan" Stachowiak.
