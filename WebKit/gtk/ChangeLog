@@ -5,6 +5,22 @@
         https://bugs.webkit.org/show_bug.cgi?id=16135
         [GTK] Support caret browsing
 
+        Refactor keyboard event handling to work properly under caret
+        browsing mode. Most of the code comes from the Windows port.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::):
+        (WebKit::interpretKeyEvent):
+        (WebKit::handleEditingKeyboardEvent):
+        (WebKit::EditorClient::handleKeyboardEvent):
+
+2009-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16135
+        [GTK] Support caret browsing
+
         Based on a patch by Alp Toker.
 
         Add enable-caret-browsing setting to WebKitWebView.

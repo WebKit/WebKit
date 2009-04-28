@@ -2,6 +2,8 @@
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2009 Diego Escalante Urrelo <diegoe@gnome.org>
+ *  Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ *  Copyright (C) 2009, Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +27,7 @@
 #include "EditCommand.h"
 #include "Editor.h"
 #include <enchant.h>
+#include "EventNames.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include <glib.h>
@@ -324,143 +327,183 @@ void EditorClient::toggleGrammarChecking()
 {
 }
 
-void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
-{
-    Frame* frame = core(m_webView)->focusController()->focusedOrMainFrame();
-    if (!frame || !frame->document()->focusedNode())
-        return;
+static const unsigned CtrlKey = 1 << 0;
+static const unsigned AltKey = 1 << 1;
+static const unsigned ShiftKey = 1 << 2;
 
-    const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent || kevent->type() == PlatformKeyboardEvent::KeyUp)
-        return;
+struct KeyDownEntry {
+    unsigned virtualKey;
+    unsigned modifiers;
+    const char* name;
+};
+
+struct KeyPressEntry {
+    unsigned charCode;
+    unsigned modifiers;
+    const char* name;
+};
+
+static const KeyDownEntry keyDownEntries[] = {
+    { VK_LEFT,   0,                  "MoveLeft"                                    },
+    { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"                  },
+    { VK_LEFT,   CtrlKey,            "MoveWordLeft"                                },
+    { VK_LEFT,   CtrlKey | ShiftKey, "MoveWordLeftAndModifySelection"              },
+    { VK_RIGHT,  0,                  "MoveRight"                                   },
+    { VK_RIGHT,  ShiftKey,           "MoveRightAndModifySelection"                 },
+    { VK_RIGHT,  CtrlKey,            "MoveWordRight"                               },
+    { VK_RIGHT,  CtrlKey | ShiftKey, "MoveWordRightAndModifySelection"             },
+    { VK_UP,     0,                  "MoveUp"                                      },
+    { VK_UP,     ShiftKey,           "MoveUpAndModifySelection"                    },
+    { VK_PRIOR,  ShiftKey,           "MovePageUpAndModifySelection"                },
+    { VK_DOWN,   0,                  "MoveDown"                                    },
+    { VK_DOWN,   ShiftKey,           "MoveDownAndModifySelection"                  },
+    { VK_NEXT,   ShiftKey,           "MovePageDownAndModifySelection"              },
+    { VK_PRIOR,  0,                  "MovePageUp"                                  },
+    { VK_NEXT,   0,                  "MovePageDown"                                },
+    { VK_HOME,   0,                  "MoveToBeginningOfLine"                       },
+    { VK_HOME,   ShiftKey,           "MoveToBeginningOfLineAndModifySelection"     },
+    { VK_HOME,   CtrlKey,            "MoveToBeginningOfDocument"                   },
+    { VK_HOME,   CtrlKey | ShiftKey, "MoveToBeginningOfDocumentAndModifySelection" },
+
+    { VK_END,    0,                  "MoveToEndOfLine"                             },
+    { VK_END,    ShiftKey,           "MoveToEndOfLineAndModifySelection"           },
+    { VK_END,    CtrlKey,            "MoveToEndOfDocument"                         },
+    { VK_END,    CtrlKey | ShiftKey, "MoveToEndOfDocumentAndModifySelection"       },
+
+    { VK_BACK,   0,                  "DeleteBackward"                              },
+    { VK_BACK,   ShiftKey,           "DeleteBackward"                              },
+    { VK_DELETE, 0,                  "DeleteForward"                               },
+    { VK_BACK,   CtrlKey,            "DeleteWordBackward"                          },
+    { VK_DELETE, CtrlKey,            "DeleteWordForward"                           },
+
+    { 'B',       CtrlKey,            "ToggleBold"                                  },
+    { 'I',       CtrlKey,            "ToggleItalic"                                },
+
+    { VK_ESCAPE, 0,                  "Cancel"                                      },
+    { VK_OEM_PERIOD, CtrlKey,        "Cancel"                                      },
+    { VK_TAB,    0,                  "InsertTab"                                   },
+    { VK_TAB,    ShiftKey,           "InsertBacktab"                               },
+    { VK_RETURN, 0,                  "InsertNewline"                               },
+    { VK_RETURN, CtrlKey,            "InsertNewline"                               },
+    { VK_RETURN, AltKey,             "InsertNewline"                               },
+    { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
+
+    // It's not quite clear whether Undo/Redo should be handled
+    // in the application or in WebKit. We chose WebKit.
+    { 'Z',       CtrlKey,            "Undo"                                        },
+    { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
+};
+
+static const KeyPressEntry keyPressEntries[] = {
+    { '\t',   0,                  "InsertTab"                                   },
+    { '\t',   ShiftKey,           "InsertBacktab"                               },
+    { '\r',   0,                  "InsertNewline"                               },
+    { '\r',   CtrlKey,            "InsertNewline"                               },
+    { '\r',   AltKey,             "InsertNewline"                               },
+    { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
+};
+
+static const char* interpretKeyEvent(const KeyboardEvent* evt)
+{
+    ASSERT(evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent);
+
+    static HashMap<int, const char*>* keyDownCommandsMap = 0;
+    static HashMap<int, const char*>* keyPressCommandsMap = 0;
+
+    if (!keyDownCommandsMap) {
+        keyDownCommandsMap = new HashMap<int, const char*>;
+        keyPressCommandsMap = new HashMap<int, const char*>;
+
+        for (unsigned i = 0; i < G_N_ELEMENTS(keyDownEntries); i++)
+            keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
+
+        for (unsigned i = 0; i < G_N_ELEMENTS(keyPressEntries); i++)
+            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
+    }
+
+    unsigned modifiers = 0;
+    if (evt->shiftKey())
+        modifiers |= ShiftKey;
+    if (evt->altKey())
+        modifiers |= AltKey;
+    if (evt->ctrlKey())
+        modifiers |= CtrlKey;
+
+    if (evt->type() == eventNames().keydownEvent) {
+        int mapKey = modifiers << 16 | evt->keyCode();
+        return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
+    }
+
+    int mapKey = modifiers << 16 | evt->charCode();
+    return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
+}
+
+static bool handleEditingKeyboardEvent(KeyboardEvent* evt)
+{
+    Node* node = evt->target()->toNode();
+    ASSERT(node);
+    Frame* frame = node->document()->frame();
+    ASSERT(frame);
+
+    const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
+    if (!keyEvent)
+        return false;
 
     Node* start = frame->selection()->start().node();
-    if (!start)
-        return;
-
-    // FIXME: Use GtkBindingSet instead of this hard-coded switch
-    // http://bugs.webkit.org/show_bug.cgi?id=15911
-
-    if (start->isContentEditable()) {
-        switch (kevent->windowsVirtualKeyCode()) {
-            case VK_BACK:
-                frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
-                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
-                break;
-            case VK_DELETE:
-                frame->editor()->deleteWithDirection(SelectionController::FORWARD,
-                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
-                break;
+    bool caretBrowsing = frame->settings()->caretBrowsingEnabled();
+    if (caretBrowsing || (start && start->isContentEditable())) {
+        switch (keyEvent->windowsVirtualKeyCode()) {
             case VK_LEFT:
-                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::LEFT,
-                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
+                        keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
                         true);
-                break;
+                return true;
             case VK_RIGHT:
-                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::RIGHT,
-                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
+                        keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
                         true);
-                break;
+                return true;
             case VK_UP:
-                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::BACKWARD,
-                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
+                        keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                         true);
-                break;
+                return true;
             case VK_DOWN:
-                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::FORWARD,
-                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
+                        keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                         true);
-                break;
-            case VK_PRIOR:  // PageUp
-                frame->editor()->command(kevent->shiftKey() ? "MovePageUpAndModifySelection" : "MovePageUp").execute();
-                break;
-            case VK_NEXT:  // PageDown
-                frame->editor()->command(kevent->shiftKey() ? "MovePageDownAndModifySelection" : "MovePageDown").execute();
-                break;
-            case VK_HOME:
-                if (kevent->ctrlKey() && kevent->shiftKey())
-                    frame->editor()->command("MoveToBeginningOfDocumentAndModifySelection").execute();
-                else if (kevent->ctrlKey())
-                    frame->editor()->command("MoveToBeginningOfDocument").execute();
-                else if (kevent->shiftKey())
-                    frame->editor()->command("MoveToBeginningOfLineAndModifySelection").execute();
-                else
-                    frame->editor()->command("MoveToBeginningOfLine").execute();
-                break;
-            case VK_END:
-                if (kevent->ctrlKey() && kevent->shiftKey())
-                    frame->editor()->command("MoveToEndOfDocumentAndModifySelection").execute();
-                else if (kevent->ctrlKey())
-                    frame->editor()->command("MoveToEndOfDocument").execute();
-                else if (kevent->shiftKey())
-                    frame->editor()->command("MoveToEndOfLineAndModifySelection").execute();
-                else
-                    frame->editor()->command("MoveToEndOfLine").execute();
-                break;
-            case VK_RETURN:
-                frame->editor()->command("InsertLineBreak").execute();
-                break;
-            case VK_TAB:
-                return;
-            default:
-                if (!kevent->ctrlKey() && !kevent->altKey() && !kevent->text().isEmpty()) {
-                    if (kevent->text().length() == 1) {
-                        UChar ch = kevent->text()[0];
-                        // Don't insert null or control characters as they can result in unexpected behaviour
-                        if (ch < ' ')
-                            break;
-                    }
-                    frame->editor()->insertText(kevent->text(), event);
-                } else if (kevent->ctrlKey()) {
-                    switch (kevent->windowsVirtualKeyCode()) {
-                        case VK_B:
-                            frame->editor()->command("ToggleBold").execute();
-                            break;
-                        case VK_I:
-                            frame->editor()->command("ToggleItalic").execute();
-                            break;
-                        case VK_Y:
-                            frame->editor()->command("Redo").execute();
-                            break;
-                        case VK_Z:
-                            frame->editor()->command("Undo").execute();
-                            break;
-                        default:
-                            return;
-                    }
-                } else return;
-        }
-    } else {
-        switch (kevent->windowsVirtualKeyCode()) {
-            case VK_UP:
-                frame->editor()->command("MoveUp").execute();
-                break;
-            case VK_DOWN:
-                frame->editor()->command("MoveDown").execute();
-                break;
-            case VK_PRIOR:  // PageUp
-                frame->editor()->command("MovePageUp").execute();
-                break;
-            case VK_NEXT:  // PageDown
-                frame->editor()->command("MovePageDown").execute();
-                break;
-            case VK_HOME:
-                if (kevent->ctrlKey())
-                    frame->editor()->command("MoveToBeginningOfDocument").execute();
-                break;
-            case VK_END:
-                if (kevent->ctrlKey())
-                    frame->editor()->command("MoveToEndOfDocument").execute();
-                break;
-            default:
-                return;
+                return true;
         }
     }
-    event->setDefaultHandled();
+
+
+    Editor::Command command = frame->editor()->command(interpretKeyEvent(evt));
+
+    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+        // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
+        // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        return !command.isTextInsertion() && command.execute(evt);
+    }
+
+     if (command.execute(evt))
+        return true;
+
+    // Don't insert null or control characters as they can result in unexpected behaviour
+    if (evt->charCode() < ' ')
+        return false;
+
+    return frame->editor()->insertText(evt->keyEvent()->text(), evt);
+}
+
+void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
+{
+    if (handleEditingKeyboardEvent(event))
+        event->setDefaultHandled();
 }
 
 void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
