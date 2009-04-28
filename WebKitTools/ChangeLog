@@ -1,5 +1,16 @@
 2009-04-28  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix link warnings building TestNetscapePlugin on Windows due to mismatched
+        DLL name vs. LIBRARY directive name.
+        
+        Reviewed by Jon Honeycutt.
+
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.def:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin_debug.def: Added.
+
+2009-04-28  Steve Falkenburg  <sfalken@apple.com>
+
         Fix warnings about PRODUCTION and ARCHIVE_BUILD on Windows builds
         of ImageDiff and DumpRenderTree.
         

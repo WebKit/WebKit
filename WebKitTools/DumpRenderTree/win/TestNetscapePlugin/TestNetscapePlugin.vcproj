@@ -55,7 +55,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin.def"
+				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -124,7 +124,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin.def"
+				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -193,7 +193,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin.def"
+				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -247,6 +247,10 @@
 		</File>
 		<File
 			RelativePath=".\TestNetscapePlugin.rc"
+			>
+		</File>
+		<File
+			RelativePath=".\TestNetscapePlugin_debug.def"
 			>
 		</File>
 		<File
