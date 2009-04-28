@@ -7576,6 +7576,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderMediaControls.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderMediaControls.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderMenuList.cpp"
 				>
 			</File>
@@ -9276,11 +9284,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizerScope.h"
+				RelativePath="..\dom\XMLTokenizerScope.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\XMLTokenizerScope.cpp"
+				RelativePath="..\dom\XMLTokenizerScope.h"
 				>
 			</File>
 		</Filter>
@@ -15807,11 +15815,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TopDownProfileDataGridTree.js"
+					RelativePath="..\inspector\front-end\TextPrompt.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TextPrompt.js"
+					RelativePath="..\inspector\front-end\TopDownProfileDataGridTree.js"
 					>
 				</File>
 				<File

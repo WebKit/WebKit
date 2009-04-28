@@ -35,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "RetainPtr.h"
@@ -916,8 +917,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const RenderObject::Pa
 {
     IntRect bounds = r;
 
-    if (o->style()->appearance() ==  SliderHorizontalPart || 
-        o->style()->appearance() == MediaSliderPart) {
+    if (o->style()->appearance() ==  SliderHorizontalPart) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
     } else if (o->style()->appearance() == SliderVerticalPart) {
@@ -974,19 +974,17 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::Pa
 
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
-const int mediaSliderThumbWidth = 13;
-const int mediaSliderThumbHeight = 14;
 
 void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 {
     if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
-    } else if (o->style()->appearance() == MediaSliderThumbPart) {
-        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
-    }
-
+    } 
+#if ENABLE(VIDEO)
+    else if (o->style()->appearance() == MediaSliderThumbPart) 
+        RenderMediaControls::adjustMediaSliderThumbSize(o);
+#endif
 }
 
 bool RenderThemeSafari::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1136,104 +1134,37 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Ren
 #if ENABLE(VIDEO)
 bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    paintThemePart(SafariTheme::MediaFullscreenButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaFullscreenButton, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
-        return false;
-
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
-    if (!mediaElement)
-        return false;
-
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    paintThemePart(mediaElement->muted() ? SafariTheme::MediaUnMuteButtonPart : SafariTheme::MediaMuteButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaMuteButton, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
-        return false;
-
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
-    if (!mediaElement)
-        return false;
-
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    paintThemePart(mediaElement->canPlay() ? SafariTheme::MediaPlayButtonPart : SafariTheme::MediaPauseButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    paintThemePart(SafariTheme::MediaSeekBackButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    paintThemePart(SafariTheme::MediaSeekForwardButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaSeekForwardButton, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
-        return false;
-
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
-    if (!mediaElement)
-        return false;
-
-    float percentLoaded = 0;
-    if (MediaPlayer* player = mediaElement->player())
-        if (player->duration())
-            percentLoaded = player->maxTimeBuffered() / player->duration();
-
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    ASSERT(SafariThemeLibrary());
-    STPaintProgressIndicator(SafariTheme::MediaType, paintInfo.context->platformContext(), r, NSRegularControlSize, 0, percentLoaded);
-#endif
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaSlider, o, paintInfo, r);
 }
 
 bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(SafariThemeLibrary());
-
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    paintThemePart(SafariTheme::MediaSliderThumbPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
-#endif
-
-    return false;
+    return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
 }
 #endif
 

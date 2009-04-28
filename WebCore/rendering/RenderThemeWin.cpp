@@ -28,6 +28,7 @@
 #include "HTMLElement.h"
 #include "HTMLSelectElement.h"
 #include "Icon.h"
+#include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "Settings.h"
 #include "SoftLinking.h"
@@ -748,6 +749,10 @@ void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
+#if ENABLE(VIDEO)
+    else if (o->style()->appearance() == MediaSliderThumbPart) 
+        RenderMediaControls::adjustMediaSliderThumbSize(o);
+#endif
 }
 
 int RenderThemeWin::buttonInternalPaddingLeft() const
@@ -930,5 +935,42 @@ Color RenderThemeWin::systemColor(int cssValueId) const
     COLORREF color = GetSysColor(sysColorIndex);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
+
+#if ENABLE(VIDEO)
+bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaFullscreenButton, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaMuteButton, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaSeekForwardButton, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaSlider, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
+}
+#endif
 
 }

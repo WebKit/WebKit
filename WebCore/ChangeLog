@@ -1,3 +1,45 @@
+2009-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6794691> Media documents and <video controls> never show controls on Windows
+
+        RenderThemeWin doesn't implement the media element controller rendering methods, so media
+        controls stopped rendering when we switched from RenderThemeSafari. Rather than having copies
+        of the code in both places, the logic is in a new class that is called from both.
+
+        * WebCore.vcproj/WebCore.vcproj: Add RenderMediaControls.cpp.
+
+        * rendering/RenderMediaControls.cpp: Added.
+        (WebCore::determineState): Translate renderer state to ThemeControlState.
+        (WebCore::RenderMediaControls::adjustMediaSliderThumbSize): Adjust slider thumb.
+        (WebCore::parentMediaElement): Return the HTMLMediaElement parent of a controller element.
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Paint a media controller part.
+        * rendering/RenderMediaControls.h: Added.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintSliderTrack): Remove the MediaSliderPart case, it is never
+        called for the media slider.
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize): Call RenderMediaControls function.
+        (WebCore::RenderThemeSafari::paintMediaFullscreenButton): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaMuteButton): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaPlayButton): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaSeekBackButton): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaSeekForwardButton): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaSliderTrack): Ditto.
+        (WebCore::RenderThemeSafari::paintMediaSliderThumb): Ditto.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSliderThumbSize): Ditto.
+        (WebCore::RenderThemeWin::paintMediaFullscreenButton): Ditto.
+        (WebCore::RenderThemeWin::paintMediaMuteButton): Ditto.
+        (WebCore::RenderThemeWin::paintMediaPlayButton): Ditto.
+        (WebCore::RenderThemeWin::paintMediaSeekBackButton): Ditto.
+        (WebCore::RenderThemeWin::paintMediaSeekForwardButton): Ditto.
+        (WebCore::RenderThemeWin::paintMediaSliderTrack): Ditto.
+        (WebCore::RenderThemeWin::paintMediaSliderThumb): Ditto.
+        * rendering/RenderThemeWin.h:
+
 2009-04-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
