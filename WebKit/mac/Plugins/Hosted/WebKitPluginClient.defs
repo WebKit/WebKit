@@ -190,6 +190,16 @@ simpleroutine PCSetMenuBarVisible(clientPort :mach_port_t;
 simpleroutine PCSetModal(clientPort :mach_port_t;
                        modal :boolean_t);
 
+routine PCCheckIfAllowedToLoadURL(clientPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  url :data_t;
+                                  target :data_t;
+                                  out checkID :uint32_t);
+
+simpleroutine PCCancelCheckIfAllowedToLoadURL(clientPort :mach_port_t;
+                                              pluginID :uint32_t;
+                                              checkID :uint32_t);
+
 // Replies
 simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;

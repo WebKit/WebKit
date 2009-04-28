@@ -129,6 +129,10 @@ simpleroutine PHDestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t;
                                     requestID :uint32_t);
 
+simpleroutine PHCheckIfAllowedToLoadURLResult(clientPort :mach_port_t;
+                                              pluginID :uint32_t;
+                                              checkID :uint32_t;
+                                              result :boolean_t);
 
 // Streams
 simpleroutine PHStartStream(pluginHostPort :mach_port_t;

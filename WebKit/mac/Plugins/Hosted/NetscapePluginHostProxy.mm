@@ -956,5 +956,36 @@ kern_return_t WKPCConvertPoint(mach_port_t clientPort, uint32_t pluginID,
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCCheckIfAllowedToLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t urlData, mach_msg_type_number_t urlLength,
+                                          data_t targetData, mach_msg_type_number_t targetLength, uint32_t *checkID)
+{
+    DataDeallocator urlDeallocator(urlData, urlLength);
+    DataDeallocator targetDeallocator(targetData, targetLength);
+
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    *checkID = instanceProxy->checkIfAllowedToLoadURL(urlData, targetData);
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCCancelCheckIfAllowedToLoadURL(mach_port_t clientPort, uint32_t pluginID, uint32_t checkID)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    instanceProxy->cancelCheckIfAllowedToLoadURL(checkID);
+    return KERN_SUCCESS;
+}
 
 #endif // USE(PLUGIN_HOST_PROCESS)

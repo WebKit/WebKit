@@ -38,6 +38,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/runtime.h>
 #import <WebCore/runtime_root.h>
@@ -45,6 +46,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 extern "C" {
@@ -403,6 +405,30 @@ extern "C" {
     
     if (HostedNetscapePluginStream* manualStream = _proxy->manualStream())
         manualStream->didFinishLoading(0);
+}
+
+- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)webPluginContainerCheck
+{
+    ASSERT([webPluginContainerCheck isKindOfClass:[WebPluginContainerCheck class]]);
+    
+    id contextInfo = [webPluginContainerCheck contextInfo];
+    ASSERT(contextInfo && [contextInfo isKindOfClass:[NSNumber class]]);
+
+    if (!_proxy)
+        return;
+
+    uint32_t checkID = [(NSNumber *)contextInfo unsignedIntValue];
+    _proxy->cancelCheckIfAllowedToLoadURL(checkID);
+}
+
+- (void)_containerCheckResult:(PolicyAction)policy contextInfo:(id)contextInfo
+{
+    ASSERT([contextInfo isKindOfClass:[NSNumber class]]);
+    if (!_proxy)
+        return;
+
+    uint32_t checkID = [(NSNumber *)contextInfo unsignedIntValue];
+    _proxy->checkIfAllowedToLoadURLResult(checkID, (policy == PolicyUse));
 }
 
 @end

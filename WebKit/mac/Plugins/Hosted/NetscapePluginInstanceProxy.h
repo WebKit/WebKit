@@ -155,6 +155,11 @@ public:
     
     uint32_t nextRequestID();
     
+    uint32_t checkIfAllowedToLoadURL(const char* url, const char* target);
+    void cancelCheckIfAllowedToLoadURL(uint32_t checkID);
+    
+    void checkIfAllowedToLoadURLResult(uint32_t checkID, bool allowed);
+    
     // Reply structs
     struct Reply {
         enum Type {
@@ -293,6 +298,10 @@ private:
     
     typedef HashSet<ProxyInstance*> ProxyInstanceSet;
     ProxyInstanceSet m_instances;
+
+    uint32_t m_urlCheckCounter;
+    typedef HashMap<uint32_t, RetainPtr<id> > URLCheckMap;
+    URLCheckMap m_urlChecks;
     
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;

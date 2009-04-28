@@ -1,3 +1,42 @@
+2009-04-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker and Darin Adler.
+
+        Fix <rdar://problem/6836132>.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCCheckIfAllowedToLoadURL):
+        Call the instance proxy.
+        
+        (WKPCCancelCheckIfAllowedToLoadURL):
+        Ditto.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Initialize the check ID counter.
+        
+        (WebKit::NetscapePluginInstanceProxy::checkIfAllowedToLoadURL):
+        Create a WebPluginContainerCheck, add it to the map, and start it.
+        
+        (WebKit::NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL):
+        Remove the check from the map.
+        
+        (WebKit::NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult):
+        Call the WKPH MIG callback.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView _webPluginContainerCancelCheckIfAllowedToLoadRequest:]):
+        Call the instance proxy.
+        
+        (-[WebHostedNetscapePluginView _containerCheckResult:contextInfo:]):
+        Ditto.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add MIG declarations.
+
 2009-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
