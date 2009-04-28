@@ -1,3 +1,9 @@
+2009-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed: bump versions in preparation for 1.1.6 release.
+
+        * configure.ac:
+
 2009-04-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
