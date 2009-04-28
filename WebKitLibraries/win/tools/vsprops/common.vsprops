@@ -9,7 +9,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalOptions="/GS"
-		PreprocessorDefinitions="WIN32;_WINDOWS;WINVER=0x501;_WIN32_WINNT=0x501;_WIN32_IE=0x600;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;__PRODUCTION__=0$(PRODUCTION);_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName)"
+		PreprocessorDefinitions="WIN32;_WINDOWS;WINVER=0x501;_WIN32_WINNT=0x501;_WIN32_IE=0x600;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;__PRODUCTION__=0$(ProductionBuild);_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName)"
 		ExceptionHandling="0"
 		RuntimeTypeInfo="false"
 		WarningLevel="4"
@@ -35,7 +35,7 @@
 	/>
 	<Tool
 		Name="VCMIDLTool"
-		PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
+		PreprocessorDefinitions="__PRODUCTION__=0$(ProductionBuild)"
 		WarnAsError="true"
 		HeaderFileName="$(OutDir)\$(InputName).h"
 	/>
@@ -43,5 +43,9 @@
 		Name="VCResourceCompilerTool"
 		Culture="1033"
 		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
+	/>
+	<UserMacro
+		Name="ProductionBuild"
+		Value="$(PRODUCTION)"
 	/>
 </VisualStudioPropertySheet>

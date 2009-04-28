@@ -1,3 +1,12 @@
+2009-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix extraneous warning about PRODUCTION not being defined in Windows builds.
+        Indirected definition for __PRODUCTION__ through a UserMacro.
+        
+        Reviewed by Mark Rowe.
+
+        * win/tools/vsprops/common.vsprops:
+
 2009-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Source changes reviewed by Darin Adler
