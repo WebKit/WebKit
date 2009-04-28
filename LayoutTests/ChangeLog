@@ -1,3 +1,15 @@
+2009-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Add text repaint test to cover
+        https://bugs.webkit.org/show_bug.cgi?id=16188
+
+        * platform/mac/svg/text/text-repaint-rects-expected.checksum: Added.
+        * platform/mac/svg/text/text-repaint-rects-expected.png: Added.
+        * platform/mac/svg/text/text-repaint-rects-expected.txt: Added.
+        * svg/text/text-repaint-rects.xhtml: Added.
+
 2009-04-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
