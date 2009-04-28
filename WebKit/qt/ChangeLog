@@ -1,3 +1,14 @@
+2009-04-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix some qdoc warnings.
+
+        * Api/qwebframe.cpp: Fix links.
+        * Api/qwebnetworkinterface.cpp: Make docs internal.
+        * Api/qwebnetworkinterface.h: Ditto.
+        * Api/qwebpage.cpp: Fix property name in \property.
+
 2009-04-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.

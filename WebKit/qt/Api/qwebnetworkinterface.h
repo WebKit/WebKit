@@ -149,17 +149,8 @@ protected:
     void finished(QWebNetworkJob*, int errorCode);
     
 signals:
-    /**
-     * Signal is emitted when an SSL error occurs.
-     */
     void sslErrors(QWebFrame *frame, const QUrl& url, const QList<QSslError>& errors, bool *continueAnyway);
-    /**
-     * Signal is emitted when network authentication is required.
-     */
     void authenticate(QWebFrame *frame, const QUrl& url, const QString& hostname, quint16 port, QAuthenticator *auth);
-    /**
-     * Signal is emitted when proxy authentication is required.
-     */
     void authenticateProxy(QWebFrame *frame, const QUrl& url, const QNetworkProxy& proxy, QAuthenticator *auth);
 
 private:

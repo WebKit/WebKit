@@ -1635,7 +1635,7 @@ bool QWebPage::useFixedLayout() const
 }
 
 /*!
-    \property QWebPage::usedFixedLayout
+    \property QWebPage::useFixedLayout
     \since 4.6
     \brief whether to use a fixed layout size
 */
