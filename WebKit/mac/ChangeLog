@@ -1,3 +1,16 @@
+2009-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6786360> Make PDF an insertable pasteboard type
+
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::insertablePasteboardTypes):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+
 2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
 
         Add the various switches and context menu items needed for

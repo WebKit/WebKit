@@ -706,6 +706,13 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
 
+    if ([types containsObject:NSPDFPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSPDFPboardType
+                                                inContext:context
+                                             subresources:0]))
+        return fragment;
+
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
@@ -1586,7 +1593,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     static NSArray *types = nil;
     if (!types) {
-        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType,
+        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
             NSPICTPboardType,
 #endif
@@ -2055,6 +2062,16 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
                                                               URL:uniqueURLWithRelativePart(@"image.tiff")
                                                          MIMEType:@"image/tiff" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }
+    if (pboardType == NSPDFPboardType) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPDFPboardType]
+                                                              URL:uniqueURLWithRelativePart(@"application.pdf")
+                                                         MIMEType:@"application/pdf" 
                                                  textEncodingName:nil
                                                         frameName:nil];
         DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];

@@ -92,7 +92,7 @@ DOMDocumentFragment *WebPasteboardHelper::fragmentFromPasteboard(const NSPastebo
 
 NSArray *WebPasteboardHelper::insertablePasteboardTypes() const
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType,
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
            NSPICTPboardType,
 #endif
