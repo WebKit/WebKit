@@ -1,3 +1,14 @@
+2009-04-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/6419515> REGRESSION (r31037): Positioned 
+        images with % height are collapsed when printing
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight): Make sure we don't ignore 
+        printing here!
+
 2009-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
