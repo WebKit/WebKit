@@ -185,6 +185,11 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
             needToParse = true;
     }
 
+    // parseMappedAttribute() might create a CSSMappedAttributeDeclaration on the attribute.  
+    // Normally we would be concerned about reseting the parent of those declarations in StyledElement::didMoveToNewOwnerDocument().
+    // But currently we always clear its parent and node below when adding it to the decl table.  
+    // If that changes for some reason moving between documents will be buggy.
+    // webarchive/adopt-attribute-styled-node-webarchive.html should catch any resulting crashes.
     if (needToParse)
         parseMappedAttribute(mappedAttr);
 
@@ -500,6 +505,15 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (CSSMutableStyleDeclaration* style = inlineStyleDecl())
         style->addSubresourceStyleURLs(urls);
+}
+
+
+void StyledElement::didMoveToNewOwnerDocument()
+{
+    if (m_inlineStyleDecl)
+        m_inlineStyleDecl->setParent(document()->elementSheet());
+
+    Element::didMoveToNewOwnerDocument();
 }
 
 }

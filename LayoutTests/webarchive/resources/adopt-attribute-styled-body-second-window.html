@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+
+function loaded()
+{
+    document.getElementsByTagName("body")[0].removeAttribute("onload");
+    window.doneWithBody = true;
+}
+
+</script>
+</head>
+<body id="otherBody" vlink="green" alink="green" onload="loaded();">
+<a href="SomeUnvisitedPage.html">Spaceballs: The Unvisited Link</a><br>
+<a href="about:blank">Spaceballs: The Visited Link</a>
+</body>
+</html>

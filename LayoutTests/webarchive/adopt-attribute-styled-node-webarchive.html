@@ -1,0 +1,67 @@
+<html>
+<head>
+
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpDOMAsWebArchive();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.waitUntilDone();
+}
+
+var otherWindow = null;
+
+function startTest()
+{
+    otherWindow = window.open("resources/adopt-attribute-styled-node-second-window.html", "TestWindow");
+    if (!otherWindow) {
+        alert("When running this test under Safari, popup blocking must be disabled.");
+        return;
+    }
+    tryAdoptNode();
+}
+
+function tryAdoptNode()
+{
+    var otherMarquee = otherWindow.document.getElementById("otherMarquee");
+    if (!otherMarquee) {
+        setTimeout("tryAdoptNode()", 10);
+        return;
+    }
+    
+    var adoptedMarquee = document.adoptNode(otherMarquee);
+    document.getElementById("testSpan").appendChild(adoptedMarquee);
+    otherWindow.close();
+    
+    procedeAfterClosedWindow();
+}
+
+function procedeAfterClosedWindow()
+{
+    if (!otherWindow.closed) {
+        setTimeout("procedeAfterClosedWindow()", 10);
+        return;
+    }
+    
+    otherWindow = null;
+    
+    if (window.GCController) {
+        GCController.collect();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        else
+            alert("How strange - You have window.GCController, but no window.layoutTestController.  How did this happen?");
+    }
+    else
+        alert("Now wait for garbage collection to have occured, then save the current page as a WebArchive.");
+}
+
+</script>
+</head>
+
+<body onload="startTest();">
+<span id="testSpan">This test takes a node with mapped style attributes from a different document, moves it to this document, makes sure the other document has closed,
+then makes a WebArchive from this document.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
+way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.<br></span>
+</body>
+</html>

@@ -316,4 +316,16 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     addSubresourceURL(urls, document()->completeURL(background()));
 }
 
+void HTMLBodyElement::didMoveToNewOwnerDocument()
+{
+    // When moving body elements between documents, we should have to reset the parent sheet for any
+    // link style declarations.  If we don't we might crash later.
+    // In practice I can't reproduce this theoretical problem.
+    // webarchive/adopt-attribute-styled-body-webarchive.html tries to make sure this crash won't surface.
+    if (m_linkDecl)
+        m_linkDecl->setParent(document()->elementSheet());
+    
+    HTMLElement::didMoveToNewOwnerDocument();
+}
+
 }

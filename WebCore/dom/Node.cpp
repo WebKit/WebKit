@@ -401,18 +401,49 @@ Node::~Node()
         m_next->setPreviousSibling(0);
 }
 
-void Node::setDocument(Document* doc)
+#ifdef NDEBUG
+
+static inline void setWillMoveToNewOwnerDocumentWasCalled(bool)
 {
-    if (inDocument() || m_document == doc)
+}
+
+static inline void setDidMoveToNewOwnerDocumentWasCalled(bool)
+{
+}
+
+#else
+    
+static bool willMoveToNewOwnerDocumentWasCalled;
+static bool didMoveToNewOwnerDocumentWasCalled;
+
+static void setWillMoveToNewOwnerDocumentWasCalled(bool wasCalled)
+{
+    willMoveToNewOwnerDocumentWasCalled = wasCalled;
+}
+
+static void setDidMoveToNewOwnerDocumentWasCalled(bool wasCalled)
+{
+    didMoveToNewOwnerDocumentWasCalled = wasCalled;
+}
+    
+#endif
+    
+void Node::setDocument(Document* document)
+{
+    if (inDocument() || m_document == document)
         return;
 
+    setWillMoveToNewOwnerDocumentWasCalled(false);
     willMoveToNewOwnerDocument();
+    ASSERT(willMoveToNewOwnerDocumentWasCalled);
 
-    updateDOMNodeDocument(this, m_document.get(), doc);
+    updateDOMNodeDocument(this, m_document.get(), document);
 
-    m_document = doc;
+    m_document = document;
 
+    setDidMoveToNewOwnerDocumentWasCalled(false);
     didMoveToNewOwnerDocument();
+    ASSERT(didMoveToNewOwnerDocumentWasCalled);
 }
 
 NodeRareData* Node::rareData() const
@@ -2208,12 +2239,18 @@ void Node::willMoveToNewOwnerDocument()
 {
     if (!eventListeners().isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
+
+    ASSERT(!willMoveToNewOwnerDocumentWasCalled);
+    setWillMoveToNewOwnerDocumentWasCalled(true);
 }
 
 void Node::didMoveToNewOwnerDocument()
 {
     if (!eventListeners().isEmpty())
         document()->registerDisconnectedNodeWithEventListeners(this);
+
+    ASSERT(!didMoveToNewOwnerDocumentWasCalled);
+    setDidMoveToNewOwnerDocumentWasCalled(true);
 }
 
 static inline void updateSVGElementInstancesAfterEventListenerChange(Node* referenceNode)

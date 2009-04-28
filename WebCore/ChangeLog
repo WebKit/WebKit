@@ -1,3 +1,34 @@
+2009-04-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6643219> Crashes after moving nodes between documents with Safari 4 Beta installed
+
+        When moving Nodes between documents we weren't properly updating style declarations.  Certain operations, such
+        as creating webarchives, would tickle this bug.
+
+        Tests: webarchive/adopt-attribute-styled-body-webarchive.html
+               webarchive/adopt-attribute-styled-node-webarchive.html
+               webarchive/adopt-inline-styled-node-webarchive.html
+
+        * dom/Node.cpp:  Add a debug-only mechanism to insure that anyone who overrides (did/will)MoveToNewOwnerDocument
+          calls their parent-class implementation after they've done their own work.
+        (WebCore::setWillMoveToNewOwnerDocumentWasCalled): 
+        (WebCore::setDidMoveToNewOwnerDocumentWasCalled):
+        (WebCore::Node::setDocument):
+        (WebCore::Node::willMoveToNewOwnerDocument):
+        (WebCore::Node::didMoveToNewOwnerDocument):
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged): Add a comment explaining why we don't need to walk the nameAttrMap
+          to update style declarations.
+        (WebCore::StyledElement::didMoveToNewOwnerDocument): Update the parent pointer for the inline style declaration.
+        * dom/StyledElement.h:
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::didMoveToNewOwnerDocument): Update the parent pointer for the link declaration.
+        * html/HTMLBodyElement.h:
+
 2009-04-28  Eric Carlson  <eric.carlson@apple.com>
 
          Reviewed by Darin Adler.

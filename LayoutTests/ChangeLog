@@ -1,3 +1,22 @@
+2009-04-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6643219> Crashes after moving nodes between documents with Safari 4 Beta installed
+
+        * webarchive/adopt-attribute-styled-body-webarchive-expected.webarchive: Added.
+        * webarchive/adopt-attribute-styled-body-webarchive.html: Added.
+        * webarchive/resources/adopt-attribute-styled-body-iframe.html: Added.
+        * webarchive/resources/adopt-attribute-styled-body-second-window.html: Added.
+
+        * webarchive/adopt-attribute-styled-node-webarchive-expected.webarchive: Added.
+        * webarchive/adopt-attribute-styled-node-webarchive.html: Added.
+        * webarchive/resources/adopt-attribute-styled-node-second-window.html: Added.
+
+        * webarchive/adopt-inline-styled-node-webarchive-expected.webarchive: Added.
+        * webarchive/adopt-inline-styled-node-webarchive.html: Added.
+        * webarchive/resources/adopt-inline-styled-node-second-window.html: Added.
+
 2009-04-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

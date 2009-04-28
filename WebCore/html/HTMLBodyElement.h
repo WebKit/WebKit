@@ -74,6 +74,9 @@ public:
     
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_linkDecl;
+
+private:
+    virtual void didMoveToNewOwnerDocument();
 };
 
 } //namespace
