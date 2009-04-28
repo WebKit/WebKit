@@ -1064,19 +1064,22 @@ static void normalErrorHandler(void* closure, const char* message, ...)
     va_end(args);
 }
 
-// Using a global variable entity and marking it XML_INTERNAL_PREDEFINED_ENTITY is
+// Using a static entity and marking it XML_INTERNAL_PREDEFINED_ENTITY is
 // a hack to avoid malloc/free. Using a global variable like this could cause trouble
 // if libxml implementation details were to change
-static xmlChar sharedXHTMLEntityResult[5] = {0,0,0,0,0};
-static xmlEntity sharedXHTMLEntity = {
-    0, XML_ENTITY_DECL, 0, 0, 0, 0, 0, 0, 0, 
-    sharedXHTMLEntityResult, sharedXHTMLEntityResult, 0,
-    XML_INTERNAL_PREDEFINED_ENTITY, 0, 0, 0, 0, 0,
-#if LIBXML_VERSION >= 20627
-    // xmlEntity gained an extra member in 2.6.27.
-    1
-#endif
-};
+static xmlChar sharedXHTMLEntityResult[5] = {0, 0, 0, 0, 0};
+
+static xmlEntityPtr sharedXHTMLEntity()
+{
+    static xmlEntity entity;
+    if (!entity.type) {
+        entity.type = XML_ENTITY_DECL;
+        entity.orig = sharedXHTMLEntityResult;
+        entity.content = sharedXHTMLEntityResult;
+        entity.etype = XML_INTERNAL_PREDEFINED_ENTITY;
+    }
+    return &entity;
+}
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 {
@@ -1086,11 +1089,12 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 
     CString value = String(&c, 1).utf8();
     ASSERT(value.length() < 5);
-    sharedXHTMLEntity.length = value.length();
-    sharedXHTMLEntity.name = name;
-    memcpy(sharedXHTMLEntityResult, value.data(), sharedXHTMLEntity.length + 1);
+    xmlEntityPtr entity = sharedXHTMLEntity();
+    entity->length = value.length();
+    entity->name = name;
+    memcpy(sharedXHTMLEntityResult, value.data(), entity->length + 1);
 
-    return &sharedXHTMLEntity;
+    return entity;
 }
 
 static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)

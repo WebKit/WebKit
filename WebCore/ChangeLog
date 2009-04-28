@@ -1,3 +1,16 @@
+2009-04-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Work around <rdar://problem/6833240> by relying on static initialization to zero the entire struct.
+        This removes the need for us to explicitly initialize all of the members, which have a tendency
+        to change in meaning and number between versions of libxml2.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::):
+        (WebCore::sharedXHTMLEntity):
+        (WebCore::getXHTMLEntity):
+
 2009-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Fix linker warning by specifying /NODEFAULTLIB:LIBCMT for QTMovieWin.
