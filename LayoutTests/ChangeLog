@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        Bug 25452: AX: Don't create addition space AXStaticText element for every bold or link tag
+        https://bugs.webkit.org/show_bug.cgi?id=25452
+ 
+        * accessibility/ignore-spacer-elements-expected.txt: Added.
+        * accessibility/ignore-spacer-elements.html: Added.
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+
+2009-04-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
         Bug 25449: AX: Respect the alt tag of ARIA button as AXDescription
         https://bugs.webkit.org/show_bug.cgi?id=25449
 

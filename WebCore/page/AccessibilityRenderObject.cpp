@@ -1184,7 +1184,12 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         if (parentObjectUnignored()->ariaRoleAttribute() == MenuItemRole ||
             parentObjectUnignored()->ariaRoleAttribute() == MenuButtonRole)
             return true;
-         return m_renderer->isBR() || !toRenderText(m_renderer)->firstTextBox();
+        RenderText* renderText = toRenderText(m_renderer);
+        if (m_renderer->isBR() || !renderText->firstTextBox())
+            return true;
+        
+        // text elements that are just empty whitespace should not be returned
+        return renderText->text()->containsOnlyWhitespace();
     }
     
     if (isHeading())

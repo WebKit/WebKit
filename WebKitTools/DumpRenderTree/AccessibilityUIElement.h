@@ -63,6 +63,7 @@ public:
     void getChildrenWithRange(Vector<AccessibilityUIElement>&, unsigned location, unsigned length);
     
     AccessibilityUIElement getChildAtIndex(unsigned);
+    int childrenCount();
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
     

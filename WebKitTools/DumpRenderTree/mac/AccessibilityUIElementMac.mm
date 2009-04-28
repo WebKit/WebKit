@@ -203,6 +203,14 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
     convertNSArrayToVector(children, elementVector);
 }
 
+int AccessibilityUIElement::childrenCount()
+{
+    Vector<AccessibilityUIElement> children;
+    getChildren(children);
+    
+    return children.size();
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     Vector<AccessibilityUIElement> children;
