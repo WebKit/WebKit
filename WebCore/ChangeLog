@@ -1,3 +1,14 @@
+2009-04-28  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        ScrollView copy and paste typo fix.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25445
+
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformSetScrollbarModes):
+
 2009-04-28  John Sullivan  <sullivan@apple.com>
 
         <rdar://problem/6820221> REGRESSION: 2-byte character names of images are displayed as %-encoded ASCII
