@@ -1,3 +1,18 @@
+2009-04-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6709057> REGRESSION (4PB-TOT): http://www.winway.com/main3/support/faq.aspx selector doesn't look right or work
+
+        The problem here is that we had a self-painting layer nested inside 
+        a non-self-painting layer. We ended up ignoring the self-painting 
+        layer both during painting and hit-testing. This patch corrects 
+        that. 
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+
 2009-04-27  Ada Chan  <adachan@apple.com>
 
         If it has been set to allow any HTTPS certificates for this host, set 
