@@ -161,7 +161,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         return;
 
     paintInfo.context->save();
-    paintInfo.context->concatCTM(localTransform());
+    paintInfo.context->concatCTM(localToParentTransform());
 
     if (paintInfo.phase == PaintPhaseForeground) {
         SVGResourceFilter* filter = 0;
@@ -185,7 +185,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->restore();
 }
 
-bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int _x, int _y, int, int, HitTestAction hitTestAction)
+bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
@@ -195,17 +195,22 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult& result, i
     
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        double localX, localY;
-        absoluteTransform().inverse().map(_x, _y, localX, localY);
+        FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 
         if (hitRules.canHitFill) {
-            if (m_localBounds.contains(narrowPrecisionToFloat(localX), narrowPrecisionToFloat(localY))) {
-                updateHitTestResult(result, IntPoint(_x, _y));
+            if (m_localBounds.contains(localPoint)) {
+                updateHitTestResult(result, roundedIntPoint(localPoint));
                 return true;
             }
         }
     }
 
+    return false;
+}
+
+bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+{
+    ASSERT_NOT_REACHED();
     return false;
 }
 

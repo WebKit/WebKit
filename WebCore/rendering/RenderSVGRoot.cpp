@@ -269,34 +269,33 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    TransformationMatrix ctm = RenderBox::absoluteTransform();
+    IntPoint pointInContainer(_x, _y);
+    IntSize containerToParentOffset(_tx, _ty);
 
-    int sx = (_tx - static_cast<int>(ctm.e())); // scroll offset
-    int sy = (_ty - static_cast<int>(ctm.f())); // scroll offset
- 
-    if (!viewportSize().isEmpty()
-        && style()->overflowX() == OHIDDEN
-        && style()->overflowY() == OHIDDEN) {
-        int tx = x() - _tx + sx;
-        int ty = y() - _ty + sy;
+    IntPoint pointInParent = pointInContainer - containerToParentOffset;
+    IntPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
 
-        // Check if we need to do anything at all.
-        IntRect overflowBox = overflowRect(false);
-        overflowBox.move(tx, ty);
-        double localX, localY;
-        ctm.inverse().map(_x - _tx, _y - _ty, localX, localY);
-        if (!overflowBox.contains((int)localX, (int)localY))
+    // Note: For now, we're ignoring hits to border and padding for <svg>
+
+    if (style()->overflowX() == OHIDDEN) {
+        // SVG doesn't support independent x/y overflow
+        ASSERT(style()->overflowY() == OHIDDEN);
+        IntPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
+        if (!contentBoxRect().contains(pointInContentBox))
             return false;
     }
 
+    IntPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
+
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x - sx, _y - sy, 0, 0, hitTestAction)) {
-            updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
+        if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
+            // FIXME: CSS/HTML assumes the local point is relative to the border box, right?
+            updateHitTestResult(result, pointInBorderBox);
             return true;
         }
     }
-    
-    // Spec: Only graphical elements can be targeted by the mouse, period.
+
+    // Spec: Only graphical elements can be targeted by the mouse, so we don't check self here.
     // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
     return false;
 }

@@ -37,7 +37,7 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 {
 }
 
-TransformationMatrix RenderForeignObject::translationForAttributes()
+TransformationMatrix RenderForeignObject::translationForAttributes() const
 {
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
     return TransformationMatrix().translate(foreign->x().value(foreign), foreign->y().value(foreign));
@@ -45,13 +45,15 @@ TransformationMatrix RenderForeignObject::translationForAttributes()
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
+    // The SVG rendering tree should not be using parentX/parentY
+    ASSERT(!parentX);
+    ASSERT(!parentY);
     if (paintInfo.context->paintingDisabled())
         return;
 
     paintInfo.context->save();
     paintInfo.context->concatCTM(TransformationMatrix().translate(parentX, parentY));
-    paintInfo.context->concatCTM(localTransform());
-    paintInfo.context->concatCTM(translationForAttributes());
+    paintInfo.context->concatCTM(localToParentTransform());
     paintInfo.context->clip(clipRect(parentX, parentY));
 
     float opacity = style()->opacity();
@@ -85,9 +87,7 @@ FloatRect RenderForeignObject::repaintRectInLocalCoordinates() const
 
 void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
 {
-    TransformationMatrix transform = translationForAttributes() * localTransform();
-    rect = transform.mapRect(rect);
-
+    rect = localToParentTransform().mapRect(rect);
     RenderBlock::computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
@@ -98,6 +98,15 @@ bool RenderForeignObject::calculateLocalTransform()
     return (oldTransform != m_localTransform);
 }
 
+TransformationMatrix RenderForeignObject::localToParentTransform() const
+{
+    // FIXME: This trasition is backwards!
+    // It should be localTransform() * translationForAttributes()
+    // but leaving it backwards for now for LayoutTest result compatibility
+    // https://bugs.webkit.org/show_bug.cgi?id=25433
+    return translationForAttributes() * localTransform();
+}
+
 void RenderForeignObject::layout()
 {
     ASSERT(needsLayout());
@@ -105,14 +114,11 @@ void RenderForeignObject::layout()
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
 
-    // FIXME: using m_absoluteBounds breaks if containerForRepaint() is not the root
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), &m_absoluteBounds);
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     
     calculateLocalTransform();
     
     RenderBlock::layout();
-
-    m_absoluteBounds = absoluteClippedOverflowRect();
 
     repainter.repaintAfterLayout();
 
@@ -120,13 +126,16 @@ void RenderForeignObject::layout()
     setNeedsLayout(false);
 }
 
-bool RenderForeignObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
-    TransformationMatrix totalTransform = absoluteTransform();
-    totalTransform *= translationForAttributes();
-    double localX, localY;
-    totalTransform.inverse().map(x, y, localX, localY);
-    return RenderBlock::nodeAtPoint(request, result, static_cast<int>(localX), static_cast<int>(localY), tx, ty, hitTestAction);
+    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
+    return RenderBlock::nodeAtPoint(request, result, static_cast<int>(localPoint.x()), static_cast<int>(localPoint.y()), 0, 0, hitTestAction);
+}
+
+bool RenderForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore

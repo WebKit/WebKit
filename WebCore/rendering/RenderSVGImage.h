@@ -42,7 +42,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSVGImage"; }
         virtual bool isSVGImage() const { return true; }
 
-        virtual TransformationMatrix localTransform() const { return m_localTransform; }
+        virtual TransformationMatrix localToParentTransform() const { return m_localTransform; }
 
         virtual FloatRect objectBoundingBox() const;
         virtual FloatRect repaintRectInLocalCoordinates() const;
@@ -62,15 +62,15 @@ namespace WebCore {
 
         bool requiresLayer() const { return false; }
 
+        virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
-        bool calculateLocalTransform();
-
     private:
-        void calculateAbsoluteBounds();
+        bool calculateLocalTransform();
+        virtual TransformationMatrix localTransform() const { return m_localTransform; }
+
         TransformationMatrix m_localTransform;
         FloatRect m_localBounds;
-        IntRect m_absoluteBounds;
     };
 
 } // namespace WebCore

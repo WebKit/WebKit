@@ -233,22 +233,21 @@ void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int, int)
     graphicsContext->addFocusRingRect(enclosingIntRect(repaintRectInLocalCoordinates()));
 }
 
-bool RenderPath::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int _x, int _y, int, int, HitTestAction hitTestAction)
+bool RenderPath::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
         return false;
-    
-    IntPoint absolutePoint(_x, _y);
+
+    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->pointerEvents());
 
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        FloatPoint hitPoint = mapAbsolutePointToLocal(absolutePoint);
-        if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
-            || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
-            updateHitTestResult(result, absolutePoint);
+        if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(localPoint, hitRules.requireStroke))
+            || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill))) {
+            updateHitTestResult(result, roundedIntPoint(localPoint));
             return true;
         }
     }

@@ -76,7 +76,7 @@ void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&, bool)
     // This subtree does not take up space or paint
 }
 
-bool RenderSVGHiddenContainer::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+bool RenderSVGHiddenContainer::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction)
 {
     return false;
 }

@@ -1,3 +1,67 @@
+2009-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Simplify nodeAtPoint for SVG
+        https://bugs.webkit.org/show_bug.cgi?id=25432
+
+        Added a new nodeAtFloatPoint method which takes a FloatPoint
+        instead of the *super confusing* x/y tx/ty pairs that HTML uses.
+        Mostly this is just lots of minus-lines as the new code is *much* simpler.
+
+        I made all the SVG renderers use the new nodeAtFloatPoint and ASSERT_NOT_REACHED
+        for the nodeAtPoint HTML/CSS int x/y version.
+
+        Eventually the rest of CSS/HTML render objects will follow suit
+        and move to nodeAtFloatPoint (possibly renamed back to nodeAtPoint), but changing them
+        over was well outside the scope of this change.
+
+        SVG hit testing is not actually floating point precise yet, since its still
+        passed in an integer x/y.  Certain transform hit-test edge cases are likely fixed
+        by moving to FloatPoint here, but I didn't try to find one.
+
+        This should not cause functional changes for common-case hit testing, thus
+        no tests changed, nor should new tests be needed.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        (WebCore::RenderForeignObject::paint):
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        (WebCore::RenderForeignObject::localToParentTransform):
+        (WebCore::RenderForeignObject::layout):
+        (WebCore::RenderForeignObject::nodeAtFloatPoint):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::nodeAtFloatPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtFloatPoint):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::pointIsInsideViewportClip):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::nodeAtFloatPoint):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::localToParentTransform):
+        (WebCore::RenderSVGImage::localTransform):
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::nodeAtFloatPoint):
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtFloatPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::pointIsInsideViewportClip):
+        * rendering/RenderSVGViewportContainer.h:
+
 2009-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         - fix the Tiger build

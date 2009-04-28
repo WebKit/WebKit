@@ -168,11 +168,17 @@ FloatRect RenderSVGContainer::repaintRectInLocalCoordinates() const
     return repaintRect;
 }
 
-bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
+    // Give RenderSVGViewportContainer a chance to apply its viewport clip
+    if (!pointIsInsideViewportClip(pointInParent))
+        return false;
+
+    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
+
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction)) {
-            updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
+        if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
+            updateHitTestResult(result, roundedIntPoint(localPoint));
             return true;
         }
     }

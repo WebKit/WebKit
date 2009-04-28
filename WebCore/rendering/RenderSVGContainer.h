@@ -54,13 +54,14 @@ public:
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
 protected:
     virtual bool calculateLocalTransform();
 
-    // This allows RenderSVGViewportContainer to hook in at the right time in paint()
+    // Allow RenderSVGViewportContainer to hook in at the right times in paint() and nodeAtFloatPoint()
     virtual void applyViewportClip(PaintInfo&) { }
+    virtual bool pointIsInsideViewportClip(const FloatPoint& /*pointInParent*/) { return true; }
 
 private:
     bool selfWillPaint() const;

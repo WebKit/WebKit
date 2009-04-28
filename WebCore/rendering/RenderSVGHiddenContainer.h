@@ -58,7 +58,7 @@ namespace WebCore {
         virtual FloatRect objectBoundingBox() const;
         virtual FloatRect repaintRectInLocalCoordinates() const;
 
-        virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+        virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
     };
 }
 

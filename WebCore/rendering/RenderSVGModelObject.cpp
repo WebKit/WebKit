@@ -103,6 +103,12 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool)
     quads.append(absoluteClippedOverflowRect());
 }
 
+bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

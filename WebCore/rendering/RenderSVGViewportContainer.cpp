@@ -143,43 +143,15 @@ TransformationMatrix RenderSVGViewportContainer::absoluteTransform() const
     return localToParentTransform() * RenderSVGContainer::absoluteTransform();
 }
 
-bool RenderSVGViewportContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& pointInParent)
 {
-    if (!viewport().isEmpty()
-        && style()->overflowX() == OHIDDEN
-        && style()->overflowY() == OHIDDEN) {
-        // Check to see if the region is outside of our viewport (and thus can't hit our kids)
-        // FIXME: This code seems needlessly complicated (and thus likely wrong)
-        IntRect overflowBox = IntRect(0, 0, viewport().width(), viewport().height());
-        overflowBox.move(_tx, _ty);
-        TransformationMatrix ctm = RenderObject::absoluteTransform();
-        ctm.translate(viewport().x(), viewport().y());
-        double localX, localY;
-        ctm.inverse().map(_x - _tx, _y - _ty, localX, localY);
-        if (!overflowBox.contains((int)localX, (int)localY))
+    // Respect the viewport clip (which is in parent coords).  SVG does not support separate x/y overflow rules.
+    if (style()->overflowX() == OHIDDEN) {
+        ASSERT(style()->overflowY() == OHIDDEN);
+        if (!viewport().contains(pointInParent))
             return false;
     }
-
-    int sx = 0;
-    int sy = 0;
-
-    // Respect parent translation offset for non-outermost <svg> elements.
-    // Outermost <svg> element is handled by RenderSVGRoot.
-    if (node()->hasTagName(SVGNames::svgTag)) {
-        sx = _tx;
-        sy = _ty;
-    }
-
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x - sx, _y - sy, _tx, _ty, hitTestAction)) {
-            updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
-            return true;
-        }
-    }
-
-    // Spec: Only graphical elements can be targeted by the mouse, period.
-    // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
-    return false;
+    return true;
 }
 
 }
