@@ -1,3 +1,12 @@
+2009-04-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Maciej "Henry Morgan" Stachowiak.
+
+        Enable YARR.
+        (Again.)
+
+        * wtf/Platform.h:
+
 2009-04-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.
