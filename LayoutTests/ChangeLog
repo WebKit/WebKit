@@ -1,5 +1,15 @@
 2009-04-28  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Alder.
+
+        Bug 25453: AX: fall back to PLACEHOLDER attr if form element is not labeled
+        https://bugs.webkit.org/show_bug.cgi?id=25453
+
+        * accessibility/placeholder-expected.txt: Added.
+        * accessibility/placeholder.html: Added.
+
+2009-04-28  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 25452: AX: Don't create addition space AXStaticText element for every bold or link tag

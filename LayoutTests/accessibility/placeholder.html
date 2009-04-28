@@ -1,0 +1,33 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+ 
+    <!-- This test makes sure that the AXTitle will fall back to placeholder text if nothing else is available -->
+ 
+    <input placeholder="search" type="text" name="q" size="15" maxlength="255" id="searchterm" />
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var field = document.getElementById("searchterm");
+            field.focus();
+            var fieldElement = accessibilityController.focusedElement;
+            
+            var pattern = "AXTitle: search";
+            if (fieldElement.allAttributes().indexOf(pattern) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

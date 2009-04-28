@@ -908,6 +908,10 @@ String AccessibilityRenderObject::title() const
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label && !titleUIElement())
             return label->innerText();
+        
+        const AtomicString& placeholder = getAttribute(placeholderAttr);
+        if (!placeholder.isEmpty())
+            return placeholder;
     }
     
     if (roleValue() == ButtonRole
