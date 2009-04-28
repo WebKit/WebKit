@@ -57,6 +57,7 @@
 				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				DelayLoadDLLs=""
 			/>
 			<Tool
@@ -128,6 +129,7 @@
 				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				DelayLoadDLLs=""
 			/>
 			<Tool
@@ -198,6 +200,7 @@
 				AdditionalDependencies="QTMLClient.lib WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				DelayLoadDLLs=""
 			/>
 			<Tool

@@ -1,3 +1,11 @@
+2009-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix linker warning by specifying /NODEFAULTLIB:LIBCMT for QTMovieWin.
+        
+        Reviewed by Mark Rowe.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+
 2009-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
