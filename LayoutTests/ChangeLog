@@ -1,5 +1,17 @@
 2009-04-28  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        Add text gradient test to cover
+        https://bugs.webkit.org/show_bug.cgi?id=25403
+
+        * platform/mac/svg/text/text-gradient-positioning-expected.checksum: Added.
+        * platform/mac/svg/text/text-gradient-positioning-expected.png: Added.
+        * platform/mac/svg/text/text-gradient-positioning-expected.txt: Added.
+        * svg/text/text-gradient-positioning.svg: Added.
+
+2009-04-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by David Hyatt.
 
         Add text repaint test to cover
