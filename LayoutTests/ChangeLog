@@ -1,3 +1,14 @@
+2009-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=22242
+        
+        Add pixel test for zoomed video with controls, with and without a transform.
+
+        * media/video-zoom-controls.html: Added.
+        * platform/mac/media/video-zoom-controls-expected.checksum: Added.
+        * platform/mac/media/video-zoom-controls-expected.png: Added.
+        * platform/mac/media/video-zoom-controls-expected.txt: Added.
+
 2009-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson
