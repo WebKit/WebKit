@@ -1,3 +1,16 @@
+2009-04-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/6617298> Typing delete on an unquoted blank line unquotes the preceding, quoted blank line
+
+        * editing/deleting/type-delete-after-quote.html: Added.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.txt: This expected result change reflects a change in how the editing is done, 
+          but the document structure remains the same, and there are no visible changes to the result.
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.checksum: Added.
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.png: Added.
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.txt: Added.
+
 2009-04-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

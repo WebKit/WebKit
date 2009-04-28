@@ -1,3 +1,20 @@
+2009-04-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6617298> Typing delete on an unquoted blank line unquotes the preceding, quoted blank line
+
+        Test: editing/deleting/type-delete-after-quote.html
+
+        When a selection is deleted that contains a whole number paragraphs plus a line break, we refrain from merging paragraphs after the delete,
+        since it is unclear to most users that such a selection actually ends at the start of the next paragraph.  However, when a user hits delete 
+        with a caret selection, they actually do expect the start of that paragraph to be merged into the paragraph before it.  We can tell that 
+        we're in this state because the TypingCommand creates the selection to delete but it doesn't change the endingSelection.  So we can tell
+        that if we started with a caret selection, then we're not in this special case where we have to protect the user from unexpected behavior 
+        from deleting a range they selected.
+
+        * editing/DeleteSelectionCommand.cpp: (WebCore::DeleteSelectionCommand::initializePositionData):
+
 2009-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed: fix distcheck build, add missing header to file list.
