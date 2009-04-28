@@ -1,3 +1,10 @@
+2009-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        - fix the Tiger build
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::cacheMovieScale):
+
 2009-04-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
