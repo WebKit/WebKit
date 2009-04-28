@@ -1,3 +1,14 @@
+2009-04-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Tweak a loop condition to keep GCC happy,
+        some GCCs seem to be having issues with this. :-/
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::breakTarget):
+        * wtf/Platform.h:
+
 2009-04-27  Adam Roben  <aroben@apple.com>
 
         Windows Debug build fix

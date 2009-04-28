@@ -1587,8 +1587,17 @@ void BytecodeGenerator::popFinallyContext()
 LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
 {
     // Reclaim free label scopes.
-    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
+    //
+    // The condition was previously coded as 'm_labelScopes.size() && !m_labelScopes.last().refCount()',
+    // however sometimes this appears to lead to GCC going a little haywire and entering the loop with
+    // size 0, leading to segfaulty badness.  We are yet to identify a valid cause within our code to
+    // cause the GCC codegen to misbehave in this fashion, and as such the following refactoring of the
+    // loop condition is a workaround.
+    while (m_labelScopes.size()) {
+        if  (m_labelScopes.last().refCount())
+            break;
         m_labelScopes.removeLast();
+    }
 
     if (!m_labelScopes.size())
         return 0;
