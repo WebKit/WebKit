@@ -1,3 +1,13 @@
+2009-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - formatting cleanup
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight): Corrected indentation and added braces
+        around a multi-line "else" clause.
+
 2009-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben

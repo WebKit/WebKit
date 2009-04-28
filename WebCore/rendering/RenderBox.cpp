@@ -1452,14 +1452,15 @@ void RenderBox::calcHeight()
                 maxH = heightResult;
             heightResult = min(maxH, heightResult);
             heightResult = max(minH, heightResult);
-        } else
+        } else {
             // The only times we don't check min/max height are when a fixed length has
             // been given as an override.  Just use that.  The value has already been adjusted
             // for box-sizing.
             heightResult = h.value() + borderTop() + borderBottom() + paddingTop() + paddingBottom();
-
-            setHeight(heightResult);
         }
+
+        setHeight(heightResult);
+    }
 
     // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
     // <html> block in quirks mode.  Only apply this quirk if the block is normal flow and no height
