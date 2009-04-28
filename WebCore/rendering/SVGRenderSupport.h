@@ -26,6 +26,9 @@
 
 namespace WebCore {
 
+// FIXME: Most of this code should move to RenderSVGModelObject once
+// all SVG renderers inherit from RenderSVGModelObject
+
 class SVGResourceFilter;
 void prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
 void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, GraphicsContext* savedContext);
@@ -39,6 +42,12 @@ void clampImageBufferSizeToViewport(RenderObject*, IntSize&);
 // Used to share the "walk all the children" logic between objectBoundingBox
 // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
 FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
+
+// returns the filter bounding box (or the empty rect if no filter) in local coordinates
+FloatRect filterBoundingBoxForRenderer(const RenderObject*);
+
+// Used for transforming the GraphicsContext and damage rect before passing PaintInfo to child renderers.
+void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const TransformationMatrix& localToChildTransform);
 
 }
 

@@ -3,8 +3,7 @@
     Copyright (C) 2006 Apple Computer, Inc.
     Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
-
-    This file is part of the WebKit project
+    Copyright (C) 2009, Google, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,6 +31,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
+#include "RenderLayer.h"
 #include "SVGImageElement.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
@@ -150,8 +150,6 @@ void RenderSVGImage::layout()
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
 
-    calculateAbsoluteBounds();
-
     repainter.repaintAfterLayout();
     
     setNeedsLayout(false);
@@ -218,7 +216,12 @@ FloatRect RenderSVGImage::objectBoundingBox() const
 
 FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 {
-    return m_localBounds;
+    FloatRect repaintRect = m_localBounds;
+
+    // Filters can paint outside the image content
+    repaintRect.unite(filterBoundingBoxForRenderer(this));
+
+    return repaintRect;
 }
 
 void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
@@ -229,28 +232,24 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
     repaintRectangle(absoluteClippedOverflowRect());    // FIXME: Isn't this just repaint()?
 }
 
-void RenderSVGImage::calculateAbsoluteBounds()
+IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    // FIXME: broken with CSS transforms
-    FloatRect absoluteRect = absoluteTransform().mapRect(repaintRectInLocalCoordinates());
+    // Return early for any cases where we don't actually paint
+    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
+        return IntRect();
 
-#if ENABLE(SVG_FILTERS)
-    // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
-    if (filter)
-        absoluteRect.unite(filter->filterBBoxForItemBBox(absoluteRect));
-#endif
-
-    if (!absoluteRect.isEmpty())
-        absoluteRect.inflate(1); // inflate 1 pixel for antialiasing
-
-    m_absoluteBounds = enclosingIntRect(absoluteRect);
+    // Pass our local paint rect to computeRectForRepaint() which will
+    // map to parent coords and recurse up the parent chain.
+    IntRect repaintRect = enclosingIntRect(repaintRectInLocalCoordinates());
+    computeRectForRepaint(repaintContainer, repaintRect);
+    return repaintRect;
 }
 
-IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* /*repaintContainer*/)
+void RenderSVGImage::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    // FIXME: handle non-root repaintContainer
-    return m_absoluteBounds;
+    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
+    repaintRect = localToParentTransform().mapRect(repaintRect);
+    parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
 void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int, int)

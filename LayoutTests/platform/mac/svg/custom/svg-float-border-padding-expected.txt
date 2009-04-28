@@ -10,8 +10,8 @@ layer at (0,0) size 800x516
       RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 354x18
           text run at (0,0) width 354: "There should be a red, white and blue pattern below this"
-      RenderSVGRoot {svg} at (18,86) size 100x100
-        RenderPath {rect} at (18,86) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGRoot {svg} at (38,106) size 100x100
+        RenderPath {rect} at (38,106) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
       RenderBlock {p} at (0,228) size 784x18
         RenderText {#text} at (0,0) size 353x18
           text run at (0,0) width 353: "There should be a red, white and blue pattern above this"

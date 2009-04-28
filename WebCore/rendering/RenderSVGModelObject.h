@@ -58,10 +58,6 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
-
-protected:
-    // Returns the bounding box for the filter associated with this object (if any)
-    FloatRect filterBoundingBox() const;
 };
 
 }

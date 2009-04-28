@@ -63,20 +63,23 @@ public:
     virtual TransformationMatrix localTransform() const;
     virtual TransformationMatrix absoluteTransform() const;
 
-    FloatRect viewport() const;
-
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed);
 
 private:
-    void calcViewport(); 
-    void applyContentTransforms(PaintInfo&, int parentX, int parentY);
+    void calcViewport();
+    const FloatSize& viewportSize() const;
 
-    TransformationMatrix localToParentTransformWithoutCSSParentOffset() const;
+    bool selfWillPaint() const;
+
+    IntSize parentOriginToBorderBox() const;
+    IntSize borderOriginToContentBox() const;
+    TransformationMatrix localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const;
+    TransformationMatrix localToBorderBoxTransform() const;
 
     RenderObjectChildList m_children;
-    FloatRect m_viewport;
+    FloatSize m_viewportSize;
 };
 
 } // namespace WebCore

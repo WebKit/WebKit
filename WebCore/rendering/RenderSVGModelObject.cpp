@@ -103,16 +103,6 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool)
     quads.append(absoluteClippedOverflowRect());
 }
 
-FloatRect RenderSVGModelObject::filterBoundingBox() const
-{
-#if ENABLE(SVG_FILTERS)
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
-    if (filter)
-        return filter->filterBBoxForItemBBox(objectBoundingBox());
-#endif
-    return FloatRect();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

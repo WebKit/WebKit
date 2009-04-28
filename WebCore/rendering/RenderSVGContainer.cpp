@@ -91,17 +91,6 @@ void RenderSVGContainer::layout()
     setNeedsLayout(false);
 }
 
-void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
-{
-    if (!localTransform().isIdentity())
-        paintInfo.context->concatCTM(localTransform());
-}
-
-void RenderSVGContainer::applyAdditionalTransforms(PaintInfo&)
-{
-    // no-op
-}
-
 bool RenderSVGContainer::selfWillPaint() const
 {
 #if ENABLE(SVG_FILTERS)
@@ -121,29 +110,29 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
      // Spec: groups w/o children still may render filter content.
     if (!firstChild() && !selfWillPaint())
         return;
-    
-    paintInfo.context->save();
-    applyContentTransforms(paintInfo);
+
+    PaintInfo childPaintInfo(paintInfo);
+
+    childPaintInfo.context->save();
+
+    // Let the RenderSVGViewportContainer subclass clip if necessary
+    applyViewportClip(childPaintInfo);
+
+    applyTransformToPaintInfo(childPaintInfo, localToParentTransform());
 
     SVGResourceFilter* filter = 0;
-    PaintInfo savedInfo(paintInfo);
-
     FloatRect boundingBox = repaintRectInLocalCoordinates();
-    if (paintInfo.phase == PaintPhaseForeground)
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter); 
+    if (childPaintInfo.phase == PaintPhaseForeground)
+        prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
 
-    applyAdditionalTransforms(paintInfo);
-
-    // default implementation. Just pass paint through to the children
-    PaintInfo childInfo(paintInfo);
-    childInfo.paintingRoot = paintingRootForChildren(paintInfo);
+    childPaintInfo.paintingRoot = paintingRootForChildren(childPaintInfo);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->paint(childInfo, 0, 0);
+        child->paint(childPaintInfo, 0, 0);
 
     if (paintInfo.phase == PaintPhaseForeground)
-        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
+        finishRenderSVGContent(this, childPaintInfo, boundingBox, filter, paintInfo.context);
 
-    paintInfo.context->restore();
+    childPaintInfo.context->restore();
 
     // FIXME: This really should be drawn from local coordinates, but currently we hack it
     // to avoid our clip killing our outline rect.  Thus we translate our
@@ -174,7 +163,7 @@ FloatRect RenderSVGContainer::repaintRectInLocalCoordinates() const
     FloatRect repaintRect = computeContainerBoundingBox(this, true);
 
     // A filter on this container can paint outside of the union of the child repaint rects
-    repaintRect.unite(filterBoundingBox());
+    repaintRect.unite(filterBoundingBoxForRenderer(this));
 
     return repaintRect;
 }

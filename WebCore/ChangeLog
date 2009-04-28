@@ -1,3 +1,82 @@
+2009-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Simplify how SVG containers paint
+        https://bugs.webkit.org/show_bug.cgi?id=25431
+
+        Moved filterBoundingBox() from RenderSVGModelObject to SVGRenderSupport to share with other classes.
+        Gave RenderSVGText a modern clippedOverflowRectForRepaint and computeRectForRepaint.
+        RenderSVGText now applies transforms at paint() time instead of during chunk draw time
+        this should be much more efficient.
+
+        Fixed the order in which RenderSVGViewportContainer applied
+        transforms and clips.  We now clip to the viewport first and apply
+        all transforms at once.  Also since the viewport logic is now only
+        inside RenderSVGViewportContainer (instead of inside RenderSVGContainer)
+        we always know we have a viewport.  We now use only viewportSize instead of
+        viewport() since RenderSVGViewportContainers can't have x/y offsets.
+
+        We now correctly transform the PaintInfo::rect (damage rect) when applying transforms.
+        This allowed us to apply the transform during text paint() instead of at chunk paint
+        time. Previously we had to apply the transform during chunk paint time because
+        RenderBlock (superclass of RenderSVGBlock) would check intersection with the damageRect
+        before telling any of the inlines to draw.  Now that we adjust the damage rect correctly
+        we pass the intersection check correctly!  (This probably fixed some <text> redraw bugs
+        but since I still have a bunch of those to fix, I've not tried to write additional tests
+        to cover these potential fixes yet.)
+
+        SVGRootInlineBox no longer needs to deal with transforms at chunk paint time, yay!
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::applyViewportClip):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGImage::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGImage::computeRectForRepaint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGModelObject.cpp:
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::viewportSize):
+        (WebCore::RenderSVGRoot::calcViewport):
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::parentOriginToBorderBox):
+        (WebCore::RenderSVGRoot::borderOriginToContentBox):
+        (WebCore::RenderSVGRoot::localToRepaintContainerTransform):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        (WebCore::RenderSVGText::paint):
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::localToParentTransform):
+        (WebCore::RenderSVGText::localTransform):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::applyViewportClip):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::filterBoundingBoxForRenderer):
+        (WebCore::applyTransformToPaintInfo):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkStartCallback):
+        (WebCore::SVGRootInlineBox::paint):
+
 2009-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

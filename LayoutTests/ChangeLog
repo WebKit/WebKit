@@ -1,3 +1,18 @@
+2009-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Simplify how SVG containers paint
+        https://bugs.webkit.org/show_bug.cgi?id=25431
+
+        All three of these changes are progressions.
+        We're now respecting border and padding in absoluteTransform()
+        which changes the dumped coordinates for these tests.
+
+        * platform/mac/svg/custom/circle-move-invalidation-expected.txt: 1px border causes path offset
+        * platform/mac/svg/custom/svg-float-border-padding-expected.txt: now respects 20px of border/padding
+        * platform/mac/svg/custom/viewport-update2-expected.txt: now respects 5px of border/padding, SVG origin is effectively 5,5 (not 0,0)
+
 2009-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Alder.

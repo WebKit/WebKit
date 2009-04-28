@@ -58,8 +58,9 @@ public:
 
 protected:
     virtual bool calculateLocalTransform();
-    virtual void applyContentTransforms(PaintInfo&);
-    virtual void applyAdditionalTransforms(PaintInfo&);
+
+    // This allows RenderSVGViewportContainer to hook in at the right time in paint()
+    virtual void applyViewportClip(PaintInfo&) { }
 
 private:
     bool selfWillPaint() const;

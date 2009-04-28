@@ -189,6 +189,27 @@ FloatRect computeContainerBoundingBox(const RenderObject* container, bool includ
     return boundingBox;
 }
 
+FloatRect filterBoundingBoxForRenderer(const RenderObject* object)
+{
+#if ENABLE(SVG_FILTERS)
+    SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filter());
+    if (filter)
+        return filter->filterBBoxForItemBBox(object->objectBoundingBox());
+#else
+    UNUSED_PARAM(object);
+#endif
+    return FloatRect();
+}
+
+void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const TransformationMatrix& localToAncestorTransform)
+{
+    if (localToAncestorTransform.isIdentity())
+        return;
+
+    paintInfo.context->concatCTM(localToAncestorTransform);
+    paintInfo.rect = localToAncestorTransform.inverse().mapRect(paintInfo.rect);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

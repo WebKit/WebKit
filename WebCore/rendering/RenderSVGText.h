@@ -38,27 +38,32 @@ public:
     RenderSVGText(SVGTextElement* node);
 
     virtual const char* renderName() const { return "RenderSVGText"; }
-    
+
     virtual bool isSVGText() const { return true; }
-    
-    bool calculateLocalTransform();
-    virtual TransformationMatrix localTransform() const { return m_localTransform; }
-    
+
+    virtual TransformationMatrix localToParentTransform() const { return m_localTransform; }
+
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    
+
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
-    
+
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
-    
+
 private:
+    bool calculateLocalTransform();
+
+    // FIXME: This can be removed when localTransform() is removed from RenderObject
+    virtual TransformationMatrix localTransform() const { return m_localTransform; }
+
     virtual RootInlineBox* createRootBox();
 
     TransformationMatrix m_localTransform;

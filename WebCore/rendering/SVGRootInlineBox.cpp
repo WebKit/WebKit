@@ -403,14 +403,7 @@ struct SVGRootInlineBoxPaintWalker {
         m_paintInfo.context->save();
 
         if (!flowBox->isRootInlineBox())
-            m_paintInfo.context->concatCTM(m_rootBox->renderer()->localTransform());
-
-        m_paintInfo.context->concatCTM(object->localTransform());
-
-        if (!flowBox->isRootInlineBox()) {
             prepareToRenderSVGContent(object, m_paintInfo, m_boundingBox, m_filter, m_rootFilter);
-            m_paintInfo.rect = object->localTransform().inverse().mapRect(m_paintInfo.rect);
-        }
     }
 
     void chunkEndCallback(InlineBox* box)
@@ -584,9 +577,7 @@ void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     FloatRect boundingBox(tx + x(), ty + y(), width(), height());
 
     // Initialize text rendering
-    paintInfo.context->concatCTM(renderer()->localTransform());
     prepareToRenderSVGContent(renderer(), paintInfo, boundingBox, filter);
-    paintInfo.context->concatCTM(renderer()->localTransform().inverse());
  
     // Render text, chunk-by-chunk
     SVGRootInlineBoxPaintWalker walkerCallback(this, filter, paintInfo, tx, ty);

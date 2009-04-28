@@ -33,8 +33,10 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
+#include "RenderLayer.h"
 #include "RenderSVGRoot.h"
 #include "SVGLengthList.h"
+#include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
@@ -49,22 +51,24 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 {
 }
 
-IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* /*repaintContainer*/)
+IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    // FIXME: handle non-root repaintContainer
-    FloatRect repaintRect = absoluteTransform().mapRect(repaintRectInLocalCoordinates());
+    // Return early for any cases where we don't actually paint
+    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
+        return IntRect();
 
-#if ENABLE(SVG_FILTERS)
-    // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
-    if (filter)
-        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
-#endif
+    // Pass our local paint rect to computeRectForRepaint() which will
+    // map to parent coords and recurse up the parent chain.
+    IntRect repaintRect = enclosingIntRect(repaintRectInLocalCoordinates());
+    computeRectForRepaint(repaintContainer, repaintRect);
+    return repaintRect;
+}
 
-    if (!repaintRect.isEmpty())
-        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
-
-    return enclosingIntRect(repaintRect);
+void RenderSVGText::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+{
+    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
+    repaintRect = localToParentTransform().mapRect(repaintRect);
+    parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
 bool RenderSVGText::calculateLocalTransform()
@@ -178,9 +182,11 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
 {   
-    RenderObject::PaintInfo pi(paintInfo);
-    pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
+    PaintInfo pi(paintInfo);
+    pi.context->save();
+    applyTransformToPaintInfo(pi, localToParentTransform());
     RenderBlock::paint(pi, 0, 0);
+    pi.context->restore();
 }
 
 FloatRect RenderSVGText::objectBoundingBox() const
@@ -219,6 +225,9 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
 
         repaintRect.inflate(strokeWidth);
     }
+
+    repaintRect.unite(filterBoundingBoxForRenderer(this));
+
     return repaintRect;
 }
 
