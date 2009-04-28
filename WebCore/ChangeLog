@@ -1,3 +1,13 @@
+2009-04-27  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix a compile breakage.
+        <https://bugs.webkit.org/show_bug.cgi?id=25384>
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-04-27  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

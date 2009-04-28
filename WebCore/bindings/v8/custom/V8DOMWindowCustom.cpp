@@ -129,7 +129,7 @@ CALLBACK_FUNC_DECL(DOMWindowAddEventListener)
     if (listener) {
         String eventType = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
-        doc->addWindowEventListener(eventType, listener, useCapture);
+        imp->addEventListener(eventType, listener, useCapture);
     }
 
     return v8::Undefined();
@@ -160,7 +160,7 @@ CALLBACK_FUNC_DECL(DOMWindowRemoveEventListener)
     if (listener) {
         String eventType = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
-        doc->removeWindowEventListener(eventType, listener.get(), useCapture);
+        imp->removeEventListener(eventType, listener.get(), useCapture);
     }
 
     return v8::Undefined();
