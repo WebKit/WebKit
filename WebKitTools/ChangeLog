@@ -1,3 +1,13 @@
+2009-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix warnings about PRODUCTION and ARCHIVE_BUILD on Windows builds
+        of ImageDiff and DumpRenderTree.
+        
+        Rubber stamped by Adam Roben.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+
 2009-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
