@@ -47,19 +47,17 @@ public:
 
     bool isNull() const;
 
-    QWebElementCollection findAll(const QString &query) const;
-    QWebElement findFirst(const QString &query) const;
+    QWebElementCollection findAll(const QString &selectorQuery) const;
+    QWebElement findFirst(const QString &selectorQuery) const;
 
     void setPlainText(const QString &text);
     QString toPlainText() const;
 
-    enum XmlScope {
-        InnerXml,
-        OuterXml
-    };
+    void setOuterXml(const QString &markup);
+    QString toOuterXml() const;
 
-    void setXml(XmlScope scope, const QString &markup);
-    QString toXml(XmlScope scope) const;
+    void setInnerXml(const QString &markup);
+    QString toInnerXml() const;
 
     void setAttribute(const QString &name, const QString &value);
     void setAttributeNS(const QString &namespaceUri, const QString &name, const QString &value);
@@ -76,52 +74,57 @@ public:
     void addClass(const QString &name);
     void removeClass(const QString &name);
     void toggleClass(const QString &name);
-    void toggleClass(const QString &name, bool enabled);
 
     QRect geometry() const;
 
     QString tagName() const;
     QString prefix() const;
     QString localName() const;
-    QString namespaceURI() const;
+    QString namespaceUri() const;
 
     QWebElement parent() const;
-    QWebElement firstChild(const QString &tagName = QString()) const;
-    QWebElement lastChild(const QString &tagName = QString()) const;
-    QWebElement nextSibling(const QString &tagName = QString()) const;
-    QWebElement previousSibling(const QString &tagName = QString()) const;
+    QWebElement firstChild() const;
+    QWebElement lastChild() const;
+    QWebElement nextSibling() const;
+    QWebElement previousSibling() const;
     QWebElement document() const;
     QWebFrame *webFrame() const;
 
     // TODO: Add QWebElementCollection overloads
-    void append(const QString &markup);
-    void append(QWebElement element);
+    // docs need example snippet
+    void appendInside(const QString &markup);
+    void appendInside(const QWebElement &element);
 
-    void prepend(const QString &markup);
-    void prepend(QWebElement element);
+    // docs need example snippet
+    void prependInside(const QString &markup);
+    void prependInside(const QWebElement &element);
 
-    void insertBefore(const QString &markup);
-    void insertBefore(QWebElement element);
+    // docs need example snippet
+    void appendOutside(const QString &markup);
+    void appendOutside(const QWebElement &element);
 
-    void insertAfter(const QString &markup);
-    void insertAfter(QWebElement element);
+    // docs need example snippet
+    void prependOutside(const QString &markup);
+    void prependOutside(const QWebElement &element);
 
+    // docs need example snippet
     void wrap(const QString &markup);
-    void wrap(QWebElement element);
+    void wrap(const QWebElement &element);
 
-    void replaceWith(const QString &markup);
-    void replaceWith(QWebElement element);
+    void replace(const QString &markup);
+    void replace(const QWebElement &element);
 
-    QWebElement clone();
-    QWebElement &remove();
-    void clear();
+    QWebElement clone() const;
+    QWebElement &takeFromDocument();
+    void removeFromDocument();
+    void removeChildren();
 
-    QVariant callScriptFunction(const QString &name, const QVariantList &arguments = QVariantList());
-    QStringList scriptFunctions() const;
+    QVariant callFunction(const QString &functionName, const QVariantList &arguments = QVariantList());
+    QStringList functions() const;
 
-    QVariant scriptProperty(const QString &name) const;
-    void setScriptProperty(const QString &name, const QVariant &value);
-    QStringList scriptProperties() const;
+    QVariant scriptableProperty(const QString &name) const;
+    void setScriptableProperty(const QString &name, const QVariant &value);
+    QStringList scriptableProperties() const;
 
     QString styleProperty(const QString &name) const;
     void setStyleProperty(const QString &name, const QString &value);

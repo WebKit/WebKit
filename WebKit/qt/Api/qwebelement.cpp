@@ -142,22 +142,26 @@ bool QWebElement::isNull() const
 
 /*!
     Returns a new collection of elements that are children of this element
-    and that match the given CSS selector \a query.
+    and that match the given CSS selector \a selectorQuery.
 */
-QWebElementCollection QWebElement::findAll(const QString &query) const
+QWebElementCollection QWebElement::findAll(const QString &selectorQuery) const
 {
-    return QWebElementCollection(*this, query);
+    return QWebElementCollection(*this, selectorQuery);
 }
 
 /*!
-    Returns the first child element that matches the given CSS selector \a query.
+    Returns the first child element that matches the given CSS selector \a selectorQuery.
+
+    This function is equivalent to calling findAll() and taking only the
+    first element in the returned collection of elements. However calling
+    this function is more efficient.
 */
-QWebElement QWebElement::findFirst(const QString &query) const
+QWebElement QWebElement::findFirst(const QString &selectorQuery) const
 {
     if (!m_element)
         return QWebElement();
     ExceptionCode exception = 0; // ###
-    return QWebElement(m_element->querySelector(query, exception).get());
+    return QWebElement(m_element->querySelector(selectorQuery, exception).get());
 }
 
 /*!
@@ -187,54 +191,65 @@ QString QWebElement::toPlainText() const
 }
 
 /*!
-    Replaces the existing content of this element with \a markup.
+    Replaces the contents of this element as well as its own tag with \a markup.
     The string may contain HTML or XML tags, which is parsed and formatted
     before insertion into the document.
 
-    If \a scope is InnerXml this is equivalent to setting the HTML innerHTML
-    property, and similarily for OuterXml.
-
     \note This is currently only implemented for (X)HTML elements.
 */
-void QWebElement::setXml(XmlScope scope, const QString &markup)
+void QWebElement::setOuterXml(const QString &markup)
 {
     if (!m_element || !m_element->isHTMLElement())
         return;
 
     ExceptionCode exception = 0;
 
-    switch (scope) {
-    case InnerXml:
-        static_cast<HTMLElement*>(m_element)->setInnerHTML(markup, exception);
-        break;
-    case OuterXml:
-        static_cast<HTMLElement*>(m_element)->setOuterHTML(markup, exception);
-        break;
-    }
+    static_cast<HTMLElement*>(m_element)->setOuterHTML(markup, exception);
+}
+
+/*!
+    Returns this element converted to XML, including the start and the end
+    tag of this element and its attributes.
+
+    \note This is currently only implemented for (X)HTML elements.
+*/
+QString QWebElement::toOuterXml() const
+{
+    if (!m_element || !m_element->isHTMLElement())
+        return QString();
+
+    return static_cast<HTMLElement*>(m_element)->outerHTML();
+}
+
+/*!
+    Replaces the content of this element with \a markup.
+    The string may contain HTML or XML tags, which is parsed and formatted
+    before insertion into the document.
+
+    \note This is currently only implemented for (X)HTML elements.
+*/
+void QWebElement::setInnerXml(const QString &markup)
+{
+    if (!m_element || !m_element->isHTMLElement())
+        return;
+
+    ExceptionCode exception = 0;
+
+    static_cast<HTMLElement*>(m_element)->setInnerHTML(markup, exception);
 }
 
 /*!
     Returns the XML between the start and the end tag of this
     element.
 
-    If \a scope is InnerXml this is equivalent to reading the HTML
-    innerHTML property, and similarily for OuterXml.
-
     \note This is currently only implemented for (X)HTML elements.
 */
-QString QWebElement::toXml(XmlScope scope) const
+QString QWebElement::toInnerXml() const
 {
     if (!m_element || !m_element->isHTMLElement())
         return QString();
 
-    switch (scope) {
-    case InnerXml:
-        return static_cast<HTMLElement*>(m_element)->innerHTML();
-    case OuterXml:
-        return static_cast<HTMLElement*>(m_element)->outerHTML();
-    default:
-        return QString();
-    }
+    return static_cast<HTMLElement*>(m_element)->innerHTML();
 }
 
 /*!
@@ -388,7 +403,7 @@ QString QWebElement::localName() const
 /*!
     Returns the namespace URI of this element or an empty string if the element has no namespace URI.
 */
-QString QWebElement::namespaceURI() const
+QString QWebElement::namespaceUri() const
 {
     if (!m_element)
         return QString();
@@ -406,89 +421,73 @@ QWebElement QWebElement::parent() const
 }
 
 /*!
-    Returns the first child element of this element with tag name
-    \a tagName if \a tagName is non-empty; otherwise returns the
-    first child element. Returns a null element if no such child exists.
+    Returns the first child element of this element.
 
     \sa lastChild() previousSibling() nextSibling()
 */
-QWebElement QWebElement::firstChild(const QString &tagName) const
+QWebElement QWebElement::firstChild() const
 {
     if (!m_element)
         return QWebElement();
-    String tag = tagName;
     for (Node* child = m_element->firstChild(); child; child = child->nextSibling()) {
         if (!child->isElementNode())
             continue;
         Element* e = static_cast<Element*>(child);
-        if (tagName.isEmpty() || equalIgnoringCase(e->tagName(), tag))
-            return QWebElement(e);
+        return QWebElement(e);
     }
     return QWebElement();
 }
 
 /*!
-    Returns the last child element of this element with tag name
-    \a tagName if \a tagName is non-empty; otherwise returns the
-    last child element. Returns a null element if no such child exists.
+    Returns the last child element of this element.
 
     \sa firstChild() previousSibling() nextSibling()
 */
-QWebElement QWebElement::lastChild(const QString &tagName) const
+QWebElement QWebElement::lastChild() const
 {
     if (!m_element)
         return QWebElement();
-    String tag = tagName;
     for (Node* child = m_element->lastChild(); child; child = child->previousSibling()) {
         if (!child->isElementNode())
             continue;
         Element* e = static_cast<Element*>(child);
-        if (tagName.isEmpty() || equalIgnoringCase(e->tagName(), tag))
-            return QWebElement(e);
+        return QWebElement(e);
     }
     return QWebElement();
 }
 
 /*!
-    Returns the next sibling element of this element with tag name
-    \a tagName if \a tagName is non-empty; otherwise returns any next sibling
-    element. Returns a null element if no such sibling exists.
+    Returns the next sibling element of this element.
 
     \sa firstChild() previousSibling() lastChild()
 */
-QWebElement QWebElement::nextSibling(const QString &tagName) const
+QWebElement QWebElement::nextSibling() const
 {
     if (!m_element)
         return QWebElement();
-    String tag = tagName;
     for (Node* sib = m_element->nextSibling(); sib; sib = sib->nextSibling()) {
         if (!sib->isElementNode())
             continue;
         Element* e = static_cast<Element*>(sib);
-        if (tagName.isEmpty() || equalIgnoringCase(e->tagName(), tag))
-            return QWebElement(e);
+        return QWebElement(e);
     }
     return QWebElement();
 }
 
 /*!
-    Returns the previous sibling element of this element with tag name
-    \a tagName if \a tagName is non-empty; otherwise returns any previous sibling
-    element. Returns a null element if no such sibling exists.
+    Returns the previous sibling element of this element.
 
     \sa firstChild() nextSibling() lastChild()
 */
-QWebElement QWebElement::previousSibling(const QString &tagName) const
+QWebElement QWebElement::previousSibling() const
 {
     if (!m_element)
         return QWebElement();
-    String tag = tagName;
     for (Node* sib = m_element->previousSibling(); sib; sib = sib->previousSibling()) {
         if (!sib->isElementNode())
             continue;
         Element* e = static_cast<Element*>(sib);
-        if (tagName.isEmpty() || equalIgnoringCase(e->tagName(), tag))
-            return QWebElement(e);
+        return QWebElement(e);
     }
     return QWebElement();
 }
@@ -561,9 +560,9 @@ static bool setupScriptObject(WebCore::Element* element, ScriptObject& object, S
     on its type. For example a form element can have the "submit" function, that would submit
     the form to the destination specified in the HTML.
 
-    \sa scriptFunctions()
+    \sa functions()
 */
-QVariant QWebElement::callScriptFunction(const QString &name, const QVariantList &arguments)
+QVariant QWebElement::callFunction(const QString &name, const QVariantList &arguments)
 {
     ScriptState* state = 0;
     ScriptObject thisObject;
@@ -593,9 +592,9 @@ QVariant QWebElement::callScriptFunction(const QString &name, const QVariantList
     The function names returned are the same functions that are callable from the DOM
     element's JavaScript binding.
 
-    \sa callScriptFunction()
+    \sa callFunction()
 */
-QStringList QWebElement::scriptFunctions() const
+QStringList QWebElement::functions() const
 {
     ScriptState* state = 0;
     ScriptObject thisObject;
@@ -649,9 +648,9 @@ QStringList QWebElement::scriptFunctions() const
 
     Information about all available properties is provided through scriptProperties().
 
-    \sa setScriptProperty(), scriptProperties()
+    \sa setScriptableProperty(), scriptableProperties()
 */
-QVariant QWebElement::scriptProperty(const QString &name) const
+QVariant QWebElement::scriptableProperty(const QString &name) const
 {
     ScriptState* state = 0;
     ScriptObject thisObject;
@@ -679,9 +678,9 @@ QVariant QWebElement::scriptProperty(const QString &name) const
     Setting the property will affect the corresponding property
     in the element's JavaScript binding with the same name.
 
-    \sa scriptProperty(), scriptProperties()
+    \sa scriptableProperty(), scriptableProperties()
 */
-void QWebElement::setScriptProperty(const QString &name, const QVariant &value)
+void QWebElement::setScriptableProperty(const QString &name, const QVariant &value)
 {
     ScriptState* state = 0;
     ScriptObject thisObject;
@@ -706,8 +705,10 @@ void QWebElement::setScriptProperty(const QString &name, const QVariant &value)
 
     The function names returned are the same properties that are accessible from the DOM
     element's JavaScript binding.
+
+    \sa setScriptableProperty(), scriptableProperty()
 */
-QStringList QWebElement::scriptProperties() const
+QStringList QWebElement::scriptableProperties() const
 {
     if (!m_element)
         return QStringList();
@@ -895,28 +896,6 @@ void QWebElement::toggleClass(const QString &name)
 }
 
 /*!
-    Adds the specified class \a name if \a enabled is true or
-    removes it if \a enabled is false.
-*/
-void QWebElement::toggleClass(const QString &name, bool enabled)
-{
-    QStringList list = classes();
-    if (list.contains(name)) {
-        if (!enabled) {
-            list.removeAll(name);
-            QString value = list.join(" ");
-            setAttribute("class", value);
-        }
-    } else {
-        if (enabled) {
-            list.append(name);
-            QString value = list.join(" ");
-            setAttribute("class", value);
-        }
-    }
-}
-
-/*!
     Appends \a element as the element's last child.
 
     If \a element is the child of another element, it is re-parented
@@ -925,9 +904,9 @@ void QWebElement::toggleClass(const QString &name, bool enabled)
 
     Calling this function on a null element does nothing.
 
-    \sa prepend(), insertBefore(), insertAfter()
+    \sa prependInside(), prependOutside(), appendOutside()
 */
-void QWebElement::append(QWebElement element)
+void QWebElement::appendInside(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
@@ -941,9 +920,9 @@ void QWebElement::append(QWebElement element)
 
     Calling this function on a null element does nothing.
 
-    \sa prepend(), insertBefore(), insertAfter()
+    \sa prependInside(), prependOutside(), appendOutside()
 */
-void QWebElement::append(const QString &markup)
+void QWebElement::appendInside(const QString &markup)
 {
     if (!m_element)
         return;
@@ -967,9 +946,9 @@ void QWebElement::append(const QString &markup)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), insertBefore(), insertAfter()
+    \sa appendInside(), prependOutside(), appendOutside()
 */
-void QWebElement::prepend(QWebElement element)
+void QWebElement::prependInside(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
@@ -983,9 +962,9 @@ void QWebElement::prepend(QWebElement element)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), insertBefore(), insertAfter()
+    \sa appendInside(), prependOutside(), appendOutside()
 */
-void QWebElement::prepend(const QString &markup)
+void QWebElement::prependInside(const QString &markup)
 {
     if (!m_element)
         return;
@@ -1009,9 +988,9 @@ void QWebElement::prepend(const QString &markup)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), prepend(), insertAfter()
+    \sa appendInside(), prependInside(), appendOutside()
 */
-void QWebElement::insertBefore(QWebElement element)
+void QWebElement::prependOutside(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
@@ -1028,9 +1007,9 @@ void QWebElement::insertBefore(QWebElement element)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), prepend(), insertAfter()
+    \sa appendInside(), prependInside(), appendOutside()
 */
-void QWebElement::insertBefore(const QString &markup)
+void QWebElement::prependOutside(const QString &markup)
 {
     if (!m_element)
         return;
@@ -1056,9 +1035,9 @@ void QWebElement::insertBefore(const QString &markup)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), prepend(), insertBefore()
+    \sa appendInside(), prependInside(), prependOutside()
 */
-void QWebElement::insertAfter(QWebElement element)
+void QWebElement::appendOutside(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
@@ -1078,9 +1057,9 @@ void QWebElement::insertAfter(QWebElement element)
 
     Calling this function on a null element does nothing.
 
-    \sa append(), prepend(), insertBefore()
+    \sa appendInside(), prependInside(), prependOutside()
 */
-void QWebElement::insertAfter(const QString &markup)
+void QWebElement::appendOutside(const QString &markup)
 {
     if (!m_element)
         return;
@@ -1103,9 +1082,9 @@ void QWebElement::insertAfter(const QString &markup)
 
     The clone may be inserted at any point in the document.
 
-    \sa append(), prepend(), insertBefore(), insertAfter()
+    \sa appendInside(), prependInside(), prependOutside(), appendOutside()
 */
-QWebElement QWebElement::clone()
+QWebElement QWebElement::clone() const
 {
     if (!m_element)
         return QWebElement();
@@ -1114,14 +1093,15 @@ QWebElement QWebElement::clone()
 }
 
 /*!
-    Removes this element from the document.
+    Removes this element from the document and returns a reference
+    to this.
 
     The element is still valid after removal, and can be inserted into
     other parts of the document.
 
-    \sa clear()
+    \sa removeChildren(), removeFromDocument()
 */
-QWebElement &QWebElement::remove()
+QWebElement &QWebElement::takeFromDocument()
 {
     if (!m_element)
         return *this;
@@ -1133,11 +1113,28 @@ QWebElement &QWebElement::remove()
 }
 
 /*!
+    Removes this element from the document and makes this
+    a null element.
+
+    \sa removeChildren(), takeFromDocument()
+*/
+void QWebElement::removeFromDocument()
+{
+    if (!m_element)
+        return;
+
+    ExceptionCode exception = 0;
+    m_element->remove(exception);
+    m_element->deref();
+    m_element = 0;
+}
+
+/*!
     Removes all children from this element.
 
-    \sa remove()
+    \sa removeFromDocument(), takeFromDocument()
 */
-void QWebElement::clear()
+void QWebElement::removeChildren()
 {
     if (!m_element)
         return;
@@ -1148,22 +1145,23 @@ void QWebElement::clear()
 /*!
     Wraps this element in \a element as the last child.
 
-    \sa replaceWith()
+    \sa replace()
 */
-void QWebElement::wrap(QWebElement element)
+void QWebElement::wrap(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
 
-    insertAfter(element);
-    element.append(*this);
+    appendOutside(element);
+    QWebElement other = element;
+    other.appendInside(*this);
 }
 
 /*!
     Wraps this element in the result of parsing \a html,
     as the last child.
 
-    \sa replaceWith()
+    \sa replace()
 */
 void QWebElement::wrap(const QString &html)
 {
@@ -1202,13 +1200,13 @@ void QWebElement::wrap(const QString &html)
 
     \sa wrap()
 */
-void QWebElement::replaceWith(QWebElement element)
+void QWebElement::replace(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
 
-    insertAfter(element);
-    remove();
+    appendOutside(element);
+    takeFromDocument();
 }
 
 /*!
@@ -1219,13 +1217,13 @@ void QWebElement::replaceWith(QWebElement element)
 
     \sa wrap()
 */
-void QWebElement::replaceWith(const QString &html)
+void QWebElement::replace(const QString &html)
 {
     if (!m_element)
         return;
 
-    insertAfter(html);
-    remove();
+    appendOutside(html);
+    takeFromDocument();
 }
 
 /*!

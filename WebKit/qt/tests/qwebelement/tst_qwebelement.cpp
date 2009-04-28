@@ -90,9 +90,7 @@ private slots:
     void wrap();
     void nullSelect();
     void firstChildNextSibling();
-    void firstChildNextSiblingWithTag();
     void lastChildPreviousSibling();
-    void lastChildPreviousSiblingWithTag();
 
 private:
     QWebView* m_view;
@@ -130,7 +128,7 @@ void tst_QWebElement::textHtml()
     QCOMPARE(body.toPlainText(), QString("test"));
     QCOMPARE(body.toPlainText(), m_mainFrame->toPlainText());
 
-    QCOMPARE(body.toXml(QWebElement::InnerXml), html);
+    QCOMPARE(body.toInnerXml(), html);
 }
 
 void tst_QWebElement::simpleCollection()
@@ -235,20 +233,6 @@ void tst_QWebElement::classes()
     QVERIFY(p.hasClass("f"));
     QCOMPARE(p.classes().count(), 5);
 
-    p.toggleClass("a", true);
-    QCOMPARE(p.classes().count(), 5);
-    p.toggleClass("a", false);
-    QCOMPARE(p.classes().count(), 4);
-    p.toggleClass("z", false);
-    QVERIFY(!p.hasClass("z"));
-    QCOMPARE(p.classes().count(), 4);
-    p.toggleClass("z", true);
-    QVERIFY(p.hasClass("z"));
-    QCOMPARE(p.classes().count(), 5);
-    p.toggleClass("a", true);
-    p.toggleClass("z", false);
-    QCOMPARE(p.classes().count(), 5);
-
     p.removeClass("f");
     QVERIFY(!p.hasClass("f"));
     QCOMPARE(p.classes().count(), 4);
@@ -279,13 +263,13 @@ void tst_QWebElement::namespaceURI()
 
     m_mainFrame->setContent(content.toUtf8(), "application/xhtml+xml");
     QWebElement body = m_mainFrame->documentElement();
-    QCOMPARE(body.namespaceURI(), QLatin1String("http://www.w3.org/1999/xhtml"));
+    QCOMPARE(body.namespaceUri(), QLatin1String("http://www.w3.org/1999/xhtml"));
 
     QWebElement svg = body.findAll("*#foobar").toList().at(0);
     QCOMPARE(svg.prefix(), QLatin1String("svg"));
     QCOMPARE(svg.localName(), QLatin1String("svg"));
     QCOMPARE(svg.tagName(), QLatin1String("svg:svg"));
-    QCOMPARE(svg.namespaceURI(), QLatin1String("http://www.w3.org/2000/svg"));
+    QCOMPARE(svg.namespaceUri(), QLatin1String("http://www.w3.org/2000/svg"));
 
 }
 
@@ -331,7 +315,7 @@ void tst_QWebElement::foreachManipulation()
     QWebElement body = m_mainFrame->documentElement();
 
     foreach(QWebElement p, body.findAll("p")) {
-        p.setXml(QWebElement::InnerXml, "<div>foo</div><div>bar</div>");
+        p.setInnerXml("<div>foo</div><div>bar</div>");
     }
 
     QCOMPARE(body.findAll("div").count(), 4);
@@ -341,13 +325,13 @@ void tst_QWebElement::callFunction()
 {
     m_mainFrame->setHtml("<body><p>test");
     QWebElement body = m_mainFrame->documentElement();
-    QVERIFY(body.scriptFunctions().contains("hasChildNodes"));
-    QVariant result = body.callScriptFunction("hasChildNodes");
+    QVERIFY(body.functions().contains("hasChildNodes"));
+    QVariant result = body.callFunction("hasChildNodes");
     QVERIFY(result.isValid());
     QVERIFY(result.type() == QVariant::Bool);
     QVERIFY(result.toBool());
 
-    body.callScriptFunction("setAttribute", QVariantList() << "foo" << "bar");
+    body.callFunction("setAttribute", QVariantList() << "foo" << "bar");
     QCOMPARE(body.attribute("foo"), QString("bar"));
 }
 
@@ -357,9 +341,9 @@ void tst_QWebElement::callFunctionSubmitForm()
                                  "<input type='text'><input type='submit'></form></body></html>"), QUrl());
 
     QWebElement form = m_mainFrame->documentElement().findAll("form").at(0);
-    QVERIFY(form.scriptFunctions().contains("submit"));
+    QVERIFY(form.functions().contains("submit"));
     QVERIFY(!form.isNull());
-    form.callScriptFunction("submit");
+    form.callFunction("submit");
 
     waitForSignal(m_page, SIGNAL(loadFinished(bool)));
     QCOMPARE(m_mainFrame->url().toString(), QString("data:text/html,foo?"));
@@ -371,7 +355,7 @@ void tst_QWebElement::functionNames()
 
     QWebElement body = m_mainFrame->documentElement();
 
-    QVERIFY(body.scriptFunctions().contains("setAttribute"));
+    QVERIFY(body.functions().contains("setAttribute"));
 }
 
 void tst_QWebElement::documentElement()
@@ -489,27 +473,27 @@ void tst_QWebElement::properties()
     QWebElement checkBox = m_mainFrame->findFirstElement("#ourcheckbox");
     QVERIFY(!checkBox.isNull());
 
-    QVERIFY(checkBox.scriptProperties().contains("checked"));
+    QVERIFY(checkBox.scriptableProperties().contains("checked"));
 
-    QCOMPARE(checkBox.scriptProperty("checked"), QVariant(true));
-    checkBox.setScriptProperty("checked", false);
-    QCOMPARE(checkBox.scriptProperty("checked"), QVariant(false));
+    QCOMPARE(checkBox.scriptableProperty("checked"), QVariant(true));
+    checkBox.setScriptableProperty("checked", false);
+    QCOMPARE(checkBox.scriptableProperty("checked"), QVariant(false));
 
-    QVERIFY(!checkBox.scriptProperties().contains("non_existant"));
-    QCOMPARE(checkBox.scriptProperty("non_existant"), QVariant());
+    QVERIFY(!checkBox.scriptableProperties().contains("non_existant"));
+    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant());
 
-    checkBox.setScriptProperty("non_existant", "test");
+    checkBox.setScriptableProperty("non_existant", "test");
 
-    QCOMPARE(checkBox.scriptProperty("non_existant"), QVariant("test"));
-    QVERIFY(checkBox.scriptProperties().contains("non_existant"));
+    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant("test"));
+    QVERIFY(checkBox.scriptableProperties().contains("non_existant"));
 
-    // removing scriptProperties is currently not supported. We should look into this
+    // removing scriptableProperties is currently not supported. We should look into this
     // and consider the option of just allowing through the QtScript API only.
 #if 0
-    checkBox.setScriptProperty("non_existant", QVariant());
+    checkBox.setScriptableProperty("non_existant", QVariant());
 
-    QCOMPARE(checkBox.scriptProperty("non_existant"), QVariant());
-    QVERIFY(!checkBox.scriptProperties().contains("non_existant"));
+    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant());
+    QVERIFY(!checkBox.scriptableProperties().contains("non_existant"));
 #endif
 }
 
@@ -528,25 +512,25 @@ void tst_QWebElement::appendAndPrepend()
     QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
     QCOMPARE(body.findAll("p").count(), 2);
-    body.append(body.findFirst("p"));
+    body.appendInside(body.findFirst("p"));
     QCOMPARE(body.findAll("p").count(), 2);
     QCOMPARE(body.findFirst("p").toPlainText(), QString("bar"));
     QCOMPARE(body.findAll("p").last().toPlainText(), QString("foo"));
 
-    body.append(body.findFirst("p").clone());
+    body.appendInside(body.findFirst("p").clone());
     QCOMPARE(body.findAll("p").count(), 3);
     QCOMPARE(body.findFirst("p").toPlainText(), QString("bar"));
     QCOMPARE(body.findAll("p").last().toPlainText(), QString("bar"));
 
-    body.prepend(body.findAll("p").at(1).clone());
+    body.prependInside(body.findAll("p").at(1).clone());
     QCOMPARE(body.findAll("p").count(), 4);
     QCOMPARE(body.findFirst("p").toPlainText(), QString("foo"));
 
-    body.findFirst("p").append("<div>booyakasha</div>");
+    body.findFirst("p").appendInside("<div>booyakasha</div>");
     QCOMPARE(body.findAll("p div").count(), 1);
     QCOMPARE(body.findFirst("p div").toPlainText(), QString("booyakasha"));
 
-    body.findFirst("div").prepend("<code>yepp</code>");
+    body.findFirst("div").prependInside("<code>yepp</code>");
     QCOMPARE(body.findAll("p div code").count(), 1);
     QCOMPARE(body.findFirst("p div code").toPlainText(), QString("yepp"));
 }
@@ -572,23 +556,23 @@ void tst_QWebElement::insertBeforeAndAfter()
     QCOMPARE(body.findAll("p").count(), 2);
     QCOMPARE(body.findAll("div").count(), 1);
 
-    div.insertBefore(body.findAll("p").last().clone());
+    div.prependOutside(body.findAll("p").last().clone());
     QCOMPARE(body.findAll("p").count(), 3);
     QCOMPARE(body.findAll("p").at(0).toPlainText(), QString("foo"));
     QCOMPARE(body.findAll("p").at(1).toPlainText(), QString("bar"));
     QCOMPARE(body.findAll("p").at(2).toPlainText(), QString("bar"));
 
-    div.insertAfter(body.findFirst("p").clone());
+    div.appendOutside(body.findFirst("p").clone());
     QCOMPARE(body.findAll("p").count(), 4);
     QCOMPARE(body.findAll("p").at(0).toPlainText(), QString("foo"));
     QCOMPARE(body.findAll("p").at(1).toPlainText(), QString("bar"));
     QCOMPARE(body.findAll("p").at(2).toPlainText(), QString("foo"));
     QCOMPARE(body.findAll("p").at(3).toPlainText(), QString("bar"));
 
-    div.insertBefore("<span>hey</span>");
+    div.prependOutside("<span>hey</span>");
     QCOMPARE(body.findAll("span").count(), 1);
 
-    div.insertAfter("<span>there</span>");
+    div.appendOutside("<span>there</span>");
     QCOMPARE(body.findAll("span").count(), 2);
     QCOMPARE(body.findAll("span").at(0).toPlainText(), QString("hey"));
     QCOMPARE(body.findAll("span").at(1).toPlainText(), QString("there"));
@@ -615,13 +599,13 @@ void tst_QWebElement::remove()
     QCOMPARE(body.findAll("p").count(), 3);
 
     QWebElement div = body.findFirst("div");
-    div.remove();
+    div.takeFromDocument();
 
     QCOMPARE(div.isNull(), false);
     QCOMPARE(body.findAll("div").count(), 0);
     QCOMPARE(body.findAll("p").count(), 2);
 
-    body.append(div);
+    body.appendInside(div);
 
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("p").count(), 3);
@@ -646,7 +630,7 @@ void tst_QWebElement::clear()
 
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("p").count(), 3);
-    body.findFirst("div").clear();
+    body.findFirst("div").removeChildren();
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("p").count(), 2);
 }
@@ -671,12 +655,12 @@ void tst_QWebElement::replaceWith()
 
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("span").count(), 1);
-    body.findFirst("div").replaceWith(body.findFirst("span").clone());
+    body.findFirst("div").replace(body.findFirst("span").clone());
     QCOMPARE(body.findAll("div").count(), 0);
     QCOMPARE(body.findAll("span").count(), 2);
     QCOMPARE(body.findAll("p").count(), 2);
 
-    body.findFirst("span").replaceWith("<p><code>wow</code></p>");
+    body.findFirst("span").replace("<p><code>wow</code></p>");
     QCOMPARE(body.findAll("p").count(), 3);
     QCOMPARE(body.findAll("p code").count(), 1);
     QCOMPARE(body.findFirst("p code").toPlainText(), QString("wow"));
@@ -734,23 +718,6 @@ void tst_QWebElement::firstChildNextSibling()
     QVERIFY(table.nextSibling().isNull());
 }
 
-void tst_QWebElement::firstChildNextSiblingWithTag()
-{
-    m_mainFrame->setHtml("<body><!--comment--><p><span>Test</span></p><div>test</div><p><span>test2</span></p><div>last</div>");
-
-    QWebElement body = m_mainFrame->findFirstElement("body");
-    QVERIFY(!body.isNull());
-    QWebElement div = body.firstChild("div");
-    QVERIFY(!div.isNull());
-    QCOMPARE(div.tagName(), QString("DIV"));
-    QCOMPARE(div.toPlainText(), QString("test"));
-    QCOMPARE(div.nextSibling().tagName(), QString("P"));
-    div = div.nextSibling("div");
-    QVERIFY(!div.isNull());
-    QCOMPARE(div.tagName(), QString("DIV"));
-    QCOMPARE(div.toPlainText(), QString("last"));
-}
-
 void tst_QWebElement::lastChildPreviousSibling()
 {
     m_mainFrame->setHtml("<body><!--comment--><p>Test</p><!--another commend><table>");
@@ -765,24 +732,6 @@ void tst_QWebElement::lastChildPreviousSibling()
     QCOMPARE(p.tagName(), QString("P"));
     QVERIFY(p.previousSibling().isNull());
 }
-
-void tst_QWebElement::lastChildPreviousSiblingWithTag()
-{
-    m_mainFrame->setHtml("<body><!--comment--><p><span>Test</span></p><div>test</div><p><span>test2</span></p><div>last</div>");
-
-    QWebElement body = m_mainFrame->findFirstElement("body");
-    QVERIFY(!body.isNull());
-    QWebElement div = body.lastChild("div");
-    QVERIFY(!div.isNull());
-    QCOMPARE(div.tagName(), QString("DIV"));
-    QCOMPARE(div.toPlainText(), QString("last"));
-    QCOMPARE(div.previousSibling().tagName(), QString("P"));
-    div = div.previousSibling("div");
-    QVERIFY(!div.isNull());
-    QCOMPARE(div.tagName(), QString("DIV"));
-    QCOMPARE(div.toPlainText(), QString("test"));
-}
-
 
 QTEST_MAIN(tst_QWebElement)
 #include "tst_qwebelement.moc"

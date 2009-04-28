@@ -2,6 +2,72 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        QWebElement API changes after another round of API review:
+
+        * Fix argument names of findAll/findFirst
+        * Split up toXml into innerXml and outerXml
+        * Removed confusing toggleClass overload
+        * Fixed casing of namespaceUri to follow QXmlStreamReader
+        * Removed tagName from firstChild/nextSibling/etc.
+        * Renamed append/prepend/insertAfter/insertBefore to [append|prepend][Inside|Outside]
+        * Renamed wrapWith() back to wrap()
+        * Made clone() const
+        * Renamed remove() to takeFromDocument(), added removeFromDocument()
+        * Renamed clear() to removeChildren()
+        * Renamed scriptsFunctions/callScriptFunction to functions()/callFunction()
+        * Renamed scriptProperty to scriptableProperty
+
+        * Api/qwebelement.cpp:
+        (QWebElement::findAll):
+        (QWebElement::findFirst):
+        (QWebElement::setOuterXml):
+        (QWebElement::toOuterXml):
+        (QWebElement::setInnerXml):
+        (QWebElement::toInnerXml):
+        (QWebElement::namespaceUri):
+        (QWebElement::firstChild):
+        (QWebElement::lastChild):
+        (QWebElement::nextSibling):
+        (QWebElement::previousSibling):
+        (QWebElement::callFunction):
+        (QWebElement::functions):
+        (QWebElement::scriptableProperty):
+        (QWebElement::setScriptableProperty):
+        (QWebElement::scriptableProperties):
+        (QWebElement::appendInside):
+        (QWebElement::prependInside):
+        (QWebElement::prependOutside):
+        (QWebElement::appendOutside):
+        (QWebElement::clone):
+        (QWebElement::takeFromDocument):
+        (QWebElement::removeFromDocument):
+        (QWebElement::removeChildren):
+        (QWebElement::wrap):
+        (QWebElement::replace):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::findAllElements):
+        (QWebFrame::findFirstElement):
+        * Api/qwebframe.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::textHtml):
+        (tst_QWebElement::classes):
+        (tst_QWebElement::namespaceURI):
+        (tst_QWebElement::foreachManipulation):
+        (tst_QWebElement::callFunction):
+        (tst_QWebElement::callFunctionSubmitForm):
+        (tst_QWebElement::functionNames):
+        (tst_QWebElement::properties):
+        (tst_QWebElement::appendAndPrepend):
+        (tst_QWebElement::insertBeforeAndAfter):
+        (tst_QWebElement::remove):
+        (tst_QWebElement::clear):
+        (tst_QWebElement::replaceWith):
+
+2009-04-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         Fix some qdoc warnings.
 
         * Api/qwebframe.cpp: Fix links.

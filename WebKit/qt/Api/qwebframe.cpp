@@ -983,22 +983,22 @@ QWebElement QWebFrame::documentElement() const
 /*!
     \since 4.6
     Returns a new collection of elements that are children of the frame's
-    document element and that match the given CSS selector \a query.
+    document element and that match the given CSS selector \a selectorQuery.
 */
-QWebElementCollection QWebFrame::findAllElements(const QString &query) const
+QWebElementCollection QWebFrame::findAllElements(const QString &selectorQuery) const
 {
-    return documentElement().findAll(query);
+    return documentElement().findAll(selectorQuery);
 }
 
 /*!
     \since 4.6
     Returns the first element in the frame's document that matches the
-    given CSS selector \a query. Returns a null element if there is no
+    given CSS selector \a selectorQuery. Returns a null element if there is no
     match.
 */
-QWebElement QWebFrame::findFirstElement(const QString &query) const
+QWebElement QWebFrame::findFirstElement(const QString &selectorQuery) const
 {
-    return documentElement().findFirst(query);
+    return documentElement().findFirst(selectorQuery);
 }
 
 /*!

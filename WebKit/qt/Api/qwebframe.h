@@ -179,8 +179,8 @@ public:
     QSize contentsSize() const;
 
     QWebElement documentElement() const;
-    QWebElementCollection findAllElements(const QString &query) const;
-    QWebElement findFirstElement(const QString &query) const;
+    QWebElementCollection findAllElements(const QString &selectorQuery) const;
+    QWebElement findFirstElement(const QString &selectorQuery) const;
 
     QWebHitTestResult hitTestContent(const QPoint &pos) const;
 
