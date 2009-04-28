@@ -1723,9 +1723,10 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType typ
 {
     SelectionController* selection = type == CursorCaret ? document()->frame()->selection() : document()->frame()->dragCaretController();
 
-    // Ask the SelectionController if the caret should be painted by this block
+    // Paint the caret if the SelectionController says so or if caret browsing is enabled
+    bool caretBrowsing = document()->frame()->settings() && document()->frame()->settings()->caretBrowsingEnabled();
     RenderObject* caretPainter = selection->caretRenderer();
-    if (caretPainter == this && selection->isContentEditable()) {
+    if (caretPainter == this && (selection->isContentEditable() || caretBrowsing)) {
         // Convert the painting offset into the local coordinate system of this renderer,
         // to match the localCaretRect computed by the SelectionController
         offsetForContents(tx, ty);

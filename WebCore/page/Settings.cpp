@@ -92,6 +92,7 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInStrictMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
+    , m_caretBrowsingEnabled(false)
     , m_editingBehavior(
 #if PLATFORM(MAC)
         EditingMacBehavior
@@ -442,6 +443,11 @@ void Settings::setUsesEncodingDetector(bool usesEncodingDetector)
 void Settings::setAllowScriptsToCloseWindows(bool allowScriptsToCloseWindows)
 {
     m_allowScriptsToCloseWindows = allowScriptsToCloseWindows;
+}
+
+void Settings::setCaretBrowsingEnabled(bool caretBrowsingEnabled)
+{
+    m_caretBrowsingEnabled = caretBrowsingEnabled;
 }
 
 } // namespace WebCore
