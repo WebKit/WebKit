@@ -1,3 +1,15 @@
+2009-04-27  Ada Chan  <adachan@apple.com>
+
+        If it has been set to allow any HTTPS certificates for this host, set 
+        kCFStreamSSLAllowsExpiredCertificates to true to allow expired 
+        certificate, and set kCFStreamSSLValidatesCertificateChain false to skip
+        certificate chain validation. (<rdar://problem/6382059>)
+
+        Reviewed by John Sullivan.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest):
+
 2009-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson
