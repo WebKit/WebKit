@@ -1,3 +1,13 @@
+2009-04-28  John Sullivan  <sullivan@apple.com>
+
+        <rdar://problem/6820221> REGRESSION: 2-byte character names of images are displayed as %-encoded ASCII
+
+        Reviewed by Adam Roben
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+        decode the filename before processing it as part of the image name that's passed to the client
+
 2009-04-28  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.
