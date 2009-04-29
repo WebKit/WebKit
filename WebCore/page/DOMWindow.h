@@ -300,6 +300,9 @@ namespace WebCore {
         EventListener* onwebkittransitionend() const;
         void setOnwebkittransitionend(PassRefPtr<EventListener>);
 
+        void captureEvents();
+        void releaseEvents();
+
         // These methods are used for GC marking. See JSDOMWindow::mark() in
         // JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }

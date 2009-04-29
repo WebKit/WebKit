@@ -232,8 +232,8 @@ module window {
         boolean dispatchEvent(in Event evt)
             raises(EventException);
 
-        [JSCCustom, V8Custom=DOMWindowNOP] void captureEvents(in long eventFlags);
-        [JSCCustom, V8Custom=DOMWindowNOP] void releaseEvents(in long eventFlags);
+        [V8Custom=DOMWindowNOP] void captureEvents(/*in long eventFlags*/);
+        [V8Custom=DOMWindowNOP] void releaseEvents(/*in long eventFlags*/);
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors

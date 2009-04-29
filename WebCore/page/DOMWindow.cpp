@@ -1657,4 +1657,14 @@ void DOMWindow::setOnwebkittransitionend(PassRefPtr<EventListener> eventListener
     setAttributeEventListener(eventNames().webkitTransitionEndEvent, eventListener);
 }
 
+void DOMWindow::captureEvents()
+{
+    // Not implemented.
+}
+
+void DOMWindow::releaseEvents()
+{
+    // Not implemented.
+}
+
 } // namespace WebCore
