@@ -61,7 +61,7 @@ static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, con
         int argumentCount = static_cast<int>(args.size());
         Vector<JSValueRef, 16> arguments(argumentCount);
         for (int i = 0; i < argumentCount; i++)
-            arguments[i] = toRef(args.at(exec, i));
+            arguments[i] = toRef(args.at(i));
             
         JSLock::DropAllLocks dropAllLocks(exec);
         return toJS(callback(ctx, constructorRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));

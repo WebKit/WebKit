@@ -43,7 +43,7 @@ void JSNodeFilter::mark()
 
 JSValuePtr JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
 {
-    return jsNumber(exec, impl()->acceptNode(exec, toNode(args.at(exec, 0))));
+    return jsNumber(exec, impl()->acceptNode(exec, toNode(args.at(0))));
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(JSValuePtr value)

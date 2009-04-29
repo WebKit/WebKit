@@ -47,9 +47,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args)
+ScheduledAction* ScheduledAction::create(const ArgList& args)
 {
-    JSValuePtr v = args.at(exec, 0);
+    JSValuePtr v = args.at(0);
     if (v.isString())
         return new ScheduledAction(asString(v)->value());
     CallData callData;
@@ -57,15 +57,15 @@ ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args)
         return 0;
     ArgList argsTail;
     args.getSlice(2, argsTail);
-    return new ScheduledAction(exec, v, argsTail);
+    return new ScheduledAction(v, argsTail);
 }
 
-ScheduledAction::ScheduledAction(ExecState* exec, JSValuePtr function, const ArgList& args)
+ScheduledAction::ScheduledAction(JSValuePtr function, const ArgList& args)
     : m_function(function)
 {
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        m_args.append((*it).jsValue(exec));
+        m_args.append((*it).jsValue());
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)

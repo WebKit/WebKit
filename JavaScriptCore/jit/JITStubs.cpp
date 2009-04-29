@@ -940,7 +940,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
             SamplingTool::HostCallRecord callRecord(CTI_SAMPLER);
 
             // FIXME: All host methods should be calling toThisObject, but this is not presently the case.
-            JSValuePtr thisValue = argv[0].jsValue(callFrame);
+            JSValuePtr thisValue = argv[0].jsValue();
             if (thisValue == jsNull())
                 thisValue = callFrame->globalThisValue();
 
@@ -1414,7 +1414,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     RegisterFile* registerFile = ARG_registerFile;
     int argsOffset = ARG_int1;
-    JSValuePtr arguments = callFrame[argsOffset].jsValue(callFrame);
+    JSValuePtr arguments = callFrame[argsOffset].jsValue();
     uint32_t argCount = 0;
     if (!arguments.isUndefinedOrNull()) {
         if (!arguments.isObject()) {
@@ -1890,7 +1890,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_call_eval(STUB_ARGS)
 
     Register* newCallFrame = callFrame->registers() + registerOffset;
     Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
-    JSValuePtr thisValue = argv[0].jsValue(callFrame);
+    JSValuePtr thisValue = argv[0].jsValue();
     JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject();
 
     if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {

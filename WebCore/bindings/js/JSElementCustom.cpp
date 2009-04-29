@@ -64,8 +64,8 @@ static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* elem
 JSValuePtr JSElement::setAttribute(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString name = args.at(exec, 0).toString(exec);
-    AtomicString value = args.at(exec, 1).toString(exec);
+    AtomicString name = args.at(0).toString(exec);
+    AtomicString value = args.at(1).toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, name, value))
@@ -79,7 +79,7 @@ JSValuePtr JSElement::setAttribute(ExecState* exec, const ArgList& args)
 JSValuePtr JSElement::setAttributeNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    Attr* newAttr = toAttr(args.at(exec, 0));
+    Attr* newAttr = toAttr(args.at(0));
     if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -97,9 +97,9 @@ JSValuePtr JSElement::setAttributeNode(ExecState* exec, const ArgList& args)
 JSValuePtr JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString namespaceURI = valueToStringWithNullCheck(exec, args.at(exec, 0));
-    AtomicString qualifiedName = args.at(exec, 1).toString(exec);
-    AtomicString value = args.at(exec, 2).toString(exec);
+    AtomicString namespaceURI = valueToStringWithNullCheck(exec, args.at(0));
+    AtomicString qualifiedName = args.at(1).toString(exec);
+    AtomicString value = args.at(2).toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, qualifiedName, value))
@@ -113,7 +113,7 @@ JSValuePtr JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 JSValuePtr JSElement::setAttributeNodeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    Attr* newAttr = toAttr(args.at(exec, 0));
+    Attr* newAttr = toAttr(args.at(0));
     if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();

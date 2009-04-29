@@ -357,7 +357,7 @@ void CodeBlock::dump(ExecState* exec) const
         unsigned registerIndex = m_numVars;
         size_t i = 0;
         do {
-            printf("   r%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].jsValue(exec)).ascii());
+            printf("   r%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].jsValue()).ascii());
             ++i;
             ++registerIndex;
         } while (i < m_constantRegisters.size());

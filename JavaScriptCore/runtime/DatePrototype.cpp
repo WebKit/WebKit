@@ -141,16 +141,16 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     bool useCustomFormat = false;
     UString customFormatString;
 
-    UString arg0String = args.at(exec, 0).toString(exec);
-    if (arg0String == "custom" && !args.at(exec, 1).isUndefined()) {
+    UString arg0String = args.at(0).toString(exec);
+    if (arg0String == "custom" && !args.at(1).isUndefined()) {
         useCustomFormat = true;
-        customFormatString = args.at(exec, 1).toString(exec);
-    } else if (format == LocaleDateAndTime && !args.at(exec, 1).isUndefined()) {
+        customFormatString = args.at(1).toString(exec);
+    } else if (format == LocaleDateAndTime && !args.at(1).isUndefined()) {
         dateStyle = styleFromArgString(arg0String, dateStyle);
-        timeStyle = styleFromArgString(args.at(exec, 1).toString(exec), timeStyle);
-    } else if (format != LocaleTime && !args.at(exec, 0).isUndefined())
+        timeStyle = styleFromArgString(args.at(1).toString(exec), timeStyle);
+    } else if (format != LocaleTime && !args.at(0).isUndefined())
         dateStyle = styleFromArgString(arg0String, dateStyle);
-    else if (format != LocaleDate && !args.at(exec, 0).isUndefined())
+    else if (format != LocaleDate && !args.at(0).isUndefined())
         timeStyle = styleFromArgString(arg0String, timeStyle);
 
     CFLocaleRef locale = CFLocaleCopyCurrent();
@@ -266,19 +266,19 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, const ArgList& args, in
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
         t->hour = 0;
-        milliseconds += args.at(exec, idx++).toInt32(exec, ok) * msPerHour;
+        milliseconds += args.at(idx++).toInt32(exec, ok) * msPerHour;
     }
 
     // minutes
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->minute = 0;
-        milliseconds += args.at(exec, idx++).toInt32(exec, ok) * msPerMinute;
+        milliseconds += args.at(idx++).toInt32(exec, ok) * msPerMinute;
     }
     
     // seconds
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->second = 0;
-        milliseconds += args.at(exec, idx++).toInt32(exec, ok) * msPerSecond;
+        milliseconds += args.at(idx++).toInt32(exec, ok) * msPerSecond;
     }
     
     if (!ok)
@@ -286,7 +286,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, const ArgList& args, in
         
     // milliseconds
     if (idx < numArgs) {
-        double millis = args.at(exec, idx).toNumber(exec);
+        double millis = args.at(idx).toNumber(exec);
         ok = isfinite(millis);
         milliseconds += millis;
     } else
@@ -312,16 +312,16 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, const ArgList& args, in
   
     // years
     if (maxArgs >= 3 && idx < numArgs)
-        t->year = args.at(exec, idx++).toInt32(exec, ok) - 1900;
+        t->year = args.at(idx++).toInt32(exec, ok) - 1900;
     
     // months
     if (maxArgs >= 2 && idx < numArgs && ok)   
-        t->month = args.at(exec, idx++).toInt32(exec, ok);
+        t->month = args.at(idx++).toInt32(exec, ok);
     
     // days
     if (idx < numArgs && ok) {   
         t->monthDay = 0;
-        *ms += args.at(exec, idx).toInt32(exec, ok) * msPerDay;
+        *ms += args.at(idx).toInt32(exec, ok) * msPerDay;
     }
     
     return ok;
@@ -823,7 +823,7 @@ JSValuePtr dateProtoFuncSetTime(ExecState* exec, JSObject*, JSValuePtr thisValue
 
     DateInstance* thisDateObj = asDateInstance(thisValue); 
 
-    double milli = timeClip(args.at(exec, 0).toNumber(exec));
+    double milli = timeClip(args.at(0).toNumber(exec));
     JSValuePtr result = jsNumber(exec, milli);
     thisDateObj->setInternalValue(result);
     return result;
@@ -1010,7 +1010,7 @@ JSValuePtr dateProtoFuncSetYear(ExecState* exec, JSObject*, JSValuePtr thisValue
     }
     
     bool ok = true;
-    int32_t year = args.at(exec, 0).toInt32(exec, ok);
+    int32_t year = args.at(0).toInt32(exec, ok);
     if (!ok) {
         JSValuePtr result = jsNaN(exec);
         thisDateObj->setInternalValue(result);

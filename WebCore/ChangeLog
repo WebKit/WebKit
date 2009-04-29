@@ -1,3 +1,191 @@
+2009-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Beth Dakin.
+        
+        Removed scaffolding supporting dynamically converting between 32bit and
+        64bit value representations. 
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        (WebCore::JSCanvasRenderingContext2D::putImageData):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setData):
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::hasItem):
+        (WebCore::JSDOMApplicationCache::add):
+        (WebCore::JSDOMApplicationCache::remove):
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMStringListCustom.cpp:
+        (WebCore::JSDOMStringList::item):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::atob):
+        (WebCore::JSDOMWindow::btoa):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::setAttribute):
+        (WebCore::JSElement::setAttributeNode):
+        (WebCore::JSElement::setAttributeNS):
+        (WebCore::JSElement::setAttributeNodeNS):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        (WebCore::JSInspectorController::highlightDOMNode):
+        (WebCore::JSInspectorController::addResourceSourceToFrame):
+        (WebCore::JSInspectorController::addSourceToFrame):
+        (WebCore::JSInspectorController::getResourceDocumentNode):
+        (WebCore::JSInspectorController::search):
+        (WebCore::JSInspectorController::databaseTableNames):
+        (WebCore::JSInspectorController::setting):
+        (WebCore::JSInspectorController::setSetting):
+        (WebCore::JSInspectorController::wrapCallback):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::assign):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::startConversation):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::constructWebKitCSSMatrix):
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::constructWebKitPoint):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::importScripts):
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::addEventListener):
+        (WebCore::JSWorker::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        (WebCore::JSXMLHttpRequest::setRequestHeader):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::getResponseHeader):
+        (WebCore::JSXMLHttpRequest::overrideMimeType):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::importStylesheet):
+        (WebCore::JSXSLTProcessor::transformToFragment):
+        (WebCore::JSXSLTProcessor::transformToDocument):
+        (WebCore::JSXSLTProcessor::setParameter):
+        (WebCore::JSXSLTProcessor::getParameter):
+        (WebCore::JSXSLTProcessor::removeParameter):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/js/ScriptCallFrame.h:
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::initialize):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+
 2009-04-28  David Carson  <dacarson@apple.com>
 
         Reviewed by David Hyatt.

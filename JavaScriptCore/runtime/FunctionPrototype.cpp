@@ -106,7 +106,7 @@ JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisVal
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValuePtr array = args.at(exec, 1);
+    JSValuePtr array = args.at(1);
 
     ArgList applyArgs;
     if (!array.isUndefinedOrNull()) {
@@ -124,7 +124,7 @@ JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisVal
             return throwError(exec, TypeError);
     }
 
-    return call(exec, thisValue, callType, callData, args.at(exec, 0), applyArgs);
+    return call(exec, thisValue, callType, callData, args.at(0), applyArgs);
 }
 
 JSValuePtr functionProtoFuncCall(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
@@ -136,7 +136,7 @@ JSValuePtr functionProtoFuncCall(ExecState* exec, JSObject*, JSValuePtr thisValu
 
     ArgList callArgs;
     args.getSlice(1, callArgs);
-    return call(exec, thisValue, callType, callData, args.at(exec, 0), callArgs);
+    return call(exec, thisValue, callType, callData, args.at(0), callArgs);
 }
 
 } // namespace JSC

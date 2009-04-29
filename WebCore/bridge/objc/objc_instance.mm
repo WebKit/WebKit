@@ -158,7 +158,7 @@ JSValuePtr ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodL
         NSMutableArray* objcArgs = [NSMutableArray array];
         int count = args.size();
         for (int i = 0; i < count; i++) {
-            ObjcValue value = convertValueToObjcValue(exec, args.at(exec, i), ObjcObjectType);
+            ObjcValue value = convertValueToObjcValue(exec, args.at(i), ObjcObjectType);
             [objcArgs addObject:value.objectValue];
         }
         [invocation setArgument:&objcArgs atIndex:3];
@@ -173,7 +173,7 @@ JSValuePtr ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodL
             // types.
             ASSERT(objcValueType != ObjcInvalidType && objcValueType != ObjcVoidType);
 
-            ObjcValue value = convertValueToObjcValue(exec, args.at(exec, i-2), objcValueType);
+            ObjcValue value = convertValueToObjcValue(exec, args.at(i-2), objcValueType);
 
             switch (objcValueType) {
                 case ObjcObjectType:
@@ -269,7 +269,7 @@ JSValuePtr ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &arg
     NSMutableArray* objcArgs = [NSMutableArray array];
     unsigned count = args.size();
     for (unsigned i = 0; i < count; i++) {
-        ObjcValue value = convertValueToObjcValue(exec, args.at(exec, i), ObjcObjectType);
+        ObjcValue value = convertValueToObjcValue(exec, args.at(i), ObjcObjectType);
         [objcArgs addObject:value.objectValue];
     }
     [invocation setArgument:&objcArgs atIndex:2];

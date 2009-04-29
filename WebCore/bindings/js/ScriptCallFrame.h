@@ -50,7 +50,7 @@ namespace WebCore {
     // <https://bugs.webkit.org/show_bug.cgi?id=21180>
     class ScriptCallFrame  {
     public:
-        ScriptCallFrame(const JSC::UString& functionName, const JSC::UString& urlString, int lineNumber, JSC::ExecState*, const JSC::ArgList&, unsigned skipArgumentCount);
+        ScriptCallFrame(const JSC::UString& functionName, const JSC::UString& urlString, int lineNumber, const JSC::ArgList&, unsigned skipArgumentCount);
         ~ScriptCallFrame();
 
         const ScriptString& functionName() const { return m_functionName; }

@@ -135,14 +135,14 @@ static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocum
 
     size_t size = args.size();
 
-    UString firstString = args.at(exec, 0).toString(exec);
+    UString firstString = args.at(0).toString(exec);
     SegmentedString segmentedString = String(firstString);
     if (size != 1) {
         if (!size)
             segmentedString.clear();
         else {
             for (size_t i = 1; i < size; ++i) {
-                UString subsequentString = args.at(exec, i).toString(exec);
+                UString subsequentString = args.at(i).toString(exec);
                 segmentedString.append(SegmentedString(String(subsequentString)));
             }
         }

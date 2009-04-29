@@ -38,14 +38,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptCallFrame::ScriptCallFrame(const UString& functionName, const UString& urlString, int lineNumber, ExecState* exec, const ArgList& args, unsigned skipArgumentCount)
+ScriptCallFrame::ScriptCallFrame(const UString& functionName, const UString& urlString, int lineNumber, const ArgList& args, unsigned skipArgumentCount)
     : m_functionName(functionName)
     , m_sourceURL(urlString)
     , m_lineNumber(lineNumber)
 {
     size_t argumentCount = args.size();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        m_arguments.append(ScriptValue(args.at(exec, i)));
+        m_arguments.append(ScriptValue(args.at(i)));
 }
 
 ScriptCallFrame::~ScriptCallFrame()

@@ -53,8 +53,8 @@ JSValuePtr JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList
     if (!globalObject)
         return jsUndefined();
 
-    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(exec, 1)))
-        impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
+    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(1)))
+        impl()->addEventListener(args.at(0).toString(exec), listener.release(), args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }
@@ -65,8 +65,8 @@ JSValuePtr JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgL
     if (!globalObject)
         return jsUndefined();
 
-    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(exec, 1)))
-        impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
+    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(1)))
+        impl()->removeEventListener(args.at(0).toString(exec), listener, args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }

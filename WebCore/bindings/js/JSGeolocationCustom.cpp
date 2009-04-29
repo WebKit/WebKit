@@ -74,7 +74,7 @@ JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& arg
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;
-    JSObject* object = args.at(exec, 0).getObject();
+    JSObject* object = args.at(0).getObject();
     if (exec->hadException())
         return jsUndefined();
     if (!object) {
@@ -86,8 +86,8 @@ JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& arg
         positionCallback = JSCustomPositionCallback::create(object, frame);
     
     RefPtr<PositionErrorCallback> positionErrorCallback;
-    if (!args.at(exec, 1).isUndefinedOrNull()) {
-        JSObject* object = args.at(exec, 1).getObject();
+    if (!args.at(1).isUndefinedOrNull()) {
+        JSObject* object = args.at(1).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -98,8 +98,8 @@ JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& arg
     }
     
     RefPtr<PositionOptions> positionOptions;
-    if (!args.at(exec, 2).isUndefinedOrNull()) {
-        positionOptions = createPositionOptions(exec, args.at(exec, 2));
+    if (!args.at(2).isUndefinedOrNull()) {
+        positionOptions = createPositionOptions(exec, args.at(2));
         if (exec->hadException())
             return jsUndefined();
     }
@@ -113,7 +113,7 @@ JSValuePtr JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;
-    JSObject* object = args.at(exec, 0).getObject();
+    JSObject* object = args.at(0).getObject();
     if (exec->hadException())
         return jsUndefined();
     if (!object) {
@@ -125,8 +125,8 @@ JSValuePtr JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
         positionCallback = JSCustomPositionCallback::create(object, frame);
     
     RefPtr<PositionErrorCallback> positionErrorCallback;
-    if (!args.at(exec, 1).isUndefinedOrNull()) {
-        JSObject* object = args.at(exec, 1).getObject();
+    if (!args.at(1).isUndefinedOrNull()) {
+        JSObject* object = args.at(1).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -137,8 +137,8 @@ JSValuePtr JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
     }
     
     RefPtr<PositionOptions> positionOptions;
-    if (!args.at(exec, 2).isUndefinedOrNull()) {
-        positionOptions = createPositionOptions(exec, args.at(exec, 2));
+    if (!args.at(2).isUndefinedOrNull()) {
+        positionOptions = createPositionOptions(exec, args.at(2));
         if (exec->hadException())
             return jsUndefined();
     }

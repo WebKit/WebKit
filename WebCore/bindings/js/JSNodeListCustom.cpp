@@ -39,7 +39,7 @@ namespace WebCore {
 static JSValuePtr callNodeList(ExecState* exec, JSObject* function, JSValuePtr, const ArgList& args)
 {
     bool ok;
-    unsigned index = args.at(exec, 0).toString(exec).toUInt32(&ok);
+    unsigned index = args.at(0).toString(exec).toUInt32(&ok);
     if (!ok)
         return jsUndefined();
     return toJS(exec, static_cast<JSNodeList*>(function)->impl()->item(index));

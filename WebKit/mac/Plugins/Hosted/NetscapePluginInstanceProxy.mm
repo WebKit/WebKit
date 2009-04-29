@@ -1101,7 +1101,7 @@ RetainPtr<NSData *> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, 
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
 
     for (unsigned i = 0; i < args.size(); i++)
-        addValueToArray(array.get(), exec, args.at(exec, i));
+        addValueToArray(array.get(), exec, args.at(i));
 
     RetainPtr<NSData *> data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
     ASSERT(data);

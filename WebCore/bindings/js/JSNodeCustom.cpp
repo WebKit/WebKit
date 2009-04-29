@@ -71,40 +71,40 @@ typedef int ExpectionCode;
 JSValuePtr JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->insertBefore(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
+    bool ok = impl()->insertBefore(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(exec, 0);
+        return args.at(0);
     return jsNull();
 }
 
 JSValuePtr JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->replaceChild(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
+    bool ok = impl()->replaceChild(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(exec, 1);
+        return args.at(1);
     return jsNull();
 }
 
 JSValuePtr JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->removeChild(toNode(args.at(exec, 0)), ec);
+    bool ok = impl()->removeChild(toNode(args.at(0)), ec);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(exec, 0);
+        return args.at(0);
     return jsNull();
 }
 
 JSValuePtr JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->appendChild(toNode(args.at(exec, 0)), ec, true);
+    bool ok = impl()->appendChild(toNode(args.at(0)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args.at(exec, 0);
+        return args.at(0);
     return jsNull();
 }
 
@@ -114,8 +114,8 @@ JSValuePtr JSNode::addEventListener(ExecState* exec, const ArgList& args)
     if (!globalObject)
         return jsUndefined();
 
-    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(exec, 1)))
-        impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
+    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(1)))
+        impl()->addEventListener(args.at(0).toString(exec), listener.release(), args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }
@@ -126,8 +126,8 @@ JSValuePtr JSNode::removeEventListener(ExecState* exec, const ArgList& args)
     if (!globalObject)
         return jsUndefined();
 
-    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(exec, 1)))
-        impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
+    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(1)))
+        impl()->removeEventListener(args.at(0).toString(exec), listener, args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }

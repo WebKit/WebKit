@@ -40,12 +40,12 @@ namespace WebCore {
     */
     class ScheduledAction {
     public:
-        static ScheduledAction* create(JSC::ExecState*, const JSC::ArgList&);
+        static ScheduledAction* create(const JSC::ArgList&);
 
         void execute(ScriptExecutionContext*);
 
     private:
-        ScheduledAction(JSC::ExecState* exec, JSC::JSValuePtr function, const JSC::ArgList&);
+        ScheduledAction(JSC::JSValuePtr function, const JSC::ArgList&);
         ScheduledAction(const String& code)
             : m_code(code)
         {

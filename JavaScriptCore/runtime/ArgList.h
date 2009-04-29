@@ -85,10 +85,10 @@ namespace JSC {
         size_t size() const { return m_size; }
         bool isEmpty() const { return !m_size; }
 
-        JSValuePtr at(ExecState* exec, size_t i) const
+        JSValuePtr at(size_t i) const
         {
             if (i < m_size)
-                return m_buffer[i].jsValue(exec);
+                return m_buffer[i].jsValue();
             return jsUndefined();
         }
 

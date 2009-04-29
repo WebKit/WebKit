@@ -846,8 +846,8 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
         if (src1->index() == dstIndex
             && src1->isTemporary()
             && m_codeBlock->isConstantRegisterIndex(src2->index())
-            && m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue(m_scopeChain->globalObject()->globalExec()).isString()) {
-            const UString& value = asString(m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue(m_scopeChain->globalObject()->globalExec()))->value();
+            && m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue().isString()) {
+            const UString& value = asString(m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue())->value();
             if (value == "undefined") {
                 rewindUnaryOp();
                 emitOpcode(op_is_undefined);

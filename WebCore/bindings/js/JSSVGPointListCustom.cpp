@@ -77,13 +77,13 @@ JSValuePtr JSSVGPointList::initialize(ExecState* exec, const ArgList& args)
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();
     return finishSetter(exec, ec, context(), impl(),
-        listImp->initialize(PODListItem::copy(toSVGPoint(args.at(exec, 0))), ec));
+        listImp->initialize(PODListItem::copy(toSVGPoint(args.at(0))), ec));
 }
 
 JSValuePtr JSSVGPointList::getItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
-    unsigned index = args.at(exec, 0).toUInt32(exec, indexOk);
+    unsigned index = args.at(0).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -98,7 +98,7 @@ JSValuePtr JSSVGPointList::getItem(ExecState* exec, const ArgList& args)
 JSValuePtr JSSVGPointList::insertItemBefore(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
-    unsigned index = args.at(exec, 1).toUInt32(exec, indexOk);
+    unsigned index = args.at(1).toUInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -107,13 +107,13 @@ JSValuePtr JSSVGPointList::insertItemBefore(ExecState* exec, const ArgList& args
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();
     return finishSetter(exec, ec, context(), impl(),
-        listImp->insertItemBefore(PODListItem::copy(toSVGPoint(args.at(exec, 0))), index, ec));
+        listImp->insertItemBefore(PODListItem::copy(toSVGPoint(args.at(0))), index, ec));
 }
 
 JSValuePtr JSSVGPointList::replaceItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
-    unsigned index = args.at(exec, 1).toInt32(exec, indexOk);
+    unsigned index = args.at(1).toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -122,13 +122,13 @@ JSValuePtr JSSVGPointList::replaceItem(ExecState* exec, const ArgList& args)
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();
     return finishSetter(exec, ec, context(), impl(),
-        listImp->replaceItem(PODListItem::copy(toSVGPoint(args.at(exec, 0))), index, ec));
+        listImp->replaceItem(PODListItem::copy(toSVGPoint(args.at(0))), index, ec));
 }
 
 JSValuePtr JSSVGPointList::removeItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
-    unsigned index = args.at(exec, 0).toInt32(exec, indexOk);
+    unsigned index = args.at(0).toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -145,7 +145,7 @@ JSValuePtr JSSVGPointList::appendItem(ExecState* exec, const ArgList& args)
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();
     return finishSetter(exec, ec, context(), impl(),
-        listImp->appendItem(PODListItem::copy(toSVGPoint(args.at(exec, 0))), ec));
+        listImp->appendItem(PODListItem::copy(toSVGPoint(args.at(0))), ec));
 }
 
 }

@@ -134,7 +134,7 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
-    UString input = args.isEmpty() ? regExpConstructor->input() : args.at(exec, 0).toString(exec);
+    UString input = args.isEmpty() ? regExpConstructor->input() : args.at(0).toString(exec);
     if (input.isNull()) {
         throwError(exec, GeneralError, "No input to " + toString(exec) + ".");
         return false;

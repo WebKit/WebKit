@@ -48,8 +48,8 @@ static JSObject* constructWebKitPoint(ExecState* exec, JSObject*, const ArgList&
     float x = 0;
     float y = 0;
     if (args.size() >= 2) {
-        x = (float)args.at(exec, 0).toNumber(exec);
-        y = (float)args.at(exec, 1).toNumber(exec);
+        x = (float)args.at(0).toNumber(exec);
+        y = (float)args.at(1).toNumber(exec);
         if (isnan(x))
             x = 0;
         if (isnan(y))

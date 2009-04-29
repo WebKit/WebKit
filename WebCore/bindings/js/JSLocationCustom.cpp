@@ -267,7 +267,7 @@ JSValuePtr JSLocation::replace(ExecState* exec, const ArgList& args)
     if (!activeFrame->loader()->shouldAllowNavigation(frame))
         return jsUndefined();
 
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0).toString(exec)), true, true);
+    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(0).toString(exec)), true, true);
     return jsUndefined();
 }
 
@@ -301,7 +301,7 @@ JSValuePtr JSLocation::assign(ExecState* exec, const ArgList& args)
         return jsUndefined();
 
     // We want a new history item if this JS was called via a user gesture
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0).toString(exec)), !frame->script()->anyPageIsProcessingUserGesture(), false);
+    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(0).toString(exec)), !frame->script()->anyPageIsProcessingUserGesture(), false);
     return jsUndefined();
 }
 

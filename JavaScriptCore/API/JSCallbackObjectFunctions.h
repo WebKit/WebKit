@@ -282,7 +282,7 @@ JSObject* JSCallbackObject<Base>::construct(ExecState* exec, JSObject* construct
             int argumentCount = static_cast<int>(args.size());
             Vector<JSValueRef, 16> arguments(argumentCount);
             for (int i = 0; i < argumentCount; i++)
-                arguments[i] = toRef(args.at(exec, i));
+                arguments[i] = toRef(args.at(i));
             JSLock::DropAllLocks dropAllLocks(exec);
             JSValueRef exception = 0;
             JSObject* result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), &exception));
@@ -337,7 +337,7 @@ JSValuePtr JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObjec
             int argumentCount = static_cast<int>(args.size());
             Vector<JSValueRef, 16> arguments(argumentCount);
             for (int i = 0; i < argumentCount; i++)
-                arguments[i] = toRef(args.at(exec, i));
+                arguments[i] = toRef(args.at(i));
             JSLock::DropAllLocks dropAllLocks(exec);
             JSValueRef exception = 0;
             JSValuePtr result = toJS(callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception));

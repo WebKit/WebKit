@@ -81,18 +81,18 @@ JSValuePtr JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(args.at(exec, 1).toString(exec));
-    String method = args.at(exec, 0).toString(exec);
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(args.at(1).toString(exec));
+    String method = args.at(0).toString(exec);
     bool async = true;
     if (args.size() >= 3)
-        async = args.at(exec, 2).toBoolean(exec);
+        async = args.at(2).toBoolean(exec);
 
     ExceptionCode ec = 0;
-    if (args.size() >= 4 && !args.at(exec, 3).isUndefined()) {
-        String user = valueToStringWithNullCheck(exec, args.at(exec, 3));
+    if (args.size() >= 4 && !args.at(3).isUndefined()) {
+        String user = valueToStringWithNullCheck(exec, args.at(3));
 
-        if (args.size() >= 5 && !args.at(exec, 4).isUndefined()) {
-            String password = valueToStringWithNullCheck(exec, args.at(exec, 4));
+        if (args.size() >= 5 && !args.at(4).isUndefined()) {
+            String password = valueToStringWithNullCheck(exec, args.at(4));
             impl()->open(method, url, async, user, password, ec);
         } else
             impl()->open(method, url, async, user, ec);
@@ -109,7 +109,7 @@ JSValuePtr JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& ar
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    impl()->setRequestHeader(args.at(exec, 0).toString(exec), args.at(exec, 1).toString(exec), ec);
+    impl()->setRequestHeader(args.at(0).toString(exec), args.at(1).toString(exec), ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }
@@ -120,7 +120,7 @@ JSValuePtr JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         impl()->send(ec);
     else {
-        JSValuePtr val = args.at(exec, 0);
+        JSValuePtr val = args.at(0);
         if (val.isUndefinedOrNull())
             impl()->send(ec);
         else if (val.isObject(&JSDocument::s_info))
@@ -149,7 +149,7 @@ JSValuePtr JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& a
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    JSValuePtr header = jsStringOrNull(exec, impl()->getResponseHeader(args.at(exec, 0).toString(exec), ec));
+    JSValuePtr header = jsStringOrNull(exec, impl()->getResponseHeader(args.at(0).toString(exec), ec));
     setDOMException(exec, ec);
     return header;
 }
@@ -159,7 +159,7 @@ JSValuePtr JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& ar
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    impl()->overrideMimeType(args.at(exec, 0).toString(exec));
+    impl()->overrideMimeType(args.at(0).toString(exec));
     return jsUndefined();
 }
 
@@ -168,10 +168,10 @@ JSValuePtr JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& ar
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
         return jsUndefined();
-    RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(exec, 1));
+    RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(args.at(1));
     if (!listener)
         return jsUndefined();
-    impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), listener.release(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -180,10 +180,10 @@ JSValuePtr JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList&
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
         return jsUndefined();
-    JSEventListener* listener = globalObject->findJSEventListener(args.at(exec, 1));
+    JSEventListener* listener = globalObject->findJSEventListener(args.at(1));
     if (!listener)
         return jsUndefined();
-    impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), listener, args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

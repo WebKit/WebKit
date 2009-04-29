@@ -319,8 +319,8 @@ void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValu
 // ECMA 15.10.4
 JSObject* constructRegExp(ExecState* exec, const ArgList& args)
 {
-    JSValuePtr arg0 = args.at(exec, 0);
-    JSValuePtr arg1 = args.at(exec, 1);
+    JSValuePtr arg0 = args.at(0);
+    JSValuePtr arg1 = args.at(1);
 
     if (arg0.isObject(&RegExpObject::info)) {
         if (!arg1.isUndefined())

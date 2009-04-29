@@ -60,16 +60,16 @@ static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* construct
 
     ExceptionCode ec = 0;
     RefPtr<Text> text = document->createTextNode("");
-    if (!args.at(exec, 0).isUndefined())
-        text->setData(args.at(exec, 0).toString(exec), ec);
+    if (!args.at(0).isUndefined())
+        text->setData(args.at(0).toString(exec), ec);
     if (ec == 0)
         element->appendChild(text.release(), ec);
-    if (ec == 0 && !args.at(exec, 1).isUndefined())
-        element->setValue(args.at(exec, 1).toString(exec));
+    if (ec == 0 && !args.at(1).isUndefined())
+        element->setValue(args.at(1).toString(exec));
     if (ec == 0)
-        element->setDefaultSelected(args.at(exec, 2).toBoolean(exec));
+        element->setDefaultSelected(args.at(2).toBoolean(exec));
     if (ec == 0)
-        element->setSelected(args.at(exec, 3).toBoolean(exec));
+        element->setSelected(args.at(3).toBoolean(exec));
 
     if (ec) {
         setDOMException(exec, ec);

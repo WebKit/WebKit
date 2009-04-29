@@ -335,8 +335,8 @@ JSValuePtr JSDOMWindow::open(ExecState* exec, const ArgList& args)
 
     Page* page = frame->page();
 
-    String urlString = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    AtomicString frameName = args.at(exec, 1).isUndefinedOrNull() ? "_blank" : AtomicString(args.at(exec, 1).toString(exec));
+    String urlString = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
+    AtomicString frameName = args.at(1).isUndefinedOrNull() ? "_blank" : AtomicString(args.at(1).toString(exec));
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
@@ -371,7 +371,7 @@ JSValuePtr JSDOMWindow::open(ExecState* exec, const ArgList& args)
     }
 
     // In the case of a named frame or a new window, we'll use the createWindow() helper
-    WindowFeatures windowFeatures(valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2)));
+    WindowFeatures windowFeatures(valueToStringWithUndefinedOrNullCheck(exec, args.at(2)));
     FloatRect windowRect(windowFeatures.xSet ? windowFeatures.x : 0, windowFeatures.ySet ? windowFeatures.y : 0,
                          windowFeatures.widthSet ? windowFeatures.width : 0, windowFeatures.heightSet ? windowFeatures.height : 0);
     DOMWindow::adjustWindowRect(screenAvailableRect(page ? page->mainFrame()->view() : 0), windowRect, windowRect);
@@ -400,9 +400,9 @@ JSValuePtr JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     if (!DOMWindow::canShowModalDialogNow(frame) || !DOMWindow::allowPopUp(activeFrame))
         return jsUndefined();
 
-    String url = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    JSValuePtr dialogArgs = args.at(exec, 1);
-    String featureArgs = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2));
+    String url = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
+    JSValuePtr dialogArgs = args.at(1);
+    String featureArgs = valueToStringWithUndefinedOrNullCheck(exec, args.at(2));
 
     HashMap<String, String> features;
     DOMWindow::parseModalDialogFeatures(featureArgs, features);
@@ -477,14 +477,14 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     DOMWindow* window = impl();
 
     DOMWindow* source = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-    String message = args.at(exec, 0).toString(exec);
+    String message = args.at(0).toString(exec);
 
     if (exec->hadException())
         return jsUndefined();
 
-    MessagePort* messagePort = (args.size() == 2) ? 0 : toMessagePort(args.at(exec, 1));
+    MessagePort* messagePort = (args.size() == 2) ? 0 : toMessagePort(args.at(1));
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, (args.size() == 2) ? 1 : 2));
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at((args.size() == 2) ? 1 : 2));
     if (exec->hadException())
         return jsUndefined();
 
@@ -497,19 +497,19 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(args);
     if (!action)
         return jsUndefined();
-    int delay = args.at(exec, 1).toInt32(exec);
+    int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setTimeout(action, delay));
 }
 
 JSValuePtr JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(args);
     if (!action)
         return jsUndefined();
-    int delay = args.at(exec, 1).toInt32(exec);
+    int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setInterval(action, delay));
 }
 
@@ -518,7 +518,7 @@ JSValuePtr JSDOMWindow::atob(ExecState* exec, const ArgList& args)
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    JSValuePtr v = args.at(exec, 0);
+    JSValuePtr v = args.at(0);
     if (v.isNull())
         return jsEmptyString(exec);
 
@@ -544,7 +544,7 @@ JSValuePtr JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    JSValuePtr v = args.at(exec, 0);
+    JSValuePtr v = args.at(0);
     if (v.isNull())
         return jsEmptyString(exec);
 
@@ -570,8 +570,8 @@ JSValuePtr JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    if (RefPtr<JSEventListener> listener = findOrCreateJSEventListener(args.at(exec, 1)))
-        impl()->addEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener.release(), args.at(exec, 2).toBoolean(exec));
+    if (RefPtr<JSEventListener> listener = findOrCreateJSEventListener(args.at(1)))
+        impl()->addEventListener(AtomicString(args.at(0).toString(exec)), listener.release(), args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }
@@ -582,8 +582,8 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
     if (!frame)
         return jsUndefined();
 
-    if (JSEventListener* listener = findJSEventListener(args.at(exec, 1)))
-        impl()->removeEventListener(AtomicString(args.at(exec, 0).toString(exec)), listener, args.at(exec, 2).toBoolean(exec));
+    if (JSEventListener* listener = findJSEventListener(args.at(1)))
+        impl()->removeEventListener(AtomicString(args.at(0).toString(exec)), listener, args.at(2).toBoolean(exec));
 
     return jsUndefined();
 }

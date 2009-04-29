@@ -156,7 +156,7 @@ JSArray::JSArray(PassRefPtr<Structure> structure, unsigned initialLength)
     checkConsistency();
 }
 
-JSArray::JSArray(ExecState* exec, PassRefPtr<Structure> structure, const ArgList& list)
+JSArray::JSArray(PassRefPtr<Structure> structure, const ArgList& list)
     : JSObject(structure)
 {
     unsigned length = list.size();
@@ -173,7 +173,7 @@ JSArray::JSArray(ExecState* exec, PassRefPtr<Structure> structure, const ArgList
     size_t i = 0;
     ArgList::const_iterator end = list.end();
     for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        storage->m_vector[i] = (*it).jsValue(exec);
+        storage->m_vector[i] = (*it).jsValue();
 
     m_storage = storage;
 
@@ -1062,12 +1062,12 @@ JSArray* constructArray(ExecState* exec, JSValuePtr singleItemValue)
 {
     ArgList values;
     values.append(singleItemValue);
-    return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayStructure(), values);
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
 }
 
 JSArray* constructArray(ExecState* exec, const ArgList& values)
 {
-    return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayStructure(), values);
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
 }
 
 } // namespace JSC

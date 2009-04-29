@@ -44,8 +44,8 @@ JSValuePtr JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
  
-    float x = args.at(exec, 0).toFloat(exec);
-    float y = args.at(exec, 1).toFloat(exec);
+    float x = args.at(0).toFloat(exec);
+    float y = args.at(1).toFloat(exec);
 
     JSC::JSValuePtr result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
 

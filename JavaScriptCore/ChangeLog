@@ -1,3 +1,185 @@
+2009-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Beth Dakin.
+        
+        Removed scaffolding supporting dynamically converting between 32bit and
+        64bit value representations. 
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::construct):
+        (JSC::::call):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getConstant):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::thisValue):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * interpreter/Register.h:
+        (JSC::Register::):
+        (JSC::Register::Register):
+        (JSC::Register::jsValue):
+        (JSC::Register::marked):
+        (JSC::Register::mark):
+        (JSC::Register::i):
+        (JSC::Register::activation):
+        (JSC::Register::arguments):
+        (JSC::Register::callFrame):
+        (JSC::Register::codeBlock):
+        (JSC::Register::function):
+        (JSC::Register::propertyNameIterator):
+        (JSC::Register::scopeChain):
+        (JSC::Register::vPC):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_call_NotJSFunction):
+        (JSC::JITStubs::cti_op_load_varargs):
+        (JSC::JITStubs::cti_op_call_eval):
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionRun):
+        (functionLoad):
+        * runtime/ArgList.h:
+        (JSC::ArgList::at):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToRegisters):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateParse):
+        (JSC::dateUTC):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::fillStructuresUsingTimeArgs):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructError):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::constructArray):
+        * runtime/JSArray.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncIsNaN):
+        (JSC::globalFuncIsFinite):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::globalFuncJSCPrint):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncAbs):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCeil):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncFloor):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        (JSC::mathProtoFuncRound):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::construct):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        (JSC::callNumberConstructor):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        (JSC::stringFromCharCode):
+        (JSC::constructWithStringConstructor):
+        (JSC::callStringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+
 2009-04-28  David Kilzer  <ddkilzer@apple.com>
 
         A little more hardening for UString
