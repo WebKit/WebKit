@@ -1,3 +1,15 @@
+2009-04-28  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6834830>
+
+        Make sure we cover the two possible values reported by event.total that are playback engine
+        specific.
+
+        * media/progress-event-total-expected.txt: Match the new test.
+        * media/progress-event-total.html: Test the two values.
+
 2009-04-28  Timothy Hatcher  <timothy@apple.com>
 
         Rename -[DOMRange lineBoxRects] to -[DOMRange textRects] and change how it

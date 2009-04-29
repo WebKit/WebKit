@@ -18,7 +18,11 @@
 
         testExpected("event.lengthComputable", true);
         testExpected("event.loaded", 0, '>');
-        testExpected("event.total", 188483);
+        var allowedTotalBytes = [188483, 192844];
+        if (event.total == allowedTotalBytes[0] || event.total == allowedTotalBytes[1])
+            consoleWrite("SUCCESS: event.total is " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + " (Playback engine specific)");
+        else
+            consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + ")");
         endTest();
     }
 
