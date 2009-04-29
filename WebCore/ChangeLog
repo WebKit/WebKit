@@ -1,3 +1,14 @@
+2009-04-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reveal current execution line once SourceFrame content is loaded. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=25448
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+
 2009-04-29  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Fraser.

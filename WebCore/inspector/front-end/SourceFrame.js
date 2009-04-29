@@ -233,6 +233,8 @@ WebInspector.SourceFrame.prototype = {
         this._addExistingMessagesToSource();
         this._addExistingBreakpointsToSource();
         this._updateExecutionLine();
+        if (this._executionLine)
+            this.revealLine(this._executionLine);
 
         if (this.autoSizesToFitContentHeight)
             this.sizeToFitContentHeight();
