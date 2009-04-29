@@ -1,3 +1,15 @@
+2009-04-28  David Carson  <dacarson@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Restore alignment to device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=25458
+
+        Adjust the adjusted destination rect to be device pixel aligned.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2009-04-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
