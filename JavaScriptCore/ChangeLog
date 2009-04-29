@@ -1,3 +1,17 @@
+2009-04-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bring back r42969, this time with correct codegen
+
+        Add logic to the codegen for right shift to avoid jumping to a helper function
+        when shifting a small floating point value.
+
+        * jit/JITArithmetic.cpp:
+        (isSSE2Present):
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+
 2009-04-28  Kevin Ollivier <kevino@theolliviers.com>
 
         wxMSW build fix. Switch JSCore build back to static. 
