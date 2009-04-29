@@ -28,6 +28,7 @@
 
 @interface DOMNode (DOMNodeExtensionsPendingPublic)
 - (NSImage *)renderedImage;
+- (NSArray *)textRects;
 @end
 
 // FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
@@ -44,7 +45,8 @@
 
 @interface DOMRange (DOMRangeExtensions)
 - (NSRect)boundingBox;
-- (NSArray *)lineBoxRects;
+- (NSArray *)lineBoxRects; // Deprecated. Use textRects instead.
+- (NSArray *)textRects;
 @end
 
 @interface DOMElement (WebPrivate)

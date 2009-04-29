@@ -1026,35 +1026,28 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
 void RenderObject::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool)
 {
     if (!firstChild()) {
-        if ((isInline() || isAnonymousBlock())) {
-            FloatPoint absPos = localToAbsolute(FloatPoint());
-            absoluteRects(rects, absPos.x(), absPos.y());
-        }
+        FloatPoint absPos = localToAbsolute(FloatPoint());
+        absoluteRects(rects, absPos.x(), absPos.y());
         return;
     }
 
     unsigned offset = start;
     for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset) {
-        if (child->isText() || child->isInline() || child->isAnonymousBlock()) {
-            FloatPoint absPos = child->localToAbsolute(FloatPoint());
-            child->absoluteRects(rects, absPos.x(), absPos.y());
-        }
+        FloatPoint absPos = child->localToAbsolute(FloatPoint());
+        child->absoluteRects(rects, absPos.x(), absPos.y());
     }
 }
 
 void RenderObject::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool)
 {
     if (!firstChild()) {
-        if (isInline() || isAnonymousBlock())
-            absoluteQuads(quads);
+        absoluteQuads(quads);
         return;
     }
 
     unsigned offset = start;
-    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset) {
-        if (child->isText() || child->isInline() || child->isAnonymousBlock())
-            child->absoluteQuads(quads);
-    }
+    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset)
+        child->absoluteQuads(quads);
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)

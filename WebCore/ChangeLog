@@ -1,5 +1,35 @@
 2009-04-28  Timothy Hatcher  <timothy@apple.com>
 
+        Rename -[DOMRange lineBoxRects] to -[DOMRange textRects] and change how it
+        collects the individual rects, making sure to only include RenderText.
+
+        <rdar://problem/6810061>
+
+        Reviewed by Sam Weinig.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode textRects]): Added. Make a Range and call textRects.
+        (-[DOMNode lineBoxRects]): Call textRects method.
+        (-[DOMRange textRects]): Call Range::textRects.
+        (-[DOMRange lineBoxRects]): Call textRects method.
+        * bindings/objc/DOMPrivate.h: Add the new methods and a comment
+        about lineBoxRects being deprecated.
+        * dom/Range.cpp:
+        (WebCore::Range::boundingBox): Call textRects (renamed from addLineBoxRects).
+        (WebCore::Range::textRects): Renamed from addLineBoxRects. Iterate over the
+        nodes instead of the RenderObjects to correctly account for offsets. Also
+        only call absoluteRectsForRange on RenderText.
+        * dom/Range.h: Renamed addLineBoxRects to textRects.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionTextRects): Call textRects (renamed from addLineBoxRects).
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRectsForRange): Remove if conditions that made this
+        function very specific for the lineBoxRects API. These functions are still used
+        by the InspectorController, and this change improves what the Inspector shows.
+        (WebCore::RenderObject::absoluteQuadsForRange): Ditto.
+
+2009-04-28  Timothy Hatcher  <timothy@apple.com>
+
         Remove the topLevel boolean argument from absolute{Rects,Quads}.
         This argument was default to true and no one ever passed false.
 

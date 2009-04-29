@@ -1203,7 +1203,7 @@ void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleConte
     RefPtr<Range> selectedRange = selection()->toNormalizedRange();
 
     Vector<IntRect> intRects;
-    selectedRange->addLineBoxRects(intRects, true);
+    selectedRange->textRects(intRects, true);
 
     unsigned size = intRects.size();
     FloatRect visibleContentRect = m_view->visibleContentRect();

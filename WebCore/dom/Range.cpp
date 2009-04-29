@@ -1585,34 +1585,29 @@ IntRect Range::boundingBox()
 {
     IntRect result;
     Vector<IntRect> rects;
-    addLineBoxRects(rects);
+    textRects(rects);
     const size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         result.unite(rects[i]);
     return result;
 }
 
-void Range::addLineBoxRects(Vector<IntRect>& rects, bool useSelectionHeight)
+void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight)
 {
     if (!m_start.container() || !m_end.container())
         return;
 
-    RenderObject* start = m_start.container()->renderer();
-    RenderObject* end = m_end.container()->renderer();
-    if (!start || !end)
-        return;
+    Node* startContainer = m_start.container();
+    Node* endContainer = m_end.container();
 
-    RenderObject* stop = end->childAt(m_end.offset());
-    if (!stop)
-        stop = end->nextInPreOrderAfterChildren();
-    
-    for (RenderObject* r = start; r && r != stop; r = r->nextInPreOrder()) {
-        // only ask leaf render objects for their line box rects
-        if (!r->firstChild()) {
-            int startOffset = r == start ? m_start.offset() : 0;
-            int endOffset = r == end ? m_end.offset() : INT_MAX;
-            r->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight);
-        }
+    Node* stopNode = pastLastNode();
+    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+        RenderObject* r = node->renderer();
+        if (!r || !r->isText())
+            continue;
+        int startOffset = node == startContainer ? m_start.offset() : 0;
+        int endOffset = node == endContainer ? m_end.offset() : INT_MAX;
+        r->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight);
     }
 }
 

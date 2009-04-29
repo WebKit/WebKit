@@ -359,16 +359,23 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     return renderer->absoluteBoundingBoxRect();
 }
 
-- (NSArray *)lineBoxRects
+- (NSArray *)textRects
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
     core(self)->document()->updateLayoutIgnorePendingStylesheets();
-    WebCore::RenderObject* renderer = core(self)->renderer();
-    if (!renderer)
+    if (!core(self)->renderer())
         return nil;
+    RefPtr<Range> range = Range::create(core(self)->document());
+    WebCore::ExceptionCode ec = 0;
+    range->selectNodeContents(core(self), ec);
     Vector<WebCore::IntRect> rects;
-    renderer->absoluteRectsForRange(rects);
+    range->textRects(rects);
     return kit(rects);
+}
+
+- (NSArray *)lineBoxRects
+{
+    return [self textRects];
 }
 
 @end
@@ -396,13 +403,19 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     return core(self)->boundingBox();
 }
 
-- (NSArray *)lineBoxRects
+- (NSArray *)textRects
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     Vector<WebCore::IntRect> rects;
     core(self)->ownerDocument()->updateLayoutIgnorePendingStylesheets();
-    core(self)->addLineBoxRects(rects);
+    core(self)->textRects(rects);
     return kit(rects);
+}
+
+- (NSArray *)lineBoxRects
+{
+    // FIXME: Remove this once all clients stop using it and we drop Leopard support.
+    return [self textRects];
 }
 
 @end
