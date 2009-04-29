@@ -1,3 +1,18 @@
+2009-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        Added missing pixel test results.
+
+        * platform/mac/fast/css-generated-content/beforeAfter-interdocument-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/beforeAfter-interdocument-expected.png: Added.
+        * platform/mac/fast/table/cell-coalescing-expected.checksum: Added.
+        * platform/mac/fast/table/cell-coalescing-expected.png: Added.
+        * platform/mac/webarchive/adopt-attribute-styled-body-webarchive-expected.checksum: Added.
+        * platform/mac/webarchive/adopt-attribute-styled-body-webarchive-expected.png: Added.
+        * platform/mac/webarchive/adopt-attribute-styled-node-webarchive-expected.checksum: Added.
+        * platform/mac/webarchive/adopt-attribute-styled-node-webarchive-expected.png: Added.
+        * platform/mac/webarchive/adopt-inline-styled-node-webarchive-expected.checksum: Added.
+        * platform/mac/webarchive/adopt-inline-styled-node-webarchive-expected.png: Added.
+
 2009-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
