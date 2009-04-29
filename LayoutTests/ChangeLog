@@ -1,3 +1,19 @@
+2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add a new accessibility role for list items. Part of
+        http://bugs.webkit.org/show_id.cgi?id=20013
+
+        * platform/win/accessibility: Added a new directory to add
+        windows specific test case.
+        * platform/win/accessibility/listitem-role-expected.txt: Added. This 
+        test case is added to check if role attribute of list item elements is
+        populated correctly or not.
+        * platform/win/accessibility/listitem-role.html: Added. This file
+        contains the expected output for the new test case that is added in 
+        this fix.
+
 2009-04-29  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

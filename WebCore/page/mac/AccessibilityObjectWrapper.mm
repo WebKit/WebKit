@@ -1011,7 +1011,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
 #endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
-        { DefinitionListTermRole, NSAccessibilityGroupRole }
+        { DefinitionListTermRole, NSAccessibilityGroupRole },
+        { ListItemRole, NSAccessibilityGroupRole }
         
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
