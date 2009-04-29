@@ -872,7 +872,7 @@ static bool runningTigerMail()
             frame->view()->resize([self bounds].size.width, [self bounds].size.height);
         frame->view()->setNeedsLayout();
         [self setNeedsDisplay:YES];
-        _private->lastLayoutSize = [[self superview] bounds].size;
+        _private->lastLayoutSize = [self bounds].size;
     }
 }
 
