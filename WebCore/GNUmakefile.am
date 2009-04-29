@@ -1221,6 +1221,8 @@ webcore_sources += \
 	WebCore/page/Page.h \
 	WebCore/page/PageGroup.cpp \
 	WebCore/page/PageGroup.h \
+  WebCore/page/PageGroupLoadDeferrer.cpp \
+  WebCore/page/PageGroupLoadDeferrer.h \
 	WebCore/page/PositionCallback.h \
 	WebCore/page/PositionError.h \
 	WebCore/page/PositionErrorCallback.h \

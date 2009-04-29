@@ -730,6 +730,7 @@ This file contains the list of files needed to build WebCore.
         page/NavigatorBase.cpp
         page/Page.cpp
         page/PageGroup.cpp
+        page/PageGroupLoadDeferrer.cpp
         page/Screen.cpp
         page/SecurityOrigin.cpp
         page/Settings.cpp

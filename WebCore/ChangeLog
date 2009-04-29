@@ -1,3 +1,21 @@
+2009-04-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Extract PageGroupLoadDeferrer from Chrome.cpp
+
+        * GNUmakefile.am: added PageGroupLoadDeferrer
+        * WebCore.pro: ditto
+        * WebCore.scons: ditto
+        * WebCore.vcproj/WebCore.vcproj: ditto
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * WebCoreSources.bkl: ditto
+        * page/Chrome.cpp: PageGroupLoadDeferrer impl moved to a separate class.
+        * page/PageGroupLoadDeferrer.cpp: Added.
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        * page/PageGroupLoadDeferrer.h: Added.
+
 2009-04-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.

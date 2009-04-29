@@ -35,7 +35,7 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "Page.h"
-#include "PageGroup.h"
+#include "PageGroupLoadDeferrer.h"
 #include "ResourceHandle.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -53,14 +53,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 using namespace std;
-
-class PageGroupLoadDeferrer : Noncopyable {
-public:
-    PageGroupLoadDeferrer(Page*, bool deferSelf);
-    ~PageGroupLoadDeferrer();
-private:
-    Vector<RefPtr<Frame>, 16> m_deferredFrames;
-};
 
 Chrome::Chrome(Page* page, ChromeClient* client)
     : m_page(page)
@@ -441,46 +433,6 @@ bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, Scro
 bool ChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
 {
     return false;
-}
-
-// --------
-
-PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
-{
-    const HashSet<Page*>& pages = page->group().pages();
-
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
-        Page* otherPage = *it;
-        if ((deferSelf || otherPage != page)) {
-            if (!otherPage->defersLoading())
-                m_deferredFrames.append(otherPage->mainFrame());
-
-#if !PLATFORM(MAC)
-            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                frame->document()->suspendActiveDOMObjects();
-#endif
-        }
-    }
-
-    size_t count = m_deferredFrames.size();
-    for (size_t i = 0; i < count; ++i)
-        if (Page* page = m_deferredFrames[i]->page())
-            page->setDefersLoading(true);
-}
-
-PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
-{
-    for (size_t i = 0; i < m_deferredFrames.size(); ++i) {
-        if (Page* page = m_deferredFrames[i]->page()) {
-            page->setDefersLoading(false);
-
-#if !PLATFORM(MAC)
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                frame->document()->resumeActiveDOMObjects();
-#endif
-        }
-    }
 }
 
 

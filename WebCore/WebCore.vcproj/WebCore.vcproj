@@ -2181,6 +2181,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PageGroupLoadDeferrer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageGroupLoadDeferrer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Plugin.h"
 				>
 			</File>
