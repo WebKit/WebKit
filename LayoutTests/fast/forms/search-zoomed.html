@@ -22,7 +22,11 @@
     <script>
         if (window.eventSender) {
             var target = document.getElementById("target");
-            eventSender.mouseMoveTo(174, 84);
+            var x = target.offsetLeft + target.offsetWidth - 5;
+            var y = target.offsetTop + target.offsetHeight - 5;
+            x = x * 1.2;
+            y = y * 1.2;
+            eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");

@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 526x18
+          text run at (0,0) width 526: "These demonstrate 11475: the '\\n's at the end of the fragment should be unrendered."
+        RenderBR {BR} at (526,14) size 0x0
+      RenderBlock {DIV} at (0,18) size 784x36
+        RenderText {#text} at (31,0) size 725x36
+          text run at (31,0) width 721: "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail"
+          text run at (752,0) width 4: " "
+          text run at (359,18) width 65: "assertions."
+      RenderBlock {DIV} at (0,54) size 784x23
+        RenderBlock {DIV} at (0,0) size 784x23
+          RenderTextControl {INPUT} at (310,2) size 152x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (464,2) size 4x18
+            text run at (464,2) width 4: " "
+          RenderInline {SPAN} at (0,0) size 8x18
+            RenderText {#text} at (468,2) size 8x18
+              text run at (468,2) width 8: "x"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,77) size 784x0
+layer at (321,67) size 146x13
+  RenderBlock {DIV} at (3,3) size 146x13
+caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

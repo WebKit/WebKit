@@ -71,6 +71,8 @@ void SimpleFontData::initGDIFont()
      m_descent = textMetrics.tmDescent;
      m_lineGap = textMetrics.tmExternalLeading;
      m_lineSpacing = m_ascent + m_descent + m_lineGap;
+     m_avgCharWidth = textMetrics.tmAveCharWidth;
+     m_maxCharWidth = textMetrics.tmMaxCharWidth;
      m_xHeight = m_ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 
      GLYPHMETRICS gm;

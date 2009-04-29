@@ -1,3 +1,30 @@
+2009-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Make textarea and text input metrics more closely match IEs.
+
+        textarea-metrics.js tests the client/scroll/offset width and height
+        of textareas with various CSS applied to them in both quirks
+        and strict mode.
+
+        svg-fonts-in-text-controls tests that the average and max character
+        width of an svg font are correctly retrieved.
+
+        text-control-intrinsic-widths tests the widths of inputs and textareas with
+        different size/cols and different fonts set.
+        
+        Also, there are 3 tests that have Mac-specific metrics in their asserts. 
+        The results are actually correct for Windows, so I've added them 
+        to the Skipped list and promise I'll fix them in the next couple days.
+        It's just hard to manage a change that requires updating such a large
+        number of test expectations. The three tests are:
+          fast/forms/textarea-appearance-wrap.html
+          fast/forms/textarea-hard-linewrap.html
+          fast/replaced/table-percent-height.html
+        
+        Excluding list of updated results as the list is so long.
+
 2009-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -67,6 +67,8 @@ void SimpleFontData::platformInit()
     m_xHeight = m_ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
     m_lineGap = lroundf(textMetrics.tmExternalLeading * metricsMultiplier);
     m_lineSpacing = m_ascent + m_descent + m_lineGap;
+    m_avgCharWidth = lroundf(textMetrics.tmAveCharWidth * metricsMultiplier);
+    m_maxCharWidth = lroundf(textMetrics.tmMaxCharWidth * metricsMultiplier);
 
     OUTLINETEXTMETRIC metrics;
     if (GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics) > 0) {
@@ -86,6 +88,11 @@ void SimpleFontData::platformInit()
 
     RestoreDC(hdc, -1);
     ReleaseDC(0, hdc);
+}
+
+void SimpleFontData::platformCharWidthInit()
+{
+    // charwidths are set in platformInit.
 }
 
 void SimpleFontData::platformDestroy()

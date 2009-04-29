@@ -40,7 +40,7 @@ if (document.URL.substring(0, 4) == "file") {
         
         // wrap = hard
         result = unescape(urlString.substring(index1, index2 - 1));
-        expectedResult = unescape("ta_WrapHard=1234567%0D%0A89");
+        expectedResult = unescape("ta_WrapHard=123456%0D%0A789");
         if (result == expectedResult)
             log("<p>wrap=hard : Success</p>");
         else
@@ -64,7 +64,7 @@ if (document.URL.substring(0, 4) == "file") {
     
         // wrap = hard - RTL text
         result = unescape(urlString.substring(index4, index5 - 1));
-        expectedResult = unescape("ta_WrapHardRTL=&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;&#1488;&#1489;%0D%0A&#1490;&#1488;&#1489;&#1490;");
+        expectedResult = unescape("ta_WrapHardRTL=&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;%0D%0A&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;");
         if (result == expectedResult)
             log("<p>wrap=hard rtl text: Success</p>");
         else
@@ -72,7 +72,7 @@ if (document.URL.substring(0, 4) == "file") {
 
         // wrap = hard, mixed rtl and ltr text
         result = unescape(urlString.substring(index5, index6 - 1));
-        expectedResult = unescape("ta_WrapHardBidi=abc&#1488;&#1489;&#1490;&#1488;&#1489;%0D%0A&#1490;abc");
+        expectedResult = unescape("ta_WrapHardBidi=abc&#1488;&#1489;&#1490;%0D%0A&#1488;&#1489;&#1490;abc");
         if (result == expectedResult)
             log("<p>wrap=hard mixed rtl and ltr text: Success</p>");
         else
@@ -80,7 +80,7 @@ if (document.URL.substring(0, 4) == "file") {
 
         // wrap = hard, visibility:hidden
         result = unescape(urlString.substring(index6, index7 - 1));
-        expectedResult = unescape("ta_WrapHardHidden=1234567%0D%0A89");
+        expectedResult = unescape("ta_WrapHardHidden=123456%0D%0A789");
         if (result == expectedResult)
             log("<p>wrap=hard visibility:hidden: Success</p>");
         else

@@ -274,6 +274,41 @@ void SimpleFontData::platformInit()
         m_xHeight = [m_font.font() xHeight];
 }
 
+void SimpleFontData::platformCharWidthInit()
+{
+    m_avgCharWidth = 0.f;
+
+    // Calculate avgCharWidth according to http://developer.apple.com/textfonts/TTRefMan/RM06/Chap6OS2.html
+    // We can try grabbing it out of the OS/2 table or via ATSFontGetHorizontalMetrics, but
+    // ATSFontGetHorizontalMetrics never seems to return a non-zero value and the OS/2 table
+    // contains zero for a large number of fonts.
+    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
+    if (glyphPageZero) {
+        static int weights[] = { 64, 14, 27, 35, 100, 20, 14, 42, 63, 3, 6, 35, 20, 56, 56, 17, 4, 49, 56, 71, 31, 10, 18, 3, 18, 2, 166 };
+        int numGlyphs = 27;
+        ASSERT(numGlyphs == sizeof(weights) / sizeof(int));
+        // Compute the weighted sum of the space character and the lowercase letters in the Latin alphabet.
+        float sum = 0.f;
+        int totalWeight = 0;
+        for (int i = 0; i < numGlyphs; i++) {
+            Glyph glyph = glyphPageZero->glyphDataForCharacter((i < 26 ? i + 'a' : ' ')).glyph;
+            if (glyph) {
+                totalWeight += weights[i];
+                sum += widthForGlyph(glyph) * weights[i];
+            }
+        }
+        if (sum > 0.f && totalWeight > 0)
+            m_avgCharWidth = sum / totalWeight;
+    }
+
+    m_maxCharWidth = 0.f;
+    if (m_font.font())
+        m_maxCharWidth = [m_font.font() maximumAdvancement].width;
+
+    // Fallback to a cross-platform estimate, which will populate these values if they are non-positive.
+    initCharWidths();
+}
+
 void SimpleFontData::platformDestroy()
 {
 #ifdef BUILDING_ON_TIGER

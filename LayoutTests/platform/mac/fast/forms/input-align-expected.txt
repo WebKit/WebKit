@@ -7,41 +7,41 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 564x18
           text run at (0,0) width 564: "The following 5 inputs should be all be rendered exactly the same, aligned to the left side."
       RenderBlock (anonymous) at (0,34) size 784x92
-        RenderTextControl {INPUT} at (2,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (152,2) size 4x18
-          text run at (152,2) width 4: " "
+        RenderTextControl {INPUT} at (2,2) size 128x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (132,2) size 4x18
+          text run at (132,2) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,25) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (152,25) size 4x18
-          text run at (152,25) width 4: " "
+        RenderTextControl {INPUT} at (2,25) size 128x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (132,25) size 4x18
+          text run at (132,25) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,48) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (152,48) size 4x18
-          text run at (152,48) width 4: " "
+        RenderTextControl {INPUT} at (2,48) size 128x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (132,48) size 4x18
+          text run at (132,48) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,71) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (152,71) size 4x18
-          text run at (152,71) width 4: " "
+        RenderTextControl {INPUT} at (2,71) size 128x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (132,71) size 4x18
+          text run at (132,71) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (0,126) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (13,47) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+        RenderTextControl {INPUT} at (2,2) size 128x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (13,47) size 122x13
+  RenderBlock {DIV} at (3,3) size 122x13
     RenderText {#text} at (1,0) size 99x13
       text run at (1,0) width 99: "The quick brown..."
-layer at (13,70) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+layer at (13,70) size 122x13
+  RenderBlock {DIV} at (3,3) size 122x13
     RenderText {#text} at (1,0) size 99x13
       text run at (1,0) width 99: "The quick brown..."
-layer at (13,93) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+layer at (13,93) size 122x13
+  RenderBlock {DIV} at (3,3) size 122x13
     RenderText {#text} at (1,0) size 99x13
       text run at (1,0) width 99: "The quick brown..."
-layer at (13,116) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+layer at (13,116) size 122x13
+  RenderBlock {DIV} at (3,3) size 122x13
     RenderText {#text} at (1,0) size 99x13
       text run at (1,0) width 99: "The quick brown..."
-layer at (13,139) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+layer at (13,139) size 122x13
+  RenderBlock {DIV} at (3,3) size 122x13
     RenderText {#text} at (1,0) size 99x13
       text run at (1,0) width 99: "The quick brown..."

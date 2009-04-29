@@ -107,8 +107,4 @@ option {
 
 textarea {
   font-family: monospace;
-  margin: 1px 0;
-
-  /* Matches IE */
-  padding: 2px;
 }

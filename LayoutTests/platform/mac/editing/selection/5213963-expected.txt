@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 759x18
           text run at (0,0) width 759: "This tests to see that a selection inside an input field is removed when clicking (and focusing) a button in the same frame."
       RenderBlock (anonymous) at (0,34) size 784x45
-        RenderTextControl {INPUT} at (2,2) size 426x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBR {BR} at (430,16) size 0x0
+        RenderTextControl {INPUT} at (2,2) size 344x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderBR {BR} at (348,16) size 0x0
         RenderButton {INPUT} at (2,25) size 62x18 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 46x13
             RenderText at (0,0) size 46x13
               text run at (0,0) width 46: "Click Me"
         RenderBR {BR} at (66,38) size 0x0
       RenderBlock {UL} at (0,95) size 784x0
-layer at (13,47) size 420x13
-  RenderBlock {DIV} at (3,3) size 420x13
+layer at (13,47) size 338x13 scrollWidth 374
+  RenderBlock {DIV} at (3,3) size 338x13
     RenderText {#text} at (1,0) size 372x13
       text run at (1,0) width 372: "After you click the button below, this content should not be selected."

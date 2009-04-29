@@ -17,7 +17,10 @@
     <script>
         if (window.eventSender) {
             var target = document.getElementById("target");
-            eventSender.mouseMoveTo(200, 122);
+            var translationAmount = 50;
+            var x = target.offsetLeft + target.offsetWidth + translationAmount - 5;
+            var y = target.offsetTop + target.offsetHeight + translationAmount - 5;
+            eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");

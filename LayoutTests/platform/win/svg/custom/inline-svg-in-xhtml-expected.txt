@@ -1,0 +1,35 @@
+KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFF00), (1.00,#008000)]] [start=(0,0)] [end=(1,0)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {html} at (0,0) size 800x0
+layer at (48,38) size 722x542 layerType: background only
+layer at (49,39) size 720x540
+  RenderSVGRoot {svg} at (49,-51) size 720x720
+    RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} at (0,0) size 0x0
+    RenderPath {rect} at (49,-51) size 720x720 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFF00), (1.00,#008000)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderPath {circle} at (193,93) size 432x432 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFF00), (1.00,#008000)]] [start=(0,0)] [end=(1,0)]}] [data="M80.00,50.00 L79.94,51.88 L79.76,53.76 L79.47,55.62 L79.06,57.46 L78.53,59.27 L77.89,61.04 L77.14,62.77 L76.29,64.45 L75.33,66.07 L74.27,67.63 L73.12,69.12 L71.87,70.54 L70.54,71.87 L69.12,73.12 L67.63,74.27 L66.07,75.33 L64.45,76.29 L62.77,77.14 L61.04,77.89 L59.27,78.53 L57.46,79.06 L55.62,79.47 L53.76,79.76 L51.88,79.94 L50.00,80.00 L48.12,79.94 L46.24,79.76 L44.38,79.47 L42.54,79.06 L40.73,78.53 L38.96,77.89 L37.23,77.14 L35.55,76.29 L33.93,75.33 L32.37,74.27 L30.88,73.12 L29.46,71.87 L28.13,70.54 L26.88,69.12 L25.73,67.63 L24.67,66.07 L23.71,64.45 L22.86,62.77 L22.11,61.04 L21.47,59.27 L20.94,57.46 L20.53,55.62 L20.24,53.76 L20.06,51.88 L20.00,50.00 L20.06,48.12 L20.24,46.24 L20.53,44.38 L20.94,42.54 L21.47,40.73 L22.11,38.96 L22.86,37.23 L23.71,35.55 L24.67,33.93 L25.73,32.37 L26.88,30.88 L28.13,29.46 L29.46,28.13 L30.88,26.88 L32.37,25.73 L33.93,24.67 L35.55,23.71 L37.23,22.86 L38.96,22.11 L40.73,21.47 L42.54,20.94 L44.38,20.53 L46.24,20.24 L48.12,20.06 L50.00,20.00 L51.88,20.06 L53.76,20.24 L55.62,20.53 L57.46,20.94 L59.27,21.47 L61.04,22.11 L62.77,22.86 L64.45,23.71 L66.07,24.67 L67.63,25.73 L69.12,26.88 L70.54,28.13 L71.87,29.46 L73.12,30.88 L74.27,32.37 L75.33,33.93 L76.29,35.55 L77.14,37.23 L77.89,38.96 L78.53,40.73 L79.06,42.54 L79.47,44.38 L79.76,46.24 L79.94,48.12 Z"]
+layer at (48,38) size 722x542 layerType: foreground only
+  RenderBody {body} at (48,38) size 722x542 [border: (1px solid #000000)]
+    RenderBlock {form} at (1,1) size 720x128
+      RenderFieldSet {fieldset} at (2,0) size 716x128 [border: (2px groove #C0C0C0)]
+        RenderBlock {legend} at (14,0) size 88x18
+          RenderText {#text} at (2,0) size 84x18
+            text run at (2,0) width 84: "HTML Form"
+        RenderBlock {p} at (14,39) size 688x23
+          RenderInline {label} at (0,0) size 107x18
+            RenderText {#text} at (0,2) size 107x18
+              text run at (0,2) width 107: "Enter something:"
+          RenderText {#text} at (107,2) size 4x18
+            text run at (107,2) width 4: " "
+          RenderTextControl {input} at (113,2) size 152x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (14,78) size 688x22
+          RenderButton {button} at (2,2) size 63x18 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,2) size 47x13
+              RenderText {#text} at (0,0) size 47x13
+                text run at (0,0) width 47: "Activate!"
+layer at (181,83) size 146x13
+  RenderBlock {div} at (3,3) size 146x13

@@ -35,12 +35,15 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
+#include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGGlyphElement.h"
 #endif
 
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -59,22 +62,36 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
     UNUSED_PARAM(svgFontData);
 #else
     if (SVGFontFaceElement* svgFontFaceElement = svgFontData ? svgFontData->svgFontFaceElement() : 0) {
-       m_unitsPerEm = svgFontFaceElement->unitsPerEm();
+        m_unitsPerEm = svgFontFaceElement->unitsPerEm();
 
-       double scale = f.size();
-       if (m_unitsPerEm)
-           scale /= m_unitsPerEm;
+        double scale = f.size();
+        if (m_unitsPerEm)
+            scale /= m_unitsPerEm;
 
         m_ascent = static_cast<int>(svgFontFaceElement->ascent() * scale);
         m_descent = static_cast<int>(svgFontFaceElement->descent() * scale);
         m_xHeight = static_cast<int>(svgFontFaceElement->xHeight() * scale);
         m_lineGap = 0.1f * f.size();
         m_lineSpacing = m_ascent + m_descent + m_lineGap;
-    
+
+        SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
+
+        Vector<SVGGlyphIdentifier> spaceGlyphs;
+        associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
+        m_spaceWidth = spaceGlyphs.isEmpty() ? m_xHeight : static_cast<float>(spaceGlyphs.first().horizontalAdvanceX * scale);
+
+        Vector<SVGGlyphIdentifier> numeralZeroGlyphs;
+        associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
+        m_avgCharWidth = numeralZeroGlyphs.isEmpty() ? m_spaceWidth : static_cast<float>(numeralZeroGlyphs.first().horizontalAdvanceX * scale);
+
+        Vector<SVGGlyphIdentifier> letterWGlyphs;
+        associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
+        m_maxCharWidth = letterWGlyphs.isEmpty() ? m_ascent : static_cast<float>(letterWGlyphs.first().horizontalAdvanceX * scale);
+
+        // FIXME: is there a way we can get the space glyph from the SVGGlyphIdentifier above?
         m_spaceGlyph = 0;
-        m_spaceWidth = 0;
-        m_adjustedSpaceWidth = 0;
         determinePitch();
+        m_adjustedSpaceWidth = roundf(m_spaceWidth);
         m_missingGlyphData.fontData = this;
         m_missingGlyphData.glyph = 0;
         return;
@@ -83,6 +100,28 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
 
     platformInit();
     platformGlyphInit();
+    platformCharWidthInit();
+}
+
+// Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
+void SimpleFontData::initCharWidths()
+{
+    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
+
+    // Treat the width of a '0' as the avgCharWidth.
+    if (m_avgCharWidth <= 0.f && glyphPageZero) {
+        static const UChar32 digitZeroChar = '0';
+        Glyph digitZeroGlyph = glyphPageZero->glyphDataForCharacter(digitZeroChar).glyph;
+        if (digitZeroGlyph)
+            m_avgCharWidth = widthForGlyph(digitZeroGlyph);
+    }
+
+    // If we can't retrieve the width of a '0', fall back to the x height.
+    if (m_avgCharWidth <= 0.f)
+        m_avgCharWidth = m_xHeight;
+
+    if (m_maxCharWidth <= 0.f)
+        m_maxCharWidth = max<float>(m_avgCharWidth, m_ascent);
 }
 
 #if !PLATFORM(QT)
