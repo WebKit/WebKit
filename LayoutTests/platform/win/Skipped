@@ -587,3 +587,6 @@ http/tests/misc/redirect-to-external-url.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=25465 media/video-zoom-controls.html fails on Windows
 media/video-zoom-controls.html
+
+# Skip while it's fixed it to not use a setTimeout. See <https://bugs.webkit.org/show_bug.cgi?id=25471>
+fast/forms/textarea-metrics.html

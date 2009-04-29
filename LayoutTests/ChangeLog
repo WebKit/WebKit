@@ -1,3 +1,16 @@
+2009-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Skip fast/forms/textarea-metrics.html. It's printing the TEST PASSED
+        before the test is finished. There's a race with any JS tests that
+        use setTimeout. Fortunately, this test doesn't need the setTimeout,
+        so it's easy to fix.
+        
+        See https://bugs.webkit.org/show_bug.cgi?id=25471
+        
+        * platform/win/Skipped:
+
 2009-04-29  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out a patch.
