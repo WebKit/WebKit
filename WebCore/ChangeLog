@@ -1,3 +1,11 @@
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove unused EventListeners.
+
+        * page/DOMWindow.idl:
+
 2009-04-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reveal current execution line once SourceFrame content is loaded. 

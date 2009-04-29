@@ -217,11 +217,6 @@ module window {
         attribute EventListener onwebkitanimationend;
         attribute EventListener onwebkittransitionend;
 
-#if defined(V8_BINDING)
-        attribute [ProtectedListener] EventListener ondragdrop;
-        attribute [ProtectedListener] EventListener onmove;
-#endif
-
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
                                       in EventListener listener,
