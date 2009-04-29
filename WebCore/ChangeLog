@@ -1,3 +1,16 @@
+2009-04-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6573742> - Problem dragging standalone images from Safari to Mail
+
+        Roll out trac.webkit.org/changeset/35867 which fixed <rdar://problem/6153432>
+
+        Cloned <rdar://problem/6153432> to <rdar://problem/6839881> to find a better fix for that Tiger Mail bug.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource): Remove the preload referenced check.
+
 2009-04-29  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Dimitri Glazkov.
