@@ -1,3 +1,32 @@
+2009-04-29  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24168
+        RTL: Home/End key does not behave correctly in mixed bidi text in RTL document
+
+        Test: editing/selection/home-end.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingForward): Change calling endOfLine()
+        to logicalEndOfLine() when granularity is LineBoundary.
+        (WebCore::SelectionController::modifyMovingForward): Change calling endOfLine()
+        to logicalEndOfLine() when granularity is LineBoundary
+        (WebCore::SelectionController::modifyExtendingBackward): Change calling 
+        startOfLine() to logicalStartOfLine() when granularity is LineBoundary.
+        (WebCore::SelectionController::modifyMovingBackward): Change calling startOfLine() 
+        to logicalStartOfLine() when granularity is LineBoundary.
+        * editing/visible_units.cpp:
+        (WebCore::getLeafBoxesInLogicalOrder): Added. Reconstruct leaf boxes in logical order.
+        (WebCore::getLogicalStartBoxAndNode): Added.
+        (WebCore::getLogicalEndBoxAndNode): Added.
+        (WebCore::logicalStartPositionForLine): Added. Similar to startPositionForLine.
+        (WebCore::logicalStartOfLine): Added. Similar to startOfLine.
+        (WebCore::logicalEndPositionForLine): Added. Similar to endPositionForLine.
+        (WebCore::inSameLogicalLine): Added.
+        (WebCore::logicalEndOfLine): Added. Similar to endOfLine.
+        * editing/visible_units.h:
+
 2009-04-29  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Eric Seidel.

@@ -1,0 +1,127 @@
+Test 1, LTR:
+  Moving forward: "\nabc ABC xyz DEF def\n"[1, 20]
+  Moving backward:  "\nabc ABC xyz DEF def\n"[20, 1]
+Test 1, RTL:
+  Moving forward: "\nabc ABC xyz DEF def\n"[1, 20]
+  Moving backward:  "\nabc ABC xyz DEF def\n"[20, 1]
+Test 2, LTR:
+  Moving forward: "\nABC xyz DEF def GHI\n"[1, 20]
+  Moving backward:  "\nABC xyz DEF def GHI\n"[20, 1]
+Test 2, RTL:
+  Moving forward: "\nABC xyz DEF def GHI\n"[1, 20]
+  Moving backward:  "\nABC xyz DEF def GHI\n"[20, 1]
+Test 3, LTR:
+  Moving forward: "\nABC DEF ABC\n"[1, 12]
+  Moving backward:  "\nABC DEF ABC\n"[12, 1]
+Test 3, RTL:
+  Moving forward: "\nABC DEF ABC\n"[1, 12]
+  Moving backward:  "\nABC DEF ABC\n"[12, 1]
+Test 4, LTR:
+  Moving forward: "\nabc efd dabeb\n"[1, 14]
+  Moving backward:  "\nabc efd dabeb\n"[14, 1]
+Test 4, RTL:
+  Moving forward: "\nabc efd dabeb\n"[1, 14]
+  Moving backward:  "\nabc efd dabeb\n"[14, 1]
+Test 5, LTR:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 5, RTL:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 6, LTR:
+  Moving forward: "Lorem "[0], "ipsum dolor"[11]
+  Moving backward:  "ipsum dolor"[11], "Lorem "[0]
+Test 6, RTL:
+  Moving forward: "Lorem "[0], "ipsum dolor"[11]
+  Moving backward:  "ipsum dolor"[11], "Lorem "[0]
+Test 7, LTR:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 7, RTL:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 8, LTR:
+  Moving forward: "Lorem "[0, 5]
+  Moving backward:  "Lorem "[5, 0]
+Test 8, RTL:
+  Moving forward: "Lorem "[0, 5]
+  Moving backward:  "Lorem "[5, 0]
+Test 9, LTR:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 9, RTL:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 10, LTR:
+  Moving forward: "Lorem "[0], "ipsum dolor"[11]
+  Moving backward:  "ipsum dolor"[11], "Lorem "[0]
+Test 10, RTL:
+  Moving forward: "Lorem "[0], "ipsum dolor"[11]
+  Moving backward:  "ipsum dolor"[11], "Lorem "[0]
+Test 11, LTR:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 11, RTL:
+  Moving forward: "Lorem "[0], " amet"[5]
+  Moving backward:  " amet"[5], "Lorem "[0]
+Test 12, LTR:
+  Moving forward: "Lorem "[0, 5]
+  Moving backward:  "Lorem "[5, 0]
+Test 12, RTL:
+  Moving forward: "Lorem "[0, 5]
+  Moving backward:  "Lorem "[5, 0]
+Test 13, LTR:
+  Moving forward: "\n	Just\n	"[2], "\n	BFDX\n"[6]
+  Moving backward:  "\n	BFDX\n"[6], "\n	Just\n	"[2]
+Test 13, RTL:
+  Moving forward: "\n	Just\n	"[2], "\n	BFDX\n"[6]
+  Moving backward:  "\n	BFDX\n"[6], "\n	Just\n	"[2]
+Test 14, LTR:
+  Moving forward: "\n	Just\n	"[2], "\n	ever\n"[6]
+  Moving backward:  "\n	ever\n"[6], "\n	Just\n	"[2]
+Test 14, RTL:
+  Moving forward: "\n	Just\n	"[2], "\n	ever\n"[6]
+  Moving backward:  "\n	ever\n"[6], "\n	Just\n	"[2]
+Test 15, LTR:
+  Moving forward: "car means ABC."[0, 14]
+  Moving backward:  "car means ABC."[14, 0]
+Test 15, RTL:
+  Moving forward: "car means ABC."[0, 14]
+  Moving backward:  "car means ABC."[14, 0]
+Test 16, LTR:
+  Moving forward: "᪜car DEF ABC.᪝"[1, 13]
+  Moving backward:  "᪜car DEF ABC.᪝"[13, 1]
+Test 16, RTL:
+  Moving forward: "᪜car DEF ABC.᪝"[1, 13]
+  Moving backward:  "᪜car DEF ABC.᪝"[13, 1]
+Test 17, LTR:
+  Moving forward: "he said "᪜car DEF ABC᪝.""[0, 24]
+  Moving backward:  "he said "᪜car DEF ABC᪝.""[24, 0]
+Test 17, RTL:
+  Moving forward: "he said "᪜car DEF ABC᪝.""[0, 24]
+  Moving backward:  "he said "᪜car DEF ABC᪝.""[24, 0]
+Test 18, LTR:
+  Moving forward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[0, 40]
+  Moving backward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[40, 0]
+Test 18, RTL:
+  Moving forward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[0, 40]
+  Moving backward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[40, 0]
+Test 19, LTR:
+  Moving forward: "ABC abc DEF"[0, 11]
+  Moving backward:  "ABC abc DEF"[11, 0]
+Test 19, RTL:
+  Moving forward: "ABC abc DEF"[0, 11]
+  Moving backward:  "ABC abc DEF"[11, 0]
+Test 20, LTR:
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
+Test 20, RTL:
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 7]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[7, 0]
+Test 21, LTR:
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
+Test 21, RTL:
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 7]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[7, 0]
+

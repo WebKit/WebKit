@@ -1055,4 +1055,177 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
     return lastDeepEditingPositionForNode(highestRoot);
 }
 
+static void getLeafBoxesInLogicalOrder(RootInlineBox* rootBox, Vector<InlineBox*>& leafBoxesInLogicalOrder) {
+    unsigned char minLevel = 128;
+    unsigned char maxLevel = 0;
+    unsigned count = 0;
+    InlineBox* r = rootBox->firstLeafChild();
+    // First find highest and lowest levels,
+    // and initialize leafBoxesInLogicalOrder with the leaf boxes in visual order.
+    while (r) {
+        if (r->bidiLevel() > maxLevel)
+            maxLevel = r->bidiLevel();
+        if (r->bidiLevel() < minLevel)
+            minLevel = r->bidiLevel();
+        leafBoxesInLogicalOrder.append(r);
+        r = r->nextLeafChild();
+        ++count;
+    }
+
+    if (rootBox->renderer()->style()->visuallyOrdered())
+        return;
+    // Reverse of reordering of the line (L2 according to Bidi spec):
+    // L2. From the highest level found in the text to the lowest odd level on each line,
+    // reverse any contiguous sequence of characters that are at that level or higher.
+
+    // Reversing the reordering of the line is only done up to the lowest odd level.
+    if (!(minLevel % 2))
+        minLevel++;
+    
+    InlineBox** end = leafBoxesInLogicalOrder.end();
+    while (minLevel <= maxLevel) {
+        InlineBox** iter = leafBoxesInLogicalOrder.begin();
+        while (iter != end) {
+            while (iter != end) {
+                if ((*iter)->bidiLevel() >= minLevel)
+                    break;
+                ++iter;
+            }
+            InlineBox** first = iter;
+            while (iter != end) {
+                if ((*iter)->bidiLevel() < minLevel)
+                    break;
+                ++iter;
+            }
+            InlineBox** last = iter;
+            std::reverse(first, last);
+        }                
+        ++minLevel;
+    }
+}
+
+static void getLogicalStartBoxAndNode(RootInlineBox* rootBox, InlineBox*& startBox, Node*& startNode)
+{
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+    getLeafBoxesInLogicalOrder(rootBox, leafBoxesInLogicalOrder);
+    startBox = 0;
+    startNode = 0;
+    for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
+        startBox = leafBoxesInLogicalOrder[i];
+        startNode = startBox->renderer()->node();
+        if (startNode)
+            return; 
+    }
+}
+
+static void getLogicalEndBoxAndNode(RootInlineBox* rootBox, InlineBox*& endBox, Node*& endNode)
+{
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+    getLeafBoxesInLogicalOrder(rootBox, leafBoxesInLogicalOrder);
+    endBox = 0;
+    endNode = 0;
+    // Generated content (e.g. list markers and CSS :before and :after
+    // pseudoelements) have no corresponding DOM element, and so cannot be
+    // represented by a VisiblePosition.  Use whatever precedes instead.
+    for (size_t i = leafBoxesInLogicalOrder.size(); i > 0; --i) { 
+        endBox = leafBoxesInLogicalOrder[i - 1];
+        endNode = endBox->renderer()->node();
+        if (endNode)
+            return;
+    }
+}
+
+static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
+{
+    if (c.isNull())
+        return VisiblePosition();
+
+    RootInlineBox* rootBox = rootBoxForLine(c);
+    if (!rootBox) {
+        // There are VisiblePositions at offset 0 in blocks without
+        // RootInlineBoxes, like empty editable blocks and bordered blocks.
+        Position p = c.deepEquivalent();
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && !p.m_offset)
+            return positionAvoidingFirstPositionInTable(c);
+        
+        return VisiblePosition();
+    }
+    
+    InlineBox* logicalStartBox;
+    Node* logicalStartNode;
+    getLogicalStartBoxAndNode(rootBox, logicalStartBox, logicalStartNode);
+
+    if (!logicalStartNode)
+        return VisiblePosition();
+
+    int startOffset = logicalStartBox->caretMinOffset();
+  
+    VisiblePosition visPos = VisiblePosition(logicalStartNode, startOffset, DOWNSTREAM);
+    return positionAvoidingFirstPositionInTable(visPos);
+}
+
+VisiblePosition logicalStartOfLine(const VisiblePosition& c)
+{
+    VisiblePosition visPos = logicalStartPositionForLine(c);
+    
+    if (visPos.isNull())
+        return c.honorEditableBoundaryAtOrAfter(visPos);
+
+    return c.honorEditableBoundaryAtOrAfter(visPos);
+}
+
+static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
+{
+    if (c.isNull())
+        return VisiblePosition();
+
+    RootInlineBox* rootBox = rootBoxForLine(c);
+    if (!rootBox) {
+        // There are VisiblePositions at offset 0 in blocks without
+        // RootInlineBoxes, like empty editable blocks and bordered blocks.
+        Position p = c.deepEquivalent();
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && !p.m_offset)
+            return c;
+        return VisiblePosition();
+    }
+    
+    InlineBox* logicalEndBox;
+    Node* logicalEndNode;
+    getLogicalEndBoxAndNode(rootBox, logicalEndBox, logicalEndNode);
+    if (!logicalEndNode)
+        return VisiblePosition();
+    
+    int endOffset = 1;
+    if (logicalEndNode->hasTagName(brTag))
+        endOffset = 0;
+    else if (logicalEndBox->isInlineTextBox()) {
+        InlineTextBox* endTextBox = static_cast<InlineTextBox *>(logicalEndBox);
+        endOffset = endTextBox->start();
+        if (!endTextBox->isLineBreak())
+            endOffset += endTextBox->len();
+    }
+    
+    return VisiblePosition(logicalEndNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);
+}
+
+bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.isNotNull() && logicalStartOfLine(a) == logicalStartOfLine(b);
+}
+
+VisiblePosition logicalEndOfLine(const VisiblePosition& c)
+{
+    VisiblePosition visPos = logicalEndPositionForLine(c);
+    
+    // Make sure the end of line is at the same line as the given input position. For a wrapping line, the logical end
+    // position for the not-last-2-lines might incorrectly hand back the logical beginning of the next line. 
+    // For example, <div contenteditable dir="rtl" style="line-break:before-white-space">abcdefg abcdefg abcdefg
+    // a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg </div>
+    // In this case, use the previous position of the computed logical end position.
+    if (!inSameLogicalLine(c, visPos))
+        visPos = visPos.previous();
+    
+    return c.honorEditableBoundaryAtOrBefore(visPos);
+}
+
 }

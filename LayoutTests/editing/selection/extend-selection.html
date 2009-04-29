@@ -247,6 +247,27 @@
             }
         }
 
+        function testExtendingLineBoundary(tests, sel)
+        {
+            for (var i = 0; i < tests.length; ++i) {
+                tests[i].style.direction = "ltr";
+                log("Test " + (i + 1) + ", LTR:\n  Extending forward: ");
+                sel.setPosition(tests[i], 0);
+                var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
+    
+                log("  Extending backward:  ");
+                var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+
+                tests[i].style.direction = "rtl";
+                log("Test " + (i + 1) + ", RTL:\n  Extending forward: ");
+                sel.setPosition(tests[i], 0);
+                var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
+    
+                log("  Extending backward:  ");
+                var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+            }
+        }
+
         onload = function()
         {
             if (!window.layoutTestController)
@@ -269,31 +290,64 @@
             testExtendingSelectionForEnclosingBlock(tests,  sel, "character", 1);
             log("\n\n\n\n\nExtending by word\n");
             testExtendingSelectionForEnclosingBlock(tests,  sel, "word", 1);
+
+            tests = document.getElementsByClassName("home-end-test");
+            var sel = getSelection();
+            log("\n\n\nExtending by lineBoundary\n");
+            testExtendingLineBoundary(tests,  sel);
         }
 
     </script>
 </head>
 <body>
-<div contenteditable class="test">
+<div contenteditable class="test home-end-test">
 abc &#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def
 </div>
-<div contenteditable class="test">
+<div contenteditable class="test home-end-test">
 &#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def &#1494;&#1495;&#1496;
 </div>
-<div contenteditable class="test">
+<div contenteditable class="test home-end-test">
 &#1488;&#1489;&#1490; &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;
 </div>
-<div contenteditable class="test">
+<div contenteditable class="test home-end-test">
 abc efd dabeb
 </div>
 
 
-<div contenteditable  class="test">Lorem <span  style="direction: rtl">ipsum dolor sit</span> amet</div>
-<div contenteditable class="test">Lorem <span  dir="rtl">ipsum dolor sit</span> amet</div>
-<div contenteditable  class="test">Lorem <span  style="direction: ltr">ipsum dolor sit</span> amet</div>
-<div contenteditable class="test">Lorem <span  dir="ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="test home-end-test">Lorem <span  style="direction: rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test home-end-test">Lorem <span  dir="rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="test home-end-test">Lorem <span  style="direction: ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test home-end-test">Lorem <span  dir="ltr">ipsum dolor sit</span> amet</div>
 
-<div contenteditable class="testEnclosingBlock">Lorem <div  dir="rtl">ipsum dolor sit</div> amett</div>
+<div contenteditable class="testEnclosingBlock home-end-test">Lorem <div  dir="rtl">ipsum dolor sit</div> amett</div>
+
+<div contenteditable  class="home-end-test">Lorem <span  style="direction: ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="home-end-test">Lorem <span  style="direction: ltr">ipsum dolor<div > just a test</div> sit</span> amet</div>
+<div contenteditable class="home-end-test">Lorem <span  dir="ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable class="home-end-test">Lorem <div  dir="ltr">ipsum dolor sit</div> amet</div>
+
+<div class="home-end-test" contenteditable>
+  Just
+  <span>testing רק</span>
+  בודק
+</div>
+
+<div class="home-end-test" contenteditable>
+  Just
+  <span>testing what</span>
+  ever
+</div>
+
+
+<div class="home-end-test" contenteditable>car means &#1488;&#1489;&#1490;.</div>
+<div class="home-end-test" contenteditable>&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;.&#x202c;</div>
+<div class="home-end-test" contenteditable>he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;."</div>
+<div class="home-end-test" contenteditable>&#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502; '&#x202a;he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;"&#x202c;'?</div>
+
+
+<div class="home-end-test" contenteditable>&#1488;&#1489;&#1490; abc &#1491;&#1492;&#1493;<br />edf &#1494;&#1495;&#1496; abrebg</div>
+<div class="home-end-test" contenteditable style="line-break:before-white-space; width:100px">abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg </div>
+<div class="home-end-test" contenteditable style="line-break:after-white-space; width:100px">abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg </div>
 
 <pre id="console"></pre>
 </body>
