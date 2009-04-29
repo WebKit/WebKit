@@ -49,7 +49,12 @@ void Location::disconnectFrame()
 inline const KURL& Location::url() const
 {
     ASSERT(m_frame);
-    return m_frame->loader()->url();
+
+    const KURL& url = m_frame->loader()->url();
+    if (!url.isValid())
+        return blankURL();  // Use "about:blank" while the page is still loading (before we have a frame).
+
+    return url;
 }
 
 String Location::href() const

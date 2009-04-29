@@ -11,13 +11,13 @@ var testWindow = open("data:text/plain,a");
 // of the test. We're checking behavior when the object was just created and is not yet at its new
 // location.
 
-shouldBe("testWindow.location.toString()", "'/'"); // Firefox returns about:blank
-shouldBe("testWindow.location.href", "'/'"); // Firefox returns about:blank
-shouldBe("testWindow.location.protocol", "':'"); // Firefox returns about:
+shouldBe("testWindow.location.toString()", "'about:blank'");
+shouldBe("testWindow.location.href", "'about:blank'");
+shouldBe("testWindow.location.protocol", "'about:'");
 shouldBe("testWindow.location.host", "''"); // Firefox throws an exception
 shouldBe("testWindow.location.hostname", "''"); // Firefox throws an exception
 shouldBe("testWindow.location.port", "''");
-shouldBe("testWindow.location.pathname", "'/'"); // Firefox returns the empty string
+shouldBe("testWindow.location.pathname", "'blank'"); // Firefox returns the empty string
 shouldBe("testWindow.location.search", "''");
 shouldBe("testWindow.location.hash", "''");
 
@@ -34,13 +34,13 @@ shouldBe("testWindow.location.assign('data:text/plain,i')", "undefined");
 shouldBe("testWindow.location.replace('data:text/plain,j')", "undefined");
 shouldBe("testWindow.location.reload()", "undefined");
 
-shouldBe("testWindow.location.toString()", "'/'"); // Firefox returns about:blank
-shouldBe("testWindow.location.href", "'/'"); // Firefox returns about:blank
-shouldBe("testWindow.location.protocol", "':'"); // Firefox returns about:
+shouldBe("testWindow.location.toString()", "'about:blank'");
+shouldBe("testWindow.location.href", "'about:blank'");
+shouldBe("testWindow.location.protocol", "'about:'");
 shouldBe("testWindow.location.host", "''"); // Firefox throws an exception
 shouldBe("testWindow.location.hostname", "''"); // Firefox throws an exception
 shouldBe("testWindow.location.port", "''");
-shouldBe("testWindow.location.pathname", "'/'"); // Firefox returns the empty string
+shouldBe("testWindow.location.pathname", "'blank'"); // Firefox returns the empty string
 shouldBe("testWindow.location.search", "''");
 shouldBe("testWindow.location.hash", "''");
 
