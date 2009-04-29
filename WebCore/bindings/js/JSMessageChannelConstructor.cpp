@@ -61,7 +61,11 @@ ConstructType JSMessageChannelConstructor::getConstructData(ConstructData& const
 
 JSObject* JSMessageChannelConstructor::construct(ExecState* exec, JSObject* constructor, const ArgList&)
 {
-    return asObject(toJS(exec, MessageChannel::create(static_cast<JSMessageChannelConstructor*>(constructor)->scriptExecutionContext())));
+    ScriptExecutionContext* context = static_cast<JSMessageChannelConstructor*>(constructor)->scriptExecutionContext();
+    if (!context)
+        return throwError(exec, ReferenceError, "MessageChannel constructor associated document is unavailable");
+
+    return asObject(toJS(exec, MessageChannel::create(context)));
 }
 
 void JSMessageChannelConstructor::mark()

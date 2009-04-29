@@ -977,7 +977,13 @@ DOMWindow* DOMWindow::top() const
 
 Document* DOMWindow::document() const
 {
+    // FIXME: This function shouldn't need a frame to work.
     if (!m_frame)
+        return 0;
+
+    // The m_frame pointer is not zeroed out when the window is put into b/f cache, so it can hold an unrelated document/window pair.
+    // FIXME: We should always zero out the frame pointer on navigation to avoid accidentally accessing the new frame content.
+    if (m_frame->domWindow() != this)
         return 0;
 
     ASSERT(m_frame->document());

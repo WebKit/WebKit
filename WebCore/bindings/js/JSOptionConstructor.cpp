@@ -53,6 +53,8 @@ Document* JSOptionConstructor::document() const
 static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     Document* document = static_cast<JSOptionConstructor*>(constructor)->document();
+    if (!document)
+        return throwError(exec, ReferenceError, "Option constructor associated document is unavailable");
 
     RefPtr<HTMLOptionElement> element = static_pointer_cast<HTMLOptionElement>(document->createElement(HTMLNames::optionTag, false));
 

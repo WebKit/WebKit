@@ -188,12 +188,6 @@ ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject
     if (originWindow == targetWindow)
         return true;
 
-    // JS may be attempting to access the "window" object, which should be valid,
-    // even if the document hasn't been constructed yet.  If the document doesn't
-    // exist yet allow JS to access the window object.
-    if (!originWindow->impl()->document())
-        return true;
-
     const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
     const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
 

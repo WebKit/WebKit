@@ -65,6 +65,8 @@ static JSObject* constructImage(ExecState* exec, JSObject* constructor, const Ar
     }
 
     Document* document = static_cast<JSImageConstructor*>(constructor)->document();
+    if (!document)
+        return throwError(exec, ReferenceError, "Image constructor associated document is unavailable");
 
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::mark

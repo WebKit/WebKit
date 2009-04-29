@@ -46,7 +46,11 @@ ScriptExecutionContext* JSXMLHttpRequestConstructor::scriptExecutionContext() co
 
 static JSObject* constructXMLHttpRequest(ExecState* exec, JSObject* constructor, const ArgList&)
 {
-    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(static_cast<JSXMLHttpRequestConstructor*>(constructor)->scriptExecutionContext());
+    ScriptExecutionContext* context = static_cast<JSXMLHttpRequestConstructor*>(constructor)->scriptExecutionContext();
+    if (!context)
+        return throwError(exec, ReferenceError, "XMLHttpRequest constructor associated document is unavailable");
+
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
     return CREATE_DOM_OBJECT_WRAPPER(exec, XMLHttpRequest, xmlHttpRequest.get());
 }
 

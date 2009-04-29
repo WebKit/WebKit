@@ -1,3 +1,42 @@
+2009-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25420
+        <rdar://problem/6829570> REGRESSION: XMLHttpRequest allows loading from another origin
+
+        Test: http/tests/xmlhttprequest/detaching-frame-2.html
+
+        This was caused by faulty DOMWindow::document(), which could return a new document from
+        the window's frame after navigation.
+
+        * bindings/js/JSDOMWindowCustom.h: (WebCore::JSDOMWindowBase::allowsAccessFromPrivate):
+        Removed an obsolete check that allowed access when document was null. Contrary to what a
+        comment said, that can happen for a window that is no longer in frame, not to one whose
+        document is not constructed yet.
+
+        * bindings/js/JSXMLHttpRequestConstructor.cpp: (WebCore::constructXMLHttpRequest): Bail
+        out if context was not found. This currently happens due to a shortcoming in
+        DOMWindow::document() - when it is fixed, the XMLHttpRequest object in included regression
+        test will be constructed successfully, but won't be sent, because its context will be
+        frameless.
+
+        * page/DOMWindow.cpp: (WebCore::DOMWindow::document): Check that the window in frame hasn't
+        been replaced yet. Added FIXME comments about how this may be better fixed in the future.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::document):
+        (WebCore::constructAudio):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::document):
+        (WebCore::constructImage):
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::construct):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::document):
+        (WebCore::constructHTMLOptionElement):
+        Make matching changes to other constructors that hold a reference to global object.
+
 2009-04-28  Kevin Ollivier <kevino@theolliviers.com>
 
         wxMSW build fix. Switch JSCore build back to static.
