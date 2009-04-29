@@ -1,13 +1,12 @@
-2009-04-29  Ojan Vafai  <ojan@chromium.org>
+2009-04-29  Eric Seidel  <eric@webkit.org>
 
-        Reviewed by Eric Seidel.
-        
-        Add expected results for failing tests.
+        No review, rolling out a patch.
 
-        * platform/mac-tiger/text-control-intrinsic-widths-expected.txt:
-        Default Tiger install has different Arial, Times New Roman and Trebuchet MS
-        fonts than the default Leopard install. This leads to different font
-        metrics and thus different text control widths for these fonts.
+        Revert 43020 as it caused accessibility/lists.html to fail
+        and no one is around to tell me if it's a progression or not.
+
+        * platform/win/accessibility/listitem-role-expected.txt: Removed.
+        * platform/win/accessibility/listitem-role.html: Removed.
 
 2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 

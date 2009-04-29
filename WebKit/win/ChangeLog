@@ -1,3 +1,13 @@
+2009-04-29  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out a patch.
+
+        Revert 43020 as it caused accessibility/lists.html to fail
+        and no one is around to tell me if it's a progression or not.
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+
 2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 
         Reviewed by Jon Honeycutt.

@@ -17,18 +17,20 @@
         (WebCore::FrameView::setNeedsLayout):
         * page/FrameView.h:
 
-2009-04-29  Antony Sargent  <asargent@chromium.org>
+2009-04-29  Eric Seidel  <eric@webkit.org>
 
-        Reviewed by Dimitri Glazkov and Eric Seidel.
+        No review, rolling out a patch.
 
-        Use AtomicString to speed up window and document interceptors.
-        https://bugs.webkit.org/show_bug.cgi?id=25275
+        Revert 43020 as it caused accessibility/lists.html to fail
+        and no one is around to tell me if it's a progression or not.
 
-        * bindings/v8/custom/V8DOMWindowCustom.cpp:
-        (WebCore::NAMED_PROPERTY_GETTER):
-        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
-        (WebCore::NAMED_PROPERTY_DELETER):
-        (WebCore::NAMED_PROPERTY_GETTER):
+        * page/AccessibilityObject.h:
+        (WebCore::):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::roleValue):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (RoleEntry::):
 
 2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 

@@ -149,8 +149,7 @@ enum AccessibilityRole {
     ListBoxOptionRole,
     TableHeaderContainerRole,
     DefinitionListTermRole,
-    DefinitionListDefinitionRole,
-    ListItemRole
+    DefinitionListDefinitionRole
 };
 
 struct VisiblePositionRange {
