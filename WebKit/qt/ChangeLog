@@ -1,3 +1,18 @@
+2009-03-27  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Simon Hausmann.
+
+        Update the page actions when a finishing loading even if the frame is
+        not the top frame such as when browsing inside of a website with frames.
+        https://bugs.webkit.org/show_bug.cgi?id=24890
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        * tests/qwebpage/frametest/frame_a.html: Added.
+        * tests/qwebpage/frametest/index.html: Added.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::backActionUpdate):
+
 2009-04-29  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -387,7 +387,7 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 
     m_loadSucceeded = true;
 
-    if (m_frame->tree()->parent() || !m_webFrame)
+    if (!m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }

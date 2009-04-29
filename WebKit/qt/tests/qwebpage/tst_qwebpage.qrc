@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>frametest/index.html</file>
+    <file>frametest/frame_a.html</file>
+</qresource>
+</RCC>
+
