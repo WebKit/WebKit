@@ -4,9 +4,10 @@
         
         Add expected results for failing tests.
 
-        * platform/win/fast/forms/textarea-metrics-expected.txt:
-        Issue with running JS tests that use setTimeout.
-        See https://bugs.webkit.org/show_bug.cgi?id=25469
+        * platform/mac-tiger/text-control-intrinsic-widths-expected.txt:
+        Default Tiger install has different Arial, Times New Roman and Trebuchet MS
+        fonts than the default Leopard install. This leads to different font
+        metrics and thus different text control widths for these fonts.
 
 2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 
