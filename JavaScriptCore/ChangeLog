@@ -1,3 +1,16 @@
+2009-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        A little more hardening for UString
+
+        Reviewed by Maciej Stachowiak.
+
+        Revised fix for <rdar://problem/5861045> in r42644.
+
+        * runtime/UString.cpp:
+        (JSC::newCapacityWithOverflowCheck): Added.
+        (JSC::concatenate): Used newCapacityWithOverflowCheck().
+        (JSC::UString::append): Ditto.
+
 2009-04-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
