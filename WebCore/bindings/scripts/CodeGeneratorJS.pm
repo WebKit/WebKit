@@ -1400,15 +1400,15 @@ sub GenerateImplementation
                     
                     if ($parameter->type eq "XPathNSResolver") {
                         push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
-                        push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args.at(exec, $paramIndex));\n");
+                        push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args.at($paramIndex));\n");
                         push(@implContent, "    if (!resolver) {\n");
-                        push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args.at(exec, $paramIndex));\n");
+                        push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args.at($paramIndex));\n");
                         push(@implContent, "        if (exec->hadException())\n");
                         push(@implContent, "            return jsUndefined();\n");
                         push(@implContent, "        resolver = customResolver.get();\n");
                         push(@implContent, "    }\n");
                     } else {
-                        push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args.at(exec, $paramIndex)") . ";\n");
+                        push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args.at($paramIndex)") . ";\n");
 
                         # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
                         # But this needs to be done in the bindings, because the type is unsigned and the fact that it

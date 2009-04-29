@@ -2,6 +2,14 @@
 
         Rubber stamped by Beth Dakin.
         
+        Missed one.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2009-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Beth Dakin.
+        
         Removed scaffolding supporting dynamically converting between 32bit and
         64bit value representations. 
 
