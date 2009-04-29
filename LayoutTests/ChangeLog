@@ -1,3 +1,15 @@
+2009-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add a couple table hit tests
+        https://bugs.webkit.org/show_bug.cgi?id=21892
+
+        * svg/hittest/svg-inside-display-table-expected.txt: Added.
+        * svg/hittest/svg-inside-display-table.xhtml: Added.
+        * svg/hittest/svg-inside-table-expected.txt: Added.
+        * svg/hittest/svg-inside-table.xhtml: Added.
+
 2009-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
