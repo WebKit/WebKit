@@ -1,3 +1,14 @@
+2009-04-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Roll out r42969, due to hangs in build bot.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+        (JSC::isSSE2Present):
+
 2009-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed: fix distcheck build, add (even more) missing files to list.

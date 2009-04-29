@@ -44,52 +44,6 @@
 
 using namespace std;
 
-#if PLATFORM(MAC)
-
-static inline bool isSSE2Present()
-{
-    return true; // All X86 Macs are guaranteed to support at least SSE2
-}
-
-#else
-
-static bool isSSE2Present()
-{
-    static const int SSE2FeatureBit = 1 << 26;
-    struct SSE2Check {
-        SSE2Check()
-        {
-            int flags;
-#if COMPILER(MSVC)
-            _asm {
-                mov eax, 1 // cpuid function 1 gives us the standard feature set
-                cpuid;
-                mov flags, edx;
-            }
-#elif COMPILER(GCC)
-            asm (
-                 "movl $0x1, %%eax;"
-                 "pushl %%ebx;"
-                 "cpuid;"
-                 "popl %%ebx;"
-                 "movl %%edx, %0;"
-                 : "=g" (flags)
-                 :
-                 : "%eax", "%ecx", "%edx"
-                 );
-#else
-            flags = 0;
-#endif
-            present = (flags & SSE2FeatureBit) != 0;
-        }
-        bool present;
-    };
-    static SSE2Check check;
-    return check.present;
-}
-
-#endif
-
 namespace JSC {
 
 void JIT::compileFastArith_op_lshift(unsigned result, unsigned op1, unsigned op2)
@@ -148,25 +102,7 @@ void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2
 #endif
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT2);
-        if (isSSE2Present()) {
-            Jump lhsIsInt = emitJumpIfImmediateInteger(regT0);
-#if USE(ALTERNATE_JSIMMEDIATE)
-            addSlowCase(emitJumpIfNotImmediateNumber(regT0));
-            m_assembler.movq_rr(regT0, X86::xmm0);
-#else
-            emitJumpSlowCaseIfNotJSCell(regT0, op1);
-            Structure* numberStructure = m_globalData->numberStructure.get();
-            __ cmpl_im(reinterpret_cast<uintptr_t>(numberStructure), FIELD_OFFSET(JSCell, m_structure), regT0);
-            addSlowCase(__ jne());
-            __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), regT0, X86::xmm0);
-#endif
-            __ cvttsd2si_rr(X86::xmm0, regT0);
-            addSlowCase(branch32(Equal, regT0, Imm32(0x80000000)));
-            add32(regT0, regT0);
-            addSlowCase(__ jo());
-            lhsIsInt.link(this);
-        } else
-            emitJumpSlowCaseIfNotImmediateInteger(regT0);
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT2);
         emitFastArithImmToInt(regT2);
 #if !PLATFORM(X86)
@@ -187,22 +123,13 @@ void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2
 #endif
     emitPutVirtualRegister(result);
 }
-void JIT::compileFastArithSlow_op_rshift(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileFastArithSlow_op_rshift(unsigned result, unsigned, unsigned op2, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
     if (isOperandConstantImmediateInt(op2))
         emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
     else {
-        if (isSSE2Present()) {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-#if !USE(ALTERNATE_JSIMMEDIATE)
-            linkSlowCase(iter);
-#endif
-            emitGetVirtualRegister(op1, regT0);
-        } else
-            linkSlowCase(iter);
+        linkSlowCase(iter);
         emitPutJITStubArg(regT2, 2);
     }
 
@@ -672,6 +599,51 @@ typedef X86Assembler::JmpSrc JmpSrc;
 typedef X86Assembler::JmpDst JmpDst;
 typedef X86Assembler::XMMRegisterID XMMRegisterID;
 
+#if PLATFORM(MAC)
+
+static inline bool isSSE2Present()
+{
+    return true; // All X86 Macs are guaranteed to support at least SSE2
+}
+
+#else
+
+static bool isSSE2Present()
+{
+    static const int SSE2FeatureBit = 1 << 26;
+    struct SSE2Check {
+        SSE2Check()
+        {
+            int flags;
+#if COMPILER(MSVC)
+            _asm {
+                mov eax, 1 // cpuid function 1 gives us the standard feature set
+                cpuid;
+                mov flags, edx;
+            }
+#elif COMPILER(GCC)
+            asm (
+                "movl $0x1, %%eax;"
+                "pushl %%ebx;"
+                "cpuid;"
+                "popl %%ebx;"
+                "movl %%edx, %0;"
+                : "=g" (flags)
+                :
+                : "%eax", "%ecx", "%edx"
+            );
+#else
+            flags = 0;
+#endif
+            present = (flags & SSE2FeatureBit) != 0;
+        }
+        bool present;
+    };
+    static SSE2Check check;
+    return check.present;
+}
+
+#endif
 
 void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types)
 {
