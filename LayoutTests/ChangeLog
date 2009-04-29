@@ -1,3 +1,9 @@
+2009-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Disable media/video-zoom-controls.html on Windows for now.
+
+        * platform/win/Skipped: add media/video-zoom-controls.html.
+
 2009-04-29  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Fraser.
