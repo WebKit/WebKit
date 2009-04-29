@@ -10,8 +10,9 @@
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
                     { "name": "apple-windows-3", "platform": "win"},
-                    { "name": "apple-windows-4", "platform": "win"}
+                    { "name": "apple-windows-4", "platform": "win"},
 
+                    { "name": "gtk-linux-slave-1", "platform": "gtk"}
                   ],
 
     "builders":   [ { "name": "Tiger Intel Release", "type": "BuildAndTest", "builddir": "tiger-intel-release",
@@ -59,12 +60,18 @@
                       "name": "Windows Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-windows-4", "apple-windows-3", "test-slave"]
+                    },
+                    {
+                      "name": "GTK Linux Release", "type": "BuildAndTest", "builddir": "gtk-linux-release",
+                      "platform": "gtk", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["gtk-linux-slave-1"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 90.0,
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
-                                       "Windows Release (Build)", "Windows Debug (Build)"]
+                                       "Windows Release (Build)", "Windows Debug (Build)",
+                                       "GTK Linux Release"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
                       "builderNames": ["Leopard Intel Release (Tests)"]

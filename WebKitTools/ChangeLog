@@ -1,5 +1,11 @@
 2009-04-29  Mark Rowe  <mrowe@apple.com>
 
+        Update build.webkit.org configuration for the addition of the new GTK buildbot.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2009-04-29  Mark Rowe  <mrowe@apple.com>
+
         Ignore the --use-remote-links-to-tests option for GTK as it leads to
         perl errors being spewed at the end of run-webkit-tests.
 
