@@ -277,6 +277,9 @@ private:
 
     bool m_shouldUpdateWhileOffscreen;
 
+    unsigned m_deferSetNeedsLayouts;
+    bool m_setNeedsLayoutWasDeferred;
+
     RefPtr<Node> m_nodeToDraw;
     PaintRestriction m_paintRestriction;
     bool m_isPainting;

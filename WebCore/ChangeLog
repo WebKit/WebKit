@@ -1,3 +1,22 @@
+2009-04-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6828164>, Mail hits the !root->needsLayout() assert because it re-marks the FrameView for layout
+        when the FrameView is resized.  This bug was exposed by the elimination of the separate WebKit layout
+        flag on Mac.  
+        
+        FrameView now defers setNeedsLayouts during size changes.  Once all of the size changes are finished (including re-entrant ones
+        from WebDynamicScrollbarsView and ScrollView::updateScrollbars) we then do a layout if necessary.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::setNeedsLayout):
+        * page/FrameView.h:
+
 2009-04-29  Antony Sargent  <asargent@chromium.org>
 
         Reviewed by Dimitri Glazkov and Eric Seidel.

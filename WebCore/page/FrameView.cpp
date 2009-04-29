@@ -109,6 +109,8 @@ FrameView::FrameView(Frame* frame)
     , m_inProgrammaticScroll(false)
     , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
     , m_shouldUpdateWhileOffscreen(true)
+    , m_deferSetNeedsLayouts(0)
+    , m_setNeedsLayoutWasDeferred(false)
 {
     init();
     show();
@@ -134,6 +136,8 @@ FrameView::FrameView(Frame* frame, const IntSize& initialSize)
     , m_inProgrammaticScroll(false)
     , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
     , m_shouldUpdateWhileOffscreen(true)
+    , m_deferSetNeedsLayouts(0)
+    , m_setNeedsLayoutWasDeferred(false)
 {
     init();
     Widget::setFrameRect(IntRect(x(), y(), initialSize.width(), initialSize.height()));
@@ -336,6 +340,8 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
 
 void FrameView::setContentsSize(const IntSize& size)
 {
+    m_deferSetNeedsLayouts++;
+
     ScrollView::setContentsSize(size);
 
     Page* page = frame() ? frame()->page() : 0;
@@ -343,6 +349,11 @@ void FrameView::setContentsSize(const IntSize& size)
         return;
 
     page->chrome()->contentsSizeChanged(frame(), size); //notify only
+    
+    m_deferSetNeedsLayouts--;
+    
+    if (!m_deferSetNeedsLayouts && m_setNeedsLayoutWasDeferred)
+        layout();
 }
 
 void FrameView::adjustViewSize()
@@ -440,6 +451,7 @@ void FrameView::layout(bool allowSubtree)
 
     m_layoutTimer.stop();
     m_delayedLayout = false;
+    m_setNeedsLayoutWasDeferred = false;
 
     // Protect the view from being deleted during layout (in recalcStyle)
     RefPtr<FrameView> protector(this);
@@ -974,11 +986,16 @@ bool FrameView::needsLayout() const
         || (root && root->needsLayout())
         || m_layoutRoot
         || (document && document->childNeedsStyleRecalc()) // can occur when using WebKit ObjC interface
-        || m_frame->needsReapplyStyles();
+        || m_frame->needsReapplyStyles()
+        || m_setNeedsLayoutWasDeferred;
 }
 
 void FrameView::setNeedsLayout()
 {
+    if (m_deferSetNeedsLayouts) {
+        m_setNeedsLayoutWasDeferred = true;
+        return;
+    }
     RenderView* root = m_frame->contentRenderer();
     if (root)
         root->setNeedsLayout(true);
