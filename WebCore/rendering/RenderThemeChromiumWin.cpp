@@ -261,6 +261,13 @@ String RenderThemeChromiumWin::extraQuirksStyleSheet()
     return String(themeWinQuirksUserAgentStyleSheet, sizeof(themeWinQuirksUserAgentStyleSheet));
 }
 
+#if ENABLE(VIDEO)
+String RenderThemeChromiumWin::extraMediaControlsStyleSheet()
+{
+    return String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet));
+}
+#endif
+
 bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
 {
    // Let webkit draw one of its halo rings around any focused element,

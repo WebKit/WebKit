@@ -49,6 +49,9 @@ namespace WebCore {
 
         virtual String extraDefaultStyleSheet();
         virtual String extraQuirksStyleSheet();
+#if ENABLE(VIDEO)
+        virtual String extraMediaControlsStyleSheet();
+#endif
 
         // A method asking if the theme's controls actually care about redrawing when hovered.
         virtual bool supportsHover(const RenderStyle*) const { return true; }
