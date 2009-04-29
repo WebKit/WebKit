@@ -1,6 +1,14 @@
 2009-04-29  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
+        
+        Put this file in the right place to fix the bot failure.
+
+        * platform/mac-tiger/fast/forms/text-control-intrinsic-widths-expected.txt: Renamed from LayoutTests/platform/mac-tiger/text-control-intrinsic-widths-expected.txt.
+
+2009-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
 
         Skip fast/forms/textarea-metrics.html. It's printing the TEST PASSED
         before the test is finished. There's a race with any JS tests that
