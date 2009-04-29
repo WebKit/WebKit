@@ -1,3 +1,16 @@
+2009-04-29  Antony Sargent  <asargent@chromium.org>
+
+        Reviewed by Dimitri Glazkov and Eric Seidel.
+
+        Use AtomicString to speed up window and document interceptors.
+        https://bugs.webkit.org/show_bug.cgi?id=25275
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::NAMED_PROPERTY_DELETER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+
 2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 
         Reviewed by Jon Honeycutt.

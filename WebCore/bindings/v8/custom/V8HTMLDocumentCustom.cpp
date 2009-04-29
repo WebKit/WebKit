@@ -40,6 +40,7 @@
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -48,8 +49,9 @@ NAMED_PROPERTY_DELETER(HTMLDocument)
     // Only handle document.all.  Insert the marker object into the
     // shadow internal field to signal that document.all is no longer
     // shadowed.
-    String key = toWebCoreString(name);
-    if (key != "all")
+    AtomicString key = v8StringToAtomicWebCoreString(name);
+    DEFINE_STATIC_LOCAL(const AtomicString, all, ("all"));
+    if (key != all)
         return deletionNotHandledByInterceptor();
 
     ASSERT(info.Holder()->InternalFieldCount() == kHTMLDocumentInternalFieldCount);
@@ -61,12 +63,13 @@ NAMED_PROPERTY_DELETER(HTMLDocument)
 NAMED_PROPERTY_GETTER(HTMLDocument)
 {
     INC_STATS("DOM.HTMLDocument.NamedPropertyGetter");
-    AtomicString key = toWebCoreString(name);
+    AtomicString key = v8StringToAtomicWebCoreString(name);
 
     // Special case for document.all.  If the value in the shadow
     // internal field is not the marker object, then document.all has
     // been temporarily shadowed and we return the value.
-    if (key == "all") {
+    DEFINE_STATIC_LOCAL(const AtomicString, all, ("all"));
+    if (key == all) {
         ASSERT(info.Holder()->InternalFieldCount() == kHTMLDocumentInternalFieldCount);
         v8::Local<v8::Value> marker = info.Holder()->GetInternalField(kHTMLDocumentMarkerIndex);
         v8::Local<v8::Value> value = info.Holder()->GetInternalField(kHTMLDocumentShadowIndex);
