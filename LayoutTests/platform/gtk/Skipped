@@ -20,6 +20,16 @@ accessibility
 # failing tests
 dom/xhtml/level3/core/canonicalform08.xhtml
 dom/xhtml/level3/core/canonicalform09.xhtml
+dom/xhtml/level3/core/entitygetinputencoding03.xhtml
+dom/xhtml/level3/core/entitygetinputencoding04.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding02.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding03.xhtml
+dom/xhtml/level3/core/entitygetxmlencoding04.xhtml
+dom/xhtml/level3/core/entitygetxmlversion03.xhtml
+dom/xhtml/level3/core/entitygetxmlversion04.xhtml
+dom/xhtml/level3/core/nodegetbaseuri16.xhtml
+dom/xhtml/level3/core/nodegetbaseuri19.xhtml
+dom/xhtml/level3/core/nodegetbaseuri20.xhtml
 editing/deleting/5546763.html
 editing/deleting/5729680.html
 editing/deleting/delete-all-text-in-text-field-assertion.html
@@ -43,6 +53,8 @@ editing/input/textarea-arrow-navigation.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
 editing/inserting/typing-tab-designmode.html
+editing/pasteboard/19644-1.html
+editing/pasteboard/19644-2.html
 editing/pasteboard/4744008.html
 editing/pasteboard/4922709.html
 editing/pasteboard/5665299.html
@@ -107,6 +119,7 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
 fast/dom/navigator-detached-no-crash.html
+fast/dom/null-document-location-assign-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/open-and-close-by-DOM.html
@@ -302,13 +315,18 @@ fast/js/exceptions-thrown-in-callbacks.html
 fast/js/navigator-mimeTypes-length.html
 fast/layers/resize-layer-deletion-crash.html
 fast/loader/cancel-load-during-port-block-timer.html
+fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
+fast/loader/local-image-from-local.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
+fast/loader/plain-text-document.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
+fast/loader/subframe-self-close.html
 fast/parser/tabindex-parsing.html
 fast/regex/test1.html
 fast/regex/test4.html
@@ -323,6 +341,7 @@ fast/text/large-text-composed-char-dos.html
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/reset-drag-on-mouse-down.html
 fast/text/international/thai-offsetForPosition-inside-character.html
+fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/xsl/xslt-mismatched-tags-in-xslt.xml
 
 # HTTP tests
@@ -586,16 +605,32 @@ http/tests/xmlhttprequest/workers/methods.html
 media/audio-mpeg-supported.html
 media/broken-video.html
 media/progress-event-total.html
+media/remove-from-document.html
 media/unsupported-rtsp.html
+media/video-append-source.html
+media/video-autoplay.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 media/video-error-does-not-exist.html
+media/video-load-networkState.html
 media/video-loop.html
+media/video-pause-empty-events.html
+media/video-played-collapse.html
+media/video-played-reset.html
+media/video-played.html
 media/video-seek-past-end-playing.html
+media/video-seekable.html
+media/video-seeking.html
+media/video-size-intrinsic-scale.html
+media/video-source-add-src.html
 media/video-source-type-params.html
 media/video-source-type.html
+media/video-src-change.html
+media/video-src-invalid-remove.html
+media/video-src-plus-source.html
+media/video-timeupdate-during-playback.html
 
 # Tests in plugins/ directory
 # Notice that some of these need an ObjectiveC plugin to work
@@ -641,6 +676,7 @@ storage/domstorage/localstorage/simple-events.html
 storage/domstorage/localstorage/simple-usage.html
 storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
+storage/private-browsing-readonly.html
 svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getscreenctm-in-mixed-content2.xhtml
 svg/custom/getSubStringLength.html

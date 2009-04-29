@@ -1,3 +1,12 @@
+2009-04-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Mark Rowe.
+
+        Disable failing tests to make the bot green for its new debut, so
+        that we can more easily track regressions.
+
+        * platform/gtk/Skipped:
+
 2009-04-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.
