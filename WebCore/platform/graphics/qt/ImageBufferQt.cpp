@@ -47,7 +47,24 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     : m_pixmap(size)
 {
     m_pixmap.fill(QColor(Qt::transparent));
-    m_painter.set(new QPainter(&m_pixmap));
+
+    QPainter* painter = new QPainter(&m_pixmap);
+    m_painter.set(painter);
+
+    // Since ImageBuffer is used mainly for Canvas, explicitly initialize
+    // its painter's pen and brush with the corresponding canvas defaults
+    // NOTE: keep in sync with CanvasRenderingContext2D::State
+    QPen pen = painter->pen();
+    pen.setColor(Qt::black);
+    pen.setWidth(1);
+    pen.setCapStyle(Qt::FlatCap);
+    pen.setJoinStyle(Qt::MiterJoin);
+    pen.setMiterLimit(10);
+    painter->setPen(pen);
+    QBrush brush = painter->brush();
+    brush.setColor(Qt::black);
+    painter->setBrush(brush);
+    painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)

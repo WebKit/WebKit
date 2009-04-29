@@ -62,8 +62,8 @@ PASS testSetStrokeColor('1') is white
 PASS testSetStrokeColor('1, 0.8') is translucentWhite
 PASS testSetStrokeColor('0, 1, 0, 1') is green
 PASS testSetStrokeColor('0, 1, 0, 0.8') is translucentGreen
-FAIL testSetStrokeColor('0, 0, 0, 1, 1') should be #1a1a1a. Was rgba(0, 0, 0, 0.12549019607843137).
-FAIL testSetStrokeColor('0, 0, 0, 1, 0.8') should be rgba(25, 25, 25, 0.8). Was rgba(0, 0, 0, 0.10196078431372549).
+FAIL testSetStrokeColor('0, 0, 0, 1, 1') should be #1a1a1a. Was #000000.
+FAIL testSetStrokeColor('0, 0, 0, 1, 0.8') should be rgba(25, 25, 25, 0.8). Was rgba(0, 0, 0, 0.8).
 PASS testSetStrokeColor('0, 0, 0, 1, 0') is transparent
 PASS successfullyParsed is true
 

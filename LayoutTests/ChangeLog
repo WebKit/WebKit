@@ -1,3 +1,11 @@
+2009-04-29  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Updated expected results after Qt's GraphicsContext fixes.
+
+        * platform/qt/fast/canvas/set-colors-expected.txt:
+
 2009-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Fix the test for <https://bugs.webkit.org/show_bug.cgi?id=25420> - I broke it when
