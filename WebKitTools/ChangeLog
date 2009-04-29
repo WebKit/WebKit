@@ -1,3 +1,15 @@
+2009-04-28  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25462
+
+        Make sure "--pixel --add-platform-exceptions" produces platform
+        specific pixel test results.
+
+        * Scripts/run-webkit-tests: Support "--pixel
+        --add-platform-exceptions"
+
 2009-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Fix link warnings building TestNetscapePlugin on Windows due to mismatched

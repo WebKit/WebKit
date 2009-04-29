@@ -829,17 +829,29 @@ for my $test (@tests) {
     } else {
         $result = "mismatch";
 
-        my $message = $actual eq $expected ? "pixel test failed" : "failed";
+        my $pixelTestFailed = $pixelTests && $diffPNG && $diffPNG ne "";
+        my $testFailed = $actual ne $expected;
 
-        if ($actual ne $expected && $addPlatformExceptions) {
+        my $message = !$testFailed ? "pixel test failed" : "failed";
+
+        if (($testFailed || $pixelTestFailed) && $addPlatformExceptions) {
             my $testBase = catfile($testDirectory, $base);
             my $expectedBase = catfile($expectedDir, $base);
             my $testIsMaximallyPlatformSpecific = $testBase =~ m|^\Q$platformTestDirectory\E/|;
             my $expectedResultIsMaximallyPlatformSpecific = $expectedBase =~ m|^\Q$platformTestDirectory\E/|;
             if (!$testIsMaximallyPlatformSpecific && !$expectedResultIsMaximallyPlatformSpecific) {
                 mkpath catfile($platformTestDirectory, dirname($base));
-                my $expectedFile = catfile($platformTestDirectory, "$expectedFileName");
-                writeToFile("$expectedFile", $actual);
+                if ($testFailed) {
+                    my $expectedFile = catfile($platformTestDirectory, "$expectedFileName");
+                    writeToFile("$expectedFile", $actual);
+                }
+                if ($pixelTestFailed) {
+                    my $expectedFile = catfile($platformTestDirectory, "$base-$expectedTag.checksum");
+                    writeToFile("$expectedFile", $actualHash);
+
+                    $expectedFile = catfile($platformTestDirectory, "$base-$expectedTag.png");
+                    writeToFile("$expectedFile", $actualPNG);
+                }
                 $message .= " (results generated in $platformTestDirectory)";
             }
         }
@@ -854,7 +866,7 @@ for my $test (@tests) {
         deleteExpectedAndActualResults($base);
         recordActualResultsAndDiff($base, $actual);
 
-        if ($pixelTests && $diffPNG && $diffPNG ne "") {
+        if ($pixelTestFailed) {
             $imagesPresent{$base} = 1;
 
             writeToFile("$testResultsDirectory/$base-$actualTag.png", $actualPNG);
