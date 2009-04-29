@@ -135,6 +135,9 @@ namespace WebCore {
         static void decrementStatsCounter(const char* name);
         static void incrementStatsCounter(const char* name);
 
+        // Sudden Termination
+        static void suddenTerminationChanged(bool enabled);
+
         // SystemTime ---------------------------------------------------------
         static double currentTime();
 
