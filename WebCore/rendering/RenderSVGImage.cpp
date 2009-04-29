@@ -264,12 +264,12 @@ void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int, in
     graphicsContext->addFocusRingRect(contentRect);
 }
 
-void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int, bool)
+void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int)
 {
     rects.append(absoluteClippedOverflowRect());
 }
 
-void RenderSVGImage::absoluteQuads(Vector<FloatQuad>& quads, bool)
+void RenderSVGImage::absoluteQuads(Vector<FloatQuad>& quads)
 {
     quads.append(FloatRect(absoluteClippedOverflowRect()));
 }

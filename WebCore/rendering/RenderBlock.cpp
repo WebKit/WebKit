@@ -4845,31 +4845,31 @@ void RenderBlock::setMaxBottomMargins(int pos, int neg)
     m_maxMargin->m_bottomNeg = neg;
 }
 
-void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
+void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel && inlineContinuation()) {
+    if (inlineContinuation()) {
         rects.append(IntRect(tx, ty - collapsedMarginTop(),
                              width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
         inlineContinuation()->absoluteRects(rects,
                                             tx - x() + inlineContinuation()->containingBlock()->x(),
-                                            ty - y() + inlineContinuation()->containingBlock()->y(), topLevel);
+                                            ty - y() + inlineContinuation()->containingBlock()->y());
     } else
         rects.append(IntRect(tx, ty, width(), height()));
 }
 
-void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel && inlineContinuation()) {
+    if (inlineContinuation()) {
         FloatRect localRect(0, -collapsedMarginTop(),
                             width(), height() + collapsedMarginTop() + collapsedMarginBottom());
         quads.append(localToAbsoluteQuad(localRect));
-        inlineContinuation()->absoluteQuads(quads, topLevel);
+        inlineContinuation()->absoluteQuads(quads);
     } else
         quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }

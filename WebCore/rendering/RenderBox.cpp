@@ -317,12 +317,12 @@ void RenderBox::setScrollTop(int newTop)
         layer()->scrollToYOffset(newTop);
 }
 
-void RenderBox::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
+void RenderBox::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     rects.append(IntRect(tx, ty, width(), height()));
 }
 
-void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool)
+void RenderBox::absoluteQuads(Vector<FloatQuad>& quads)
 {
     quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }

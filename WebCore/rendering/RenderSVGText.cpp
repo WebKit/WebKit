@@ -133,7 +133,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int,
     return false;
 }
 
-void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
+void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int)
 {
     RenderSVGRoot* root = findSVGRootObject(parent());
     if (!root)
@@ -158,7 +158,7 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     }
 }
 
-void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool)
+void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)
 {
     RenderSVGRoot* root = findSVGRootObject(parent());
     if (!root)

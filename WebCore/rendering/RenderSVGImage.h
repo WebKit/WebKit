@@ -50,8 +50,8 @@ namespace WebCore {
         virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
         virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
     
-        virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
-        virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+        virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+        virtual void absoluteQuads(Vector<FloatQuad>&);
         virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
         virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);

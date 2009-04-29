@@ -535,13 +535,13 @@ public:
 
     virtual void absoluteRectsForRange(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
     
-    virtual void absoluteRects(Vector<IntRect>&, int, int, bool = true) { }
+    virtual void absoluteRects(Vector<IntRect>&, int, int) { }
     // FIXME: useTransforms should go away eventually
     IntRect absoluteBoundingBoxRect(bool useTransforms = false);
 
     // Build an array of quads in absolute coords for line boxes
     virtual void absoluteQuadsForRange(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool /*topLevel*/ = true) { }
+    virtual void absoluteQuads(Vector<FloatQuad>&) { }
 
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);

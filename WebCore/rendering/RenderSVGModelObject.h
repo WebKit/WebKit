@@ -54,8 +54,8 @@ public:
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const;
 
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
+    virtual void absoluteQuads(Vector<FloatQuad>&);
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
 

@@ -1,3 +1,60 @@
+2009-04-28  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the topLevel boolean argument from absolute{Rects,Quads}.
+        This argument was default to true and no one ever passed false.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteRects):
+        (WebCore::RenderBlock::absoluteQuads):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        (WebCore::RenderBox::absoluteQuads):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteRects):
+        (WebCore::RenderObject::absoluteQuads):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::absoluteRects):
+        (WebCore::RenderSVGHiddenContainer::absoluteQuads):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::absoluteRects):
+        (WebCore::RenderSVGImage::absoluteQuads):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        (WebCore::RenderSVGInlineText::absoluteQuads):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::absoluteRects):
+        (WebCore::RenderSVGModelObject::absoluteQuads):
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        (WebCore::RenderSVGTSpan::absoluteQuads):
+        * rendering/RenderSVGTSpan.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::absoluteQuads):
+        * rendering/RenderSVGTextPath.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteRects):
+        (WebCore::RenderView::absoluteQuads):
+        * rendering/RenderView.h:
+
 2009-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

@@ -421,7 +421,7 @@ void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
     m_lineBoxes.paint(this, paintInfo, tx, ty);
 }
 
-void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
+void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     if (InlineRunBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
@@ -429,19 +429,18 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
     } else
         rects.append(IntRect(tx, ty, 0, 0));
 
-    if (continuation() && topLevel) {
+    if (continuation()) {
         if (continuation()->isBox()) {
             RenderBox* box = toRenderBox(continuation());
             continuation()->absoluteRects(rects, 
                                           tx - containingBlock()->x() + box->x(),
-                                          ty - containingBlock()->y() + box->y(),
-                                          topLevel);
+                                          ty - containingBlock()->y() + box->y());
         } else
-            continuation()->absoluteRects(rects, tx - containingBlock()->x(), ty - containingBlock()->y(), topLevel);
+            continuation()->absoluteRects(rects, tx - containingBlock()->x(), ty - containingBlock()->y());
     }
 }
 
-void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderInline::absoluteQuads(Vector<FloatQuad>& quads)
 {
     if (InlineRunBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox()) {
@@ -451,8 +450,8 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
     } else
         quads.append(localToAbsoluteQuad(FloatRect()));
 
-    if (continuation() && topLevel)
-        continuation()->absoluteQuads(quads, topLevel);
+    if (continuation())
+        continuation()->absoluteQuads(quads);
 }
 
 int RenderInline::offsetLeft() const

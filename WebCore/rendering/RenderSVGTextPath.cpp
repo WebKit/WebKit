@@ -98,7 +98,7 @@ void RenderSVGTextPath::absoluteRects(Vector<IntRect>& rects, int, int)
     }
 }
 
-void RenderSVGTextPath::absoluteQuads(Vector<FloatQuad>& quads, bool)
+void RenderSVGTextPath::absoluteQuads(Vector<FloatQuad>& quads)
 {
     InlineRunBox* firstBox = firstLineBox();
 

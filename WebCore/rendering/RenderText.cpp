@@ -210,7 +210,7 @@ PassRefPtr<StringImpl> RenderText::originalText() const
     return e ? static_cast<Text*>(e)->string() : 0;
 }
 
-void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
+void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rects.append(IntRect(tx + box->x(), ty + box->y(), box->width(), box->height()));
@@ -255,7 +255,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     }
 }
 
-void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool)
+void RenderText::absoluteQuads(Vector<FloatQuad>& quads)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         quads.append(localToAbsoluteQuad(FloatRect(box->x(), box->y(), box->width(), box->height())));
