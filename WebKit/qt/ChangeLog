@@ -1,3 +1,22 @@
+2009-04-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Replaced QWebElementCollection with QList<QWebElement>.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::findAll):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::findAllElements):
+        * Api/qwebframe.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::selectElements):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::simpleCollection):
+        (tst_QWebElement::namespaceURI):
+        (tst_QWebElement::nullSelect):
+
 2009-04-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

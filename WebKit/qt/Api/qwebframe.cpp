@@ -985,7 +985,7 @@ QWebElement QWebFrame::documentElement() const
     Returns a new collection of elements that are children of the frame's
     document element and that match the given CSS selector \a selectorQuery.
 */
-QWebElementCollection QWebFrame::findAllElements(const QString &selectorQuery) const
+QList<QWebElement> QWebFrame::findAllElements(const QString &selectorQuery) const
 {
     return documentElement().findAll(selectorQuery);
 }

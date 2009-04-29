@@ -188,7 +188,7 @@ protected slots:
         QString str = QInputDialog::getText(this, "Select elements", "Choose elements",
                                             QLineEdit::Normal, "a", &ok);
         if (ok && !str.isEmpty()) {
-            QWebElementCollection result =  view->page()->mainFrame()->findAllElements(str);
+            QList<QWebElement> result =  view->page()->mainFrame()->findAllElements(str);
             foreach (QWebElement e, result)
                 e.setStyleProperty("background-color", "yellow");
             statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);

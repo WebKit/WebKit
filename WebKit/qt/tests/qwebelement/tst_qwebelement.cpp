@@ -70,17 +70,14 @@ private slots:
     void attributesNS();
     void classes();
     void namespaceURI();
-    void iteration();
     void foreachManipulation();
     void callFunction();
     void callFunctionSubmitForm();
     void functionNames();
     void documentElement();
     void frame();
-    void emptyCollection();
     void style();
     void computedStyle();
-    void appendCollection();
     void properties();
     void appendAndPrepend();
     void insertBeforeAndAfter();
@@ -137,10 +134,7 @@ void tst_QWebElement::simpleCollection()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QWebElementCollection paras = body.findAll("p");
-    QCOMPARE(paras.count(), 2);
-
-    QList<QWebElement> list = paras.toList();
+    QList<QWebElement> list = body.findAll("p");
     QCOMPARE(list.count(), 2);
     QCOMPARE(list.at(0).toPlainText(), QString("first para"));
     QCOMPARE(list.at(1).toPlainText(), QString("second para"));
@@ -265,47 +259,12 @@ void tst_QWebElement::namespaceURI()
     QWebElement body = m_mainFrame->documentElement();
     QCOMPARE(body.namespaceUri(), QLatin1String("http://www.w3.org/1999/xhtml"));
 
-    QWebElement svg = body.findAll("*#foobar").toList().at(0);
+    QWebElement svg = body.findAll("*#foobar").at(0);
     QCOMPARE(svg.prefix(), QLatin1String("svg"));
     QCOMPARE(svg.localName(), QLatin1String("svg"));
     QCOMPARE(svg.tagName(), QLatin1String("svg:svg"));
     QCOMPARE(svg.namespaceUri(), QLatin1String("http://www.w3.org/2000/svg"));
 
-}
-
-void tst_QWebElement::iteration()
-{
-    QString html = "<body><p>first para</p><p>second para</p></body>";
-    m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement();
-
-    QWebElementCollection paras = body.findAll("p");
-    QList<QWebElement> referenceList = paras.toList();
-
-    QList<QWebElement> foreachList;
-    foreach(QWebElement p, paras) {
-        foreachList.append(p);
-    }
-    QVERIFY(foreachList.count() == 2);
-    QCOMPARE(foreachList.count(), referenceList.count());
-    QCOMPARE(foreachList.at(0), referenceList.at(0));
-    QCOMPARE(foreachList.at(1), referenceList.at(1));
-
-    QList<QWebElement> forLoopList;
-    for (int i = 0; i < paras.count(); ++i) {
-        forLoopList.append(paras.at(i));
-    }
-    QVERIFY(foreachList.count() == 2);
-    QCOMPARE(foreachList.count(), referenceList.count());
-    QCOMPARE(foreachList.at(0), referenceList.at(0));
-    QCOMPARE(foreachList.at(1), referenceList.at(1));
-
-    for (int i = 0; i < paras.count(); ++i) {
-        QCOMPARE(paras.at(i), paras[i]);
-    }
-
-    QCOMPARE(paras.at(0), paras.first());
-    QCOMPARE(paras.at(1), paras.last());
 }
 
 void tst_QWebElement::foreachManipulation()
@@ -395,12 +354,6 @@ void tst_QWebElement::frame()
     QVERIFY(secondPara.webFrame() == secondFrame);
 }
 
-void tst_QWebElement::emptyCollection()
-{
-    QWebElementCollection emptyCollection;
-    QCOMPARE(emptyCollection.count(), 0);
-}
-
 void tst_QWebElement::style()
 {
     QString html = "<body><p style=\"color: blue;\">some text</p></body>";
@@ -433,37 +386,6 @@ void tst_QWebElement::computedStyle()
     QCOMPARE(p.computedStyleProperty("cursor"), QLatin1String("text"));
     QCOMPARE(p.computedStyleProperty("color"), QLatin1String("rgb(255, 0, 0)"));
     QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
-}
-
-void tst_QWebElement::appendCollection()
-{
-    QString html = "<body><span class='a'>aaa</span><p>first para</p><div>foo</div>"
-        "<span class='b'>bbb</span><p>second para</p><div>bar</div></body>";
-    m_mainFrame->setHtml(html);
-    QWebElement body = m_mainFrame->documentElement();
-
-    QWebElementCollection collection = body.findAll("p");
-    QCOMPARE(collection.count(), 2);
-
-    collection.append(body.findAll("div"));
-    QCOMPARE(collection.count(), 4);
-
-    collection += body.findAll("span.a");
-    QCOMPARE(collection.count(), 5);
-
-    QWebElementCollection all = collection + body.findAll("span.b");
-    QCOMPARE(all.count(), 6);
-    QCOMPARE(collection.count(), 5);
-
-    all += collection;
-    QCOMPARE(all.count(), 11);
-
-    QCOMPARE(collection.count(), 5);
-    QWebElementCollection test;
-    test.append(collection);
-    QCOMPARE(test.count(), 5);
-    test.append(QWebElementCollection());
-    QCOMPARE(test.count(), 5);
 }
 
 void tst_QWebElement::properties()
@@ -699,7 +621,7 @@ void tst_QWebElement::nullSelect()
 {
     m_mainFrame->setHtml("<body><p>Test");
 
-    QWebElementCollection collection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
+    QList<QWebElement> collection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
     QVERIFY(collection.count() == 0);
 }
 
