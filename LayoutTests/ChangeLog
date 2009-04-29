@@ -2,6 +2,22 @@
 
         No review, rolling out a patch.
 
+        Revert http://trac.webkit.org/changeset/43019
+
+        New tests failed because I removed the tabs from them
+        when landing (since we avoid tabs in WebKit files).
+        I couldn't tell if the new results were correct with
+        spaces or not.
+
+        * editing/selection/extend-selection-expected.txt:
+        * editing/selection/extend-selection.html:
+        * editing/selection/home-end-expected.txt: Removed.
+        * editing/selection/home-end.html: Removed.
+
+2009-04-29  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out a patch.
+
         Revert 43020 as it caused accessibility/lists.html to fail
         and no one is around to tell me if it's a progression or not.
 

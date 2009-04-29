@@ -1,3 +1,22 @@
+2009-04-29  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out a patch.
+
+        Revert http://trac.webkit.org/changeset/43019
+
+        New tests failed because I removed the tabs from them
+        when landing (since we avoid tabs in WebKit files).
+        I couldn't tell if the new results were correct with
+        spaces or not.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingBackward):
+        * editing/visible_units.cpp:
+        * editing/visible_units.h:
+
 2009-04-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

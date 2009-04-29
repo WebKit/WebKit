@@ -321,7 +321,7 @@ VisiblePosition SelectionController::modifyExtendingForward(TextGranularity gran
             pos = endOfSentence(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case LineBoundary:
-            pos = logicalEndOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
+            pos = endOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case ParagraphBoundary:
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
@@ -395,7 +395,7 @@ VisiblePosition SelectionController::modifyMovingForward(TextGranularity granula
             pos = endOfSentence(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case LineBoundary:
-            pos = logicalEndOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
+            pos = endOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case ParagraphBoundary:
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
@@ -474,7 +474,7 @@ VisiblePosition SelectionController::modifyExtendingBackward(TextGranularity gra
             pos = startOfSentence(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case LineBoundary:
-            pos = logicalStartOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
+            pos = startOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case ParagraphBoundary:
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
@@ -541,7 +541,7 @@ VisiblePosition SelectionController::modifyMovingBackward(TextGranularity granul
             pos = startOfSentence(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case LineBoundary:
-            pos = logicalStartOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
+            pos = startOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case ParagraphBoundary:
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
