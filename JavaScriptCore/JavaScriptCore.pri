@@ -13,19 +13,32 @@ win32-* {
     LIBS += -lwinmm
 }
 
-# Disable the JIT due to numerous observed miscompilations :(
+# Default rules to turn JIT on/off
 !contains(DEFINES, ENABLE_JIT=.) {
     CONFIG(release):isEqual(QT_ARCH,i386) {
-         JIT_DEFINES = ENABLE_JIT ENABLE_WREC ENABLE_JIT_OPTIMIZE_CALL ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS ENABLE_JIT_OPTIMIZE_ARITHMETIC
-         # Require gcc >= 4.1
-         linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
-             DEFINES += $$JIT_DEFINES WTF_USE_JIT_STUB_ARGUMENT_VA_LIST
-             QMAKE_CXXFLAGS += -fno-stack-protector
-             QMAKE_CFLAGS += -fno-stack-protector
-         }
-         win32-msvc* {
-             DEFINES += $$JIT_DEFINES WTF_USE_JIT_STUB_ARGUMENT_REGISTER
-         }
+        # Require gcc >= 4.1
+        linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
+            DEFINES += ENABLE_JIT=1
+        }
+        win32-msvc* {
+            DEFINES += ENABLE_JIT=1
+        }
+    }
+}
+
+# Rules when JIT enabled
+contains(DEFINES, ENABLE_JIT=1) {
+    !contains(DEFINES, WREC=.): DEFINES += ENABLE_WREC=1
+    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_CALL=.): DEFINES += ENABLE_JIT_OPTIMIZE_CALL=1
+    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=.): DEFINES += ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=1
+    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_ARITHMETIC=.): DEFINES += ENABLE_JIT_OPTIMIZE_ARITHMETIC=1
+    linux-g++* {
+        !contains(DEFINES, WTF_USE_JIT_STUB_ARGUMENT_VA_LIST=.): DEFINES += WTF_USE_JIT_STUB_ARGUMENT_VA_LIST=1
+        QMAKE_CXXFLAGS += -fno-stack-protector
+        QMAKE_CFLAGS += -fno-stack-protector
+    }
+    win32-msvc* {
+        !contains(DEFINES, WTF_USE_JIT_STUB_ARGUMENT_REGISTER=.): DEFINES += WTF_USE_JIT_STUB_ARGUMENT_REGISTER=1
     }
 }
 
