@@ -132,7 +132,6 @@ JavaScriptCore Bakefile project file.
         <sys-lib>$(READLINE_LIB)</sys-lib>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
             <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
-            <sys-lib>jscore</sys-lib>
             <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
             <lib-path>$(WKOUTPUTDIR)</lib-path>
             <lib-path>$(WK_ROOT)/WebKitLibraries/win/lib</lib-path>
@@ -145,10 +144,7 @@ JavaScriptCore Bakefile project file.
         <command>bash make-generated-sources.sh</command>
     </action>
 
-    <dll id="jscore" template="jscore_base,wxwk">
-        <define>BUILDING_JavaScriptCore</define>
-        <runtime-libs>dynamic</runtime-libs>
-        <dllname>jscore</dllname>
-        <libname>jscore</libname>
-    </dll>
+    <lib id="jscore" template="jscore_base,wx-lib">
+
+    </lib>
 </makefile>

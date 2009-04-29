@@ -1,3 +1,9 @@
+2009-04-28  Kevin Ollivier <kevino@theolliviers.com>
+
+        wxMSW build fix. Switch JSCore build back to static.
+
+        * config.h:
+
 2009-04-28  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.

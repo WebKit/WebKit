@@ -1,3 +1,11 @@
+2009-04-28  Kevin Ollivier <kevino@theolliviers.com>
+
+        wxMSW build fix. Switch JSCore build back to static. 
+
+        * API/JSBase.h:
+        * config.h:
+        * jscore.bkl:
+
 2009-04-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

@@ -65,7 +65,9 @@ typedef struct OpaqueJSValue* JSObjectRef;
 /* JavaScript symbol exports */
 
 #undef JS_EXPORT
-#if defined(__GNUC__)
+#if defined(BUILDING_WX__)
+    #define JS_EXPORT
+#elif defined(__GNUC__)
     #define JS_EXPORT __attribute__((visibility("default")))
 #elif defined(WIN32) || defined(_WIN32)
     /*
