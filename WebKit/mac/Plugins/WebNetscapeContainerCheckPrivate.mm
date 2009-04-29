@@ -34,7 +34,7 @@ WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
 {
     static WKNBrowserContainerCheckFuncs funcs = {
         sizeof(WKNBrowserContainerCheckFuncs),
-        0,
+        WKNVBrowserContainerCheckFuncsVersion,
         WKN_CheckIfAllowedToLoadURL,
         WKN_CancelCheckIfAllowedToLoadURL
     };

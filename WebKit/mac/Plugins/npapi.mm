@@ -217,9 +217,9 @@ NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordina
     return [pluginViewForInstance(instance) convertFromX:sourceX andY:sourceY space:sourceSpace toX:destX andY:destY space:destSpace];
 }
 
-uint32 WKN_CheckIfAllowedToLoadURL(NPP instance, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool))
+uint32 WKN_CheckIfAllowedToLoadURL(NPP instance, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool, void*), void* context)
 {
-    return [pluginViewForInstance(instance) checkIfAllowedToLoadURL:url frame:frame callbackFunc:callbackFunc];
+    return [pluginViewForInstance(instance) checkIfAllowedToLoadURL:url frame:frame callbackFunc:callbackFunc context:context];
 }
 
 void WKN_CancelCheckIfAllowedToLoadURL(NPP instance, uint32 checkID)

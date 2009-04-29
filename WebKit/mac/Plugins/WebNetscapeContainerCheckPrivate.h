@@ -36,11 +36,12 @@ extern "C" {
 #endif
     
 #define WKNVBrowserContainerCheckFuncs 1701
+#define WKNVBrowserContainerCheckFuncsVersion 1
 
-typedef uint32 (*WKN_CheckIfAllowedToLoadURLProcPtr)(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed));
+typedef uint32 (*WKN_CheckIfAllowedToLoadURLProcPtr)(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed, void* context), void* context);
 typedef void  (*WKN_CancelCheckIfAllowedToLoadURLProcPtr)(NPP npp, uint32);
 
-uint32 WKN_CheckIfAllowedToLoadURL(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed));
+uint32 WKN_CheckIfAllowedToLoadURL(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed, void* context), void* context);
 void WKN_CancelCheckIfAllowedToLoadURL(NPP npp, uint32);
 
 typedef struct _WKNBrowserContainerCheckFuncs {
