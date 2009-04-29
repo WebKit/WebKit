@@ -1,3 +1,19 @@
+2009-04-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix for <rdar://problem/6835573>, Find Banner turns invisible when WebView is resized.  Make sure
+        not to resize the interior views of a WebView in response to its bounds changing when not using
+        viewless WebKit.  Auto-resizing rules were already in place to handle size adjustments for us.
+        Just mark as needing layout and do nothing else.
+
+        This does mean viewless WebKit is broken with the Find Banner, and that will likely require a
+        Safari change (using a new API that will enable clients to define the edges of the content area as offsets
+        from the sides of the WebView).
+
+        * WebView/WebView.mm:
+        (-[WebView _boundsChanged]):
+
 2009-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.
