@@ -99,13 +99,14 @@ Class kitClass(WebCore::CSSRule* impl)
 Class kitClass(WebCore::CSSValue* impl)
 {
     switch (impl->cssValueType()) {
-        case DOM_CSS_PRIMITIVE_VALUE:
+        case WebCore::CSSValue::CSS_PRIMITIVE_VALUE:
             return [DOMCSSPrimitiveValue class];
-        case DOM_CSS_VALUE_LIST:
+        case WebCore::CSSValue::CSS_VALUE_LIST:
             return [DOMCSSValueList class];
-        case DOM_CSS_INHERIT:
+        case WebCore::CSSValue::CSS_INHERIT:
+        case WebCore::CSSValue::CSS_INITIAL:
             return [DOMCSSValue class];
-        case DOM_CSS_CUSTOM:
+        case WebCore::CSSValue::CSS_CUSTOM:
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
             if (impl->isSVGPaint())
                 return [DOMSVGPaint class];

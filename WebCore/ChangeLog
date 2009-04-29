@@ -1,3 +1,11 @@
+2009-04-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):  Added CSS_INITIAL to the switch statement, and changed to use the WebCore
+          type and not the binding type.
+
 2009-04-29  John Abd-El-Malek  <jam@google.com>
 
         Reviewed by Dimitri Glazkov.
@@ -9,7 +17,7 @@
 
 2009-04-29  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Darin Adler
+        Reviewed by Darin Adler.
 
         <rdar://problem/6573742> - Problem dragging standalone images from Safari to Mail
 
