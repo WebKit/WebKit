@@ -1126,9 +1126,11 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val(STUB_ARGS)
                 result = jsArray->getIndex(i);
             else
                 result = jsArray->JSArray::get(callFrame, i);
-        } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
+        } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i)) {
+            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_string));
             result = asString(baseValue)->getIndex(ARG_globalData, i);
-        else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+        } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));
             return JSValuePtr::encode(asByteArray(baseValue)->getIndex(callFrame, i));
@@ -1142,6 +1144,37 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValuePtr::encode(result);
 }
+    
+    JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val_string(STUB_ARGS)
+    {
+        BEGIN_STUB_FUNCTION();
+        
+        CallFrame* callFrame = ARG_callFrame;
+        JSGlobalData* globalData = ARG_globalData;
+        
+        JSValuePtr baseValue = ARG_src1;
+        JSValuePtr subscript = ARG_src2;
+        
+        JSValuePtr result;
+        
+        if (LIKELY(subscript.isUInt32Fast())) {
+            uint32_t i = subscript.getUInt32Fast();
+            if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
+                result = asString(baseValue)->getIndex(ARG_globalData, i);
+            else {
+                result = baseValue.get(callFrame, i);
+                if (!isJSString(globalData, baseValue))
+                    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
+            }
+        } else {
+            Identifier property(callFrame, subscript.toString(callFrame));
+            result = baseValue.get(callFrame, property);
+        }
+        
+        CHECK_FOR_EXCEPTION_AT_END();
+        return JSValuePtr::encode(result);
+    }
+    
 
 JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS)
 {

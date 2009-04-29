@@ -8,6 +8,20 @@
 
         Reviewed by Geoff Garen.
 
+        Improve performance of string indexing
+
+        Add a cti_get_by_val_string function to specialise indexing into a string object.
+        This gives us a slight performance win on a number of string tests.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_get_by_val):
+        (JSC::JITStubs::cti_op_get_by_val_string):
+        * jit/JITStubs.h:
+
+2009-04-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Improve performance of right shifts of large or otherwise floating point values.
 
         Add logic to the codegen for right shift to avoid jumping to a helper function
