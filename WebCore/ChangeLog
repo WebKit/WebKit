@@ -1,3 +1,12 @@
+2009-04-29  John Abd-El-Malek  <jam@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Reverted my previous change to add resetChromiumPluginCache().
+        https://bugs.webkit.org/show_bug.cgi?id=25318
+
+        * plugins/chromium/PluginDataChromium.cpp:
+
 2009-04-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

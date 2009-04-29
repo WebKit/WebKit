@@ -85,11 +85,6 @@ private:
 
 static PluginCache pluginCache;
 
-void resetChromiumPluginCache()
-{
-    pluginCache.reset(false);
-}
-
 void PluginData::initPlugins()
 {
     const Vector<PluginInfo*>& plugins = pluginCache.plugins();
