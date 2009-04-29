@@ -1,3 +1,11 @@
+2009-04-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::findMethodIndex): Removed exec param from at() call.
+        (JSC::Bindings::QtRuntimeConnectionMethod::call): Ditto.
+
 2009-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.

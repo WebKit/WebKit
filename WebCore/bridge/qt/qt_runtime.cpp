@@ -1181,7 +1181,7 @@ static int findMethodIndex(ExecState* exec,
         bool converted = true;
         int matchDistance = 0;
         for (int i = 0; converted && i < types.count() - 1; ++i) {
-            JSValuePtr arg = i < jsArgs.size() ? jsArgs.at(exec, i) : jsUndefined();
+            JSValuePtr arg = i < jsArgs.size() ? jsArgs.at(i) : jsUndefined();
 
             int argdistance = -1;
             QVariant v = convertValueToQVariant(exec, arg, types.at(i+1).typeId(), &argdistance);
@@ -1454,7 +1454,7 @@ JSValuePtr QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionOb
 
         if (signalIndex != -1) {
             if (args.size() == 1) {
-                funcObject = args.at(exec, 0).toObject(exec);
+                funcObject = args.at(0).toObject(exec);
                 CallData callData;
                 if (funcObject->getCallData(callData) == CallTypeNone) {
                     if (d->m_isConnect)
@@ -1463,18 +1463,18 @@ JSValuePtr QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionOb
                         return throwError(exec, TypeError, "QtMetaMethod.disconnect: target is not a function");
                 }
             } else if (args.size() >= 2) {
-                if (args.at(exec, 0).isObject()) {
-                    thisObject = args.at(exec, 0).toObject(exec);
+                if (args.at(0).isObject()) {
+                    thisObject = args.at(0).toObject(exec);
 
                     // Get the actual function to call
-                    JSObject *asObj = args.at(exec, 1).toObject(exec);
+                    JSObject *asObj = args.at(1).toObject(exec);
                     CallData callData;
                     if (asObj->getCallData(callData) != CallTypeNone) {
                         // Function version
                         funcObject = asObj;
                     } else {
                         // Convert it to a string
-                        UString funcName = args.at(exec, 1).toString(exec);
+                        UString funcName = args.at(1).toString(exec);
                         Identifier funcIdent(exec, funcName);
 
                         // ### DropAllLocks
