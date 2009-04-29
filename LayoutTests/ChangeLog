@@ -1,3 +1,10 @@
+2009-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Fix the test for <https://bugs.webkit.org/show_bug.cgi?id=25420> - I broke it when
+        experimenting with other aspects of the issue, so it didn't check what it should have checked.
+
+        * http/tests/xmlhttprequest/detaching-frame-2.html:
+
 2009-04-28  David Carson  <dacarson@apple.com>
 
         Reviewed by David Kilzer.

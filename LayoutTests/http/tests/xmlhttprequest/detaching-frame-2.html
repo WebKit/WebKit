@@ -15,8 +15,8 @@
    frames[0].frameElement.onload = function() {
      var client
      try {
-       client = new XMLHttpRequest()
-       client.open("GET", "/xmlhttprequest/resources/meaningless-frame.html", false)
+       client = new window.x()
+       client.open("GET", "/xmlhttprequest/resources/echo-host.php", false)
        client.send("")
      } catch(e)
      {
