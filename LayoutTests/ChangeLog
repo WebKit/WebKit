@@ -1,3 +1,19 @@
+2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
+
+        Reviewed by Adele Peterson.
+
+        Populate the role attribute for document objects correctly
+        on windows. Added a new test case for this fix. This fix is
+        specific for windows. So, added a new test case in windows
+        specific directory.
+        https://bugs.webkit.org/show_bug.cgi?id=23583
+
+        * platform/win/accessibility: Added a new directory i.e. accessibility.
+        * platform/win/accessibility/document-role-expected.txt: Added a new
+        test case for populating role attribute of document objects.
+        * platform/win/accessibility/document-role.html: This file represents
+        the expected output for the test case that is added.
+
 2009-04-29  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Eric Seidel.

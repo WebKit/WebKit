@@ -38,6 +38,11 @@ AccessibleDocument::AccessibleDocument(Document* doc)
 {
 }
 
+long AccessibleDocument::role() const
+{
+    return ROLE_SYSTEM_DOCUMENT;
+}
+
 Document* AccessibleDocument::document() const
 {
     if (!m_object)

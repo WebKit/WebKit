@@ -1,3 +1,17 @@
+2009-04-29  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23583
+        Populate role attribute for document objects correctly
+        on Windows platform.
+
+        * AccessibleDocument.cpp:
+        (AccessibleDocument::role): Return ROLE_SYSTEM_DOCUMENT for
+        document objects on windows. (Matching Firefox).
+        * AccessibleDocument.h: Add the role function prototype in
+        header file.
+
 2009-04-22  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5115298> Don't get error msg when download is interrupted and cannot resume due to server unavailability
