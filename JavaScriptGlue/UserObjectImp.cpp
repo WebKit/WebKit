@@ -67,7 +67,7 @@ JSValuePtr UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, con
         CFMutableArrayRef jsArgs = CFArrayCreateMutable(0, 0, &arrayCallBacks);
         if (jsArgs) {
             for (CFIndex i = 0; i < argCount; i++) {
-                JSUserObject* jsArg = KJSValueToJSObject(args.at(exec, i), exec);
+                JSUserObject* jsArg = KJSValueToJSObject(args.at(i), exec);
                 CFArrayAppendValue(jsArgs, (void*)jsArg);
                 jsArg->Release();
             }
