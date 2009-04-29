@@ -1,3 +1,12 @@
+2009-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Add a test case for non-string value for Function.displayName in the profiler.
+
+        * fast/profiler/named-functions-with-display-names-expected.txt:
+        * fast/profiler/named-functions-with-display-names.html:
+
 2009-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         Disable media/video-zoom-controls.html on Windows for now.

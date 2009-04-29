@@ -1,3 +1,14 @@
+2009-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Crash in profiler due to incorrect assuming displayName would be a string.
+
+        Fixed by adding a type guard.
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::displayName):
+
 2009-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.

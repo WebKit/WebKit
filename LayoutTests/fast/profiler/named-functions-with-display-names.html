@@ -42,6 +42,14 @@ function function1000()
 
 function1000.displayName = "1000 iterations function";
 
+
+function bogusDisplayNameFunction()
+{
+    for (var i = 0; i < 0; ++i) ;
+}
+
+bogusDisplayNameFunction.displayName = bogusDisplayNameFunction;
+
 function startTest()
 {
     console.profile("Named functions with display names");
@@ -51,6 +59,7 @@ function startTest()
     function2();
     function20();
     function1000();
+    bogusDisplayNameFunction();
 
     endTest();
 }
