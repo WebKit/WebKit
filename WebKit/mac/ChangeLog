@@ -1,3 +1,19 @@
+2009-04-30  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlson.
+
+        <rdar://problem/6823049>
+        
+        Fix an issue where some plug-ins would cause the application icon to constantly bounce
+        up and down in the Dock.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h: Change m_placeholderWindow ivar to be
+        a subclass of NSWindow, WebPlaceholderModalWindow.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:  Added WebPlaceholderModalWindow NSWindow subclass.
+        (-[WebPlaceholderModalWindow _wantsUserAttention]): Prevent NSApp from calling requestUserAttention:
+         when the window is shown modally, even if the app is inactive.
+        (WebKit::NetscapePluginHostProxy::beginModal): NSWindow -> WebPlaceholderModalWindow.
+
 2009-04-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

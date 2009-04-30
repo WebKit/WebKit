@@ -49,6 +49,18 @@ using namespace std;
 using namespace JSC;
 using namespace WebCore;
 
+@interface WebPlaceholderModalWindow : NSWindow 
+@end
+
+@implementation WebPlaceholderModalWindow
+// Prevent NSApp from calling requestUserAttention: when the window is shown 
+// modally, even if the app is inactive. See 6823049.
+- (BOOL)_wantsUserAttention
+{
+    return NO;   
+}
+@end
+
 namespace WebKit {
 
 class PluginDestroyDeferrer {
@@ -201,7 +213,7 @@ void NetscapePluginHostProxy::beginModal()
     ASSERT(!m_placeholderWindow);
     ASSERT(!m_activationObserver);
     
-    m_placeholderWindow.adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    m_placeholderWindow.adoptNS([[WebPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationWillBecomeActiveNotification object:NSApp queue:nil
                                                                          usingBlock:^(NSNotification *){ applicationDidBecomeActive(); }];

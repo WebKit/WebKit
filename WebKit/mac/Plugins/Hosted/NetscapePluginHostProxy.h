@@ -33,6 +33,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/PassRefPtr.h>
 
+@class WebPlaceholderModalWindow;
+
 namespace WebKit {
     
 class NetscapePluginInstanceProxy;
@@ -80,7 +82,7 @@ private:
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
     
     RetainPtr<id> m_activationObserver;
-    RetainPtr<NSWindow *> m_placeholderWindow;
+    RetainPtr<WebPlaceholderModalWindow *> m_placeholderWindow;
     unsigned m_isModal;
     bool m_menuBarIsVisible;
     const ProcessSerialNumber m_pluginHostPSN;
