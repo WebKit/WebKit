@@ -1,46 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
-<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" onload="runTest()">
-   <script type="text/ecmascript"><![CDATA[
-      var states = [];
-      var clicked;
-      function testClickAt(x, y) {
-         eventSender.mouseMoveTo(x, y);
-         eventSender.mouseDown();
-         eventSender.mouseUp();
-         states.push(clicked);
-         clicked = false;
-      }
-      function checkResults() {
-         var testAgainst = [true, false];
-         for (var i = 0; i < testAgainst.length; i++) {
-            if (testAgainst[i] != states[i]) {
-               alert("was: " + states);
-               alert("shouldBe: " + testAgainst);
-               return false;
-            }
-         }
-         return true;
-      }
-      
-      function runTest() {
-         if (window.eventSender) {
-            testClickAt(219, 196); 
-            testClickAt(236, 300); 
-            document.getElementById("status").textContent = "Failed";
-            if (checkResults())
-                document.getElementById("status").textContent = "Passed";
-         } else {
-            // in manual mode
-            alert("Please use run-webkit-tests.");
-        }
-     }
-   ]]></script>
-   <g style="visibility:hidden" transform="rotate(30)">
-	<svg x="250" width="100" height="150" style="overflow:hidden">"
-		<image pointer-events="all" onmousedown="clicked=true;" id="image1PNG" x="0" y="0" width="240" height="150" xlink:href="resources/struct-image-01.png"/>
-	</svg>
-   </g>
-   <text id="status" x="90" y="130" onmousedown="clicked=true;">Unknown</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
+   <script>
+   <![CDATA[
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+var clicked = false;
+
+function addToStatus(s) {
+  document.getElementById("status").textContent += s;
+}
+function setStatus(s) {
+  document.getElementById("status").textContent = s;
+}
+
+function testClickAt(x, y, expectedResult) {
+   eventSender.mouseMoveTo(x, y);
+   eventSender.mouseDown();
+   eventSender.mouseUp();
+   
+   addToStatus("Hit test @ " + x + ", " + y);
+   if (clicked == expectedResult)
+     addToStatus(" SUCCESS, got " + clicked);
+   else {
+     addToStatus("FAILURE, expected " + expectedResult)
+   }
+   addToStatus("; ");
+   clicked = false;
+}
+
+function runTest() {
+  if (!window.eventSender) {
+    setStatus("This test requires DumpRenderTree to run. Dots are where the clicks go.");
+    return;
+  }
+  testClickAt(219, 196, true);
+  testClickAt(236, 300, false);
+}
+
+function gotClick() {
+  if (!window.layoutTestController)
+    alert("Clicked hidden image @ " + event.clientX + ", " + event.clientY);
+  clicked = true;
+}
+   ]]>
+   </script>
+  <circle cx="219" cy="196" r="3" />
+  <circle cx="236" cy="300" r="3" />
+  <g transform="rotate(30)" style="visibility:hidden">
+    <svg x="250" width="100" height="150" style="overflow:hidden">"
+      <rect opacity="0.5" fill="pink" x="0" y="0" width="240" height="150" />
+      <image pointer-events="all" onmousedown="gotClick()" x="0" y="0" width="240" height="150" xlink:href="resources/struct-image-01.png"/>
+    </svg>
+  </g>
+  <text id="status" x="10" y="20"></text>
 </svg>
 

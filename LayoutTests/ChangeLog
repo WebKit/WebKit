@@ -1,3 +1,15 @@
+2009-04-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Re-write image-clipped-hit.svg to be dumpAsText() (and clean up the code to be less insane)
+
+        * platform/mac/svg/custom/image-clipped-hit-expected.checksum: Removed.
+        * platform/mac/svg/custom/image-clipped-hit-expected.png: Removed.
+        * platform/mac/svg/custom/image-clipped-hit-expected.txt: Removed.
+        * platform/qt/svg/custom/image-clipped-hit-expected.txt: Removed.
+        * svg/custom/image-clipped-hit.svg:
+
 2009-04-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Second try at making the bot green.
