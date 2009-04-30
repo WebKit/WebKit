@@ -215,8 +215,11 @@ bool JSDOMWindowBase::supportsProfiling() const
     Page* page = frame->page();
     if (!page)
         return false;
-
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     return page->inspectorController()->profilerEnabled();
+#else
+    return false;
+#endif
 }
 
 bool JSDOMWindowBase::shouldInterruptScript() const

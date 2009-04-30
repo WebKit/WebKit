@@ -68,10 +68,6 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
-#include <profiler/Profile.h>
-#include <profiler/Profiler.h>
-#include <runtime/JSLock.h>
-#include <runtime/UString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
@@ -89,9 +85,14 @@
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
 #include "JSJavaScriptCallFrame.h"
-#endif
+
+#include <profiler/Profile.h>
+#include <profiler/Profiler.h>
+#include <runtime/JSLock.h>
+#include <runtime/UString.h>
 
 using namespace JSC;
+#endif
 using namespace std;
 
 namespace WebCore {
@@ -172,20 +173,20 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_page(0)
     , m_scriptState(0)
     , m_windowVisible(false)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerEnabled(false)
-    , m_attachDebuggerWhenShown(false)
-#endif
-    , m_profilerEnabled(false)
-    , m_recordingUserInitiatedProfile(false)
     , m_showAfterVisible(ElementsPanel)
     , m_nextIdentifier(-2)
     , m_groupLevel(0)
     , m_searchingForNode(false)
+    , m_previousMessage(0)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    , m_debuggerEnabled(false)
+    , m_attachDebuggerWhenShown(false)
+    , m_profilerEnabled(false)
+    , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
     , m_nextUserInitiatedProfileNumber(1)
-    , m_previousMessage(0)
     , m_startProfiling(this, &InspectorController::startUserInitiatedProfiling)
+#endif
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
@@ -439,16 +440,6 @@ void InspectorController::clearConsoleMessages()
     m_groupLevel = 0;
 }
 
-void InspectorController::toggleRecordButton(bool isProfiling)
-{
-    if (!hasWebInspector())
-        return;
-
-    ScriptFunctionCall function(m_scriptState, m_webInspector, "setRecordingProfile");
-    function.appendArgument(isProfiling);
-    function.call();
-}
-
 void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack)
 {
     ++m_groupLevel;
@@ -464,32 +455,6 @@ void InspectorController::endGroup(MessageSource source, unsigned lineNumber, co
     --m_groupLevel;
 
     addConsoleMessage(0, new ConsoleMessage(source, EndGroupMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
-}
-
-void InspectorController::addProfile(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
-{
-    if (!enabled())
-        return;
-
-    RefPtr<Profile> profile = prpProfile;
-    m_profiles.append(profile);
-
-    if (windowVisible())
-        addScriptProfile(profile.get());
-
-    addProfileMessageToConsole(profile, lineNumber, sourceURL);
-}
-
-void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
-{
-    RefPtr<Profile> profile = prpProfile;
-
-    UString message = "Profile \"webkit-profile://";
-    message += encodeWithURLEscapeSequences(profile->title());
-    message += "/";
-    message += UString::from(profile->uid());
-    message += "\" finished.";
-    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 void InspectorController::attachWindow()
@@ -663,8 +628,8 @@ void InspectorController::close()
     if (!enabled())
         return;
 
-    stopUserInitiatedProfiling();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    stopUserInitiatedProfiling();
     disableDebugger();
 #endif
     closeWindow();
@@ -683,81 +648,6 @@ void InspectorController::closeWindow()
 {
     m_client->closeWindow();
 }
-
-void InspectorController::startUserInitiatedProfilingSoon()
-{
-    m_startProfiling.startOneShot(0);
-}
-
-void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>*)
-{
-    if (!enabled())
-        return;
-
-    if (!profilerEnabled()) {
-        enableProfiler(true);
-        JavaScriptDebugServer::shared().recompileAllJSFunctions();
-    }
-
-    m_recordingUserInitiatedProfile = true;
-    m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
-
-    UString title = UserInitiatedProfileName;
-    title += ".";
-    title += UString::from(m_currentUserInitiatedProfileNumber);
-
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    Profiler::profiler()->startProfiling(scriptState, title);
-
-    toggleRecordButton(true);
-}
-
-void InspectorController::stopUserInitiatedProfiling()
-{
-    if (!enabled())
-        return;
-
-    m_recordingUserInitiatedProfile = false;
-
-    UString title =  UserInitiatedProfileName;
-    title += ".";
-    title += UString::from(m_currentUserInitiatedProfileNumber);
-
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(scriptState, title);
-    if (profile)
-        addProfile(profile, 0, UString());
-
-    toggleRecordButton(false);
-}
-
-void InspectorController::enableProfiler(bool skipRecompile)
-{
-    if (m_profilerEnabled)
-        return;
-
-    m_profilerEnabled = true;
-
-    if (!skipRecompile)
-        JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-
-    if (hasWebInspector())
-        callSimpleFunction(m_scriptState, m_webInspector, "profilerWasEnabled");
-}
-
-void InspectorController::disableProfiler()
-{
-    if (!m_profilerEnabled)
-        return;
-
-    m_profilerEnabled = false;
-
-    JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-
-    if (hasWebInspector())
-        callSimpleFunction(m_scriptState, m_webInspector, "profilerWasDisabled");
-}
-
 
 void InspectorController::populateScriptObjects()
 {
@@ -785,14 +675,6 @@ void InspectorController::populateScriptObjects()
 #endif
 
     callSimpleFunction(m_scriptState, m_webInspector, "populateInterface");
-}
-
-void InspectorController::addScriptProfile(Profile* profile)
-{
-    ScriptFunctionCall function(m_scriptState, m_webInspector, "addProfile");
-    JSLock lock(false);
-    function.appendArgument(toJS(m_scriptState, profile));
-    function.call();
 }
 
 void InspectorController::resetScriptObjects()
@@ -851,8 +733,9 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         m_times.clear();
         m_counts.clear();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         m_profiles.clear();
-
+#endif
 #if ENABLE(DATABASE)
         m_databaseResources.clear();
 #endif
@@ -1142,6 +1025,123 @@ void InspectorController::moveWindowBy(float x, float y) const
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorController::addProfile(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
+{
+    if (!enabled())
+        return;
+
+    RefPtr<Profile> profile = prpProfile;
+    m_profiles.append(profile);
+
+    if (windowVisible())
+        addScriptProfile(profile.get());
+
+    addProfileMessageToConsole(profile, lineNumber, sourceURL);
+}
+
+void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
+{
+    RefPtr<Profile> profile = prpProfile;
+
+    UString message = "Profile \"webkit-profile://";
+    message += encodeWithURLEscapeSequences(profile->title());
+    message += "/";
+    message += UString::from(profile->uid());
+    message += "\" finished.";
+    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
+}
+
+void InspectorController::addScriptProfile(Profile* profile)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "addProfile");
+    JSLock lock(false);
+    function.appendArgument(toJS(m_scriptState, profile));
+    function.call();
+}
+void InspectorController::startUserInitiatedProfilingSoon()
+{
+    m_startProfiling.startOneShot(0);
+}
+
+void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>*)
+{
+    if (!enabled())
+        return;
+
+    if (!profilerEnabled()) {
+        enableProfiler(true);
+        JavaScriptDebugServer::shared().recompileAllJSFunctions();
+    }
+
+    m_recordingUserInitiatedProfile = true;
+    m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
+
+    UString title = UserInitiatedProfileName;
+    title += ".";
+    title += UString::from(m_currentUserInitiatedProfileNumber);
+
+    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
+    Profiler::profiler()->startProfiling(scriptState, title);
+
+    toggleRecordButton(true);
+}
+
+void InspectorController::stopUserInitiatedProfiling()
+{
+    if (!enabled())
+        return;
+
+    m_recordingUserInitiatedProfile = false;
+
+    UString title =  UserInitiatedProfileName;
+    title += ".";
+    title += UString::from(m_currentUserInitiatedProfileNumber);
+
+    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
+    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(scriptState, title);
+    if (profile)
+        addProfile(profile, 0, UString());
+
+    toggleRecordButton(false);
+}
+
+void InspectorController::toggleRecordButton(bool isProfiling)
+{
+    if (!hasWebInspector())
+        return;
+
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "setRecordingProfile");
+    function.appendArgument(isProfiling);
+    function.call();
+}
+
+void InspectorController::enableProfiler(bool skipRecompile)
+{
+    if (m_profilerEnabled)
+        return;
+
+    m_profilerEnabled = true;
+
+    if (!skipRecompile)
+        JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+
+    if (hasWebInspector())
+        callSimpleFunction(m_scriptState, m_webInspector, "profilerWasEnabled");
+}
+
+void InspectorController::disableProfiler()
+{
+    if (!m_profilerEnabled)
+        return;
+
+    m_profilerEnabled = false;
+
+    JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+
+    if (hasWebInspector())
+        callSimpleFunction(m_scriptState, m_webInspector, "profilerWasDisabled");
+}
+
 void InspectorController::enableDebugger()
 {
     if (!enabled())
@@ -1238,6 +1238,40 @@ void InspectorController::removeBreakpoint(intptr_t sourceID, unsigned lineNumbe
 {
     JavaScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
 }
+
+// JavaScriptDebugListener functions
+
+void InspectorController::didParseSource(ExecState*, const SourceCode& source)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "parsedScriptSource");
+    function.appendArgument(static_cast<long long>(source.provider()->asID()));
+    function.appendArgument(source.provider()->url());
+    function.appendArgument(JSC::UString(source.data(), source.length()));
+    function.appendArgument(source.firstLine());
+    function.call();
+}
+
+void InspectorController::failedToParseSource(ExecState*, const SourceCode& source, int errorLine, const UString& errorMessage)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "failedToParseScriptSource");
+    function.appendArgument(source.provider()->url());
+    function.appendArgument(JSC::UString(source.data(), source.length()));
+    function.appendArgument(source.firstLine());
+    function.appendArgument(errorLine);
+    function.appendArgument(errorMessage);
+    function.call();
+}
+
+void InspectorController::didPause()
+{
+    callSimpleFunction(m_scriptState, m_webInspector, "pausedScript");
+}
+
+void InspectorController::didContinue()
+{
+    callSimpleFunction(m_scriptState, m_webInspector, "resumedScript");
+}
+
 #endif
 
 static Path quadToPath(const FloatQuad& quad)
@@ -1417,42 +1451,5 @@ bool InspectorController::stopTiming(const String& title, double& elapsed)
     elapsed = currentTime() * 1000 - startTime;
     return true;
 }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
-// JavaScriptDebugListener functions
-
-void InspectorController::didParseSource(ExecState*, const SourceCode& source)
-{
-    ScriptFunctionCall function(m_scriptState, m_webInspector, "parsedScriptSource");
-    function.appendArgument(static_cast<long long>(source.provider()->asID()));
-    function.appendArgument(source.provider()->url());
-    function.appendArgument(JSC::UString(source.data(), source.length()));
-    function.appendArgument(source.firstLine());
-    function.call();
-}
-
-void InspectorController::failedToParseSource(ExecState*, const SourceCode& source, int errorLine, const UString& errorMessage)
-{
-    ScriptFunctionCall function(m_scriptState, m_webInspector, "failedToParseScriptSource");
-    function.appendArgument(source.provider()->url());
-    function.appendArgument(JSC::UString(source.data(), source.length()));
-    function.appendArgument(source.firstLine());
-    function.appendArgument(errorLine);
-    function.appendArgument(errorMessage);
-    function.call();
-}
-
-void InspectorController::didPause()
-{
-    callSimpleFunction(m_scriptState, m_webInspector, "pausedScript");
-}
-
-void InspectorController::didContinue()
-{
-    callSimpleFunction(m_scriptState, m_webInspector, "resumedScript");
-}
-
-#endif
 
 } // namespace WebCore

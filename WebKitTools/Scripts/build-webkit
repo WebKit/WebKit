@@ -49,6 +49,7 @@ my $domStorageSupport = 1;
 my $geolocationSupport = 0;
 my $gnomeKeyringSupport = 0;
 my $iconDatabaseSupport = 1;
+my $javaScriptDebuggerSupport = 1;
 my $offlineWebApplicationSupport = 1;
 my $svgSupport = 1;
 my $svgAnimationSupport = 1;
@@ -82,6 +83,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]geolocation                Toggle Geolocation support (default: $geolocationSupport)
   --[no-]gnomekeyring               Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
   --[no-]icon-database              Toggle Icon database support (default: $iconDatabaseSupport)
+  --[no-]javascript-debugger        Toggle JavaScript Debugger/Profiler support (default: $javaScriptDebuggerSupport)
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default: $offlineWebApplicationSupport)
   --[no-]svg                        Toggle SVG support (default: $svgSupport)
   --[no-]svg-animation              Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
@@ -109,6 +111,7 @@ GetOptions(
            'geolocation!' => \$geolocationSupport,
            'gnomekeyring!' => \$gnomeKeyringSupport,
            'icon-database!' => \$iconDatabaseSupport,
+           'javascript-debugger!' => \$javaScriptDebuggerSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
            'svg!' => \$svgSupport,
            'svg-animation!' => \$svgAnimationSupport,
@@ -176,6 +179,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($geolocationSupport, "geolocation");
     push @options, autotoolsFlag($gnomeKeyringSupport, "gnomekeyring");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
+    push @options, autotoolsFlag($javaScriptDebuggerSupport, "javascript-debugger");
     push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
@@ -206,6 +210,7 @@ if (isAppleMacWebKit()) {
     push @options, option("ENABLE_DOM_STORAGE", $domStorageSupport);
     push @options, option("ENABLE_GEOLOCATION", $geolocationSupport);
     push @options, option("ENABLE_ICONDATABASE", $iconDatabaseSupport);
+    push @options, option("ENABLE_JAVASCRIPT_DEBUGGER", $javaScriptDebuggerSupport);
     push @options, option("ENABLE_OFFLINE_WEB_APPLICATIONS", $offlineWebApplicationSupport);
     push @options, option("ENABLE_SVG", $svgSupport);
     push @options, option("ENABLE_SVG_ANIMATION", $svgAnimationSupport);

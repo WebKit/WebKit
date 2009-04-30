@@ -269,7 +269,7 @@ void Console::count(ScriptCallStack* callStack)
     page->inspectorController()->count(title, lastCaller.lineNumber(), lastCaller.sourceURL().string());
 }
 
-#if USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 void Console::profile(const JSC::UString& title, ScriptCallStack* callStack)
 {

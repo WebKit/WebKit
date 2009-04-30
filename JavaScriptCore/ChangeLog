@@ -1,3 +1,12 @@
+2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25470
+        Extend the cover of ENABLE_JAVASCRIPT_DEBUGGER to profiler.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_JAVASCRIPT_DEBUGGER define.
+
 2009-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey Proskuryakov.

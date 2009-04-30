@@ -69,18 +69,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSInspectorController::profiles(JSC::ExecState* exec, const JSC::ArgList&)
-{
-    JSLock lock(false);
-    MarkedArgumentBuffer result;
-    const Vector<RefPtr<Profile> >& profiles = impl()->profiles();
-
-    for (size_t i = 0; i < profiles.size(); ++i)
-        result.append(toJS(exec, profiles[i].get()));
-
-    return constructArray(exec, result);
-}
-
 JSValuePtr JSInspectorController::highlightDOMNode(JSC::ExecState*, const JSC::ArgList& args)
 {
     if (args.size() < 1)
@@ -317,6 +305,8 @@ JSValuePtr JSInspectorController::wrapCallback(ExecState* exec, const ArgList& a
     return JSInspectorCallbackWrapper::wrap(exec, args.at(0));
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 JSValuePtr JSInspectorController::currentCallFrame(ExecState* exec, const ArgList&)
 {
     JavaScriptCallFrame* callFrame = impl()->currentCallFrame();
@@ -329,5 +319,19 @@ JSValuePtr JSInspectorController::currentCallFrame(ExecState* exec, const ArgLis
     JSLock lock(false);
     return JSInspectedObjectWrapper::wrap(globalExec, toJS(exec, callFrame));
 }
+
+JSValuePtr JSInspectorController::profiles(JSC::ExecState* exec, const JSC::ArgList&)
+{
+    JSLock lock(false);
+    MarkedArgumentBuffer result;
+    const Vector<RefPtr<Profile> >& profiles = impl()->profiles();
+
+    for (size_t i = 0; i < profiles.size(); ++i)
+        result.append(toJS(exec, profiles[i].get()));
+
+    return constructArray(exec, result);
+}
+
+#endif
 
 } // namespace WebCore

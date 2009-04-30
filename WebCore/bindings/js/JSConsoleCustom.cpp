@@ -34,6 +34,8 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 typedef Vector<RefPtr<JSC::Profile> > ProfilesArray;
 
 JSValuePtr JSConsole::profiles(ExecState* exec) const
@@ -47,5 +49,7 @@ JSValuePtr JSConsole::profiles(ExecState* exec) const
 
     return constructArray(exec, list);
 }
+
+#endif
 
 } // namespace WebCore

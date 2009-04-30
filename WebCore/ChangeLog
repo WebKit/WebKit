@@ -1,5 +1,23 @@
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25470
+        Extend the cover of ENABLE_JAVASCRIPT_DEBUGGER to profiler.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_JAVASCRIPT_DEBUGGER.
+        * WebCore.vcproj/build-generated-files.sh: Ditto.
+        * bindings/js/JSConsoleCustom.cpp: Added ENABLE(JAVASCRIPT_DEBUGGER) guard.
+        * bindings/js/JSDOMWindowBase.cpp: Ditto.
+        * bindings/js/JSInspectorControllerCustom.cpp: Ditto.
+        * inspector/InspectorController.cpp: Moved profiler/debugger methods under
+            ENABLE(JAVASCRIPT_DEBUGGER) flag.
+        * inspector/InspectorController.h: Ditto.
+        * inspector/InspectorController.idl: Added ENABLE(JAVASCRIPT_DEBUGGER) guard.
+        * page/Console.cpp: Replaced USE(JSC) with ENABLE(JAVASCRIPT_DEBUGGER) guard.
+
+2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, build fix.
 
         https://bugs.webkit.org/show_bug.cgi?id=25275
