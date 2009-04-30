@@ -1,3 +1,9 @@
+2009-04-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip one more video test that sometimes fails.
+
+        * platform/gtk/Skipped:
+
 2009-04-30  Adam Roben  <aroben@apple.com>
 
         Add a sometimes-timing-out test to the Windows skipped file
