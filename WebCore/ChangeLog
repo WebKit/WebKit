@@ -1,3 +1,18 @@
+2009-04-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        For now just drop the deferred layout on the floor, since it causes an infinite hang in mail.  Even
+        trying to schedule a relayout for later leaves you in a state where you hit the needsLayout painting
+        assertions.
+
+        Basically what Mail is doing is crazy, and we can't support it other than to just drop the last layout
+        and not do it (which is basically what was happening before).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::needsLayout):
+
 2009-04-29  Douglas Davidson  <ddavidso@apple.com>
 
         Reviewed by Justin Garcia.
