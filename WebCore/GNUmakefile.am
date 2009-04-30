@@ -1893,6 +1893,17 @@ webcoregtk_sources += \
 endif # END USE_PANGO
 
 # ----
+# JavaScript Debugger/Profiler
+# ----
+if ENABLE_JAVASCRIPT_DEBUGGER
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_JAVASCRIPT_DEBUGGER=1
+
+webcore_cppflags += \
+	-DENABLE_JAVASCRIPT_DEBUGGER=1
+
+endif # END ENABLE_JAVASCRIPT_DEBUGGER
+
+# ----
 # Offline Web Applications
 # ----
 if ENABLE_OFFLINE_WEB_APPLICATIONS
