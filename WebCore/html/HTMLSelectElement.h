@@ -145,6 +145,8 @@ private:
     void typeAheadFind(KeyboardEvent*);
     void saveLastSelection();
 
+    virtual void insertedIntoTree(bool);
+
     mutable Vector<HTMLElement*> m_listItems;
     Vector<bool> m_cachedStateForActiveSelection;
     Vector<bool> m_lastOnChangeSelection;

@@ -1,3 +1,25 @@
+2009-04-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25379
+        <rdar://problem/6809460> REGRESSION (r41772): Selecting a bank in American Express Pay Bill fails
+
+        Test: fast/forms/multiple-selected-options-innerHTML.html
+
+        This problem was caused by an inconsistency at when Node::instertedIntoTree() is called.
+        For normal HTML parsing, it is called immediately after an element is inserted, but for
+        innerHTML, it is only called after the whole subtree is inserted into a document.
+
+        It may make sense to harmonize these cases one day, but for now, I only made the minimal
+        changes necessary to fix the bug.
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::insertedIntoTree):
+        * html/HTMLSelectElement.h:
+        Recalculate list items when a SELECT element is inserted. OPTION elements cannot decide
+        which one to keep selected themselves, because their logic assumes normal parsing, with
+        insertedIntoTree() called after each element is inserted.
+
 2009-04-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

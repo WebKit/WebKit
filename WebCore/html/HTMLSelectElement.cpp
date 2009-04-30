@@ -1085,6 +1085,14 @@ void HTMLSelectElement::scrollToSelection()
         static_cast<RenderListBox*>(renderer())->selectionChanged();
 }
 
+void HTMLSelectElement::insertedIntoTree(bool deep)
+{
+    // When the element is created during document parsing, it won't have any items yet - but for innerHTML
+    // and related methods, this method is called after the whole subtree is constructed.
+    recalcListItems(true);
+    HTMLFormControlElementWithState::insertedIntoTree(deep);
+}
+
 #ifndef NDEBUG
 
 void HTMLSelectElement::checkListItems() const
