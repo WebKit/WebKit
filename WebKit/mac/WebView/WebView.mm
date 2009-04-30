@@ -252,6 +252,7 @@ macro(moveWordLeftAndModifySelection) \
 macro(moveWordRight) \
 macro(moveWordRightAndModifySelection) \
 macro(outdent) \
+macro(orderFrontSubstitutionsPanel) \
 macro(pageDown) \
 macro(pageDownAndModifySelection) \
 macro(pageUp) \
@@ -3751,6 +3752,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return retVal;
+    } else if (action == @selector(toggleSmartInsertDelete:)) {
+        BOOL checkMark = [self smartInsertDeleteEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
 #ifndef BUILDING_ON_TIGER
     } else if (action == @selector(toggleGrammarChecking:)) {
         BOOL checkMark = [self isGrammarCheckingEnabled];

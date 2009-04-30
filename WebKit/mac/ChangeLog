@@ -1,3 +1,15 @@
+2009-04-29  Douglas Davidson  <ddavidso@apple.com>
+
+        Reviewed by Justin Garcia.
+        
+        <rdar://problem/6836921> Mail exhibits issues with text checking, e.g. menu items not always validated correctly
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView orderFrontSubstitutionsPanel:]):
+        * WebView/WebView.mm:
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]):
+
 2009-04-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

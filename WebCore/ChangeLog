@@ -1,3 +1,20 @@
+2009-04-29  Douglas Davidson  <ddavidso@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        <rdar://problem/6836921> Mail exhibits issues with text checking, e.g. menu items not always validated correctly
+        
+        Updates to the text checking code to enable text checking even if spellchecking is turned off 
+        and fix an off-by-one error in selection handling.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+
 2009-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

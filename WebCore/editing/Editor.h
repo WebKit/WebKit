@@ -217,7 +217,7 @@ public:
     void toggleAutomaticTextReplacement();
     bool isAutomaticSpellingCorrectionEnabled();
     void toggleAutomaticSpellingCorrection();
-    void markAllMisspellingsAndBadGrammarInRanges(Range* spellingRange, bool markGrammar, Range* grammarRange, bool performTextCheckingReplacements);
+    void markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* spellingRange, bool markGrammar, Range* grammarRange, bool performTextCheckingReplacements);
 #endif
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();
