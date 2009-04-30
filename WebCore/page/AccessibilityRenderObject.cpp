@@ -983,7 +983,6 @@ String AccessibilityRenderObject::accessibilityDescription() const
 
 IntRect AccessibilityRenderObject::boundingBoxRect() const
 {
-    IntRect rect;
     RenderObject* obj = m_renderer;
     
     if (!obj)
@@ -992,20 +991,22 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
     if (obj->node()) // If we are a continuation, we want to make sure to use the primary renderer.
         obj = obj->node()->renderer();
     
-    // FIXME: This doesn't work correctly with transforms.
-    Vector<IntRect> rects;
-    FloatPoint absPos = obj->localToAbsolute();
-    obj->absoluteRects(rects, absPos.x(), absPos.y());
-    const size_t n = rects.size();
+    Vector<FloatQuad> quads;
+    obj->absoluteQuads(quads);
+    const size_t n = quads.size();
+    if (!n)
+        return IntRect();
+
+    IntRect result;
     for (size_t i = 0; i < n; ++i) {
-        IntRect r = rects[i];
+        IntRect r = quads[i].enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style()->hasAppearance())
                 theme()->adjustRepaintRect(obj, r);
-            rect.unite(r);
+            result.unite(r);
         }
     }
-    return rect;
+    return result;
 }
     
 IntRect AccessibilityRenderObject::checkboxOrRadioRect() const

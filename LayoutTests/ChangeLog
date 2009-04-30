@@ -1,3 +1,14 @@
+2009-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6839338> VoiceOver does not take into account transforms when drawing outlines
+        
+        Test accessibility bounding box with CSS transforms.
+
+        * accessibility/transformed-element-expected.txt: Added.
+        * accessibility/transformed-element.html: Added.
+
 2009-04-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

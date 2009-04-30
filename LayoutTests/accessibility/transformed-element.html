@@ -1,0 +1,28 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+</script>
+<body id="body">
+    <!-- This test ensures that AX rectangles take transforms into account-->
+
+    <div id="hiddenDiv" style="-webkit-transform: rotate(20deg); -webkit-transform-origin: left bottom; padding-left: 100px; width: 200px; border: 1px solid black;">
+      <a href="#b">hello</a>
+    </div>
+    
+    <div id="result"></div>
+     
+    <script>
+      if (window.accessibilityController) {
+          var result = document.getElementById("result");
+
+          var body = document.getElementById("body");
+          body.focus();
+          var div = accessibilityController.focusedElement.childAtIndex(0);
+
+          result.innerText += div.allAttributes();
+      }
+    </script>
+</body>
+</html>

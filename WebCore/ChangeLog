@@ -1,3 +1,17 @@
+2009-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6839338> VoiceOver does not take into account transforms when drawing outlines
+        
+        Use transform-aware quad methods when computing the boundingBoxRect for
+        an AccessibilityRenderObject. The code follows RenderObject::absoluteBoundingBoxRect().
+
+        Test: accessibility/transformed-element.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, Chromium build fix.
