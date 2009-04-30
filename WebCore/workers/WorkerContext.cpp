@@ -56,7 +56,6 @@ namespace WebCore {
 WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
     : m_url(url)
     , m_userAgent(userAgent)
-    , m_location(WorkerLocation::create(url))
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
 {
@@ -92,12 +91,19 @@ KURL WorkerContext::completeURL(const String& url) const
     if (url.isNull())
         return KURL();
     // Always use UTF-8 in Workers.
-    return KURL(m_location->url(), url);
+    return KURL(m_url, url);
 }
 
 String WorkerContext::userAgent(const KURL&) const
 {
     return m_userAgent;
+}
+
+WorkerLocation* WorkerContext::location() const
+{
+    if (!m_location)
+        m_location = WorkerLocation::create(m_url);
+    return m_location.get();
 }
 
 WorkerNavigator* WorkerContext::navigator() const

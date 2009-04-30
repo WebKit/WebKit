@@ -1,3 +1,13 @@
+2009-04-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test for bug where the WorkerLocation and WorkerNavigator wrappers would be
+        collected even if the WorkerContext is still alive.
+
+        * fast/workers/worker-context-gc-expected.txt: Added.
+        * fast/workers/worker-context-gc.html: Added.
+
 2009-04-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

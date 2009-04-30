@@ -31,9 +31,13 @@
 
 #include "JSDOMBinding.h"
 #include "JSEventListener.h"
+#include "JSWorkerLocation.h"
+#include "JSWorkerNavigator.h"
 #include "JSXMLHttpRequestConstructor.h"
 #include "ScheduledAction.h"
 #include "WorkerContext.h"
+#include "WorkerLocation.h"
+#include "WorkerNavigator.h"
 #include <interpreter/Interpreter.h>
 
 using namespace JSC;
@@ -52,7 +56,12 @@ void JSWorkerContext::mark()
 {
     Base::mark();
 
-    markActiveObjectsForContext(*globalData(), scriptExecutionContext());
+    JSGlobalData& globalData = *this->globalData();
+
+    markActiveObjectsForContext(globalData, scriptExecutionContext());
+
+    markDOMObjectWrapper(globalData, impl()->optionalLocation());
+    markDOMObjectWrapper(globalData, impl()->optionalNavigator());
 
     markIfNotNull(impl()->onmessage());
 

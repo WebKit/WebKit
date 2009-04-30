@@ -64,7 +64,7 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&) const;
 
-        WorkerLocation* location() const { return m_location.get(); }
+        WorkerLocation* location() const;
         WorkerNavigator* navigator() const;
 
         WorkerScriptController* script() { return m_script.get(); }
@@ -103,7 +103,12 @@ namespace WebCore {
         EventListenersMap& eventListeners() { return m_eventListeners; }
 
         void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
-        
+
+        // These methods are used for GC marking. See JSWorkerContext::mark() in
+        // JSWorkerContextCustom.cpp.
+        WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
+        WorkerLocation* optionalLocation() const { return m_location.get(); }
+
         using RefCounted<WorkerContext>::ref;
         using RefCounted<WorkerContext>::deref;
 
@@ -120,7 +125,8 @@ namespace WebCore {
 
         KURL m_url;
         String m_userAgent;
-        RefPtr<WorkerLocation> m_location;
+
+        mutable RefPtr<WorkerLocation> m_location;
         mutable RefPtr<WorkerNavigator> m_navigator;
 
         OwnPtr<WorkerScriptController> m_script;

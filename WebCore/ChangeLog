@@ -1,3 +1,22 @@
+2009-04-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix bug where the WorkerLocation and WorkerNavigator wrappers would be
+        collected even if the WorkerContext is still alive.
+
+        Test: fast/workers/worker-context-gc.html
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::mark):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::completeURL):
+        (WebCore::WorkerContext::location):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::optionalNavigator):
+        (WebCore::WorkerContext::optionalLocation):
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
