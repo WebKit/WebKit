@@ -123,8 +123,8 @@ JSValuePtr JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& 
 
 JSValuePtr JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(args);
-    if (!action)
+    ScheduledAction* action = ScheduledAction::create(exec, args);
+    if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setTimeout(action, delay));
@@ -132,8 +132,8 @@ JSValuePtr JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSWorkerContext::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(args);
-    if (!action)
+    ScheduledAction* action = ScheduledAction::create(exec, args);
+    if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setInterval(action, delay));

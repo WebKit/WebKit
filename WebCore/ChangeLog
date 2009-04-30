@@ -1,3 +1,22 @@
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25440
+        setTimeout should stringify non-string/non-function first arguments
+
+        Test: fast/dom/Window/setTimeout-string-argument.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * bindings/js/ScheduledAction.h:
+
 2009-04-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,13 @@
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=25440
+        setTimeout should stringify non-string/non-function first arguments
+
+        * fast/dom/Window/setTimeout-string-argument-expected.txt: Added.
+        * fast/dom/Window/setTimeout-string-argument.html: Added.
+
 2009-04-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

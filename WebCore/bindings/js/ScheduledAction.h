@@ -40,7 +40,7 @@ namespace WebCore {
     */
     class ScheduledAction {
     public:
-        static ScheduledAction* create(const JSC::ArgList&);
+        static ScheduledAction* create(JSC::ExecState*, const JSC::ArgList&);
 
         void execute(ScriptExecutionContext*);
 

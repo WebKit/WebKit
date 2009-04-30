@@ -497,8 +497,8 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(args);
-    if (!action)
+    ScheduledAction* action = ScheduledAction::create(exec, args);
+    if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setTimeout(action, delay));
@@ -506,8 +506,8 @@ JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 
 JSValuePtr JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(args);
-    if (!action)
+    ScheduledAction* action = ScheduledAction::create(exec, args);
+    if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setInterval(action, delay));

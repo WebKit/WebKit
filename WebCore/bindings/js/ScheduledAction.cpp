@@ -47,14 +47,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScheduledAction* ScheduledAction::create(const ArgList& args)
+ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args)
 {
     JSValuePtr v = args.at(0);
-    if (v.isString())
-        return new ScheduledAction(asString(v)->value());
     CallData callData;
     if (v.getCallData(callData) == CallTypeNone)
-        return 0;
+        return new ScheduledAction(v.toString(exec));
     ArgList argsTail;
     args.getSlice(2, argsTail);
     return new ScheduledAction(v, argsTail);
