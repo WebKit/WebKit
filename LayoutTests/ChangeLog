@@ -1,5 +1,11 @@
 2009-04-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Also disable new tests, and tests that are using stderr.
+
+        * platform/gtk/Skipped:
+
+2009-04-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Disabling more video tests that seem to come and go.
 
         * platform/gtk/Skipped:
