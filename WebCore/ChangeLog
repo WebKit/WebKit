@@ -1,3 +1,13 @@
+2009-04-29  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Fix m_offset uses added while I wasn't looking.
+
+        * editing/visible_units.cpp:
+        (WebCore::logicalStartPositionForLine):
+        (WebCore::logicalEndPositionForLine):
+
 2009-04-29  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.
