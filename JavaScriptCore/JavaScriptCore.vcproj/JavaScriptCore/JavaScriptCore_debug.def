@@ -213,6 +213,7 @@ EXPORTS
         ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
         ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
         ?signal@ThreadCondition@WTF@@QAEXXZ
+        ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValuePtr@2@@Z
         ?startIgnoringLeaks@Structure@JSC@@SAXXZ
         ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z
         ?stopIgnoringLeaks@Structure@JSC@@SAXXZ

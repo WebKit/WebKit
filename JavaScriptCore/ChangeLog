@@ -1,5 +1,12 @@
 2009-04-29  Sam Weinig  <sam@webkit.org>
 
+        Another attempt to fix the windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
         Try and fix the windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
