@@ -1,3 +1,21 @@
+2009-04-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a first text iterator test. We'll add more later.
+        This test includes some known expected failures. At some point we'll fix those.
+
+        * editing/text-iterator: Added.
+        * editing/text-iterator/basic-iteration-expected.txt: Added.
+        * editing/text-iterator/basic-iteration.html: Added.
+        * editing/text-iterator/resources: Added.
+        * editing/text-iterator/resources/TEMPLATE.html: Copied from editing/selection/resources/TEMPLATE.html.
+        * editing/text-iterator/resources/basic-iteration.js: Added.
+
+        * platform/gtk/Skipped: Skip editing/text-iterator since only Mac DumpRenderTree has this at the moment.
+        * platform/qt/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
 2009-04-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

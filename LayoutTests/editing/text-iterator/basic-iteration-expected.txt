@@ -1,0 +1,21 @@
+Unit tests for WebCore text iterator
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is ""
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "a"
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "a"
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "a\nb"
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "debugging this note"
+FAIL range.selectNodeContents(testDocument.body); plainText.plainText(range) should be Hello
+. Was Hello
+
+.
+PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "hey"
+FAIL range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); plainText.plainText(range) should be hey. Was 
+hey.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

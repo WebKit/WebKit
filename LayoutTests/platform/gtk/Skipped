@@ -5764,3 +5764,6 @@ webarchive/test-script-src.html
 webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
+
+# Plain text controller currently in Mac DumpRenderTree only.
+editing/text-iterator

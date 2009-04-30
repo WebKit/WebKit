@@ -4399,3 +4399,6 @@ fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html
 fast/forms/mailto/post-multiple-items.html
 fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
+
+# Plain text controller currently in Mac DumpRenderTree only.
+editing/text-iterator
