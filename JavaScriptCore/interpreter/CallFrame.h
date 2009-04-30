@@ -83,7 +83,9 @@ namespace JSC  {
         const MarkedArgumentBuffer& emptyList() const { return *globalData().emptyList; }
         Interpreter* interpreter() { return globalData().interpreter; }
         Heap* heap() { return &globalData().heap; }
-
+#ifndef NDEBUG
+        void dumpCaller();
+#endif
         static const HashTable* arrayTable(CallFrame* callFrame) { return callFrame->globalData().arrayTable; }
         static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->globalData().dateTable; }
         static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }

@@ -1,3 +1,16 @@
+2009-04-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add function to CallFrame for dumping the current JS caller
+
+        Added debug only method CallFrame::dumpCaller() that provide the call location
+        of the deepest currently executing JS function.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::dumpCaller):
+        * interpreter/CallFrame.h:
+
 2009-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff Garen.
