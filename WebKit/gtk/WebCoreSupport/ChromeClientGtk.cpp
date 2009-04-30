@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ChromeClientGtk.h"
 
+#include "Console.h"
 #include "FileSystem.h"
 #include "FileChooser.h"
 #include "FloatRect.h"
@@ -237,7 +238,7 @@ bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String& message, W
     return runJavaScriptConfirm(frame, message);
 }
 
-void ChromeClient::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
+void ChromeClient::addMessageToConsole(WebCore::MessageSource source, WebCore::MessageLevel level, const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
 {
     gboolean retval;
     g_signal_emit_by_name(m_webView, "console-message", message.utf8().data(), lineNumber, sourceId.utf8().data(), &retval);

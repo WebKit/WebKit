@@ -76,7 +76,7 @@ public:
 
     virtual void setResizable(bool);
 
-    virtual void addMessageToConsole(const WebCore::String& message, unsigned line, const WebCore::String& url);
+    virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageLevel level, const WebCore::String& message, unsigned line, const WebCore::String& url);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
     virtual bool runBeforeUnloadConfirmPanel(const WebCore::String& message, WebCore::Frame* frame);

@@ -67,7 +67,8 @@ namespace WebKit {
 
         virtual void setResizable(bool);
 
-        virtual void addMessageToConsole(const WebCore::String& message, unsigned int lineNumber,
+        virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageLevel level,
+                                         const WebCore::String& message, unsigned int lineNumber,
                                          const WebCore::String& sourceID);
 
         virtual bool canRunBeforeUnloadConfirmPanel();

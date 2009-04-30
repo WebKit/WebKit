@@ -20,6 +20,7 @@
 #ifndef ChromeClient_h
 #define ChromeClient_h
 
+#include "Console.h"
 #include "Cursor.h"
 #include "GraphicsContext.h"
 #include "FocusDirection.h"
@@ -99,7 +100,7 @@ namespace WebCore {
 
         virtual void setResizable(bool) = 0;
         
-        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID) = 0;
+        virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID) = 0;
 
         virtual bool canRunBeforeUnloadConfirmPanel() = 0;
         virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame) = 0;

@@ -75,7 +75,9 @@ public:
 
     virtual void setResizable(bool);
 
-    virtual void addMessageToConsole(const String& message,
+    virtual void addMessageToConsole(MessageSource source,
+                                     MessageLevel level,
+                                     const String& message,
                                      unsigned int lineNumber,
                                      const String& sourceID);
 

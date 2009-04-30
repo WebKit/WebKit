@@ -34,6 +34,7 @@
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
+#include <WebCore/Console.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
@@ -287,7 +288,7 @@ void WebChromeClient::setResizable(bool resizable)
     }
 }
 
-void WebChromeClient::addMessageToConsole(const String& message, unsigned line, const String& url)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned line, const String& url)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {

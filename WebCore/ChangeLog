@@ -1,3 +1,24 @@
+2009-04-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25342
+        Add MessageSource and MessageLevel parameters to the ChromeClient::addMessageToConsole.
+
+        Chromium async/out-of-process version of WebInspector is currently not based on
+        InspectorController. The reason was that we did not want to interfere with
+        the unforking effort, yet wanted to experiment. So we came up with these
+        agents concept that basically mimic InspectorController, but separating 'agent'
+        nature from the 'transport'. Now that InspectorController is unforked, I am
+        planning to bring these concepts into the WebKit land and use what we have in
+        Chromium as a proof of concept / experimental playground.
+
+        * loader/EmptyClients.h: added MessageSource and MessageLevel parameters.
+        (WebCore::EmptyChromeClient::addMessageToConsole): ditto
+        * page/ChromeClient.h: ditto
+        * page/Console.cpp: Used new method signature.
+        (WebCore::Console::addMessage): ditto
+
 2009-04-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

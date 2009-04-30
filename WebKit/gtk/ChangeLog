@@ -1,3 +1,14 @@
+2009-04-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25342
+        Add MessageSource and MessageLevel parameters to the ChromeClient::addMessageToConsole.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::addMessageToConsole):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2009-04-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Update gtk-doc control and base sgml files for 1.1.6.

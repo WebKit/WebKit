@@ -47,6 +47,7 @@
 #import "WebViewInternal.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/Console.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
@@ -290,7 +291,7 @@ void WebChromeClient::setResizable(bool b)
     [[m_webView _UIDelegateForwarder] webView:m_webView setResizable:b];
 }
 
-void WebChromeClient::addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceURL)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, const String& sourceURL)
 {
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:addMessageToConsole:);
