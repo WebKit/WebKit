@@ -66,10 +66,15 @@ void SamplingFlags::stop()
     for (unsigned i = 0; i <= 32; ++i)
         total += s_flagCounts[i];
 
-    printf("SamplingFlags: sample count with flags set:\n");
-    for (unsigned i = 0; i <= 32; ++i)
-        printf("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
-    printf("\n\n");
+    if (total) {
+        printf("\nSamplingFlags: sample counts with flags set: (%lld total)\n", total);
+        for (unsigned i = 0; i <= 32; ++i) {
+            if (s_flagCounts[i])
+                printf("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
+        }
+        printf("\n");
+    } else
+    printf("\nSamplingFlags: no samples.\n\n");
 }
 uint64_t SamplingFlags::s_flagCounts[33];
 

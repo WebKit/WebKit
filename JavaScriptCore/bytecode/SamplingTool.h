@@ -59,6 +59,24 @@ namespace JSC {
         }
 
         static void sample();
+
+        class ScopedFlag {
+        public:
+            ScopedFlag(int flag)
+                : m_flag(flag)
+            {
+                setFlag(flag);
+            }
+
+            ~ScopedFlag()
+            {
+                clearFlag(m_flag);
+            }
+
+        private:
+            int m_flag;
+        };
+    
 #endif
     private:
         static uint32_t s_flags;
