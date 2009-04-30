@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,6 +134,8 @@ public:
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
 
     virtual void formStateDidChange(const Node*) { }
+
+    virtual HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient {

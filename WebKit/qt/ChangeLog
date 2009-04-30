@@ -1,3 +1,13 @@
+2009-04-30  David Kilzer  <ddkilzer@apple.com>
+
+        Provide a mechanism to create a quirks delegate for HTMLParser
+
+        Reviewed by David Hyatt.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::createHTMLParserQuirks): Added.  The
+        default implementation of this factory method returns 0.
+
 2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Unreviewed build fix after r43072.

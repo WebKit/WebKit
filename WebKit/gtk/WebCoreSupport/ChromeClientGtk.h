@@ -104,6 +104,8 @@ namespace WebKit {
 
         virtual void formStateDidChange(const WebCore::Node*) { }
 
+        virtual WebCore::HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
+
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;

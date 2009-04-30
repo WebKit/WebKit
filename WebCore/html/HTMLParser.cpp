@@ -3,7 +3,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1999,2001 Lars Knoll (knoll@kde.org)
               (C) 2000,2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "CharacterNames.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ChromeClient.h"
 #include "Comment.h"
 #include "Console.h"
 #include "DOMWindow.h"
@@ -45,15 +46,17 @@
 #include "HTMLIsIndexElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserQuirks.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
-    
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -133,6 +136,7 @@ HTMLParser::HTMLParser(HTMLDocument* doc, bool reportErrors)
     , m_reportErrors(reportErrors)
     , m_handlingResidualStyleAcrossBlocks(false)
     , m_inStrayTableContent(0)
+    , m_parserQuirks(m_document->page() ? m_document->page()->chrome()->client()->createHTMLParserQuirks() : 0)
 {
 }
 
@@ -150,6 +154,7 @@ HTMLParser::HTMLParser(DocumentFragment* frag)
     , m_reportErrors(false)
     , m_handlingResidualStyleAcrossBlocks(false)
     , m_inStrayTableContent(0)
+    , m_parserQuirks(m_document->page() ? m_document->page()->chrome()->client()->createHTMLParserQuirks() : 0)
 {
     if (frag)
         frag->ref();
@@ -159,7 +164,9 @@ HTMLParser::~HTMLParser()
 {
     freeBlock();
     if (m_didRefCurrent)
-        m_current->deref(); 
+        m_current->deref();
+    if (m_parserQuirks)
+        delete m_parserQuirks;
 }
 
 void HTMLParser::reset()
@@ -181,6 +188,9 @@ void HTMLParser::reset()
     m_isindexElement = 0;
 
     m_skipModeTag = nullAtom;
+    
+    if (m_parserQuirks)
+        m_parserQuirks->reset();
 }
 
 void HTMLParser::setCurrent(Node* newCurrent) 
@@ -331,6 +341,9 @@ bool HTMLParser::insertNode(Node* n, bool flat)
         while (m_blocksInStack >= cMaxBlockDepth)
             popBlock(m_blockStack->tagName);
     }
+
+    if (m_parserQuirks && !m_parserQuirks->shouldInsertNode(m_current, n))
+        return false;
 
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
@@ -1334,7 +1347,10 @@ void HTMLParser::pushBlock(const AtomicString& tagName, int level)
 void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
 {
     HTMLStackElem* elem = m_blockStack;
-    
+
+    if (m_parserQuirks && elem && !m_parserQuirks->shouldPopBlock(elem->tagName, tagName))
+        return;
+
     int maxLevel = 0;
 
     while (elem && (elem->tagName != tagName)) {

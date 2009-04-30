@@ -22,10 +22,10 @@
 
 #include "Console.h"
 #include "Cursor.h"
-#include "GraphicsContext.h"
 #include "FocusDirection.h"
-#include "ScrollTypes.h"
+#include "GraphicsContext.h"
 #include "HostWindow.h"
+#include "ScrollTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -45,6 +45,7 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class Geolocation;
+    class HTMLParserQuirks;
     class HitTestResult;
     class IntRect;
     class Node;
@@ -163,6 +164,8 @@ namespace WebCore {
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*) = 0;
+
+        virtual HTMLParserQuirks* createHTMLParserQuirks() = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
         // Pass 0 as the GraphicsLayer to detatch the root layer.

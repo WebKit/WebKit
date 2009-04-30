@@ -133,6 +133,8 @@ public:
 
     virtual void formStateDidChange(const WebCore::Node*) { }
 
+    virtual WebCore::HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();

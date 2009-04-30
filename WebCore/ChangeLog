@@ -1,3 +1,39 @@
+2009-04-30  David Kilzer  <ddkilzer@apple.com>
+
+        Provide a mechanism to create a quirks delegate for HTMLParser
+
+        Reviewed by David Hyatt.
+
+        No tests since there is no change in behavior.
+
+        HTMLParserQuirks.h defines an abstract base class that may be
+        extended as needed.  The ChromeClient::createHTMLParserQuirks()
+        factory method should be used to return an HTMLParserQuirks
+        subclassed object when needed.
+
+        * WebCore.xcodeproj/project.pbxproj: Added HTMLParserQuirks.h.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser): Initialize m_parserQuirks
+        using ChromeClient::createHTMLParserQuirks().
+        (WebCore::HTMLParser::~HTMLParser): Delete m_parserQuirks if
+        set.
+        (WebCore::HTMLParser::reset): Call HTMLParserQuirks::reset() if
+        m_parserQuirks is set.
+        (WebCore::HTMLParser::insertNode): Call
+        HTMLParserQuirks::shouldInsertNode() if m_parserQuirks is set,
+        and return early if it returns false.
+        (WebCore::HTMLParser::popBlock): Call
+        HTMLParserQuirks::shouldPopBlock() if m_parserQuirks is set, and
+        return early if it returns false.
+        * html/HTMLParser.h: Added m_parserQuirks.
+        * html/HTMLParserQuirks.h: Added.
+        (WebCore::HTMLParserQuirks::HTMLParserQuirks):
+        (WebCore::HTMLParserQuirks::~HTMLParserQuirks):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::createHTMLParserQuirks): Added.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::createHTMLParserQuirks): Added.
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
