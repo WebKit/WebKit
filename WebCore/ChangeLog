@@ -1,3 +1,32 @@
+2009-04-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - WebCore part of <rdar://problem/6609509> Select All and then Delete
+          should put Mail editing back into the same state as a new message
+
+        Test: editing/deleting/in-visibly-empty-root.html
+
+        * WebCore.base.exp: Exported VisibleSelection::isAll(bool).
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::isAll): Added. Calls through to
+        VisibleSelection.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty): Added. Removes all children
+        of the root editable element the selection is in, other than a
+        placeholder. Returns true iff it did anything.
+        (WebCore::TypingCommand::deleteKeyPressed): When there is only a single
+        visible position in the root editable element, but it has children other
+        than a placeholder, remove those children.
+        * editing/TypingCommand.h:
+        * editing/VisiblePosition.h:
+        Added a StayInEditableContent enum and a FIXME.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::isAll): Added. Returns whether the
+        selection encompasses all visible positions, either in the document or
+        in the editable root.
+        * editing/VisibleSelection.h:
+
 2009-04-29  Sam Weinig  <sam@webkit.org>
 
         Fix style nit.

@@ -1,3 +1,16 @@
+2009-04-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - WebKit part of <rdar://problem/6609509> Select All and then Delete
+          should put Mail editing back into the same state as a new message
+
+        * WebView/WebView.mm:
+        (-[WebView _selectionIsCaret]): Added.
+        (-[WebView _selectionIsAll]): Added. Returns whether the selection
+        encompasses the entire document.
+        * WebView/WebViewPrivate.h:
+
 2009-04-29  Douglas Davidson  <ddavidso@apple.com>
 
         Reviewed by Justin Garcia.

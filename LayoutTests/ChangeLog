@@ -1,3 +1,15 @@
+2009-04-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test and updated results for <rdar://problem/6609509> Select All and
+          then Delete should put Mail editing back into the same state as a new
+          message
+
+        * editing/deleting/in-visibly-empty-root-expected.txt: Added.
+        * editing/deleting/in-visibly-empty-root.html: Added.
+        * platform/mac/editing/deleting/delete-at-start-or-end-expected.txt:
+
 2009-04-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

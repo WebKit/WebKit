@@ -222,6 +222,11 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     return searchRange.release();
 }
 
+bool VisibleSelection::isAll(StayInEditableContent stayInEditableContent) const
+{
+    return visibleStart().previous(stayInEditableContent).isNull() && visibleEnd().next(stayInEditableContent).isNull();
+}
+
 void VisibleSelection::appendTrailingWhitespace()
 {
     RefPtr<Range> searchRange = makeSearchRange(m_end);

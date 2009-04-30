@@ -492,6 +492,8 @@ Could be worth adding to the API.
 @interface WebView (WebViewEditingInMail)
 - (void)_insertNewlineInQuotedContent;
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle;
+- (BOOL)_selectionIsCaret;
+- (BOOL)_selectionIsAll;
 @end
 
 @interface NSObject (WebFrameLoadDelegatePrivate)

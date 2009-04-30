@@ -33,6 +33,7 @@
 #include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
@@ -43,6 +44,8 @@
 #include "visible_units.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText, TextGranularity granularity, bool killRing)
     : CompositeEditCommand(document), 
@@ -379,6 +382,27 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     typingAddedToOpenCommand();
 }
 
+bool TypingCommand::makeEditableRootEmpty()
+{
+    Element* root = endingSelection().rootEditableElement();
+    if (!root->firstChild())
+        return false;
+
+    if (root->firstChild() == root->lastChild() && root->firstElementChild() && root->firstElementChild()->hasTagName(brTag)) {
+        // If there is a single child and it could be a placeholder, leave it alone.
+        if (root->renderer() && root->renderer()->isBlockFlow())
+            return false;
+    }
+
+    while (Node* child = root->firstChild())
+        removeNode(child);
+
+    addBlockPlaceholderIfNeeded(root);
+    setEndingSelection(VisibleSelection(Position(root, 0), DOWNSTREAM));
+
+    return true;
+}
+
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 {
     VisibleSelection selectionToDelete;
@@ -403,9 +427,14 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             if (killRing && selection.isCaret() && granularity != CharacterGranularity) 
                 selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity); 
             
-            // When the caret is at the start of the editable area in an empty list item, break out of the list item.
             if (endingSelection().visibleStart().previous(true).isNull()) {
+                // When the caret is at the start of the editable area in an empty list item, break out of the list item.
                 if (breakOutOfEmptyListItem()) {
+                    typingAddedToOpenCommand();
+                    return;
+                }
+                // When there are no visible positions in the editing root, delete its entire contents.
+                if (endingSelection().visibleStart().next(true).isNull() && makeEditableRootEmpty()) {
                     typingAddedToOpenCommand();
                     return;
                 }

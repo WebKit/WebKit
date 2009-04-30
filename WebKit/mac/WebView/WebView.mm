@@ -4803,6 +4803,22 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     [[self _selectedOrMainFrame] _replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO matchStyle:matchStyle];
 }
 
+- (BOOL)_selectionIsCaret
+{
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->selection()->isCaret();
+}
+
+- (BOOL)_selectionIsAll
+{
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->selection()->isAll(MayLeaveEditableContent);
+}
+
 @end
 
 static WebFrameView *containingFrameView(NSView *view)

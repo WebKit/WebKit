@@ -83,6 +83,7 @@ private:
 
     void markMisspellingsAfterTyping();
     void typingAddedToOpenCommand();
+    bool makeEditableRootEmpty();
     
     ETypingCommand m_commandType;
     String m_textToInsert;
