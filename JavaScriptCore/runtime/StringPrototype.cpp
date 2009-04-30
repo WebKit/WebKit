@@ -351,9 +351,7 @@ JSValuePtr stringProtoFuncReplace(ExecState* exec, JSObject*, JSValuePtr thisVal
     }
 
     int ovector[2] = { matchPos, matchPos + matchLen };
-    return jsString(exec, source.substr(0, matchPos)
-        + substituteBackreferences(replacementString, source, ovector, 0)
-        + source.substr(matchPos + matchLen));
+    return jsString(exec, source.replaceRange(matchPos, matchLen, substituteBackreferences(replacementString, source, ovector, 0)));
 }
 
 JSValuePtr stringProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)

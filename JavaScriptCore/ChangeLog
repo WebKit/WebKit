@@ -1,3 +1,18 @@
+2009-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        - Concatenate final three strings in simple replace case at one go
+
+        ~0.2% SunSpider speedup
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace): Use new replaceRange helper instead of
+        taking substrings and concatenating three strings.
+        * runtime/UString.cpp:
+        (JSC::UString::replaceRange): New helper function.
+        * runtime/UString.h:
+
 2009-04-30  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Gavin Barraclough.
