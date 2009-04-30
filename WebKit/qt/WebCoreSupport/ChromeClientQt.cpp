@@ -228,8 +228,8 @@ void ChromeClientQt::setResizable(bool)
     notImplemented();
 }
 
-void ChromeClientQt::addMessageToConsole(const String& message, unsigned int lineNumber,
-                                         const String& sourceID)
+void ChromeClientQt::addMessageToConsole(MessageSource, MessageLevel, const String& message,
+                                         unsigned int lineNumber, const String& sourceID)
 {
     QString x = message;
     QString y = sourceID;
