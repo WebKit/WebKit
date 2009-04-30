@@ -1,3 +1,12 @@
+2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Unreview build fix after r43037.
+
+        Use MarkedArgumentBuffer instead of ArgList.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtConnectionObject::execute):
+
 2009-04-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
