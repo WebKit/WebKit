@@ -1070,7 +1070,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
         if (frame) {
             VisibleSelection selection = frame->selection()->selection();
             if (selection.isCaret()) {
-                return QVariant(selection.start().m_offset);
+                return QVariant(selection.start().deprecatedEditingOffset());
             }
         }
         return QVariant();

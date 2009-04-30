@@ -1,3 +1,12 @@
+2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Unreviewed build fix, after r43035.
+
+        Temporarily use Position::deprecatedEditingOffset().
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+
 2009-03-27  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by Simon Hausmann.
