@@ -1,3 +1,16 @@
+2009-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver "Abandon Ship!" Hunt.
+
+        Fix a leak in Yarr.
+
+        All Disjunctions should be recorded in RegexPattern::m_disjunctions,
+        so that they can be freed at the end of compilation - copyDisjunction
+        is failing to do so.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::copyDisjunction):
+
 2009-04-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

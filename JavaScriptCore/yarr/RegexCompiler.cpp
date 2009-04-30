@@ -494,6 +494,7 @@ public:
                 newAlternative->m_terms.append(copyTerm(alternative->m_terms[i]));
         }
 
+        m_pattern.m_disjunctions.append(newDisjunction);
         return newDisjunction;
     }
 
