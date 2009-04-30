@@ -57,7 +57,7 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
 
 inline JSC::JSValuePtr toJS(JSValueRef v)
 {
-    return JSC::JSValuePtr::decode(reinterpret_cast<JSC::JSValueEncodedAsPointer*>(const_cast<OpaqueJSValue*>(v)));
+    return JSC::JSValuePtr::decode(reinterpret_cast<JSC::EncodedJSValuePtr>(const_cast<OpaqueJSValue*>(v)));
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)

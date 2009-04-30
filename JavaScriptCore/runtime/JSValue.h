@@ -33,6 +33,7 @@ namespace JSC {
 
     class Identifier;
     class JSCell;
+    class JSImmediate;
     class JSObject;
     class JSString;
     class PropertySlot;
@@ -44,8 +45,7 @@ namespace JSC {
 
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 
-    class JSImmediate;
-    class JSValueEncodedAsPointer;
+    typedef void* EncodedJSValuePtr;
 
     class JSValuePtr {
         friend class JSImmediate;
@@ -91,12 +91,12 @@ namespace JSC {
             return m_ptr != other.m_ptr;
         }
 
-        static JSValueEncodedAsPointer* encode(JSValuePtr value)
+        static EncodedJSValuePtr encode(JSValuePtr value)
         {
-            return reinterpret_cast<JSValueEncodedAsPointer*>(value.m_ptr);
+            return reinterpret_cast<EncodedJSValuePtr>(value.m_ptr);
         }
 
-        static JSValuePtr decode(JSValueEncodedAsPointer* ptr)
+        static JSValuePtr decode(EncodedJSValuePtr ptr)
         {
             return JSValuePtr(reinterpret_cast<JSCell*>(ptr));
         }

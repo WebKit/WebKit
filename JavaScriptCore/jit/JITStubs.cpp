@@ -335,7 +335,7 @@ void JITStubs::cti_op_end(STUB_ARGS)
     scopeChain->deref();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_add(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_add(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -380,7 +380,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_add(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_pre_inc(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_pre_inc(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -463,7 +463,7 @@ void JITStubs::cti_op_put_by_id_generic(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_generic(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_generic(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -518,7 +518,7 @@ void JITStubs::cti_op_put_by_id_fail(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -535,7 +535,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_second(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_second(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -552,7 +552,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_second(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_self_fail(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_self_fail(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -627,7 +627,7 @@ static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(Str
     return prototypeStructureList;
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -679,7 +679,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list_full(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_proto_list_full(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -691,7 +691,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_list_full(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_fail(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_proto_fail(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -703,7 +703,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_proto_fail(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_array_fail(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_array_fail(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -715,7 +715,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_array_fail(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -729,7 +729,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS)
 
 #endif
 
-JSValueEncodedAsPointer* JITStubs::cti_op_instanceof(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_instanceof(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -772,7 +772,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_instanceof(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_del_by_id(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_del_by_id(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -785,7 +785,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_del_by_id(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_mul(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_mul(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -912,7 +912,7 @@ JSObject* JITStubs::cti_op_push_activation(STUB_ARGS)
     return activation;
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1027,7 +1027,7 @@ JSObject* JITStubs::cti_op_new_array(STUB_ARGS)
     return constructArray(ARG_callFrame, argList);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_resolve(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_resolve(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1072,7 +1072,7 @@ JSObject* JITStubs::cti_op_construct_JSConstruct(STUB_ARGS)
     return new (ARG_globalData) JSObject(structure);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1106,7 +1106,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_val(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1145,7 +1145,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
     
-    JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val_string(STUB_ARGS)
+    EncodedJSValuePtr JITStubs::cti_op_get_by_val_string(STUB_ARGS)
     {
         BEGIN_STUB_FUNCTION();
         
@@ -1176,7 +1176,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val(STUB_ARGS)
     }
     
 
-JSValueEncodedAsPointer* JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
     
@@ -1249,7 +1249,7 @@ VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS)
     VM_THROW_EXCEPTION_2();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_sub(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_sub(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1385,7 +1385,7 @@ void JITStubs::cti_op_put_by_val_byte_array(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_lesseq(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_lesseq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1468,7 +1468,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
     return argCount + 1;
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_negate(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_negate(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1484,14 +1484,14 @@ JSValueEncodedAsPointer* JITStubs::cti_op_negate(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_resolve_base(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_resolve_base(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(JSC::resolveBase(ARG_callFrame, *ARG_id1, ARG_callFrame->scopeChain()));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_resolve_skip(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_resolve_skip(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1524,7 +1524,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_resolve_skip(STUB_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_resolve_global(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_resolve_global(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1556,7 +1556,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_resolve_global(STUB_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_div(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_div(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1574,7 +1574,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_div(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_pre_dec(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_pre_dec(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1599,7 +1599,7 @@ int JITStubs::cti_op_jless(STUB_ARGS)
     return result;
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_not(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_not(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1639,7 +1639,7 @@ VoidPtrPair JITStubs::cti_op_post_inc(STUB_ARGS)
     RETURN_PAIR(JSValuePtr::encode(number), JSValuePtr::encode(jsNumber(ARG_globalData, number.uncheckedGetNumber() + 1)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_eq(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_eq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1654,7 +1654,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_eq(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_lshift(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_lshift(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1674,7 +1674,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_lshift(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_bitand(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_bitand(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1692,7 +1692,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_bitand(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_rshift(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_rshift(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1712,7 +1712,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_rshift(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_bitnot(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_bitnot(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1769,7 +1769,7 @@ JSObject* JITStubs::cti_op_new_func_exp(STUB_ARGS)
     return ARG_funcexp1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_mod(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_mod(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1783,7 +1783,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_mod(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_less(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_less(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1793,7 +1793,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_less(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_neq(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_neq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1822,7 +1822,7 @@ VoidPtrPair JITStubs::cti_op_post_dec(STUB_ARGS)
     RETURN_PAIR(JSValuePtr::encode(number), JSValuePtr::encode(jsNumber(ARG_globalData, number.uncheckedGetNumber() - 1)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_urshift(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_urshift(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1840,7 +1840,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_urshift(STUB_ARGS)
     }
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_bitxor(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_bitxor(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1861,7 +1861,7 @@ JSObject* JITStubs::cti_op_new_regexp(STUB_ARGS)
     return new (ARG_globalData) RegExpObject(ARG_callFrame->lexicalGlobalObject()->regExpStructure(), ARG_regexp1);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_bitor(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_bitor(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1875,7 +1875,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_bitor(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_call_eval(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_call_eval(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1906,7 +1906,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_call_eval(STUB_ARGS)
     return JSValuePtr::encode(jsImpossibleValue());
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_throw(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_throw(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1939,7 +1939,7 @@ JSPropertyNameIterator* JITStubs::cti_op_get_pnames(STUB_ARGS)
     return JSPropertyNameIterator::create(ARG_callFrame, ARG_src1);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_next_pname(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_next_pname(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1967,14 +1967,14 @@ void JITStubs::cti_op_pop_scope(STUB_ARGS)
     ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->pop());
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_typeof(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_typeof(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsTypeStringForValue(ARG_callFrame, ARG_src1));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_undefined(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_undefined(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -1982,42 +1982,42 @@ JSValueEncodedAsPointer* JITStubs::cti_op_is_undefined(STUB_ARGS)
     return JSValuePtr::encode(jsBoolean(v.isCell() ? v.asCell()->structure()->typeInfo().masqueradesAsUndefined() : v.isUndefined()));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_boolean(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_boolean(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsBoolean(ARG_src1.isBoolean()));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_number(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_number(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsBoolean(ARG_src1.isNumber()));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_string(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_string(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsBoolean(isJSString(ARG_globalData, ARG_src1)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_object(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_object(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsBoolean(jsIsObjectType(ARG_src1)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_is_function(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_is_function(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
     return JSValuePtr::encode(jsBoolean(jsIsFunctionType(ARG_src1)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_stricteq(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_stricteq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -2027,7 +2027,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_stricteq(STUB_ARGS)
     return JSValuePtr::encode(jsBoolean(JSValuePtr::strictEqual(src1, src2)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_nstricteq(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_nstricteq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -2037,7 +2037,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_nstricteq(STUB_ARGS)
     return JSValuePtr::encode(jsBoolean(!JSValuePtr::strictEqual(src1, src2)));
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_to_jsnumber(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_to_jsnumber(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -2049,7 +2049,7 @@ JSValueEncodedAsPointer* JITStubs::cti_op_to_jsnumber(STUB_ARGS)
     return JSValuePtr::encode(result);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_in(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_in(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -2170,7 +2170,7 @@ void* JITStubs::cti_op_switch_string(STUB_ARGS)
     return result;
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_op_del_by_val(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_op_del_by_val(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
@@ -2246,7 +2246,7 @@ void JITStubs::cti_op_debug(STUB_ARGS)
     ARG_globalData->interpreter->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 }
 
-JSValueEncodedAsPointer* JITStubs::cti_vm_throw(STUB_ARGS)
+EncodedJSValuePtr JITStubs::cti_vm_throw(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 

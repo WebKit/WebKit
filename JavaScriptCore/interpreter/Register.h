@@ -89,7 +89,7 @@ namespace JSC {
         union {
             intptr_t i;
             void* v;
-            JSValueEncodedAsPointer* value;
+            EncodedJSValuePtr value;
 
             JSActivation* activation;
             Arguments* arguments;

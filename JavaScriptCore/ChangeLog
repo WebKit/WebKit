@@ -1,3 +1,84 @@
+2009-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber Stamped by Gavin Barraclough.
+        
+        Changed JSValueEncodedAsPtr* => EncodedJSValuePtr to support a non-pointer
+        encoding for JSValuePtrs.
+
+        * API/APICast.h:
+        (toJS):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::JSValueHashTraits::constructDeletedValue):
+        (JSC::BytecodeGenerator::JSValueHashTraits::isDeletedValue):
+        * interpreter/Register.h:
+        (JSC::Register::):
+        * jit/JIT.cpp:
+        (JSC::):
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        (JSC::):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_add):
+        (JSC::JITStubs::cti_op_pre_inc):
+        (JSC::JITStubs::cti_op_get_by_id_generic):
+        (JSC::JITStubs::cti_op_get_by_id):
+        (JSC::JITStubs::cti_op_get_by_id_second):
+        (JSC::JITStubs::cti_op_get_by_id_self_fail):
+        (JSC::JITStubs::cti_op_get_by_id_proto_list):
+        (JSC::JITStubs::cti_op_get_by_id_proto_list_full):
+        (JSC::JITStubs::cti_op_get_by_id_proto_fail):
+        (JSC::JITStubs::cti_op_get_by_id_array_fail):
+        (JSC::JITStubs::cti_op_get_by_id_string_fail):
+        (JSC::JITStubs::cti_op_instanceof):
+        (JSC::JITStubs::cti_op_del_by_id):
+        (JSC::JITStubs::cti_op_mul):
+        (JSC::JITStubs::cti_op_call_NotJSFunction):
+        (JSC::JITStubs::cti_op_resolve):
+        (JSC::JITStubs::cti_op_construct_NotJSConstruct):
+        (JSC::JITStubs::cti_op_get_by_val):
+        (JSC::JITStubs::cti_op_get_by_val_string):
+        (JSC::JITStubs::cti_op_get_by_val_byte_array):
+        (JSC::JITStubs::cti_op_sub):
+        (JSC::JITStubs::cti_op_lesseq):
+        (JSC::JITStubs::cti_op_negate):
+        (JSC::JITStubs::cti_op_resolve_base):
+        (JSC::JITStubs::cti_op_resolve_skip):
+        (JSC::JITStubs::cti_op_resolve_global):
+        (JSC::JITStubs::cti_op_div):
+        (JSC::JITStubs::cti_op_pre_dec):
+        (JSC::JITStubs::cti_op_not):
+        (JSC::JITStubs::cti_op_eq):
+        (JSC::JITStubs::cti_op_lshift):
+        (JSC::JITStubs::cti_op_bitand):
+        (JSC::JITStubs::cti_op_rshift):
+        (JSC::JITStubs::cti_op_bitnot):
+        (JSC::JITStubs::cti_op_mod):
+        (JSC::JITStubs::cti_op_less):
+        (JSC::JITStubs::cti_op_neq):
+        (JSC::JITStubs::cti_op_urshift):
+        (JSC::JITStubs::cti_op_bitxor):
+        (JSC::JITStubs::cti_op_bitor):
+        (JSC::JITStubs::cti_op_call_eval):
+        (JSC::JITStubs::cti_op_throw):
+        (JSC::JITStubs::cti_op_next_pname):
+        (JSC::JITStubs::cti_op_typeof):
+        (JSC::JITStubs::cti_op_is_undefined):
+        (JSC::JITStubs::cti_op_is_boolean):
+        (JSC::JITStubs::cti_op_is_number):
+        (JSC::JITStubs::cti_op_is_string):
+        (JSC::JITStubs::cti_op_is_object):
+        (JSC::JITStubs::cti_op_is_function):
+        (JSC::JITStubs::cti_op_stricteq):
+        (JSC::JITStubs::cti_op_nstricteq):
+        (JSC::JITStubs::cti_op_to_jsnumber):
+        (JSC::JITStubs::cti_op_in):
+        (JSC::JITStubs::cti_op_del_by_val):
+        (JSC::JITStubs::cti_vm_throw):
+        * jit/JITStubs.h:
+        * runtime/JSValue.h:
+        (JSC::JSValuePtr::encode):
+        (JSC::JSValuePtr::decode):
+
 2009-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver "Abandon Ship!" Hunt.

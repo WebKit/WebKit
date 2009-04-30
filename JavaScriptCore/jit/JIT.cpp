@@ -156,7 +156,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 
 extern "C" {
     
-    __declspec(naked) JSValueEncodedAsPointer* ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*)
+    __declspec(naked) EncodedJSValuePtr ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*)
     {
         __asm {
             push ebp;

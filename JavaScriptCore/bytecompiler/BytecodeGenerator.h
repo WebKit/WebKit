@@ -350,12 +350,12 @@ namespace JSC {
 
         PassRefPtr<Label> emitComplexJumpScopes(Label* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
-        struct JSValueHashTraits : HashTraits<JSValueEncodedAsPointer*> {
-            static void constructDeletedValue(JSValueEncodedAsPointer*& slot) { slot = JSValuePtr::encode(jsImpossibleValue()); }
-            static bool isDeletedValue(JSValueEncodedAsPointer* value) { return value == JSValuePtr::encode(jsImpossibleValue()); }
+        struct JSValueHashTraits : HashTraits<EncodedJSValuePtr> {
+            static void constructDeletedValue(EncodedJSValuePtr& slot) { slot = JSValuePtr::encode(jsImpossibleValue()); }
+            static bool isDeletedValue(EncodedJSValuePtr value) { return value == JSValuePtr::encode(jsImpossibleValue()); }
         };
 
-        typedef HashMap<JSValueEncodedAsPointer*, unsigned, PtrHash<JSValueEncodedAsPointer*>, JSValueHashTraits> JSValueMap;
+        typedef HashMap<EncodedJSValuePtr, unsigned, PtrHash<EncodedJSValuePtr>, JSValueHashTraits> JSValueMap;
 
         struct IdentifierMapIndexHashTraits {
             typedef int TraitType;
