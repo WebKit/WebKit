@@ -625,11 +625,15 @@ media/unsupported-rtsp.html
 media/video-append-source.html
 media/video-aspect-ratio.html
 media/video-autoplay.html
+media/video-buffered.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-rendering.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
+media/video-currentTime-set2.html
+media/video-currentTime-set.html
+media/video-currentTime.html
 media/video-display-toggle.html
 media/video-dom-autoplay.html
 media/video-error-does-not-exist.html
