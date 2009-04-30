@@ -73,6 +73,48 @@ static Node* previousRenderedEditable(Node* node)
     return 0;
 }
 
+Position::Position(PassRefPtr<Node> anchorNode, int offset)
+    : m_anchorNode(anchorNode)
+    , m_offset(offset)
+    , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
+    , m_isLegacyEditingPosition(true)
+{
+}
+
+Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
+    : m_anchorNode(anchorNode)
+    , m_offset(0)
+    , m_anchorType(anchorType)
+    , m_isLegacyEditingPosition(false)
+{
+    ASSERT(anchorType != PositionIsOffsetInAnchor);
+}
+
+Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorType)
+    : m_anchorNode(anchorNode)
+    , m_offset(offset)
+    , m_anchorType(anchorType)
+    , m_isLegacyEditingPosition(false)
+{
+    ASSERT(anchorType == PositionIsOffsetInAnchor);
+}
+
+void Position::moveToPosition(PassRefPtr<Node> node, int offset)
+{
+    ASSERT(anchorType() == PositionIsOffsetInAnchor || m_isLegacyEditingPosition);
+    m_anchorNode = node;
+    m_offset = offset;
+    if (m_isLegacyEditingPosition)
+        m_anchorType = anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset);
+}
+void Position::moveToOffset(int offset)
+{
+    ASSERT(anchorType() == PositionIsOffsetInAnchor || m_isLegacyEditingPosition);
+    m_offset = offset;
+    if (m_isLegacyEditingPosition)
+        m_anchorType = anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset);
+}
+
 Node* Position::containerNode() const
 {
     if (!m_anchorNode)
@@ -143,35 +185,23 @@ Node* Position::computeNodeAfterPosition() const
     return 0;
 }
 
-// FIXME: Position should store an AnchorType up-front, instead of lazily
-// determining it via editingIgnoresContent(anchorNode())
-// That would require fixing moveToOffset to know how to recompute the AnchorType
-// for positions which need historical editing-compatible behavior
-// (and for explicitly anchored positions to ASSERT_NOT_REACHED())
-Position::AnchorType Position::anchorType() const
+Position::AnchorType Position::anchorTypeForLegacyEditingPosition(Node* anchorNode, int offset)
 {
-    if (m_anchorNode && editingIgnoresContent(m_anchorNode.get())) {
-        if (m_offset == 0)
-            return PositionIsBeforeAnchor;
-        return PositionIsAfterAnchor;
+    if (anchorNode && editingIgnoresContent(anchorNode)) {
+        if (offset == 0)
+            return Position::PositionIsBeforeAnchor;
+        return Position::PositionIsAfterAnchor;
     }
-    return PositionIsOffsetInAnchor;
+    return Position::PositionIsOffsetInAnchor;
 }
 
-Element* Position::documentElement() const
+// FIXME: This method is confusing (does it return anchorNode() or containerNode()?) and should be renamed or removed
+Element* Position::element() const
 {
-    if (Node* n = node())
-        if (Element* e = n->document()->documentElement())
-            return e;
-    return 0;
-}
-
-Element *Position::element() const
-{
-    Node *n;
-    for (n = node(); n && !n->isElementNode(); n = n->parentNode())
-        ; // empty loop body
-    return static_cast<Element *>(n);
+    Node* n = anchorNode();
+    while (n && !n->isElementNode())
+        n = n->parentNode();
+    return static_cast<Element*>(n);
 }
 
 PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
