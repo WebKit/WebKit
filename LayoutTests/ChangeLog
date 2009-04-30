@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
         
+        Fix this test to only use a setTimeout in IE. It doesn't need a timeout in WebKit
+        and the timeout requires using waitUntilDone/notifyDone, which doesn't play
+        nicely with JS tests.
+        
+        See https://bugs.webkit.org/show_bug.cgi?id=25471
+
+        * fast/forms/resources/textarea-metrics.js:
+        (assertTextareaMetrics):
+        * fast/forms/textarea-metrics-expected.txt:
+        * platform/win/fast/forms/textarea-metrics-expected.txt:
+        * platform/win/Skipped:
+
+2009-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
         Put this file in the right place to fix the bot failure.
 
         * platform/mac-tiger/fast/forms/text-control-intrinsic-widths-expected.txt: Renamed from LayoutTests/platform/mac-tiger/text-control-intrinsic-widths-expected.txt.

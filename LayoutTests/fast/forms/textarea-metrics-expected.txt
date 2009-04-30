@@ -6,9 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Testing BackCompat document.
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Properties = none
 PASS BackCompatdoc.getElementById('no-styles').clientWidth is 48
 PASS BackCompatdoc.getElementById('no-styles').clientHeight is 48
@@ -170,4 +167,7 @@ PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').offsetHeight 
 PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollWidth is 37
 PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollHeight is 64
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

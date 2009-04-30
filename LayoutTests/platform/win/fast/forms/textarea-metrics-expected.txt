@@ -86,9 +86,6 @@ PASS BackCompatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').offsetHeight 
 PASS BackCompatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollWidth is 31
 PASS BackCompatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollHeight is 104
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Testing CSS1Compat document.
 Properties = none
 PASS CSS1Compatdoc.getElementById('no-styles').clientWidth is 54
@@ -170,4 +167,7 @@ PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').offsetHeight 
 PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollWidth is 37
 PASS CSS1Compatdoc.getElementById('-innerHTML-AAAAAAAAA-rows-10-').scrollHeight is 64
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

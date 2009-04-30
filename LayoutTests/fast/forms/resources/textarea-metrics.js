@@ -4,14 +4,6 @@ description("This test checks that textareas have the right metrics. These numbe
 "2. For the elements with scroll in standards-mode, IE wraps the text differently. It seems to leave 2px less space for the text. We don't " +
 "currently mimic this quirk. It's not clear whether we should given that we agree with IE7's clientWidth numbers in all these cases.");
 
-if (window.layoutTestController)
-  window.layoutTestController.waitUntilDone();
-
-// IE needs some time to get all it's metrics calculated correctly.
-// But we don't want to slow down tests when running as run-webkit-tests.
-var timeout = window.layoutTestController ? 0 : 100;
-
-var numTextareasLeft = 1;
 function assertTextareaMetrics(doc, properties, expectedMetrics) {
     var textarea = doc.createElement('textarea');
     // Give some consistent CSS for consistent rendering across platforms
@@ -36,9 +28,7 @@ function assertTextareaMetrics(doc, properties, expectedMetrics) {
 
     window[doc.compatMode + 'doc'] = doc;
 
-    numTextareasLeft++;
-    // Give a timeout so IE has time to figure out it's metrics.
-    setTimeout(function() {
+    function assertMetricsForTextarea() {
         if (!title)
             title = ' none';
 
@@ -50,11 +40,12 @@ function assertTextareaMetrics(doc, properties, expectedMetrics) {
         shouldBe(doc.compatMode + "doc.getElementById('" + id + "').scrollWidth", String(expectedMetrics.scrollWidth));
         shouldBe(doc.compatMode + "doc.getElementById('" + id + "').scrollHeight", String(expectedMetrics.scrollHeight));
         debug('');
-
-        numTextareasLeft--;
-        if (!numTextareasLeft && window.layoutTestController)
-            window.layoutTestController.notifyDone();
-    }, timeout);
+    }
+    if (document.all)
+      // Give a timeout so IE has time to figure out it's metrics.
+      setTimeout(assertMetricsForTextarea, 100);
+    else
+      assertMetricsForTextarea();
 }
 
 var smallHTML = 'A';
@@ -132,40 +123,36 @@ document.body.appendChild(standardsIframe);
 standardsIframe.contentWindow.document.write('<!DocType html><html><head></head><body></body></html>');
 standardsIframe.contentWindow.document.close();
 
-// Give a timeout so IE has time to figure out it's metrics.
-setTimeout(function() {
-    numTextareasLeft--;
-    var textareaSizesStandards = {clientWidth: 54,
-                                  clientHeight: 54,
-                                  offsetWidth: 56,
-                                  offsetHeight: 56,
-                                  scrollWidth: 54,
-                                  scrollHeight: 54};
+var textareaSizesStandards = {clientWidth: 54,
+                              clientHeight: 54,
+                              offsetWidth: 56,
+                              offsetHeight: 56,
+                              scrollWidth: 54,
+                              scrollHeight: 54};
 
-    var textareaWithScrollSizesStandards = {clientWidth: 56 - scrollbarPlusBorderWidth,
-                                            clientHeight: 54,
-                                            offsetWidth: 56,
-                                            offsetHeight: 56,
-                                            scrollWidth: 56 - scrollbarPlusBorderWidth,
-                                            scrollHeight: 64};
+var textareaWithScrollSizesStandards = {clientWidth: 56 - scrollbarPlusBorderWidth,
+                                        clientHeight: 54,
+                                        offsetWidth: 56,
+                                        offsetHeight: 56,
+                                        scrollWidth: 56 - scrollbarPlusBorderWidth,
+                                        scrollHeight: 64};
 
-    var textareaWith8pxPaddingSizesStandards = {clientWidth: 66,
-                                                clientHeight: 66,
-                                                offsetWidth: 68,
-                                                offsetHeight: 68,
-                                                scrollWidth: 66,
-                                                scrollHeight: 66};
+var textareaWith8pxPaddingSizesStandards = {clientWidth: 66,
+                                            clientHeight: 66,
+                                            offsetWidth: 68,
+                                            offsetHeight: 68,
+                                            scrollWidth: 66,
+                                            scrollHeight: 66};
 
-    var textareaWith8pxPaddingAndScrollbarSizesStandards = {clientWidth: 68 - scrollbarPlusBorderWidth,
-                                                            clientHeight: 66,
-                                                            offsetWidth: 68,
-                                                            offsetHeight: 68,
-                                                            scrollWidth: 68 - scrollbarPlusBorderWidth,
-                                                            scrollHeight: 76};
+var textareaWith8pxPaddingAndScrollbarSizesStandards = {clientWidth: 68 - scrollbarPlusBorderWidth,
+                                                        clientHeight: 66,
+                                                        offsetWidth: 68,
+                                                        offsetHeight: 68,
+                                                        scrollWidth: 68 - scrollbarPlusBorderWidth,
+                                                        scrollHeight: 76};
 
-    testTextareasForDocument(standardsIframe.contentWindow.document, 'CSS1Compat',
-                             textareaSizesStandards, textareaWithScrollSizesStandards,
-                             textareaWith8pxPaddingSizesStandards, textareaWith8pxPaddingAndScrollbarSizesStandards);
-}, timeout);
+testTextareasForDocument(standardsIframe.contentWindow.document, 'CSS1Compat',
+                         textareaSizesStandards, textareaWithScrollSizesStandards,
+                         textareaWith8pxPaddingSizesStandards, textareaWith8pxPaddingAndScrollbarSizesStandards);
 
 var successfullyParsed = true;
