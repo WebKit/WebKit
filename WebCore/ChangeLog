@@ -41,6 +41,8 @@
         https://bugs.webkit.org/show_bug.cgi?id=25492
         Add JSC guards around node wrapper cache calls. These are not used by V8.
 
+        Also, remove JSDOMBinding include, which is brought in by ScriptController.
+
         * dom/Document.cpp:
         (WebCore::Document::~Document): Added JSC guard.
         * dom/Node.cpp:
