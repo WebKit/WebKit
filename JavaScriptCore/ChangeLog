@@ -1,5 +1,20 @@
 2009-04-30  Adam Roben  <aroben@apple.com>
 
+        Restore build event steps that were truncated in r43082
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops:
+        Re-copied the command lines for the build events from the pre-r43082
+        .vcproj files.
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Removed an unnecessary
+        attribute.
+
+2009-04-30  Adam Roben  <aroben@apple.com>
+
         Move settings from .vcproj files to .vsprops files within the
         JavaScriptCore directory
 
