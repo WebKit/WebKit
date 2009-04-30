@@ -62,6 +62,12 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length);
 // look like a relative URL.
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
 
+// Resolves the potentially relative URL "attributeURL" relative to the given
+// base URL, and returns the hash of the string that will be used for visited.
+// It will return an empty Vector in case of errors.
+void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>&);
+
+
 }  // namespace WebCore
 
 #endif  // LinkHash_h

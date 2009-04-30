@@ -152,12 +152,12 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length)
   return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url, length));
 }
 
-LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
+void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
 {
     const UChar* characters = attributeURL.characters();
     unsigned length = attributeURL.length();
     if (!length)
-        return 0;
+        return;
 
     // This is a poor man's completeURL. Faster with less memory allocation.
     // FIXME: It's missing a lot of what completeURL does and a lot of what KURL does.
@@ -172,17 +172,18 @@ LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 
     bool hasColonSlashSlash = containsColonSlashSlash(characters, length);
 
-    if (hasColonSlashSlash && !needsTrailingSlash(characters, length))
-        return visitedLinkHash(attributeURL.characters(), attributeURL.length());
+    if (hasColonSlashSlash && !needsTrailingSlash(characters, length)) {
+        buffer.append(attributeURL.characters(), attributeURL.length());
+        return;
+    }
 
-    Vector<UChar, 512> buffer;
 
     if (hasColonSlashSlash) {
         // FIXME: This is incorrect for URLs that have a query or anchor; the "/" needs to go at the
         // end of the path, *before* the query or anchor.
         buffer.append(characters, length);
         buffer.append('/');
-        return visitedLinkHash(buffer.data(), buffer.size());
+        return;
     }
 
     switch (characters[0]) {
@@ -204,7 +205,17 @@ LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
         buffer.append('/');
     }
 
-    return visitedLinkHash(buffer.data(), buffer.size());
+    return;
+}
+
+LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
+{
+    Vector<UChar, 512> url;
+    visitedURL(base, attributeURL, url);
+    if (url.isEmpty())
+        return 0;
+
+    return visitedLinkHash(url.data(), url.size());
 }
 
 }  // namespace WebCore

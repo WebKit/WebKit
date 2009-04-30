@@ -110,6 +110,10 @@
 #include "WMLNames.h"
 #endif
 
+#if PLATFORM(QT)
+#include <qwebhistoryinterface.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -863,10 +867,6 @@ PseudoState CSSStyleSelector::SelectorChecker::checkPseudoState(Element* element
     if (!checkVisited)
         return PseudoAnyLink;
 
-    LinkHash hash = visitedLinkHash(m_document->baseURL(), *attr);
-    if (!hash)
-        return PseudoLink;
-
     Frame* frame = m_document->frame();
     if (!frame)
         return PseudoLink;
@@ -875,6 +875,22 @@ PseudoState CSSStyleSelector::SelectorChecker::checkPseudoState(Element* element
     if (!page)
         return PseudoLink;
 
+    Vector<UChar, 512> url;
+    visitedURL(m_document->baseURL(), *attr, url);
+    if (url.isEmpty())
+        return PseudoLink;
+
+#if PLATFORM(QT)
+    // If the Qt4.4 interface for the history is used, we will have to fallback
+    // to the old global history.
+    QWebHistoryInterface* interface = QWebHistoryInterface::defaultInterface();
+    if (interface)
+        return interface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? PseudoVisited : PseudoLink;
+#endif
+
+    LinkHash hash = visitedLinkHash(url.data(), url.size());
+    if (!hash)
+        return PseudoLink;
     m_linksCheckedForVisitedState.add(hash);
     return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
 }
