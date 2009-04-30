@@ -72,7 +72,7 @@ void JSCustomSQLStatementCallback::handleEvent(SQLTransaction* transaction, SQLR
 
     RefPtr<JSCustomSQLStatementCallback> protect(this);
 
-    ArgList args;
+    MarkedArgumentBuffer args;
     args.append(toJS(exec, transaction));
     args.append(toJS(exec, resultSet));
         

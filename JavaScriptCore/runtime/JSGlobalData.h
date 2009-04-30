@@ -107,7 +107,7 @@ namespace JSC {
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
-        const ArgList* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
+        const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
         SmallStrings smallStrings;
 
 #if ENABLE(ASSEMBLER)

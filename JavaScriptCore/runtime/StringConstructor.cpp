@@ -33,7 +33,7 @@ static NEVER_INLINE JSValuePtr stringFromCharCodeSlowCase(ExecState* exec, const
     UChar* p = buf;
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        *p++ = static_cast<UChar>((*it).jsValue().toUInt32(exec));
+        *p++ = static_cast<UChar>((*it).toUInt32(exec));
     return jsString(exec, UString(buf, p - buf, false));
 }
 

@@ -63,7 +63,7 @@ namespace JSC {
 
         virtual void mark();
 
-        void fillArgList(ExecState*, ArgList&);
+        void fillArgList(ExecState*, MarkedArgumentBuffer&);
 
         uint32_t numProvidedArguments(ExecState* exec) const 
         {

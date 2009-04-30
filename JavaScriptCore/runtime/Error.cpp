@@ -72,7 +72,7 @@ JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message,
             break;
     }
 
-    ArgList args;
+    MarkedArgumentBuffer args;
     if (message.isEmpty())
         args.append(jsString(exec, name));
     else

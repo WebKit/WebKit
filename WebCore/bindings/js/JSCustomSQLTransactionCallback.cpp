@@ -114,7 +114,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         
     RefPtr<JSCustomSQLTransactionCallback> protect(this);
         
-    ArgList args;
+    MarkedArgumentBuffer args;
     args.append(toJS(exec, transaction));
 
     globalObject->globalData()->timeoutChecker.start();

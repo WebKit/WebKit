@@ -108,7 +108,7 @@ JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisVal
 
     JSValuePtr array = args.at(1);
 
-    ArgList applyArgs;
+    MarkedArgumentBuffer applyArgs;
     if (!array.isUndefinedOrNull()) {
         if (!array.isObject())
             return throwError(exec, TypeError);

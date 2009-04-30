@@ -31,11 +31,11 @@
 
 namespace JSC {
     
-    class ArgList : Noncopyable {
+    class MarkedArgumentBuffer : Noncopyable {
     private:
         static const unsigned inlineCapacity = 8;
         typedef Vector<Register, inlineCapacity> VectorType;
-        typedef HashSet<ArgList*> ListSet;
+        typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
     public:
         typedef VectorType::iterator iterator;
@@ -43,7 +43,7 @@ namespace JSC {
 
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
-        ArgList()
+        MarkedArgumentBuffer()
             : m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(false)
@@ -54,7 +54,7 @@ namespace JSC {
         }
 
         // Constructor for a read-only list whose data has already been allocated elsewhere.
-        ArgList(Register* buffer, size_t size)
+        MarkedArgumentBuffer(Register* buffer, size_t size)
             : m_buffer(buffer)
             , m_size(size)
             , m_markSet(0)
@@ -76,7 +76,7 @@ namespace JSC {
 #endif
         }
 
-        ~ArgList()
+        ~MarkedArgumentBuffer()
         {
             if (m_markSet)
                 m_markSet->remove(this);
@@ -113,8 +113,6 @@ namespace JSC {
                 ++m_size;
             }
         }
-
-        void getSlice(int startIndex, ArgList& result) const;
 
         iterator begin() { return m_buffer; }
         iterator end() { return m_buffer + m_size; }
@@ -154,6 +152,59 @@ namespace JSC {
 
         void* operator new(size_t, void*);
         void operator delete(void*, size_t);
+    };
+
+    class ArgList {
+    public:
+        typedef JSValuePtr* iterator;
+        typedef const JSValuePtr* const_iterator;
+
+        ArgList()
+            : m_args(0)
+            , m_argCount(0)
+        {
+        }
+        
+        ArgList(JSValuePtr* args, unsigned argCount)
+            : m_args(args)
+            , m_argCount(argCount)
+        {
+        }
+        
+        ArgList(Register* args, int argCount)
+            : m_args(reinterpret_cast<JSValuePtr*>(args))
+            , m_argCount(argCount)
+        {
+            ASSERT(argCount >= 0);
+        }
+
+        ArgList(const MarkedArgumentBuffer& args)
+            : m_args(reinterpret_cast<JSValuePtr*>(const_cast<Register*>(args.begin())))
+            , m_argCount(args.size())
+        {
+        }
+
+        JSValuePtr at(size_t idx) const
+        {
+            if (idx < m_argCount)
+                return m_args[idx];
+            return jsUndefined();
+        }
+
+        bool isEmpty() const { return !m_argCount; }
+
+        size_t size() const { return m_argCount; }
+        
+        iterator begin() { return m_args; }
+        iterator end() { return m_args + m_argCount; }
+        
+        const_iterator begin() const { return m_args; }
+        const_iterator end() const { return m_args + m_argCount; }
+
+        void getSlice(int startIndex, ArgList& result) const;
+    private:
+        JSValuePtr* m_args;
+        size_t m_argCount;
     };
 
 } // namespace JSC

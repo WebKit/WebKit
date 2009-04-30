@@ -68,7 +68,7 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     
     RefPtr<JSCustomPositionErrorCallback> protect(this);
     
-    ArgList args;
+    MarkedArgumentBuffer args;
     args.append(toJS(exec, positionError));
     
     globalObject->globalData()->timeoutChecker.start();

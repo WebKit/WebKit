@@ -104,7 +104,7 @@ void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxS
     }
 }
 
-void Arguments::fillArgList(ExecState* exec, ArgList& args)
+void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 {
     if (UNLIKELY(d->overrodeLength)) {
         unsigned length = get(exec, exec->propertyNames().length).toUInt32(exec); 

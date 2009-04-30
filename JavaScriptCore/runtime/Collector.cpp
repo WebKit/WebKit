@@ -986,7 +986,7 @@ bool Heap::collect()
     markStackObjectsConservatively();
     markProtectedObjects();
     if (m_markListSet && m_markListSet->size())
-        ArgList::markLists(*m_markListSet);
+        MarkedArgumentBuffer::markLists(*m_markListSet);
     if (m_globalData->exception && !m_globalData->exception.marked())
         m_globalData->exception.mark();
     m_globalData->interpreter->registerFile().markCallFrames(this);

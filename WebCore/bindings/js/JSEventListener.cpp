@@ -106,7 +106,7 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
     if (callType != CallTypeNone) {
         ref();
 
-        ArgList args;
+        MarkedArgumentBuffer args;
         args.append(toJS(exec, event));
 
         Event* savedEvent = globalObject->currentEvent();

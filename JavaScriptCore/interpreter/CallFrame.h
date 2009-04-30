@@ -80,7 +80,7 @@ namespace JSC  {
         bool hadException() const { return globalData().exception; }
 
         const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }
-        const ArgList& emptyList() const { return *globalData().emptyList; }
+        const MarkedArgumentBuffer& emptyList() const { return *globalData().emptyList; }
         Interpreter* interpreter() { return globalData().interpreter; }
         Heap* heap() { return &globalData().heap; }
 

@@ -152,7 +152,7 @@ JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj
         JSObject* ksjThisObj = value.toObject(exec);
         JSObject* objValue = ptr->GetValue().toObject(exec);
 
-        ArgList listArgs;
+        MarkedArgumentBuffer listArgs;
         CFIndex argCount = args ? CFArrayGetCount(args) : 0;
         for (CFIndex i = 0; i < argCount; i++)
         {

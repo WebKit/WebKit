@@ -71,7 +71,7 @@ void JSCustomVoidCallback::handleEvent()
         
     RefPtr<JSCustomVoidCallback> protect(this);
         
-    ArgList args;
+    MarkedArgumentBuffer args;
     
     globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);

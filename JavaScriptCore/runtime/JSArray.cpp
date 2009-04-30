@@ -173,7 +173,7 @@ JSArray::JSArray(PassRefPtr<Structure> structure, const ArgList& list)
     size_t i = 0;
     ArgList::const_iterator end = list.end();
     for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        storage->m_vector[i] = (*it).jsValue();
+        storage->m_vector[i] = *it;
 
     m_storage = storage;
 
@@ -790,7 +790,7 @@ struct AVLTreeAbstractorForArrayCompare {
             m_cachedCall->setArgument(1, vb);
             compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame());
         } else {
-            ArgList arguments;
+            MarkedArgumentBuffer arguments;
             arguments.append(va);
             arguments.append(vb);
             compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
@@ -914,7 +914,7 @@ void JSArray::sort(ExecState* exec, JSValuePtr compareFunction, CallType callTyp
     checkConsistency(SortConsistencyCheck);
 }
 
-void JSArray::fillArgList(ExecState* exec, ArgList& args)
+void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 {
     unsigned fastAccessLength = min(m_storage->m_length, m_fastAccessCutoff);
     unsigned i = 0;
@@ -1060,7 +1060,7 @@ JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
 
 JSArray* constructArray(ExecState* exec, JSValuePtr singleItemValue)
 {
-    ArgList values;
+    MarkedArgumentBuffer values;
     values.append(singleItemValue);
     return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
 }

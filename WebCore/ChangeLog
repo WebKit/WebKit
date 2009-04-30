@@ -1,3 +1,64 @@
+2009-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Clean up ArgList to be a trivial type
+
+        Start using MarkedArgumentBuffer to create argument lists for function calls
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profiles):
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        (WebCore::JSInspectorController::profiles):
+        (WebCore::JSInspectorController::search):
+        (WebCore::JSInspectorController::databaseTableNames):
+        (WebCore::JSInspectorController::setting):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptFunctionCall.h:
+        * bindings/objc/WebScriptObject.mm:
+        (getListFromNSArray):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        * bridge/NP_jsobject.cpp:
+        (getListFromVariantArgs):
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Construct):
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::getListFromJArray):
+
 2009-04-29  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

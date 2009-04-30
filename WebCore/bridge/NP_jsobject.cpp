@@ -49,7 +49,7 @@ using namespace JSC;
 using namespace JSC::Bindings;
 using namespace WebCore;
 
-static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, ArgList& aList)
+static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
     for (unsigned i = 0; i < argCount; ++i)
         aList.append(convertNPVariantToValue(exec, &args[i], rootObject));
@@ -119,7 +119,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         if (callType == CallTypeNone)
             return false;
         
-        ArgList argList;
+        MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
         globalObject->globalData()->timeoutChecker.start();
@@ -169,7 +169,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
             return false;
 
         // Call the function object.
-        ArgList argList;
+        MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
         globalObject->globalData()->timeoutChecker.start();
@@ -439,7 +439,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         if (constructType == ConstructTypeNone)
             return false;
         
-        ArgList argList;
+        MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
         globalObject->globalData()->timeoutChecker.start();

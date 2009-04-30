@@ -1,3 +1,78 @@
+2009-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Clean up ArgList to be a trivial type
+
+        Separate out old ArgList logic to handle buffering and marking arguments
+        into a distinct MarkedArgumentBuffer type.  ArgList becomes a trivial
+        struct of a pointer and length.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * JavaScriptCore.exp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::emptyList):
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice):
+        (JSC::MarkedArgumentBuffer::markLists):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+        (JSC::ArgList::ArgList):
+        (JSC::ArgList::at):
+        (JSC::ArgList::isEmpty):
+        (JSC::ArgList::size):
+        (JSC::ArgList::begin):
+        (JSC::ArgList::end):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::fillArgList):
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/Collector.cpp:
+        (JSC::Heap::collect):
+        * runtime/Collector.h:
+        (JSC::Heap::markListSet):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::Error::create):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        (JSC::JSArray::fillArgList):
+        (JSC::constructArray):
+        * runtime/JSArray.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncMatch):
+
 2009-04-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Sam Weinig.

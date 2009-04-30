@@ -265,7 +265,7 @@ static void _didExecute(WebScriptObject *obj)
     return YES;
 }
 
-static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObject, ArgList& aList)
+static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
     int i, numObjects = array ? [array count] : 0;
     
@@ -292,7 +292,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (callType == CallTypeNone)
         return nil;
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     getListFromNSArray(exec, args, [self _rootObject], argList);
 
     if (![self _isSafeScript])

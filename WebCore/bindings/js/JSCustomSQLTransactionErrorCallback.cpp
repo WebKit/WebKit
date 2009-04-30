@@ -71,7 +71,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
 
     RefPtr<JSCustomSQLTransactionErrorCallback> protect(this);
         
-    ArgList args;
+    MarkedArgumentBuffer args;
     args.append(toJS(exec, error));
 
     JSValuePtr result;

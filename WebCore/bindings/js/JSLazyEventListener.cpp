@@ -92,7 +92,7 @@ void JSLazyEventListener::parseCode() const
 
     ExecState* exec = m_globalObject->globalExec();
 
-    ArgList args;
+    MarkedArgumentBuffer args;
     UString sourceURL(m_globalObject->scriptExecutionContext()->url().string());
     args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsString(exec, m_code));

@@ -72,7 +72,7 @@ namespace WebCore {
 JSValuePtr JSInspectorController::profiles(JSC::ExecState* exec, const JSC::ArgList&)
 {
     JSLock lock(false);
-    ArgList result;
+    MarkedArgumentBuffer result;
     const Vector<RefPtr<Profile> >& profiles = impl()->profiles();
 
     for (size_t i = 0; i < profiles.size(); ++i)
@@ -178,7 +178,7 @@ JSValuePtr JSInspectorController::search(ExecState* exec, const ArgList& args)
     if (exec->hadException())
         return jsUndefined();
 
-    ArgList result;
+    MarkedArgumentBuffer result;
     RefPtr<Range> searchRange(rangeOfContents(node));
 
     ExceptionCode ec = 0;
@@ -215,7 +215,7 @@ JSValuePtr JSInspectorController::databaseTableNames(ExecState* exec, const ArgL
     if (!database)
         return jsUndefined();
 
-    ArgList result;
+    MarkedArgumentBuffer result;
 
     Vector<String> tableNames = database->tableNames();
     unsigned length = tableNames.size();
@@ -256,7 +256,7 @@ JSValuePtr JSInspectorController::setting(ExecState* exec, const ArgList& args)
         case InspectorController::Setting::BooleanType:
             return jsBoolean(setting.booleanValue());
         case InspectorController::Setting::StringVectorType: {
-            ArgList stringsArray;
+            MarkedArgumentBuffer stringsArray;
             const Vector<String>& strings = setting.stringVector();
             const unsigned length = strings.size();
             for (unsigned i = 0; i < length; ++i)

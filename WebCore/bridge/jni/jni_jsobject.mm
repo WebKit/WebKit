@@ -300,7 +300,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
         return 0;
 
     // Call the function object.
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     getListFromJArray(exec, args, argList);
     rootObject->globalObject()->globalData()->timeoutChecker.start();
     JSValuePtr result = JSC::call(exec, function, callType, callData, _imp, argList);
@@ -605,7 +605,7 @@ JSValuePtr JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObjec
     return JavaInstance::create(theObject, _rootObject)->createRuntimeObject(exec);
 }
 
-void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, ArgList& list) const
+void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, MarkedArgumentBuffer& list) const
 {
     JNIEnv *env = getJNIEnv();
     int numObjects = jArray ? env->GetArrayLength(jArray) : 0;

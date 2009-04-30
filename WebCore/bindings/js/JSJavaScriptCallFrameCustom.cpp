@@ -74,7 +74,7 @@ JSValuePtr JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     // we must always have something in the scope chain
     ASSERT(iter != end);
 
-    ArgList list;
+    MarkedArgumentBuffer list;
     do {
         list.append(*iter);
         ++iter;

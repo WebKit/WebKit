@@ -60,7 +60,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (!exec)
         return NodeFilter::FILTER_REJECT;
 
-    ArgList args;
+    MarkedArgumentBuffer args;
     args.append(toJS(exec, filterNode));
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;

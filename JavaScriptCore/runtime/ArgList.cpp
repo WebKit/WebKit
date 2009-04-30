@@ -30,19 +30,18 @@ namespace JSC {
 
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
-    ASSERT(!result.m_isReadOnly);
-
-    const_iterator start = min(begin() + startIndex, end());
-    result.m_vector.appendRange(start, end());
-    result.m_size = result.m_vector.size();
-    result.m_buffer = result.m_vector.data();
+    if (startIndex <= 0 || static_cast<unsigned>(startIndex) >= m_argCount) {
+        result = ArgList(m_args, 0);
+        return;
+    }
+    result = ArgList(m_args + startIndex, m_argCount - startIndex);
 }
 
-void ArgList::markLists(ListSet& markSet)
+void MarkedArgumentBuffer::markLists(ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
-        ArgList* list = *it;
+        MarkedArgumentBuffer* list = *it;
 
         iterator end2 = list->end();
         for (iterator it2 = list->begin(); it2 != end2; ++it2)
@@ -51,7 +50,7 @@ void ArgList::markLists(ListSet& markSet)
     }
 }
 
-void ArgList::slowAppend(JSValuePtr v)
+void MarkedArgumentBuffer::slowAppend(JSValuePtr v)
 {
     // As long as our size stays within our Vector's inline 
     // capacity, all our values are allocated on the stack, and 

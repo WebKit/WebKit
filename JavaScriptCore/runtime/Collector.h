@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-    class ArgList;
+    class MarkedArgumentBuffer;
     class CollectorBlock;
     class JSCell;
     class JSGlobalData;
@@ -113,7 +113,7 @@ namespace JSC {
 
         void markConservatively(void* start, void* end);
 
-        HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
+        HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
 
         JSGlobalData* globalData() const { return m_globalData; }
         static bool isNumber(JSCell*);
@@ -147,7 +147,7 @@ namespace JSC {
         OwnPtr<Mutex> m_protectedValuesMutex; // Only non-null if the client explicitly requested it via setGCPrtotectNeedsLocking().
         ProtectCountSet m_protectedValues;
 
-        HashSet<ArgList*>* m_markListSet;
+        HashSet<MarkedArgumentBuffer*>* m_markListSet;
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         void makeUsableFromMultipleThreads();

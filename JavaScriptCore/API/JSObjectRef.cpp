@@ -122,7 +122,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
 
     Identifier nameID = name ? name->identifier(&exec->globalData()) : Identifier(exec, "anonymous");
     
-    ArgList args;
+    MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)
         args.append(jsString(exec, parameterNames[i]->ustring()));
     args.append(jsString(exec, body->ustring()));
@@ -145,7 +145,7 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
 
     JSObject* result;
     if (argumentCount) {
-        ArgList argList;
+        MarkedArgumentBuffer argList;
         for (size_t i = 0; i < argumentCount; ++i)
             argList.append(toJS(arguments[i]));
 
@@ -169,7 +169,7 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(arguments[i]));
 
@@ -190,7 +190,7 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(arguments[i]));
 
@@ -211,7 +211,7 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(arguments[i]));
 
@@ -389,7 +389,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     if (!jsThisObject)
         jsThisObject = exec->globalThisValue();
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(arguments[i]));
 
@@ -428,7 +428,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     if (constructType == ConstructTypeNone)
         return 0;
 
-    ArgList argList;
+    MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(arguments[i]));
     JSObjectRef result = toRef(construct(exec, jsObject, constructType, constructData, argList));

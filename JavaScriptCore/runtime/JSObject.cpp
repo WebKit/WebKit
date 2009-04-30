@@ -147,7 +147,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValuePtr v
                 
                 CallData callData;
                 CallType callType = setterFunc->getCallData(callData);
-                ArgList args;
+                MarkedArgumentBuffer args;
                 args.append(value);
                 call(exec, setterFunc, callType, callData, this, args);
                 return;

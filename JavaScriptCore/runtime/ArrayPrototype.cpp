@@ -305,7 +305,7 @@ JSValuePtr arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValuePtr thisValue
         }
         if (it == end)
             break;
-        curArg = (*it).jsValue();
+        curArg = (*it);
         ++it;
     }
     arr->setLength(n);
@@ -335,7 +335,7 @@ JSValuePtr arrayProtoFuncPush(ExecState* exec, JSObject*, JSValuePtr thisValue, 
 {
     if (isJSArray(&exec->globalData(), thisValue) && args.size() == 1) {
         JSArray* array = asArray(thisValue);
-        array->push(exec, args.begin()->jsValue());
+        array->push(exec, *args.begin());
         return jsNumber(exec, array->length());
     }
 
@@ -477,7 +477,7 @@ JSValuePtr arrayProtoFuncSort(ExecState* exec, JSObject*, JSValuePtr thisValue, 
             else if (minObj.isUndefined())
                 compareResult = -1;
             else if (callType != CallTypeNone) {
-                ArgList l;
+                MarkedArgumentBuffer l;
                 l.append(jObj);
                 l.append(minObj);
                 compareResult = call(exec, function, callType, callData, exec->globalThisValue(), l).toNumber(exec);
@@ -619,7 +619,7 @@ JSValuePtr arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValuePtr thisValue
 
         JSValuePtr v = slot.getValue(exec, k);
 
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
 
         eachArguments.append(v);
         eachArguments.append(jsNumber(exec, k));
@@ -672,7 +672,7 @@ JSValuePtr arrayProtoFuncMap(ExecState* exec, JSObject*, JSValuePtr thisValue, c
 
         JSValuePtr v = slot.getValue(exec, k);
 
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
 
         eachArguments.append(v);
         eachArguments.append(jsNumber(exec, k));
@@ -729,7 +729,7 @@ JSValuePtr arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValuePtr thisValue,
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
 
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(exec, k));
@@ -781,7 +781,7 @@ JSValuePtr arrayProtoFuncForEach(ExecState* exec, JSObject*, JSValuePtr thisValu
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
@@ -829,7 +829,7 @@ JSValuePtr arrayProtoFuncSome(ExecState* exec, JSObject*, JSValuePtr thisValue, 
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
@@ -903,7 +903,7 @@ JSValuePtr arrayProtoFuncReduce(ExecState* exec, JSObject*, JSValuePtr thisValue
         if (!prop)
             continue;
         
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(rv);
         eachArguments.append(prop);
         eachArguments.append(jsNumber(exec, i));
@@ -972,7 +972,7 @@ JSValuePtr arrayProtoFuncReduceRight(ExecState* exec, JSObject*, JSValuePtr this
         if (!prop)
             continue;
         
-        ArgList eachArguments;
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(rv);
         eachArguments.append(prop);
         eachArguments.append(jsNumber(exec, idx));

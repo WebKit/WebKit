@@ -42,6 +42,7 @@ namespace JSC {
 class ArgList;
 class ExecState;
 class JSObject;
+class MarkedArgumentBuffer;
 
 namespace Bindings {
 
@@ -92,7 +93,7 @@ public:
 
     jobject convertValueToJObject(JSValuePtr) const;
     JSValuePtr convertJObjectToValue(ExecState*, jobject) const;
-    void getListFromJArray(ExecState*, jobjectArray, ArgList&) const;
+    void getListFromJArray(ExecState*, jobjectArray, MarkedArgumentBuffer&) const;
     
     RootObject* rootObject() const;
     

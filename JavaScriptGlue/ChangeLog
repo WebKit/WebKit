@@ -1,3 +1,14 @@
+2009-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Clean up ArgList to be a trivial type
+
+        Start using MarkedArgumentBuffer to create argument lists for function calls
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCallFunction):
+
 2009-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.
