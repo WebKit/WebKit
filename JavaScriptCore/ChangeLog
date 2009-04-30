@@ -1,3 +1,43 @@
+2009-04-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver "Peg-Leg" Hunt.
+
+        Coallesce input checking and reduce futzing with the index position
+        between alternatives and iterations of the main loop of a regex,
+        when run in YARR.
+
+        Consider the following regex:  /foo|bar/
+        
+        Prior to this patch, this will be implemented something like this pseudo-code description:
+        
+        loop:
+            check_for_available_input(3) // this increments the index by 3, for the first alterantive.
+                if (available) { test "foo" }
+            decrement_index(3)
+            check_for_available_input(3) // this increments the index by 3, for the second alterantive.
+                if (available) { test "bar" }
+            decrement_index(3)
+            check_for_available_input(1) // can we loop again?
+                if (available) { goto loop }
+
+        With these changes it will look more like this:
+
+            check_for_available_input(3) // this increments the index by 3, for the first alterantive.
+            if (!available) { goto fail }
+        loop:
+            test "foo"
+            test "bar"
+            check_for_available_input(1) // can we loop again?
+                if (available) { goto loop }
+        fail:
+
+
+        This gives about a 5% gain on v8-regex, no change on Sunspider.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::TermGenerationState::linkAlternativeBacktracksTo):
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+
 2009-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
