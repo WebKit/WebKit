@@ -123,7 +123,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
     return scope.success();
 }
 
-bool ScriptGlobalObject::getObject(ScriptState* scriptState, const char* name, ScriptObject& value)
+bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {
     ScriptScope scope(scriptState);
     v8::Local<v8::Value> v8Value = scope.global()->Get(v8::String::New(name));
@@ -135,6 +135,12 @@ bool ScriptGlobalObject::getObject(ScriptState* scriptState, const char* name, S
 
     value = ScriptObject(v8::Handle<v8::Object>(v8::Object::Cast(*v8Value)));
     return true;
+}
+
+bool ScriptGlobalObject::remove(ScriptState* scriptState, const char* name)
+{
+    ScriptScope scope(scriptState);
+    return scope.global()->Delete(v8::String::New(name));
 }
 
 } // namespace WebCore
