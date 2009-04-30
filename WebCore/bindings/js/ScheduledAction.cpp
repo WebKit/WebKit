@@ -51,8 +51,12 @@ ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args)
 {
     JSValuePtr v = args.at(0);
     CallData callData;
-    if (v.getCallData(callData) == CallTypeNone)
-        return new ScheduledAction(v.toString(exec));
+    if (v.getCallData(callData) == CallTypeNone) {
+        UString string = v.toString(exec);
+        if (exec->hadException())
+            return 0;
+        return new ScheduledAction(string);
+    }
     ArgList argsTail;
     args.getSlice(2, argsTail);
     return new ScheduledAction(v, argsTail);

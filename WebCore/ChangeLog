@@ -1,3 +1,13 @@
+2009-04-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix a leak introduced yesterday.  Don't allocate a ScheduledAction
+        if the toString()ing throws an exception.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+
 2009-04-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
