@@ -301,7 +301,7 @@ AC_MSG_CHECKING([whether to enable JavaScript debugger/profiler support])
 AC_ARG_ENABLE(javascript_debugger,
               AC_HELP_STRING([--enable-javascript-debugger],
                              [enable JavaScript debugger/profiler support [default=yes]]),
-              [],[javascript_debugger="yes"])
+              [],[enable_javascript_debugger="yes"])
 AC_MSG_RESULT([$enable_javascript_debugger])
 
 # check whether to enable HTML5 Offline Web Applications support

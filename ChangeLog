@@ -1,3 +1,9 @@
+2009-04-30  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Unreviewed build GTK build fix
+
+        * configure.ac: typo fix - javascript_debugger should be enable_javascript_debugger
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
