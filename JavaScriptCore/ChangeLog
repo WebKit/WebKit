@@ -1,3 +1,10 @@
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
+        Try and fix the windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-04-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver "Peg-Leg" Hunt.
