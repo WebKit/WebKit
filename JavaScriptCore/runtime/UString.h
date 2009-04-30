@@ -133,12 +133,13 @@ namespace JSC {
             static BaseString& empty() { return *emptyBaseString; }
 
         protected:
+            // constructor for use by BaseString subclass; they are their own bases
             Rep(int length)
                 : offset(0)
                 , len(length)
                 , rc(1)
                 , _hash(0)
-                , m_nothing(0)
+                , m_baseString(static_cast<BaseString*>(this))
             {
             }
 
@@ -152,12 +153,8 @@ namespace JSC {
                 checkConsistency();
             }
 
-            union {
-                // If !baseIsSelf()
-                BaseString* m_baseString;
-                // If baseIsSelf()
-                void* m_nothing;
-            };
+
+            BaseString* m_baseString;
 
         private:
             // For SmallStringStorage which allocates an array and does initialization manually.
@@ -410,12 +407,12 @@ namespace JSC {
 
     inline UString::BaseString* UString::Rep::baseString()
     {
-        return baseIsSelf() ? reinterpret_cast<BaseString*>(this) : m_baseString;
+        return m_baseString;
     }
 
     inline const UString::BaseString* UString::Rep::baseString() const
     {
-        return const_cast<Rep*>(this)->baseString();
+        return m_baseString;
     }
 
 #ifdef NDEBUG

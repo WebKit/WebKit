@@ -1,3 +1,15 @@
+2009-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - make BaseStrings have themselves as a base, instead of nothing, to remove common branches
+
+        ~0.7% SunSpider speedup
+
+        * runtime/UString.h:
+        (JSC::UString::Rep::Rep): For the constructor without a base, set self as base instead of null.
+        (JSC::UString::Rep::baseString): Just read m_baseString - no more branching.
+
 2009-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
