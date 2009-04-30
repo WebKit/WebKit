@@ -2575,7 +2575,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         }
    }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(CHROMIUM)
     if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled())
         axObjectCache()->handleFocusedUIElementChanged();
 #endif
