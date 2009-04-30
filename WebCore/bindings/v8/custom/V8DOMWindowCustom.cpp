@@ -554,8 +554,6 @@ NAMED_PROPERTY_GETTER(DOMWindow)
     if (!frame)
         return notHandledByInterceptor();
 
-    AtomicString propName = v8StringToAtomicWebCoreString(name);
-
     // Search sub-frames.
     AtomicString propName = v8StringToAtomicWebCoreString(name);
     Frame* child = frame->tree()->child(propName);
