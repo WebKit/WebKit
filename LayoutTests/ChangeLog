@@ -1,3 +1,13 @@
+2009-04-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        Test for <rdar://problem/3785248> http://www.greekembassy.org/ gets in an infinite reload loop
+        https://bugs.webkit.org/show_bug.cgi?id=21193
+
+        * fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution.html: Added.
+
 2009-04-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip one more video test that sometimes fails.

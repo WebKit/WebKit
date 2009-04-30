@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+
+<script for=window event=onresize>
+alert("This text should only be alerted if the window is resizing.  If you see it as a mere result of the page loading, then you're seeing a symptom that breaks real world websites");
+</script>
+
+</head>
+<body>
+If a script has a for attribute, then it was intended to only be run under certain conditions, often as a result of a certain window event.<br>
+Since we don't yet support the full for attribute syntax we would run these scripts as we parsed them, often causing unintentional breakage of the site in question.<br>
+You should *not* see the alert() that is in a script element on this page.  If you do, we're not properly running these scripts only when they were intended to be run.
+</body>
+</html>

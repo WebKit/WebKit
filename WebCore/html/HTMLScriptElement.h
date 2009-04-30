@@ -82,6 +82,7 @@ protected:
     virtual String charsetAttributeValue() const;
     virtual String typeAttributeValue() const;
     virtual String languageAttributeValue() const;
+    virtual String forAttributeValue() const;
 
     virtual void dispatchLoadEvent();
     virtual void dispatchErrorEvent();

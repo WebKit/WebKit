@@ -1,3 +1,41 @@
+2009-04-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        <rdar://problem/3785248> http://www.greekembassy.org/ gets in an infinite reload loop
+        https://bugs.webkit.org/show_bug.cgi?id=21193
+
+        Some websites use for attributes in script elements to specify events that the script 
+        should be run for.  One example is greekembassy.org which has the following in their <head>:
+
+        <script for=window event=onresize>
+            location.reload(false);
+        </script>
+
+        Since we don't support the full for attribute syntax, we would just blissfully ignore the
+        condition and execute the code unconditionally.  This caused breakage on multiple real-world 
+        sites besides greekembassy.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16915 and <rdar://problem/4471751> track adding full 
+        support for the for attribute in scripts.  In the meantime it's best to not execute them
+        unconditionally.
+
+        Test: fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::shouldExecuteAsJavaScript): After all other checks have
+          passed, only return true if there is no for attribute in the script element.
+        * dom/ScriptElement.h:
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::forAttributeValue): Return the attribute value, if any.
+        * html/HTMLScriptElement.h:
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::forAttributeValue): Return an empty string (like the other
+          attribute getters do for SVGScriptElement)
+        * svg/SVGScriptElement.h:
+
 2009-04-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

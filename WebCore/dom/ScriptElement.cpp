@@ -232,8 +232,15 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
     if (!language.isEmpty())
         return isSupportedJavaScriptLanguage(language);
 
-    // No type or language is specified, so we assume the script to be JavaScript
-    return true;
+    // No type or language is specified, so we assume the script to be JavaScript.
+    // We don't yet support setting event listeners via the 'for' attribute for scripts.
+    // If there is such an attribute it's likely better to not execute the script than to do so
+    // immediately and unconditionally.
+    // FIXME: After <rdar://problem/4471751> / https://bugs.webkit.org/show_bug.cgi?id=16915 are resolved 
+    // and we support the for syntax in script tags, this check can be removed and we should just
+    // return 'true' here.
+    String forAttribute = m_scriptElement->forAttributeValue();
+    return forAttribute.isEmpty();
 }
 
 String ScriptElementData::scriptCharset() const

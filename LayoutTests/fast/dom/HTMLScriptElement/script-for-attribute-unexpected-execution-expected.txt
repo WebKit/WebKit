@@ -1,0 +1,3 @@
+If a script has a for attribute, then it was intended to only be run under certain conditions, often as a result of a certain window event.
+Since we don't yet support the full for attribute syntax we would run these scripts as we parsed them, often causing unintentional breakage of the site in question.
+You should *not* see the alert() that is in a script element on this page. If you do, we're not properly running these scripts only when they were intended to be run.

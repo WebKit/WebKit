@@ -210,6 +210,11 @@ String HTMLScriptElement::languageAttributeValue() const
 {
     return getAttribute(languageAttr).string();
 }
+
+String HTMLScriptElement::forAttributeValue() const
+{
+    return getAttribute(forAttr).string();
+}
  
 void HTMLScriptElement::dispatchLoadEvent()
 {
