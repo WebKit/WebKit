@@ -1,3 +1,14 @@
+2009-04-30  Adam Roben  <aroben@apple.com>
+
+        Add a sometimes-timing-out test to the Windows skipped file
+
+        See Bug 25483: http/tests/navigation/redirect-cycle.html sometimes
+        times out on Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25483>
+
+        * platform/win/Skipped: Added
+        http/tests/navigation/redirect-cycle.html.
+
 2009-04-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip two more tests that I had accidentaly generated results for,
