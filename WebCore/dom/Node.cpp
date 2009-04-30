@@ -48,7 +48,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "JSDOMBinding.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MouseEvent.h"
@@ -437,7 +436,9 @@ void Node::setDocument(Document* document)
     willMoveToNewOwnerDocument();
     ASSERT(willMoveToNewOwnerDocumentWasCalled);
 
+#if USE(JSC)
     updateDOMNodeDocument(this, m_document.get(), document);
+#endif
 
     m_document = document;
 
