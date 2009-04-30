@@ -1,3 +1,10 @@
+2009-04-29  Sam Weinig  <sam@webkit.org>
+
+        Fix style nit.
+
+        * editing/visible_units.cpp:
+        (WebCore::getLeafBoxesInLogicalOrder):
+
 2009-04-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

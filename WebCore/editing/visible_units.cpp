@@ -1055,7 +1055,8 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
     return lastDeepEditingPositionForNode(highestRoot);
 }
 
-static void getLeafBoxesInLogicalOrder(RootInlineBox* rootBox, Vector<InlineBox*>& leafBoxesInLogicalOrder) {
+static void getLeafBoxesInLogicalOrder(RootInlineBox* rootBox, Vector<InlineBox*>& leafBoxesInLogicalOrder)
+{
     unsigned char minLevel = 128;
     unsigned char maxLevel = 0;
     unsigned count = 0;
