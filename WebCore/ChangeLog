@@ -1,3 +1,12 @@
+2009-04-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * platform/graphics/SimpleFontData.cpp: Don't use initCharWidths() for the Qt build.
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformCharWidthInit): Instead initialize the average and
+        max char widths from QFontMetrics.
+
 2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Unreview build fix after r43037.

@@ -61,9 +61,9 @@ void SimpleFontData::platformGlyphInit()
 
 void SimpleFontData::platformCharWidthInit()
 {
-    m_avgCharWidth = 0.f;
-    m_maxCharWidth = 0.f;
-    initCharWidths();
+    QFontMetrics fm(m_font.font());
+    m_avgCharWidth = fm.averageCharWidth();
+    m_maxCharWidth = fm.maxWidth();
 }
 
 void SimpleFontData::platformDestroy()
