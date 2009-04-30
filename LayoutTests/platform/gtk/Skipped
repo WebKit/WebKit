@@ -2637,6 +2637,7 @@ fast/frames/calculate-fixed.html
 fast/frames/calculate-order.html
 fast/frames/calculate-percentage.html
 fast/frames/calculate-relative.html
+fast/frames/calculate-round.html
 fast/frames/contentWindow_Frame.html
 fast/frames/contentWindow_iFrame.html
 fast/frames/empty-cols-attribute.html
@@ -3851,6 +3852,7 @@ media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-rendering.html
 media/video-controls-transformed.html
+media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
 media/video-currentTime-set.html
 media/video-currentTime-set2.html
