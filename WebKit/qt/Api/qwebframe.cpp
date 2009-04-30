@@ -97,6 +97,7 @@ QT_END_NAMESPACE
 
 void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* qframe, bool enabled)
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     Frame* frame = QWebFramePrivate::core(qframe);
     InspectorController* controller = frame->page()->inspectorController();
     if (!controller)
@@ -105,6 +106,7 @@ void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* qframe, bool
         controller->enableProfiler();
     else
         controller->disableProfiler();
+#endif
 }
 
 // Pause a given CSS animation or transition on the target node at a specific time.

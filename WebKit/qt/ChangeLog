@@ -1,5 +1,12 @@
 2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Unreviewed build fix after r43072.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_setJavaScriptProfilingEnabled): Enclose with JAVASCRIPT_DEBUGGER.
+
+2009-04-30  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Unreviewed build fix after r43063.
 
         * WebCoreSupport/ChromeClientQt.cpp:
