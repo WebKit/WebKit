@@ -107,8 +107,10 @@ public:
     void prependOutside(const QWebElement &element);
 
     // docs need example snippet
-    void wrap(const QString &markup);
-    void wrap(const QWebElement &element);
+    void encloseContentsWith(const QWebElement &element);
+    void encloseContentsWith(const QString &markup);
+    void encloseWith(const QString &markup);
+    void encloseWith(const QWebElement &element);
 
     void replace(const QString &markup);
     void replace(const QWebElement &element);

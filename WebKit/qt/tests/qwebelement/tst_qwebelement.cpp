@@ -85,7 +85,8 @@ private slots:
     void remove();
     void clear();
     void replaceWith();
-    void wrap();
+    void encloseWith();
+    void encloseContentsWith();
     void nullSelect();
     void firstChildNextSibling();
     void lastChildPreviousSibling();
@@ -615,7 +616,42 @@ void tst_QWebElement::replaceWith()
     QCOMPARE(body.findFirst("p code").toPlainText(), QString("wow"));
 }
 
-void tst_QWebElement::wrap()
+void tst_QWebElement::encloseContentsWith()
+{
+    QString html = "<body>"
+        "<div>"
+            "<i>"
+                "yeah"
+            "</i>"
+            "<i>"
+                "hello"
+            "</i>"
+        "</div>"
+        "<p>"
+            "<span>foo</span>"
+            "<span>bar</span>"
+        "</p>"
+        "<u></u>"
+        "<b></b>"
+    "</body>";
+
+    m_mainFrame->setHtml(html);
+    QWebElement body = m_mainFrame->documentElement().findFirst("body");
+
+    body.findFirst("p").encloseContentsWith(body.findFirst("b"));
+    QCOMPARE(body.findAll("p b span").count(), 2);
+    QCOMPARE(body.findFirst("p b span").toPlainText(), QString("foo"));
+
+    body.findFirst("u").encloseContentsWith("<i></i>");
+    QCOMPARE(body.findAll("u i").count(), 1);
+    QCOMPARE(body.findFirst("u i").toPlainText(), QString());
+
+    body.findFirst("div").encloseContentsWith("<span></span>");
+    QCOMPARE(body.findAll("div span i").count(), 2);
+    QCOMPARE(body.findFirst("div span i").toPlainText(), QString("yeah"));
+}
+
+void tst_QWebElement::encloseWith()
 {
     QString html = "<body>"
         "<p>"
@@ -632,13 +668,16 @@ void tst_QWebElement::wrap()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement().findFirst("body");
 
+    body.findFirst("p").encloseWith("<br>");
+    QCOMPARE(body.findAll("br").count(), 0);
+
     QCOMPARE(body.findAll("div").count(), 1);
-    body.findFirst("div").wrap(body.findFirst("span").clone());
+    body.findFirst("div").encloseWith(body.findFirst("span").clone());
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("span").count(), 2);
     QCOMPARE(body.findAll("p").count(), 2);
 
-    body.findFirst("div").wrap("<code></code>");
+    body.findFirst("div").encloseWith("<code></code>");
     QCOMPARE(body.findAll("code").count(), 1);
     QCOMPARE(body.findAll("code div").count(), 1);
     QCOMPARE(body.findFirst("code div").toPlainText(), QString("yeah"));

@@ -1,3 +1,20 @@
+2009-04-30  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Implement encloseContentsWith and rename wrap to encloseWith.
+
+        Also in encloseWith, make sure that you cannot enclose with
+        non-enclosable elements.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::encloseContentsWith):
+        (QWebElement::encloseWith):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::encloseContentsWith):
+        (tst_QWebElement::encloseWith):
+
 2009-04-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

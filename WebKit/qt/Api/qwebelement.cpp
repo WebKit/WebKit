@@ -1216,12 +1216,59 @@ void QWebElement::removeChildren()
     m_element->removeAllChildren();
 }
 
+void QWebElement::encloseContentsWith(const QWebElement &element)
+{
+    if (!m_element || element.isNull())
+        return;
+
+    QWebElement other = element;
+    for (QWebElement child = firstChild(); !child.isNull();) {
+        QWebElement next = child.nextSibling();
+        other.appendInside(child);
+        child = next;
+    }
+
+    appendInside(other);
+}
+
+void QWebElement::encloseContentsWith(const QString &markup)
+{
+    if (!m_element)
+        return;
+
+    if (!m_element->parent())
+        return;
+
+    if (!m_element->isHTMLElement())
+        return;
+
+    HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
+    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+
+    if (!fragment || !fragment->firstChild())
+        return;
+
+    ExceptionCode exception = 0;
+
+    // reparent children
+    for (RefPtr<Node> child = m_element->firstChild(); child;) {
+        RefPtr<Node> next = child->nextSibling();
+        fragment->firstChild()->appendChild(child, exception);
+        child = next;
+    }
+
+    if (m_element->hasChildNodes())
+        m_element->insertBefore(fragment, m_element->firstChild(), exception);
+    else
+        m_element->appendChild(fragment, exception);
+}
+
 /*!
-    Wraps this element in \a element as the last child.
+    Enclose this element in \a element as the last child.
 
     \sa replace()
 */
-void QWebElement::wrap(const QWebElement &element)
+void QWebElement::encloseWith(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
@@ -1232,12 +1279,12 @@ void QWebElement::wrap(const QWebElement &element)
 }
 
 /*!
-    Wraps this element in the result of parsing \a html,
+    Enclose this element in the result of parsing \a html,
     as the last child.
 
     \sa replace()
 */
-void QWebElement::wrap(const QString &html)
+void QWebElement::encloseWith(const QString &html)
 {
     if (!m_element)
         return;
@@ -1261,9 +1308,14 @@ void QWebElement::wrap(const QString &html)
     Node* parentNode = m_element->parent();
     Node* siblingNode = m_element->nextSibling();
 
+    // Elements with forbidden tag status can never have children
+    HTMLElement* element = static_cast<HTMLElement*>(fragment->firstChild());
+    if (element->endTagRequirement() == TagStatusForbidden)
+        return;
+
     ExceptionCode exception = 0;
     fragment->firstChild()->appendChild(m_element, exception);
-    parentNode->insertBefore(fragment, siblingNode, exception);
+    parentNode->insertBefore(element, siblingNode, exception);
 }
 
 /*!
@@ -1272,7 +1324,7 @@ void QWebElement::wrap(const QString &html)
     It is not possible to replace the <html>, <head>, or <body>
     elements using this method.
 
-    \sa wrap()
+    \sa encloseWith()
 */
 void QWebElement::replace(const QWebElement &element)
 {
@@ -1289,7 +1341,7 @@ void QWebElement::replace(const QWebElement &element)
     It is not possible to replace the <html>, <head>, or <body>
     elements using this method.
 
-    \sa wrap()
+    \sa encloseWith()
 */
 void QWebElement::replace(const QString &html)
 {
