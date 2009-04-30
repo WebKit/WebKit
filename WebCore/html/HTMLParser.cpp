@@ -165,8 +165,6 @@ HTMLParser::~HTMLParser()
     freeBlock();
     if (m_didRefCurrent)
         m_current->deref();
-    if (m_parserQuirks)
-        delete m_parserQuirks;
 }
 
 void HTMLParser::reset()

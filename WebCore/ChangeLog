@@ -1,5 +1,15 @@
 2009-04-30  David Kilzer  <ddkilzer@apple.com>
 
+        Use OwnPtr<HTMLParserQuirks> for m_parserQuirks
+
+        Reviewed by Geoff Garen.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::~HTMLParser): Removed unneeded code.
+        * html/HTMLParser.h: Made m_parserQuirks an OwnPtr.
+
+2009-04-30  David Kilzer  <ddkilzer@apple.com>
+
         Provide a mechanism to create a quirks delegate for HTMLParser
 
         Reviewed by David Hyatt.
