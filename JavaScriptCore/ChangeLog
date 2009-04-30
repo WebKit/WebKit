@@ -1,3 +1,50 @@
+2009-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add SamplingFlags mechanism.
+
+        This mechanism allows fine-grained JSC and JavaScript program aware
+        performance measurement.  The mechanism provides a set of 32 flags,
+        numbered #1..#32.  Flag #16 is initially set, and all other flags
+        are cleared.  Flags may be set and cleared from within
+
+        Enable by setting ENABLE_SAMPLING_FLAGS to 1 in wtf/Platform.h.
+        Disabled by default, no performance impact.  Flags may be modified
+        by calling SamplingFlags::setFlag() and SamplingFlags::clearFlag()
+        from within JSC implementation, or by calling setSamplingFlag() and
+        clearSamplingFlag() from JavaScript.
+
+        The flags are sampled with a frequency of 10000Hz, and the highest
+        set flag in recorded, allowing multiple events to be measured (with
+        the highest flag number representing the highest priority).
+
+        Disabled by default; no performance impact.
+
+        * JavaScriptCore.exp:
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingFlags::sample):
+        (JSC::SamplingFlags::start):
+        (JSC::SamplingFlags::stop):
+        (JSC::SamplingThread::threadStartFunc):
+        (JSC::SamplingThread::start):
+        (JSC::SamplingThread::stop):
+        (JSC::ScopeSampleRecord::sample):
+        (JSC::SamplingTool::doRun):
+        (JSC::SamplingTool::sample):
+        (JSC::SamplingTool::start):
+        (JSC::SamplingTool::stop):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingFlags::setFlag):
+        (JSC::SamplingFlags::clearFlag):
+        (JSC::SamplingTool::SamplingTool):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        (functionSetSamplingFlag):
+        (functionClearSamplingFlag):
+        (runWithScripts):
+        * wtf/Platform.h:
+
 2009-04-29  Sam Weinig  <sam@webkit.org>
 
         Another attempt to fix the windows build.

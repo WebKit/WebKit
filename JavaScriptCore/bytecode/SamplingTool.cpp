@@ -39,24 +39,52 @@
 
 namespace JSC {
 
-void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
+#if ENABLE(SAMPLING_FLAGS)
+
+void SamplingFlags::sample()
 {
-    if (!m_samples) {
-        m_size = codeBlock->instructions().size();
-        m_samples = static_cast<int*>(calloc(m_size, sizeof(int)));
-        m_codeBlock = codeBlock;
+    uint32_t mask = 1 << 31;
+    unsigned index;
+
+    for (index = 0; index < 32; ++index) {
+        if (mask & s_flags)
+            break;
+        mask >>= 1;
     }
 
-    ++m_sampleCount;
-
-    unsigned offest = vPC - codeBlock->instructions().begin();
-    // Since we don't read and write codeBlock and vPC atomically, this check
-    // can fail if we sample mid op_call / op_ret.
-    if (offest < m_size) {
-        m_samples[offest]++;
-        m_opcodeSampleCount++;
-    }
+    s_flagCounts[32 - index]++;
 }
+
+void SamplingFlags::start()
+{
+    for (unsigned i = 0; i <= 32; ++i)
+        s_flagCounts[i] = 0;
+}
+void SamplingFlags::stop()
+{
+    uint64_t total = 0;
+    for (unsigned i = 0; i <= 32; ++i)
+        total += s_flagCounts[i];
+
+    printf("SamplingFlags: sample count with flags set:\n");
+    for (unsigned i = 0; i <= 32; ++i)
+        printf("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
+    printf("\n\n");
+}
+uint64_t SamplingFlags::s_flagCounts[33];
+
+#else
+void SamplingFlags::start() {}
+void SamplingFlags::stop() {}
+#endif
+
+/*
+  Start with flag 16 set.
+  By doing this the monitoring of lower valued flags will be masked out
+  until flag 16 is explictly cleared.
+*/
+uint32_t SamplingFlags::s_flags = 1 << 15;
+
 
 #if PLATFORM(WIN_OS)
 
@@ -82,40 +110,96 @@ static inline unsigned hertz2us(unsigned hertz)
     return 1000000 / hertz;
 }
 
-void SamplingTool::run()
+
+SamplingTool* SamplingTool::s_samplingTool = 0;
+
+
+bool SamplingThread::s_running = false;
+unsigned SamplingThread::s_hertz = 10000;
+ThreadIdentifier SamplingThread::s_samplingThread;
+
+void* SamplingThread::threadStartFunc(void*)
 {
-    while (m_running) {
-        sleepForMicroseconds(hertz2us(m_hertz));
+    while (s_running) {
+        sleepForMicroseconds(hertz2us(s_hertz));
 
-        Sample sample(m_sample, m_codeBlock);
-        ++m_sampleCount;
-
-        if (sample.isNull())
-            continue;
-
-        if (!sample.inHostFunction()) {
-            unsigned opcodeID = m_interpreter->getOpcodeID(sample.vPC()[0].u.opcode);
-
-            ++m_opcodeSampleCount;
-            ++m_opcodeSamples[opcodeID];
-
-            if (sample.inCTIFunction())
-                m_opcodeSamplesInCTIFunctions[opcodeID]++;
-        }
-
-#if ENABLE(CODEBLOCK_SAMPLING)
-        MutexLocker locker(m_scopeSampleMapMutex);
-        ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode());
-        ASSERT(record);
-        record->sample(sample.codeBlock(), sample.vPC());
+#if ENABLE(SAMPLING_FLAGS)
+        SamplingFlags::sample();
 #endif
+#if ENABLE(OPCODE_SAMPLING)
+        SamplingTool::sample();
+#endif
+    }
+
+    return 0;
+}
+
+
+void SamplingThread::start(unsigned hertz)
+{
+    ASSERT(!s_running);
+    s_running = true;
+    s_hertz = hertz;
+
+    s_samplingThread = createThread(threadStartFunc, 0, "JavaScriptCore::Sampler");
+}
+
+void SamplingThread::stop()
+{
+    ASSERT(s_running);
+    s_running = false;
+    waitForThreadCompletion(s_samplingThread, 0);
+}
+
+
+void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
+{
+    if (!m_samples) {
+        m_size = codeBlock->instructions().size();
+        m_samples = static_cast<int*>(calloc(m_size, sizeof(int)));
+        m_codeBlock = codeBlock;
+    }
+
+    ++m_sampleCount;
+
+    unsigned offest = vPC - codeBlock->instructions().begin();
+    // Since we don't read and write codeBlock and vPC atomically, this check
+    // can fail if we sample mid op_call / op_ret.
+    if (offest < m_size) {
+        m_samples[offest]++;
+        m_opcodeSampleCount++;
     }
 }
 
-void* SamplingTool::threadStartFunc(void* samplingTool)
+void SamplingTool::doRun()
 {
-    reinterpret_cast<SamplingTool*>(samplingTool)->run();
-    return 0;
+    Sample sample(m_sample, m_codeBlock);
+    ++m_sampleCount;
+
+    if (sample.isNull())
+        return;
+
+    if (!sample.inHostFunction()) {
+        unsigned opcodeID = m_interpreter->getOpcodeID(sample.vPC()[0].u.opcode);
+
+        ++m_opcodeSampleCount;
+        ++m_opcodeSamples[opcodeID];
+
+        if (sample.inCTIFunction())
+            m_opcodeSamplesInCTIFunctions[opcodeID]++;
+    }
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+    MutexLocker locker(m_scopeSampleMapMutex);
+    ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode());
+    ASSERT(record);
+    record->sample(sample.codeBlock(), sample.vPC());
+#endif
+}
+
+void SamplingTool::sample()
+{
+    s_samplingTool->doRun();
 }
 
 void SamplingTool::notifyOfScope(ScopeNode* scope)
@@ -124,20 +208,9 @@ void SamplingTool::notifyOfScope(ScopeNode* scope)
     m_scopeSampleMap->set(scope, new ScopeSampleRecord(scope));
 }
 
-void SamplingTool::start(unsigned hertz)
+void SamplingTool::setup()
 {
-    ASSERT(!m_running);
-    m_running = true;
-    m_hertz = hertz;
-
-    m_samplingThread = createThread(threadStartFunc, this, "JavaScriptCore::Sampler");
-}
-
-void SamplingTool::stop()
-{
-    ASSERT(m_running);
-    m_running = false;
-    waitForThreadCompletion(m_samplingThread, 0);
+    s_samplingTool = this;
 }
 
 #if ENABLE(OPCODE_SAMPLING)
