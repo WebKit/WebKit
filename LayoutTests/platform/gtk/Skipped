@@ -85,6 +85,7 @@ editing/selection/doubleclick-whitespace.html
 editing/selection/drag-in-iframe.html
 editing/selection/drag-text-delay.html
 editing/selection/drag-to-contenteditable-iframe.html
+editing/selection/extend-selection.html
 editing/selection/extend-selection-bidi.html
 editing/selection/getRangeAt.html
 editing/selection/hit-test-anonymous.html
@@ -645,6 +646,7 @@ media/video-seek-past-end-playing.html
 media/video-seekable.html
 media/video-seeking.html
 media/video-size-intrinsic-scale.html
+media/video-size.html
 media/video-source-add-src.html
 media/video-source-type-params.html
 media/video-source-type.html
@@ -654,6 +656,7 @@ media/video-src-plus-source.html
 media/video-src-remove.html
 media/video-timeupdate-during-playback.html
 media/video-transformed.html
+media/video-volume.html
 media/video-zoom.html
 
 # Tests in plugins/ directory
@@ -705,6 +708,7 @@ svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getscreenctm-in-mixed-content2.xhtml
 svg/custom/getSubStringLength.html
 svg/custom/glyph-setting-d-attribute.svg
+svg/custom/image-clipped-hit.svg
 svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/stroke-width-click.svg
