@@ -1,3 +1,27 @@
+2009-04-30  Adam Roben  <aroben@apple.com>
+
+        Move settings from .vcproj files to .vsprops files within the
+        JavaScriptCore directory
+
+        Moving the settings to a .vsprops file means that we will only have to
+        change a single setting to affect all configurations, instead of one
+        setting per configuration.
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+        Moved settings from these files to the new .vsprops files. Note that
+        testapi.vcproj had a lot of overrides of default settings that were
+        the same as the defaults, which I've removed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops: Added.
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="JavaScriptCoreCommon"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+		PreprocessorDefinitions="__STD_C"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
+		ModuleDefinitionFile="JavaScriptCore$(WebKitDLLConfigSuffix).def"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%"
+	/>
+	<Tool
+		Name="VCPreLinkEventTool"
+		CommandLine="if not exist &quot;$(WebKitOutputDir)\public\sym&quot; mkdir &quot;$(WebKitOutputDir)\public\sym&quot;"
+	/>
+</VisualStudioPropertySheet>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WTFCommon"
+	OutputDirectory="$(WebKitOutputDir)\lib"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../parser/;../../wtf/;../../wtf/unicode/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+		PreprocessorDefinitions="__STD_C"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		AdditionalDependencies="user32.lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%"
+	/>
+</VisualStudioPropertySheet>
