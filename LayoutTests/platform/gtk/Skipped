@@ -68,6 +68,7 @@ editing/pasteboard/paste-plaintext-user-select-none.html
 editing/pasteboard/paste-table-002.html
 editing/pasteboard/paste-text-013.html
 editing/selection/5209984.html
+editing/selection/5232159.html
 editing/selection/after-line-break.html
 editing/selection/anchor-focus1.html
 editing/selection/anchor-focus2.html
@@ -81,13 +82,16 @@ editing/selection/crash-on-drag-with-mutation-events.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
+editing/selection/drag-in-iframe.html
 editing/selection/drag-text-delay.html
+editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/extend-selection-bidi.html
 editing/selection/getRangeAt.html
 editing/selection/hit-test-anonymous.html
 editing/selection/legal-positions.html
 editing/selection/move-begin-end.html
 editing/selection/removeAllRanges.html
+editing/selection/select-all-iframe.html
 editing/selection/select-all-textarea.html
 editing/selection/skip-non-editable-1.html
 editing/selection/skip-non-editable-2.html
@@ -120,9 +124,15 @@ fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
 fast/dom/navigator-detached-no-crash.html
 fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-location-href-put-crash.html
+fast/dom/null-document-location-put-crash.html
+fast/dom/null-document-location-replace-crash.html
+fast/dom/null-document-window-open-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/open-and-close-by-DOM.html
+fast/dom/tabindex-clamp.html
 fast/dom/Document/early-document-access.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml
@@ -272,8 +282,10 @@ fast/forms/slider-mouse-events.html
 fast/forms/slider-onchange-event.html
 fast/forms/slider-transformed.html
 fast/forms/slider-zoomed.html
+fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-appearance-wrap.html
 fast/forms/textarea-hard-linewrap.html
+fast/forms/textarea-metrics.html
 fast/forms/textarea-paste-newline.html
 fast/forms/textarea-scrolled-endline-caret.html
 fast/forms/textarea-selection-preservation.html
@@ -328,6 +340,7 @@ fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
 fast/loader/subframe-self-close.html
 fast/parser/tabindex-parsing.html
+fast/profiler/named-functions-with-display-names.html
 fast/regex/test1.html
 fast/regex/test4.html
 fast/replaced/image-map-bug16782.html
@@ -602,24 +615,32 @@ http/tests/xmlhttprequest/workers/methods.html
 # Tests in media/ directory.
 # These fail because many of the interfaces are not fully implemented
 # in MediaPlayerPrivateGStreamer. See https://bugs.webkit.org/show_bug.cgi?id=16356.
+media/audio-controls-rendering.html
 media/audio-mpeg-supported.html
 media/broken-video.html
 media/progress-event-total.html
 media/remove-from-document.html
 media/unsupported-rtsp.html
 media/video-append-source.html
+media/video-aspect-ratio.html
 media/video-autoplay.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
+media/video-controls-rendering.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
+media/video-display-toggle.html
+media/video-dom-autoplay.html
 media/video-error-does-not-exist.html
 media/video-load-networkState.html
+media/video-layer-crash.html
 media/video-loop.html
 media/video-pause-empty-events.html
+media/video-play-empty-events.html
 media/video-played-collapse.html
 media/video-played-reset.html
 media/video-played.html
+media/video-seek-past-end-paused.html
 media/video-seek-past-end-playing.html
 media/video-seekable.html
 media/video-seeking.html
@@ -630,7 +651,10 @@ media/video-source-type.html
 media/video-src-change.html
 media/video-src-invalid-remove.html
 media/video-src-plus-source.html
+media/video-src-remove.html
 media/video-timeupdate-during-playback.html
+media/video-transformed.html
+media/video-zoom.html
 
 # Tests in plugins/ directory
 # Notice that some of these need an ObjectiveC plugin to work
@@ -685,6 +709,7 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/stroke-width-click.svg
 svg/custom/svg-disallowed-in-dashboard-object.html
+svg/custom/svg-fonts-in-text-controls.html
 svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
 svg/custom/use-elementInstance-event-target.svg
@@ -821,4 +846,5 @@ svg/dynamic-updates/SVGRectElement-svgdom-width-prop.html
 svg/dynamic-updates/SVGRectElement-svgdom-x-prop.html
 svg/dynamic-updates/SVGRectElement-svgdom-y-prop.html
 transitions/opacity-transition-zindex.html
+transitions/zero-duration-with-non-zero-delay-end.html
 webarchive/loading/test-loading-archive.html
