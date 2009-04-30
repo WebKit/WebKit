@@ -98,8 +98,8 @@ int comparePositions(const Position& a, const Position& b)
     ASSERT(nodeA);
     Node* nodeB = b.node();
     ASSERT(nodeB);
-    int offsetA = a.m_offset;
-    int offsetB = b.m_offset;
+    int offsetA = a.deprecatedEditingOffset();
+    int offsetB = b.deprecatedEditingOffset();
 
     Node* shadowAncestorA = nodeA->shadowAncestorNode();
     if (shadowAncestorA == nodeA)
@@ -322,17 +322,17 @@ Position rangeCompliantEquivalent(const Position& pos)
 
     Node* node = pos.node();
 
-    if (pos.m_offset <= 0) {
+    if (pos.deprecatedEditingOffset() <= 0) {
         if (node->parentNode() && (editingIgnoresContent(node) || isTableElement(node)))
             return positionBeforeNode(node);
         return Position(node, 0);
     }
 
     if (node->offsetInCharacters())
-        return Position(node, min(node->maxCharacterOffset(), pos.m_offset));
+        return Position(node, min(node->maxCharacterOffset(), pos.deprecatedEditingOffset()));
 
     int maxCompliantOffset = node->childNodeCount();
-    if (pos.m_offset > maxCompliantOffset) {
+    if (pos.deprecatedEditingOffset() > maxCompliantOffset) {
         if (node->parentNode())
             return positionAfterNode(node);
 
@@ -342,12 +342,12 @@ Position rangeCompliantEquivalent(const Position& pos)
     } 
 
     // Editing should never generate positions like this.
-    if ((pos.m_offset < maxCompliantOffset) && editingIgnoresContent(node)) {
+    if ((pos.deprecatedEditingOffset() < maxCompliantOffset) && editingIgnoresContent(node)) {
         ASSERT_NOT_REACHED();
         return node->parentNode() ? positionBeforeNode(node) : Position(node, 0);
     }
     
-    if (pos.m_offset == maxCompliantOffset && (editingIgnoresContent(node) || isTableElement(node)))
+    if (pos.deprecatedEditingOffset() == maxCompliantOffset && (editingIgnoresContent(node) || isTableElement(node)))
         return positionAfterNode(node);
     
     return Position(pos);

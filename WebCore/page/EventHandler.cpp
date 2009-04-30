@@ -304,7 +304,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         // was created right-to-left
         Position start = newSelection.start();
         Position end = newSelection.end();
-        short before = Range::compareBoundaryPoints(pos.node(), pos.m_offset, start.node(), start.m_offset);
+        short before = Range::compareBoundaryPoints(pos.node(), pos.deprecatedEditingOffset(), start.node(), start.deprecatedEditingOffset());
         if (before <= 0)
             newSelection = VisibleSelection(pos, end);
         else

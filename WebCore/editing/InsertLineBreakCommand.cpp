@@ -118,7 +118,7 @@ void InsertLineBreakCommand::doApply()
         
         VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
         setEndingSelection(VisibleSelection(endingPosition));
-    } else if (pos.m_offset <= caretMinOffset(pos.node())) {
+    } else if (pos.deprecatedEditingOffset() <= caretMinOffset(pos.node())) {
         insertNodeAt(nodeToInsert.get(), pos);
         
         // Insert an extra br or '\n' if the just inserted one collapsed.
@@ -128,7 +128,7 @@ void InsertLineBreakCommand::doApply()
         setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
-    } else if (pos.m_offset >= caretMaxOffset(pos.node()) || !pos.node()->isTextNode()) {
+    } else if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.node()) || !pos.node()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
         setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {
@@ -137,7 +137,7 @@ void InsertLineBreakCommand::doApply()
         
         // Do the split
         Text* textNode = static_cast<Text*>(pos.node());
-        splitTextNode(textNode, pos.m_offset);
+        splitTextNode(textNode, pos.deprecatedEditingOffset());
         insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = Position(textNode, 0);
         

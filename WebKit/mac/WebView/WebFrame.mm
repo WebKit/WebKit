@@ -757,8 +757,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     RefPtr<Range> range = _private->coreFrame->document()->createRange();
     int exception = 0;
-    range->setStart(newStart.node(), newStart.m_offset, exception);
-    range->setEnd(newStart.node(), newStart.m_offset, exception);
+    range->setStart(newStart.node(), newStart.deprecatedEditingOffset(), exception);
+    range->setEnd(newStart.node(), newStart.deprecatedEditingOffset(), exception);
     return kit(range.get());
 }
 

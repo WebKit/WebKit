@@ -89,9 +89,9 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (start.node() != end.node() || !start.node()->isTextNode() || isTabSpanTextNode(start.node()))
         return false;
         
-    replaceTextInNode(static_cast<Text*>(start.node()), start.m_offset, end.m_offset - start.m_offset, text);
+    replaceTextInNode(static_cast<Text*>(start.node()), start.deprecatedEditingOffset(), end.deprecatedEditingOffset() - start.deprecatedEditingOffset(), text);
     
-    Position endPosition(start.node(), start.m_offset + text.length());
+    Position endPosition(start.node(), start.deprecatedEditingOffset() + text.length());
     
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
@@ -176,7 +176,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
         Text *textNode = static_cast<Text *>(startPosition.node());
-        int offset = startPosition.m_offset;
+        int offset = startPosition.deprecatedEditingOffset();
 
         insertTextIntoNode(textNode, offset, text);
         endPosition = Position(textNode, offset + text.length());
@@ -228,7 +228,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
         
     Node *node = insertPos.node();
-    unsigned int offset = insertPos.m_offset;
+    unsigned int offset = insertPos.deprecatedEditingOffset();
 
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {

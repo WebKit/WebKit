@@ -45,8 +45,8 @@ public:
 
     PositionIterator(const Position& pos)
         : m_parent(pos.node())
-        , m_child(m_parent->childNode(pos.m_offset))
-        , m_offset(m_child ? 0 : pos.m_offset)
+        , m_child(m_parent->childNode(pos.deprecatedEditingOffset()))
+        , m_offset(m_child ? 0 : pos.deprecatedEditingOffset())
     {
     }
     operator Position() const;

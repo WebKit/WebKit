@@ -169,7 +169,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
         ASSERT(isRange());
         s = m_start.downstream();
         e = m_end.upstream();
-        if (Range::compareBoundaryPoints(s.node(), s.m_offset, e.node(), e.m_offset) > 0) {
+        if (Range::compareBoundaryPoints(s.node(), s.deprecatedEditingOffset(), e.node(), e.deprecatedEditingOffset()) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
             Position tmp = s;
@@ -213,7 +213,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
 
     Position start(rangeCompliantEquivalent(pos));
     searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.node(), start.m_offset, ec);
+    searchRange->setStart(start.node(), start.deprecatedEditingOffset(), ec);
 
     ASSERT(!ec);
     if (ec)
@@ -588,13 +588,13 @@ void VisibleSelection::debugPosition() const
 
     if (m_start == m_end) {
         Position pos = m_start;
-        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.m_offset);
+        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
     } else {
         Position pos = m_start;
-        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.m_offset);
+        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
         fprintf(stderr, "-----------------------------------\n");
         pos = m_end;
-        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.m_offset);
+        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
         fprintf(stderr, "-----------------------------------\n");
     }
 
@@ -628,7 +628,7 @@ void VisibleSelection::showTreeForThis() const
 {
     if (start().node()) {
         start().node()->showTreeAndMark(start().node(), "S", end().node(), "E");
-        fprintf(stderr, "start offset: %d, end offset: %d\n", start().m_offset, end().m_offset);
+        fprintf(stderr, "start offset: %d, end offset: %d\n", start().deprecatedEditingOffset(), end().deprecatedEditingOffset());
     }
 }
 

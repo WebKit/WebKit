@@ -765,11 +765,11 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         if (node()->hasTagName(brTag))
             return false;
 
-        if (m_offset == pos.m_offset)
+        if (m_offset == pos.deprecatedEditingOffset())
             return false;
             
         if (!node()->isTextNode() && !pos.node()->isTextNode()) {
-            if (m_offset != pos.m_offset)
+            if (m_offset != pos.deprecatedEditingOffset())
                 return true;
         }
     }
@@ -843,7 +843,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
-        UChar c = string[prev.m_offset];
+        UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             if (isEditablePosition(prev))
                 return prev;

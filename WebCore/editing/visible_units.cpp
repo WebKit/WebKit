@@ -99,7 +99,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     if (requiresContextForWordBoundary(c.characterBefore())) {
         RefPtr<Range> forwardsScanRange(d->createRange());
         forwardsScanRange->setEndAfter(boundary, ec);
-        forwardsScanRange->setStart(end.node(), end.m_offset, ec);
+        forwardsScanRange->setStart(end.node(), end.deprecatedEditingOffset(), ec);
         TextIterator forwardsIterator(forwardsScanRange.get());
         while (!forwardsIterator.atEnd()) {
             const UChar* characters = forwardsIterator.characters();
@@ -113,8 +113,8 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         }
     }
 
-    searchRange->setStart(start.node(), start.m_offset, ec);
-    searchRange->setEnd(end.node(), end.m_offset, ec);
+    searchRange->setStart(start.node(), start.deprecatedEditingOffset(), ec);
+    searchRange->setEnd(end.node(), end.deprecatedEditingOffset(), ec);
     
     ASSERT(!ec);
     if (ec)
@@ -190,7 +190,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     ExceptionCode ec = 0;
     if (requiresContextForWordBoundary(c.characterAfter())) {
         RefPtr<Range> backwardsScanRange(d->createRange());
-        backwardsScanRange->setEnd(start.node(), start.m_offset, ec);
+        backwardsScanRange->setEnd(start.node(), start.deprecatedEditingOffset(), ec);
         SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange.get());
         while (!backwardsIterator.atEnd()) {
             const UChar* characters = backwardsIterator.characters();
@@ -205,7 +205,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     }
 
     searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.node(), start.m_offset, ec);
+    searchRange->setStart(start.node(), start.deprecatedEditingOffset(), ec);
     TextIterator it(searchRange.get(), true);
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
@@ -386,7 +386,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
-        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.m_offset == 0)
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.deprecatedEditingOffset() == 0)
             return positionAvoidingFirstPositionInTable(c);
         
         return VisiblePosition();
@@ -433,7 +433,7 @@ VisiblePosition startOfLine(const VisiblePosition& c)
         // greater than the input position.  This fix is to account for the discrepancy between lines with webkit-line-break:after-white-space 
         // style versus lines without that style, which would break before a space by default. 
         Position p = visPos.deepEquivalent();
-        if (p.m_offset > c.deepEquivalent().m_offset && p.node()->isSameNode(c.deepEquivalent().node())) {
+        if (p.deprecatedEditingOffset() > c.deepEquivalent().deprecatedEditingOffset() && p.node()->isSameNode(c.deepEquivalent().node())) {
             visPos = c.previous();
             if (visPos.isNull())
                 return VisiblePosition();
@@ -454,7 +454,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
-        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.m_offset == 0)
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.deprecatedEditingOffset() == 0)
             return c;
         return VisiblePosition();
     }
@@ -671,7 +671,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
         Node* startBlock = enclosingBlock(node);
-        Node* n = nextLeafWithSameEditability(node, p.m_offset);
+        Node* n = nextLeafWithSameEditability(node, p.deprecatedEditingOffset());
         while (n && startBlock == enclosingBlock(n))
             n = nextLeafWithSameEditability(n);
         while (n) {
@@ -787,7 +787,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c)
     Node* startBlock = enclosingBlock(startNode);
 
     Node *node = startNode;
-    int offset = p.m_offset;
+    int offset = p.deprecatedEditingOffset();
 
     Node *n = startNode;
     while (n) {
@@ -848,7 +848,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
     Node *stayInsideBlock = startBlock;
     
     Node *node = startNode;
-    int offset = p.m_offset;
+    int offset = p.deprecatedEditingOffset();
 
     Node *n = startNode;
     while (n) {

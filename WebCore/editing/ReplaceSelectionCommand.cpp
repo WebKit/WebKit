@@ -892,7 +892,7 @@ void ReplaceSelectionCommand::doApply()
     
     // We inserted before the startBlock to prevent nesting, and the content before the startBlock wasn't in its own block and
     // didn't have a br after it, so the inserted content ended up in the same paragraph.
-    if (startBlock && insertionPos.node() == startBlock->parentNode() && (unsigned)insertionPos.m_offset < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
+    if (startBlock && insertionPos.node() == startBlock->parentNode() && (unsigned)insertionPos.deprecatedEditingOffset() < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
         insertNodeAt(createBreakElement(document()).get(), startOfInsertedContent.deepEquivalent());
     
     Position lastPositionToSelect;

@@ -157,7 +157,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
     // likewise for replaced elements, brs, etc.
     Position p = rangeCompliantEquivalent(editingPosition);
     Node* refChild = p.node();
-    int offset = p.m_offset;
+    int offset = p.deprecatedEditingOffset();
     
     if (canHaveChildrenForEditing(refChild)) {
         Node* child = refChild->firstChild();
@@ -327,13 +327,13 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     
     Node* tabSpan = tabSpanNode(pos.node());
     
-    if (pos.m_offset <= caretMinOffset(pos.node()))
+    if (pos.deprecatedEditingOffset() <= caretMinOffset(pos.node()))
         return positionBeforeNode(tabSpan);
         
-    if (pos.m_offset >= caretMaxOffset(pos.node()))
+    if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.node()))
         return positionAfterNode(tabSpan);
 
-    splitTextNodeContainingElement(static_cast<Text *>(pos.node()), pos.m_offset);
+    splitTextNodeContainingElement(static_cast<Text *>(pos.node()), pos.deprecatedEditingOffset());
     return positionBeforeNode(tabSpan);
 }
 
@@ -392,7 +392,7 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     String text = textNode->data();
     ASSERT(!text.isEmpty());
 
-    int offset = position.m_offset;
+    int offset = position.deprecatedEditingOffset();
     // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     if (!isWhitespace(text[offset])) {
         offset--;
@@ -449,9 +449,9 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     Position previous(previousVisiblePos.deepEquivalent());
     
     if (isCollapsibleWhitespace(previousVisiblePos.characterAfter()) && previous.node()->isTextNode() && !previous.node()->hasTagName(brTag))
-        replaceTextInNode(static_cast<Text*>(previous.node()), previous.m_offset, 1, nonBreakingSpaceString());
+        replaceTextInNode(static_cast<Text*>(previous.node()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     if (isCollapsibleWhitespace(visiblePos.characterAfter()) && position.node()->isTextNode() && !position.node()->hasTagName(brTag))
-        replaceTextInNode(static_cast<Text*>(position.node()), position.m_offset, 1, nonBreakingSpaceString());
+        replaceTextInNode(static_cast<Text*>(position.node()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()
@@ -542,8 +542,8 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         next = node->traverseNextNode();
         if (node->isTextNode()) {
             Text* textNode = static_cast<Text*>(node);
-            int startOffset = node == start.node() ? start.m_offset : 0;
-            int endOffset = node == end.node() ? end.m_offset : textNode->length();
+            int startOffset = node == start.node() ? start.deprecatedEditingOffset() : 0;
+            int endOffset = node == end.node() ? end.deprecatedEditingOffset() : textNode->length();
             deleteInsignificantText(textNode, startOffset, endOffset);
         }
         if (node == end.node())
@@ -776,7 +776,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // start and end can't be used directly to create a Range; they are "editing positions"
     Position startRangeCompliant = rangeCompliantEquivalent(start);
     Position endRangeCompliant = rangeCompliantEquivalent(end);
-    RefPtr<Range> range = Range::create(document(), startRangeCompliant.node(), startRangeCompliant.m_offset, endRangeCompliant.node(), endRangeCompliant.m_offset);
+    RefPtr<Range> range = Range::create(document(), startRangeCompliant.node(), startRangeCompliant.deprecatedEditingOffset(), endRangeCompliant.node(), endRangeCompliant.deprecatedEditingOffset());
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
     // shouldn't matter though, since moved paragraphs will usually be quite small.
@@ -825,7 +825,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             if (textNode->length() == 1)
                 removeNodeAndPruneAncestors(node);
             else 
-                deleteTextFromNode(textNode, position.m_offset, 1);
+                deleteTextFromNode(textNode, position.deprecatedEditingOffset(), 1);
         }
     }
 
@@ -949,7 +949,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         removeNode(caretPos.node());
         prune(beforeBR.node());
     } else {
-        ASSERT(caretPos.m_offset == 0);
+        ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text* textNode = static_cast<Text*>(caretPos.node());
         Node* parentNode = textNode->parentNode();
         // The preserved newline must be the first thing in the node, since otherwise the previous

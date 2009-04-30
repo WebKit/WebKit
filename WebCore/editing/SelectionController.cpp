@@ -1019,9 +1019,9 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         if (selected) {
             int offset = 0;
             if (r->node() == m_sel.start().node())
-                offset = m_sel.start().m_offset;
+                offset = m_sel.start().deprecatedEditingOffset();
             else if (r->node() == m_sel.end().node())
-                offset = m_sel.end().m_offset;
+                offset = m_sel.end().deprecatedEditingOffset();
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);

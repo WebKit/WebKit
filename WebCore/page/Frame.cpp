@@ -662,7 +662,7 @@ void Frame::selectionLayoutChanged()
         if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
-            view->setSelection(startRenderer, startPos.m_offset, endRenderer, endPos.m_offset);
+            view->setSelection(startRenderer, startPos.deprecatedEditingOffset(), endRenderer, endPos.deprecatedEditingOffset());
         }
     }
 }

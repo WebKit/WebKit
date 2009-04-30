@@ -195,7 +195,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
         else if (insertionPosition.node() == startBlock && nestNewBlock) {
-            refNode = startBlock->childNode(insertionPosition.m_offset);
+            refNode = startBlock->childNode(insertionPosition.deprecatedEditingOffset());
             ASSERT(refNode); // must be true or we'd be in the end of block case
         } else
             refNode = insertionPosition.node();
@@ -248,16 +248,16 @@ void InsertParagraphSeparatorCommand::doApply()
     if (leadingWhitespace.isNotNull()) {
         Text* textNode = static_cast<Text*>(leadingWhitespace.node());
         ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
-        replaceTextInNode(textNode, leadingWhitespace.m_offset, 1, nonBreakingSpaceString());
+        replaceTextInNode(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
     if (insertionPosition.node()->isTextNode()) {
         Text* textNode = static_cast<Text*>(insertionPosition.node());
-        bool atEnd = (unsigned)insertionPosition.m_offset >= textNode->length();
-        if (insertionPosition.m_offset > 0 && !atEnd) {
-            splitTextNode(textNode, insertionPosition.m_offset);
-            insertionPosition.m_offset = 0;
+        bool atEnd = (unsigned)insertionPosition.deprecatedEditingOffset() >= textNode->length();
+        if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
+            splitTextNode(textNode, insertionPosition.deprecatedEditingOffset());
+            insertionPosition.moveToOffset(0);
             visiblePos = VisiblePosition(insertionPosition);
             splitText = true;
         }
@@ -288,7 +288,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // Move the start node and the siblings of the start node.
     if (insertionPosition.node() != startBlock) {
         Node* n = insertionPosition.node();
-        if (insertionPosition.m_offset >= caretMaxOffset(n))
+        if (insertionPosition.deprecatedEditingOffset() >= caretMaxOffset(n))
             n = n->nextSibling();
 
         while (n && n != blockToInsert) {

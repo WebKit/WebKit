@@ -419,7 +419,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
             selectionToDelete = selection.selection();
 
-            if (granularity == CharacterGranularity && selectionToDelete.end().node() == selectionToDelete.start().node() && selectionToDelete.end().m_offset - selectionToDelete.start().m_offset > 1) {
+            if (granularity == CharacterGranularity && selectionToDelete.end().node() == selectionToDelete.start().node() && selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset() > 1) {
                 // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
                 selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
             }
@@ -484,7 +484,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             if (visibleEnd == endOfParagraph(visibleEnd))
                 downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
             // When deleting tables: Select the table first, then perform the deletion
-            if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.m_offset == 0) {
+            if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.deprecatedEditingOffset() == 0) {
                 setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.node()), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
@@ -507,10 +507,10 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
                 else {
                     int extraCharacters;
                     if (selectionToDelete.start().node() == selectionToDelete.end().node())
-                        extraCharacters = selectionToDelete.end().m_offset - selectionToDelete.start().m_offset;
+                        extraCharacters = selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset();
                     else
-                        extraCharacters = selectionToDelete.end().m_offset;
-                    extent = Position(extent.node(), extent.m_offset + extraCharacters);
+                        extraCharacters = selectionToDelete.end().deprecatedEditingOffset();
+                    extent = Position(extent.node(), extent.deprecatedEditingOffset() + extraCharacters);
                 }
                 selectionAfterUndo.setWithoutValidation(startingSelection().start(), extent);
             }
