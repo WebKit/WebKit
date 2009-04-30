@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function getComputedStyleForElement (element, cssPropertyName)
+{
+    if (!element)
+        return null;
+
+    if (window.getComputedStyle)
+        return window.getComputedStyle(element, '').getPropertyValue(cssPropertyName.replace(/([A-Z])/g, "-$1").toLowerCase());
+
+    if (element.currentStyle)
+        return element.currentStyle[cssPropertyName];
+
+    return null;
+}
+
+function printMetrics(id, cssPropertyName, expectedMacValue, expectedWinValue) {
+  var value = getComputedStyleForElement(document.getElementById(id), cssPropertyName);
+
+  var matchingPlatform;
+  if (expectedMacValue == expectedWinValue && value == expectedMacValue)
+      matchingPlatform = 'PASS MAC/WIN';
+  else if (value == expectedMacValue)
+      matchingPlatform = 'PASS MAC';
+  else if (value == expectedWinValue)
+      matchingPlatform = 'PASS WIN';
+  else
+      matchingPlatform = 'FAIL. Doesn\'t match any platform\'s results.';
+
+  debug(matchingPlatform + ' ' + id + ' ' + cssPropertyName + ' = ' + value + '. ' +
+       'Expects: MAC ' + expectedMacValue + ', WIN ' + expectedWinValue);
+}
+
+function test()
+{
+    description("This test checks that text controls with percentage heights within table cells have the correct height." +
+        "Text controls are in a different test than other replaced elements because their metrics are platform-specific.");
+
+    printMetrics('input-password-75', 'width', '128px', '152px');
+    printMetrics('input-password-75', 'height', '8px', '8px');
+    printMetrics('input-password-100', 'width', '128px', '152px');
+    printMetrics('input-password-100', 'height', '13px', '13px');
+
+    printMetrics('input-text-75', 'width', '128px', '152px');
+    printMetrics('input-text-75', 'height', '8px', '8px');
+    printMetrics('input-text-100', 'width', '128px', '152px');
+    printMetrics('input-text-100', 'height', '13px', '13px');
+
+    printMetrics('isindex-75', 'width', '122px', '146px');
+    printMetrics('isindex-75', 'height', '35px', '35px');
+    printMetrics('isindex-100', 'width', '122px', '146px');
+    printMetrics('isindex-100', 'height', '49px', '49px');
+
+    printMetrics('textarea-75', 'width', '129px', '161px');
+    printMetrics('textarea-75', 'height', '19px', '19px');
+    printMetrics('textarea-100', 'width', '129px', '161px');
+    printMetrics('textarea-100', 'height', '28px', '28px');
+
+    isSuccessfullyParsed();
+
+    if (window.layoutTestController) { 
+        layoutTestController.notifyDone();
+    }
+}
+
+var successfullyParsed = true;
+</script>
+</head>
+<body onload="test()">
+
+<table><tr><td><input type="password" id="input-password-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="password" id="input-password-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="text" id="input-text-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="text" id="input-text-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><isindex id="isindex-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><isindex id="isindex-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><textarea id="textarea-75" style="height: 75%;"></textarea></td></tr></table>
+<table><tr><td><textarea id="textarea-100" style="height: 100%;"></textarea></td></tr></table>
+
+<p id="description"></p>
+<div id="console"></div>
+</body>
+</html>

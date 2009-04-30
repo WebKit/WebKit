@@ -73,11 +73,6 @@ function test()
     shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'width')", "'100px'");
     shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'height')", "'100px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-password-75'), 'width')", "'128px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-password-75'), 'height')", "'8px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-password-100'), 'width')", "'128px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-password-100'), 'height')", "'13px'");
-
     shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'width')", "'12px'");
     shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'height')", "'4px'");
     shouldBe("getComputedStyleForElement(document.getElementById('input-radio-100'), 'width')", "'12px'");
@@ -93,25 +88,10 @@ function test()
     shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'width')", "'54px'");
     shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'height')", "'18px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-text-75'), 'width')", "'128px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-text-75'), 'height')", "'8px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-text-100'), 'width')", "'128px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-text-100'), 'height')", "'13px'");
-
-    shouldBe("getComputedStyleForElement(document.getElementById('isindex-75'), 'width')", "'122px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('isindex-75'), 'height')", "'35px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('isindex-100'), 'width')", "'122px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('isindex-100'), 'height')", "'49px'");
-
     shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'width')", "'68px'");
     shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'height')", "'18px'");
     shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'width')", "'68px'");
     shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'height')", "'18px'");
-
-    shouldBe("getComputedStyleForElement(document.getElementById('textarea-75'), 'width')", "'129px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('textarea-75'), 'height')", "'19px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('textarea-100'), 'width')", "'129px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('textarea-100'), 'height')", "'28px'");
 
     isSuccessfullyParsed();
 
@@ -152,9 +132,6 @@ var successfullyParsed = true;
 <table><tr><td><input type="image" src="resources/square-blue-100x100.png" id="input-image-75" style="height: 75%;"></td></tr></table>
 <table><tr><td><input type="image" src="resources/square-blue-100x100.png" id="input-image-100" style="height: 100%;"></td></tr></table>
 
-<table><tr><td><input type="password" id="input-password-75" style="height: 75%;"></td></tr></table>
-<table><tr><td><input type="password" id="input-password-100" style="height: 100%;"></td></tr></table>
-
 <table><tr><td><input type="radio" id="input-radio-75" style="height: 75%;"></td></tr></table>
 <table><tr><td><input type="radio" id="input-radio-100" style="height: 100%;"></td></tr></table>
 
@@ -164,17 +141,8 @@ var successfullyParsed = true;
 <table><tr><td><input type="submit" id="input-submit-75" style="height: 75%;"></td></tr></table>
 <table><tr><td><input type="submit" id="input-submit-100" style="height: 100%;"></td></tr></table>
 
-<table><tr><td><input type="text" id="input-text-75" style="height: 75%;"></td></tr></table>
-<table><tr><td><input type="text" id="input-text-100" style="height: 100%;"></td></tr></table>
-
-<table><tr><td><isindex id="isindex-75" style="height: 75%;"></td></tr></table>
-<table><tr><td><isindex id="isindex-100" style="height: 100%;"></td></tr></table>
-
 <table><tr><td><select id="select-75" style="height: 75%;"><option>Option</option></select></td></tr></table>
 <table><tr><td><select id="select-100" style="height: 100%;"><option>Option</option></select></td></tr></table>
-
-<table><tr><td><textarea id="textarea-75" style="height: 75%;"></textarea></td></tr></table>
-<table><tr><td><textarea id="textarea-100" style="height: 100%;"></textarea></td></tr></table>
 
 <p id="description"></p>
 <div id="console"></div>

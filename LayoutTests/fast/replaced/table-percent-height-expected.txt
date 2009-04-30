@@ -22,14 +22,6 @@ Button
 
 
 
-
-
-This is a searchable index. Enter search keywords: 
-This is a searchable index. Enter search keywords: 
-
-
-
-
 This test checks that replaced elements with percentage heights within table cells have the correct height.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -71,10 +63,6 @@ PASS getComputedStyleForElement(document.getElementById('input-image-75'), 'widt
 PASS getComputedStyleForElement(document.getElementById('input-image-75'), 'height') is '75px'
 PASS getComputedStyleForElement(document.getElementById('input-image-100'), 'width') is '100px'
 PASS getComputedStyleForElement(document.getElementById('input-image-100'), 'height') is '100px'
-PASS getComputedStyleForElement(document.getElementById('input-password-75'), 'width') is '128px'
-PASS getComputedStyleForElement(document.getElementById('input-password-75'), 'height') is '8px'
-PASS getComputedStyleForElement(document.getElementById('input-password-100'), 'width') is '128px'
-PASS getComputedStyleForElement(document.getElementById('input-password-100'), 'height') is '13px'
 PASS getComputedStyleForElement(document.getElementById('input-radio-75'), 'width') is '12px'
 PASS getComputedStyleForElement(document.getElementById('input-radio-75'), 'height') is '4px'
 PASS getComputedStyleForElement(document.getElementById('input-radio-100'), 'width') is '12px'
@@ -87,22 +75,10 @@ PASS getComputedStyleForElement(document.getElementById('input-submit-75'), 'wid
 PASS getComputedStyleForElement(document.getElementById('input-submit-75'), 'height') is '18px'
 PASS getComputedStyleForElement(document.getElementById('input-submit-100'), 'width') is '54px'
 PASS getComputedStyleForElement(document.getElementById('input-submit-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-text-75'), 'width') is '128px'
-PASS getComputedStyleForElement(document.getElementById('input-text-75'), 'height') is '8px'
-PASS getComputedStyleForElement(document.getElementById('input-text-100'), 'width') is '128px'
-PASS getComputedStyleForElement(document.getElementById('input-text-100'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('isindex-75'), 'width') is '122px'
-PASS getComputedStyleForElement(document.getElementById('isindex-75'), 'height') is '35px'
-PASS getComputedStyleForElement(document.getElementById('isindex-100'), 'width') is '122px'
-PASS getComputedStyleForElement(document.getElementById('isindex-100'), 'height') is '49px'
 PASS getComputedStyleForElement(document.getElementById('select-75'), 'width') is '68px'
 PASS getComputedStyleForElement(document.getElementById('select-75'), 'height') is '18px'
 PASS getComputedStyleForElement(document.getElementById('select-100'), 'width') is '68px'
 PASS getComputedStyleForElement(document.getElementById('select-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('textarea-75'), 'width') is '129px'
-PASS getComputedStyleForElement(document.getElementById('textarea-75'), 'height') is '19px'
-PASS getComputedStyleForElement(document.getElementById('textarea-100'), 'width') is '129px'
-PASS getComputedStyleForElement(document.getElementById('textarea-100'), 'height') is '28px'
 PASS successfullyParsed is true
 
 TEST COMPLETE

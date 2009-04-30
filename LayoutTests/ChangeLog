@@ -1,3 +1,38 @@
+2009-04-30  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
+        Fix tests that depend on Mac-specific metrics now that text controls
+        are sized according to font metrics (r43007).
+        
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=25474.
+
+        * fast/forms/textarea-appearance-wrap-expected.txt:
+        * fast/forms/textarea-appearance-wrap.html:
+        This test only really cares that a line-wrap character is submitted
+        with forms that have the appropriate wrap value and not with other forms.
+        So checking that the submit contents have a line-wrap character, instead of
+        looking for it in a specific place, is sufficient. This gets around that we
+        wrap in a different place in some cases on Mac and Windows.
+
+        * fast/forms/textarea-hard-linewrap-expected.txt: Removed.
+        * fast/forms/textarea-hard-linewrap.html: Removed.
+        This test is redundant with fast/forms/textarea-appearance-wrap.html.
+
+        * fast/replaced/table-percent-height-expected.txt:
+        * fast/replaced/table-percent-height-text-controls-expected.txt: Added.
+        * fast/replaced/table-percent-height-text-controls.html: Added.
+        * fast/replaced/table-percent-height.html:
+        Pulled out the cases in table-percent-height.html that had text controls and moved
+        them into their own test. The new test doesn't assert specific metrics, it just
+        spits them out. This allows us to have different expected results for Windows and
+        Mac without having "FAIL" messages in the expected results. It's not perfect, but
+        it seems better than any alternatives I could come up with. We do still print "FAIL"
+        if the results don't match any platform.
+
+        * platform/win/Skipped:
+        * platform/win/fast/replaced/table-percent-height-text-controls-expected.txt: Added.
+
 2009-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

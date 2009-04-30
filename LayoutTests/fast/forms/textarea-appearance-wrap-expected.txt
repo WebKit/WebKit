@@ -5,13 +5,13 @@ This tests that textarea wrap attributes work correctly when submitting a form.
 
 
 
-wrap=hard : Success
+wrap=hard: Success
 
 
-wrap=soft : Success
+wrap=soft: Success
 
 
-wrap=off : Success
+wrap=off: Success
 
 
 wrap=hard rtl text: Success
