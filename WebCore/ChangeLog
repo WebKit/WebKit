@@ -1,3 +1,13 @@
+2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25493
+        Remove debugger/profiler custom method stubs, catching V8 bindings up to
+        http://trac.webkit.org/changeset/43072.
+
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp: Removed method stubs.
+
 2009-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
