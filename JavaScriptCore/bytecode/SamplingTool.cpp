@@ -195,10 +195,12 @@ void SamplingTool::doRun()
     }
 
 #if ENABLE(CODEBLOCK_SAMPLING)
-    MutexLocker locker(m_scopeSampleMapMutex);
-    ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode());
-    ASSERT(record);
-    record->sample(sample.codeBlock(), sample.vPC());
+    if (CodeBlock* codeBlock = sample.codeBlock()) {
+        MutexLocker locker(m_scopeSampleMapMutex);
+        ScopeSampleRecord* record = m_scopeSampleMap->get(codeBlock->ownerNode());
+        ASSERT(record);
+        record->sample(codeBlock, sample.vPC());
+    }
 #endif
 }
 

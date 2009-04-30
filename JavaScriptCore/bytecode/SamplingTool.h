@@ -234,7 +234,7 @@ namespace JSC {
             {
             }
             
-            bool isNull() { return !m_sample || !m_codeBlock; }
+            bool isNull() { return !m_sample; }
             CodeBlock* codeBlock() { return m_codeBlock; }
             Instruction* vPC() { return reinterpret_cast<Instruction*>(m_sample & ~0x3); }
             bool inHostFunction() { return m_sample & 0x1; }

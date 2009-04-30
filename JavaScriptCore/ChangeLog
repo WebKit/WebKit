@@ -1,3 +1,18 @@
+2009-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        OPCODE_SAMPLING without CODEBLOCK_SAMPLING is currently broken,
+        since SamplingTool::Sample::isNull() checks the m_codeBlock
+        member (which is always null without CODEBLOCK_SAMPLING).
+
+        Restructure the checks so make this work again.
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::doRun):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::Sample::isNull):
+
 2009-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gavin Barraclough.
