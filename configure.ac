@@ -296,6 +296,14 @@ AC_ARG_ENABLE(channel_messaging,
               [],[enable_channel_messaging="no"])
 AC_MSG_RESULT([$enable_channel_messaging])
 
+# check whether to enable JavaScript debugger/profiler support
+AC_MSG_CHECKING([whether to enable JavaScript debugger/profiler support])
+AC_ARG_ENABLE(javascript_debugger,
+              AC_HELP_STRING([--enable-javascript-debugger],
+                             [enable JavaScript debugger/profiler support [default=yes]]),
+              [],[javascript_debugger="yes"])
+AC_MSG_RESULT([$enable_javascript_debugger])
+
 # check whether to enable HTML5 Offline Web Applications support
 AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
 AC_ARG_ENABLE(offline_web_applications,
@@ -634,6 +642,7 @@ AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DASHBOARD_SUPPORT],[test "$enable_dashboard_support" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3D_transforms" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
+AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
@@ -683,6 +692,7 @@ Features:
  Dashboard support                                        : $enable_dashboard_support
  Geolocation support                                      : $enable_geolocation
  GNOME Keyring support                                    : $enable_gnomekeyring
+ JavaScript debugger/profiler support                     : $enable_javascript_debugger
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 client-side session and persistent storage support : $enable_dom_storage
