@@ -1,3 +1,17 @@
+2009-04-29  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=24168
+        RTL: Home/End key does not behave correctly in mixed bidi text in RTL document
+
+        * editing/selection/extend-selection-expected.txt: Added result for extend in
+        lineBoundary.
+        * editing/selection/extend-selection.html: Added test cases and script for extend
+        in lineBoundary.
+        * editing/selection/home-end-expected.txt: Added.
+        * editing/selection/home-end.html: Added.
+
 2009-04-29  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
