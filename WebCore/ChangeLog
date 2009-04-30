@@ -1,3 +1,16 @@
+2009-04-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=25476
+          <rdar://problem/6841919> REGRESSION (r42987): Welcome to Safari 4
+          animation is jittery
+
+        Reverted r42987.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2009-04-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak

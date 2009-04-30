@@ -1,3 +1,18 @@
+2009-04-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - updated results for https://bugs.webkit.org/show_bug.cgi?id=25476
+          <rdar://problem/6841919> REGRESSION (r42987): Welcome to Safari 4
+          animation is jittery
+
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/mac/svg/custom/focus-ring-expected.checksum:
+        * platform/mac/svg/custom/focus-ring-expected.png:
+        * platform/mac/svg/custom/image-small-width-height-expected.checksum:
+        * platform/mac/svg/custom/image-small-width-height-expected.png:
+
 2009-04-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak

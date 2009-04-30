@@ -187,9 +187,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     if (!shouldUseSubimage && currHeight < selfSize.height())
         adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height());
 
-    // Align to pixel boundaries
-    adjustedDestRect = ctxt->roundToDevicePixels(adjustedDestRect);
-
     // Flip the coords.
     ctxt->setCompositeOperation(compositeOp);
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.bottom());
