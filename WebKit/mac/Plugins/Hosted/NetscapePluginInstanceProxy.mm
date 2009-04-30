@@ -732,8 +732,8 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
         return false;
-    
-    ArgList argList;
+
+    MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
@@ -765,8 +765,8 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     CallType callType = object->getCallData(callData);
     if (callType == CallTypeNone)
         return false;
-    
-    ArgList argList;
+
+    MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
@@ -799,8 +799,8 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     ConstructType constructType = object->getConstructData(constructData);
     if (constructType == ConstructTypeNone)
         return false;
-        
-    ArgList argList;
+
+    MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
@@ -1180,7 +1180,7 @@ JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const ch
     return value;
 }
 
-void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, ArgList& result)
+void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBuffer& result)
 {
     RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
 

@@ -1,3 +1,14 @@
+2009-04-29  Mark Rowe  <mrowe@apple.com>
+
+        More build fixing after r43037.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+        (WebKit::NetscapePluginInstanceProxy::construct):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+
 2009-04-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
