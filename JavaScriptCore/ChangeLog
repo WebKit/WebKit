@@ -1,3 +1,16 @@
+2009-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - speed up string concatenation by reorganizing some simple cases
+
+        0.7% SunSpider speedup
+
+        * runtime/UString.cpp:
+        (JSC::concatenate): Put fast case for appending a single character
+        before the empty string special cases; streamline code a bit to
+        delay computing values that are not needed in the fast path.
+
 2009-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.
