@@ -1,3 +1,22 @@
+2009-05-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele Peterson and Darin Adler.
+
+        <rdar://problem/4815598> Stuck in double spacing mode after pasting a
+        paragraph with padding/margin (or table mode !)
+
+        A lot of the issues in this bug were resolved on Mail's side by using
+        WebKit to convert to plain text.  This is the final issue, that floating
+        style stays on copied nodes causing them to float when they are pasted
+        which is not what the user intended.
+
+        * editing/markup.cpp:
+        (WebCore::removeExteriorStyles):
+        (WebCore::):
+        (WebCore::appendStartMarkup):
+        (WebCore::getStartMarkup):
+        (WebCore::createMarkup):
+
 2009-05-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

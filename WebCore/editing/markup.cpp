@@ -387,7 +387,14 @@ static void appendDocumentType(Vector<UChar>& result, const DocumentType* n)
     append(result, ">");
 }
 
-static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0)
+static void removeExteriorStyles(CSSMutableStyleDeclaration* style)
+{
+    style->removeProperty(CSSPropertyFloat);
+}
+
+enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
+
+static void appendStartMarkup(Vector<UChar>& result, const Node* node, const Range* range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
     switch (node->nodeType()) {
@@ -502,6 +509,10 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                 }
                 if (convert)
                     style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+                // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
+                // only the ones that affect it and the nodes within it.
+                if (rangeFullySelectsNode == DoesNotFullySelectNode)
+                    removeExteriorStyles(style.get());
                 if (style->length() > 0) {
                     DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
                     append(result, stylePrefix);
@@ -536,10 +547,10 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
     }
 }
 
-static String getStartMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0)
+static String getStartMarkup(const Node* node, const Range* range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
 {
     Vector<UChar> result;
-    appendStartMarkup(result, node, range, annotate, convertBlocksToInlines, namespaces);
+    appendStartMarkup(result, node, range, annotate, convertBlocksToInlines, namespaces, rangeFullySelectsNode);
     return String::adopt(result);
 }
 
@@ -893,7 +904,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             // We added markup for this node, and we're descending into it.  Set it to close eventually.
             ancestorsToClose.append(n);
     }
-    
+
     // Include ancestors that aren't completely inside the range but are required to retain 
     // the structure and appearance of the copied markup.
     Node* specialCommonAncestor = 0;
@@ -967,7 +978,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                     markups.append(divCloseTag);
                 }
             } else {
-                preMarkups.append(getStartMarkup(ancestor, updatedRange.get(), annotate, convertBlocksToInlines));
+                // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode
+                // so that styles that affect the exterior of the node are not included.
+                preMarkups.append(getStartMarkup(ancestor, updatedRange.get(), annotate, convertBlocksToInlines, 0, DoesNotFullySelectNode));
                 markups.append(getEndMarkup(ancestor));
             }
             if (nodes)
