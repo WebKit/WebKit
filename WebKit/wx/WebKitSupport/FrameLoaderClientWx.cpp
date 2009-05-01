@@ -47,6 +47,7 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"
+#include "ScriptString.h"
 
 #include <stdio.h>
 
@@ -663,6 +664,11 @@ bool FrameLoaderClientWx::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*
 {
     notImplemented();
     return false;
+}
+
+void FrameLoaderClientWx::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const ScriptString&)
+{
+  notImplemented();
 }
 
 void FrameLoaderClientWx::dispatchDidFailProvisionalLoad(const ResourceError&)

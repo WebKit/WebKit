@@ -1,3 +1,15 @@
+2009-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a FrameLoaderClient callback for the ResourceRetrievedByXMLHttpRequest.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25347
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest):
+
 2009-04-30  David Kilzer  <ddkilzer@apple.com>
 
         Provide a mechanism to create a quirks delegate for HTMLParser

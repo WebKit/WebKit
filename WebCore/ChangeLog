@@ -1,3 +1,23 @@
+2009-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a FrameLoaderClient callback for the ResourceRetrievedByXMLHttpRequest.
+        This is the only resource-related information that is available in InspectorController
+        and is missing in the FrameLoaderClient.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25347
+
+        * WebCore.xcodeproj/project.pbxproj: Made ScriptSource private.
+        * dom/Document.cpp: Made a call to a client along with the call to the InspectorController.
+        (WebCore::Document::resourceRetrievedByXMLHttpRequest):
+        * loader/EmptyClients.h: Added stub implementation.
+        (WebCore::EmptyFrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest):
+        * loader/FrameLoader.cpp: Call initiating dispatches.
+        (WebCore::FrameLoader::resourceRetrievedByXMLHttpRequest):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
 2009-04-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver Hunt.

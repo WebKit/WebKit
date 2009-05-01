@@ -69,6 +69,7 @@ namespace WebKit {
         virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long  identifier);
         virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long  identifier, const WebCore::ResourceError&);
         virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length);
+        virtual void dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const WebCore::ScriptString&);
 
         virtual void dispatchDidHandleOnloadEvents();
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();

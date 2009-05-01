@@ -1,3 +1,15 @@
+2009-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a FrameLoaderClient callback for the ResourceRetrievedByXMLHttpRequest.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25347
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidLoadResourceByXMLHttpRequest):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2009-04-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, remove references to JSCore shared library.

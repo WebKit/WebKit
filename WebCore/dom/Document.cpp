@@ -4304,6 +4304,11 @@ void Document::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const
 {
     if (page())
         page()->inspectorController()->resourceRetrievedByXMLHttpRequest(identifier, sourceString);
+    Frame* frame = this->frame();
+    if (frame) {
+        FrameLoader* frameLoader = frame->loader();
+        frameLoader->didLoadResourceByXMLHttpRequest(identifier, sourceString);
+    }
 }
 
 void Document::scriptImported(unsigned long identifier, const String& sourceString)
