@@ -1,3 +1,44 @@
+2009-05-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam "That doesn't look like what I thought it looks like" Weinig.
+        
+        Beefed up the JSValuePtr class and removed some non-JSValuePtr dependencies
+        on JSImmediate, in prepapration for making JSImmediate an implementation
+        detail of JSValuePtr.
+        
+        SunSpider reports no change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_mod):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt): Updated for interface changes.
+
+        * runtime/JSImmediate.h:
+        (JSC::JSValuePtr::JSValuePtr):
+        * runtime/JSValue.h:
+        (JSC::JSValuePtr::):
+        (JSC::jsImpossibleValue):
+        (JSC::jsNull):
+        (JSC::jsUndefined):
+        (JSC::jsBoolean):
+        (JSC::JSValuePtr::encode):
+        (JSC::JSValuePtr::decode):
+        (JSC::JSValuePtr::JSValuePtr):
+        (JSC::JSValuePtr::operator bool):
+        (JSC::JSValuePtr::operator==):
+        (JSC::JSValuePtr::operator!=):
+        (JSC::JSValuePtr::isUndefined):
+        (JSC::JSValuePtr::isNull): Changed jsImpossibleValue(), jsNull(),
+        jsUndefined(), and jsBoolean() to operate in terms of JSValuePtr instead
+        of JSImmediate.
+
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast): Fixed up for clarity.
+
 2009-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

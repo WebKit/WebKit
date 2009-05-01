@@ -1567,7 +1567,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr dividendValue = callFrame[dividend].jsValue();
         JSValuePtr divisorValue = callFrame[divisor].jsValue();
 
-        if (JSValuePtr::areBothInt32Fast(dividendValue, divisorValue) && divisorValue != js0()) {
+        if (JSValuePtr::areBothInt32Fast(dividendValue, divisorValue) && divisorValue != jsNumber(callFrame, 0)) {
             // We expect the result of the modulus of a number that was representable as an int32 to also be representable
             // as an int32.
             JSValuePtr result = JSValuePtr::makeInt32Fast(dividendValue.getInt32Fast() % divisorValue.getInt32Fast());

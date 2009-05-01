@@ -61,45 +61,27 @@ namespace JSC {
         }
         
     public:
-        JSValuePtr()
-            : m_ptr(0)
-        {
-        }
+        enum ImpossibleValueTag { ImpossibleValue };
+        enum JSNullTag { JSNull };
+        enum JSUndefinedTag { JSUndefined };
+        enum JSTrueTag { JSTrue };
+        enum JSFalseTag { JSFalse };
 
-        JSValuePtr(JSCell* ptr)
-            : m_ptr(ptr)
-        {
-        }
+        static EncodedJSValuePtr encode(JSValuePtr value);
+        static JSValuePtr decode(EncodedJSValuePtr ptr);
 
-        JSValuePtr(const JSCell* ptr)
-            : m_ptr(const_cast<JSCell*>(ptr))
-        {
-        }
+        JSValuePtr();
+        JSValuePtr(ImpossibleValueTag);
+        JSValuePtr(JSNullTag);
+        JSValuePtr(JSUndefinedTag);
+        JSValuePtr(JSTrueTag);
+        JSValuePtr(JSFalseTag);
+        JSValuePtr(JSCell* ptr);
+        JSValuePtr(const JSCell* ptr);
 
-        operator bool() const
-        {
-            return m_ptr;
-        }
-
-        bool operator==(const JSValuePtr other) const
-        {
-            return m_ptr == other.m_ptr;
-        }
-
-        bool operator!=(const JSValuePtr other) const
-        {
-            return m_ptr != other.m_ptr;
-        }
-
-        static EncodedJSValuePtr encode(JSValuePtr value)
-        {
-            return reinterpret_cast<EncodedJSValuePtr>(value.m_ptr);
-        }
-
-        static JSValuePtr decode(EncodedJSValuePtr ptr)
-        {
-            return JSValuePtr(reinterpret_cast<JSCell*>(ptr));
-        }
+        operator bool() const;
+        bool operator==(const JSValuePtr other) const;
+        bool operator!=(const JSValuePtr other) const;
 
         // Querying the type.
         bool isUndefined() const;
@@ -206,9 +188,30 @@ namespace JSC {
         JSCell* m_ptr;
     };
 
+    // Stand-alone helper functions.
     inline JSValuePtr noValue()
     {
         return JSValuePtr();
+    }
+
+    inline JSValuePtr jsImpossibleValue()
+    {
+        return JSValuePtr(JSValuePtr::ImpossibleValue);
+    }
+
+    inline JSValuePtr jsNull()
+    {
+        return JSValuePtr(JSValuePtr::JSNull);
+    }
+
+    inline JSValuePtr jsUndefined()
+    {
+        return JSValuePtr(JSValuePtr::JSUndefined);
+    }
+
+    inline JSValuePtr jsBoolean(bool b)
+    {
+        return b ? JSValuePtr(JSValuePtr::JSTrue) : JSValuePtr(JSValuePtr::JSFalse);
     }
 
     inline bool operator==(const JSValuePtr a, const JSCell* b) { return a == JSValuePtr(b); }
@@ -216,6 +219,57 @@ namespace JSC {
 
     inline bool operator!=(const JSValuePtr a, const JSCell* b) { return a != JSValuePtr(b); }
     inline bool operator!=(const JSCell* a, const JSValuePtr b) { return JSValuePtr(a) != b; }
+
+    // JSValuePtr member functions.
+    inline EncodedJSValuePtr JSValuePtr::encode(JSValuePtr value)
+    {
+        return reinterpret_cast<EncodedJSValuePtr>(value.m_ptr);
+    }
+
+    inline JSValuePtr JSValuePtr::decode(EncodedJSValuePtr ptr)
+    {
+        return JSValuePtr(reinterpret_cast<JSCell*>(ptr));
+    }
+
+    inline JSValuePtr::JSValuePtr()
+        : m_ptr(0)
+    {
+    }
+
+    inline JSValuePtr::JSValuePtr(JSCell* ptr)
+        : m_ptr(ptr)
+    {
+    }
+
+    inline JSValuePtr::JSValuePtr(const JSCell* ptr)
+        : m_ptr(const_cast<JSCell*>(ptr))
+    {
+    }
+
+    inline JSValuePtr::operator bool() const
+    {
+        return m_ptr;
+    }
+
+    inline bool JSValuePtr::operator==(const JSValuePtr other) const
+    {
+        return m_ptr == other.m_ptr;
+    }
+
+    inline bool JSValuePtr::operator!=(const JSValuePtr other) const
+    {
+        return m_ptr != other.m_ptr;
+    }
+
+    inline bool JSValuePtr::isUndefined() const
+    {
+        return asValue() == jsUndefined();
+    }
+
+    inline bool JSValuePtr::isNull() const
+    {
+        return asValue() == jsNull();
+    }
 
 } // namespace JSC
 

@@ -47,14 +47,14 @@ namespace WTF {
      * C++'s idea of a reinterpret_cast lacks sufficient cojones.
      */
     template<typename TO, typename FROM>
-    TO bitwise_cast(FROM in)
+    TO bitwise_cast(FROM from)
     {
-        COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_wtf_reinterpret_cast_sizeof_types_is_equal);
+        COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_bitwise_cast_sizeof_casted_types_is_equal);
         union {
             FROM from;
             TO to;
         } u;
-        u.from = in;
+        u.from = from;
         return u.to;
     }
 

@@ -273,7 +273,7 @@ void JIT::compileFastArith_op_mod(unsigned result, unsigned op1, unsigned op2)
     emitJumpSlowCaseIfNotImmediateInteger(X86::eax);
     emitJumpSlowCaseIfNotImmediateInteger(X86::ecx);
 #if USE(ALTERNATE_JSIMMEDIATE)
-    addSlowCase(branchPtr(Equal, X86::ecx, ImmPtr(JSValuePtr::encode(js0()))));
+    addSlowCase(branchPtr(Equal, X86::ecx, ImmPtr(JSValuePtr::encode(jsNumber(m_globalData, 0)))));
     m_assembler.cdq();
     m_assembler.idivl_r(X86::ecx);
 #else
