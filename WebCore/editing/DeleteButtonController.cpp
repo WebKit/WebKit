@@ -69,8 +69,8 @@ static bool isDeletableElement(const Node* node)
     // In general we want to only draw the UI arround object of a certain area, but we still keep the min width/height to
     // make sure we don't end up with very thin or very short elements getting the UI.
     const int minimumArea = 2500;
-    const int minimumWidth = 25;
-    const int minimumHeight = 25;
+    const int minimumWidth = 48;
+    const int minimumHeight = 16;
     const unsigned minimumVisibleBorders = 1;
 
     RenderObject* renderer = node->renderer();

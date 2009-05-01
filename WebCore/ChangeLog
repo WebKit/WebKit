@@ -1,5 +1,18 @@
 2009-05-01  Timothy Hatcher  <timothy@apple.com>
 
+        Decrease the minimum height for deleteable elements to 16px, and increase the
+        minimum width to 48px. This allows deleting shorter items like navigation bars.
+
+        <rdar://problem/6840735> Deletion UI does not show up for short
+        elements (22px or less)
+
+        Reviewed by Adele Peterson.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+
+2009-05-01  Timothy Hatcher  <timothy@apple.com>
+
         Clean up the comments and logic in the code for picking a
         deleteable element for the deletion UI.
 
