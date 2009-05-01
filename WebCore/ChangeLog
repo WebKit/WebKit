@@ -1,3 +1,13 @@
+2009-05-01  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up the comments and logic in the code for picking a
+        deleteable element for the deletion UI.
+
+        Reviewed by Adele Peterson.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+
 2009-05-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele Peterson and Darin Adler.
