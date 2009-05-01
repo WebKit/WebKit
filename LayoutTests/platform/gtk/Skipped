@@ -3639,15 +3639,6 @@ http/tests/history/redirect-meta-refresh-2-seconds.html
 # tests that failed
 http/tests/incremental/slow-utf8-text.pl
 http/tests/incremental/split-hex-entities.pl
-http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/bad-server-subframe.html
-http/tests/loading/basic.html
-http/tests/loading/empty-subframe.html
-http/tests/loading/gmail-assert-on-load.html
-http/tests/loading/location-hash-reload-cycle.html
-http/tests/loading/onload-vs-immediate-refresh.pl
-http/tests/loading/slow-parsing-subframe.html
-http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
@@ -5748,8 +5739,6 @@ webarchive/archive-empty-frame-dom.html
 webarchive/archive-empty-frame-source.html
 webarchive/archive-with-unencoded-url.html
 webarchive/doctype.html
-webarchive/loading/cache-expired-subresource.html
-webarchive/loading/test-loading-archive.html
 webarchive/test-body-background.html
 webarchive/test-css-import.html
 webarchive/test-css-url-resources-in-stylesheets.html
@@ -5767,3 +5756,8 @@ webarchive/test-xml-stylesheet.xml
 
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator
+
+# Frame load delegate logging not implemented in GTK DumpRenderTree.
+fast/loading
+http/tests/loading
+webarchive/loading
