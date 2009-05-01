@@ -1,3 +1,13 @@
+2009-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add layout test for rdar:/68455379.
+
+        * fast/js/regexp-range-bound-ffff-expected.txt: Added.
+        * fast/js/regexp-range-bound-ffff.html: Added.
+        * fast/js/resources/regexp-range-bound-ffff.js: Added.
+
 2009-04-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

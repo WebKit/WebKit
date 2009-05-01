@@ -108,11 +108,18 @@ public:
             }
         }
         if (hi >= 0x80) {
-            UChar unicodeCurr = std::max(lo, (UChar)0x80);
+            uint32_t unicodeCurr = std::max(lo, (UChar)0x80);
             addSortedRange(m_rangesUnicode, unicodeCurr, hi);
             
             if (m_isCaseInsensitive) {
                 while (unicodeCurr <= hi) {
+                    // If the upper bound of the range (hi) is 0xffff, the increments to
+                    // unicodeCurr in this loop may take it to 0x10000.  This is fine
+                    // (if so we won't re-enter the loop, since the loop condition above
+                    // will definitely fail) - but this does mean we cannot use a UChar
+                    // to represent unicodeCurr, we must use a 32-bit value instead.
+                    ASSERT(unicodeCurr <= 0xffff);
+
                     if (isUnicodeUpper(unicodeCurr)) {
                         UChar lowerCaseRangeBegin = Unicode::toLower(unicodeCurr);
                         UChar lowerCaseRangeEnd = lowerCaseRangeBegin;
