@@ -62,7 +62,7 @@ Bakefile for wxWebKit Python bindings.
     <module id="wxwebkit-python" template="wxwk,webcore,xml2,iconv,xslt,icu,jscore,curl,sqlite3,gtk,pthreads">
         <!-- make sure we relink wxwebkit if either webcore or jscore change -->
         <if cond="FORMAT=='gnu'">
-            <depends-on-file>$(WKOUTPUTDIR)/libjscore.dylib</depends-on-file>
+            <depends-on-file>$(WKOUTPUTDIR)/libjscore.a</depends-on-file>
             <depends-on-file>$(WKOUTPUTDIR)/libwebcore-wx.a</depends-on-file>
         </if>
         <if cond="FORMAT=='msvc'">

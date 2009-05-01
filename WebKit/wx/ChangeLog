@@ -1,3 +1,10 @@
+2009-04-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, remove references to JSCore shared library.
+
+        * bindings/python/wxwebkit-py.bkl:
+        * wxwebkit.bkl:
+
 2009-04-30  David Kilzer  <ddkilzer@apple.com>
 
         Provide a mechanism to create a quirks delegate for HTMLParser

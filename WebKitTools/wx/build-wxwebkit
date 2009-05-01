@@ -249,7 +249,7 @@ if [ $do_clean != 1 ]; then
         mkdir -p DerivedSources/JavaScriptCore
         cd DerivedSources/JavaScriptCore
         
-        make -f ../../DerivedSources.make JavaScriptCore=../.. BUILT_PRODUCTS_DIR=../.. all FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT"
+        make -f ../../DerivedSources.make JavaScriptCore=../.. BUILT_PRODUCTS_DIR=../.. all FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT ENABLE_JAVASCRIPT_DEBUGGER"
         if [ $? != 0 ]; then
             exit 1
         fi
@@ -257,7 +257,7 @@ if [ $do_clean != 1 ]; then
         cd $WK_ROOT/WebCore
         mkdir -p DerivedSources/WebCore
         cd DerivedSources/WebCore
-        make -f ../../DerivedSources.make all WebCore=../.. SOURCE_ROOT=../.. FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT"
+        make -f ../../DerivedSources.make all WebCore=../.. SOURCE_ROOT=../.. FEATURE_DEFINES="ENABLE_DATABASE ENABLE_XSLT ENABLE_JAVASCRIPT_DEBUGGER"
         if [ $? != 0 ]; then
             exit 1
         fi

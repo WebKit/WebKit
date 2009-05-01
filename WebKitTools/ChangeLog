@@ -1,3 +1,9 @@
+2009-04-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, define ENABLE_JAVASCRIPT_DEBUGGER.
+
+        * wx/build-wxwebkit:
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
