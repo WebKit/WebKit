@@ -1,5 +1,11 @@
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix take 3.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-05-01  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix take 2.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
