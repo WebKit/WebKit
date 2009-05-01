@@ -1,3 +1,12 @@
+2009-05-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt and Sam "Jon 'The Belly' Honeycutt" Weinig
+
+        Fix <rdar://problem/6848867> Addition of DOCTYPE node breaks Tiger Mail
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument firstChild]): Add a Tiger Mail version of this method that skips DOCTYPE nodes.
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Sam Weinig.

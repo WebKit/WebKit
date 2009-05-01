@@ -33,6 +33,7 @@
 #import "DOMHTMLInputElementInternal.h"
 #import "DOMHTMLSelectElementInternal.h"
 #import "DOMHTMLTextAreaElementInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
 #import "FrameView.h"
@@ -40,8 +41,10 @@
 #import "HTMLInputElement.h"
 #import "HTMLSelectElement.h"
 #import "HTMLTextAreaElement.h"
+#import "Page.h"
 #import "Range.h"
 #import "RenderTextControl.h"
+#import "Settings.h"
 #import "markup.h"
 
 //------------------------------------------------------------------------------------------
@@ -76,6 +79,25 @@
 }
 
 @end
+
+#ifdef BUILDING_ON_TIGER
+@implementation DOMHTMLDocument (DOMHTMLDocumentOverrides)
+
+- (DOMNode *)firstChild
+{
+    WebCore::HTMLDocument* coreHTMLDocument = core(self);
+    if (!coreHTMLDocument->page() || !coreHTMLDocument->page()->settings()->needsTigerMailQuirks())
+        return kit(coreHTMLDocument->firstChild());
+
+    WebCore::Node* child = coreHTMLDocument->firstChild();
+    while (child && child->nodeType() == WebCore::Node::DOCUMENT_TYPE_NODE)
+        child = child->nextSibling();
+    
+    return kit(child);
+}
+
+@end
+#endif
 
 @implementation DOMHTMLInputElement (FormAutoFillTransition)
 
