@@ -356,70 +356,70 @@ void markDOMObjectWrapper(JSGlobalData& globalData, void* object)
     wrapper->mark();
 }
 
-JSValuePtr jsStringOrNull(ExecState* exec, const String& s)
+JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsNull();
     return jsString(exec, s);
 }
 
-JSValuePtr jsOwnedStringOrNull(ExecState* exec, const UString& s)
+JSValue jsOwnedStringOrNull(ExecState* exec, const UString& s)
 {
     if (s.isNull())
         return jsNull();
     return jsOwnedString(exec, s);
 }
 
-JSValuePtr jsStringOrUndefined(ExecState* exec, const String& s)
+JSValue jsStringOrUndefined(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsUndefined();
     return jsString(exec, s);
 }
 
-JSValuePtr jsStringOrFalse(ExecState* exec, const String& s)
+JSValue jsStringOrFalse(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsBoolean(false);
     return jsString(exec, s);
 }
 
-JSValuePtr jsStringOrNull(ExecState* exec, const KURL& url)
+JSValue jsStringOrNull(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsNull();
     return jsString(exec, url.string());
 }
 
-JSValuePtr jsStringOrUndefined(ExecState* exec, const KURL& url)
+JSValue jsStringOrUndefined(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsUndefined();
     return jsString(exec, url.string());
 }
 
-JSValuePtr jsStringOrFalse(ExecState* exec, const KURL& url)
+JSValue jsStringOrFalse(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsBoolean(false);
     return jsString(exec, url.string());
 }
 
-UString valueToStringWithNullCheck(ExecState* exec, JSValuePtr value)
+UString valueToStringWithNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isNull())
         return UString();
     return value.toString(exec);
 }
 
-UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValuePtr value)
+UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isUndefinedOrNull())
         return UString();
     return value.toString(exec);
 }
 
-void reportException(ExecState* exec, JSValuePtr exception)
+void reportException(ExecState* exec, JSValue exception)
 {
     UString errorMessage = exception.toString(exec);
     JSObject* exceptionObject = exception.toObject(exec);
@@ -440,7 +440,7 @@ void reportException(ExecState* exec, JSValuePtr exception)
 
 void reportCurrentException(ExecState* exec)
 {
-    JSValuePtr exception = exec->exception();
+    JSValue exception = exec->exception();
     exec->clearException();
     reportException(exec, exception);
 }
@@ -453,7 +453,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     ExceptionCodeDescription description;
     getExceptionCodeDescription(ec, description);
 
-    JSValuePtr errorObject = noValue();
+    JSValue errorObject = noValue();
     switch (description.type) {
         case DOMExceptionType:
             errorObject = toJS(exec, DOMCoreException::create(description));
@@ -512,7 +512,7 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
         window->printErrorMessage(message);
 }
 
-JSValuePtr objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+JSValue objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, objectProtoFuncToString);
 }

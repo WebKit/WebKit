@@ -157,12 +157,12 @@ bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySl
     return true;
 }
 
-void JSCell::put(ExecState* exec, const Identifier& identifier, JSValuePtr value, PutPropertySlot& slot)
+void JSCell::put(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
     toObject(exec)->put(exec, identifier, value, slot);
 }
 
-void JSCell::put(ExecState* exec, unsigned identifier, JSValuePtr value)
+void JSCell::put(ExecState* exec, unsigned identifier, JSValue value)
 {
     toObject(exec)->put(exec, identifier, value);
 }
@@ -197,7 +197,7 @@ const ClassInfo* JSCell::classInfo() const
     return 0;
 }
 
-JSValuePtr JSCell::getJSNumber()
+JSValue JSCell::getJSNumber()
 {
     return noValue();
 }

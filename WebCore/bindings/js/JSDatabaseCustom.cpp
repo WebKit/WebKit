@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValuePtr JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
+JSValue JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
 {
     String oldVersion = args.at(0).toString(exec);
     String newVersion = args.at(1).toString(exec);
@@ -86,7 +86,7 @@ JSValuePtr JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSDatabase::transaction(ExecState* exec, const ArgList& args)
+JSValue JSDatabase::transaction(ExecState* exec, const ArgList& args)
 {
     JSObject* object;
     

@@ -35,28 +35,28 @@
 
 namespace JSC {
 
-bool JSValuePtr::equalSlowCase(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
+bool JSValue::equalSlowCase(ExecState* exec, JSValue v1, JSValue v2)
 {
     return equalSlowCaseInline(exec, v1, v2);
 }
 
-bool JSValuePtr::strictEqualSlowCase(JSValuePtr v1, JSValuePtr v2)
+bool JSValue::strictEqualSlowCase(JSValue v1, JSValue v2)
 {
     return strictEqualSlowCaseInline(v1, v2);
 }
 
-NEVER_INLINE JSValuePtr throwOutOfMemoryError(ExecState* exec)
+NEVER_INLINE JSValue throwOutOfMemoryError(ExecState* exec)
 {
     JSObject* error = Error::create(exec, GeneralError, "Out of memory");
     exec->setException(error);
     return error;
 }
 
-NEVER_INLINE JSValuePtr jsAddSlowCase(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
+NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
     // exception for the Date exception in defaultValue()
-    JSValuePtr p1 = v1.toPrimitive(callFrame);
-    JSValuePtr p2 = v2.toPrimitive(callFrame);
+    JSValue p1 = v1.toPrimitive(callFrame);
+    JSValue p2 = v2.toPrimitive(callFrame);
 
     if (p1.isString() || p2.isString()) {
         RefPtr<UString::Rep> value = concatenate(p1.toString(callFrame).rep(), p2.toString(callFrame).rep());
@@ -68,7 +68,7 @@ NEVER_INLINE JSValuePtr jsAddSlowCase(CallFrame* callFrame, JSValuePtr v1, JSVal
     return jsNumber(callFrame, p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }
 
-JSValuePtr jsTypeStringForValue(CallFrame* callFrame, JSValuePtr v)
+JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
 {
     if (v.isUndefined())
         return jsNontrivialString(callFrame, "undefined");
@@ -90,7 +90,7 @@ JSValuePtr jsTypeStringForValue(CallFrame* callFrame, JSValuePtr v)
     return jsNontrivialString(callFrame, "object");
 }
 
-bool jsIsObjectType(JSValuePtr v)
+bool jsIsObjectType(JSValue v)
 {
     if (!v.isCell())
         return v.isNull();
@@ -108,7 +108,7 @@ bool jsIsObjectType(JSValuePtr v)
     return true;
 }
 
-bool jsIsFunctionType(JSValuePtr v)
+bool jsIsFunctionType(JSValue v)
 {
     if (v.isObject()) {
         CallData callData;

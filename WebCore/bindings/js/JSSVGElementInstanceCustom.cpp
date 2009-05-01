@@ -47,7 +47,7 @@ void JSSVGElementInstance::mark()
         correspondingWrapper->mark();
 }
 
-JSValuePtr JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
+JSValue JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -59,7 +59,7 @@ JSValuePtr JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList
     return jsUndefined();
 }
 
-JSValuePtr JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -75,9 +75,9 @@ void JSSVGElementInstance::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }
 
-JSC::JSValuePtr toJS(JSC::ExecState* exec, SVGElementInstance* object)
+JSC::JSValue toJS(JSC::ExecState* exec, SVGElementInstance* object)
 {
-    JSValuePtr result = getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
+    JSValue result = getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
 
     // Ensure that our corresponding element has a JavaScript wrapper to keep its event handlers alive.
     if (object)

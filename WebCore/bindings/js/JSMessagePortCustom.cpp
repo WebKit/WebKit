@@ -60,7 +60,7 @@ void JSMessagePort::mark()
     }
 }
 
-JSValuePtr JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
+JSValue JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     const UString& message = args.at(0).toString(exec);
@@ -68,7 +68,7 @@ JSValuePtr JSMessagePort::startConversation(ExecState* exec, const ArgList& args
     return toJS(exec, impl()->startConversation(globalObject->scriptExecutionContext(), message).get());
 }
 
-JSValuePtr JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
+JSValue JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -80,7 +80,7 @@ JSValuePtr JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)

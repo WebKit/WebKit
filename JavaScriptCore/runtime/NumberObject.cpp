@@ -36,12 +36,12 @@ NumberObject::NumberObject(PassRefPtr<Structure> structure)
 {
 }
 
-JSValuePtr NumberObject::getJSNumber()
+JSValue NumberObject::getJSNumber()
 {
     return internalValue();
 }
 
-NumberObject* constructNumber(ExecState* exec, JSValuePtr number)
+NumberObject* constructNumber(ExecState* exec, JSValue number)
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
     object->setInternalValue(number);

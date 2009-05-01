@@ -84,17 +84,17 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
     return d()->impl->document();
 }
 
-JSValuePtr JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
 }
 
-JSValuePtr JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(slot.index())->domWindow());
 }
 
-JSValuePtr JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSDOMWindowBase* thisObj = static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()));
     Document* doc = thisObj->impl()->frame()->document();
@@ -122,7 +122,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
     // Do prototype lookup early so that functions and attributes in the prototype can have
     // precedence over the index and name getters.  
-    JSValuePtr proto = prototype();
+    JSValue proto = prototype();
     if (proto.isObject()) {
         if (asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
             if (!allowsAccessFrom(exec))
@@ -160,7 +160,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (allowsAccessFrom(exec))
         Base::put(exec, propertyName, value, slot);
@@ -276,7 +276,7 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     return globalData;
 }
 
-void JSDOMWindowBase::setReturnValueSlot(JSValuePtr* slot)
+void JSDOMWindowBase::setReturnValueSlot(JSValue* slot)
 {
     d()->returnValueSlot = slot;
 }
@@ -285,7 +285,7 @@ void JSDOMWindowBase::disconnectFrame()
 {
 }
 
-JSValuePtr toJS(ExecState*, DOMWindow* domWindow)
+JSValue toJS(ExecState*, DOMWindow* domWindow)
 {
     if (!domWindow)
         return jsNull();
@@ -302,7 +302,7 @@ JSDOMWindow* toJSDOMWindow(Frame* frame)
     return frame->script()->windowShell()->window();
 }
 
-JSDOMWindow* toJSDOMWindow(JSValuePtr value)
+JSDOMWindow* toJSDOMWindow(JSValue value)
 {
     if (!value.isObject())
         return 0;

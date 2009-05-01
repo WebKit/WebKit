@@ -40,13 +40,13 @@ namespace JSC {
     class RegisterFile;
 
     extern "C" {
-        EncodedJSValuePtr ctiTrampoline(
+        EncodedJSValue ctiTrampoline(
 #if PLATFORM(X86_64)
             // FIXME: (bug #22910) this will force all arguments onto the stack (regparm(0) does not appear to have any effect).
             // We can allow register passing here, and move the writes of these values into the trampoline.
             void*, void*, void*, void*, void*, void*,
 #endif
-            void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*);
+            void* code, RegisterFile*, CallFrame*, JSValue* exception, Profiler**, JSGlobalData*);
     };
 
     class JITCode {
@@ -77,9 +77,9 @@ namespace JSC {
         }
 
         // Execute the code!
-        inline JSValuePtr execute(RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValuePtr* exception)
+        inline JSValue execute(RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValue* exception)
         {
-            return JSValuePtr::decode(ctiTrampoline(
+            return JSValue::decode(ctiTrampoline(
 #if PLATFORM(X86_64)
                 0, 0, 0, 0, 0, 0,
 #endif

@@ -88,7 +88,7 @@ JSObject* JavaScriptCallFrame::thisObject() const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValuePtr JavaScriptCallFrame::evaluate(const UString& script, JSValuePtr& exception) const
+JSValue JavaScriptCallFrame::evaluate(const UString& script, JSValue& exception) const
 {
     ASSERT(m_isValid);
     if (!m_isValid)

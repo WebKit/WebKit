@@ -58,7 +58,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
         
     JSC::JSLock lock(false);
         
-    JSValuePtr handleEventFunction = m_callback->get(exec, Identifier(exec, "handleEvent"));
+    JSValue handleEventFunction = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData handleEventCallData;
     CallType handleEventCallType = handleEventFunction.getCallData(handleEventCallData);
     CallData callbackCallData;
@@ -78,7 +78,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
     args.append(toJS(exec, transaction));
     args.append(toJS(exec, error));
         
-    JSValuePtr result;
+    JSValue result;
     globalObject->globalData()->timeoutChecker.start();
     if (handleEventCallType != CallTypeNone)
         result = call(exec, handleEventFunction, handleEventCallType, handleEventCallData, m_callback, args);

@@ -53,7 +53,7 @@ void Debugger::detach(JSGlobalObject* globalObject)
     globalObject->setDebugger(0);
 }
 
-JSValuePtr evaluateInGlobalCallFrame(const UString& script, JSValuePtr& exception, JSGlobalObject* globalObject)
+JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
 

@@ -40,7 +40,7 @@ namespace JSC {
     class ExecState;
     class JSGlobalData;
     class JSObject;
-    class JSValuePtr;
+    class JSValue;
     class ProfileGenerator;
     class UString;
 
@@ -52,14 +52,14 @@ namespace JSC {
         }
 
         static Profiler* profiler(); 
-        static CallIdentifier createCallIdentifier(JSGlobalData*, JSValuePtr, const UString& sourceURL, int lineNumber);
+        static CallIdentifier createCallIdentifier(JSGlobalData*, JSValue, const UString& sourceURL, int lineNumber);
 
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
 
-        void willExecute(ExecState*, JSValuePtr function);
+        void willExecute(ExecState*, JSValue function);
         void willExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
-        void didExecute(ExecState*, JSValuePtr function);
+        void didExecute(ExecState*, JSValue function);
         void didExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
 
         const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };

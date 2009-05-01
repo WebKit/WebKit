@@ -43,7 +43,7 @@ namespace JSC {
     class CollectorBlock;
     class JSCell;
     class JSGlobalData;
-    class JSValuePtr;
+    class JSValue;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
     enum HeapType { PrimaryHeap, NumberHeap };
@@ -96,10 +96,10 @@ namespace JSC {
         Statistics statistics() const;
 
         void setGCProtectNeedsLocking();
-        void protect(JSValuePtr);
-        void unprotect(JSValuePtr);
+        void protect(JSValue);
+        void unprotect(JSValue);
 
-        static Heap* heap(JSValuePtr); // 0 for immediate values
+        static Heap* heap(JSValue); // 0 for immediate values
 
         size_t globalObjectCount();
         size_t protectedObjectCount();

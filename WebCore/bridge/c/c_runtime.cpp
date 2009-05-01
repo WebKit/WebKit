@@ -37,7 +37,7 @@
 namespace JSC {
 namespace Bindings {
 
-JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) const
+JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();
@@ -51,7 +51,7 @@ JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) cons
             result = obj->_class->getProperty(obj, _fieldIdentifier, &property);
         }
         if (result) {
-            JSValuePtr result = convertNPVariantToValue(exec, &property, instance->rootObject());
+            JSValue result = convertNPVariantToValue(exec, &property, instance->rootObject());
             _NPN_ReleaseVariantValue(&property);
             return result;
         }
@@ -59,7 +59,7 @@ JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) cons
     return jsUndefined();
 }
 
-void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValuePtr aValue) const
+void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue aValue) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();

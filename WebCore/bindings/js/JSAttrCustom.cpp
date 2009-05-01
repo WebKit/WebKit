@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSAttr::setValue(ExecState* exec, JSValuePtr value)
+void JSAttr::setValue(ExecState* exec, JSValue value)
 {
     Attr* imp = static_cast<Attr*>(impl());
     String attrValue = valueToStringWithNullCheck(exec, value);

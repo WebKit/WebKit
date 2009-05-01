@@ -54,14 +54,14 @@ namespace WebCore {
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
         // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-        JSEventListener* findJSEventListener(JSC::JSValuePtr);
+        JSEventListener* findJSEventListener(JSC::JSValue);
 
         // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::JSValuePtr);
+        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::JSValue);
 
         // Creates a GC-protected JS EventListener for an "onXXX" event attribute.
         // These listeners cannot be removed through the removeEventListener API.
-        PassRefPtr<JSEventListener> createJSAttributeEventListener(JSC::JSValuePtr);
+        PassRefPtr<JSEventListener> createJSAttributeEventListener(JSC::JSValue);
 
         typedef HashMap<JSC::JSObject*, JSEventListener*> JSListenersMap;
 

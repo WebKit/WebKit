@@ -49,8 +49,8 @@ public:
     JSC::Bindings::MethodList methodsNamed(const JSC::Identifier&);
     JSC::Bindings::Field* fieldNamed(const JSC::Identifier&);
 
-    JSC::JSValuePtr fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
-    void setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValuePtr) const;
+    JSC::JSValue fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
+    void setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValue) const;
     
     void invalidate();
     
@@ -61,24 +61,24 @@ private:
     
     virtual JSC::Bindings::Class *getClass() const;
 
-    virtual JSC::JSValuePtr invokeMethod(JSC::ExecState*, const JSC::Bindings::MethodList&, const JSC::ArgList& args);
+    virtual JSC::JSValue invokeMethod(JSC::ExecState*, const JSC::Bindings::MethodList&, const JSC::ArgList& args);
 
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSC::JSValuePtr invokeDefaultMethod(JSC::ExecState*, const JSC::ArgList&);
+    virtual JSC::JSValue invokeDefaultMethod(JSC::ExecState*, const JSC::ArgList&);
 
     virtual bool supportsConstruct() const;
-    virtual JSC::JSValuePtr invokeConstruct(JSC::ExecState*, const JSC::ArgList&);
+    virtual JSC::JSValue invokeConstruct(JSC::ExecState*, const JSC::ArgList&);
 
-    virtual JSC::JSValuePtr defaultValue(JSC::ExecState*, JSC::PreferredPrimitiveType) const;
-    virtual JSC::JSValuePtr valueOf(JSC::ExecState*) const;
+    virtual JSC::JSValue defaultValue(JSC::ExecState*, JSC::PreferredPrimitiveType) const;
+    virtual JSC::JSValue valueOf(JSC::ExecState*) const;
     
     virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
 
-    JSC::JSValuePtr stringValue(JSC::ExecState*) const;
-    JSC::JSValuePtr numberValue(JSC::ExecState*) const;
-    JSC::JSValuePtr booleanValue() const;
+    JSC::JSValue stringValue(JSC::ExecState*) const;
+    JSC::JSValue numberValue(JSC::ExecState*) const;
+    JSC::JSValue booleanValue() const;
     
-    JSC::JSValuePtr invoke(JSC::ExecState*, InvokeType, uint64_t identifier, const JSC::ArgList& args);
+    JSC::JSValue invoke(JSC::ExecState*, InvokeType, uint64_t identifier, const JSC::ArgList& args);
     
     NetscapePluginInstanceProxy* m_instanceProxy;
     uint32_t m_objectID;

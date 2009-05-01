@@ -77,16 +77,16 @@ public:
     
     virtual Class *getClass() const;
     
-    virtual JSValuePtr valueOf(ExecState*) const;
-    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValue valueOf(ExecState*) const;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    virtual JSValuePtr invokeMethod(ExecState* exec, const MethodList& method, const ArgList& args);
+    virtual JSValue invokeMethod(ExecState* exec, const MethodList& method, const ArgList& args);
 
     jobject javaInstance() const { return _instance->_instance; }
     
-    JSValuePtr stringValue(ExecState*) const;
-    JSValuePtr numberValue(ExecState*) const;
-    JSValuePtr booleanValue() const;
+    JSValue stringValue(ExecState*) const;
+    JSValue numberValue(ExecState*) const;
+    JSValue booleanValue() const;
 
 protected:
     virtual void virtualBegin();

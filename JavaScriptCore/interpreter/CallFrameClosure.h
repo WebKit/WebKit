@@ -39,7 +39,7 @@ struct CallFrameClosure {
     int expectedParams;
     int providedParams;
     
-    void setArgument(int arg, JSValuePtr value)
+    void setArgument(int arg, JSValue value)
     {
         if (arg < expectedParams)
             newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;

@@ -60,12 +60,12 @@ namespace WebCore {
         void disconnectFrame();
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
         void clear();
 
         // Set a place to put a dialog return value when the window is cleared.
-        void setReturnValueSlot(JSC::JSValuePtr* slot);
+        void setReturnValueSlot(JSC::JSValue* slot);
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
@@ -96,13 +96,13 @@ namespace WebCore {
 
             RefPtr<DOMWindow> impl;
 
-            JSC::JSValuePtr* returnValueSlot;
+            JSC::JSValue* returnValueSlot;
             JSDOMWindowShell* shell;
         };
 
-        static JSC::JSValuePtr childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValuePtr indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValuePtr namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValue childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValue indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValue namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         void clearHelperObjectProperties();
 
@@ -113,11 +113,11 @@ namespace WebCore {
     };
 
     // Returns a JSDOMWindow or jsNull()
-    JSC::JSValuePtr toJS(JSC::ExecState*, DOMWindow*);
+    JSC::JSValue toJS(JSC::ExecState*, DOMWindow*);
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*);
-    JSDOMWindow* toJSDOMWindow(JSC::JSValuePtr);
+    JSDOMWindow* toJSDOMWindow(JSC::JSValue);
 
 } // namespace WebCore
 

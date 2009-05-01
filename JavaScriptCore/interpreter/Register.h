@@ -49,9 +49,9 @@ namespace JSC {
     class Register {
     public:
         Register();
-        Register(JSValuePtr);
+        Register(JSValue);
 
-        JSValuePtr jsValue() const;
+        JSValue jsValue() const;
 
         bool marked() const;
         void mark();
@@ -89,7 +89,7 @@ namespace JSC {
         union {
             intptr_t i;
             void* v;
-            EncodedJSValuePtr value;
+            EncodedJSValue value;
 
             JSActivation* activation;
             Arguments* arguments;
@@ -105,18 +105,18 @@ namespace JSC {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        u.value = JSValuePtr::encode(noValue());
+        u.value = JSValue::encode(noValue());
 #endif
     }
 
-    ALWAYS_INLINE Register::Register(JSValuePtr v)
+    ALWAYS_INLINE Register::Register(JSValue v)
     {
-        u.value = JSValuePtr::encode(v);
+        u.value = JSValue::encode(v);
     }
 
-    ALWAYS_INLINE JSValuePtr Register::jsValue() const
+    ALWAYS_INLINE JSValue Register::jsValue() const
     {
-        return JSValuePtr::decode(u.value);
+        return JSValue::decode(u.value);
     }
     
     ALWAYS_INLINE bool Register::marked() const

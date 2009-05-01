@@ -33,9 +33,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 
-static JSValuePtr functionProtoFuncToString(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr functionProtoFuncApply(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr functionProtoFuncCall(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValue functionProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue functionProtoFuncApply(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue functionProtoFuncCall(ExecState*, JSObject*, JSValue, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec, PassRefPtr<Structure> structure)
     : InternalFunction(&exec->globalData(), structure, exec->propertyNames().nullIdentifier)
@@ -52,7 +52,7 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, Structure* protot
     putDirectFunctionWithoutTransition(exec, *callFunction, DontEnum);
 }
 
-static JSValuePtr callFunctionPrototype(ExecState*, JSObject*, JSValuePtr, const ArgList&)
+static JSValue callFunctionPrototype(ExecState*, JSObject*, JSValue, const ArgList&)
 {
     return jsUndefined();
 }
@@ -82,7 +82,7 @@ static inline void insertSemicolonIfNeeded(UString& functionBody)
     }
 }
 
-JSValuePtr functionProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
+JSValue functionProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     if (thisValue.isObject(&JSFunction::info)) {
         JSFunction* function = asFunction(thisValue);
@@ -99,14 +99,14 @@ JSValuePtr functionProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr this
     return throwError(exec, TypeError);
 }
 
-JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+JSValue functionProtoFuncApply(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     CallData callData;
     CallType callType = thisValue.getCallData(callData);
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValuePtr array = args.at(1);
+    JSValue array = args.at(1);
 
     MarkedArgumentBuffer applyArgs;
     if (!array.isUndefinedOrNull()) {
@@ -127,7 +127,7 @@ JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisVal
     return call(exec, thisValue, callType, callData, args.at(0), applyArgs);
 }
 
-JSValuePtr functionProtoFuncCall(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+JSValue functionProtoFuncCall(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     CallData callData;
     CallType callType = thisValue.getCallData(callData);

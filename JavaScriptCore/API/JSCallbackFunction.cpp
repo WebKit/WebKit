@@ -46,7 +46,7 @@ JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCa
 {
 }
 
-JSValuePtr JSCallbackFunction::call(ExecState* exec, JSObject* functionObject, JSValuePtr thisValue, const ArgList& args)
+JSValue JSCallbackFunction::call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(functionObject);

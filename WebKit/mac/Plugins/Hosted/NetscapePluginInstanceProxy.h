@@ -141,8 +141,8 @@ public:
     
     PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
     RetainPtr<NSData *> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
-    void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
-    JSC::JSValuePtr demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
+    void marshalValue(JSC::ExecState*, JSC::JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength);
+    JSC::JSValue demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
 
     void addInstance(ProxyInstance*);
     void removeInstance(ProxyInstance*);
@@ -287,9 +287,9 @@ private:
     // NPRuntime
     uint32_t idForObject(JSC::JSObject*);
     
-    void addValueToArray(NSMutableArray *, JSC::ExecState* exec, JSC::JSValuePtr value);
+    void addValueToArray(NSMutableArray *, JSC::ExecState* exec, JSC::JSValue value);
     
-    bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValuePtr& result);
+    bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
     void demarshalValues(JSC::ExecState*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
 
     uint32_t m_objectIDCounter;

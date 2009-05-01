@@ -60,7 +60,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr toJS(ExecState* exec, EventTarget* target)
+JSValue toJS(ExecState* exec, EventTarget* target)
 {
     if (!target)
         return jsNull();
@@ -105,7 +105,7 @@ JSValuePtr toJS(ExecState* exec, EventTarget* target)
     return jsNull();
 }
 
-EventTarget* toEventTarget(JSC::JSValuePtr value)
+EventTarget* toEventTarget(JSC::JSValue value)
 {
     #define CONVERT_TO_EVENT_TARGET(type) \
         if (value.isObject(&JS##type::s_info)) \

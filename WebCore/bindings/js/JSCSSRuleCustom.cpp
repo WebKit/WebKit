@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr toJS(ExecState* exec, CSSRule* rule)
+JSValue toJS(ExecState* exec, CSSRule* rule)
 {
     if (!rule)
         return jsNull();

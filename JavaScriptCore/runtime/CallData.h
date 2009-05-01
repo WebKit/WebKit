@@ -35,7 +35,7 @@ namespace JSC {
     class ExecState;
     class FunctionBodyNode;
     class JSObject;
-    class JSValuePtr;
+    class JSValue;
     class ScopeChainNode;
 
     enum CallType {
@@ -44,7 +44,7 @@ namespace JSC {
         CallTypeJS
     };
 
-    typedef JSValuePtr (*NativeFunction)(ExecState*, JSObject*, JSValuePtr thisValue, const ArgList&);
+    typedef JSValue (*NativeFunction)(ExecState*, JSObject*, JSValue thisValue, const ArgList&);
 
     union CallData {
         struct {
@@ -56,7 +56,7 @@ namespace JSC {
         } js;
     };
 
-    JSValuePtr call(ExecState*, JSValuePtr functionObject, CallType, const CallData&, JSValuePtr thisValue, const ArgList&);
+    JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
 
 } // namespace JSC
 

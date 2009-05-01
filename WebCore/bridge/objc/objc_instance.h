@@ -48,21 +48,21 @@ public:
     
     virtual Class *getClass() const;
         
-    virtual JSValuePtr valueOf(ExecState*) const;
-    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValue valueOf(ExecState*) const;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
     
-    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
+    virtual JSValue invokeMethod(ExecState*, const MethodList&, const ArgList&);
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
+    virtual JSValue invokeDefaultMethod(ExecState*, const ArgList&);
 
-    JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier&) const;
-    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr);
+    JSValue getValueOfUndefinedField(ExecState*, const Identifier&) const;
+    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue);
 
     ObjectStructPtr getObject() const { return _instance.get(); }
     
-    JSValuePtr stringValue(ExecState*) const;
-    JSValuePtr numberValue(ExecState*) const;
-    JSValuePtr booleanValue() const;
+    JSValue stringValue(ExecState*) const;
+    JSValue numberValue(ExecState*) const;
+    JSValue booleanValue() const;
 
 protected:
     virtual void virtualBegin();

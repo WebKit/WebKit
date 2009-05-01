@@ -85,7 +85,7 @@ namespace JSC {
         size_t size() const { return m_size; }
         bool isEmpty() const { return !m_size; }
 
-        JSValuePtr at(size_t i) const
+        JSValue at(size_t i) const
         {
             if (i < m_size)
                 return m_buffer[i].jsValue();
@@ -99,7 +99,7 @@ namespace JSC {
             m_size = 0;
         }
 
-        void append(JSValuePtr v)
+        void append(JSValue v)
         {
             ASSERT(!m_isReadOnly);
             
@@ -123,7 +123,7 @@ namespace JSC {
         static void markLists(ListSet&);
 
     private:
-        void slowAppend(JSValuePtr);
+        void slowAppend(JSValue);
         
         Register* m_buffer;
         size_t m_size;
@@ -156,8 +156,8 @@ namespace JSC {
 
     class ArgList {
     public:
-        typedef JSValuePtr* iterator;
-        typedef const JSValuePtr* const_iterator;
+        typedef JSValue* iterator;
+        typedef const JSValue* const_iterator;
 
         ArgList()
             : m_args(0)
@@ -165,26 +165,26 @@ namespace JSC {
         {
         }
         
-        ArgList(JSValuePtr* args, unsigned argCount)
+        ArgList(JSValue* args, unsigned argCount)
             : m_args(args)
             , m_argCount(argCount)
         {
         }
         
         ArgList(Register* args, int argCount)
-            : m_args(reinterpret_cast<JSValuePtr*>(args))
+            : m_args(reinterpret_cast<JSValue*>(args))
             , m_argCount(argCount)
         {
             ASSERT(argCount >= 0);
         }
 
         ArgList(const MarkedArgumentBuffer& args)
-            : m_args(reinterpret_cast<JSValuePtr*>(const_cast<Register*>(args.begin())))
+            : m_args(reinterpret_cast<JSValue*>(const_cast<Register*>(args.begin())))
             , m_argCount(args.size())
         {
         }
 
-        JSValuePtr at(size_t idx) const
+        JSValue at(size_t idx) const
         {
             if (idx < m_argCount)
                 return m_args[idx];
@@ -203,7 +203,7 @@ namespace JSC {
 
         void getSlice(int startIndex, ArgList& result) const;
     private:
-        JSValuePtr* m_args;
+        JSValue* m_args;
         size_t m_argCount;
     };
 

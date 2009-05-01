@@ -30,7 +30,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
-static JSValuePtr errorProtoFuncToString(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValue errorProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
 
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
@@ -44,13 +44,13 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure,
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-JSValuePtr errorProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
+JSValue errorProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
     UString s = "Error";
 
-    JSValuePtr v = thisObj->get(exec, exec->propertyNames().name);
+    JSValue v = thisObj->get(exec, exec->propertyNames().name);
     if (!v.isUndefined())
         s = v.toString(exec);
 

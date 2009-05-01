@@ -32,7 +32,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSHTMLInputElement::selectionStart(ExecState* exec) const
+JSValue JSHTMLInputElement::selectionStart(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
@@ -41,7 +41,7 @@ JSValuePtr JSHTMLInputElement::selectionStart(ExecState* exec) const
     return jsNumber(exec, input->selectionStart());
 }
 
-void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValuePtr value)
+void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValue value)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
@@ -50,7 +50,7 @@ void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValuePtr value)
     input->setSelectionStart(value.toInt32(exec));
 }
 
-JSValuePtr JSHTMLInputElement::selectionEnd(ExecState* exec) const
+JSValue JSHTMLInputElement::selectionEnd(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
@@ -59,7 +59,7 @@ JSValuePtr JSHTMLInputElement::selectionEnd(ExecState* exec) const
     return jsNumber(exec, input->selectionEnd());
 }
 
-void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValuePtr value)
+void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
@@ -68,7 +68,7 @@ void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValuePtr value)
     input->setSelectionEnd(value.toInt32(exec));
 }
 
-JSValuePtr JSHTMLInputElement::setSelectionRange(ExecState* exec, const ArgList& args)
+JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec, const ArgList& args)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())

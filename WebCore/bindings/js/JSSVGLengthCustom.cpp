@@ -26,13 +26,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSSVGLength::value(ExecState* exec) const
+JSValue JSSVGLength::value(ExecState* exec) const
 {
     SVGLength imp(*impl());
     return jsNumber(exec, imp.value(context()));
 }
 
-JSValuePtr JSSVGLength::convertToSpecifiedUnits(ExecState* exec, const ArgList& args)
+JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec, const ArgList& args)
 {
     JSSVGPODTypeWrapper<SVGLength>* wrapper = impl();
 

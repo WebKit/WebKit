@@ -55,12 +55,12 @@ bool DebuggerActivation::getOwnPropertySlot(ExecState* exec, const Identifier& p
     return m_activation->getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void DebuggerActivation::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+void DebuggerActivation::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     m_activation->put(exec, propertyName, value, slot);
 }
 
-void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValuePtr value, unsigned attributes)
+void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     m_activation->putWithAttributes(exec, propertyName, value, attributes);
 }
@@ -90,12 +90,12 @@ void DebuggerActivation::defineSetter(ExecState* exec, const Identifier& propert
     m_activation->defineSetter(exec, propertyName, setterFunction);
 }
 
-JSValuePtr DebuggerActivation::lookupGetter(ExecState* exec, const Identifier& propertyName)
+JSValue DebuggerActivation::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_activation->lookupGetter(exec, propertyName);
 }
 
-JSValuePtr DebuggerActivation::lookupSetter(ExecState* exec, const Identifier& propertyName)
+JSValue DebuggerActivation::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_activation->lookupSetter(exec, propertyName);
 }

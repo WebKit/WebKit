@@ -60,7 +60,7 @@ namespace WebCore {
 
         void* operator new(size_t);
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValuePtr prototype) 
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype) 
         {
             return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType)); 
         }
@@ -69,22 +69,22 @@ namespace WebCore {
         virtual void mark();
         virtual JSC::UString className() const;
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
-        virtual void putWithAttributes(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, unsigned attributes);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
+        virtual void putWithAttributes(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, unsigned attributes);
         virtual bool deleteProperty(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
         virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier& propertyName, unsigned& attributes) const;
         virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction);
         virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction);
-        virtual JSC::JSValuePtr lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
-        virtual JSC::JSValuePtr lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
+        virtual JSC::JSValue lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
+        virtual JSC::JSValue lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSObject* unwrappedObject();
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
         JSDOMWindow* m_window;
     };
 
-    JSC::JSValuePtr toJS(JSC::ExecState*, Frame*);
+    JSC::JSValue toJS(JSC::ExecState*, Frame*);
     JSDOMWindowShell* toJSDOMWindowShell(Frame*);
 
 } // namespace WebCore

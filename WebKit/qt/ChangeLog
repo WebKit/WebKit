@@ -1,3 +1,18 @@
+2009-05-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber Stamped by Sam Weinig.
+        
+        Renamed JSValuePtr => JSValue.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        (setupScriptObject):
+        (QWebElement::evaluateScript):
+        (QWebElement::functions):
+        (QWebElement::scriptableProperty):
+        (QWebElement::setScriptableProperty):
+        (QWebElement::scriptableProperties):
+
 2009-05-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

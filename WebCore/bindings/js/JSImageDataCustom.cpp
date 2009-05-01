@@ -36,7 +36,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr toJS(ExecState* exec, ImageData* imageData)
+JSValue toJS(ExecState* exec, ImageData* imageData)
 {
     if (!imageData)
         return jsNull();

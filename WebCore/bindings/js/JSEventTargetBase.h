@@ -74,13 +74,13 @@
     macro(specificEventTarget, OnUnload, unloadEvent) \
 
 #define EVENT_LISTENER_GETTER(specificEventTarget, name, event) \
-JSC::JSValuePtr js##specificEventTarget##name(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot& slot) \
+JSC::JSValue js##specificEventTarget##name(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot& slot) \
 { \
     return static_cast<JS##specificEventTarget*>(slot.slotBase())->getListener(event); \
 } \
 
 #define EVENT_LISTENER_SETTER(specificEventTarget, name, event) \
-void setJS##specificEventTarget##name(JSC::ExecState* exec, JSC::JSObject* baseObject, JSC::JSValuePtr value) \
+void setJS##specificEventTarget##name(JSC::ExecState* exec, JSC::JSObject* baseObject, JSC::JSValue value) \
 { \
     static_cast<JS##specificEventTarget*>(baseObject)->setListener(exec, event, value); \
 } \

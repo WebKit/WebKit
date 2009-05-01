@@ -697,7 +697,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     globalObject->globalData()->timeoutChecker.stop();
     ComplType type = completion.complType();
     
-    JSValuePtr result;
+    JSValue result;
     if (type == Normal)
         result = completion.value();
     
@@ -727,7 +727,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);
-    JSValuePtr function = object->get(exec, methodName);
+    JSValue function = object->get(exec, methodName);
     CallData callData;
     CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
@@ -738,7 +738,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     globalObject->globalData()->timeoutChecker.start();
-    JSValuePtr value = call(exec, function, callType, callData, object, argList);
+    JSValue value = call(exec, function, callType, callData, object, argList);
     globalObject->globalData()->timeoutChecker.stop();
         
     marshalValue(exec, value, resultData, resultLength);
@@ -771,7 +771,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     globalObject->globalData()->timeoutChecker.start();
-    JSValuePtr value = call(exec, object, callType, callData, object, argList);
+    JSValue value = call(exec, object, callType, callData, object, argList);
     globalObject->globalData()->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
@@ -805,7 +805,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
 
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     globalObject->globalData()->timeoutChecker.start();
-    JSValuePtr value = JSC::construct(exec, object, constructType, constructData, argList);
+    JSValue value = JSC::construct(exec, object, constructType, constructData, argList);
     globalObject->globalData()->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
@@ -828,7 +828,7 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
     
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);    
-    JSValuePtr value = object->get(exec, propertyName);
+    JSValue value = object->get(exec, propertyName);
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -847,7 +847,7 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned proper
     
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);    
-    JSValuePtr value = object->get(exec, propertyName);
+    JSValue value = object->get(exec, propertyName);
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -870,7 +870,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);    
 
-    JSValuePtr value = demarshalValue(exec, valueData, valueLength);
+    JSValue value = demarshalValue(exec, valueData, valueLength);
     PutPropertySlot slot;
     object->put(exec, propertyName, value, slot);
     
@@ -894,7 +894,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);    
     
-    JSValuePtr value = demarshalValue(exec, valueData, valueLength);
+    JSValue value = demarshalValue(exec, valueData, valueLength);
     object->put(exec, propertyName, value);
     
     exec->clearException();
@@ -1006,7 +1006,7 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
     
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);
-    JSValuePtr func = object->get(exec, methodName);
+    JSValue func = object->get(exec, methodName);
     exec->clearException();
     return !func.isUndefined();
 }
@@ -1050,7 +1050,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     return true;
 }
 
-void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValuePtr value)
+void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValue value)
 {
     JSLock lock(false);
 
@@ -1081,7 +1081,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithInt:VoidValueType]];
 }
 
-void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
+void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     
@@ -1109,7 +1109,7 @@ RetainPtr<NSData *> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, 
     return data;
 }    
 
-bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArray *array, NSUInteger& index, JSValuePtr& result)
+bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArray *array, NSUInteger& index, JSValue& result)
 {
     if (index == [array count])
         return false;
@@ -1164,7 +1164,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
     }
 }
 
-JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char* valueData, mach_msg_type_number_t valueLength)
+JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char* valueData, mach_msg_type_number_t valueLength)
 {
     RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:(void*)valueData length:valueLength freeWhenDone:NO]);
 
@@ -1173,7 +1173,7 @@ JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const ch
                                                                            format:0
                                                                  errorDescription:0];
     NSUInteger position = 0;
-    JSValuePtr value;
+    JSValue value;
     bool result = demarshalValueFromArray(exec, array.get(), position, value);
     ASSERT_UNUSED(result, result);
 
@@ -1189,7 +1189,7 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
                                                                            format:0
                                                                  errorDescription:0];
     NSUInteger position = 0;
-    JSValuePtr value;
+    JSValue value;
     while (demarshalValueFromArray(exec, array.get(), position, value))
         result.append(value);
 }

@@ -35,13 +35,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSHTMLOptionsCollection::length(ExecState* exec) const
+JSValue JSHTMLOptionsCollection::length(ExecState* exec) const
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     return jsNumber(exec, imp->length());
 }
 
-void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValuePtr value)
+void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     ExceptionCode ec = 0;
@@ -60,14 +60,14 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValuePtr value)
     setDOMException(exec, ec);
 }
 
-void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValuePtr value)
+void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
     selectIndexSetter(base, exec, index, value);
 }
 
-JSValuePtr JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
+JSValue JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     HTMLOptionElement* option = toHTMLOptionElement(args.at(0));
@@ -88,7 +88,7 @@ JSValuePtr JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSHTMLOptionsCollection::remove(ExecState* exec, const ArgList& args)
+JSValue JSHTMLOptionsCollection::remove(ExecState* exec, const ArgList& args)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     JSHTMLSelectElement* base = static_cast<JSHTMLSelectElement*>(asObject(toJS(exec, imp->base())));

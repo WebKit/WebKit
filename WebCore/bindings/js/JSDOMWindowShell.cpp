@@ -88,12 +88,12 @@ bool JSDOMWindowShell::getOwnPropertySlot(ExecState* exec, const Identifier& pro
     return m_window->getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSDOMWindowShell::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+void JSDOMWindowShell::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     m_window->put(exec, propertyName, value, slot);
 }
 
-void JSDOMWindowShell::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValuePtr value, unsigned attributes)
+void JSDOMWindowShell::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     m_window->putWithAttributes(exec, propertyName, value, attributes);
 }
@@ -123,12 +123,12 @@ void JSDOMWindowShell::defineSetter(ExecState* exec, const Identifier& propertyN
     m_window->defineSetter(exec, propertyName, setterFunction);
 }
 
-JSValuePtr JSDOMWindowShell::lookupGetter(ExecState* exec, const Identifier& propertyName)
+JSValue JSDOMWindowShell::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_window->lookupGetter(exec, propertyName);
 }
 
-JSValuePtr JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& propertyName)
+JSValue JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_window->lookupSetter(exec, propertyName);
 }
@@ -166,7 +166,7 @@ void* JSDOMWindowShell::operator new(size_t size)
 // Conversion methods
 // ----
 
-JSValuePtr toJS(ExecState*, Frame* frame)
+JSValue toJS(ExecState*, Frame* frame)
 {
     if (!frame)
         return jsNull();

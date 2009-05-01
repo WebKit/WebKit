@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-JSValuePtr CallFrame::thisValue()
+JSValue CallFrame::thisValue()
 {
     return this[codeBlock()->thisRegister()].jsValue();
 }
@@ -42,7 +42,7 @@ void CallFrame::dumpCaller()
     int signedLineNumber;
     intptr_t sourceID;
     UString urlString;
-    JSValuePtr function;
+    JSValue function;
     
     interpreter()->retrieveLastCaller(this, signedLineNumber, sourceID, urlString, function);
     printf("Callpoint => %s:%d\n", urlString.ascii(), signedLineNumber);

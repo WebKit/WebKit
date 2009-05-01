@@ -61,7 +61,7 @@ namespace WebCore {
         const JSC::ScopeChainNode* scopeChain() const;
 
         JSC::JSObject* thisObject() const;
-        JSC::JSValuePtr evaluate(const JSC::UString& script, JSC::JSValuePtr& exception) const;
+        JSC::JSValue evaluate(const JSC::UString& script, JSC::JSValue& exception) const;
         
     private:
         JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, int line);

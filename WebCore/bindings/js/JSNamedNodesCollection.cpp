@@ -48,13 +48,13 @@ JSNamedNodesCollection::JSNamedNodesCollection(ExecState* exec, const Vector<Ref
 {
 }
 
-JSValuePtr JSNamedNodesCollection::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSNamedNodesCollection::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSNamedNodesCollection* thisObj = static_cast<JSNamedNodesCollection*>(asObject(slot.slotBase()));
     return jsNumber(exec, thisObj->m_nodes->size());
 }
 
-JSValuePtr JSNamedNodesCollection::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSNamedNodesCollection::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSNamedNodesCollection *thisObj = static_cast<JSNamedNodesCollection*>(asObject(slot.slotBase()));
     return toJS(exec, (*thisObj->m_nodes)[slot.index()].get());

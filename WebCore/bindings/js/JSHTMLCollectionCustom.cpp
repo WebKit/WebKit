@@ -35,7 +35,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValuePtr getNamedItems(ExecState* exec, HTMLCollection* impl, const Identifier& propertyName)
+static JSValue getNamedItems(ExecState* exec, HTMLCollection* impl, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     impl->namedItems(propertyName, namedItems);
@@ -51,7 +51,7 @@ static JSValuePtr getNamedItems(ExecState* exec, HTMLCollection* impl, const Ide
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-static JSValuePtr callHTMLCollection(ExecState* exec, JSObject* function, JSValuePtr, const ArgList& args)
+static JSValue callHTMLCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();
@@ -102,13 +102,13 @@ bool JSHTMLCollection::canGetItemsForName(ExecState* exec, HTMLCollection* thisO
     return !getNamedItems(exec, thisObj, propertyName).isUndefined();
 }
 
-JSValuePtr JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection* thisObj = static_cast<JSHTMLCollection*>(asObject(slot.slotBase()));
     return getNamedItems(exec, thisObj->impl(), propertyName);
 }
 
-JSValuePtr JSHTMLCollection::item(ExecState* exec, const ArgList& args)
+JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
 {
     bool ok;
     uint32_t index = args.at(0).toString(exec).toUInt32(&ok, false);
@@ -117,12 +117,12 @@ JSValuePtr JSHTMLCollection::item(ExecState* exec, const ArgList& args)
     return getNamedItems(exec, impl(), Identifier(exec, args.at(0).toString(exec)));
 }
 
-JSValuePtr JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
+JSValue JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
 {
     return getNamedItems(exec, impl(), Identifier(exec, args.at(0).toString(exec)));
 }
 
-JSValuePtr toJS(ExecState* exec, HTMLCollection* collection)
+JSValue toJS(ExecState* exec, HTMLCollection* collection)
 {
     if (!collection)
         return jsNull();

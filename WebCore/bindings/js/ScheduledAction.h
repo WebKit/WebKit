@@ -45,20 +45,20 @@ namespace WebCore {
         void execute(ScriptExecutionContext*);
 
     private:
-        ScheduledAction(JSC::JSValuePtr function, const JSC::ArgList&);
+        ScheduledAction(JSC::JSValue function, const JSC::ArgList&);
         ScheduledAction(const String& code)
             : m_code(code)
         {
         }
 
-        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValuePtr thisValue);
+        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue);
         void execute(Document*);
 #if ENABLE(WORKERS)        
         void execute(WorkerContext*);
 #endif
 
-        JSC::ProtectedJSValuePtr m_function;
-        Vector<JSC::ProtectedJSValuePtr> m_args;
+        JSC::ProtectedJSValue m_function;
+        Vector<JSC::ProtectedJSValue> m_args;
         String m_code;
     };
 

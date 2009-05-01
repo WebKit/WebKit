@@ -77,18 +77,18 @@ public:
     uint64_t serverIdentifier() const { return m_serverIdentifier; }
 
 private:
-    virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
     
     uint64_t m_serverIdentifier;
 };
 
-JSValuePtr ProxyField::valueFromInstance(ExecState* exec, const Instance* instance) const
+JSValue ProxyField::valueFromInstance(ExecState* exec, const Instance* instance) const
 {
     return static_cast<const ProxyInstance*>(instance)->fieldValue(exec, this);
 }
     
-void ProxyField::setValueToInstance(ExecState* exec, const Instance* instance, JSValuePtr value) const
+void ProxyField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue value) const
 {
     static_cast<const ProxyInstance*>(instance)->setFieldValue(exec, this, value);
 }
@@ -134,7 +134,7 @@ JSC::Bindings::Class *ProxyInstance::getClass() const
     return proxyClass();
 }
 
-JSValuePtr ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const JSC::ArgList& args)
+JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const JSC::ArgList& args)
 {
     RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
 
@@ -151,7 +151,7 @@ JSValuePtr ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t
     return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
 }
 
-JSValuePtr ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
+JSValue ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
 {
     ASSERT(methodList.size() == 1);
 
@@ -176,7 +176,7 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
     return false;
 }
     
-JSValuePtr ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
+JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 {
     return invoke(exec, InvokeDefault, 0, args);
 }
@@ -197,12 +197,12 @@ bool ProxyInstance::supportsConstruct() const
     return false;
 }
     
-JSValuePtr ProxyInstance::invokeConstruct(ExecState* exec, const ArgList& args)
+JSValue ProxyInstance::invokeConstruct(ExecState* exec, const ArgList& args)
 {
     return invoke(exec, Construct, 0, args);
 }
 
-JSValuePtr ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
         return stringValue(exec);
@@ -211,25 +211,25 @@ JSValuePtr ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType h
     return valueOf(exec);
 }
 
-JSValuePtr ProxyInstance::stringValue(ExecState* exec) const
+JSValue ProxyInstance::stringValue(ExecState* exec) const
 {
     // FIXME: Implement something sensible.
     return jsString(exec, "");
 }
 
-JSValuePtr ProxyInstance::numberValue(ExecState* exec) const
+JSValue ProxyInstance::numberValue(ExecState* exec) const
 {
     // FIXME: Implement something sensible.
     return jsNumber(exec, 0);
 }
 
-JSValuePtr ProxyInstance::booleanValue() const
+JSValue ProxyInstance::booleanValue() const
 {
     // FIXME: Implement something sensible.
     return jsBoolean(false);
 }
 
-JSValuePtr ProxyInstance::valueOf(ExecState* exec) const
+JSValue ProxyInstance::valueOf(ExecState* exec) const
 {
     return stringValue(exec);
 }
@@ -319,7 +319,7 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
     return 0;
 }
 
-JSC::JSValuePtr ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
+JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
 {
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
     uint32_t requestID = m_instanceProxy->nextRequestID();
@@ -336,7 +336,7 @@ JSC::JSValuePtr ProxyInstance::fieldValue(ExecState* exec, const Field* field) c
     return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
 }
     
-void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValuePtr value) const
+void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue value) const
 {
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
     uint32_t requestID = m_instanceProxy->nextRequestID();

@@ -39,7 +39,7 @@ public:
     
     // InternalFunction mish-mashes constructor and function behavior -- we should 
     // refactor the code so this override isn't necessary
-    static PassRefPtr<Structure> createStructure(JSValuePtr proto) 
+    static PassRefPtr<Structure> createStructure(JSValue proto) 
     { 
         return Structure::create(proto, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot)); 
     }
@@ -48,7 +48,7 @@ private:
     virtual CallType getCallData(CallData&);
     virtual const ClassInfo* classInfo() const { return &info; }
 
-    static JSValuePtr call(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+    static JSValue call(ExecState*, JSObject*, JSValue, const ArgList&);
 
     JSObjectCallAsFunctionCallback m_callback;
 };

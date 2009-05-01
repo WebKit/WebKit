@@ -133,7 +133,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
 bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {
     JSLock lock(false);
-    JSValuePtr jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier(scriptState, name));
+    JSValue jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier(scriptState, name));
     if (!jsValue)
         return false;
 

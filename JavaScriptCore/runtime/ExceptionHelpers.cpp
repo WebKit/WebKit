@@ -51,22 +51,22 @@ public:
     virtual UString toString(ExecState*) const { return "JavaScript execution exceeded timeout."; }
 };
 
-JSValuePtr createInterruptedExecutionException(JSGlobalData* globalData)
+JSValue createInterruptedExecutionException(JSGlobalData* globalData)
 {
     return new (globalData) InterruptedExecutionError(globalData);
 }
 
-static JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg)
+static JSValue createError(ExecState* exec, ErrorType e, const char* msg)
 {
     return Error::create(exec, e, msg, -1, -1, 0);
 }
 
-JSValuePtr createStackOverflowError(ExecState* exec)
+JSValue createStackOverflowError(ExecState* exec)
 {
     return createError(exec, RangeError, "Maximum call stack size exceeded.");
 }
 
-JSValuePtr createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
@@ -81,7 +81,7 @@ JSValuePtr createUndefinedVariableError(ExecState* exec, const Identifier& ident
     return exception;
 }
     
-static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValuePtr value, UString error)
+static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValue value, UString error)
 {
     if (!expressionStop || expressionStart > codeBlock->source()->length()) {
         UString errorText = value.toString(exec);
@@ -125,7 +125,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
     return errorText;
 }
 
-JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     UString message = "not a valid argument for '";
     message.append(op);
@@ -143,7 +143,7 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValuePtr va
     return exception;
 }
 
-JSObject* createNotAConstructorError(ExecState* exec, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSObject* createNotAConstructorError(ExecState* exec, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
@@ -164,7 +164,7 @@ JSObject* createNotAConstructorError(ExecState* exec, JSValuePtr value, unsigned
     return exception;
 }
 
-JSValuePtr createNotAFunctionError(ExecState* exec, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValue createNotAFunctionError(ExecState* exec, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;

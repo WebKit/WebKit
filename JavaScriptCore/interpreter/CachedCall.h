@@ -34,7 +34,7 @@
 namespace JSC {
     class CachedCall : Noncopyable {
     public:
-        CachedCall(CallFrame* callFrame, JSFunction* function, int argCount, JSValuePtr* exception)
+        CachedCall(CallFrame* callFrame, JSFunction* function, int argCount, JSValue* exception)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
             , m_exception(exception)
@@ -44,13 +44,13 @@ namespace JSC {
             m_valid = !*exception;
         }
         
-        JSValuePtr call()
+        JSValue call()
         { 
             ASSERT(m_valid);
             return m_interpreter->execute(m_closure, m_exception);
         }
-        void setThis(JSValuePtr v) { m_closure.setArgument(0, v); }
-        void setArgument(int n, JSValuePtr v) { m_closure.setArgument(n + 1, v); }
+        void setThis(JSValue v) { m_closure.setArgument(0, v); }
+        void setArgument(int n, JSValue v) { m_closure.setArgument(n + 1, v); }
         CallFrame* newCallFrame() { return m_closure.newCallFrame; }
         ~CachedCall()
         {
@@ -61,7 +61,7 @@ namespace JSC {
     private:
         bool m_valid;
         Interpreter* m_interpreter;
-        JSValuePtr* m_exception;
+        JSValue* m_exception;
         DynamicGlobalObjectScope m_globalObjectScope;
         CallFrameClosure m_closure;
     };

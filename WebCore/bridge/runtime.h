@@ -49,8 +49,8 @@ typedef Vector<Method*> MethodList;
 
 class Field {
 public:
-    virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const = 0;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const = 0;
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const = 0;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const = 0;
 
     virtual ~Field() { }
 };
@@ -66,7 +66,7 @@ class Class : Noncopyable {
 public:
     virtual MethodList methodsNamed(const Identifier&, Instance*) const = 0;
     virtual Field* fieldNamed(const Identifier&, Instance*) const = 0;
-    virtual JSValuePtr fallbackObject(ExecState*, Instance*, const Identifier&) { return jsUndefined(); }
+    virtual JSValue fallbackObject(ExecState*, Instance*, const Identifier&) { return jsUndefined(); }
 
     virtual ~Class() { }
 };
@@ -90,28 +90,28 @@ public:
     virtual RuntimeObjectImp* createRuntimeObject(ExecState*);
     
     // Returns false if the value was not set successfully.
-    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr) { return false; }
+    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue) { return false; }
 
-    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList& args) = 0;
+    virtual JSValue invokeMethod(ExecState*, const MethodList&, const ArgList& args) = 0;
 
     virtual bool supportsInvokeDefaultMethod() const { return false; }
-    virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
+    virtual JSValue invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
     
     virtual bool supportsConstruct() const { return false; }
-    virtual JSValuePtr invokeConstruct(ExecState*, const ArgList&) { return noValue(); }
+    virtual JSValue invokeConstruct(ExecState*, const ArgList&) { return noValue(); }
     
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 
-    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const = 0;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const = 0;
     
-    virtual JSValuePtr valueOf(ExecState* exec) const = 0;
+    virtual JSValue valueOf(ExecState* exec) const = 0;
     
     RootObject* rootObject() const;
     
     virtual ~Instance();
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&) { return false; }
-    virtual void put(JSObject*, ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&) { }
+    virtual void put(JSObject*, ExecState*, const Identifier&, JSValue, PutPropertySlot&) { }
 
 protected:
     virtual void virtualBegin() { }
@@ -125,8 +125,8 @@ public:
     Array(PassRefPtr<RootObject>);
     virtual ~Array();
     
-    virtual void setValueAt(ExecState *, unsigned index, JSValuePtr) const = 0;
-    virtual JSValuePtr valueAt(ExecState *, unsigned index) const = 0;
+    virtual void setValueAt(ExecState *, unsigned index, JSValue) const = 0;
+    virtual JSValue valueAt(ExecState *, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
 
 protected:

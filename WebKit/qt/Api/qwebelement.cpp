@@ -538,7 +538,7 @@ QWebFrame *QWebElement::webFrame() const
     return QWebFramePrivate::kit(frame);
 }
 
-static bool setupScriptContext(WebCore::Element* element, JSC::JSValuePtr& thisValue, ScriptState*& state, ScriptController*& scriptController)
+static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValue, ScriptState*& state, ScriptController*& scriptController)
 {
     if (!element)
         return false;
@@ -584,7 +584,7 @@ static bool setupScriptObject(WebCore::Element* element, ScriptObject& object, S
 
     state = scriptController->globalObject()->globalExec();
 
-    JSC::JSValuePtr thisValue = toJS(state, element);
+    JSC::JSValue thisValue = toJS(state, element);
     if (!thisValue)
         return false;
 
@@ -607,7 +607,7 @@ QVariant QWebElement::evaluateScript(const QString& scriptSource)
         return QVariant();
 
     ScriptState* state = 0;
-    JSC::JSValuePtr thisValue;
+    JSC::JSValue thisValue;
     ScriptController* scriptController = 0;
 
     if (!setupScriptContext(m_element, thisValue, state, scriptController))
@@ -619,7 +619,7 @@ QVariant QWebElement::evaluateScript(const QString& scriptSource)
     if ((completion.complType() != JSC::ReturnValue) && (completion.complType() != JSC::Normal))
         return QVariant();
 
-    JSC::JSValuePtr result = completion.value();
+    JSC::JSValue result = completion.value();
     if (!result)
         return QVariant();
 
@@ -689,7 +689,7 @@ QStringList QWebElement::functions() const
     for (JSC::PropertyNameArray::const_iterator it = properties.begin();
          it != properties.end(); ++it) {
 
-        JSC::JSValuePtr property = object->get(state, *it);
+        JSC::JSValue property = object->get(state, *it);
         if (!property)
             continue;
 
@@ -734,7 +734,7 @@ QVariant QWebElement::scriptableProperty(const QString &name) const
         return QVariant();
 
     String wcName(name);
-    JSC::JSValuePtr property = thisObject.jsObject()->get(state, JSC::Identifier(state, wcName));
+    JSC::JSValue property = thisObject.jsObject()->get(state, JSC::Identifier(state, wcName));
 
     // ###
     if (state->hadException())
@@ -763,7 +763,7 @@ void QWebElement::setScriptableProperty(const QString &name, const QVariant &val
     if (!setupScriptObject(m_element, thisObject, state, scriptController))
         return;
 
-    JSC::JSValuePtr jsValue = JSC::Bindings::convertQVariantToValue(state, scriptController->bindingRootObject(), value);
+    JSC::JSValue jsValue = JSC::Bindings::convertQVariantToValue(state, scriptController->bindingRootObject(), value);
     if (!jsValue)
         return;
 
@@ -798,7 +798,7 @@ QStringList QWebElement::scriptableProperties() const
     ScriptController* script = frame->script();
     JSC::ExecState* exec = script->globalObject()->globalExec();
 
-    JSC::JSValuePtr thisValue = toJS(exec, m_element);
+    JSC::JSValue thisValue = toJS(exec, m_element);
     if (!thisValue)
         return QStringList();
 
@@ -814,7 +814,7 @@ QStringList QWebElement::scriptableProperties() const
     for (JSC::PropertyNameArray::const_iterator it = properties.begin();
          it != properties.end(); ++it) {
 
-        JSC::JSValuePtr property = object->get(exec, *it);
+        JSC::JSValue property = object->get(exec, *it);
         if (!property)
             continue;
 

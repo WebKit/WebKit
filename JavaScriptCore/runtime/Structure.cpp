@@ -120,7 +120,7 @@ void Structure::dumpStatistics()
 #endif
 }
 
-Structure::Structure(JSValuePtr prototype, const TypeInfo& typeInfo)
+Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
     , m_prototype(prototype)
     , m_propertyTable(0)
@@ -418,7 +418,7 @@ PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, 
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValuePtr prototype)
+PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValue prototype)
 {
     RefPtr<Structure> transition = create(prototype, structure->typeInfo());
 

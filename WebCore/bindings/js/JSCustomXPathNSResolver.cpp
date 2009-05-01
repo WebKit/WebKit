@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(JSC::ExecState* exec, JSC::JSValuePtr value)
+PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(JSC::ExecState* exec, JSC::JSValue value)
 {
     if (value.isUndefinedOrNull())
         return 0;
@@ -77,7 +77,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
         
-    JSValuePtr function = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
+    JSValue function = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
     CallData callData;
     CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone) {
@@ -96,7 +96,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     args.append(jsString(exec, prefix));
 
     globalObject->globalData()->timeoutChecker.start();
-    JSValuePtr retval = call(exec, function, callType, callData, m_customResolver, args);
+    JSValue retval = call(exec, function, callType, callData, m_customResolver, args);
     globalObject->globalData()->timeoutChecker.stop();
 
     String result;

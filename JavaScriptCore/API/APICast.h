@@ -33,7 +33,7 @@ namespace JSC {
     class PropertyNameArray;
     class JSGlobalData;
     class JSObject;
-    class JSValuePtr;
+    class JSValue;
 }
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
@@ -55,9 +55,9 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
     return reinterpret_cast<JSC::ExecState*>(c);
 }
 
-inline JSC::JSValuePtr toJS(JSValueRef v)
+inline JSC::JSValue toJS(JSValueRef v)
 {
-    return JSC::JSValuePtr::decode(reinterpret_cast<JSC::EncodedJSValuePtr>(const_cast<OpaqueJSValue*>(v)));
+    return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)
@@ -75,12 +75,12 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
     return reinterpret_cast<JSC::JSGlobalData*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
-inline JSValueRef toRef(JSC::JSValuePtr v)
+inline JSValueRef toRef(JSC::JSValue v)
 {
-    return reinterpret_cast<JSValueRef>(JSC::JSValuePtr::encode(v));
+    return reinterpret_cast<JSValueRef>(JSC::JSValue::encode(v));
 }
 
-inline JSValueRef* toRef(JSC::JSValuePtr* v)
+inline JSValueRef* toRef(JSC::JSValue* v)
 {
     return reinterpret_cast<JSValueRef*>(v);
 }

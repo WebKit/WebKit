@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-static NEVER_INLINE JSValuePtr stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
+static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
 {
     UChar* buf = static_cast<UChar*>(fastMalloc(args.size() * sizeof(UChar)));
     UChar* p = buf;
@@ -37,7 +37,7 @@ static NEVER_INLINE JSValuePtr stringFromCharCodeSlowCase(ExecState* exec, const
     return jsString(exec, UString(buf, p - buf, false));
 }
 
-static JSValuePtr stringFromCharCode(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
+static JSValue stringFromCharCode(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     if (LIKELY(args.size() == 1))
         return jsSingleCharacterString(exec, args.at(0).toUInt32(exec));
@@ -74,7 +74,7 @@ ConstructType StringConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.5.1
-static JSValuePtr callStringConstructor(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
+static JSValue callStringConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     if (args.isEmpty())
         return jsEmptyString(exec);

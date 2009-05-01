@@ -37,7 +37,7 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
 }
 
 template<JSC::NativeFunction nativeFunction, int length>
-JSC::JSValuePtr nonCachingStaticFunctionGetter(JSC::ExecState* exec, const JSC::Identifier& propertyName, const JSC::PropertySlot&)
+JSC::JSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, const JSC::Identifier& propertyName, const JSC::PropertySlot&)
 {
     return new (exec) JSC::PrototypeFunction(exec, length, propertyName, nativeFunction);
 }
@@ -128,7 +128,7 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
     return false;
 }
 
-inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValuePtr value, JSC::PutPropertySlot& slot)
+inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue value, JSC::PutPropertySlot& slot)
 {
     if (!impl()->frame())
         return true;

@@ -29,10 +29,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
+JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 {
     TransformationMatrix imp(*impl());
-    JSC::JSValuePtr result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.inverse()).get(), m_context.get());
+    JSC::JSValue result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.inverse()).get(), m_context.get());
 
     if (!imp.isInvertible())
         setDOMException(exec, SVGException::SVG_MATRIX_NOT_INVERTABLE);
@@ -40,14 +40,14 @@ JSValuePtr JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
     return result;
 }
 
-JSValuePtr JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
+JSValue JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
  
     float x = args.at(0).toFloat(exec);
     float y = args.at(1).toFloat(exec);
 
-    JSC::JSValuePtr result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
+    JSC::JSValue result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
 
     if (x == 0.0 || y == 0.0)
         setDOMException(exec, SVGException::SVG_INVALID_VALUE_ERR);

@@ -69,7 +69,7 @@ using JSC::ExecState;
 using JSC::Interpreter;
 using JSC::JSLock;
 using JSC::JSObject;
-using JSC::JSValuePtr;
+using JSC::JSValue;
 using JSC::UString;
 
 #if PLATFORM(QT)

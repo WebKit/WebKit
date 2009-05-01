@@ -43,7 +43,7 @@ JSByteArray::JSByteArray(ExecState* exec, PassRefPtr<Structure> structure, ByteA
     putDirect(exec->globalData().propertyNames->length, jsNumber(exec, m_storage->length()), ReadOnly | DontDelete);
 }
     
-PassRefPtr<Structure> JSByteArray::createStructure(JSValuePtr prototype)
+PassRefPtr<Structure> JSByteArray::createStructure(JSValue prototype)
 {
     PassRefPtr<Structure> result = Structure::create(prototype, TypeInfo(ObjectType));
     return result;
@@ -69,7 +69,7 @@ bool JSByteArray::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Pro
     return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
-void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     bool ok;
     unsigned index = propertyName.toUInt32(&ok, false);
@@ -80,7 +80,7 @@ void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValuePt
     JSObject::put(exec, propertyName, value, slot);
 }
 
-void JSByteArray::put(ExecState* exec, unsigned propertyName, JSValuePtr value)
+void JSByteArray::put(ExecState* exec, unsigned propertyName, JSValue value)
 {
     setIndex(exec, propertyName, value);
 }

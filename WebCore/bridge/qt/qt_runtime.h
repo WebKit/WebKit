@@ -56,8 +56,8 @@ public:
         : m_type(ChildObject), m_childObject(child)
         {}
 
-    virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
     virtual const char* name() const;
     QtFieldType fieldType() const {return m_type;}
 private:
@@ -98,8 +98,8 @@ public:
 
     RootObject* rootObject() const;
 
-    virtual void setValueAt(ExecState*, unsigned index, JSValuePtr) const;
-    virtual JSValuePtr valueAt(ExecState*, unsigned index) const;
+    virtual void setValueAt(ExecState*, unsigned index, JSValue) const;
+    virtual JSValue valueAt(ExecState*, unsigned index) const;
     virtual unsigned int getLength() const {return m_length;}
 
 private:
@@ -149,7 +149,7 @@ public:
         return globalObject->functionPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
         return Structure::create(prototype, TypeInfo(ObjectType));
     }
@@ -174,10 +174,10 @@ protected:
 
 private:
     virtual CallType getCallData(CallData&);
-    static JSValuePtr call(ExecState* exec, JSObject* functionObject, JSValuePtr thisValue, const ArgList& args);
-    static JSValuePtr lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValuePtr connectGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValuePtr disconnectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args);
+    static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue connectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue disconnectGetter(ExecState*, const Identifier&, const PropertySlot&);
 };
 
 class QtConnectionObject;
@@ -193,8 +193,8 @@ protected:
 
 private:
     virtual CallType getCallData(CallData&);
-    static JSValuePtr call(ExecState* exec, JSObject* functionObject, JSValuePtr thisValue, const ArgList& args);
-    static JSValuePtr lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args);
+    static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static QMultiMap<QObject *, QtConnectionObject *> connections;
     friend class QtConnectionObject;
 };
@@ -223,8 +223,8 @@ private:
     ProtectedPtr<JSObject> m_funcObject;
 };
 
-QVariant convertValueToQVariant(ExecState* exec, JSValuePtr value, QMetaType::Type hint, int *distance);
-JSValuePtr convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& variant);
+QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);
+JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& variant);
 
 } // namespace Bindings
 } // namespace JSC

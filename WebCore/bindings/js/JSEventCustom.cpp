@@ -72,12 +72,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSEvent::clipboardData(ExecState* exec) const
+JSValue JSEvent::clipboardData(ExecState* exec) const
 {
     return impl()->isClipboardEvent() ? toJS(exec, impl()->clipboardData()) : jsUndefined();
 }
 
-JSValuePtr toJS(ExecState* exec, Event* event)
+JSValue toJS(ExecState* exec, Event* event)
 {
     JSLock lock(false);
 

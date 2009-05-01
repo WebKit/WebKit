@@ -39,28 +39,28 @@ using namespace JSC;
 
 namespace WebCore {
 
-static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValuePtr value)
+static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
 {
     if (!value.isObject())
         return 0;
 
     JSObject* object = asObject(value);
 
-    JSValuePtr enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
+    JSValue enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
     if (exec->hadException())
         return 0;
     bool enableHighAccuracy = enableHighAccuracyValue.toBoolean(exec);
     if (exec->hadException())
         return 0;
 
-    JSValuePtr timeoutValue = object->get(exec, Identifier(exec, "timeout"));
+    JSValue timeoutValue = object->get(exec, Identifier(exec, "timeout"));
     if (exec->hadException())
         return 0;
     unsigned timeout = timeoutValue.toUInt32(exec);
     if (exec->hadException())
         return 0;
 
-    JSValuePtr maximumAgeValue = object->get(exec, Identifier(exec, "maximumAge"));
+    JSValue maximumAgeValue = object->get(exec, Identifier(exec, "maximumAge"));
     if (exec->hadException())
         return 0;
     unsigned maximumAge = maximumAgeValue.toUInt32(exec);
@@ -70,7 +70,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     return PositionOptions::create(enableHighAccuracy, timeout, maximumAge);
 }
 
-JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
+JSValue JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;
@@ -109,7 +109,7 @@ JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& arg
     return jsUndefined();
 }
 
-JSValuePtr JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
+JSValue JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;

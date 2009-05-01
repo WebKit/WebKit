@@ -35,7 +35,7 @@ namespace JSC {
     class ExecState;
     class FunctionBodyNode;
     class JSObject;
-    class JSValuePtr;
+    class JSValue;
     class ScopeChainNode;
 
     enum ConstructType {
@@ -56,7 +56,7 @@ namespace JSC {
         } js;
     };
 
-    JSObject* construct(ExecState*, JSValuePtr constructor, ConstructType, const ConstructData&, const ArgList&);
+    JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
 
 } // namespace JSC
 
