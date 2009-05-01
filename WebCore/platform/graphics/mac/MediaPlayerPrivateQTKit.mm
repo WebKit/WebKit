@@ -1044,8 +1044,12 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         allowedTrackTypes->add(QTMediaTypeText);
         allowedTrackTypes->add(QTMediaTypeBase);
         allowedTrackTypes->add(QTMediaTypeMPEG);
-        allowedTrackTypes->add("clcp");
-        allowedTrackTypes->add("sbtl");
+        allowedTrackTypes->add("clcp"); // Closed caption
+        allowedTrackTypes->add("sbtl"); // Subtitle
+        allowedTrackTypes->add("odsm"); // MPEG-4 object descriptor stream
+        allowedTrackTypes->add("sdsm"); // MPEG-4 scene description stream
+        allowedTrackTypes->add("tmcd"); // timecode
+        allowedTrackTypes->add("tc64"); // timcode-64
     }
     
     NSArray *tracks = [m_qtMovie.get() tracks];

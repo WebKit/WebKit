@@ -672,6 +672,10 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount, unsigned&
         allowedTrackTypes->add(BaseMediaType);
         allowedTrackTypes->add('clcp'); // Closed caption
         allowedTrackTypes->add('sbtl'); // Subtitle
+        allowedTrackTypes->add('odsm'); // MPEG-4 object descriptor stream
+        allowedTrackTypes->add('sdsm'); // MPEG-4 scene description stream
+        allowedTrackTypes->add(TimeCodeMediaType);
+        allowedTrackTypes->add(TimeCode64MediaType);
     }
 
     long trackCount = GetMovieTrackCount(m_private->m_movie);

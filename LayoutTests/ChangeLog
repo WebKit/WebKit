@@ -1,3 +1,20 @@
+2009-04-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        MediaDocument falls back to plug-in unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=25504
+        <rdar://problem/6844702>
+
+        Test case for MediaDocument with previously unsupported track
+        types. Disabled on Windows for now until https://bugs.webkit.org/show_bug.cgi?id=25220
+        has been fixed.
+    
+        * media/content/counting.mp4: Added.
+        * media/video-document-types-expected.txt: Added.
+        * media/video-document-types.html: Added.
+        * platform/win/Skipped:
+
 2009-04-30  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

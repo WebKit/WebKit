@@ -1,3 +1,23 @@
+2009-04-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        MediaDocument falls back to plug-in unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=25504
+        <rdar://problem/6844702>
+        
+        Don't allow harmless media types to cause a MediaDocument to fall
+        back to PluginDocument.
+
+        Test: media/video-document-types.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks): add timecode, timecode 64,
+        odsm, and sdsm to allowed track types.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::disableUnsupportedTracks): Ditto.
+
 2009-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

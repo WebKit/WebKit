@@ -532,7 +532,6 @@ http/tests/security/local-iFrame-from-remote.html
 http/tests/security/local-image-from-remote.html
 http/tests/security/local-user-CSS-from-remote.html
 http/tests/security/originHeader/origin-header-for-https.html
-media/video-click-dblckick-standalone.html
 plugins/npruntime.html
 
 ################################################################################
@@ -588,3 +587,7 @@ media/video-zoom-controls.html
 
 # Bug 25483: http/tests/navigation/redirect-cycle.html sometimes times out on Windows <https://bugs.webkit.org/show_bug.cgi?id=25483>
 http/tests/navigation/redirect-cycle.html
+
+# disable until 25220 is fixed: Loading a .ogv file into Safari downloads the file instead of playing it in a media document, even if XiphQT is installed (25220)
+media/video-click-dblckick-standalone.html
+media/video-document-types.html
