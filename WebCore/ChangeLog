@@ -1,3 +1,24 @@
+2009-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/6841106> REGRESSION: Crash drag selecting 
+        To Do's in a Mail note (excessive recursion in mouse drag tracking)
+
+        Oliver's recent change to dragging seems to have revealed a long-
+        time bug in passSubframeEventToSubframe where we did not set 
+        m_sendingEventToSubview to true before calling 
+        handleMouseMoveEvent() in the NSMouseMoved case. This patch fixes 
+        that and adds ASSERTions around all of the places where 
+        m_sendingEventToSubview is set to true and then false to make sure 
+        we are not trampling its state.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+
 2009-04-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

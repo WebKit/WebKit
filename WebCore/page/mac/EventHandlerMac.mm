@@ -352,6 +352,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
         return false;
     
     if (!m_mouseDownWasInSubframe) {
+        ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view mouseDragged:currentEvent().get()];
@@ -378,6 +379,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
         return false;
     
     if (!m_mouseDownWasInSubframe) {
+        ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view mouseUp:currentEvent().get()];
@@ -406,7 +408,10 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             // Since we're passing in currentEvent() here, we can call
             // handleMouseMoveEvent() directly, since the save/restore of
             // currentEvent() that mouseMoved() does would have no effect.
+            ASSERT(!m_sendingEventToSubview);
+            m_sendingEventToSubview = true;
             subframe->eventHandler()->handleMouseMoveEvent(currentEvent().get(), hoveredNode);
+            m_sendingEventToSubview = false;
             return true;
         
         case NSLeftMouseDown: {
@@ -490,6 +495,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
         // We probably hit the border of a RenderWidget
         return false;
 
+    ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
     // Work around <rdar://problem/6806810> which can cause -[NSScrollView scrollWheel:] to
     // crash if the NSScrollView is released during timer or network callback dispatch
