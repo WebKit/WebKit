@@ -1,5 +1,12 @@
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix take 1.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-05-01  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber Stamped by Sam Weinig.
         
         Renamed JSValuePtr => JSValue.
