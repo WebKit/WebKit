@@ -77,6 +77,15 @@ static bool isDeletableElement(const Node* node)
     if (!renderer || !renderer->isBox())
         return false;
 
+    // Disallow the body element since it isn't practical to delete, and the deletion UI would be clipped.
+    if (node->hasTagName(bodyTag))
+        return false;
+
+    // Disallow elements with any overflow clip, since the deletion UI would be clipped as well. <rdar://problem/6840161>
+    if (renderer->hasOverflowClip())
+        return false;
+
+    // Disallow Mail blockquotes since the deletion UI would get in the way of editing for these.
     if (isMailBlockquote(node))
         return false;
 
@@ -91,7 +100,7 @@ static bool isDeletableElement(const Node* node)
     if (renderer->isTable())
         return true;
 
-    if (node->hasTagName(ulTag) || node->hasTagName(olTag))
+    if (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(iframeTag))
         return true;
 
     if (renderer->isPositioned())

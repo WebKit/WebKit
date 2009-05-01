@@ -1,5 +1,19 @@
 2009-05-01  Timothy Hatcher  <timothy@apple.com>
 
+        Disallow the deletion UI for elements that have any overflow clipping.
+        Also disallow the UI for the body element it isn't practical to delete,
+        and the deletion UI would be clipped.
+
+        <rdar://problem/6840161> Deletion UI can be clipped by some
+        elements (with overflow: hidden)
+
+        Reviewed by Darin Adler.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+
+2009-05-01  Timothy Hatcher  <timothy@apple.com>
+
         Decrease the minimum height for deleteable elements to 16px, and increase the
         minimum width to 48px. This allows deleting shorter items like navigation bars.
 
