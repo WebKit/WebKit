@@ -222,6 +222,13 @@ void SubresourceLoader::didCancel(const ResourceError& error)
     
     if (cancelled())
         return;
+    
+    // The only way the subresource loader can reach the terminal state here is if the run loop spins when calling
+    // m_client->didFail. This should in theory not happen which is why the assert is here. 
+    ASSERT(!reachedTerminalState());
+    if (reachedTerminalState())
+        return;
+    
     m_documentLoader->removeSubresourceLoader(this);
     ResourceLoader::didCancel(error);
 }

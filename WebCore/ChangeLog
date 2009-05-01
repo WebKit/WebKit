@@ -1,3 +1,17 @@
+2009-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6839222>
+        CrashTracer: Lots of crashes in Safari in hash table remove function inside DocumentLoader::removeSubresourceLoader
+        
+        After calling m_client->didFail(), check if the subresource loader has reached its terminal state. If that's the case,
+        return early to avoid calling removeSubresourceLoader on a null document loader. I don't think this is allowed to happen
+        which is why I've added the ASSERT.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didCancel):
+
 2009-05-01  Timothy Hatcher  <timothy@apple.com>
 
         Disallow the deletion UI for elements that have any overflow clipping.
