@@ -17,6 +17,7 @@ EXPORTS
         ??0JSValue@JSC@@QAE@W4JSNullTag@01@@Z)
         ??0Mutex@WTF@@QAE@XZ
         ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@HABVIdentifier@1@P6A?AVJSValue@1@0PAVJSObject@1@V41@ABVArgList@1@@Z@Z)
+        ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6A?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
         ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
         ??0ScriptCallStack@WebCore@@QAE@PAVExecState@JSC@@ABVArgList@3@I@Z)
         ??0StringObject@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVUString@1@@Z
