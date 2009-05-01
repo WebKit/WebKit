@@ -2609,7 +2609,6 @@ fast/forms/text-control-intrinsic-widths.html
 fast/forms/textAreaLineHeight.html
 fast/forms/textarea-align.html
 fast/forms/textarea-appearance-wrap.html
-fast/forms/textarea-hard-linewrap.html
 fast/forms/textarea-metrics.html
 fast/forms/textarea-paste-newline.html
 fast/forms/textarea-rows-cols.html
@@ -3149,6 +3148,7 @@ fast/replaced/selection-rect-in-table-cell.html
 fast/replaced/selection-rect-transform.html
 fast/replaced/selection-rect.html
 fast/replaced/table-percent-height.html
+fast/replaced/table-percent-height-text-controls.html
 fast/replaced/three-selects-break.html
 fast/replaced/width100percent-button.html
 fast/replaced/width100percent-checkbox.html
@@ -3859,6 +3859,7 @@ media/video-currentTime-set.html
 media/video-currentTime-set2.html
 media/video-currentTime.html
 media/video-display-toggle.html
+media/video-document-types.html
 media/video-dom-autoplay.html
 media/video-empty-source.html
 media/video-error-does-not-exist.html

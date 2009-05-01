@@ -1,3 +1,11 @@
+2009-05-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Skip the following failing tests:
+        fast/replaced/table-percent-height-text-controls.html
+        media/video-document-types.html
+
+        * platform/gtk/Skipped:
+
 2009-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
