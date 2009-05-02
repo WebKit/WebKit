@@ -1,3 +1,13 @@
+2009-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6741615> REGRESSION (r38629): Shortcut "Flag/Junk" in MobileMe does not work
+        when Kotoeri is used.
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView inputContext]): Return a nil input context when
+        focus is not in editable content.
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Sam Weinig.

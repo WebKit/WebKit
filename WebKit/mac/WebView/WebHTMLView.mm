@@ -5373,6 +5373,14 @@ static BOOL isInPasswordField(Frame* coreFrame)
     return coreFrame && coreFrame->selection()->isInPasswordField();
 }
 
+- (NSTextInputContext *)inputContext
+{
+    Frame* coreFrame = core([self _frame]);
+    if (!isTextInput(coreFrame) || isInPasswordField(coreFrame))
+        return nil;
+    return [super inputContext];
+}
+
 - (NSAttributedString *)textStorage
 {
     Frame* coreFrame = core([self _frame]);
