@@ -1,3 +1,9 @@
+2009-05-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Skip new test that does not represent a regression.
+
+        * platform/gtk/Skipped:
+
 2009-04-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele Peterson and Darin Adler.
