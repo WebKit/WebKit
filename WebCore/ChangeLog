@@ -1,3 +1,16 @@
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::isEqual):
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::getHeadCallback):
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::getChildren):
+        (WebCore::getParent):
+        (WebCore::getHead):
+
 2009-05-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver Hunt and Sam "Jon 'The Belly' Honeycutt" Weinig
