@@ -1,5 +1,17 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey "Too Far!" Garen.
+
+        Move JS number construction into JSValue.
+
+        * runtime/JSImmediate.h:
+        * runtime/JSNumberCell.h:
+        (JSC::JSValue::JSValue):
+        * runtime/JSValue.h:
+        (JSC::jsNumber):
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff "The Minneapolis" Garen.
 
         Add mechanism to vend heap allocated JS numbers to JavaScriptCore API clients with a

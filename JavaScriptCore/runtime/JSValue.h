@@ -28,11 +28,13 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
+#include <wtf/AlwaysInline.h>
 
 namespace JSC {
 
     class Identifier;
     class JSCell;
+    class JSGlobalData;
     class JSImmediate;
     class JSObject;
     class JSString;
@@ -78,6 +80,22 @@ namespace JSC {
         JSValue(JSFalseTag);
         JSValue(JSCell* ptr);
         JSValue(const JSCell* ptr);
+
+        // Numbers
+        JSValue(ExecState*, double);
+        JSValue(ExecState*, int);
+        JSValue(ExecState*, unsigned);
+        JSValue(ExecState*, long);
+        JSValue(ExecState*, unsigned long);
+        JSValue(ExecState*, long long);
+        JSValue(ExecState*, unsigned long long);
+        JSValue(JSGlobalData*, double);
+        JSValue(JSGlobalData*, int);
+        JSValue(JSGlobalData*, unsigned);
+        JSValue(JSGlobalData*, long);
+        JSValue(JSGlobalData*, unsigned long);
+        JSValue(JSGlobalData*, long long);
+        JSValue(JSGlobalData*, unsigned long long);
 
         operator bool() const;
         bool operator==(const JSValue other) const;
@@ -215,6 +233,76 @@ namespace JSC {
     inline JSValue jsBoolean(bool b)
     {
         return b ? JSValue(JSValue::JSTrue) : JSValue(JSValue::JSFalse);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, double d)
+    {
+        return JSValue(exec, d);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, int i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, unsigned i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, long i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, unsigned long i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, long long i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(ExecState* exec, unsigned long long i)
+    {
+        return JSValue(exec, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, double d)
+    {
+        return JSValue(globalData, d);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, int i)
+    {
+        return JSValue(globalData, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, unsigned i)
+    {
+        return JSValue(globalData, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, long i)
+    {
+        return JSValue(globalData, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, unsigned long i)
+    {
+        return JSValue(globalData, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, long long i)
+    {
+        return JSValue(globalData, i);
+    }
+
+    ALWAYS_INLINE JSValue jsNumber(JSGlobalData* globalData, unsigned long long i)
+    {
+        return JSValue(globalData, i);
     }
 
     inline bool operator==(const JSValue a, const JSCell* b) { return a == JSValue(b); }

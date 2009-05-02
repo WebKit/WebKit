@@ -42,27 +42,6 @@ namespace JSC {
     class JSObject;
     class UString;
 
-    JSValue jsNumber(ExecState* exec, double d);
-    JSValue jsNumber(ExecState*, char i);
-    JSValue jsNumber(ExecState*, unsigned char i);
-    JSValue jsNumber(ExecState*, short i);
-    JSValue jsNumber(ExecState*, unsigned short i);
-    JSValue jsNumber(ExecState* exec, int i);
-    JSValue jsNumber(ExecState* exec, unsigned i);
-    JSValue jsNumber(ExecState* exec, long i);
-    JSValue jsNumber(ExecState* exec, unsigned long i);
-    JSValue jsNumber(ExecState* exec, long long i);
-    JSValue jsNumber(ExecState* exec, unsigned long long i);
-    JSValue jsNumber(JSGlobalData* globalData, double d);
-    JSValue jsNumber(JSGlobalData* globalData, short i);
-    JSValue jsNumber(JSGlobalData* globalData, unsigned short i);
-    JSValue jsNumber(JSGlobalData* globalData, int i);
-    JSValue jsNumber(JSGlobalData* globalData, unsigned i);
-    JSValue jsNumber(JSGlobalData* globalData, long i);
-    JSValue jsNumber(JSGlobalData* globalData, unsigned long i);
-    JSValue jsNumber(JSGlobalData* globalData, long long i);
-    JSValue jsNumber(JSGlobalData* globalData, unsigned long long i);
-
 #if USE(ALTERNATE_JSIMMEDIATE)
     inline intptr_t reinterpretDoubleToIntptr(double value)
     {
