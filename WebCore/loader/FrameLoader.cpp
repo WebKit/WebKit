@@ -5108,19 +5108,22 @@ Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletEleme
         paramNames.append(it->first);
         paramValues.append(it->second);
     }
-    
+
+    KURL codeBaseURL = completeURL(codeBaseURLString);
+    if (!canLoad(codeBaseURL, String(), element->document())) {
+        FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
+        return 0;
+    }
+
     if (baseURLString.isEmpty())
         baseURLString = m_frame->document()->baseURL().string();
     KURL baseURL = completeURL(baseURLString);
 
-    Widget* widget = 0;
-    KURL codeBaseURL = completeURL(codeBaseURLString);
-    if (canLoad(codeBaseURL, String(), element->document())) {
-        widget = m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
-        if (widget)
-            m_containsPlugIns = true;
-    }
+    Widget* widget = m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+    if (!widget)
+        return 0;
 
+    m_containsPlugIns = true;
     return widget;
 }
 

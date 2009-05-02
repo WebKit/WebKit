@@ -1,5 +1,14 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        A little clean up.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createJavaAppletWidget):
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Fix the build.
 
         * bindings/js/ScriptValue.cpp:
