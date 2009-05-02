@@ -55,15 +55,15 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
     if (completion.complType() == Throw) {
         if (exception)
-            *exception = toRef(exec, completion.value());
+            *exception = toRef(completion.value());
         return 0;
     }
 
     if (completion.value())
-        return toRef(exec, completion.value());
+        return toRef(completion.value());
     
     // happens, for example, when the only statement is an empty (';') statement
-    return toRef(exec, jsUndefined());
+    return toRef(jsUndefined());
 }
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
@@ -76,7 +76,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     Completion completion = checkSyntax(exec->dynamicGlobalObject()->globalExec(), source);
     if (completion.complType() == Throw) {
         if (exception)
-            *exception = toRef(exec, completion.value());
+            *exception = toRef(completion.value());
         return false;
     }
     

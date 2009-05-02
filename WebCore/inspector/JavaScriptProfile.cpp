@@ -68,9 +68,8 @@ static JSValueRef getHeadCallback(JSContextRef ctx, JSObjectRef thisObject, JSSt
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
         return JSValueMakeUndefined(ctx);
 
-    ExecState* exec = toJS(ctx);
     Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
-    return toRef(exec, toJS(exec, profile->head()));
+    return toRef(toJS(toJS(ctx), profile->head()));
 }
 
 static JSValueRef getUniqueIdCallback(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)

@@ -171,9 +171,8 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     if (exception && *exception)
         return JSValueMakeUndefined(ctx);
 
-    ExecState* exec = toJS(ctx);
     for (Vector<RefPtr<ProfileNode> >::const_iterator it = children.begin(); it != children.end(); ++it) {
-        JSValueRef arg0 = toRef(exec, toJS(exec, (*it).get() ));
+        JSValueRef arg0 = toRef(toJS(toJS(ctx), (*it).get() ));
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
         if (exception && *exception)
             return JSValueMakeUndefined(ctx);
@@ -190,8 +189,8 @@ static JSValueRef getParent(JSContextRef ctx, JSObjectRef thisObject, JSStringRe
         return JSValueMakeUndefined(ctx);
 
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
-    ExecState* exec = toJS(ctx);
-    return toRef(exec, toJS(exec, profileNode->parent()));
+    return toRef(toJS(toJS(ctx), profileNode->parent())
+    );
 }
 
 static JSValueRef getHead(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
@@ -202,8 +201,7 @@ static JSValueRef getHead(JSContextRef ctx, JSObjectRef thisObject, JSStringRef,
         return JSValueMakeUndefined(ctx);
 
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
-    ExecState* exec = toJS(ctx);
-    return toRef(exec, toJS(exec, profileNode->head()));
+    return toRef(toJS(toJS(ctx), profileNode->head()));
 }
 
 static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)

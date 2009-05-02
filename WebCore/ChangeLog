@@ -1,5 +1,18 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Roll out JavaScriptCore API number marshaling.
+
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::isEqual):
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::getHeadCallback):
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::getChildren):
+        (WebCore::getParent):
+        (WebCore::getHead):
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Fix build.
 
         * workers/WorkerContext.idl:

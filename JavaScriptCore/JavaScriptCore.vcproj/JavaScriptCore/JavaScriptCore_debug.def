@@ -177,7 +177,6 @@ EXPORTS
         ?isGetterSetter@JSCell@JSC@@UBE_NXZ
         ?isMainThread@WTF@@YA_NXZ
         ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
-        ?jsAPIMangledNumber@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
         ?jsNumber@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
         ?jsNumberCell@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
         ?jsOwnedString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z

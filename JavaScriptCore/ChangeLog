@@ -1,5 +1,75 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Roll out JavaScriptCore API number marshaling.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::construct):
+        (JSC::::hasInstance):
+        (JSC::::call):
+        (JSC::::toNumber):
+        (JSC::::toString):
+        (JSC::::staticValueGetter):
+        (JSC::::callbackGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsObjectOfClass):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeUndefined):
+        (JSValueMakeNull):
+        (JSValueMakeBoolean):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/JSValue.h:
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
