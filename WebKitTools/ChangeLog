@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig.
 
+        Another cut at getting tests passing on Windows again.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame): Tweak formatting.
+        (FrameLoadDelegate::didFailProvisionalLoadWithError): Ditto.
+        (FrameLoadDelegate::didCommitLoadForFrame): Ditto.
+        (FrameLoadDelegate::didFinishLoadForFrame): Ditto.
+        (FrameLoadDelegate::didFailLoadWithError): Added missing logging.
+
+2009-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Try to get tests passing on Windows again.
 
         * DumpRenderTree/win/DumpRenderTree.cpp:
