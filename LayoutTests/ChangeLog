@@ -1,5 +1,19 @@
 2009-05-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 25352: REGRESSION(r42322): style isn't applied at bmwusa.com
+        https://bugs.webkit.org/show_bug.cgi?id=25352
+        rdar://problem/6823239
+
+        * http/tests/mime/resources/style-with-text-css-and-invalid-type.php:
+        Copied from LayoutTests/http/tests/mime/resources/style-with-charset.php and adapted.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type-expected.txt: Added.
+        * http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html:
+        Copied from LayoutTests/http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html and adapted.
+
+2009-05-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady Eidson (except for the non-fast/loading test fixes).
 
         Bug 25491: WebFrame leak when a subframe removes itself

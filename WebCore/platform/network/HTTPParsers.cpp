@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,12 +40,13 @@ static inline bool skipWhiteSpace(const String& str, int& pos, bool fromHttpEqui
 {
     int len = str.length();
 
-    if (fromHttpEquivMeta)
+    if (fromHttpEquivMeta) {
         while (pos != len && str[pos] <= ' ')
             ++pos;
-    else
+    } else {
         while (pos != len && (str[pos] == '\t' || str[pos] == ' '))
             ++pos;
+    }
 
     return pos != len;
 }
@@ -135,14 +136,33 @@ String extractMIMETypeFromMediaType(const String& mediaType)
     Vector<UChar, 64> mimeType;
     unsigned length = mediaType.length();
     mimeType.reserveCapacity(length);
-    for (unsigned offset = 0; offset < length; offset++) {
-        UChar c = mediaType[offset];
+    for (unsigned i = 0; i < length; i++) {
+        UChar c = mediaType[i];
+
         if (c == ';')
             break;
-        else if (isSpaceOrNewline(c)) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
+
+        // While RFC 2616 does not allow it, other browsers allow multiple values in the HTTP media
+        // type header field, Content-Type. In such cases, the media type string passed here may contain
+        // the multiple values separated by commas. For now, this code ignores text after the first comma,
+        // which prevents it from simply failing to parse such types altogether. Later for better
+        // compatibility we could consider using the first or last valid MIME type instead.
+        // See https://bugs.webkit.org/show_bug.cgi?id=25352 for more discussion.
+        if (c == ',')
+            break;
+
+        // FIXME: The following is not correct. RFC 2616 allows linear white space before and
+        // after the MIME type, but not within the MIME type itself. And linear white space
+        // includes only a few specific ASCII characters; a small subset of isSpaceOrNewline.
+        // See https://bugs.webkit.org/show_bug.cgi?id=8644 for a bug tracking part of this.
+        if (isSpaceOrNewline(c))
             continue;
+
         mimeType.append(c);
     }
+
+    if (mimeType.size() == length)
+        return mediaType;
     return String(mimeType.data(), mimeType.size());
 }
 

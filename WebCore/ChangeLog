@@ -1,5 +1,18 @@
 2009-05-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 25352: REGRESSION(r42322): style isn't applied at bmwusa.com
+        https://bugs.webkit.org/show_bug.cgi?id=25352
+        rdar://problem/6823239
+
+        Test: http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractMIMETypeFromMediaType): Allow comma as a separator.
+
+2009-05-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady Eidson.
 
         Bug 25491: WebFrame leak when a subframe removes itself
