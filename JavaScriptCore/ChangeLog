@@ -1,3 +1,9 @@
+2009-05-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
         Fix 64bit build.

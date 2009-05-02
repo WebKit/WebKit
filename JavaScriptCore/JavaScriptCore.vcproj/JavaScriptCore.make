@@ -6,7 +6,7 @@ BUILDSTYLE=Debug_Internal
 
 install:
     set PRODUCTION=1
-	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
+	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
 	-xcopy "$(OBJROOT)\bin\*.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
