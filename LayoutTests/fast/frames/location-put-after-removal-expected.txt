@@ -2,4 +2,5 @@ This page tests for a crash when assigning to the location property of a window 
 
 If the test passes, you'll see a PASS message below.
 
+
 PASS: You didn't crash.

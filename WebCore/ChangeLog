@@ -1,3 +1,17 @@
+2009-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Bug 25491: WebFrame leak when a subframe removes itself
+        https://bugs.webkit.org/show_bug.cgi?id=25491
+        rdar://problem/6833859
+
+        Test: fast/loading/subframe-removes-itself.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): When isStopping is true,
+        treat load as complete, even if isLoadingInAPISense is still returning true.
+
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
         Roll out JavaScriptCore API number marshaling.

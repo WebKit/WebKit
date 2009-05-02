@@ -1,3 +1,28 @@
+2009-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson (except for the non-fast/loading test fixes).
+
+        Bug 25491: WebFrame leak when a subframe removes itself
+        https://bugs.webkit.org/show_bug.cgi?id=25491
+        rdar://problem/6833859
+
+        * fast/loading: Added.
+        * fast/loading/resources: Added.
+        * fast/loading/resources/subframe-that-removes-itself.html: Added.
+        * fast/loading/subframe-removes-itself-expected.txt: Added.
+        * fast/loading/subframe-removes-itself.html: Added.
+
+        * fast/frames/location-put-after-removal-expected.txt: Updated.
+        For some reason, fixing the loader sequence results in output that has one more blank line.
+
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html:
+        Updated tests so they don't terminate when the partial load of the subframe completes, but
+        rather wait until the subsequent load of about:blank occurs.
+
+        * platform/gtk/Skipped: Skip loading tests.
+
 2009-05-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Skip test that sometimes fails in GTK+.
