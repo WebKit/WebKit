@@ -227,102 +227,102 @@ namespace JSC {
 
 #else
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, double d)
+    inline JSValue::JSValue(ExecState*, double d)
     {
         JSValue v = JSImmediate::from(d);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, int i)
+    inline JSValue::JSValue(ExecState*, int i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, unsigned i)
+    inline JSValue::JSValue(ExecState*, unsigned i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, long i)
+    inline JSValue::JSValue(ExecState*, long i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, unsigned long i)
+    inline JSValue::JSValue(ExecState*, unsigned long i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, long long i)
+    inline JSValue::JSValue(ExecState*, long long i)
     {
         JSValue v = JSImmediate::from(static_cast<double>(i));
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, unsigned long long i)
+    inline JSValue::JSValue(ExecState*, unsigned long long i)
     {
         JSValue v = JSImmediate::from(static_cast<double>(i));
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, double d)
+    inline JSValue::JSValue(JSGlobalData*, double d)
     {
         JSValue v = JSImmediate::from(d);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, int i)
+    inline JSValue::JSValue(JSGlobalData*, int i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, unsigned i)
+    inline JSValue::JSValue(JSGlobalData*, unsigned i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, long i)
+    inline JSValue::JSValue(JSGlobalData*, long i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, unsigned long i)
+    inline JSValue::JSValue(JSGlobalData*, unsigned long i)
     {
         JSValue v = JSImmediate::from(i);
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, long long i)
+    inline JSValue::JSValue(JSGlobalData*, long long i)
     {
         JSValue v = JSImmediate::from(static_cast<double>(i));
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, unsigned long long i)
+    inline JSValue::JSValue(JSGlobalData*, unsigned long long i)
     {
         JSValue v = JSImmediate::from(static_cast<double>(i));
         ASSERT(v);
-        return v;
+        *this = v;
     }
 
     inline bool JSValue::isDoubleNumber() const
@@ -348,40 +348,52 @@ namespace JSC {
 
 #endif
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, char i)
+    inline JSValue::JSValue(ExecState*, char i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, unsigned char i)
+    inline JSValue::JSValue(ExecState*, unsigned char i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, short i)
+    inline JSValue::JSValue(ExecState*, short i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValue jsNumber(ExecState*, unsigned short i)
+    inline JSValue::JSValue(ExecState*, unsigned short i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, short i)
+    inline JSValue::JSValue(JSGlobalData*, char i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValue jsNumber(JSGlobalData*, unsigned short i)
+    inline JSValue::JSValue(JSGlobalData*, unsigned char i)
     {
         ASSERT(JSImmediate::from(i));
-        return JSImmediate::from(i);
+        *this = JSImmediate::from(i);
+    }
+
+    inline JSValue::JSValue(JSGlobalData*, short i)
+    {
+        ASSERT(JSImmediate::from(i));
+        *this = JSImmediate::from(i);
+    }
+
+    inline JSValue::JSValue(JSGlobalData*, unsigned short i)
+    {
+        ASSERT(JSImmediate::from(i));
+        *this = JSImmediate::from(i);
     }
 
     inline JSValue jsNaN(ExecState* exec)

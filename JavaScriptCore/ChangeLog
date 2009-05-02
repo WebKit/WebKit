@@ -1,5 +1,14 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Fix 64bit build.
+
+        * runtime/JSNumberCell.h:
+        (JSC::JSValue::JSValue):
+        * runtime/JSValue.h:
+        (JSC::jsNumber):
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Roll out JavaScriptCore API number marshaling.
 
         * API/APICast.h:
