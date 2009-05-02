@@ -1,5 +1,11 @@
 2009-05-02  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Skip test that sometimes fails in GTK+.
+
+        * platform/gtk/Skipped:
+
+2009-05-02  Gustavo Noronha Silva  <gns@gnome.org>
+
         Skip new test that does not represent a regression.
 
         * platform/gtk/Skipped:
