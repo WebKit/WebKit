@@ -1,3 +1,81 @@
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff "The Minneapolis" Garen.
+
+        Add mechanism to vend heap allocated JS numbers to JavaScriptCore API clients with a
+        representation that is independent of the number representation in the VM.
+        - Numbers leaving the interpreter are converted to a tagged JSNumberCell.
+        - The numbers coming into the interpreter (asserted to be the tagged JSNumberCell) are
+          converted back to the VM's internal number representation.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::construct):
+        (JSC::::hasInstance):
+        (JSC::::call):
+        (JSC::::toNumber):
+        (JSC::::toString):
+        (JSC::::staticValueGetter):
+        (JSC::::callbackGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsObjectOfClass):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeUndefined):
+        (JSValueMakeNull):
+        (JSValueMakeBoolean):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * runtime/JSNumberCell.cpp:
+        (JSC::jsAPIMangledNumber):
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::isAPIMangledNumber):
+        (JSC::JSNumberCell::):
+        (JSC::JSNumberCell::JSNumberCell):
+        (JSC::JSValue::isAPIMangledNumber):
+        * runtime/JSValue.h:
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix take 6.
