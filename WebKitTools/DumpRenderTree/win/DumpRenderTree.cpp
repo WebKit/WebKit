@@ -634,7 +634,7 @@ fail:
 
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "loading/");
+    return strstr(pathOrURL, "/loading/") || strstr(pathOrURL, "\\loading\\");
 }
 
 static void resetWebViewToConsistentStateBeforeTesting()

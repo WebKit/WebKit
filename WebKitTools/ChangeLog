@@ -1,3 +1,13 @@
+2009-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Try to get tests passing on Windows again.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (shouldLogFrameLoadDelegates): Allow either "/" or "\" as a path
+        separator. Also require separator before as well as after path name.
+
 2009-04-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, define ENABLE_JAVASCRIPT_DEBUGGER.
