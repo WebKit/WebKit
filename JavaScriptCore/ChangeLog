@@ -1,3 +1,24 @@
+2009-05-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - speed up the lexer in various ways
+
+        ~2% command-line SunSpider speedup
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::setCode): Moved below shift() so it can inline.
+        (JSC::Lexer::scanRegExp):  Use resize(0) instead of clear() on Vectors, since the intent
+        here is not to free the underlying buffer.
+        (JSC::Lexer::lex): ditto; also, change the loop logic a bit for the main lexing loop
+        to avoid branching on !m_done twice per iteration. Now we only check it once.
+        (JSC::Lexer::shift): Make this ALWAYS_INLINE and tag an unusual branch as UNLIKELY
+        * parser/Lexer.h:
+        (JSC::Lexer::makeIdentifier): force to be ALWAYS_INLINE
+        * wtf/Vector.h:
+        (WTF::::append): force to be ALWAYS_INLINE (may have helped in ways other than parsing but it wasn't
+        getting inlined in a hot code path in the lexer)
+
 2009-05-01  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

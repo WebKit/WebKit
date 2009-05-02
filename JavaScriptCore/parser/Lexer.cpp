@@ -88,6 +88,31 @@ Lexer::~Lexer()
     m_mainTable.deleteTable();
 }
 
+ALWAYS_INLINE void Lexer::shift(unsigned p)
+{
+    // ECMA-262 calls for stripping Cf characters here, but we only do this for BOM,
+    // see <https://bugs.webkit.org/show_bug.cgi?id=4931>.
+
+    while (p--) {
+        m_current = m_next1;
+        m_next1 = m_next2;
+        m_next2 = m_next3;
+        m_currentOffset = m_nextOffset1;
+        m_nextOffset1 = m_nextOffset2;
+        m_nextOffset2 = m_nextOffset3;
+        do {
+            if (m_position >= m_length) {
+                m_nextOffset3 = m_position;
+                m_position++;
+                m_next3 = -1;
+                break;
+            }
+            m_nextOffset3 = m_position;
+            m_next3 = m_code[m_position++];
+        } while (UNLIKELY(m_next3 == 0xFEFF));
+    }
+}
+
 void Lexer::setCode(const SourceCode& source)
 {
     yylineno = source.firstLine();
@@ -110,31 +135,6 @@ void Lexer::setCode(const SourceCode& source)
     shift(4);
 }
 
-void Lexer::shift(unsigned p)
-{
-    // ECMA-262 calls for stripping Cf characters here, but we only do this for BOM,
-    // see <https://bugs.webkit.org/show_bug.cgi?id=4931>.
-
-    while (p--) {
-        m_current = m_next1;
-        m_next1 = m_next2;
-        m_next2 = m_next3;
-        m_currentOffset = m_nextOffset1;
-        m_nextOffset1 = m_nextOffset2;
-        m_nextOffset2 = m_nextOffset3;
-        do {
-            if (m_position >= m_length) {
-                m_nextOffset3 = m_position;
-                m_position++;
-                m_next3 = -1;
-                break;
-            }
-            m_nextOffset3 = m_position;
-            m_next3 = m_code[m_position++];
-        } while (m_next3 == 0xFEFF);
-    }
-}
-
 // called on each new line
 void Lexer::nextLine()
 {
@@ -155,8 +155,8 @@ int Lexer::lex(void* p1, void* p2)
     int token = 0;
     m_state = Start;
     unsigned short stringType = 0; // either single or double quotes
-    m_buffer8.clear();
-    m_buffer16.clear();
+    m_buffer8.resize(0);
+    m_buffer16.resize(0);
     m_done = false;
     m_terminator = false;
     m_skipLF = false;
@@ -170,7 +170,8 @@ int Lexer::lex(void* p1, void* p2)
         m_stackToken = 0;
     }
     int startOffset = m_currentOffset;
-    while (!m_done) {
+    if (!m_done) {
+    while (true) {
         if (m_skipLF && m_current != '\n') // found \r but not \n afterwards
             m_skipLF = false;
         if (m_skipCR && m_current != '\r') // found \n but not \r afterwards
@@ -451,11 +452,13 @@ int Lexer::lex(void* p1, void* p2)
                 ASSERT(!"Unhandled state in switch statement");
         }
 
-        // move on to the next character
-        if (!m_done)
-            shift(1);
         if (m_state != Start && m_state != InSingleLineComment)
             m_atLineStart = false;
+        if (m_done)
+            break;
+
+        shift(1);
+    }
     }
 
     // no identifiers allowed directly after numeric literal, e.g. "3in" is bad
@@ -842,7 +845,7 @@ void Lexer::record16(UChar c)
 
 bool Lexer::scanRegExp()
 {
-    m_buffer16.clear();
+    m_buffer16.resize(0);
     bool lastWasEscape = false;
     bool inBrackets = false;
 
@@ -862,7 +865,7 @@ bool Lexer::scanRegExp()
             !lastWasEscape && (m_current == '\\');
         } else { // end of regexp
             m_pattern = UString(m_buffer16);
-            m_buffer16.clear();
+            m_buffer16.resize(0);
             shift(1);
             break;
         }

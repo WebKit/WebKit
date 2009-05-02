@@ -123,7 +123,7 @@ namespace JSC {
         void record16(int);
         void record16(UChar);
 
-        JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer)
+        ALWAYS_INLINE JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer)
         {
             m_identifiers.append(JSC::Identifier(m_globalData, buffer.data(), buffer.size()));
             return &m_identifiers.last();
