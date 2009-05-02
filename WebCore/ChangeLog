@@ -1,5 +1,23 @@
 2009-05-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Cleanup workers code a bit.
+
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::customGetOwnPropertySlot):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::toWorkerContext):
+        (WebCore::WorkerContext::self):
+        (WebCore::WorkerContext::setOnmessage):
+        (WebCore::WorkerContext::onmessage):
+        * workers/WorkerContext.idl:
+
+2009-05-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         A little clean up.

@@ -31,6 +31,7 @@
 
 #include "JSWorkerContextBase.h"
 
+#include "JSWorkerContext.h"
 #include "WorkerContext.h"
 
 using namespace JSC;
@@ -54,6 +55,16 @@ JSWorkerContextBase::~JSWorkerContextBase()
 ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const
 {
     return m_impl.get();
+}
+
+JSValue toJS(ExecState*, WorkerContext* workerContext)
+{
+    if (!workerContext)
+        return jsNull();
+    WorkerScriptController* script = workerContext->script();
+    if (!script)
+        return jsNull();
+    return script->workerContextWrapper();
 }
 
 } // namespace WebCore

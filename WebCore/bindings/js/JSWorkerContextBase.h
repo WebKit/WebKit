@@ -51,6 +51,9 @@ namespace WebCore {
         RefPtr<WorkerContext> m_impl;
     };
 
+    // Returns a JSWorkerContext or jsNull()
+    JSC::JSValue toJS(JSC::ExecState*, WorkerContext*);
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

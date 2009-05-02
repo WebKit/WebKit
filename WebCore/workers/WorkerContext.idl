@@ -34,30 +34,34 @@ module threads {
         LegacyParent=JSWorkerContextBase,
         NoStaticTables
     ] WorkerContext {
-#if defined(LANGUAGE_JAVASCRIPT)
-        attribute [Custom] WorkerContext self;
-#endif
 
-        attribute EventListener onmessage;
+        // WorkerGlobalScope
+                 attribute [Replaceable] WorkerContext self;
+                 attribute [Replaceable] WorkerLocation location;
+        // void close();
+        //         attribute EventListener onclose;
+        //         attribute EventListener onerror;
+
+        // WorkerUtils
+        [Custom] void importScripts(/*[Variadic] in DOMString urls */);
+                 attribute [Replaceable] WorkerNavigator navigator;
+        // Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
+        // DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
+
+
+        // DedicatedWorkerGlobalScope
         void postMessage(in DOMString message);
-        [Custom] void importScripts(/* urls */);
+                 attribute EventListener onmessage;
 
-        attribute [Replaceable] WorkerLocation location;
-        attribute [Replaceable] WorkerNavigator navigator;
-        
-        attribute MessageEventConstructor MessageEvent;
-        attribute WorkerLocationConstructor WorkerLocation;
-
-        attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
         void clearTimeout(in long handle);
-
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in DOMString code, in long timeout);
         void clearInterval(in long handle);
+
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 
@@ -68,6 +72,13 @@ module threads {
                                           in boolean useCapture);
         boolean dispatchEvent(in Event evt)
             raises(EventException);
+
+
+        // Constructors
+        attribute MessageEventConstructor MessageEvent;
+        attribute WorkerLocationConstructor WorkerLocation;
+
+        attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
     };
 
 }
