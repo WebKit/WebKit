@@ -59,6 +59,7 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
 Loader::Loader()
     : m_nonHTTPProtocolHost(AtomicString(), maxRequestsInFlightForNonHTTPProtocols)
     , m_requestTimer(this, &Loader::requestTimerFired)
+    , m_isSuspendingPendingRequests(false)
 {
     maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
 }
@@ -138,6 +139,9 @@ void Loader::requestTimerFired(Timer<Loader>*)
 
 void Loader::servePendingRequests(Priority minimumPriority)
 {
+    if (m_isSuspendingPendingRequests)
+        return;
+
     m_requestTimer.stop();
     
     m_nonHTTPProtocolHost.servePendingRequests(minimumPriority);
@@ -155,7 +159,21 @@ void Loader::servePendingRequests(Priority minimumPriority)
         }
     }
 }
-    
+
+void Loader::suspendPendingRequests()
+{
+    ASSERT(!m_isSuspendingPendingRequests);
+    m_isSuspendingPendingRequests = true;
+}
+
+void Loader::resumePendingRequests()
+{
+    ASSERT(m_isSuspendingPendingRequests);
+    m_isSuspendingPendingRequests = false;
+    if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost.hasRequests())
+        scheduleServePendingRequests();
+}
+
 void Loader::cancelRequests(DocLoader* docLoader)
 {
     docLoader->clearPendingPreloads();
@@ -175,7 +193,7 @@ void Loader::cancelRequests(DocLoader* docLoader)
     
     ASSERT(docLoader->requestCount() == (docLoader->loadInProgress() ? 1 : 0));
 }
-    
+
 Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
     : m_name(name)
     , m_maxRequestsInFlight(maxRequestsInFlight)
@@ -208,6 +226,9 @@ bool Loader::Host::hasRequests() const
 
 void Loader::Host::servePendingRequests(Loader::Priority minimumPriority)
 {
+    if (cache()->loader()->isSuspendingPendingRequests())
+        return;
+
     bool serveMore = true;
     for (int priority = High; priority >= minimumPriority && serveMore; --priority)
         servePendingRequests(m_requestsPending[priority], serveMore);

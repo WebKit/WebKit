@@ -1,3 +1,26 @@
+2009-05-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6631735> Crash in WebCore::CSSStyleSelector::applyProperty(int, WebCore::CSSValue*) (RenderStyle.h:454)
+        
+        Avoid re-entering style selector from load delegates by not issuing resource loads synchronously during attach().
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks):
+        (WebCore::ContainerNode::resumePostAttachCallbacks):
+        (WebCore::ContainerNode::attach):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::suspendPendingRequests):
+        (WebCore::Loader::resumePendingRequests):
+        (WebCore::Loader::Host::servePendingRequests):
+        * loader/loader.h:
+        (WebCore::Loader::isSuspendingPendingRequests):
+
 2009-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
