@@ -1,3 +1,11 @@
+2009-05-03  Zan Dobersek  <zandobersek@gmail.com>
+
+         Reviewed by Gustavo Noronha.
+
+         Enable more tests that succeed and style up the list a bit.
+
+         * platform/gtk/Skipped:
+
 2009-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
