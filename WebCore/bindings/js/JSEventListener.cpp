@@ -99,7 +99,7 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
     CallData callData;
     CallType callType = handleEventFunction.getCallData(callData);
     if (callType == CallTypeNone) {
-        handleEventFunction = noValue();
+        handleEventFunction = JSValue();
         callType = jsFunction->getCallData(callData);
     }
 

@@ -39,7 +39,6 @@ namespace JSC {
 
         DebuggerCallFrame(CallFrame* callFrame)
             : m_callFrame(callFrame)
-            , m_exception(noValue())
         {
         }
 

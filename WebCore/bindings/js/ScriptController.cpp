@@ -114,7 +114,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
         reportException(exec, comp.value());
 
     m_sourceURL = savedSourceURL;
-    return noValue();
+    return JSValue();
 }
 
 void ScriptController::clearWindowShell()

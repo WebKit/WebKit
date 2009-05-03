@@ -911,7 +911,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
     // Later we can do the extra work to handle that like the other cases.
     if (number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(globalData(), number));
-    JSValue& valueInMap = m_numberMap.add(number, noValue()).first->second;
+    JSValue& valueInMap = m_numberMap.add(number, JSValue()).first->second;
     if (!valueInMap)
         valueInMap = jsNumber(globalData(), number);
     return emitLoad(dst, valueInMap);

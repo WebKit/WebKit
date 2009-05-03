@@ -355,12 +355,12 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
 
     if (newNumValuesInVector == storage->m_numValuesInVector + 1) {
         for (unsigned j = vectorLength; j < newVectorLength; ++j)
-            storage->m_vector[j] = noValue();
+            storage->m_vector[j] = JSValue();
         if (i > MIN_SPARSE_ARRAY_INDEX)
             map->remove(i);
     } else {
         for (unsigned j = vectorLength; j < max(vectorLength, MIN_SPARSE_ARRAY_INDEX); ++j)
-            storage->m_vector[j] = noValue();
+            storage->m_vector[j] = JSValue();
         for (unsigned j = max(vectorLength, MIN_SPARSE_ARRAY_INDEX); j < newVectorLength; ++j)
             storage->m_vector[j] = map->take(j);
     }
@@ -400,7 +400,7 @@ bool JSArray::deleteProperty(ExecState* exec, unsigned i)
             checkConsistency();
             return false;
         }
-        valueSlot = noValue();
+        valueSlot = JSValue();
         --storage->m_numValuesInVector;
         if (m_fastAccessCutoff > i)
             m_fastAccessCutoff = i;
@@ -470,7 +470,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     storage->m_vectorLength = newVectorLength;
 
     for (unsigned i = vectorLength; i < newVectorLength; ++i)
-        storage->m_vector[i] = noValue();
+        storage->m_vector[i] = JSValue();
 
     m_storage = storage;
     return true;
@@ -492,7 +492,7 @@ void JSArray::setLength(unsigned newLength)
         for (unsigned i = newLength; i < usedVectorLength; ++i) {
             JSValue& valueSlot = storage->m_vector[i];
             bool hadValue = valueSlot;
-            valueSlot = noValue();
+            valueSlot = JSValue();
             storage->m_numValuesInVector -= hadValue;
         }
 
@@ -531,13 +531,13 @@ JSValue JSArray::pop()
         JSValue& valueSlot = m_storage->m_vector[length];
         result = valueSlot;
         ASSERT(result);
-        valueSlot = noValue();
+        valueSlot = JSValue();
         --m_storage->m_numValuesInVector;
         m_fastAccessCutoff = length;
     } else if (length < m_storage->m_vectorLength) {
         JSValue& valueSlot = m_storage->m_vector[length];
         result = valueSlot;
-        valueSlot = noValue();
+        valueSlot = JSValue();
         if (result)
             --m_storage->m_numValuesInVector;
         else
@@ -906,7 +906,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
 
     // Ensure that unused values in the vector are zeroed out.
     for (unsigned i = newUsedVectorLength; i < usedVectorLength; ++i)
-        m_storage->m_vector[i] = noValue();
+        m_storage->m_vector[i] = JSValue();
 
     m_fastAccessCutoff = newUsedVectorLength;
     m_storage->m_numValuesInVector = newUsedVectorLength;
@@ -986,7 +986,7 @@ unsigned JSArray::compactForSorting()
     for (unsigned i = numDefined; i < newUsedVectorLength; ++i)
         storage->m_vector[i] = jsUndefined();
     for (unsigned i = newUsedVectorLength; i < usedVectorLength; ++i)
-        storage->m_vector[i] = noValue();
+        storage->m_vector[i] = JSValue();
 
     m_fastAccessCutoff = newUsedVectorLength;
     storage->m_numValuesInVector = newUsedVectorLength;

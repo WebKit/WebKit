@@ -28,6 +28,7 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
+#include <wtf/HashTraits.h>
 #include <wtf/AlwaysInline.h>
 
 namespace JSC {
@@ -51,6 +52,7 @@ namespace JSC {
 
     class JSValue {
         friend class JSImmediate;
+        friend struct JSValueHashTraits;
 
         static JSValue makeImmediate(intptr_t value)
         {
@@ -63,7 +65,6 @@ namespace JSC {
         }
         
     public:
-        enum ImpossibleValueTag { ImpossibleValue };
         enum JSNullTag { JSNull };
         enum JSUndefinedTag { JSUndefined };
         enum JSTrueTag { JSTrue };
@@ -73,7 +74,6 @@ namespace JSC {
         static JSValue decode(EncodedJSValue ptr);
 
         JSValue();
-        JSValue(ImpossibleValueTag);
         JSValue(JSNullTag);
         JSValue(JSUndefinedTag);
         JSValue(JSTrueTag);
@@ -200,12 +200,15 @@ namespace JSC {
         static bool strictEqualSlowCase(JSValue v1, JSValue v2);
         static bool strictEqualSlowCaseInline(JSValue v1, JSValue v2);
 
-        JSValue getJSNumber(); // noValue() if this is not a JSNumber or number object
+        JSValue getJSNumber(); // JSValue() if this is not a JSNumber or number object
 
         bool isCell() const;
         JSCell* asCell() const;
 
     private:
+        enum HashTableDeletedValueTag { HashTableDeletedValue };
+        JSValue(HashTableDeletedValueTag);
+
         inline const JSValue asValue() const { return *this; }
 
         bool isDoubleNumber() const;
@@ -214,17 +217,12 @@ namespace JSC {
         JSCell* m_ptr;
     };
 
+    struct JSValueHashTraits : HashTraits<EncodedJSValue> {
+        static void constructDeletedValue(EncodedJSValue& slot) { slot = JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
+        static bool isDeletedValue(EncodedJSValue value) { return value == JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
+    };
+
     // Stand-alone helper functions.
-    inline JSValue noValue()
-    {
-        return JSValue();
-    }
-
-    inline JSValue jsImpossibleValue()
-    {
-        return JSValue(JSValue::ImpossibleValue);
-    }
-
     inline JSValue jsNull()
     {
         return JSValue(JSValue::JSNull);
@@ -367,8 +365,15 @@ namespace JSC {
         return JSValue(reinterpret_cast<JSCell*>(ptr));
     }
 
+    // 0x0 can never occur naturally because it has a tag of 00, indicating a pointer value, but a payload of 0x0, which is in the (invalid) zero page.
     inline JSValue::JSValue()
         : m_ptr(0)
+    {
+    }
+
+    // 0x4 can never occur naturally because it has a tag of 00, indicating a pointer value, but a payload of 0x4, which is in the (invalid) zero page.
+    inline JSValue::JSValue(HashTableDeletedValueTag)
+        : m_ptr(reinterpret_cast<JSCell*>(0x4))
     {
     }
 

@@ -1,3 +1,94 @@
+2009-05-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Simplified null-ish JSValues.
+        
+        Replaced calls to noValue() with calls to JSValue() (which is what
+        noValue() returned). Removed noValue().
+        
+        Replaced almost all uses of jsImpossibleValue() with uses of JSValue().
+        Its one remaining use is for construction of hash table deleted values.
+        For that specific task, I made a new, private constructor with a special
+        tag. Removed jsImpossibleValue().
+        
+        Removed "JSValue()" initialiazers, since default construction happens...
+        by default.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::call):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::clearException):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * interpreter/Register.h:
+        (JSC::Register::Register):
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_call_eval):
+        (JSC::JITStubs::cti_vm_throw):
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::willExecute):
+        (JSC::Profiler::didExecute):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        (JSC::Completion::Completion):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::getPrimitiveNumber):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getJSNumber):
+        * runtime/JSCell.h:
+        (JSC::JSValue::getJSNumber):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::fromNumberOutsideIntegerRange):
+        (JSC::JSImmediate::from):
+        * runtime/JSNumberCell.cpp:
+        (JSC::jsNumberCell):
+        * runtime/JSObject.cpp:
+        (JSC::callDefaultValueFunction):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::toPrimitive):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::next):
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        (JSC::JSValueHashTraits::constructDeletedValue):
+        (JSC::JSValueHashTraits::isDeletedValue):
+        (JSC::JSValue::JSValue):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/Operations.h:
+        (JSC::resolveBase):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::clearBase):
+        (JSC::PropertySlot::clearValue):
+
 2009-05-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

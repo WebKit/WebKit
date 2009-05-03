@@ -292,7 +292,7 @@ namespace JSC {
 
     inline JSValue JSValue::getJSNumber()
     {
-        return JSImmediate::isNumber(asValue()) ? asValue() : JSImmediate::isImmediate(asValue()) ? noValue() : asCell()->getJSNumber();
+        return JSImmediate::isNumber(asValue()) ? asValue() : JSImmediate::isImmediate(asValue()) ? JSValue() : asCell()->getJSNumber();
     }
 
 } // namespace JSC

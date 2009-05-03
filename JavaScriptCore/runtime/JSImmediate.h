@@ -283,8 +283,6 @@ namespace JSC {
         static JSValue zeroImmediate();
         static JSValue oneImmediate();
 
-        static JSValue impossibleValue();
-        
         static JSObject* prototype(JSValue, ExecState*);
 
     private:
@@ -376,9 +374,6 @@ namespace JSC {
     ALWAYS_INLINE JSValue JSImmediate::zeroImmediate() { return makeInt(0); }
     ALWAYS_INLINE JSValue JSImmediate::oneImmediate() { return makeInt(1); }
 
-    // This value is impossible because 0x4 is not a valid pointer but a tag of 0 would indicate non-immediate
-    ALWAYS_INLINE JSValue JSImmediate::impossibleValue() { return makeValue(0x4); }
-
 #if USE(ALTERNATE_JSIMMEDIATE)
     inline bool doubleToBoolean(double value)
     {
@@ -416,7 +411,7 @@ namespace JSC {
     template<typename T>
     inline JSValue JSImmediate::fromNumberOutsideIntegerRange(T)
     {
-        return noValue();
+        return JSValue();
     }
 #endif
 
@@ -478,7 +473,7 @@ namespace JSC {
     ALWAYS_INLINE JSValue JSImmediate::from(long long i)
     {
         if ((i < minImmediateInt) | (i > maxImmediateInt))
-            return noValue();
+            return JSValue();
         return makeInt(static_cast<intptr_t>(i));
     }
 
@@ -551,11 +546,6 @@ namespace JSC {
     uint32_t toUInt32(double);
     int32_t toInt32SlowCase(double, bool& ok);
     uint32_t toUInt32SlowCase(double, bool& ok);
-
-    inline JSValue::JSValue(ImpossibleValueTag)
-    {
-        *this = JSImmediate::impossibleValue();
-    }
 
     inline JSValue::JSValue(JSNullTag)
     {

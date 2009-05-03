@@ -131,7 +131,7 @@ static JSValue getProperty(ExecState* exec, JSObject* obj, unsigned index)
 {
     PropertySlot slot(obj);
     if (!obj->getPropertySlot(exec, index, slot))
-        return noValue();
+        return JSValue();
     return slot.getValue(exec, index);
 }
 

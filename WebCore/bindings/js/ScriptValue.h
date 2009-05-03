@@ -41,7 +41,7 @@ class String;
 
 class ScriptValue {
 public:
-    ScriptValue(JSC::JSValue value = JSC::noValue()) : m_value(value) {}
+    ScriptValue(JSC::JSValue value = JSC::JSValue()) : m_value(value) {}
     virtual ~ScriptValue() {}
 
     JSC::JSValue jsValue() const { return m_value.get(); }
@@ -50,7 +50,7 @@ public:
     bool isEqual(ScriptState*, const ScriptValue&) const;
     bool isNull() const;
     bool isUndefined() const;
-    bool hasNoValue() const { return m_value == JSC::noValue(); }
+    bool hasNoValue() const { return m_value == JSC::JSValue(); }
 
 private:
     JSC::ProtectedJSValue m_value;

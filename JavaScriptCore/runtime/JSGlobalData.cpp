@@ -132,7 +132,6 @@ JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     , jitStubs(this)
 #endif
     , heap(this)
-    , exception(noValue())
     , initializingLazyNumericCompareFunction(false)
     , newParserObjects(0)
     , parserObjectExtraRefCounts(0)

@@ -298,17 +298,17 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != noValue())) \
+        if (UNLIKELY(ARG_globalData->exception != JSValue())) \
             VM_THROW_EXCEPTION(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != noValue())) \
+        if (UNLIKELY(ARG_globalData->exception != JSValue())) \
             VM_THROW_EXCEPTION_AT_END(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_VOID() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != noValue())) { \
+        if (UNLIKELY(ARG_globalData->exception != JSValue())) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
         } \
@@ -1894,16 +1894,16 @@ EncodedJSValue JITStubs::cti_op_call_eval(STUB_ARGS)
     JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject();
 
     if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
-        JSValue exceptionValue = noValue();
+        JSValue exceptionValue;
         JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset, exceptionValue);
-        if (UNLIKELY(exceptionValue != noValue())) {
+        if (UNLIKELY(exceptionValue != JSValue())) {
             ARG_globalData->exception = exceptionValue;
             VM_THROW_EXCEPTION_AT_END();
         }
         return JSValue::encode(result);
     }
 
-    return JSValue::encode(jsImpossibleValue());
+    return JSValue::encode(JSValue());
 }
 
 EncodedJSValue JITStubs::cti_op_throw(STUB_ARGS)
@@ -2258,7 +2258,7 @@ EncodedJSValue JITStubs::cti_vm_throw(STUB_ARGS)
 
     JSValue exceptionValue = globalData->exception;
     ASSERT(exceptionValue);
-    globalData->exception = noValue();
+    globalData->exception = JSValue();
 
     HandlerInfo* handler = globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex, false);
 

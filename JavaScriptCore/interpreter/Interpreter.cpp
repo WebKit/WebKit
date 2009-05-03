@@ -1094,7 +1094,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             #undef ADD_OPCODE_ID
             ASSERT(m_opcodeIDTable.size() == numOpcodeIDs);
         #endif // HAVE(COMPUTED_GOTO)
-        return noValue();
+        return JSValue();
     }
 
 #if ENABLE(JIT)
@@ -1103,7 +1103,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 #endif
 
     JSGlobalData* globalData = &callFrame->globalData();
-    JSValue exceptionValue = noValue();
+    JSValue exceptionValue;
     HandlerInfo* handler = 0;
 
     Instruction* vPC = callFrame->codeBlock()->instructions().begin();
@@ -1112,7 +1112,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(globalData->exception != noValue())) { \
+        if (UNLIKELY(globalData->exception != JSValue())) { \
             exceptionValue = globalData->exception; \
             goto vm_throw; \
         } \
@@ -3567,7 +3567,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ASSERT(!globalData->exception);
         int ex = (++vPC)->u.operand;
         callFrame[ex] = exceptionValue;
-        exceptionValue = noValue();
+        exceptionValue = JSValue();
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -3756,7 +3756,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         NEXT_INSTRUCTION();
     }
     vm_throw: {
-        globalData->exception = noValue();
+        globalData->exception = JSValue();
         if (!tickCount) {
             // The exceptionValue is a lie! (GCC produces bad code for reasons I 
             // cannot fathom if we don't assign to the exceptionValue before branching)
@@ -3824,7 +3824,7 @@ JSValue Interpreter::retrieveCaller(CallFrame* callFrame, InternalFunction* func
 
 void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const
 {
-    function = noValue();
+    function = JSValue();
     lineNumber = -1;
     sourceURL = UString();
 

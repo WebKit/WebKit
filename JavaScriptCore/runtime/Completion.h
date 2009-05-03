@@ -39,7 +39,7 @@ namespace JSC {
      */
     class Completion {
     public:
-        Completion(ComplType type = Normal, JSValue value = noValue())
+        Completion(ComplType type = Normal, JSValue value = JSValue())
             : m_type(type)
             , m_value(value)
         {
@@ -56,7 +56,7 @@ namespace JSC {
     };
 
     Completion checkSyntax(ExecState*, const SourceCode&);
-    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue thisValue = noValue());
+    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue thisValue = JSValue());
 
 } // namespace JSC
 

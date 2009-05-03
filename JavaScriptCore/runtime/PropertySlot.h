@@ -177,14 +177,14 @@ namespace JSC {
         void clearBase()
         {
 #ifndef NDEBUG
-            m_slotBase = noValue();
+            m_slotBase = JSValue();
 #endif
         }
 
         void clearValue()
         {
 #ifndef NDEBUG
-            m_value = noValue();
+            m_value = JSValue();
 #endif
         }
 

@@ -244,7 +244,7 @@ static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSO
     if (exec->hadException())
         return exec->exception();
     if (result.isObject())
-        return noValue();
+        return JSValue();
     return result;
 }
 

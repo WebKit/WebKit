@@ -98,7 +98,7 @@ public:
     virtual JSValue invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
     
     virtual bool supportsConstruct() const { return false; }
-    virtual JSValue invokeConstruct(ExecState*, const ArgList&) { return noValue(); }
+    virtual JSValue invokeConstruct(ExecState*, const ArgList&) { return JSValue(); }
     
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 

@@ -381,7 +381,7 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
 
-    frame = createWindow(exec, activeFrame, frame, urlString, frameName, windowFeatures, noValue());
+    frame = createWindow(exec, activeFrame, frame, urlString, frameName, windowFeatures, JSValue());
 
     if (!frame)
         return jsUndefined();
@@ -458,7 +458,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
 
     // Get the return value either just before clearing the dialog window's
     // properties (in JSDOMWindowBase::clear), or when on return from runModal.
-    JSValue returnValue = noValue();
+    JSValue returnValue;
     dialogWindow->setReturnValueSlot(&returnValue);
     dialogFrame->page()->chrome()->runModal();
     dialogWindow->setReturnValueSlot(0);

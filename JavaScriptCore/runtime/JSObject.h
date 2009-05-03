@@ -125,7 +125,7 @@ namespace JSC {
         JSValue getDirect(const Identifier& propertyName) const
         {
             size_t offset = m_structure->get(propertyName);
-            return offset != WTF::notFound ? m_propertyStorage[offset] : noValue();
+            return offset != WTF::notFound ? m_propertyStorage[offset] : JSValue();
         }
 
         JSValue* getDirectLocation(const Identifier& propertyName)

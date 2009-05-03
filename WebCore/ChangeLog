@@ -1,3 +1,41 @@
+2009-05-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Simplified null-ish JSValues.
+        
+        Replaced calls to noValue() with calls to JSValue() (which is what
+        noValue() returned). Removed noValue().
+        
+        Removed "JSValue()" initialiazers, since default construction happens...
+        by default.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/ScriptValue.h:
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::hasNoValue):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::invokeConstruct):
+
 2009-05-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.

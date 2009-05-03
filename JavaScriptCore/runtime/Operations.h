@@ -274,7 +274,7 @@ namespace JSC {
         }
 
         ASSERT_NOT_REACHED();
-        return noValue();
+        return JSValue();
     }
 
 } // namespace JSC

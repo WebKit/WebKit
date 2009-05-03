@@ -93,7 +93,7 @@ jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance 
         {
             RootObject* rootObject = instance->rootObject();
             if (rootObject && rootObject->nativeHandle()) {
-                JSValue exceptionDescription = noValue();
+                JSValue exceptionDescription;
                 jvalue args[1];
                 
                 args[0].l = jinstance;
@@ -175,7 +175,7 @@ void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *
         {
             RootObject* rootObject = instance->rootObject();
             if (rootObject && rootObject->nativeHandle()) {
-                JSValue exceptionDescription = noValue();
+                JSValue exceptionDescription;
                 jvalue args[2];
                 jvalue result;
                 

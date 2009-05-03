@@ -105,7 +105,7 @@ namespace JSC {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        u.value = JSValue::encode(noValue());
+        u.value = JSValue::encode(JSValue());
 #endif
     }
 

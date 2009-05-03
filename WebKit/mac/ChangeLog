@@ -1,3 +1,18 @@
+2009-05-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Simplified null-ish JSValues.
+        
+        Replaced calls to noValue() with calls to JSValue() (which is what
+        noValue() returned). Removed noValue().
+        
+        Removed "JSValue()" initialiazers, since default construction happens...
+        by default.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+
 2009-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
