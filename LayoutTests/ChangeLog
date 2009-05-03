@@ -1,3 +1,13 @@
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Dump more metrics from svgsvgelement-ctm test.
+        (And break up the first SVG into two SVGs for easier reading of the metrics)
+
+        * svg/custom/svgsvgelement-ctm-expected.txt:
+        * svg/custom/svgsvgelement-ctm.xhtml:
+
 2009-05-03  Gustavo Noronha Silva  <gns@gnome.org>
 
         Some tests are still failing on the bot, despite working

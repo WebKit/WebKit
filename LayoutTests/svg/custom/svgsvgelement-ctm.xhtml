@@ -1,42 +1,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <body>
   <div style="position: absolute; top: 10px; left: 10px; width: 400px; height: 400;">
-    <svg xmlns="http://www.w3.org/2000/svg" id="outersvg" viewBox="5 5 20 20">
-       <g  transform="translate(10, 10)">
-         <svg id="innersvg" viewBox="5 5 20 20"></svg>
-       </g>
+    <svg xmlns="http://www.w3.org/2000/svg" id="svg1" viewBox="0 0 400 400">
+        <svg id="svg2" viewBox="5 5 20 20">
+           <g id="group" transform="translate(10, 10)">
+             <svg id="svg3" viewBox="5 5 20 20"></svg>
+           </g>
+        </svg>
     </svg>
   </div>
   <div id="log"></div>
   <script type="text/ecmascript"><![CDATA[
     if (window.layoutTestController)
       layoutTestController.dumpAsText();
-    
+
     var logDiv = document.getElementById('log');
     function log(s) {
-      var newText = document.createTextNode(s);
-      var newBR = document.createElementNS("http://www.w3.org/1999/xhtml", 'br');
-      logDiv.appendChild(newText);
-      logDiv.appendChild(newBR);
+      logDiv.appendChild(document.createTextNode(s));
+      logDiv.appendChild(document.createElement('br'));
     }
     function stringForMatrix(m) {
-      return "[(" + m.a + ', ' + m.c + ')(' + m.b + ', ' + m.d + ')(' + m.e + ', ' + m.f + ")]";
+      return m + " [(" + m.a + ', ' + m.c + ')(' + m.b + ', ' + m.d + ')(' + m.e + ', ' + m.f + ")]";
     }
-    
-    var outerSVG = document.getElementById("outersvg");
-    var innerSVG = document.getElementById("innersvg");
-    
-    var svgMatrixProto = outerSVG.createSVGMatrix().__proto__;
-    
-    svgMatrixProto.oldToString = svgMatrixProto.toString;
-    svgMatrixProto.toString = function() {
-      return this.oldToString() + " " + stringForMatrix(this);
+    function printCTMs(name) {
+        var element = document.getElementById(name);
+        log(name + " CTM: " + stringForMatrix(element.getCTM()));
+        log(name + " ScreenCTM: " + stringForMatrix(element.getScreenCTM()));
     }
-    
-    log("outer CTM: " + outerSVG.getCTM());
-    log("outer ScreenCTM: " + outerSVG.getScreenCTM());
-    log("inner CTM: " + innerSVG.getCTM());
-    log("inner ScreenCTM: " + innerSVG.getScreenCTM());
+    printCTMs("svg1");
+    printCTMs("svg2");
+    printCTMs("group");
+    printCTMs("svg3");
   ]]></script>
 </body>
 </html>
