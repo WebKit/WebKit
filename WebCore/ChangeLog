@@ -1,3 +1,7 @@
+2009-05-02  Sam Weinig  <sam@webkit.org>
+
+        Roll JSC API number marshaling back in.
+
 2009-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
