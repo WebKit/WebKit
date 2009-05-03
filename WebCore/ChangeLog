@@ -1,3 +1,7 @@
+2009-05-03  Sam Weinig  <sam@webkit.org>
+
+        Roll JSC API number marshaling back out. It still breaks windows.
+
 2009-05-02  Sam Weinig  <sam@webkit.org>
 
         Roll JSC API number marshaling back in.

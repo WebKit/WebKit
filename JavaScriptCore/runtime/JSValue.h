@@ -176,9 +176,6 @@ namespace JSC {
         // signle precision float is not a representation used in JS or JSC).
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
-        // API Mangled Numbers
-        bool isAPIMangledNumber();
-
         // Garbage collection.
         void mark();
         bool marked() const;

@@ -57,7 +57,7 @@ bool ScriptValue::isEqual(ScriptState* scriptState, const ScriptValue& anotherVa
     if (hasNoValue())
         return anotherValue.hasNoValue();
 
-    return JSValueIsEqual(toRef(scriptState), toRef(scriptState, jsValue()), toRef(scriptState, anotherValue.jsValue()), 0);
+    return JSValueIsEqual(toRef(scriptState), toRef(jsValue()), toRef(anotherValue.jsValue()), 0);
 }
 
 bool ScriptValue::isNull() const
