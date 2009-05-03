@@ -399,7 +399,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             newKeyState[VK_SHIFT] = 0x80;
 
         if (argumentCount > 1) {
-            JSObjectRef modifiersArray = JSValueToObject(context, arguments[1], exception);
+            JSObjectRef modifiersArray = JSValueToObject(context, arguments[1], 0);
             if (modifiersArray) {
                 int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty, 0), 0);
                 for (int i = 0; i < modifiersCount; ++i) {

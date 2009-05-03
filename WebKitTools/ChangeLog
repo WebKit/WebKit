@@ -1,3 +1,12 @@
+2009-05-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Don't pass an exception parameter if we don't care about the value.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2009-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
