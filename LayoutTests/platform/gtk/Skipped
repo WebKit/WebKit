@@ -16,6 +16,13 @@
 #
 #     grep -v '^#' | grep -v '^$'
 
+# These tests are not failing locally, but fail on the bot:
+# editing/selection/extend-selection.html
+# fast/dom/null-document-location-assign-crash.html
+# fast/dom/Window/window-screen-properties.html
+# fast/js/navigator-mimeTypes-length.html
+# transitions/zero-duration-with-non-zero-delay-end.html
+
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
@@ -755,6 +762,7 @@ editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
 editing/selection/drag-text-delay.html
+editing/selection/extend-selection.html
 editing/selection/extend-selection-bidi.html
 editing/selection/getRangeAt.html
 editing/selection/hit-test-anonymous.html
@@ -1538,6 +1546,7 @@ fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
 fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
+fast/dom/null-document-location-assign-crash.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
@@ -1559,6 +1568,7 @@ fast/dom/Window/window-open-pending-url.html
 fast/dom/Window/window-properties.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
+fast/dom/Window/window-screen-properties.html
 fast/dom/Window/window-xy-properties.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/paused-event-dispatch.html
@@ -1731,6 +1741,7 @@ fast/html/tab-order.html
 fast/js/date-DST-time-cusps.html
 fast/js/date-big-setdate.html
 fast/js/exceptions-thrown-in-callbacks.html
+fast/js/navigator-mimeTypes-length.html
 fast/layers/resize-layer-deletion-crash.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/main-document-url-for-non-http-loads.html
@@ -5825,6 +5836,7 @@ transforms/2d/zoom-menulist.html
 # Tests in transitions/ directory
 #   Tests generating new results
 transitions/transition-drt-api.html
+transitions/zero-duration-with-non-zero-delay-end.html
 
 # Tests in webarchive/ directory
 #   Tests failing

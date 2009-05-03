@@ -1,3 +1,10 @@
+2009-05-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Some tests are still failing on the bot, despite working
+        locally. Disabling for now.
+
+        * platform/gtk/Skipped:
+
 2009-05-03  Zan Dobersek  <zandobersek@gmail.com>
 
          Reviewed by Gustavo Noronha.
