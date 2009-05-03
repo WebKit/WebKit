@@ -1,3 +1,24 @@
+2009-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - another fix for <rdar://problem/6617298> Typing delete on an unquoted
+          blank line unquotes the preceding, quoted blank line
+
+        Test: editing/deleting/type-delete-after-quote-2.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand): Initialize
+        m_startsAtEmptyLine.
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete): When the
+        selection starts at an empty line, do not prevent the merging of blocks.
+        This is what allows the text after the line break to be merged into the
+        block containing the line break. Also set m_startsAtEmptyLine to true.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): If
+        m_startsAtEmptyLine is true, create a placeholder BR to serve as the
+        merge destination.
+        * editing/DeleteSelectionCommand.h:
+
 2009-05-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

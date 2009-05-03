@@ -79,6 +79,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDel
       m_replace(replace),
       m_expandForSpecialElements(expandForSpecialElements),
       m_pruneStartBlockIfNecessary(false),
+      m_startsAtEmptyLine(false),
       m_startBlock(0),
       m_endBlock(0),
       m_typingStyle(0),
@@ -94,6 +95,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection
       m_replace(replace),
       m_expandForSpecialElements(expandForSpecialElements),
       m_pruneStartBlockIfNecessary(false),
+      m_startsAtEmptyLine(false),
       m_selectionToDelete(selection),
       m_startBlock(0),
       m_endBlock(0),
@@ -303,7 +305,7 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     // Not a special-case delete per se, but we can detect that the merging of content between blocks
     // should not be done.
     if (upstreamStartIsBR && downstreamStartIsBR) {
-        m_mergeBlocksAfterDelete = false;
+        m_startsAtEmptyLine = true;
         m_endingPosition = m_downstreamEnd;
     }
     
@@ -576,7 +578,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     }
     
     // We need to merge into m_upstreamStart's block, but it's been emptied out and collapsed by deletion.
-    if (!mergeDestination.deepEquivalent().node() || !mergeDestination.deepEquivalent().node()->isDescendantOf(m_upstreamStart.node()->enclosingBlockFlowElement())) {
+    if (!mergeDestination.deepEquivalent().node() || !mergeDestination.deepEquivalent().node()->isDescendantOf(m_upstreamStart.node()->enclosingBlockFlowElement()) || m_startsAtEmptyLine) {
         insertNodeAt(createBreakElement(document()).get(), m_upstreamStart);
         mergeDestination = VisiblePosition(m_upstreamStart);
     }
@@ -591,8 +593,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // The rule for merging into an empty block is: only do so if its farther to the right.
     // FIXME: Consider RTL.
-    // FIXME: handleSpecialCaseBRDelete prevents us from getting here in a case like <ul><li>foo<br><br></li></ul>^foo
-    if (isStartOfParagraph(mergeDestination) && startOfParagraphToMove.absoluteCaretBounds().x() > mergeDestination.absoluteCaretBounds().x()) {
+    if (!m_startsAtEmptyLine && isStartOfParagraph(mergeDestination) && startOfParagraphToMove.absoluteCaretBounds().x() > mergeDestination.absoluteCaretBounds().x()) {
         ASSERT(mergeDestination.deepEquivalent().downstream().node()->hasTagName(brTag));
         removeNodeAndPruneAncestors(mergeDestination.deepEquivalent().downstream().node());
         m_endingPosition = startOfParagraphToMove.deepEquivalent();

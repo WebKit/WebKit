@@ -1,3 +1,13 @@
+2009-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - another test for <rdar://problem/6617298> Typing delete on an unquoted
+          blank line unquotes the preceding, quoted blank line
+
+        * editing/deleting/type-delete-after-quote-2-expected.txt: Added.
+        * editing/deleting/type-delete-after-quote-2.html: Added.
+
 2009-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
