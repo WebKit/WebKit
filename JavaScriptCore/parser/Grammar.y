@@ -218,7 +218,7 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 %token ANDEQUAL MODEQUAL           /* &= and %= */
 %token XOREQUAL OREQUAL            /* ^= and |= */
 %token <intValue> OPENBRACE        /* { (with char offset) */
-%token <intValue> CLOSEBRACE        /* { (with char offset) */
+%token <intValue> CLOSEBRACE       /* } (with char offset) */
 
 /* terminal types */
 %token <doubleValue> NUMBER

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,10 +22,10 @@
 #ifndef Lexer_h
 #define Lexer_h
 
-#include "Identifier.h"
 #include "Lookup.h"
 #include "SegmentedVector.h"
 #include "SourceCode.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -35,13 +35,34 @@ namespace JSC {
 
     class Lexer : Noncopyable {
     public:
+        // Character manipulation functions.
+        static bool isWhiteSpace(int character);
+        static bool isLineTerminator(int character);
+        static unsigned char convertHex(int c1, int c2);
+        static UChar convertUnicode(int c1, int c2, int c3, int c4);
+
+        // Functions to set up parsing.
         void setCode(const SourceCode&);
         void setIsReparsing() { m_isReparsing = true; }
+
+        // Functions for the parser itself.
         int lex(void* lvalp, void* llocp);
-
-        int lineNo() const { return yylineno; }
-
+        int lineNumber() const { return m_lineNumber; }
         bool prevTerminator() const { return m_terminator; }
+        SourceCode sourceCode(int openBrace, int closeBrace, int firstLine);
+        bool scanRegExp();
+        const UString& pattern() const { return m_pattern; }
+        const UString& flags() const { return m_flags; }
+
+        // Functions for use after parsing.
+        bool sawError() const { return m_error; }
+        void clear();
+
+    private:
+        friend class JSGlobalData;
+
+        Lexer(JSGlobalData*);
+        ~Lexer();
 
         enum State {
             Start,
@@ -75,85 +96,50 @@ namespace JSC {
             Bad
         };
 
-        bool scanRegExp();
-        const UString& pattern() const { return m_pattern; }
-        const UString& flags() const { return m_flags; }
-
-        static unsigned char convertHex(int);
-        static unsigned char convertHex(int c1, int c2);
-        static UChar convertUnicode(int c1, int c2, int c3, int c4);
-        static bool isIdentStart(int);
-        static bool isIdentPart(int);
-        static bool isHexDigit(int);
-
-        bool sawError() const { return m_error; }
-
-        void clear();
-        SourceCode sourceCode(int openBrace, int closeBrace, int firstLine) { return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine); }
-
-        static inline bool isWhiteSpace(int ch)
-        {
-            return ch == '\t' || ch == 0x0b || ch == 0x0c || WTF::Unicode::isSeparatorSpace(ch);
-        }
-
-        static inline bool isLineTerminator(int ch)
-        {
-            return ch == '\r' || ch == '\n' || ch == 0x2028 || ch == 0x2029;
-        }
-
-    private:
-        friend class JSGlobalData;
-        Lexer(JSGlobalData*);
-        ~Lexer();
-
         void setDone(State);
-        void shift(unsigned int p);
+        void shift1();
+        void shift2();
+        void shift3();
+        void shift4();
         void nextLine();
         int lookupKeyword(const char *);
 
-        bool isWhiteSpace() const;
         bool isLineTerminator();
-        static bool isOctalDigit(int);
 
-        ALWAYS_INLINE int matchPunctuator(int& charPos, int c1, int c2, int c3, int c4);
-        static unsigned short singleEscape(unsigned short);
-        static unsigned short convertOctal(int c1, int c2, int c3);
+        int matchPunctuator(int& charPos);
 
         void record8(int);
         void record16(int);
         void record16(UChar);
 
-        ALWAYS_INLINE JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer)
-        {
-            m_identifiers.append(JSC::Identifier(m_globalData, buffer.data(), buffer.size()));
-            return &m_identifiers.last();
-        }
+        void copyCodeWithoutBOMs();
+
+        int currentOffset() const;
+
+        JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer);
+
+        bool lastTokenWasRestrKeyword() const;
 
         static const size_t initialReadBufferCapacity = 32;
         static const size_t initialIdentifierTableCapacity = 64;
 
-        int yylineno;
-        int yycolumn;
+        int m_lineNumber;
 
         bool m_done;
         Vector<char> m_buffer8;
         Vector<UChar> m_buffer16;
         bool m_terminator;
-        bool m_restrKeyword;
         bool m_delimited; // encountered delimiter like "'" and "}" on last run
-        bool m_skipLF;
-        bool m_skipCR;
-        bool m_eatNextIdentifier;
-        int m_stackToken;
+        unsigned char m_skipLineEnd;
         int m_lastToken;
 
         State m_state;
-        unsigned int m_position;
         const SourceCode* m_source;
         const UChar* m_code;
-        unsigned int m_length;
+        const UChar* m_codeStart;
+        const UChar* m_codeEnd;
         bool m_isReparsing;
-        int m_atLineStart;
+        bool m_atLineStart;
         bool m_error;
 
         // current and following unicode characters (int to allow for -1 for end-of-file marker)
@@ -162,11 +148,6 @@ namespace JSC {
         int m_next2;
         int m_next3;
         
-        int m_currentOffset;
-        int m_nextOffset1;
-        int m_nextOffset2;
-        int m_nextOffset3;
-        
         SegmentedVector<JSC::Identifier, initialIdentifierTableCapacity> m_identifiers;
 
         JSGlobalData* m_globalData;
@@ -174,8 +155,30 @@ namespace JSC {
         UString m_pattern;
         UString m_flags;
 
-        const HashTable m_mainTable;
+        const HashTable m_keywordTable;
+
+        Vector<UChar> m_codeWithoutBOMs;
     };
+
+    inline bool Lexer::isWhiteSpace(int ch)
+    {
+        return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : WTF::Unicode::isSeparatorSpace(ch);
+    }
+
+    inline bool Lexer::isLineTerminator(int ch)
+    {
+        return ch == '\r' || ch == '\n' || ch == 0x2028 || ch == 0x2029;
+    }
+
+    inline unsigned char Lexer::convertHex(int c1, int c2)
+    {
+        return (toASCIIHexValue(c1) << 4) | toASCIIHexValue(c2);
+    }
+
+    inline UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
+    {
+        return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
+    }
 
 } // namespace JSC
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -148,5 +148,19 @@ namespace WTF {
 #endif
     inline bool isASCIIPrintable(int c) { return c >= ' ' && c <= '~'; }
 }
+
+using WTF::isASCII;
+using WTF::isASCIIAlpha;
+using WTF::isASCIIAlphanumeric;
+using WTF::isASCIIDigit;
+using WTF::isASCIIHexDigit;
+using WTF::isASCIILower;
+using WTF::isASCIIOctalDigit;
+using WTF::isASCIIPrintable;
+using WTF::isASCIISpace;
+using WTF::isASCIIUpper;
+using WTF::toASCIIHexValue;
+using WTF::toASCIILower;
+using WTF::toASCIIUpper;
 
 #endif

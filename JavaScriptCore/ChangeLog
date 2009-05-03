@@ -1,3 +1,89 @@
+2009-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 25519: streamline lexer by handling BOMs differently
+        https://bugs.webkit.org/show_bug.cgi?id=25519
+
+        Roughly 1% faster SunSpider.
+
+        * parser/Grammar.y: Tweak formatting a bit.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::Lexer): Remove unnnecessary initialization of data members
+        that are set up by setCode.
+        (JSC::Lexer::currentOffset): Added. Used where the old code would look at
+        m_currentOffset.
+        (JSC::Lexer::shift1): Replaces the old shift function. No longer does anything
+        to handle BOM characters.
+        (JSC::Lexer::shift2): Ditto.
+        (JSC::Lexer::shift3): Ditto.
+        (JSC::Lexer::shift4): Ditto.
+        (JSC::Lexer::setCode): Updated for name change from yylineno to m_line.
+        Removed now-unused m_eatNextIdentifier, m_stackToken, and m_restrKeyword.
+        Replaced m_skipLF and m_skipCR with m_skipLineEnd. Replaced the old
+        m_length with m_codeEnd and m_currentOffset with m_codeStart. Added code
+        to scan for a BOM character and call copyCodeWithoutBOMs() if we find any.
+        (JSC::Lexer::copyCodeWithoutBOMs): Added.
+        (JSC::Lexer::nextLine): Updated for name change from yylineno to m_line.
+        (JSC::Lexer::makeIdentifier): Moved up higher in the file.
+        (JSC::Lexer::matchPunctuator): Moved up higher in the file and changed to
+        use a switch statement instead of just if statements.
+        (JSC::Lexer::isLineTerminator): Moved up higher in the file and changed to
+        have fewer branches.
+        (JSC::Lexer::lastTokenWasRestrKeyword): Added. This replaces the old
+        m_restrKeyword boolean.
+        (JSC::Lexer::isIdentStart): Moved up higher in the file. Changed to use
+        fewer branches in the ASCII but not identifier case.
+        (JSC::Lexer::isIdentPart): Ditto.
+        (JSC::Lexer::singleEscape): Moved up higher in the file.
+        (JSC::Lexer::convertOctal): Moved up higher in the file.
+        (JSC::Lexer::convertHex): Moved up higher in the file. Changed to use
+        toASCIIHexValue instead of rolling our own here.
+        (JSC::Lexer::convertUnicode): Ditto.
+        (JSC::Lexer::record8): Moved up higher in the file.
+        (JSC::Lexer::record16): Moved up higher in the file.
+        (JSC::Lexer::lex): Changed type of stringType to int. Replaced m_skipLF
+        and m_skipCR with m_skipLineEnd, which requires fewer branches in the
+        main lexer loop. Use currentOffset instead of m_currentOffset. Removed
+        unneeded m_stackToken. Use isASCIIDigit instead of isDecimalDigit.
+        Split out the two cases for InIdentifierOrKeyword and InIdentifier.
+        Added special case tight loops for identifiers and other simple states.
+        Removed a branch from the code that sets m_atLineStart to false using goto.
+        Streamlined the number-handling code so we don't check for the same types
+        twice for non-numeric cases and don't add a null to m_buffer8 when it's
+        not being used. Removed m_eatNextIdentifier, which wasn't working anyway,
+        and m_restrKeyword, which is redundant with m_lastToken. Set the
+        m_delimited flag without using a branch.
+        (JSC::Lexer::scanRegExp): Tweaked style a bit.
+        (JSC::Lexer::clear): Clear m_codeWithoutBOMs so we don't use memory after
+        parsing. Clear out UString objects in the more conventional way.
+        (JSC::Lexer::sourceCode): Made this no-longer inline since it has more
+        work to do in the case where we stripped BOMs.
+
+        * parser/Lexer.h: Renamed yylineno to m_lineNumber. Removed convertHex
+        function, which is the same as toASCIIHexValue. Removed isHexDigit
+        function, which is the same as isASCIIHedDigit. Replaced shift with four
+        separate shift functions. Removed isWhiteSpace function that passes
+        m_current, instead just passing m_current explicitly. Removed isOctalDigit,
+        which is the same as isASCIIOctalDigit. Eliminated unused arguments from
+        matchPunctuator. Added copyCoodeWithoutBOMs and currentOffset. Moved the
+        makeIdentifier function out of the header. Added lastTokenWasRestrKeyword
+        function. Added new constants for m_skipLineEnd. Removed unused yycolumn,
+        m_restrKeyword, m_skipLF, m_skipCR, m_eatNextIdentifier, m_stackToken,
+        m_position, m_length, m_currentOffset, m_nextOffset1, m_nextOffset2,
+        m_nextOffset3. Added m_skipLineEnd, m_codeStart, m_codeEnd, and
+        m_codeWithoutBOMs.
+
+        * parser/SourceProvider.h: Added hasBOMs function. In the future this can
+        be used to tell the lexer about strings known not to have BOMs.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncUnescape): Changed to use isASCIIHexDigit.
+
+        * wtf/ASCIICType.h: Added using statements to match the design of the
+        other WTF headers.
+
 2009-05-02  Ada Chan  <adachan@apple.com>
 
         Fix windows build (when doing a clean build)

@@ -404,12 +404,12 @@ JSValue globalFuncUnescape(ExecState* exec, JSObject*, JSValue, const ArgList& a
         const UChar* c = str.data() + k;
         UChar u;
         if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
-            if (Lexer::isHexDigit(c[2]) && Lexer::isHexDigit(c[3]) && Lexer::isHexDigit(c[4]) && Lexer::isHexDigit(c[5])) {
+            if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                 u = Lexer::convertUnicode(c[2], c[3], c[4], c[5]);
                 c = &u;
                 k += 5;
             }
-        } else if (c[0] == '%' && k <= len - 3 && Lexer::isHexDigit(c[1]) && Lexer::isHexDigit(c[2])) {
+        } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
             u = UChar(Lexer::convertHex(c[1], c[2]));
             c = &u;
             k += 2;

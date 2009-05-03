@@ -57,12 +57,13 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
 
     int parseError = jscyyparse(globalData);
     bool lexError = lexer.sawError();
+    int lineNumber = lexer.lineNumber();
     lexer.clear();
 
     ParserRefCounted::deleteNewObjects(globalData);
 
     if (parseError || lexError) {
-        *errLine = lexer.lineNo();
+        *errLine = lineNumber;
         *errMsg = "Parse error";
         m_sourceElements.clear();
     }

@@ -215,7 +215,7 @@ void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
 Node::Node(JSGlobalData* globalData)
     : ParserRefCounted(globalData)
 {
-    m_line = globalData->lexer->lineNo();
+    m_line = globalData->lexer->lineNumber();
 }
 
 // ------------------------------ ThrowableExpressionData --------------------------------
