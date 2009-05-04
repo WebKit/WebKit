@@ -9,7 +9,7 @@ EVENT(loadedmetadata)
 EXPECTED (video.videoWidth == '640') OK
 EXPECTED (video.videoHeight == '480') OK
 
-Loading "content/720x576i-anamorphic.mov". Movie encoded with PAL non-square pixels and clean aperture dimenstions corrects pixel aspect ratio.
+Loading "content/720x576i-anamorphic.mov". Movie encoded with PAL non-square pixels, clean aperture corrects pixel aspect ratio when displayed.
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)

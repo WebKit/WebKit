@@ -1,3 +1,10 @@
+2009-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        * media/video-size-intrinsic-scale-expected.txt: Changed to match test.
+        * media/video-size-intrinsic-scale.html: Removed doubled "Movie" word.
+
 2009-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
