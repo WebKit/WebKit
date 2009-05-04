@@ -1,3 +1,12 @@
+2009-05-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Ariya Hidayat.
+
+        Update the qrc file for the Web Inspector in the Qt build
+        with missing files.
+
+        * inspector/front-end/WebKit.qrc:
+
 2009-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by George Staikos.
