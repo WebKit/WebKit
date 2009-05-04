@@ -1,3 +1,13 @@
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding missing results.
+
+        Add Win results for editing/spelling/spellcheck-attribute
+        Pixel results are still missing, but I have no easy way
+        to add them, and the bots aren't generating them currently.
+
+        * platform/win/editing/spelling/spellcheck-attribute-expected.txt: Added.
+
 2009-05-03  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.
