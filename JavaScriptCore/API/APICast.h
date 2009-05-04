@@ -29,6 +29,7 @@
 #include "JSNumberCell.h"
 #include "JSValue.h"
 #include <wtf/Platform.h>
+#include <wtf/UnusedParam.h>
 
 namespace JSC {
     class ExecState;
@@ -60,7 +61,9 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
 {
     JSC::JSValue jsValue = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
-#if !USE(ALTERNATE_JSIMMEDIATE)
+#if USE(ALTERNATE_JSIMMEDIATE)
+    UNUSED_PARAM(exec);
+#else
     if (jsValue && jsValue.isNumber()) {
         ASSERT(jsValue.isAPIMangledNumber());
         return JSC::jsNumber(exec, jsValue.uncheckedGetNumber());
@@ -86,7 +89,9 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
 
 inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
 {
-#if !USE(ALTERNATE_JSIMMEDIATE)
+#if USE(ALTERNATE_JSIMMEDIATE)
+    UNUSED_PARAM(exec);
+#else
     if (v && v.isNumber()) {
         ASSERT(!v.isAPIMangledNumber());
         return reinterpret_cast<JSValueRef>(JSC::JSValue::encode(JSC::jsAPIMangledNumber(exec, v.uncheckedGetNumber())));

@@ -126,6 +126,12 @@ JSValue jsNumberCell(ExecState*, double)
     return JSValue();
 }
 
+JSValue jsAPIMangledNumber(ExecState*, double)
+{
+    ASSERT_NOT_REACHED();
+    return JSValue();
+}
+
 #endif
 
 } // namespace JSC

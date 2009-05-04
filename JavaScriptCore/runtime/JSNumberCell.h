@@ -36,6 +36,7 @@ namespace JSC {
     extern const double Inf;
 
     JSValue jsNumberCell(ExecState*, double);
+    JSValue jsAPIMangledNumber(ExecState*, double);
 
 #if !USE(ALTERNATE_JSIMMEDIATE)
 
@@ -235,8 +236,6 @@ namespace JSC {
         ASSERT(isNumber());
         return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : getDoubleNumber();
     }
-
-    JSValue jsAPIMangledNumber(ExecState* exec, double);
 
     inline bool JSValue::isAPIMangledNumber()
     {
