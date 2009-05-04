@@ -2227,6 +2227,20 @@ static void markMisspellingsOrBadGrammar(Editor* editor, const VisibleSelection&
     if (!editableNode || !editableNode->isContentEditable())
         return;
     
+    // Ascend the DOM tree to find a "spellcheck" attribute.
+    // When we find a "spellcheck" attribute, retrieve its value and exit if its value is "false".
+    const Node* node = editor->frame()->document()->focusedNode();
+    while (node) {
+        if (node->isElementNode()) {
+            const WebCore::AtomicString& value = static_cast<const Element*>(node)->getAttribute(spellcheckAttr);
+            if (equalIgnoringCase(value, "true"))
+                break;
+            if (equalIgnoringCase(value, "false"))
+                return;
+        }
+        node = node->parent();
+    }
+
     // Get the spell checker if it is available
     if (!editor->client())
         return;

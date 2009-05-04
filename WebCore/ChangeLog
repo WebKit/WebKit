@@ -1,3 +1,20 @@
+2009-05-03  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Test: editing/spelling/spellcheck-attribute.html
+
+        Bug 14552: Add a way to disable spell checking for specific element
+        https://bugs.webkit.org/show_bug.cgi?id=14552
+
+        For compatibility with Firefox, this code ascends the DOM tree when an element does
+        not have its "spellcheck" attribute.
+
+        * editing/Editor.cpp:
+        (WebCore::markMisspellingsOrBadGrammar): Retrieve the value of the "spellcheck"
+        attribute of an element before calling a spell checker or a grammar checker.
+        * html/HTMLAttributeNames.in: Add a "spellcheck" attribute.
+
 2009-05-03  Sam Weinig  <sam@webkit.org>
 
         Roll JSC API number marshaling back in one last time (I hope).

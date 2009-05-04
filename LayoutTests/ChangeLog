@@ -1,3 +1,20 @@
+2009-05-03  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 14552: Add a way to disable spell checking for specific element
+        https://bugs.webkit.org/show_bug.cgi?id=14552
+
+        Add a layout test which verifies "spellcheck" attributes work as written
+        in this specification, "http://damowmow.com/playground/spellcheck.txt".
+        This test expects the default value of an element is compatible with
+        Firefox, i.e. inheriting from the parent element.
+
+        * editing/spelling/spellcheck-attribute.html: Added.
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.checksum: Added.
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.png: Added.
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.txt: Added.
+
 2009-05-03  Gustavo Noronha Silva  <gns@gnome.org>
 
         Three more failing tests caused by the disabling of the others.

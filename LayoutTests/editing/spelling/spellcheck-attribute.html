@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Spellcheck Attribute Test</title>
+<link rel="help" href="http://damowmow.com/playground/spellcheck.txt">
+</head>
+<body>
+<p>This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.</p>
+<div spellcheck="true">
+<label>1.1.</label><input id="test1_1" type="text"></input><br/>
+<label>1.2.</label><input id="test1_2" type="text" spellcheck="true"></input><br/>
+<label>1.3.</label><input id="test1_3" type="text" spellcheck="false"></input><br/>
+</div>
+<div spellcheck="false">
+<label>2.1.</label><input id="test2_1" type="text"></input><br/>
+<label>2.2.</label><input id="test2_2" type="text" spellcheck="true"></input><br/>
+<label>2.3.</label><input id="test2_3" type="text" spellcheck="false"></input><br/>
+</div>
+<script>
+function typeInvalidWord(id) {
+    document.getElementById(id).focus();
+    document.execCommand("InsertText", false, 'z');
+    document.execCommand("InsertText", false, 'z');
+    document.execCommand("InsertText", false, ' ');
+}
+
+typeInvalidWord('test1_1');
+typeInvalidWord('test1_2');
+typeInvalidWord('test1_3');
+typeInvalidWord('test2_1');
+typeInvalidWord('test2_2');
+typeInvalidWord('test2_3');
+</script>
+</body>
+</html>
