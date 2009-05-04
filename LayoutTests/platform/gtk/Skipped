@@ -32,6 +32,9 @@
 # media/video-autoplay.html
 # media/video-buffered.html
 # media/video-controls.html
+# media/video-currentTime-set.html
+# media/video-currentTime-set2.html
+# media/video-currentTime.html
 # media/video-dom-autoplay.html
 # media/video-error-abort.html
 # media/video-pause-empty-events.html
@@ -3976,6 +3979,9 @@ media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 media/video-controls.html
+media/video-currentTime-set.html
+media/video-currentTime-set2.html
+media/video-currentTime.html
 media/video-document-types.html
 media/video-dom-autoplay.html
 media/video-dom-src.html
