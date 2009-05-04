@@ -1,3 +1,11 @@
+2009-05-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Disable more tests that fail on the bot, and those which fail when
+        we disable some. Hopefully this finishes our massage to the
+        skipped list and we can go back to working on fixing tests now.
+
+        * platform/gtk/Skipped:
+
 2009-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.

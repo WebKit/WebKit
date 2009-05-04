@@ -16,11 +16,31 @@
 #
 #     grep -v '^#' | grep -v '^$'
 
-# These tests are not failing locally, but fail on the bot:
+# These tests are not failing locally, but fail on the bot: Most of
+# the media/video tests fail if you remove some of them.
+#
 # editing/selection/extend-selection.html
 # fast/dom/null-document-location-assign-crash.html
+# fast/dom/null-document-location-href-put-crash.html
+# fast/dom/null-document-location-put-crash.html
+# fast/dom/null-document-location-replace-crash.html
+# fast/dom/null-document-window-open-crash.html
 # fast/dom/Window/window-screen-properties.html
 # fast/js/navigator-mimeTypes-length.html
+# media/remove-from-document.html
+# media/video-append-source.html
+# media/video-autoplay.html
+# media/video-buffered.html
+# media/video-controls.html
+# media/video-dom-autoplay.html
+# media/video-error-abort.html
+# media/video-pause-empty-events.html
+# media/video-play-empty-events.html
+# media/video-seek-past-end-paused.html
+# media/video-seekable.html
+# media/video-size.html
+# media/video-src-remove.html
+# media/video-volume.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
 # Tests in accessibility/ directory
@@ -1547,7 +1567,10 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
 fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-location-href-put-crash.html
+fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
+fast/dom/null-document-window-open-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/open-and-close-by-DOM.html
@@ -3944,27 +3967,41 @@ http/tests/webarchive/test-preload-resources.html
 media/audio-mpeg-supported.html
 media/broken-video.html
 media/progress-event-total.html
+media/remove-from-document.html
+media/video-append-source.html
+media/video-autoplay.html
+media/video-buffered.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
+media/video-controls.html
 media/video-document-types.html
+media/video-dom-autoplay.html
 media/video-dom-src.html
+media/video-error-abort.html
 media/video-error-does-not-exist.html
 media/video-load-networkState.html
 media/video-loop.html
+media/video-pause-empty-events.html
+media/video-play-empty-events.html
 media/video-played-collapse.html
 media/video-played-reset.html
 media/video-played.html
+media/video-seek-past-end-paused.html
 media/video-seek-past-end-playing.html
+media/video-seekable.html
 media/video-seeking.html
 media/video-size-intrinsic-scale.html
+media/video-size.html
 media/video-source-add-src.html
 media/video-source-type-params.html
 media/video-source-type.html
 media/video-src-change.html
 media/video-src-invalid-remove.html
 media/video-src-plus-source.html
+media/video-src-remove.html
+media/video-volume.html
 #   Tests timing out
 media/unsupported-rtsp.html
 #   Tests generating new results
