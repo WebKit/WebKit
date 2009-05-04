@@ -2,6 +2,16 @@
 
         Reviewed by George Staikos.
 
+        Remove dead code from RenderPath
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        * rendering/RenderPath.cpp:
+        * rendering/RenderPath.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by George Staikos.
+
         Share layout code between RenderSVGViewportContainer and RenderSVGContainer
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

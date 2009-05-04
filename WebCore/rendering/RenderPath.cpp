@@ -78,16 +78,6 @@ TransformationMatrix RenderPath::localTransform() const
     return m_localTransform;
 }
 
-FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
-{
-    // FIXME: does it make sense to map incoming points with the inverse of the
-    // absolute transform? 
-    double localX;
-    double localY;
-    absoluteTransform().inverse().map(point.x(), point.y(), localX, localY);
-    return FloatPoint::narrowPrecision(localX, localY);
-}
-
 bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
 {
     if (m_path.isEmpty())

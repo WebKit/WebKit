@@ -64,8 +64,6 @@ public:
     FloatRect drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
 
 private:
-    FloatPoint mapAbsolutePointToLocal(const FloatPoint&) const;
-
     bool calculateLocalTransform();
     virtual TransformationMatrix localTransform() const;
 
