@@ -45,12 +45,10 @@ RenderSVGViewportContainer::~RenderSVGViewportContainer()
 void RenderSVGViewportContainer::layout()
 {
     ASSERT(needsLayout());
-    
+    ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
+
     calcViewport();
-    
-    // Arbitrary affine transforms are incompatible with LayoutState.
-    view()->disableLayoutState();
-    
+
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
@@ -60,10 +58,8 @@ void RenderSVGViewportContainer::layout()
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
     }
-    
     repainter.repaintAfterLayout();
-    
-    view()->enableLayoutState();
+
     setNeedsLayout(false);
 }
 

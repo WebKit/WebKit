@@ -65,12 +65,9 @@ bool RenderSVGContainer::calculateLocalTransform()
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
-
-    // Arbitrary affine transforms are incompatible with LayoutState.
-    view()->disableLayoutState();
+    ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
-
     calculateLocalTransform();
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
@@ -84,10 +81,8 @@ void RenderSVGContainer::layout()
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
     }
-
     repainter.repaintAfterLayout();
 
-    view()->enableLayoutState();
     setNeedsLayout(false);
 }
 
