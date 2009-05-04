@@ -226,6 +226,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     g_object_set(G_OBJECT(settings),
                  "enable-private-browsing", FALSE,
                  "enable-developer-extras", FALSE,
+                 "enable-spell-checking", TRUE,
                  NULL);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
