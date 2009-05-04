@@ -38,8 +38,6 @@ namespace WebCore {
         bool stretchMethod() const;
 
         virtual const char* renderName() const { return "RenderSVGTextPath"; }
-        virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
-        virtual void absoluteQuads(Vector<FloatQuad>&);
 
     private:
         float m_startOffset;

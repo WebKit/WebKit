@@ -26,56 +26,11 @@
 #if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
 
-#include "FloatQuad.h"
-#include "RenderBlock.h"
-#include "SVGInlineTextBox.h"
-#include "SVGRootInlineBox.h"
-
 namespace WebCore {
 
 RenderSVGTSpan::RenderSVGTSpan(Node* n)
     : RenderSVGInline(n)
 {
-}
-
-void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int, int)
-{
-    InlineRunBox* firstBox = firstLineBox();
-
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderBox* object = rootBox ? rootBox->block() : 0;
-
-    if (!object)
-        return;
-
-    int xRef = object->x();
-    int yRef = object->y();
- 
-    for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
-        // FIXME: broken with CSS transforms
-        rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
-    }
-}
-
-void RenderSVGTSpan::absoluteQuads(Vector<FloatQuad>& quads)
-{
-    InlineRunBox* firstBox = firstLineBox();
-
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderBox* object = rootBox ? rootBox->block() : 0;
-
-    if (!object)
-        return;
-
-    int xRef = object->x();
-    int yRef = object->y();
- 
-    for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
-        // FIXME: broken with CSS transforms
-        quads.append(absoluteTransform().mapRect(rect));
-    }
 }
 
 }

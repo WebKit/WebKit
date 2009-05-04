@@ -34,6 +34,10 @@ public:
     RenderSVGInline(Node*);
     virtual const char* renderName() const { return "RenderSVGInline"; }
     virtual bool requiresLayer() const { return false; }
+
+    // These are shared between RenderSVGTSpan and RenderSVGTextPath
+    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
+    virtual void absoluteQuads(Vector<FloatQuad>&);
     
 private:
     virtual InlineFlowBox* createFlowBox();

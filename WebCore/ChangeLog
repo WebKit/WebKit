@@ -2,6 +2,22 @@
 
         Reviewed by George Staikos.
 
+        Move absoluteRects and absoluteQuads into RenderSVGInline and remove absoluteTransform() usage
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::absoluteRects):
+        (WebCore::RenderSVGInline::absoluteQuads):
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGTSpan.cpp:
+        * rendering/RenderSVGTSpan.h:
+        * rendering/RenderSVGTextPath.cpp:
+        * rendering/RenderSVGTextPath.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by George Staikos.
+
         Move RenderSVGText off of localToAbsolute()
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

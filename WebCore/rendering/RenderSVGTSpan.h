@@ -31,8 +31,6 @@ class RenderSVGTSpan : public RenderSVGInline {
 public:
     RenderSVGTSpan(Node*);
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
 
     // FIXME: These are incorrect, but have always behaved this way.
     // These empty implementations prevent us from hitting RenderObject ASSERTS.
