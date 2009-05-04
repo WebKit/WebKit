@@ -1,3 +1,29 @@
+2009-05-04  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6839881> With "Mail Contents of This Page" in Safari images don't appear in the Tiger Mail compose window
+
+        DocumentLoader::subresource() is the implementation for the WebKit API [WebDataSource subresourceForURL:] and has 
+        particularly sticky behavior.  
+
+        If the DocumentLoader represents a WebArchive, this method should return ArchiveResources from that archive.  However, we 
+        prefer CachedResources over ArchiveResources because they might represent fresher data than what was originally loaded 
+        from the WebArchive.
+
+        In some instances, CachedResources are created and associated with the DocumentLoader but not immediately run through the 
+        loading delegate machinery.  This was always a possibility, but the Preload Scanner made this significantly more likely.
+
+        When this happens and someone asks the WebDataSource for a subresource, it would prefer the CachedResource over an 
+        ArchiveResource it has even if the CachedResource hasn't been loaded yet.  The CachedResource has nil data, so no
+        WebResource is returned, and the client thinks the subresource doesn't exist even though it does.
+
+        This broke Tiger Mail and probably various other WebKit applications but has a fairly straightforward fix.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource): If there is a CachedResource but it hasn't been loaded yet, fallback to the
+          ArchiveResource.
+
 2009-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
