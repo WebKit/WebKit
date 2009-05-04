@@ -1,3 +1,9 @@
+2009-05-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+
 2009-05-03  Mark Rowe  <mrowe@apple.com>
 
         Fix the 64-bit build.
