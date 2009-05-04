@@ -1,3 +1,82 @@
+2009-05-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+        
+        Initial DRT implementation for wx.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/wx: Added.
+        * DumpRenderTree/wx/DumpRenderTree.bkl: Added.
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp: Added.
+        (LayoutWebViewEventHandler::LayoutWebViewEventHandler):
+        (LayoutWebViewEventHandler::bindEvents):
+        (LayoutWebViewEventHandler::OnLoadEvent):
+        (LayoutWebViewEventHandler::OnAlertEvent):
+        (LayoutWebViewEventHandler::OnConfirmEvent):
+        (LayoutWebViewEventHandler::OnPromptEvent):
+        (LayoutWebViewEventHandler::OnConsoleMessageEvent):
+        (LayoutWebViewEventHandler::OnReceivedTitleEvent):
+        (LayoutWebViewEventHandler::OnWindowObjectClearedEvent):
+        (notifyDoneFired):
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        (MyApp::OnInit):
+        * DumpRenderTree/wx/DumpRenderTreeWx.h: Added.
+        * DumpRenderTree/wx/GCControllerWx.cpp: Added.
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: Added.
+        (LayoutTestController::~LayoutTestController):
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::copyDecodedHostName):
+        (LayoutTestController::copyEncodedHostName):
+        (LayoutTestController::display):
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::pathToLocalResource):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+        (LayoutTestController::setUseDashboardCompatibilityMode):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setWindowIsKey):
+        (LayoutTestController::setSmartInsertDeleteEnabled):
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+        (LayoutTestController::setWaitToDump):
+        (LayoutTestController::windowCount):
+        (LayoutTestController::setPrivateBrowsingEnabled):
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        (LayoutTestController::setPopupBlockingEnabled):
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+        (LayoutTestController::execCommand):
+        (LayoutTestController::setPersistentUserStyleSheetLocation):
+        (LayoutTestController::clearPersistentUserStyleSheet):
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::setDatabaseQuota):
+        (LayoutTestController::numberOfActiveAnimations):
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::setIconDatabaseEnabled):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::isCommandEnabled):
+        (LayoutTestController::webHistoryItemCount):
+        (LayoutTestController::waitForPolicyDelegate):
+        * DumpRenderTree/wx/WorkQueueItemWx.cpp: Added.
+        (LoadItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+        * Scripts/build-dumprendertree:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+        * wx/build-wxwebkit:
+
 2009-05-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

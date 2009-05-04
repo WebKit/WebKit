@@ -303,6 +303,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
     do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
     do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
     do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/WebKitTools/DumpRenderTree/wx  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE $EXTRA_CPPFLAGS" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args
 
     if [ $do_clean == 1 ]; then
         rm -rf $WK_ROOT/JavaScriptCore/DerivedSources

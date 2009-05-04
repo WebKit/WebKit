@@ -476,6 +476,9 @@ sub builtDylibPathForName
     if (isQt() or isChromium()) {
         return "$configurationProductDir/$libraryName";
     }
+    if (isWx()) {
+        return "$configurationProductDir/libwxwebkit.dylib";
+    }
     if (isGtk()) {
         return "$configurationProductDir/$libraryName/../.libs/libwebkit-1.0.so";
     }
@@ -513,6 +516,10 @@ sub hasSVGSupport
 
     if (isQt()) {
         return 1;
+    }
+    
+    if (isWx()) {
+        return 0;
     }
 
     my $hasSVGSupport = 0;

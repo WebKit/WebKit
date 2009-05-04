@@ -36,6 +36,7 @@ Build configuration script for Bakefile.
         ../../WebCore/webcore-wx.bkl
         wxwebkit.bkl
         bindings/python/wxwebkit-py.bkl
+        ../../WebKitTools/DumpRenderTree/wx/DumpRenderTree.bkl
         ../../WebKitTools/wx/browser/browser.bkl
     </input>
 
@@ -105,6 +106,16 @@ Build configuration script for Bakefile.
         -o../WebCore/Projects/wx/wxWebCore.xcode
     </add-flags>
     -->
+    
+    <add-flags files="../../WebKitTools/DumpRenderTree/wx/DumpRenderTree.bkl" formats="gnu">
+        -o../../WebKitTools/DumpRenderTree/wx/GNUmakefile
+    </add-flags>
+    <add-flags files="../../WebKitTools/DumpRenderTree/wx/DumpRenderTree.bkl" formats="msvs2005prj">
+        -o../../WebKitTools/DumpRenderTree/wx/DumpRenderTree.sln
+    </add-flags>
+    <add-flags files="../../WebKitTools/DumpRenderTree/wx/DumpRenderTree.bkl" formats="msvc">
+        -o../../WebKitTools/DumpRenderTree/wx/makefile.vc
+    </add-flags>
 
     <!-- Personal customizations (not in SVN): -->
     <include file="Bakefiles.local.bkgen" ignore_missing="1"/>

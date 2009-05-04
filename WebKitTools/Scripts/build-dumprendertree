@@ -45,7 +45,7 @@ if (isAppleMacWebKit()) {
     $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options, @ARGV;
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("DumpRenderTree.sln");
-} elsif (isQt() || isGtk()) {
+} elsif (isQt() || isGtk() || isWx()) {
     # Qt and Gtk build everything in one shot. No need to build anything here.
     $result = 0;
 } else {

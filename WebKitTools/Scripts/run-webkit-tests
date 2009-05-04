@@ -168,6 +168,9 @@ if (isTiger()) {
     $platform = "qt";
 } elsif (isGtk()) {
     $platform = "gtk";
+}
+elsif (isWx()) {
+    $platform = "wx";
 } elsif (isCygwin()) {
     $platform = "win";
 }
