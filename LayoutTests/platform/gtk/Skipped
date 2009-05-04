@@ -46,6 +46,13 @@
 # media/video-volume.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
+# These tests work correctly, but I was not able to make them
+# generate render tree dumps consistently in the bot and in my
+# machine, so I'm disabling them (kov).
+#
+# editing/spelling/spellcheck-attribute.html
+# svg/text/foreignObject-repaint.xml
+
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
@@ -1457,6 +1464,7 @@ editing/selection/word-granularity.html
 editing/selection/wrapped-line-caret-1.html
 editing/selection/wrapped-line-caret-2.html
 editing/spelling/inline_spelling_markers.html
+editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling-linebreak.html
 editing/spelling/spelling.html
 editing/style/4916887.html
@@ -4880,6 +4888,7 @@ svg/hixie/viewbox/003.xml
 svg/hixie/viewbox/004.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
+svg/text/foreignObject-repaint.xml
 svg/text/kerning.svg
 svg/text/multichar-glyph.svg
 svg/text/text-align-01-b.svg

@@ -1,5 +1,14 @@
 2009-05-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Disabling new tests, as they are failing because of font
+        configuration mismatch between my machine and the bot.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/spelling/spellcheck-attribute-expected.txt: Removed.
+        * platform/gtk/svg/text/foreignObject-repaint-expected.txt: Removed.
+
+2009-05-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Alexey Proskuryakov.
 
         Add results for two new tests, for the GTK+ port.
