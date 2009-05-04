@@ -22,12 +22,6 @@
 
 #include "config.h"
 
-// Dump SVGElementInstance object tree - useful to debug instanceRoot problems
-// #define DUMP_INSTANCE_TREE
-
-// Dump the deep-expanded shadow tree (where the renderes are built from)
-// #define DUMP_SHADOW_TREE
-
 #if ENABLE(SVG)
 #include "SVGUseElement.h"
 
@@ -37,6 +31,7 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "NodeRenderStyle.h"
 #include "RegisteredEventListener.h"
 #include "RenderSVGTransformableContainer.h"
@@ -50,6 +45,12 @@
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
 #include "XMLSerializer.h"
+
+// Dump SVGElementInstance object tree - useful to debug instanceRoot problems
+// #define DUMP_INSTANCE_TREE
+
+// Dump the deep-expanded shadow tree (where the renderers are built from)
+// #define DUMP_SHADOW_TREE
 
 namespace WebCore {
 

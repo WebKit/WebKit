@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
+
 #include "CString.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
@@ -35,12 +36,12 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "Font.h"
+#include "MappedAttribute.h"
 #include "SVGDefinitionSrcElement.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
-
 #include <math.h>
 
 namespace WebCore {

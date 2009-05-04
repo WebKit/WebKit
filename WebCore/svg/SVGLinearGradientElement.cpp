@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
+#include "MappedAttribute.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPaintServerLinearGradient.h"

@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGSVGElement.h"
 
-#include "TransformationMatrix.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
@@ -34,9 +33,10 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
-#include "RenderSVGViewportContainer.h"
+#include "MappedAttribute.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGViewportContainer.h"
+#include "SMILTimeContainer.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -46,8 +46,9 @@
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
+#include "ScriptEventListener.h"
 #include "SelectionController.h"
-#include "SMILTimeContainer.h"
+#include "TransformationMatrix.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

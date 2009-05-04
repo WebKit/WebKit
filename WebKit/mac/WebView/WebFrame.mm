@@ -51,9 +51,10 @@
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/AnimationController.h>
-#import <WebCore/AXObjectCache.h>
+#import <WebCore/CSSMutableStyleDeclaration.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocLoader.h>
@@ -69,23 +70,22 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginData.h>
+#import <WebCore/RenderLayer.h>
 #import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/RenderLayer.h>
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/ScriptValue.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
-#import <WebCore/ScriptController.h>
-#import <WebCore/ScriptValue.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSValue.h>
-#include <wtf/CurrentTime.h>
+#import <wtf/CurrentTime.h>
 
 using namespace std;
 using namespace WebCore;

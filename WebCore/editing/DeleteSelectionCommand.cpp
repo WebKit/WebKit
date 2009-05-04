@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeleteSelectionCommand.h"
 
+#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"

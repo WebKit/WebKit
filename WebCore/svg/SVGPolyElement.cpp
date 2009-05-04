@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "FloatPoint.h"
+#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGNames.h"

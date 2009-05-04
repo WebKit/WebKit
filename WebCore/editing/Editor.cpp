@@ -31,6 +31,7 @@
 #include "ApplyStyleCommand.h"
 #include "CreateLinkCommand.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"

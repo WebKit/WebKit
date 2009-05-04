@@ -23,6 +23,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLTableCellElement.h"
 
@@ -30,6 +31,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
+#include "MappedAttribute.h"
 #include "RenderTableCell.h"
 
 using std::max;

@@ -27,6 +27,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "MappedAttribute.h"
 #include "RenderSVGImage.h"
 #include "SVGDocument.h"
 #include "SVGLength.h"

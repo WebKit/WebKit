@@ -22,6 +22,7 @@
  *
  */
  
+
 #include "config.h"
 #include "HTMLSelectElement.h"
 
@@ -44,6 +45,7 @@
 #include "HTMLOptionsCollection.h"
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderListBox.h"

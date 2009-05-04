@@ -25,12 +25,15 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
+#include "CSSPrimitiveValue.h"
 #include "Element.h"
+#include "MappedAttributeEntry.h"
 #include "NamedMappedAttrMap.h"
 
 namespace WebCore {
 
 class CSSMappedAttributeDeclaration;
+class CSSMutableStyleDeclaration;
 class MappedAttribute;
 
 class StyledElement : public Element {

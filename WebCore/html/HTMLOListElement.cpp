@@ -18,12 +18,14 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLOListElement.h"
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderListItem.h"
 
 namespace WebCore {

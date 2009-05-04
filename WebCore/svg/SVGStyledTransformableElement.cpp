@@ -26,11 +26,12 @@
 #include "SVGStyledTransformableElement.h"
 
 #include "Attr.h"
+#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGDocument.h"
-#include "TransformationMatrix.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 

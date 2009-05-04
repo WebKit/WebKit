@@ -36,6 +36,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "KURL.h"
+#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderFrame.h"
 #include "Settings.h"

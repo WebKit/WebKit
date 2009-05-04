@@ -1,3 +1,14 @@
+2009-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24924: remove Document.h include of Attr.h and HTMLCollection.h,
+        and NamedMappedAttrMap.h include of MappedAttribute.h
+        https://bugs.webkit.org/show_bug.cgi?id=24924
+
+        * WebView/WebFrame.mm: Added include of CSSMutableStyleDeclaration.h
+        and ScriptValue.h.
+
 2009-05-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

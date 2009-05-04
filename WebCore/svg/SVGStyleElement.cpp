@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGStyleElement.h"
 
@@ -29,6 +30,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 

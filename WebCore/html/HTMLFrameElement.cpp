@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderFrame.h"
 
 namespace WebCore {

@@ -24,7 +24,9 @@
 
 #include "config.h"
 #include "HTMLIsIndexElement.h"
+
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 
 namespace WebCore {
 

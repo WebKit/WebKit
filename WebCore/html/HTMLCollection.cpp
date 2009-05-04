@@ -35,7 +35,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type)
+HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type)
     : m_idsDone(false)
     , m_base(base)
     , m_type(type)
@@ -44,7 +44,7 @@ HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type)
 {
 }
 
-HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type, CollectionInfo* info)
+HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type, CollectionCache* info)
     : m_idsDone(false)
     , m_base(base)
     , m_type(type)
@@ -53,7 +53,7 @@ HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type, CollectionInfo*
 {
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, Type type)
+PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, CollectionType type)
 {
     return adoptRef(new HTMLCollection(base, type));
 }
@@ -64,74 +64,12 @@ HTMLCollection::~HTMLCollection()
         delete m_info;
 }
 
-HTMLCollection::CollectionInfo::CollectionInfo()
-    : version(0)
-{
-    reset();
-}
-
-inline void HTMLCollection::CollectionInfo::copyCacheMap(NodeCacheMap& dest, const NodeCacheMap& src)
-{
-    ASSERT(dest.isEmpty());
-    NodeCacheMap::const_iterator end = src.end();
-    for (NodeCacheMap::const_iterator it = src.begin(); it != end; ++it)
-        dest.add(it->first, new Vector<Element*>(*it->second));
-}
-
-HTMLCollection::CollectionInfo::CollectionInfo(const CollectionInfo& other)
-    : version(other.version)
-    , current(other.current)
-    , position(other.position)
-    , length(other.length)
-    , elementsArrayPosition(other.elementsArrayPosition)
-    , hasLength(other.hasLength)
-    , hasNameCache(other.hasNameCache)
-{
-    copyCacheMap(idCache, other.idCache);
-    copyCacheMap(nameCache, other.nameCache);
-}
-
-void HTMLCollection::CollectionInfo::swap(CollectionInfo& other)
-{
-    std::swap(version, other.version);
-    std::swap(current, other.current);
-    std::swap(position, other.position);
-    std::swap(length, other.length);
-    std::swap(elementsArrayPosition, other.elementsArrayPosition);
-
-    idCache.swap(other.idCache);
-    nameCache.swap(other.nameCache);
-    
-    std::swap(hasLength, other.hasLength);
-    std::swap(hasNameCache, other.hasNameCache);
-}
-
-HTMLCollection::CollectionInfo::~CollectionInfo()
-{
-    deleteAllValues(idCache);
-    deleteAllValues(nameCache);
-}
-
-void HTMLCollection::CollectionInfo::reset()
-{
-    current = 0;
-    position = 0;
-    length = 0;
-    hasLength = false;
-    elementsArrayPosition = 0;
-    deleteAllValues(idCache);
-    idCache.clear();
-    deleteAllValues(nameCache);
-    nameCache.clear();
-    hasNameCache = false;
-}
-
 void HTMLCollection::resetCollectionInfo() const
 {
     unsigned docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
     if (!m_info) {
-        m_info = new CollectionInfo;
+        m_info = new CollectionCache;
         m_ownsInfo = true;
         m_info->version = docversion;
         return;
@@ -164,7 +102,7 @@ Element* HTMLCollection::itemAfter(Element* previous) const
         case DocScripts:
         case DocumentNamedItems:
         case MapAreas:
-        case Other:
+        case OtherCollection:
         case SelectOptions:
         case WindowNamedItems:
             break;
@@ -245,7 +183,7 @@ Element* HTMLCollection::itemAfter(Element* previous) const
             case NodeChildren:
                 return e;
             case DocumentNamedItems:
-            case Other:
+            case OtherCollection:
             case WindowNamedItems:
                 ASSERT_NOT_REACHED();
                 break;

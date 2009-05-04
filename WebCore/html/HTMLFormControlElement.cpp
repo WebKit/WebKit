@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
+#include "MappedAttribute.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
 

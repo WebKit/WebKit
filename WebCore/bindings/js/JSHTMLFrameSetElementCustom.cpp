@@ -27,6 +27,7 @@
 #include "JSHTMLFrameSetElement.h"
 
 #include "Document.h"
+#include "HTMLCollection.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"

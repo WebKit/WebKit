@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
 

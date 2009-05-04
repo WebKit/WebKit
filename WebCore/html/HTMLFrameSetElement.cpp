@@ -31,7 +31,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "Length.h"
-#include "Length.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
 #include "Text.h"

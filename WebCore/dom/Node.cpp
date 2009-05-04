@@ -24,6 +24,7 @@
 #include "config.h"
 #include "Node.h"
 
+#include "Attr.h"
 #include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"

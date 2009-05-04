@@ -18,6 +18,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLMapElement.h"
 
@@ -25,8 +26,9 @@
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
-#include "IntSize.h"
 #include "HitTestResult.h"
+#include "IntSize.h"
+#include "MappedAttribute.h"
 
 using namespace std;
 
@@ -96,7 +98,7 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
 
 PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 {
-    return HTMLCollection::create(this, HTMLCollection::MapAreas);
+    return HTMLCollection::create(this, MapAreas);
 }
 
 String HTMLMapElement::name() const

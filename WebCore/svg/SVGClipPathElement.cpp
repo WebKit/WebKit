@@ -27,6 +27,7 @@
 
 #include "CSSStyleSelector.h"
 #include "Document.h"
+#include "MappedAttribute.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
 #include "SVGUnitTypes.h"

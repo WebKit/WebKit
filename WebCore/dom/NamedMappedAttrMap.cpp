@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "MappedAttribute.h"
 
 namespace WebCore {
 

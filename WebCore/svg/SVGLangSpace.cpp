@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGLangSpace.h"
 
+#include "MappedAttribute.h"
 #include "SVGElement.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>

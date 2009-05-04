@@ -26,6 +26,7 @@
 #include "SVGGradientElement.h"
 
 #include "CSSStyleSelector.h"
+#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "RenderSVGHiddenContainer.h"
 #include "SVGNames.h"

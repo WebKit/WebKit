@@ -31,6 +31,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "MappedAttribute.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"
 #include "RenderWidget.h"

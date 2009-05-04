@@ -28,10 +28,10 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
-#include "ContentType.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ContentType.h"
 #include "DocLoader.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -42,26 +42,26 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
-#include <limits>
+#include "MIMETypeRegistry.h"
+#include "MappedAttribute.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
+#include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "ProgressEvent.h"
 #include "RenderVideo.h"
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "RenderPartObject.h"
-#endif
 #include "TimeRanges.h"
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "Widget.h"
-#endif
+#include <limits>
+#include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <limits>
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "RenderPartObject.h"
+#include "Widget.h"
+#endif
 
 using namespace std;
 

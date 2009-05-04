@@ -29,6 +29,7 @@
 #include "FormDataList.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
+#include "MappedAttribute.h"
 #include "SSLKeyGenerator.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>

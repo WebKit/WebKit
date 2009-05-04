@@ -845,6 +845,9 @@ webcore_sources += \
 	WebCore/html/CanvasRenderingContext2D.h \
 	WebCore/html/CanvasStyle.cpp \
 	WebCore/html/CanvasStyle.h \
+	WebCore/html/CollectionCache.cpp \
+	WebCore/html/CollectionCache.h \
+	WebCore/html/CollectionType.h \
 	WebCore/html/File.cpp \
 	WebCore/html/File.h \
 	WebCore/html/FileList.cpp \

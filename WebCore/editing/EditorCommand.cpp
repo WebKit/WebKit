@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "AtomicString.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CreateLinkCommand.h"

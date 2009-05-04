@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include <wtf/HashFunctions.h>
 
 using namespace std;

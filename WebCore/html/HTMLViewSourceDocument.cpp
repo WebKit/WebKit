@@ -26,18 +26,19 @@
 #include "HTMLViewSourceDocument.h"
 
 #include "DOMImplementation.h"
-#include "HTMLTokenizer.h"
-#include "HTMLHtmlElement.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
-#include "HTMLTableElement.h"
+#include "HTMLHtmlElement.h"
+#include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
+#include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
+#include "HTMLTokenizer.h"
+#include "MappedAttribute.h"
 #include "Text.h"
 #include "TextDocument.h"
-#include "HTMLNames.h"
 
 namespace WebCore {
 

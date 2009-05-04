@@ -26,16 +26,17 @@
 #include "config.h"
 #include "InsertParagraphSeparatorCommand.h"
 
-#include "Document.h"
-#include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
-#include "Text.h"
-#include "htmlediting.h"
+#include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
+#include "Logging.h"
 #include "RenderObject.h"
+#include "Text.h"
+#include "htmlediting.h"
 #include "visible_units.h"
 
 namespace WebCore {

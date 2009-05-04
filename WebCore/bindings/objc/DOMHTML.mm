@@ -37,6 +37,7 @@
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
 #import "FrameView.h"
+#import "HTMLCollection.h"
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"
 #import "HTMLSelectElement.h"
@@ -209,7 +210,7 @@
 
 Class kitClass(WebCore::HTMLCollection* collection)
 {
-    if (collection->type() == WebCore::HTMLCollection::SelectOptions)
+    if (collection->type() == WebCore::SelectOptions)
         return [DOMHTMLOptionsCollection class];
     return [DOMHTMLCollection class];
 }

@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"

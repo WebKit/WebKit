@@ -19,12 +19,14 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLMarqueeElement.h"
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
 

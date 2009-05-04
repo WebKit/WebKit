@@ -29,14 +29,15 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "MappedAttribute.h"
 #include "Position.h"
 #include "RenderSVGText.h"
-#include "SelectionController.h"
 #include "SVGCharacterLayoutInfo.h"
-#include "SVGRootInlineBox.h"
-#include "SVGLength.h"
 #include "SVGInlineTextBox.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
+#include "SVGRootInlineBox.h"
+#include "SelectionController.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 

@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG_ANIMATION)
 #include "SVGSMILElement.h"
 
@@ -34,11 +35,12 @@
 #include "FloatConversion.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
+#include "SMILTimeContainer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
-#include "SMILTimeContainer.h"
 #include "XLinkNames.h"
 #include <math.h>
 #include <wtf/MathExtras.h>

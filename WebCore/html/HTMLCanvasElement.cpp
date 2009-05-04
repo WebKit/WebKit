@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "MIMETypeRegistry.h"
+#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"

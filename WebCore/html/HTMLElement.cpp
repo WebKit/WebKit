@@ -32,13 +32,15 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
+#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
-#include "ScriptEventListener.h"
+#include "MappedAttribute.h"
 #include "RenderWordBreak.h"
+#include "ScriptEventListener.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -768,7 +770,7 @@ void HTMLElement::setTabIndex(int value)
 
 PassRefPtr<HTMLCollection> HTMLElement::children()
 {
-    return HTMLCollection::create(this, HTMLCollection::NodeChildren);
+    return HTMLCollection::create(this, NodeChildren);
 }
 
 // DOM Section 1.1.1

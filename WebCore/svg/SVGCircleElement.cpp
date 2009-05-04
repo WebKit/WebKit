@@ -26,6 +26,7 @@
 #include "SVGCircleElement.h"
 
 #include "FloatPoint.h"
+#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"

@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderListItem.h"
 
 namespace WebCore {

@@ -33,8 +33,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
-#include "PlatformString.h"
+#include "MappedAttribute.h"
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
 #include "SVGCursorElement.h"
@@ -45,6 +44,7 @@
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
+#include "ScriptEventListener.h"
 #include "XMLNames.h"
 
 namespace WebCore {

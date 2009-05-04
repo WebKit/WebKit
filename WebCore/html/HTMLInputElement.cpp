@@ -44,6 +44,7 @@
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderButton.h"

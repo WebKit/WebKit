@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLFormCollection.h"
 
+#include "CollectionCache.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
@@ -35,15 +36,15 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-inline HTMLCollection::CollectionInfo* HTMLFormCollection::formCollectionInfo(HTMLFormElement* form)
+inline CollectionCache* HTMLFormCollection::formCollectionInfo(HTMLFormElement* form)
 {
     if (!form->collectionInfo)
-        form->collectionInfo = new CollectionInfo;
+        form->collectionInfo = new CollectionCache;
     return form->collectionInfo;
 }
 
 HTMLFormCollection::HTMLFormCollection(PassRefPtr<HTMLFormElement> form)
-    : HTMLCollection(form.get(), Other, formCollectionInfo(form.get()))
+    : HTMLCollection(form.get(), OtherCollection, formCollectionInfo(form.get()))
 {
 }
 

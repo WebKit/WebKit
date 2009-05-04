@@ -27,6 +27,7 @@
 #include "CachedFont.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "MappedAttribute.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"

@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
+#include "Attr.h"
 #include "CDATASection.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
@@ -60,6 +61,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFrameOwnerElement.h"
@@ -81,6 +83,7 @@
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
+#include "MappedAttribute.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -3721,6 +3724,11 @@ Document *Document::topDocument() const
     return doc;
 }
 
+PassRefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
+{
+    return createAttributeNS(String(), name, ec, true);
+}
+
 PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec, bool shouldIgnoreNamespaceChecks)
 {
     String prefix, localName;
@@ -3760,75 +3768,75 @@ SVGDocumentExtensions* Document::accessSVGExtensions()
 
 PassRefPtr<HTMLCollection> Document::images()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocImages);
+    return HTMLCollection::create(this, DocImages);
 }
 
 PassRefPtr<HTMLCollection> Document::applets()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocApplets);
+    return HTMLCollection::create(this, DocApplets);
 }
 
 PassRefPtr<HTMLCollection> Document::embeds()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocEmbeds);
+    return HTMLCollection::create(this, DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
-    return HTMLCollection::create(this, HTMLCollection::DocEmbeds);
+    return HTMLCollection::create(this, DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::objects()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocObjects);
+    return HTMLCollection::create(this, DocObjects);
 }
 
 PassRefPtr<HTMLCollection> Document::scripts()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocScripts);
+    return HTMLCollection::create(this, DocScripts);
 }
 
 PassRefPtr<HTMLCollection> Document::links()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocLinks);
+    return HTMLCollection::create(this, DocLinks);
 }
 
 PassRefPtr<HTMLCollection> Document::forms()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocForms);
+    return HTMLCollection::create(this, DocForms);
 }
 
 PassRefPtr<HTMLCollection> Document::anchors()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocAnchors);
+    return HTMLCollection::create(this, DocAnchors);
 }
 
 PassRefPtr<HTMLCollection> Document::all()
 {
-    return HTMLCollection::create(this, HTMLCollection::DocAll);
+    return HTMLCollection::create(this, DocAll);
 }
 
 PassRefPtr<HTMLCollection> Document::windowNamedItems(const String &name)
 {
-    return HTMLNameCollection::create(this, HTMLCollection::WindowNamedItems, name);
+    return HTMLNameCollection::create(this, WindowNamedItems, name);
 }
 
 PassRefPtr<HTMLCollection> Document::documentNamedItems(const String &name)
 {
-    return HTMLNameCollection::create(this, HTMLCollection::DocumentNamedItems, name);
+    return HTMLNameCollection::create(this, DocumentNamedItems, name);
 }
 
-HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Type type, const AtomicString& name)
+CollectionCache* Document::nameCollectionInfo(CollectionType type, const AtomicString& name)
 {
-    ASSERT(type >= HTMLCollection::FirstNamedDocumentCachedType);
-    unsigned index = type - HTMLCollection::FirstNamedDocumentCachedType;
-    ASSERT(index < HTMLCollection::NumNamedDocumentCachedTypes);
+    ASSERT(type >= FirstNamedDocumentCachedType);
+    unsigned index = type - FirstNamedDocumentCachedType;
+    ASSERT(index < NumNamedDocumentCachedTypes);
 
     NamedCollectionMap& map = m_nameCollectionInfo[index];
     NamedCollectionMap::iterator iter = map.find(name.impl());
     if (iter == map.end())
-        iter = map.add(name.impl(), new HTMLCollection::CollectionInfo).first;
+        iter = map.add(name.impl(), new CollectionCache).first;
     return iter->second;
 }
 

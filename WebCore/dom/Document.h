@@ -26,12 +26,13 @@
 #ifndef Document_h
 #define Document_h
 
-#include "Attr.h"
 #include "CachedResourceHandle.h"
 #include "CheckedRadioButtons.h"
+#include "ContainerNode.h"
+#include "CollectionCache.h"
+#include "CollectionType.h"
 #include "Color.h"
 #include "DocumentMarker.h"
-#include "HTMLCollection.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -47,6 +48,7 @@
 
 namespace WebCore {
 
+    class Attr;
     class AXObjectCache;
     class CDATASection;
     class CachedCSSStyleSheet;
@@ -75,6 +77,7 @@ namespace WebCore {
     class FrameView;
     class HitTestRequest;
     class HTMLCanvasElement;
+    class HTMLCollection;
     class HTMLDocument;
     class HTMLElement;
     class HTMLFormElement;
@@ -227,7 +230,7 @@ public:
     PassRefPtr<Comment> createComment(const String& data);
     PassRefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
     PassRefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
-    PassRefPtr<Attr> createAttribute(const String& name, ExceptionCode& ec) { return createAttributeNS(String(), name, ec, true); }
+    PassRefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
     PassRefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
     PassRefPtr<EntityReference> createEntityReference(const String& name, ExceptionCode&);
     PassRefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
@@ -287,15 +290,15 @@ public:
     // quirks mode for historical compatibility reasons.
     Element* findAnchor(const String& name);
 
-    HTMLCollection::CollectionInfo* collectionInfo(HTMLCollection::Type type)
+    CollectionCache* collectionInfo(CollectionType type)
     {
-        ASSERT(type >= HTMLCollection::FirstUnnamedDocumentCachedType);
-        unsigned index = type - HTMLCollection::FirstUnnamedDocumentCachedType;
-        ASSERT(index < HTMLCollection::NumUnnamedDocumentCachedTypes);
+        ASSERT(type >= FirstUnnamedDocumentCachedType);
+        unsigned index = type - FirstUnnamedDocumentCachedType;
+        ASSERT(index < NumUnnamedDocumentCachedTypes);
         return &m_collectionInfo[index]; 
     }
 
-    HTMLCollection::CollectionInfo* nameCollectionInfo(HTMLCollection::Type, const AtomicString& name);
+    CollectionCache* nameCollectionInfo(CollectionType, const AtomicString& name);
 
     // DOM methods overridden from  parent classes
 
@@ -1049,9 +1052,9 @@ private:
 
     CheckedRadioButtons m_checkedRadioButtons;
 
-    typedef HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo*> NamedCollectionMap;
-    HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::NumUnnamedDocumentCachedTypes];
-    NamedCollectionMap m_nameCollectionInfo[HTMLCollection::NumNamedDocumentCachedTypes];
+    typedef HashMap<AtomicStringImpl*, CollectionCache*> NamedCollectionMap;
+    CollectionCache m_collectionInfo[NumUnnamedDocumentCachedTypes];
+    NamedCollectionMap m_nameCollectionInfo[NumNamedDocumentCachedTypes];
 
 #if ENABLE(XPATH)
     RefPtr<XPathEvaluator> m_xpathEvaluator;

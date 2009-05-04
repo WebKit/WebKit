@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeAsText.h"
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CharacterNames.h"
 #include "Document.h"
 #include "Frame.h"
@@ -45,10 +46,10 @@
 
 #if ENABLE(SVG)
 #include "RenderPath.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
 #endif

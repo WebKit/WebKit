@@ -30,6 +30,7 @@
 
 #if ENABLE(XPATH)
 
+#include "Attr.h"
 #include "Document.h"
 #include "Element.h"
 #include "NamedNodeMap.h"

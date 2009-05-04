@@ -23,6 +23,7 @@
 #ifndef HTMLCollection_h
 #define HTMLCollection_h
 
+#include "CollectionType.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -32,6 +33,7 @@ namespace WebCore {
 
 class AtomicString;
 class AtomicStringImpl;
+class CollectionCache;
 class Element;
 class Node;
 class NodeList;
@@ -39,44 +41,7 @@ class String;
 
 class HTMLCollection : public RefCounted<HTMLCollection> {
 public:
-    enum Type {
-        // unnamed collection types cached in the document
-
-        DocImages,    // all <img> elements in the document
-        DocApplets,   // all <object> and <applet> elements
-        DocEmbeds,    // all <embed> elements
-        DocObjects,   // all <object> elements
-        DocForms,     // all <form> elements
-        DocLinks,     // all <a> _and_ <area> elements with a value for href
-        DocAnchors,   // all <a> elements with a value for name
-        DocScripts,   // all <script> elements
-
-        DocAll,       // "all" elements (IE)
-        NodeChildren, // first-level children (IE)
-
-        // named collection types cached in the document
-
-        WindowNamedItems,
-        DocumentNamedItems,
-
-        // types not cached in the document; these are types that can't be used on a document
-
-        TableTBodies, // all <tbody> elements in this table
-        TSectionRows, // all row elements in this table section
-        TRCells,      // all cells in this row
-        SelectOptions,
-        MapAreas,
-
-        Other
-    };
-
-    static const Type FirstUnnamedDocumentCachedType = DocImages;
-    static const unsigned NumUnnamedDocumentCachedTypes = NodeChildren - DocImages + 1;
-
-    static const Type FirstNamedDocumentCachedType = WindowNamedItems;
-    static const unsigned NumNamedDocumentCachedTypes = DocumentNamedItems - WindowNamedItems + 1;
-
-    static PassRefPtr<HTMLCollection> create(PassRefPtr<Node> base, Type);
+    static PassRefPtr<HTMLCollection> create(PassRefPtr<Node> base, CollectionType);
     virtual ~HTMLCollection();
     
     unsigned length() const;
@@ -94,52 +59,18 @@ public:
     PassRefPtr<NodeList> tags(const String&);
 
     Node* base() const { return m_base.get(); }
-    Type type() const { return m_type; }
-
-    // FIXME: This class name is a bad in two ways. First, "info" is much too vague,
-    // and doesn't convey the job of this class (caching collection state).
-    // Second, since this is a member of HTMLCollection, it doesn't need "collection"
-    // in its name.
-    struct CollectionInfo {
-        CollectionInfo();
-        CollectionInfo(const CollectionInfo&);
-        CollectionInfo& operator=(const CollectionInfo& other)
-        {
-            CollectionInfo tmp(other);    
-            swap(tmp);
-            return *this;
-        }
-        ~CollectionInfo();
-
-        void reset();
-        void swap(CollectionInfo&);
-
-        typedef HashMap<AtomicStringImpl*, Vector<Element*>*> NodeCacheMap;
-
-        unsigned version;
-        Element* current;
-        unsigned position;
-        unsigned length;
-        int elementsArrayPosition;
-        NodeCacheMap idCache;
-        NodeCacheMap nameCache;
-        bool hasLength;
-        bool hasNameCache;
-
-    private:
-        static void copyCacheMap(NodeCacheMap&, const NodeCacheMap&);
-    };
+    CollectionType type() const { return m_type; }
 
 protected:
-    HTMLCollection(PassRefPtr<Node> base, Type, CollectionInfo*);
+    HTMLCollection(PassRefPtr<Node> base, CollectionType, CollectionCache*);
 
-    CollectionInfo* info() const { return m_info; }
-    virtual void resetCollectionInfo() const;
+    CollectionCache* info() const { return m_info; }
+    void resetCollectionInfo() const;
 
     mutable bool m_idsDone; // for nextNamedItem()
 
 private:
-    HTMLCollection(PassRefPtr<Node> base, Type);
+    HTMLCollection(PassRefPtr<Node> base, CollectionType);
 
     virtual Element* itemAfter(Element*) const;
     virtual unsigned calcLength() const;
@@ -148,9 +79,9 @@ private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
     RefPtr<Node> m_base;
-    Type m_type;
+    CollectionType m_type;
 
-    mutable CollectionInfo* m_info;
+    mutable CollectionCache* m_info;
     mutable bool m_ownsInfo;
 };
 

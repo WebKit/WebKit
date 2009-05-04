@@ -2028,6 +2028,9 @@
 		93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */; };
 		93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A800B064F00005ABD4D /* EventHandler.cpp */; };
 		93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09C850B0657AA005ABD4D /* ScrollTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93C441EF0F813A1A00C1A634 /* CollectionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */; };
+		93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441EE0F813A1A00C1A634 /* CollectionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93C442000F813AE100C1A634 /* CollectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441FF0F813AE100C1A634 /* CollectionType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6949,6 +6952,9 @@
 		93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerMac.mm; sourceTree = "<group>"; };
 		93C09A800B064F00005ABD4D /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		93C09C850B0657AA005ABD4D /* ScrollTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollTypes.h; sourceTree = "<group>"; };
+		93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionCache.cpp; sourceTree = "<group>"; };
+		93C441EE0F813A1A00C1A634 /* CollectionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionCache.h; sourceTree = "<group>"; };
+		93C441FF0F813AE100C1A634 /* CollectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionType.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
@@ -11563,6 +11569,9 @@
 				930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */,
 				93EEC27009C3218800C515D1 /* CanvasStyle.cpp */,
 				93EEC1EF09C2877700C515D1 /* CanvasStyle.h */,
+				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
+				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
+				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				BCDBB8CC0E08958400C60FF6 /* File.cpp */,
 				BCDBB8CB0E08958400C60FF6 /* File.h */,
 				BC1881D90E08C4ED00048C13 /* File.idl */,
@@ -16860,6 +16869,8 @@
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */,
+				93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */,
+				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
 				938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */,
 				9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */,
 				415E3EF60F8D67FE007EEB50 /* MessagePortProxy.h in Headers */,
@@ -18878,6 +18889,7 @@
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 				93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */,
+				93C441EF0F813A1A00C1A634 /* CollectionCache.cpp in Sources */,
 				938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */,
 				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
 				FE700DD10F92D81A008E2BFE /* JSCoordinatesCustom.cpp in Sources */,

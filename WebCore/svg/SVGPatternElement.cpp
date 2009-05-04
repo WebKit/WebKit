@@ -25,26 +25,26 @@
 #if ENABLE(SVG)
 #include "SVGPatternElement.h"
 
-#include "TransformationMatrix.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "MappedAttribute.h"
 #include "PatternAttributes.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPaintServerPattern.h"
 #include "SVGRenderSupport.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGSVGElement.h"
+#include "SVGStyledTransformableElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "SVGUnitTypes.h"
-
+#include "TransformationMatrix.h"
 #include <math.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/MathExtras.h>
+#include <wtf/OwnPtr.h>
 
 using namespace std;
 

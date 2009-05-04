@@ -9796,6 +9796,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\CollectionCache.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\CollectionCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\CollectionType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\File.cpp"
 				>
 			</File>

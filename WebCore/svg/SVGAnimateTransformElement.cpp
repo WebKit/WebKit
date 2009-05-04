@@ -23,10 +23,11 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateTransformElement.h"
 
-#include "TransformationMatrix.h"
+#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
@@ -37,7 +38,7 @@
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include "SVGUseElement.h"
-
+#include "TransformationMatrix.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 

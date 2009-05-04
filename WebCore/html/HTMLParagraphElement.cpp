@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLParagraphElement.h"
 
@@ -26,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 
 namespace WebCore {
 

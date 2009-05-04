@@ -24,14 +24,14 @@
 #if ENABLE(SVG)
 #include "SVGTextPathElement.h"
 
-#include "TransformationMatrix.h"
 #include "FloatRect.h"
+#include "MappedAttribute.h"
 #include "RenderSVGTextPath.h"
 #include "SVGLengthList.h"
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
-#include "SVGTextPathElement.h"
 #include "SVGTransformList.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 

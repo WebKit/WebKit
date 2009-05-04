@@ -36,6 +36,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "Page.h"

@@ -34,13 +34,14 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
-#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
-#include "SVGSMILElement.h"
 #include "SVGNames.h"
+#include "SVGSMILElement.h"
 #include "XLinkNames.h"
 
 namespace WebCore {

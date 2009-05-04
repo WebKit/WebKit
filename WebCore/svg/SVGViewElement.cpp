@@ -26,6 +26,7 @@
 #include "SVGViewElement.h"
 
 #include "Attr.h"
+#include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"

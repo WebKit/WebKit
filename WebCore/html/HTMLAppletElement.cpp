@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderApplet.h"
 #include "RenderInline.h"
 #include "Settings.h"

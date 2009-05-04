@@ -1,3 +1,193 @@
+2009-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24924: remove Document.h include of Attr.h and HTMLCollection.h,
+        and NamedMappedAttrMap.h include of MappedAttribute.h
+        https://bugs.webkit.org/show_bug.cgi?id=24924
+
+        Make compiles faster, and debugging info smaller.
+
+        * GNUmakefile.am: Added new source files.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS): Updated for new collection type names.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createAttribute): Added. No longer inline.
+        (WebCore::Document::images): Updated for new collection type names.
+        (WebCore::Document::applets): Ditto.
+        (WebCore::Document::embeds): Ditto.
+        (WebCore::Document::plugins): Ditto.
+        (WebCore::Document::objects): Ditto.
+        (WebCore::Document::scripts): Ditto.
+        (WebCore::Document::links): Ditto.
+        (WebCore::Document::forms): Ditto.
+        (WebCore::Document::anchors): Ditto.
+        (WebCore::Document::all): Ditto.
+        (WebCore::Document::windowNamedItems): Ditto.
+        (WebCore::Document::documentNamedItems): Ditto.
+        (WebCore::Document::nameCollectionInfo): Ditto.
+
+        * dom/Document.h: Changed around includes and forward declarations.
+        Updated for changes to collection types.
+
+        * dom/NamedMappedAttrMap.h: Removed include of MappedAttribute.h.
+
+        * html/CollectionCache.cpp: Copied from WebCore/html/HTMLCollection.cpp.
+        Contains the class that used to be HTMLCollection::CollectionInfo.
+        * html/CollectionCache.h: Copied from WebCore/html/HTMLCollection.h.
+        Ditto.
+
+        * html/CollectionType.h: Copied from WebCore/html/HTMLCollection.h.
+        Has the enum that used to be HTMLCollection::Type.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection): Update for collection type change.
+        (WebCore::HTMLCollection::create): Ditto.
+        (WebCore::HTMLCollection::resetCollectionInfo): Ditto.
+        (WebCore::HTMLCollection::itemAfter): Ditto.
+        * html/HTMLCollection.h: Ditto.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children): Updated for new collection type names.
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo): Ditto.
+        (WebCore::HTMLFormCollection::HTMLFormCollection): Ditto.
+        * html/HTMLFormCollection.h: Ditto.
+        * html/HTMLFormElement.h: Ditto.
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::areas): Ditto.
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection): Ditto.
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create): Ditto.
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::collectionInfo): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::tBodies):Ditto.
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::cells):Ditto.
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection): Ditto.
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::rows): Ditto.
+
+        * bindings/js/JSDOMWindowBase.cpp: Added newly-needed includes.
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp: Ditto.
+        * css/CSSStyleSelector.cpp: Ditto.
+        * dom/Element.cpp: Ditto.
+        * dom/InputElement.cpp: Ditto.
+        * dom/NamedAttrMap.cpp: Ditto.
+        * dom/NamedMappedAttrMap.cpp: Ditto.
+        * dom/Node.cpp: Ditto.
+        * dom/StyledElement.cpp: Ditto.
+        * dom/StyledElement.h: Ditto.
+        * editing/ApplyStyleCommand.cpp: Ditto.
+        * editing/DeleteSelectionCommand.cpp: Ditto.
+        * editing/Editor.cpp: Ditto.
+        * editing/EditorCommand.cpp: Ditto.
+        * editing/InsertParagraphSeparatorCommand.cpp: Ditto.
+        * editing/ReplaceSelectionCommand.cpp: Ditto.
+        * editing/markup.cpp: Ditto.
+        * html/CanvasRenderingContext2D.cpp: Ditto.
+        * html/HTMLAnchorElement.cpp: Ditto.
+        * html/HTMLAppletElement.cpp: Ditto.
+        * html/HTMLAreaElement.cpp: Ditto.
+        * html/HTMLBRElement.cpp: Ditto.
+        * html/HTMLBaseElement.cpp: Ditto.
+        * html/HTMLBodyElement.cpp: Ditto.
+        * html/HTMLButtonElement.cpp: Ditto.
+        * html/HTMLCanvasElement.cpp: Ditto.
+        * html/HTMLDivElement.cpp: Ditto.
+        * html/HTMLEmbedElement.cpp: Ditto.
+        * html/HTMLFontElement.cpp: Ditto.
+        * html/HTMLFormControlElement.cpp: Ditto.
+        * html/HTMLFormElement.cpp: Ditto.
+        * html/HTMLFrameElement.cpp: Ditto.
+        * html/HTMLFrameElementBase.cpp: Ditto.
+        * html/HTMLFrameSetElement.cpp: Ditto.
+        * html/HTMLHRElement.cpp: Ditto.
+        * html/HTMLIFrameElement.cpp: Ditto.
+        * html/HTMLImageElement.cpp: Ditto.
+        * html/HTMLInputElement.cpp: Ditto.
+        * html/HTMLIsIndexElement.cpp: Ditto.
+        * html/HTMLKeygenElement.cpp: Ditto.
+        * html/HTMLLIElement.cpp: Ditto.
+        * html/HTMLLinkElement.cpp: Ditto.
+        * html/HTMLMarqueeElement.cpp: Ditto.
+        * html/HTMLMetaElement.cpp: Ditto.
+        * html/HTMLOListElement.cpp: Ditto.
+        * html/HTMLObjectElement.cpp: Ditto.
+        * html/HTMLOptionElement.cpp: Ditto.
+        * html/HTMLParagraphElement.cpp: Ditto.
+        * html/HTMLParamElement.cpp: Ditto.
+        * html/HTMLPlugInElement.cpp: Ditto.
+        * html/HTMLPreElement.cpp: Ditto.
+        * html/HTMLScriptElement.cpp: Ditto.
+        * html/HTMLSelectElement.cpp: Ditto.
+        * html/HTMLStyleElement.cpp: Ditto.
+        * html/HTMLTableCaptionElement.cpp: Ditto.
+        * html/HTMLTableCellElement.cpp: Ditto.
+        * html/HTMLTableColElement.cpp: Ditto.
+        * html/HTMLTablePartElement.cpp: Ditto.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+        * html/HTMLTokenizer.cpp: Ditto.
+        * html/HTMLUListElement.cpp: Ditto.
+        * html/HTMLVideoElement.cpp: Ditto.
+        * html/HTMLViewSourceDocument.cpp: Ditto.
+        * loader/ImageDocument.cpp: Ditto.
+        * page/Frame.cpp: Ditto.
+        * rendering/RenderTreeAsText.cpp: Ditto.
+        * svg/SVGAElement.cpp: Ditto.
+        * svg/SVGAnimateMotionElement.cpp: Ditto.
+        * svg/SVGAnimateTransformElement.cpp: Ditto.
+        * svg/SVGAnimationElement.cpp: Ditto.
+        * svg/SVGCircleElement.cpp: Ditto.
+        * svg/SVGClipPathElement.cpp: Ditto.
+        * svg/SVGCursorElement.cpp: Ditto.
+        * svg/SVGElement.cpp: Ditto.
+        * svg/SVGEllipseElement.cpp: Ditto.
+        * svg/SVGExternalResourcesRequired.cpp: Ditto.
+        * svg/SVGFitToViewBox.cpp: Ditto.
+        * svg/SVGFontFaceElement.cpp: Ditto.
+        * svg/SVGFontFaceUriElement.cpp: Ditto.
+        * svg/SVGForeignObjectElement.cpp: Ditto.
+        * svg/SVGGlyphElement.cpp: Ditto.
+        * svg/SVGGradientElement.cpp: Ditto.
+        * svg/SVGImageElement.cpp: Ditto.
+        * svg/SVGLangSpace.cpp: Ditto.
+        * svg/SVGLineElement.cpp: Ditto.
+        * svg/SVGLinearGradientElement.cpp: Ditto.
+        * svg/SVGMarkerElement.cpp: Ditto.
+        * svg/SVGMaskElement.cpp: Ditto.
+        * svg/SVGPathElement.cpp: Ditto.
+        * svg/SVGPatternElement.cpp: Ditto.
+        * svg/SVGPolyElement.cpp: Ditto.
+        * svg/SVGRadialGradientElement.cpp: Ditto.
+        * svg/SVGRectElement.cpp: Ditto.
+        * svg/SVGSVGElement.cpp: Ditto.
+        * svg/SVGScriptElement.cpp: Ditto.
+        * svg/SVGStopElement.cpp: Ditto.
+        * svg/SVGStyleElement.cpp: Ditto.
+        * svg/SVGStyledElement.cpp: Ditto.
+        * svg/SVGStyledTransformableElement.cpp: Ditto.
+        * svg/SVGTests.cpp: Ditto.
+        * svg/SVGTextContentElement.cpp: Ditto.
+        * svg/SVGTextElement.cpp: Ditto.
+        * svg/SVGTextPathElement.cpp: Ditto.
+        * svg/SVGTextPositioningElement.cpp: Ditto.
+        * svg/SVGURIReference.cpp: Ditto.
+        * svg/SVGUseElement.cpp: Ditto.
+        * svg/SVGViewElement.cpp: Ditto.
+        * svg/animation/SVGSMILElement.cpp: Ditto.
+        * xml/XPathStep.cpp: Ditto.
+
 2009-05-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

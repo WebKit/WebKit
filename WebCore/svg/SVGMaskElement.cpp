@@ -29,6 +29,7 @@
 #include "CSSStyleSelector.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "MappedAttribute.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
 #include "SVGNames.h"

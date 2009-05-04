@@ -44,6 +44,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "MIMETypeRegistry.h"
+#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderTextControl.h"
 #include <limits>
@@ -53,10 +54,6 @@
 #if PLATFORM(WX)
 #include <wx/defs.h>
 #include <wx/filename.h>
-#endif
-
-#if PLATFORM(WIN_OS)
-#include <shlwapi.h>
 #endif
 
 using namespace std;

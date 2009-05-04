@@ -62,6 +62,7 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "LinkHash.h"
+#include "MappedAttribute.h"
 #include "MatrixTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
 #include "MediaList.h"

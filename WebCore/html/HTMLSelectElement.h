@@ -24,8 +24,8 @@
 #ifndef HTMLSelectElement_h
 #define HTMLSelectElement_h
 
+#include "CollectionCache.h"
 #include "Event.h"
-#include "HTMLCollection.h"
 #include "HTMLFormControlElement.h"
 #include <wtf/Vector.h>
 
@@ -119,7 +119,7 @@ public:
     Node* namedItem(const AtomicString& name);
     Node* item(unsigned index);
 
-    HTMLCollection::CollectionInfo* collectionInfo() { return &m_collectionInfo; }
+    CollectionCache* collectionInfo() { return &m_collectionInfo; }
     
     void setActiveSelectionAnchorIndex(int index);
     void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
@@ -165,7 +165,7 @@ private:
     DOMTimeStamp m_lastCharTime;
     String m_typedString;
 
-    HTMLCollection::CollectionInfo m_collectionInfo;
+    CollectionCache m_collectionInfo;
 };
 
 #ifdef NDEBUG

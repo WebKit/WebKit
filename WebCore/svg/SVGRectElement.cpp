@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGRectElement.h"
 
+#include "MappedAttribute.h"
 #include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"

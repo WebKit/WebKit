@@ -29,6 +29,7 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "KURL.h"
+#include "MappedAttribute.h"
 
 namespace WebCore {
 

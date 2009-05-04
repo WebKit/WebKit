@@ -23,6 +23,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG_ANIMATION)
 #include "SVGAnimationElement.h"
 
@@ -34,6 +35,7 @@
 #include "EventListener.h"
 #include "FloatConversion.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"

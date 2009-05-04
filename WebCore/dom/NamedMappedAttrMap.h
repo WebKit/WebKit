@@ -27,7 +27,6 @@
 #define NamedMappedAttrMap_h
 
 #include "ClassNames.h"
-#include "MappedAttribute.h" // This header is not required for the NamedMappedAttrMap definition. Should remove it.
 #include "NamedNodeMap.h"
 
 namespace WebCore {

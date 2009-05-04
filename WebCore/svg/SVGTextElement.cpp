@@ -25,13 +25,14 @@
 #if ENABLE(SVG)
 #include "SVGTextElement.h"
 
-#include "TransformationMatrix.h"
 #include "FloatRect.h"
+#include "MappedAttribute.h"
 #include "RenderSVGText.h"
 #include "SVGLengthList.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
 #include "SVGTransformList.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 

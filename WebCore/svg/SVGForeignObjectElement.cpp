@@ -26,10 +26,10 @@
 #include "SVGForeignObjectElement.h"
 
 #include "CSSPropertyNames.h"
+#include "MappedAttribute.h"
 #include "RenderForeignObject.h"
-#include "SVGNames.h"
 #include "SVGLength.h"
-
+#include "SVGNames.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

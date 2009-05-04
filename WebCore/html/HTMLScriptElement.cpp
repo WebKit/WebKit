@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "ScriptEventListener.h"
 #include "Text.h"
 

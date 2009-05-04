@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "MIMETypeRegistry.h"
+#include "MappedAttribute.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"
 #include "RenderWidget.h"

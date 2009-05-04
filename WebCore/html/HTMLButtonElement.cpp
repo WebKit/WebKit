@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "RenderButton.h"
 #include <wtf/StdLibExtras.h>
 

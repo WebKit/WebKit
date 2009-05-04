@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "EventNames.h"
+#include "MappedAttribute.h"
 #include "SVGNames.h"
 
 namespace WebCore {

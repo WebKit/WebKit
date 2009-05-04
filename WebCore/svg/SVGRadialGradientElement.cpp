@@ -27,6 +27,7 @@
 
 #include "FloatConversion.h"
 #include "FloatPoint.h"
+#include "MappedAttribute.h"
 #include "RadialGradientAttributes.h"
 #include "RenderObject.h"
 #include "SVGLength.h"

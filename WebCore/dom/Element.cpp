@@ -27,6 +27,7 @@
 #include "Element.h"
 
 #include "AXObjectCache.h"
+#include "Attr.h"
 #include "CSSStyleSelector.h"
 #include "CString.h"
 #include "ClientRect.h"
@@ -46,12 +47,13 @@
 #include "Page.h"
 #include "PlatformString.h"
 #include "RenderBlock.h"
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#endif
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
+
+#if ENABLE(SVG)
+#include "SVGNames.h"
+#endif
 
 namespace WebCore {
 

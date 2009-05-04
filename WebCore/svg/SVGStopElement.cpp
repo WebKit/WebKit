@@ -26,6 +26,7 @@
 #include "SVGStopElement.h"
 
 #include "Document.h"
+#include "MappedAttribute.h"
 #include "RenderSVGGradientStop.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"

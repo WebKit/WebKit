@@ -19,6 +19,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGStyledElement.h"
 
@@ -28,11 +29,12 @@
 #include "CString.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "PlatformString.h"
+#include "RenderObject.h"
 #include "SVGElement.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
-#include "RenderObject.h"
 #include "SVGRenderStyle.h"
 #include "SVGResource.h"
 #include "SVGSVGElement.h"

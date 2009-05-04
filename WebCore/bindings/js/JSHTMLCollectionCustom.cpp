@@ -133,10 +133,10 @@ JSValue toJS(ExecState* exec, HTMLCollection* collection)
         return wrapper;
 
     switch (collection->type()) {
-        case HTMLCollection::SelectOptions:
+        case SelectOptions:
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLOptionsCollection, collection);
             break;
-        case HTMLCollection::DocAll:
+        case DocAll:
             typedef HTMLCollection HTMLAllCollection;
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLAllCollection, collection);
             break;

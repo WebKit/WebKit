@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGLengthList.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"

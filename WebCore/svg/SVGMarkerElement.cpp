@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGMarkerElement.h"
 
+#include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGAngle.h"

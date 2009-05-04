@@ -22,9 +22,11 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateMotionElement.h"
 
+#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "SVGElementInstance.h"
 #include "SVGMPathElement.h"

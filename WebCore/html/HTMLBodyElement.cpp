@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "ScriptEventListener.h"
 
 namespace WebCore {

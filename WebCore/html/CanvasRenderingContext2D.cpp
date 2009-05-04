@@ -36,6 +36,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasStyle.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"

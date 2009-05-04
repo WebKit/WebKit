@@ -30,8 +30,9 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
+#include "MappedAttribute.h"
 #include "RenderImage.h"
+#include "ScriptEventListener.h"
 
 using namespace std;
 

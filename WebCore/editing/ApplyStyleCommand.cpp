@@ -27,6 +27,7 @@
 #include "ApplyStyleCommand.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
