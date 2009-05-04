@@ -1,3 +1,14 @@
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by George Staikos.
+
+        Simplify RenderForeignObject::paint and fix a repaint bug.
+        Paint now calls applyTransformToPaintInfo which correctly transforms the damage rect.
+        https://bugs.webkit.org/show_bug.cgi?id=16939
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+
 2009-05-03  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.

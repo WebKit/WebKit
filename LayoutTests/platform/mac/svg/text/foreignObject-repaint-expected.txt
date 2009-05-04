@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderForeignObject {foreignObject} at (0,0) size 500x300
+      RenderBlock {div} at (0,0) size 500x183
+        RenderText {#text} at (0,0) size 487x183
+          text run at (0,0) width 487: "Select this text using"
+          text run at (0,61) width 473: "the mouse, it should"
+          text run at (0,122) width 334: "not disappear!"

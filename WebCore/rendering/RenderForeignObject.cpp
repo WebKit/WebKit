@@ -28,6 +28,7 @@
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGLength.h"
+#include "SVGRenderSupport.h"
 #include "SVGTransformList.h"
 
 namespace WebCore {
@@ -43,32 +44,27 @@ TransformationMatrix RenderForeignObject::translationForAttributes() const
     return TransformationMatrix().translate(foreign->x().value(foreign), foreign->y().value(foreign));
 }
 
-void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
 {
-    // The SVG rendering tree should not be using parentX/parentY
-    ASSERT(!parentX);
-    ASSERT(!parentY);
     if (paintInfo.context->paintingDisabled())
         return;
 
-    paintInfo.context->save();
-    paintInfo.context->concatCTM(TransformationMatrix().translate(parentX, parentY));
-    paintInfo.context->concatCTM(localToParentTransform());
-    paintInfo.context->clip(clipRect(parentX, parentY));
+    // Copy the paint info so that modifications to the damage rect do not affect callers
+    PaintInfo childPaintInfo = paintInfo;
+    childPaintInfo.context->save();
+    applyTransformToPaintInfo(childPaintInfo, localToParentTransform());
+    childPaintInfo.context->clip(clipRect(0, 0));
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)
-        // FIXME: Possible optimization by clipping to bbox here, once relativeBBox is implemented & clip, mask and filter support added.
-        paintInfo.context->beginTransparencyLayer(opacity);
+        childPaintInfo.context->beginTransparencyLayer(opacity);
 
-    PaintInfo pi(paintInfo);
-    pi.rect = absoluteTransform().inverse().mapRect(paintInfo.rect);
-    RenderBlock::paint(pi, 0, 0);
+    RenderBlock::paint(childPaintInfo, 0, 0);
 
     if (opacity < 1.0f)
-        paintInfo.context->endTransparencyLayer();
+        childPaintInfo.context->endTransparencyLayer();
 
-    paintInfo.context->restore();
+    childPaintInfo.context->restore();
 }
 
 FloatRect RenderForeignObject::objectBoundingBox() const
