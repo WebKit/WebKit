@@ -58,10 +58,10 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> str)
 
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    // Skip RenderText's work.
+    // Skip RenderText's possible layout scheduling on style change
     RenderObject::styleDidChange(diff, oldStyle);
     
-    // SVG text is apparently always transformed.
+    // FIXME: SVG text is apparently always transformed?
     if (RefPtr<StringImpl> textToTransform = originalText())
         setText(textToTransform.release(), true);
 }
@@ -73,7 +73,7 @@ void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int)
 
 void RenderSVGInlineText::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    quads.append(FloatRect(computeRepaintRectForRange(0, 0, textLength())));
+    quads.append(computeRepaintQuadForRange(0, 0, textLength()));
 }
 
 IntRect RenderSVGInlineText::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool /*clipToVisibleContent*/)
@@ -108,31 +108,27 @@ IntRect RenderSVGInlineText::selectionRectForRepaint(RenderBoxModelObject* repai
     return computeRepaintRectForRange(repaintContainer, startPos, endPos);
 }
 
-IntRect RenderSVGInlineText::computeRepaintRectForRange(RenderBoxModelObject* /*repaintContainer*/, int startPos, int endPos)
+IntRect RenderSVGInlineText::computeRepaintRectForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos)
+{
+    FloatQuad repaintQuad = computeRepaintQuadForRange(repaintContainer, startPos, endPos);
+    return enclosingIntRect(repaintQuad.boundingBox());
+}
+
+FloatQuad RenderSVGInlineText::computeRepaintQuadForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos)
 {
     RenderBlock* cb = containingBlock();
     if (!cb || !cb->container())
-        return IntRect();
+        return FloatQuad();
 
     RenderSVGRoot* root = findSVGRootObject(parent());
     if (!root)
-        return IntRect();
+        return FloatQuad();
 
     IntRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rect.unite(box->selectionRect(0, 0, startPos, endPos));
 
-    // Mimic RenderBox::computeAbsoluteRepaintRect() functionality. But only the subset needed for SVG and respecting SVG transformations.
-    FloatPoint absPos = cb->container()->localToAbsolute();
-
-    // Remove HTML parent translation offsets here! These need to be retrieved from the RenderSVGRoot object.
-    // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
-    TransformationMatrix htmlParentCtm = root->RenderBox::absoluteTransform();
-
-    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - htmlParentCtm.e()),
-                        narrowPrecisionToFloat(rect.y() + absPos.y() - htmlParentCtm.f()), rect.width(), rect.height());
-    // FIXME: broken with CSS transforms, and non-zero repaintContainer
-    return enclosingIntRect(absoluteTransform().mapRect(fixedRect));
+    return localToContainerQuad(FloatQuad(rect), repaintContainer);
 }
 
 InlineTextBox* RenderSVGInlineText::createTextBox()

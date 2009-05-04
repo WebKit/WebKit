@@ -1,9 +1,9 @@
 svg1 CTM: [object SVGMatrix] [(0, 0)(0, 0)(NaN, NaN)]
-svg1 ScreenCTM: [object SVGMatrix] [(1, 0)(0, 1)(10, 110)]
+svg1 ScreenCTM: [object SVGMatrix] [(1, 0)(0, 1)(10, 210)]
 svg2 CTM: [object SVGMatrix] [(20, 0)(0, 20)(-100, -100)]
-svg2 ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(-90, 10)]
+svg2 ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(-90, 110)]
 group CTM: [object SVGMatrix] [(20, 0)(0, 20)(100, 100)]
-group ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(110, 210)]
+group ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(110, 310)]
 svg3 CTM: [object SVGMatrix] [(1, 0)(0, 1)(-5, -5)]
-svg3 ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(10, 110)]
+svg3 ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(10, 210)]
 

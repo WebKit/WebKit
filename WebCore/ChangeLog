@@ -2,6 +2,39 @@
 
         Reviewed by George Staikos.
 
+        Remove broken absoluteTransform() code from RenderSVGInlineText
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        This improved SVG text focus rings.
+        This also improved SVG.getScreenCTM() results.
+
+        SVGSVGElement::getScreenCTM was passing "true" for the second argument in
+        localToAbsolute, which is "fixed" it meant to pass "true" for the
+        third argument (useTransforms).  That change alone caused no layout test changes, however
+        before I fixed this, it was hitting ASSERT(!fixed) in RenderSVGRoot::mapLocalToContainer
+
+        mapLocalToContainer implementations really should be shared,
+        but I'll do that in a later patch.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        (WebCore::RenderSVGInlineText::absoluteQuads):
+        (WebCore::RenderSVGInlineText::computeRepaintRectForRange):
+        (WebCore::RenderSVGInlineText::computeRepaintQuadForRange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/RenderSVGText.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getScreenCTM):
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by George Staikos.
+
         Remove dead code from RenderPath
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

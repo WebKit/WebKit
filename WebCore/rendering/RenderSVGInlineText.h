@@ -52,6 +52,7 @@ public:
 private:
     virtual InlineTextBox* createTextBox();
     IntRect computeRepaintRectForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
+    FloatQuad computeRepaintQuadForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
 };
 
 }

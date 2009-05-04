@@ -418,14 +418,14 @@ TransformationMatrix SVGSVGElement::getCTM() const
 TransformationMatrix SVGSVGElement::getScreenCTM() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    FloatPoint rootLocation;    
+    FloatPoint rootLocation;
 
     if (RenderObject* renderer = this->renderer()) {
         if (isOutermostSVG()) {
             // FIXME: This doesn't work correctly with CSS transforms.
             FloatPoint point;
             if (renderer->parent())
-                point = renderer->localToAbsolute(point, true);
+                point = renderer->localToAbsolute(point, false, true);
             rootLocation.move(point.x(), point.y());
         } else
             rootLocation.move(x().value(this), y().value(this));
