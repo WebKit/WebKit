@@ -1,3 +1,18 @@
+2009-05-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=25332>.
+        Bug 25332: Plug-in inserted in to DOM of PluginDocument fails to load
+
+        Only the first plug-in in a PluginDocument can use the main resource data.  For all
+        subsequent plug-ins, such as the plug-in that ClickToFlash inserts when swapping itself
+        out for the real Flash plug-in, we need to load the resource data in the same manner
+        as for other embedded plug-ins.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadPlugin):
+
 2009-05-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.
