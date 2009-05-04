@@ -92,6 +92,10 @@ SOFT_LINK_POINTER(QTKit, QTMovieURLAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification, NSString *)
+#ifndef BUILDING_ON_TIGER
+SOFT_LINK_POINTER(QTKit, QTMovieApertureModeClean, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
+#endif
 
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
@@ -121,6 +125,10 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 #define QTSecurityPolicyNoCrossSiteAttribute getQTSecurityPolicyNoCrossSiteAttribute()
 #define QTVideoRendererWebKitOnlyNewImageAvailableNotification getQTVideoRendererWebKitOnlyNewImageAvailableNotification()
+#ifndef BUILDING_ON_TIGER
+#define QTMovieApertureModeClean getQTMovieApertureModeClean()
+#define QTMovieApertureModeAttribute getQTMovieApertureModeAttribute()
+#endif
 
 // Older versions of the QTKit header don't have these constants.
 #if !defined QTKIT_VERSION_MAX_ALLOWED || QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
@@ -229,6 +237,9 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                      [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                                      [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
                                      [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",     // FIXME: Use defined attribute when required version of QT supports this attribute
+#ifndef BUILDING_ON_TIGER
+                                     QTMovieApertureModeClean, QTMovieApertureModeAttribute,
+#endif
                                      nil];
     
     NSError *error = nil;

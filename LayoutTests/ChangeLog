@@ -1,3 +1,17 @@
+2009-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25545
+        Bug 25545: HTMLMediaElement: display anamorphic video correctly
+        
+        Added 720x576i PAL anamorphic movie, extended video-size-intrinsic-scale
+        test to check that it is sized correctly.
+
+        * media/content/720x576i-anamorphic.mov: Added.
+        * media/video-size-intrinsic-scale-expected.txt:
+        * media/video-size-intrinsic-scale.html:
+
 2009-05-03  Eric Seidel  <eric@webkit.org>
 
         No review, just adding missing results.

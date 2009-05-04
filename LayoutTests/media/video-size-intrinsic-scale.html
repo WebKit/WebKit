@@ -5,38 +5,77 @@
         <script src=video-test.js></script>
 
         <script>
+
+            var movieInfo = 
+            {
+                current:0,
+                movies: 
+                [ 
+                    {   
+                        url:"content/scaled-matrix.mov", 
+                        description:"saved with a non identity matrix", 
+                        width:640, 
+                        height:480 
+                    },
+                    {
+                        url:"content/720x576i-anamorphic.mov", 
+                        description:"Movie encoded with PAL non-square pixels, clean aperture corrects pixel aspect ratio when displayed", 
+                        width:1024, 
+                        height:576 
+                    },
+                ]
+            };
+
+            function testSize()
+            {
+                var movie = movieInfo.movies[movieInfo.current];
+
+                testExpected("video.videoWidth", movie.width);
+                testExpected("video.videoHeight", movie.height);
+
+                movieInfo.current++;
+                openNextMovie();
+            }
+            
+            function openNextMovie()
+            {
+                consoleWrite("");
+                if (movieInfo.current >= movieInfo.movies.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var url = movieInfo.movies[movieInfo.current].url;
+                video.src = url;
+                var desc = "<b>Loading</b> <em>\""+ url + "\"</em>" + 
+                            ". Movie " + movieInfo.movies[movieInfo.current].description + ".</em>";
+                consoleWrite(desc);
+                if (movieInfo.current > 0)
+                    video.load();
+            }
+
             function start()
             {
                 findMediaElement();
-        
+
                 waitForEvent("error");
                 waitForEvent("loadstart");
                 waitForEvent("ratechange");
                 waitForEvent("waiting");
                 waitForEvent("ratechange");
                 waitForEvent("durationchange");
-                waitForEvent("loadeddata");
-                waitForEvent("canplay");
-                waitForEvent("canplaythrough");
                 waitForEvent("pause");
                 waitForEvent("play");
                 waitForEvent("playing");
-        
-                waitForEvent('loadedmetadata', function () { 
-                    consoleWrite("");
-                    consoleWrite("<b>Test size after movie is open:</b>");
-                    testExpected("video.videoWidth", 640);
-                    testExpected("video.videoHeight", 480);
-                    endTest();
-                } );
-        
+
+                waitForEvent('loadedmetadata', testSize);
+
                 consoleWrite("<b>Test size before movie is open:</b>");
                 testExpected("video.videoWidth", 0, "==");
                 testExpected("video.videoHeight", 0, "==");
             
-                consoleWrite("");
-            
-                video.src = "content/scaled-matrix.mov";
+                openNextMovie();
             }
         </script>
     </head>
@@ -44,9 +83,6 @@
     <body onload="start()">
 
         <video controls></video>
-
-        <p>Test that a movie saved with a non identity matrix is sized correctly
-        when opened</p>
 
     </body>
 </html>

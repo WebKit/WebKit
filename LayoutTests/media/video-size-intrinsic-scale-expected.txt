@@ -1,15 +1,20 @@
-Test that a movie saved with a non identity matrix is sized correctly when opened
-
 Test size before movie is open:
 EXPECTED (video.videoWidth == '0') OK
 EXPECTED (video.videoHeight == '0') OK
 
+Loading "content/scaled-matrix.mov". Movie saved with a non identity matrix.
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)
-
-Test size after movie is open:
 EXPECTED (video.videoWidth == '640') OK
 EXPECTED (video.videoHeight == '480') OK
+
+Loading "content/720x576i-anamorphic.mov". Movie encoded with PAL non-square pixels and clean aperture dimenstions corrects pixel aspect ratio.
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EXPECTED (video.videoWidth == '1024') OK
+EXPECTED (video.videoHeight == '576') OK
+
 END OF TEST
 

@@ -641,6 +641,7 @@ void QTMovieWin::load(const UChar* url, int len)
     movieProps[moviePropCount].propStatus = 0; 
     moviePropCount++; 
 
+    ASSERT(moviePropCount <= sizeof(movieProps)/sizeof(movieProps[0]));
     m_private->m_loadError = NewMovieFromProperties(moviePropCount, movieProps, 0, NULL, &m_private->m_movie);
 
     CFRelease(urlRef);
@@ -649,8 +650,16 @@ end:
     // get the load fail callback quickly 
     if (m_private->m_loadError)
         updateTaskTimer(0);
-    else
+    else {
+        OSType mode = kQTApertureMode_CleanAperture;
+
+        // Set the aperture mode property on a movie to signal that we want aspect ratio
+        // and clean aperture dimensions. Don't worry about errors, we can't do anything if
+        // the installed version of QT doesn't support it and it isn't serious enough to 
+        // warrant failing.
+        QTSetMovieProperty(m_private->m_movie, kQTPropertyClass_Visual, kQTVisualPropertyID_ApertureMode, sizeof(mode), &mode);
         m_private->registerDrawingCallback();
+    }
 
     CFRelease(urlStringRef);
 }
