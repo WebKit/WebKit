@@ -1,3 +1,13 @@
+2009-05-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Do not instantiate hidden WebInspector panels. Otherwise they are hitting unimplemented InspectorController methods.
+        https://bugs.webkit.org/show_bug.cgi?id=25520
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2009-05-04  Brady Eidson <beidson@apple.com>
 
         Reviewed by Darin Adler.

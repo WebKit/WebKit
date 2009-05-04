@@ -279,22 +279,24 @@ WebInspector.loaded = function()
     document.body.addStyleClass("platform-" + platform);
 
     this.console = new WebInspector.Console();
-    this.panels = {
-        elements: new WebInspector.ElementsPanel(),
-        resources: new WebInspector.ResourcesPanel(),
-        scripts: new WebInspector.ScriptsPanel(),
-        profiles: new WebInspector.ProfilesPanel(),
-        databases: new WebInspector.DatabasesPanel()
-    };
 
+    this.panels = {};
     var hiddenPanels = (InspectorController.hiddenPanels() || "").split(',');
+    if (hiddenPanels.indexOf("elements") === -1)
+        this.panels.elements = new WebInspector.ElementsPanel();
+    if (hiddenPanels.indexOf("resources") === -1)
+        this.panels.resources = new WebInspector.ResourcesPanel();
+    if (hiddenPanels.indexOf("scripts") === -1)
+        this.panels.scripts = new WebInspector.ScriptsPanel();
+    if (hiddenPanels.indexOf("profiles") === -1)
+        this.panels.profiles = new WebInspector.ProfilesPanel();
+    if (hiddenPanels.indexOf("databases") === -1)
+        this.panels.databases = new WebInspector.DatabasesPanel();
 
     var toolbarElement = document.getElementById("toolbar");
     var previousToolbarItem = toolbarElement.children[0];
 
     for (var panelName in this.panels) {
-        if (hiddenPanels.indexOf(panelName) !== -1)
-            continue;
         var panel = this.panels[panelName];
         var panelToolbarItem = panel.toolbarItem;
         panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
