@@ -1,3 +1,9 @@
+2009-05-04  Darin Adler  <darin@apple.com>
+
+        First try at fixing the Windows build.
+
+        * DOMHTMLClasses.cpp: Added include of HTMLCollection.h.
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Sam Weinig.
