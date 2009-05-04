@@ -59,7 +59,8 @@ public:
 protected:
     virtual bool calculateLocalTransform();
 
-    // Allow RenderSVGViewportContainer to hook in at the right times in paint() and nodeAtFloatPoint()
+    // Allow RenderSVGViewportContainer to hook in at the right times in layout(), paint() and nodeAtFloatPoint()
+    virtual void calcViewport() { }
     virtual void applyViewportClip(PaintInfo&) { }
     virtual bool pointIsInsideViewportClip(const FloatPoint& /*pointInParent*/) { return true; }
 

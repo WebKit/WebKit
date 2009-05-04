@@ -67,8 +67,10 @@ void RenderSVGContainer::layout()
     ASSERT(needsLayout());
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
+    calcViewport(); // Allow RenderSVGViewportContainer to update its viewport
+
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
-    calculateLocalTransform();
+    calculateLocalTransform(); // Allow RenderSVGTransformableContainer to update its transform
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         // Only force our kids to layout if we're being asked to relayout as a result of a parent changing

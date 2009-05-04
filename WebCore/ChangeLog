@@ -2,6 +2,21 @@
 
         Reviewed by George Staikos.
 
+        Share layout code between RenderSVGViewportContainer and RenderSVGContainer
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::calcViewport):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::applyViewportClip):
+        * rendering/RenderSVGViewportContainer.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by George Staikos.
+
         Remove redundant disableLayoutState() calls
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

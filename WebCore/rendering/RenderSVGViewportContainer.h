@@ -38,7 +38,6 @@ public:
     virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }
 
-    virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
     virtual TransformationMatrix localToParentTransform() const;
@@ -52,7 +51,7 @@ public:
     TransformationMatrix viewportTransform() const;
 
 private:
-    void calcViewport();
+    virtual void calcViewport();
 
     virtual void applyViewportClip(PaintInfo&);
     virtual bool pointIsInsideViewportClip(const FloatPoint& pointInParent);
