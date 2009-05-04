@@ -4026,6 +4026,7 @@ media/video-controls-visible-audio-only.html
 media/video-display-toggle.html
 media/video-empty-source.html
 media/video-layer-crash.html
+media/video-timeupdate-during-playback.html
 media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html

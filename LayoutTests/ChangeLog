@@ -1,3 +1,7 @@
+2009-05-04  Darin Adler  <darin@apple.com>
+
+        * platform/gtk/Skipped: Disable a test that's timing out.
+
 2009-05-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Disabling new tests, as they are failing because of font
