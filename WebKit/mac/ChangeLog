@@ -1,3 +1,20 @@
+2009-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Fix <rdar://problem/6797644>.
+        
+        Make sure to send a reply even when an instance proxy can't be found.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        (WKPCInvokeDefault):
+        (WKPCGetProperty):
+        (WKPCHasProperty):
+        (WKPCHasMethod):
+        (WKPCEnumerate):
+
 2009-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
