@@ -33,11 +33,12 @@ namespace WebCore {
 
 class AtomicString;
 class AtomicStringImpl;
-class CollectionCache;
 class Element;
 class Node;
 class NodeList;
 class String;
+
+struct CollectionCache;
 
 class HTMLCollection : public RefCounted<HTMLCollection> {
 public:

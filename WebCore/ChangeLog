@@ -1,3 +1,12 @@
+2009-05-04  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * html/HTMLCollection.h:
+        * html/HTMLFormElement.h:
+        Declare CollectionCache as a struct, not a class, to match its
+        definition.
+
 2009-05-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin, Oliver Hunt.
