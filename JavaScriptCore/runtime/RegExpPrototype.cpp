@@ -23,6 +23,7 @@
 
 #include "ArrayPrototype.h"
 #include "JSArray.h"
+#include "JSFunction.h"
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSValue.h"

@@ -26,6 +26,7 @@
 
 #include "ConstructData.h"
 #include "ErrorConstructor.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"

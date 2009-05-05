@@ -25,6 +25,7 @@
 #include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"

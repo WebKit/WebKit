@@ -22,6 +22,7 @@
 #include "BooleanPrototype.h"
 
 #include "Error.h"
+#include "JSFunction.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"

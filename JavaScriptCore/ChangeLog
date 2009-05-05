@@ -1,5 +1,16 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        * runtime/ArrayConstructor.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/Error.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/RegExpPrototype.cpp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Buildfix).
 
         Add missing file
