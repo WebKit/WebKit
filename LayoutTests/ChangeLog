@@ -1,3 +1,13 @@
+2009-05-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin, Oliver Hunt.
+
+        Bug 25557: REGRESSION: Canvas elements are ignored instead of being exposed as AXImage
+        https://bugs.webkit.org/show_bug.cgi?id=25557
+
+        * accessibility/canvas-expected.txt: Added.
+        * accessibility/canvas.html: Added.
+
 2009-05-04  Kai  <set EMAIL_ADDRESS environment variable>
 
         Reviewed by Eric Seidel.
