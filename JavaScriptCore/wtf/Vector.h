@@ -692,7 +692,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    void Vector<T, inlineCapacity>::resize(size_t size)
+    inline void Vector<T, inlineCapacity>::resize(size_t size)
     {
         if (size <= m_size)
             TypeOperations::destruct(begin() + size, end());
