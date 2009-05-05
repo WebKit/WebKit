@@ -1,3 +1,22 @@
+2009-05-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6552129> Select a quote line and paste elsewhere, you
+        get that line and an extra quoted blank line
+        <rdar://problem/6609308> Triple-click a quoted header line, copy, paste
+        onto an empty line makes an extra quoted line
+
+        - Testing different scenarios where we paste quoted text into a non-quoted area and we
+        do not want a trailing newline to be quoted.
+
+        * editing/pasteboard/paste-blockquote-before-blockquote-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-before-blockquote.html: Added.
+        * editing/pasteboard/paste-double-nested-blockquote-before-blockquote-expected.txt: Added.
+        * editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html: Added.
+        * editing/pasteboard/resources/paste-blockquote-before-blockquote.js: Added.
+        (copyAndPasteNode):
+
 2009-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

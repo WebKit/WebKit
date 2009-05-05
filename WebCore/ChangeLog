@@ -1,3 +1,18 @@
+2009-05-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6552129> Select a quote line and paste elsewhere, you
+        get that line and an extra quoted blank line
+        <rdar://problem/6609308> Triple-click a quoted header line, copy, paste
+        onto an empty line makes an extra quoted line
+
+        - When pasting a blockquote with a newline, make sure we put the newline
+        outside of the blockquote so that it is not quoted.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2009-05-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
