@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Add test case to cover V8 crasher (which JSC does not share).
+        https://bugs.webkit.org/show_bug.cgi?id=25550
+
+        * svg/custom/polyline-points-crash-expected.txt: Added.
+        * svg/custom/polyline-points-crash.html: Added.
+
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Fix mappedAttributes() access without NULL check
         https://bugs.webkit.org/show_bug.cgi?id=25553
 
