@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFECompositeElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGNames.h"
 #include "SVGResourceFilter.h"
 

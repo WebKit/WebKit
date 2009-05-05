@@ -24,10 +24,11 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFESpecularLightingElement.h"
 
+#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "SVGColor.h"
-#include "SVGNames.h"
 #include "SVGFELightElement.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"
 

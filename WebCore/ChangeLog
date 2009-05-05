@@ -1,3 +1,27 @@
+2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed SVG build fix.
+
+        Include MappedAttribute.h after r43187.
+
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+
 2009-05-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam 'The Belly' Weinig

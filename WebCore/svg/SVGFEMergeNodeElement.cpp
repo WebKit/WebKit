@@ -25,6 +25,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEMergeNodeElement.h"
 
+#include "MappedAttribute.h"
+
 namespace WebCore {
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)

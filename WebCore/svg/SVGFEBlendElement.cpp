@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEBlendElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

@@ -27,10 +27,11 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
-#include "SVGResourceFilter.h"
+#include "MappedAttribute.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include "SVGResourceFilter.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {

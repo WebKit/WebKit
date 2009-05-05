@@ -26,12 +26,13 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "Attr.h"
+#include "MappedAttribute.h"
+#include "SVGFEFuncAElement.h"
+#include "SVGFEFuncBElement.h"
+#include "SVGFEFuncGElement.h"
+#include "SVGFEFuncRElement.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "SVGFEFuncRElement.h"
-#include "SVGFEFuncGElement.h"
-#include "SVGFEFuncBElement.h"
-#include "SVGFEFuncAElement.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

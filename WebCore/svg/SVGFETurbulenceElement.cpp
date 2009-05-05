@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFETurbulenceElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"
 

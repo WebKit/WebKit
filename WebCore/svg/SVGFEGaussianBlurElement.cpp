@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEGaussianBlurElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"

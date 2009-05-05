@@ -23,13 +23,14 @@
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
+#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "SVGColor.h"
+#include "SVGFEDiffuseLighting.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
-#include "SVGFEDiffuseLighting.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

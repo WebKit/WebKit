@@ -25,8 +25,9 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
-#include "SVGFilterElement.h"
+#include "MappedAttribute.h"
 #include "SVGFilterEffect.h"
+#include "SVGFilterElement.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"

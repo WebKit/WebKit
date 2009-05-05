@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGComponentTransferFunctionElement.h"
 
+#include "MappedAttribute.h"
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"

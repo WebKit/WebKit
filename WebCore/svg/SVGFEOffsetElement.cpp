@@ -26,6 +26,7 @@
 #include "SVGFEOffsetElement.h"
 
 #include "Attr.h"
+#include "MappedAttribute.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

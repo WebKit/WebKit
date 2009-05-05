@@ -23,6 +23,8 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFELightElement.h"
+
+#include "MappedAttribute.h"
 #include "SVGNames.h"
 
 namespace WebCore {
