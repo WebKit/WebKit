@@ -10,6 +10,7 @@ EXPORTS
         ??0DropAllLocks@JSLock@JSC@@QAE@_N@Z
         ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
         ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
+        ??0JSFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6A?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
         ??0JSCell@JSC@@AAE@PAVStructure@1@@Z
         ??0JSValue@JSC@@QAE@W4JSNullTag@01@@Z
         ??0Mutex@WTF@@QAE@XZ
