@@ -21,34 +21,48 @@
  *
  */
 
+#ifndef SVGRenderBase_h
+#define SVGRenderBase_h
+
 #if ENABLE(SVG)
 #include "RenderObject.h"
 
 namespace WebCore {
 
-// FIXME: Most of this code should move to RenderSVGModelObject once
-// all SVG renderers inherit from RenderSVGModelObject
+    class SVGResourceFilter;
+    class ImageBuffer;
 
-class SVGResourceFilter;
-void prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
-void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, GraphicsContext* savedContext);
+    // SVGRendererBase is an abstract base class which all SVG renderers inherit
+    // from in order to share SVG renderer code.
+    // FIXME: This code can all move into RenderSVGModelObject once
+    // all SVG renderers inherit from RenderSVGModelObject.
+    class SVGRenderBase {
+    public:
+        // FIXME: These are only public for SVGRootInlineBox.
+        // It's unclear if these should be exposed or not.  SVGRootInlineBox may
+        // pass the wrong RenderObject* and boundingBox to these functions.
+        static void prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
+        static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, GraphicsContext* savedContext);
 
-// This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
-class ImageBuffer;
-void renderSubtreeToImage(ImageBuffer*, RenderObject*);
+    protected:
+        // Used to share the "walk all the children" logic between objectBoundingBox
+        // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
+        static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
 
-void clampImageBufferSizeToViewport(RenderObject*, IntSize&);
+        // returns the filter bounding box (or the empty rect if no filter) in local coordinates
+        static FloatRect filterBoundingBoxForRenderer(const RenderObject*);
+    };
 
-// Used to share the "walk all the children" logic between objectBoundingBox
-// and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
-FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
+    // FIXME: This should move to RenderObject or PaintInfo
+    // Used for transforming the GraphicsContext and damage rect before passing PaintInfo to child renderers.
+    void applyTransformToPaintInfo(RenderObject::PaintInfo&, const TransformationMatrix& localToChildTransform);
 
-// returns the filter bounding box (or the empty rect if no filter) in local coordinates
-FloatRect filterBoundingBoxForRenderer(const RenderObject*);
+    // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
+    void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
-// Used for transforming the GraphicsContext and damage rect before passing PaintInfo to child renderers.
-void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const TransformationMatrix& localToChildTransform);
+    void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
+} // namespace WebCore
 
-}
+#endif // ENABLE(SVG)
 
-#endif
+#endif // SVGRenderBase_h

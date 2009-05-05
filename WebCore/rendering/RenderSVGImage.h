@@ -28,13 +28,14 @@
 #include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "RenderImage.h"
+#include "SVGRenderSupport.h"
 
 namespace WebCore {
 
     class SVGImageElement;
     class SVGPreserveAspectRatio;
 
-    class RenderSVGImage : public RenderImage {
+    class RenderSVGImage : public RenderImage, SVGRenderBase {
     public:
         RenderSVGImage(SVGImageElement*);
         virtual ~RenderSVGImage();

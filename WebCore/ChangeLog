@@ -1,3 +1,42 @@
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add SVGRenderBase to share logic between SVG renderers
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        I've added an SVGRenderBase base class which is shared by
+        all of the SVG renders now.  This patch is just moving code
+        there are no functional changes in this patch.
+
+        Currently I've left these functions in SVGRenderSupport.h
+        In a later patch I will rename SVGRenderSupport.* to SVGRenderBase.*
+
+        clampImageBufferSizeToViewport now takes a FrameView* which makes some code easier to read.
+
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        (WebCore::clampImageBufferSizeToViewport):
+        (WebCore::SVGRenderBase::computeContainerBoundingBox):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkStartCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkEndCallback):
+        (WebCore::SVGRootInlineBox::paint):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+
 2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed SVG build fix.

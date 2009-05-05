@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
+#include "RenderView.h"
 #include "SVGGradientElement.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGPaintServerRadialGradient.h"
@@ -134,7 +135,7 @@ static inline bool createMaskAndSwapContextForTextGradient(
     IntRect maskRect = enclosingIntRect(object->absoluteTransform().mapRect(maskBBox));
 
     IntSize maskSize(maskRect.width(), maskRect.height());
-    clampImageBufferSizeToViewport(object->document()->renderer(), maskSize);
+    clampImageBufferSizeToViewport(object->view()->frameView(), maskSize);
 
     auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(maskSize, false);
 
@@ -166,7 +167,7 @@ static inline TransformationMatrix clipToTextMask(GraphicsContext* context,
     FloatRect textBoundary = transform.mapRect(maskBBox);
 
     IntSize maskSize(lroundf(textBoundary.width()), lroundf(textBoundary.height()));
-    clampImageBufferSizeToViewport(object->document()->renderer(), maskSize);
+    clampImageBufferSizeToViewport(object->view()->frameView(), maskSize);
     textBoundary.setSize(textBoundary.size().shrunkTo(maskSize));
 
     // Clip current context to mask image (gradient)

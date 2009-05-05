@@ -25,13 +25,14 @@
 #if ENABLE(SVG)
 #include "RenderBox.h"
 #include "FloatRect.h"
+#include "SVGRenderSupport.h"
 
 namespace WebCore {
 
 class SVGStyledElement;
 class TransformationMatrix;
 
-class RenderSVGRoot : public RenderBox {
+class RenderSVGRoot : public RenderBox, SVGRenderBase {
 public:
     RenderSVGRoot(SVGStyledElement*);
     ~RenderSVGRoot();

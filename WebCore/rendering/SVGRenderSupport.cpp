@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, SVGResourceFilter* rootFilter)
+void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, SVGResourceFilter* rootFilter)
 {
 #if !ENABLE(SVG_FILTERS)
     UNUSED_PARAM(filter);
@@ -109,7 +109,7 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
         svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 }
 
-void finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, GraphicsContext* savedContext)
+void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, GraphicsContext* savedContext)
 {
 #if !ENABLE(SVG_FILTERS)
     UNUSED_PARAM(boundingBox);
@@ -156,17 +156,13 @@ void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
         svgContainer->setDrawsContents(false);
 }
 
-void clampImageBufferSizeToViewport(RenderObject* object, IntSize& size)
+void clampImageBufferSizeToViewport(FrameView* frameView, IntSize& size)
 {
-    if (!object || !object->isRenderView())
+    if (!frameView)
         return;
 
-    RenderView* view = toRenderView(object);
-    if (!view->frameView())
-        return;
-
-    int viewWidth = view->frameView()->visibleWidth();
-    int viewHeight = view->frameView()->visibleHeight();
+    int viewWidth = frameView->visibleWidth();
+    int viewHeight = frameView->visibleHeight();
 
     if (size.width() > viewWidth)
         size.setWidth(viewWidth);
@@ -175,7 +171,7 @@ void clampImageBufferSizeToViewport(RenderObject* object, IntSize& size)
         size.setHeight(viewHeight);
 }
 
-FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent)
+FloatRect SVGRenderBase::computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent)
 {
     FloatRect boundingBox;
 
@@ -189,7 +185,7 @@ FloatRect computeContainerBoundingBox(const RenderObject* container, bool includ
     return boundingBox;
 }
 
-FloatRect filterBoundingBoxForRenderer(const RenderObject* object)
+FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object)
 {
 #if ENABLE(SVG_FILTERS)
     SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filter());
