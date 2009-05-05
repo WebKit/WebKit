@@ -1,3 +1,17 @@
+2009-05-04  Kai Brüning  <kai@granus.net>
+
+        Reviewed by Eric Seidel.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24883
+        24883: Bad success test in parseXMLDocumentFragment in XMLTokenizerLibxml2.cpp
+        
+        Fixed test whether all the chunk has been processed to correctly count utf8 bytes.
+
+        Test: fast/innerHTML/innerHTML-nbsp.xhtml
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::parseXMLDocumentFragment):
+
 2009-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

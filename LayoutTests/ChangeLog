@@ -1,3 +1,10 @@
+2009-05-04  Kai  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by Eric Seidel.
+
+        * fast/innerHTML/innerHTML-nbsp-expected.txt: Added.
+        * fast/innerHTML/innerHTML-nbsp.xhtml: Added.
+
 2009-05-04  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Disable a test that's timing out.
