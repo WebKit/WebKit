@@ -1,3 +1,14 @@
+2009-05-05  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Brady Eidson.
+
+        Safety-check m_documentLoader before dereferencing.  While it seems
+        unlikely this could fail (as Safari 3 shipped without this),
+        technically almost any call can change or reset m_documentLoader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+
 2009-05-05  Dan Bernstein  <mitz@apple.com>
 
         - Tiger build fix

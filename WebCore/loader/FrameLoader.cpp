@@ -878,10 +878,12 @@ void FrameLoader::receivedFirstData()
     dispatchDidCommitLoad();
     dispatchWindowObjectAvailable();
     
-    String ptitle = m_documentLoader->title();
-    // If we have a title let the WebView know about it.
-    if (!ptitle.isNull())
-        m_client->dispatchDidReceiveTitle(ptitle);
+    if (m_documentLoader) {
+        String ptitle = m_documentLoader->title();
+        // If we have a title let the WebView know about it.
+        if (!ptitle.isNull())
+            m_client->dispatchDidReceiveTitle(ptitle);
+    }
 
     m_workingURL = KURL();
 
