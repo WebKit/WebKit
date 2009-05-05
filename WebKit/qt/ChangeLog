@@ -1,5 +1,16 @@
 2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Various improvements to the class documentation, including a simple snippet for QWebElement.
+
+        * Api/qwebelement.cpp:
+        * Api/qwebframe.cpp:
+        * docs/webkitsnippets/webelement/main.cpp: Added.
+        * docs/webkitsnippets/webelement/webelement.pro: Added.
+
+2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Ariya Hidayat.
 
         Simplify variant conversion by moving the null check into
