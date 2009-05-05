@@ -1,3 +1,9 @@
+2009-05-04  Brady Eidson  <beidson@apple.com>
+
+        Fix an ancient Changelog entry where Sam Weinig flat out lied and confused my exploration of a bug.
+
+        * ChangeLog
+
 2009-05-04  Kai Brüning  <kai@granus.net>
 
         Reviewed by Eric Seidel.
@@ -18074,7 +18080,7 @@
         * html/HTMLAppletElement.cpp:
         (WebCore::HTMLAppletElement::createRenderer):
         * loader/FrameLoader.cpp:
-        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::createJavaAppletWidget):
 
 2009-03-10  Justin Garcia  <justin.garcia@apple.com>
 
