@@ -23,7 +23,8 @@
 
         Reviewed by Darin Adler.
 
-        - fix <rdar://problem/5760774> Replying to a Mail message that contains
+        - fix https://bugs.webkit.org/show_bug.cgi?id=24192
+          <rdar://problem/5760774> Replying to a Mail message that contains
           fixed width text can change the size of the text
 
         Covered by existing tests: editing/pasteboard/5027857.html

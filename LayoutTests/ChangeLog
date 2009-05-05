@@ -2,8 +2,9 @@
 
         Reviewed by Darin Adler.
 
-        - updated results for <rdar://problem/5760774> Replying to a Mail
-          message that contains fixed width text can change the size of the text
+        - updated results for https://bugs.webkit.org/show_bug.cgi?id=24192
+          <rdar://problem/5760774> Replying to a Mail message that contains
+          fixed width text can change the size of the text
 
         * editing/execCommand/19089-expected.txt:
         * editing/execCommand/5770834-1-expected.txt:
