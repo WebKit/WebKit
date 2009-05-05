@@ -271,10 +271,13 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
 void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
 {
     ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
-    ASSERT(useTransforms); // mapping a point through SVG w/o respecting trasnforms is useless.
 
-    // Transform to our border box and let RenderBox transform the rest of the way.
-    transformState.applyTransform(localToBorderBoxTransform());
+    // FIXME: If we don't respect useTransforms we break SVG text rendering.
+    // Seems RenderSVGInlineText has some own broken translation hacks which depend useTransforms=false
+    // This should instead be ASSERT(useTransforms) once we fix RenderSVGInlineText
+    if (useTransforms)
+        transformState.applyTransform(localToBorderBoxTransform());
+
     RenderBox::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 

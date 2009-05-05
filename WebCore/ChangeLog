@@ -1,3 +1,14 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        No review, just a revert.
+
+        Roll out http://trac.webkit.org/changeset/43213 as it caused 4 tests to crash.
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::mapLocalToContainer):
+
 2009-05-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dave Hyatt.

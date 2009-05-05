@@ -64,8 +64,13 @@ void SVGRenderBase::computeRectForRepaint(RenderObject* object, RenderBoxModelOb
 void SVGRenderBase::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState)
 {
     ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
-    ASSERT(useTransforms); // mapping a point through SVG w/o respecting trasnforms is useless.
-    transformState.applyTransform(object->localToParentTransform());
+
+    // FIXME: If we don't respect useTransforms we break SVG text rendering.
+    // Seems RenderSVGInlineText has some own broken translation hacks which depend useTransforms=false
+    // This should instead be ASSERT(useTransforms) once we fix RenderSVGInlineText
+    if (useTransforms)
+        transformState.applyTransform(object->localToParentTransform());
+
     object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
 }
 
