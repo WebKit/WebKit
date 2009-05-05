@@ -1,5 +1,11 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Why should i expect msvc to list all the errors in a file?).
+
+        * parser/Nodes.cpp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Fix warning, and another missing include).
 
         * jit/JIT.cpp:
