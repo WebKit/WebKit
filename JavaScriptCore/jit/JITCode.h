@@ -56,7 +56,7 @@ namespace JSC {
         {
         }
 
-        operator bool()
+        operator bool() const
         {
             return code != 0;
         }

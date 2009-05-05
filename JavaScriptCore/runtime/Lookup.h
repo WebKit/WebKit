@@ -23,7 +23,6 @@
 
 #include "CallFrame.h"
 #include "Identifier.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "PropertySlot.h"

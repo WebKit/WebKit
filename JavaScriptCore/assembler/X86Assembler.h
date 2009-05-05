@@ -1008,6 +1008,12 @@ public:
     {
         m_formatter.oneByteOp(OP_LEA, dst, base, offset);
     }
+#if PLATFORM(X86_64)
+    void leaq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_LEA, dst, base, offset);
+    }
+#endif
 
     // Flow control:
 
@@ -1021,6 +1027,11 @@ public:
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, dst);
         return JmpSrc(m_formatter.size());
+    }
+    
+    void call_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, base, offset);
     }
 
     JmpSrc jmp()

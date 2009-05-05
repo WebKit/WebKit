@@ -1,3 +1,17 @@
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 25559: Improve native function call performance
+        <https://bugs.webkit.org/show_bug.cgi?id=25559>
+
+        Add forwarding header necessary for compilation, and fix debugger
+        to correctly account for change in JSFunction behaviour.
+
+        * ForwardingHeaders/jit/JITCode.h: Added.
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctions):
+
 2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.

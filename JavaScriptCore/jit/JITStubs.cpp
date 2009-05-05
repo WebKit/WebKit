@@ -74,8 +74,9 @@ JITStubs::JITStubs(JSGlobalData* globalData)
     , m_ctiVirtualCallPreLink(0)
     , m_ctiVirtualCallLink(0)
     , m_ctiVirtualCall(0)
+    , m_ctiNativeCallThunk(0)
 {
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiArrayLengthTrampoline, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall);
+    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiArrayLengthTrampoline, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
 }
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
@@ -819,13 +820,12 @@ void* JITStubs::cti_op_call_JSFunction(STUB_ARGS)
     ASSERT(ARG_src1.getCallData(callData) == CallTypeJS);
 #endif
 
-    ScopeChainNode* callDataScopeChain = asFunction(ARG_src1)->scope().node();
-    CodeBlock* newCodeBlock = &asFunction(ARG_src1)->body()->bytecode(callDataScopeChain);
+    JSFunction* function = asFunction(ARG_src1);
+    FunctionBodyNode* body = function->body();
+    ScopeChainNode* callDataScopeChain = function->scope().node();
+    body->jitCode(callDataScopeChain);
 
-    if (!newCodeBlock->jitCode())
-        JIT::compile(ARG_globalData, newCodeBlock);
-
-    return newCodeBlock;
+    return &(body->generatedBytecode());
 }
 
 VoidPtrPair JITStubs::cti_op_call_arityCheck(STUB_ARGS)
@@ -879,13 +879,12 @@ void* JITStubs::cti_vm_dontLazyLinkCall(STUB_ARGS)
 
     JSGlobalData* globalData = ARG_globalData;
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->body()->bytecode(callee->scope().node());
-    if (!codeBlock->jitCode())
-        JIT::compile(globalData, codeBlock);
+    JITCode jitCode = callee->body()->generatedJITCode();
+    ASSERT(jitCode);
 
     ctiPatchNearCallByReturnAddress(ARG_returnAddress2, globalData->jitStubs.ctiVirtualCallLink());
 
-    return codeBlock->jitCode().addressForCall();
+    return jitCode.addressForCall();
 }
 
 void* JITStubs::cti_vm_lazyLinkCall(STUB_ARGS)
@@ -893,14 +892,17 @@ void* JITStubs::cti_vm_lazyLinkCall(STUB_ARGS)
     BEGIN_STUB_FUNCTION();
 
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->body()->bytecode(callee->scope().node());
-    if (!codeBlock->jitCode())
-        JIT::compile(ARG_globalData, codeBlock);
+    JITCode jitCode = callee->body()->generatedJITCode();
+    ASSERT(jitCode);
+    
+    CodeBlock* codeBlock = 0;
+    if (!callee->isHostFunction())
+        codeBlock = &callee->body()->bytecode(callee->scope().node());
 
     CallLinkInfo* callLinkInfo = &ARG_callFrame->callerFrame()->codeBlock()->getCallLinkInfo(ARG_returnAddress2);
-    JIT::linkCall(callee, codeBlock, codeBlock->jitCode(), callLinkInfo, ARG_int3);
+    JIT::linkCall(callee, codeBlock, jitCode, callLinkInfo, ARG_int3);
 
-    return codeBlock->jitCode().addressForCall();
+    return jitCode.addressForCall();
 }
 
 JSObject* JITStubs::cti_op_push_activation(STUB_ARGS)
@@ -1059,16 +1061,25 @@ JSObject* JITStubs::cti_op_construct_JSConstruct(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();
 
+    JSFunction* constructor = asFunction(ARG_src1);
+    if (constructor->isHostFunction()) {
+        CallFrame* callFrame = ARG_callFrame;
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
+        ARG_globalData->exception = createNotAConstructorError(callFrame, constructor, vPCIndex, codeBlock);
+        VM_THROW_EXCEPTION();
+    }
+
 #ifndef NDEBUG
     ConstructData constructData;
-    ASSERT(asFunction(ARG_src1)->getConstructData(constructData) == ConstructTypeJS);
+    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
 #endif
 
     Structure* structure;
     if (ARG_src4.isObject())
         structure = asObject(ARG_src4)->inheritorID();
     else
-        structure = asFunction(ARG_src1)->scope().node()->globalObject()->emptyObjectStructure();
+        structure = constructor->scope().node()->globalObject()->emptyObjectStructure();
     return new (ARG_globalData) JSObject(structure);
 }
 

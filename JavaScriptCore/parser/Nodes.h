@@ -27,6 +27,7 @@
 #define NODES_H_
 
 #include "Error.h"
+#include "JITCode.h"
 #include "Opcode.h"
 #include "ResultType.h"
 #include "SourceCode.h"
@@ -2189,6 +2190,9 @@ namespace JSC {
     class FunctionBodyNode : public ScopeNode {
         friend class JIT;
     public:
+#if ENABLE(JIT)
+        static PassRefPtr<FunctionBodyNode> createNativeThunk(JSGlobalData*) JSC_FAST_CALL;
+#endif
         static FunctionBodyNode* create(JSGlobalData*) JSC_FAST_CALL;
         static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
         virtual ~FunctionBodyNode();
@@ -2199,25 +2203,23 @@ namespace JSC {
         Identifier* copyParameters();
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        
-        CodeBlock& bytecode(ScopeChainNode* scopeChain) JSC_FAST_CALL
-        {
-            ASSERT(scopeChain);
-            if (!m_code)
-                generateBytecode(scopeChain);
-            return *m_code;
-        }
-
-        CodeBlock& generatedBytecode() JSC_FAST_CALL
-        {
-            ASSERT(m_code);
-            return *m_code;
-        }
 
         bool isGenerated() JSC_FAST_CALL
         {
             return m_code;
         }
+
+#if ENABLE(JIT)
+        bool isHostFunction() const JSC_FAST_CALL
+        {
+            return m_jitCode && !m_code;
+        }
+#else
+        bool isHostFunction() const JSC_FAST_CALL
+        {
+            return true;
+        }
+#endif
 
         virtual void mark();
 
@@ -2241,13 +2243,44 @@ namespace JSC {
         }
 
         CodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*) JSC_FAST_CALL;
+#if ENABLE(JIT)
+        JITCode generatedJITCode()
+        {
+            ASSERT(m_jitCode);
+            return m_jitCode;
+        }
 
+        JITCode jitCode(ScopeChainNode* scopeChain)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChain);
+            return m_jitCode;
+        }
+#endif
+        CodeBlock& bytecode(ScopeChainNode* scopeChain) JSC_FAST_CALL
+        {
+            ASSERT(scopeChain);
+            if (!m_code)
+                generateBytecode(scopeChain);
+            return *m_code;
+        }
+        
+        CodeBlock& generatedBytecode() JSC_FAST_CALL
+        {
+            ASSERT(m_code);
+            return *m_code;
+        }
+        
     private:
         FunctionBodyNode(JSGlobalData*) JSC_FAST_CALL;
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
         void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
-
+#if ENABLE(JIT)
+        void generateJITCode(ScopeChainNode*) JSC_FAST_CALL;
+        
+        JITCode m_jitCode;
+#endif
         Identifier* m_parameters;
         size_t m_parameterCount;
         OwnPtr<CodeBlock> m_code;

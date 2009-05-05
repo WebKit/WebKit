@@ -72,12 +72,13 @@ static inline bool isNumericCompareFunction(CallType callType, const CallData& c
     if (callType != CallTypeJS)
         return false;
 
-    CodeBlock& codeBlock = callData.js.functionBody->bytecode(callData.js.scopeChain);
 #if ENABLE(JIT)
     // If the JIT is enabled then we need to preserve the invariant that every
     // function with a CodeBlock also has JIT code.
-    if (!codeBlock.jitCode())
-        JIT::compile(callData.js.scopeChain->globalData, &codeBlock);
+    callData.js.functionBody->jitCode(callData.js.scopeChain);
+    CodeBlock& codeBlock = callData.js.functionBody->generatedBytecode();
+#else
+    CodeBlock& codeBlock = callData.js.functionBody->bytecode(callData.js.scopeChain);
 #endif
 
     return codeBlock.isNumericCompareFunction();

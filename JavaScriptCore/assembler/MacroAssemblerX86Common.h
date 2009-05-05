@@ -553,6 +553,11 @@ public:
         return Call(m_assembler.call(target), Call::None);
     }
 
+    void call(Address address)
+    {
+        m_assembler.call_m(address.offset, address.base);
+    }
+
     void ret()
     {
         m_assembler.ret();

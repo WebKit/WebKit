@@ -33,6 +33,7 @@
 #include "CallFrame.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "Nodes.h"
 #include "Profile.h"
 #include "ProfileGenerator.h"
 #include "ProfileNode.h"
@@ -139,8 +140,11 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValue 
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
     if (!function.isObject())
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
-    if (asObject(function)->inherits(&JSFunction::info))
-        return createCallIdentifierFromFunctionImp(globalData, asFunction(function));
+    if (asObject(function)->inherits(&JSFunction::info)) {
+        JSFunction* func = asFunction(function);
+        if (!func->isHostFunction())
+            return createCallIdentifierFromFunctionImp(globalData, func);
+    }
     if (asObject(function)->inherits(&InternalFunction::info))
         return CallIdentifier(static_cast<InternalFunction*>(asObject(function))->name(globalData), defaultSourceURL, defaultLineNumber);
     return CallIdentifier("(" + asObject(function)->className() + " object)", defaultSourceURL, defaultLineNumber);

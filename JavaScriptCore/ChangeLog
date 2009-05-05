@@ -1,3 +1,120 @@
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 25559: Improve native function call performance
+        <https://bugs.webkit.org/show_bug.cgi?id=25559>
+
+        In order to cache calls to native functions we now make the standard
+        prototype functions use a small assembly thunk that converts the JS
+        calling convention into the native calling convention.  As this is
+        only beneficial in the JIT we use the NativeFunctionWrapper typedef
+        to alternate between PrototypeFunction and JSFunction to keep the
+        code sane.  This change from PrototypeFunction to NativeFunctionWrapper
+        is the bulk of this patch.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::call):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::addPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::leaq_mr):
+        (JSC::X86Assembler::call_m):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+        * jit/JITCall.cpp:
+        (JSC::JIT::linkCall):
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCode.h:
+        (JSC::JITCode::operator bool):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetFromCallFrameHeader):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::JITStubs):
+        (JSC::JITStubs::cti_op_call_JSFunction):
+        (JSC::JITStubs::cti_vm_dontLazyLinkCall):
+        (JSC::JITStubs::cti_vm_lazyLinkCall):
+        (JSC::JITStubs::cti_op_construct_JSConstruct):
+        * jit/JITStubs.h:
+        (JSC::JITStubs::ctiNativeCallThunk):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::createNativeThunk):
+        (JSC::FunctionBodyNode::generateJITCode):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::):
+        (JSC::FunctionBodyNode::generatedJITCode):
+        (JSC::FunctionBodyNode::jitCode):
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier):
+        * runtime/ArgList.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::functionProtoFuncToString):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::mark):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::getConstructData):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::setScope):
+        (JSC::JSFunction::scope):
+        (JSC::JSFunction::isHostFunction):
+        (JSC::JSFunction::scopeChain):
+        (JSC::JSFunction::clearScopeChain):
+        (JSC::JSFunction::setScopeChain):
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::setNativeFunction):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData):
+        (JSC::JSGlobalData::createNativeThunk):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::nativeFunctionThunk):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+
 2009-05-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

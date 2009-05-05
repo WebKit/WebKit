@@ -2685,6 +2685,9 @@ void EvalNode::mark()
 
 FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
     : ScopeNode(globalData)
+#if ENABLE(JIT)
+    , m_jitCode(0)
+#endif
     , m_parameters(0)
     , m_parameterCount(0)
     , m_refCount(0)
@@ -2693,6 +2696,9 @@ FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
 
 FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(globalData, sourceCode, children, varStack, funcStack, features, numConstants)
+#if ENABLE(JIT)
+    , m_jitCode(0)
+#endif
     , m_parameters(0)
     , m_parameterCount(0)
     , m_refCount(0)
@@ -2731,6 +2737,15 @@ void FunctionBodyNode::mark()
         m_code->mark();
 }
 
+#if ENABLE(JIT)
+PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* globalData)
+{
+    PassRefPtr<FunctionBodyNode> body = new FunctionBodyNode(globalData);
+    body->m_jitCode = globalData->jitStubs.ctiNativeCallThunk();
+    return body;
+}
+#endif
+
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
 {
     return new FunctionBodyNode(globalData);
@@ -2759,6 +2774,18 @@ void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
 
     destroyData();
 }
+
+#if ENABLE(JIT)
+void FunctionBodyNode::generateJITCode(ScopeChainNode* scopeChainNode)
+{
+    bytecode(scopeChainNode);
+    ASSERT(m_code);
+    ASSERT(!m_code->jitCode());
+    JIT::compile(scopeChainNode->globalData, m_code.get());
+    ASSERT(m_code->jitCode());
+    m_jitCode = m_code->jitCode();
+}
+#endif
 
 CodeBlock& FunctionBodyNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode, CodeBlock* codeBlockBeingRegeneratedFrom)
 {

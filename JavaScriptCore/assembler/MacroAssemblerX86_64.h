@@ -122,7 +122,7 @@ public:
 
     void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
     {
-        m_assembler.leal_mr(imm.m_value, src, dest);
+        m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
     void andPtr(RegisterID src, RegisterID dest)

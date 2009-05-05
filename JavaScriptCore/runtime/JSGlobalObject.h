@@ -24,6 +24,7 @@
 
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
+#include "NativeFunctionWrapper.h"
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
 #include <wtf/HashSet.h>
@@ -107,8 +108,8 @@ namespace JSC {
             NativeErrorConstructor* URIErrorConstructor;
 
             GlobalEvalFunction* evalFunction;
-            PrototypeFunction* callFunction;
-            PrototypeFunction* applyFunction;
+            NativeFunctionWrapper* callFunction;
+            NativeFunctionWrapper* applyFunction;
 
             ObjectPrototype* objectPrototype;
             FunctionPrototype* functionPrototype;
