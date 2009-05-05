@@ -26,7 +26,6 @@
 #if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
-#include "TransformationMatrix.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
@@ -36,9 +35,44 @@
 #include "SVGResourceMasker.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
+#include "TransformState.h"
+#include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
+
+IntRect SVGRenderBase::clippedOverflowRectForRepaint(RenderObject* object, RenderBoxModelObject* repaintContainer)
+{
+    // Return early for any cases where we don't actually paint
+    if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
+        return IntRect();
+
+    // Pass our local paint rect to computeRectForRepaint() which will
+    // map to parent coords and recurse up the parent chain.
+    IntRect repaintRect = enclosingIntRect(object->repaintRectInLocalCoordinates());
+    object->computeRectForRepaint(repaintContainer, repaintRect);
+    return repaintRect;
+}
+
+void SVGRenderBase::computeRectForRepaint(RenderObject* object, RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+{
+    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
+    repaintRect = object->localToParentTransform().mapRect(repaintRect);
+    object->parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+}
+
+void SVGRenderBase::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState)
+{
+    ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
+
+    // FIXME: If we don't respect useTransforms we break SVG text rendering.
+    // Seems RenderSVGInlineText has some own broken translation hacks which depend useTransforms=false
+    // This should instead be ASSERT(useTransforms) once we fix RenderSVGInlineText
+    if (useTransforms)
+        transformState.applyTransform(object->localToParentTransform());
+
+    object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
+}
 
 void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, SVGResourceFilter* rootFilter)
 {

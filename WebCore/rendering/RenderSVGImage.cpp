@@ -239,22 +239,17 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
 
 IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    // Return early for any cases where we don't actually paint
-    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
-        return IntRect();
-
-    // Pass our local paint rect to computeRectForRepaint() which will
-    // map to parent coords and recurse up the parent chain.
-    IntRect repaintRect = enclosingIntRect(repaintRectInLocalCoordinates());
-    computeRectForRepaint(repaintContainer, repaintRect);
-    return repaintRect;
+    return SVGRenderBase::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
 void RenderSVGImage::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
-    repaintRect = localToParentTransform().mapRect(repaintRect);
-    parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+    SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
+}
+
+void RenderSVGImage::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
+{
+    SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
 void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int, int)

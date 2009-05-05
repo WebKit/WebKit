@@ -2,6 +2,41 @@
 
         Reviewed by Simon Fraser.
 
+        Move more code into SVGRenderBase
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        clippedOverflowRectForRepaint, computeRectForRepaint and mapLocalToContainer
+        are now all shared via SVGRenderBase.
+
+        RenderForeignObject should also be sharing this code, but I've left it
+        alone for now, as changing that would likely cause test changes.
+
+        No test changes.  It's possible that transformed <svg:image> elements will
+        now show up with better metrics in the inspector.
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGImage::computeRectForRepaint):
+        (WebCore::RenderSVGImage::mapLocalToContainer):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderBase::computeRectForRepaint):
+        (WebCore::SVGRenderBase::mapLocalToContainer):
+        * rendering/SVGRenderSupport.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Add SVGRenderBase to share logic between SVG renderers
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

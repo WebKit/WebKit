@@ -45,6 +45,11 @@ namespace WebCore {
         static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, GraphicsContext* savedContext);
 
     protected:
+        static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
+        static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
+
+        static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
+
         // Used to share the "walk all the children" logic between objectBoundingBox
         // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
         static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);

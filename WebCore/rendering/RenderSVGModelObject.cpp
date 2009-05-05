@@ -37,7 +37,6 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "SVGStyledElement.h"
-#include "TransformState.h"
 
 #if ENABLE(SVG_FILTERS)
 #include "SVGResourceFilter.h"
@@ -52,38 +51,22 @@ RenderSVGModelObject::RenderSVGModelObject(SVGStyledElement* node)
 
 IntRect RenderSVGModelObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    // Return early for any cases where we don't actually paint
-    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
-        return IntRect();
-
-    // Pass our local paint rect to computeRectForRepaint() which will
-    // map to parent coords and recurse up the parent chain.
-    IntRect repaintRect = enclosingIntRect(repaintRectInLocalCoordinates());
-    computeRectForRepaint(repaintContainer, repaintRect);
-    return repaintRect;
+    return SVGRenderBase::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
 void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
-    repaintRect = localToParentTransform().mapRect(repaintRect);
-    parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+    SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
 void RenderSVGModelObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
 {
-    ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
-
-    // FIXME: If we don't respect useTransforms we break SVG text rendering.
-    // Seems RenderSVGInlineText has some own broken translation hacks which depend useTransforms=false
-    // This should instead be ASSERT(useTransforms) once we fix RenderSVGInlineText
-    if (useTransforms)
-        transformState.applyTransform(localToParentTransform());
-
-    parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
+    SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
 // Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
+// FIXME: This may also need to move into SVGRenderBase as the RenderBox version depends
+// on borderBoundingBox() which SVG RenderBox subclases (like SVGRenderBlock) do not implement.
 IntRect RenderSVGModelObject::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     IntRect box = enclosingIntRect(repaintRectInLocalCoordinates());
