@@ -58,6 +58,7 @@
 #   Tests failing
 accessibility/aria-link-supports-press.html
 accessibility/button-press-action.html
+accessibility/canvas.html
 accessibility/iframe-bastardization.html
 accessibility/ignore-spacer-elements.html
 accessibility/img-aria-button-alt-tag.html

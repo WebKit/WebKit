@@ -1,3 +1,10 @@
+2009-05-04  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Disabling accessibility/canvas.html due the lack of a
+        an AccessibilityController implementation in DRT.
+
+        * platform/gtk/Skipped:
+
 2009-05-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin, Oliver Hunt.
