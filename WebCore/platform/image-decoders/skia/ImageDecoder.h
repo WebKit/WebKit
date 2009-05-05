@@ -42,37 +42,9 @@
 
 namespace WebCore {
 
-    class RefCountedNativeImageSkia : public RefCounted<RefCountedNativeImageSkia> {
-    public:
-        static PassRefPtr<RefCountedNativeImageSkia> create()
-        {
-            return adoptRef(new RefCountedNativeImageSkia);
-        }
-
-        const NativeImageSkia& bitmap() const { return m_bitmap; }
-        NativeImageSkia& bitmap() { return m_bitmap; }
-
-    private:
-        RefCountedNativeImageSkia() {}
-        NativeImageSkia m_bitmap;
-    };
-
     // The RGBA32Buffer object represents the decoded image data in RGBA32 format.
     // This buffer is what all decoders write a single frame into.  Frames are then
     // instantiated for drawing by being handed this buffer.
-    //
-    // The image data of an RGBA32Buffer is kept in an SkBitmapRef, a refcounting
-    // container for an SkBitmap.  In all normal cases, the refcount should be
-    // exactly one.  The exception happens when resizing the vector<RGBA32Buffer> in
-    // ImageDecoder::m_frameBufferCache, which copies all the buffers to the new
-    // vector, thus transiently incrementing the refcount to two.
-    //
-    // The choice to use an SkBitmapRef instead of an SkBitmap is not because of
-    // performance concerns -- SkBitmap refcounts its internal data anyway.  Rather,
-    // we need the aforementioned vector resize to preserve the exact underlying
-    // SkBitmap object, since we may have already given its address to
-    // BitmapImage::m_frames.  Using an SkBitmap would mean that after ImageDecoder
-    // resizes its vector, BitmapImage would be holding a pointer to garbage.
     class RGBA32Buffer {
     public:
         enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
@@ -91,14 +63,12 @@ namespace WebCore {
             , m_duration(0)
             , m_disposalMethod(DisposeNotSpecified)
         {
-            m_bitmapRef = RefCountedNativeImageSkia::create();
         }
 
         // This constructor doesn't create a new copy of the image data, it only
         // increases the ref count of the existing bitmap.
         RGBA32Buffer(const RGBA32Buffer& other)
         {
-            m_bitmapRef = RefCountedNativeImageSkia::create();
             operator=(other);
         }
 
@@ -117,18 +87,20 @@ namespace WebCore {
             if (this == &other)
                 return *this;
 
-            m_bitmapRef = other.m_bitmapRef;
+            m_bitmap = other.m_bitmap;
+            // Keep the pixels locked since we will be writing directly into the
+            // bitmap throughout this object's lifetime.
+            m_bitmap.lockPixels();
             setRect(other.rect());
             setStatus(other.status());
             setDuration(other.duration());
             setDisposalMethod(other.disposalMethod());
-            setHasAlpha(other.hasAlpha());
             return *this;
         }
 
         void clear()
         {
-            m_bitmapRef = RefCountedNativeImageSkia::create();
+            m_bitmap.reset();
             m_status = FrameEmpty;
             // NOTE: Do not reset other members here; clearFrameBufferCache()
             // calls this to free the bitmap data, but other functions like
@@ -143,21 +115,13 @@ namespace WebCore {
             if (this == &other)
                 return;
 
-            m_bitmapRef = RefCountedNativeImageSkia::create();
-            SkBitmap& bmp = bitmap();
-            const SkBitmap& otherBmp = other.bitmap();
-            bmp.setConfig(SkBitmap::kARGB_8888_Config, other.width(),
-                          other.height(), otherBmp.rowBytes());
-            bmp.allocPixels();
-            if (width() > 0 && height() > 0) {
-                memcpy(bmp.getAddr32(0, 0),
-                       otherBmp.getAddr32(0, 0),
-                       otherBmp.rowBytes() * height());
-            }
+            m_bitmap.reset();
+            const NativeImageSkia& otherBitmap = other.bitmap();
+            otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
         }
 
-        NativeImageSkia& bitmap() { return m_bitmapRef->bitmap(); }
-        const NativeImageSkia& bitmap() const { return m_bitmapRef->bitmap(); }
+        NativeImageSkia& bitmap() { return m_bitmap; }
+        const NativeImageSkia& bitmap() const { return m_bitmap; }
 
         // Must be called before any pixels are written. Will return true on
         // success, false if the memory allocation fails.
@@ -165,37 +129,36 @@ namespace WebCore {
         {
             // This function should only be called once, it will leak memory
             // otherwise.
-            SkBitmap& bmp = bitmap();
-            ASSERT(bmp.width() == 0 && bmp.height() == 0);
-            bmp.setConfig(SkBitmap::kARGB_8888_Config, width, height);
-            if (!bmp.allocPixels())
+            ASSERT(m_bitmap.width() == 0 && m_bitmap.height() == 0);
+            m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, width, height);
+            if (!m_bitmap.allocPixels())
                 return false;  // Allocation failure, maybe the bitmap was too big.
 
             // Clear the image.
-            bmp.eraseARGB(0, 0, 0, 0);
+            m_bitmap.eraseARGB(0, 0, 0, 0);
 
             return true;
         }
 
-        int width() const { return bitmap().width(); }
-        int height() const { return bitmap().height(); }
+        int width() const { return m_bitmap.width(); }
+        int height() const { return m_bitmap.height(); }
 
         const IntRect& rect() const { return m_rect; }
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
-        bool hasAlpha() const { return !bitmap().isOpaque(); }
+        bool hasAlpha() const { return !m_bitmap.isOpaque(); }
 
         void setRect(const IntRect& r) { m_rect = r; }
         void setStatus(FrameStatus s)
         {
             if (s == FrameComplete)
-                m_bitmapRef->bitmap().setDataComplete();  // Tell the bitmap it's done.
+                m_bitmap.setDataComplete();  // Tell the bitmap it's done.
             m_status = s;
         }
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
-        void setHasAlpha(bool alpha) { bitmap().setIsOpaque(!alpha); }
+        void setHasAlpha(bool alpha) { m_bitmap.setIsOpaque(!alpha); }
 
         static void setRGBA(uint32_t* dest, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         {
@@ -215,11 +178,11 @@ namespace WebCore {
 
         void setRGBA(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         {
-            setRGBA(bitmap().getAddr32(x, y), r, g, b, a);
+            setRGBA(m_bitmap.getAddr32(x, y), r, g, b, a);
         }
 
     private:
-        RefPtr<RefCountedNativeImageSkia> m_bitmapRef;
+        NativeImageSkia m_bitmap;
         IntRect m_rect;    // The rect of the original specified frame within the overall buffer.
                            // This will always just be the entire buffer except for GIF frames
                            // whose original rect was smaller than the overall image size.

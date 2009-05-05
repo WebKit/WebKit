@@ -1,3 +1,24 @@
+2009-05-05  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25303
+        No need to ref the internal buffer inside the Skia ImageDecoder.
+
+        * platform/image-decoders/skia/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::operator=):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::bitmap):
+        (WebCore::RGBA32Buffer::setSize):
+        (WebCore::RGBA32Buffer::width):
+        (WebCore::RGBA32Buffer::height):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::setRGBA):
+
 2009-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
