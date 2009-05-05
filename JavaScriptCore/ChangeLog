@@ -1,5 +1,13 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Buildfix).
+
+        Add missing file
+
+        * runtime/NativeFunctionWrapper.h: Copied from JavaScriptCore/jit/ExecutableAllocator.cpp.
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Bug 25559: Improve native function call performance
