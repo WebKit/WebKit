@@ -1,5 +1,12 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Fix warning, and another missing include).
+
+        * jit/JIT.cpp:
+        * parser/Nodes.h:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (More build fixes).
 
         * runtime/ErrorPrototype.cpp:

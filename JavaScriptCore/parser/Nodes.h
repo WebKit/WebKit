@@ -27,6 +27,7 @@
 #define NODES_H_
 
 #include "Error.h"
+#include "JIT.h"
 #include "JITCode.h"
 #include "Opcode.h"
 #include "ResultType.h"

@@ -2011,7 +2011,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, argPointer)));
 
     // regT1 currently points to the first argument, regT1 - sizeof(Register) points to 'this'
-    loadPtr(Address(regT1, -sizeof(Register)), regT1);
+    loadPtr(Address(regT1, -(int)sizeof(Register)), regT1);
     poke(regT1, 2);
     storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, thisValue)));
 
