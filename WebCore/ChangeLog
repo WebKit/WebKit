@@ -1,3 +1,20 @@
+2009-05-04  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        As Qtish implementation of MIMETypeRegistry::getMIMETypeForExtension()
+        returns the application/octet-stream mimetype when it can't associate
+        extension with any mimetype, it can happen that the application/octet-stream
+        mimetype will hit the list of supported image formats. For instance,
+        it is possible when QImageReader or QImageWriter support an extension
+        that is not in the extensions map.
+
+        Make sure that this mimetype is not treated as displayable image type.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+
 2009-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
