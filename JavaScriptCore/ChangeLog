@@ -1,5 +1,12 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Fix the build fix caused by a different build fix).
+
+        * parser/Nodes.cpp:
+        * parser/Nodes.h:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (No idea how my changes could have broken these).
 
         * runtime/DatePrototype.cpp:
