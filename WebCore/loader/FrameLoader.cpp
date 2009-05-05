@@ -5109,10 +5109,12 @@ Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletEleme
         paramValues.append(it->second);
     }
 
-    KURL codeBaseURL = completeURL(codeBaseURLString);
-    if (!canLoad(codeBaseURL, String(), element->document())) {
-        FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
-        return 0;
+    if (!codeBaseURLString.isEmpty()) {
+        KURL codeBaseURL = completeURL(codeBaseURLString);
+        if (!canLoad(codeBaseURL, String(), element->document())) {
+            FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
+            return 0;
+        }
     }
 
     if (baseURLString.isEmpty())

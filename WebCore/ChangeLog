@@ -1,3 +1,21 @@
+2009-05-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam 'The Belly' Weinig
+
+        <rdar://problem/6828894> - Facebook photo uploader applet broken on Leopard only
+
+        In r41568 we started adding a default codebase attribute to <applet> tags if they didn't specify one
+        themselves.  Leopard's Java plug-in mishandles this case and fails to load code for the applet.
+
+        The spirit of r41568 can be maintained by removing the "default codebase" piece and only performing
+        the canLoad() check if a codebase was actually set on the applet tag.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer): Don't create a default codebase attribute.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createJavaAppletWidget): Only perform the canLoad() check if the codebase was set.
+
 2009-05-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix
