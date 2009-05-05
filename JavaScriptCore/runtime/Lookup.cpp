@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Lookup.h"
 
+#include "JSFunction.h"
 #include "PrototypeFunction.h"
 
 namespace JSC {

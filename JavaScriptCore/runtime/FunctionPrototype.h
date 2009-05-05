@@ -22,7 +22,6 @@
 #define FunctionPrototype_h
 
 #include "InternalFunction.h"
-#include "NativeFunctionWrapper.h"
 
 namespace JSC {
 

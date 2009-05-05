@@ -1,5 +1,12 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Will the fixes never end?).
+
+        * runtime/FunctionPrototype.h:
+        * runtime/Lookup.cpp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (More build fixes).
 
         * jit/JIT.cpp:
