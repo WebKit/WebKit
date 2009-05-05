@@ -1,3 +1,13 @@
+2009-05-01  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        STATE_CHANGED event is now named LOAD
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25549
+
+        * bindings/python/samples/simple.py:
+
 2009-05-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

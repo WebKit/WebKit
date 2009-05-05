@@ -85,7 +85,7 @@ class TestPanel(wx.Panel):
         self.webview.LoadURL(self.current)
         self.location.Append(self.current)
         
-        self.webview.Bind(wx.webview.EVT_WEBVIEW_STATE_CHANGED, self.OnStateChanged)
+        self.webview.Bind(wx.webview.EVT_WEBVIEW_LOAD, self.OnStateChanged)
 
         self.SetSizer(sizer)
 
