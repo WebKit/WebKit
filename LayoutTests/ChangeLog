@@ -1,3 +1,17 @@
+2009-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a testcase using SVG in HTML with CSS transforms
+        https://bugs.webkit.org/show_bug.cgi?id=23112
+
+        We currently fail the <text> section of this test but pass the path and image sections.
+
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.checksum: Added.
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.png: Added.
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.txt: Added.
+        * svg/transforms/animated-path-inside-transformed-html.xhtml: Added.
+
 2009-05-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dave Hyatt.
@@ -421,7 +435,7 @@
         * accessibility/canvas-expected.txt: Added.
         * accessibility/canvas.html: Added.
 
-2009-05-04  Kai  <set EMAIL_ADDRESS environment variable>
+2009-05-04  Kai Brüning  <kai@granus.net>
 
         Reviewed by Eric Seidel.
 
