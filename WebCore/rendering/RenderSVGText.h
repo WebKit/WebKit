@@ -68,7 +68,6 @@ private:
     virtual RootInlineBox* createRootBox();
 
     TransformationMatrix m_localTransform;
-    IntRect m_absoluteBounds;
 };
 
 }

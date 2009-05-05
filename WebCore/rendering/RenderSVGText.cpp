@@ -73,8 +73,7 @@ void RenderSVGText::layout()
     // FIXME: This is a hack to avoid the RenderBlock::layout() partial repainting code which is not (yet) SVG aware
     setNeedsLayout(true);
 
-    // FIXME: using m_absoluteBounds breaks if containerForRepaint() is not the root
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), &m_absoluteBounds);
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
     // Best guess for a relative starting point
     SVGTextElement* text = static_cast<SVGTextElement*>(node());
@@ -86,10 +85,7 @@ void RenderSVGText::layout()
 
     RenderBlock::layout();
 
-    m_absoluteBounds = absoluteClippedOverflowRect();
-
     repainter.repaintAfterLayout();
-        
     setNeedsLayout(false);
 }
 

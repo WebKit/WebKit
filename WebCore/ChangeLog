@@ -2,6 +2,19 @@
 
         Reviewed by Simon Fraser.
 
+        Remove m_absoluteBounds hack from RenderSVGText
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        No functional changes (SVGs inside CSS transformed HTML should theoretically repaint better)
+
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGText.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Remove the vestigial calculateLocalTransform()
         https://bugs.webkit.org/show_bug.cgi?id=25532
 
