@@ -229,7 +229,11 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
 {
     ASSERT(pos.isNotNull());
     RefPtr<CSSComputedStyleDeclaration> style = pos.computedStyle();
-    RefPtr<CSSValue> value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
+    RefPtr<CSSValue> value;
+    if (property->id() == CSSPropertyFontSize)
+        value = style->getFontSizeCSSValuePreferringKeyword();
+    else
+        value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
     if (!value)
         return false;
     return equalIgnoringCase(value->cssText(), property->value()->cssText());

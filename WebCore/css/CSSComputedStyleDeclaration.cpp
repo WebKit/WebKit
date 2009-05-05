@@ -538,9 +538,60 @@ void CSSComputedStyleDeclaration::setCssText(const String&, ExceptionCode& ec)
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
+static int cssIdentifierForFontSizeKeyword(int keywordSize)
+{
+    ASSERT_ARG(keywordSize, keywordSize);
+    ASSERT_ARG(keywordSize, keywordSize <= 8);
+    return CSSValueXxSmall + keywordSize - 1;
+}
+
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword() const
+{
+    Node* node = m_node.get();
+    if (!node)
+        return 0;
+
+    node->document()->updateLayoutIgnorePendingStylesheets();
+
+    RefPtr<RenderStyle> style = node->computedStyle();
+    if (!style)
+        return 0;
+
+    if (int keywordSize = style->fontDescription().keywordSize())
+        return CSSPrimitiveValue::createIdentifier(cssIdentifierForFontSizeKeyword(keywordSize));
+
+    return CSSPrimitiveValue::create(style->fontDescription().computedPixelSize(), CSSPrimitiveValue::CSS_PX);
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID) const
 {
     return getPropertyCSSValue(propertyID, UpdateLayout);
+}
+
+static int toCSSIdentifier(FontDescription::GenericFamilyType genericFamily)
+{
+    switch (genericFamily) {
+        case FontDescription::SerifFamily:
+            return CSSValueSerif;
+            break;
+        case FontDescription::SansSerifFamily:
+            return CSSValueSansSerif;
+            break;
+        case FontDescription::MonospaceFamily:
+            return CSSValueMonospace;
+            break;
+        case FontDescription::CursiveFamily:
+            return CSSValueCursive;
+            break;
+        case FontDescription::FantasyFamily:
+            return CSSValueFantasy;
+            break;
+        case FontDescription::StandardFamily:
+        case FontDescription::NoFamily:
+        default:
+            return 0;
+            break;
+    }
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
@@ -723,9 +774,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->emptyCells());
         case CSSPropertyFloat:
             return CSSPrimitiveValue::create(style->floating());
-        case CSSPropertyFontFamily:
+        case CSSPropertyFontFamily: {
             // FIXME: This only returns the first family.
+            if (int id = toCSSIdentifier(style->fontDescription().genericFamily()))
+                return CSSPrimitiveValue::createIdentifier(id);
+
             return CSSPrimitiveValue::create(style->fontDescription().family().family().string(), CSSPrimitiveValue::CSS_STRING);
+        }
         case CSSPropertyFontSize:
             return CSSPrimitiveValue::create(style->fontDescription().computedPixelSize(), CSSPrimitiveValue::CSS_PX);
         case CSSPropertyWebkitBinding:
@@ -1432,6 +1487,8 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInherita
         if (!m_node->computedStyle()->textStrokeColor().isValid())
             style->removeProperty(CSSPropertyWebkitTextStrokeColor, ec);
         ASSERT(ec == 0);
+        if (int keywordSize = m_node->computedStyle()->fontDescription().keywordSize())
+            style->setProperty(CSSPropertyFontSize, cssIdentifierForFontSizeKeyword(keywordSize));
     }
     return style.release();
 }

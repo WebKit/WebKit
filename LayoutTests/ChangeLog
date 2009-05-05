@@ -1,3 +1,25 @@
+2009-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - updated results for <rdar://problem/5760774> Replying to a Mail
+          message that contains fixed width text can change the size of the text
+
+        * editing/execCommand/19089-expected.txt:
+        * editing/execCommand/5770834-1-expected.txt:
+        * platform/mac/editing/deleting/delete-br-011-expected.txt:
+        * platform/mac/editing/deleting/delete-select-all-001-expected.txt:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.txt:
+        * platform/mac/editing/pasteboard/5027857-expected.checksum:
+        * platform/mac/editing/pasteboard/5027857-expected.png:
+        * platform/mac/editing/pasteboard/5027857-expected.txt:
+        * platform/mac/editing/pasteboard/paste-pre-002-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-pre-002-expected.png:
+        * platform/mac/editing/pasteboard/paste-pre-002-expected.txt:
+        * platform/mac/editing/style/block-style-004-expected.txt:
+        * platform/mac/editing/style/block-style-005-expected.txt:
+        * platform/mac/editing/style/block-style-006-expected.txt:
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

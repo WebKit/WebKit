@@ -81,7 +81,7 @@ public:
     GenericFamilyType genericFamily() const { return static_cast<GenericFamilyType>(m_genericFamily); }
     bool usePrinterFont() const { return m_usePrinterFont; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
-    int keywordSize() const { return m_keywordSize; }
+    unsigned keywordSize() const { return m_keywordSize; }
 
     FontTraitsMask traitsMask() const;
 
@@ -95,7 +95,7 @@ public:
     void setGenericFamily(GenericFamilyType genericFamily) { m_genericFamily = genericFamily; }
     void setUsePrinterFont(bool p) { m_usePrinterFont = p; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
-    void setKeywordSize(int s) { m_keywordSize = s; }
+    void setKeywordSize(unsigned s) { m_keywordSize = s; }
 
 private:
     FontFamily m_familyList; // The list of font families to be used.
@@ -114,7 +114,7 @@ private:
 
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
 
-    int m_keywordSize : 4; // We cache whether or not a font is currently represented by a CSS keyword (e.g., medium).  If so,
+    unsigned m_keywordSize : 4; // We cache whether or not a font is currently represented by a CSS keyword (e.g., medium).  If so,
                            // then we can accurately translate across different generic families to adjust for different preference settings
                            // (e.g., 13px monospace vs. 16px everything else).  Sizes are 1-8 (like the HTML size values for <font>).
 };

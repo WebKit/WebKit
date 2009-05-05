@@ -2,20 +2,20 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
+    RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 765x36
           text run at (0,0) width 414: "This tests a bug when copying HTML markup inside <pre> tags. "
           text run at (414,0) width 351: "When pasted, this content would appear as the rendered"
           text run at (0,18) width 134: "form of that markup. "
           text run at (134,18) width 333: "You should see markup in the editable region below."
-      RenderBlock {PRE} at (0,52) size 784x18
+      RenderBlock {PRE} at (0,52) size 784x15
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,0) size 784x18
-          RenderBlock {PRE} at (0,0) size 784x18
-            RenderText {#text} at (0,0) size 410x18
-              text run at (0,0) width 410: "<input type='button'>foo<br>bar<b>baz</b>"
-        RenderBlock (anonymous) at (0,34) size 784x0
+        RenderBlock (anonymous) at (0,0) size 784x15
+          RenderBlock {PRE} at (0,0) size 784x15
+            RenderText {#text} at (0,0) size 328x15
+              text run at (0,0) width 328: "<input type='button'>foo<br>bar<b>baz</b>"
+        RenderBlock (anonymous) at (0,28) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
 caret: position 41 of child 0 {#text} of child 0 {PRE} of child 0 {SPAN} of child 2 {PRE} of child 1 {BODY} of child 0 {HTML} of document

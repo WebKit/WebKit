@@ -16,7 +16,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 722: "This tests that RemoveFormat not only removes style from the selected part of the DOM, but that it also applies the"
           text run at (0,18) width 625: "document default style to the selection if that's necessary in order to leave the selected text unstyled."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 305x18
-          text run at (0,0) width 305: "This text should look the same as the text above."
+        RenderText {#text} at (0,0) size 28x18
+          text run at (0,0) width 28: "This"
+        RenderText {#text} at (28,0) size 277x18
+          text run at (28,0) width 277: " text should look the same as the text above."
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
 selection end:   position 4 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

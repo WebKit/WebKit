@@ -1,3 +1,35 @@
+2009-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5760774> Replying to a Mail message that contains
+          fixed width text can change the size of the text
+
+        Covered by existing tests: editing/pasteboard/5027857.html
+                                   editing/pasteboard/paste-pre-002.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword):
+        Added. If the font-size is keyword-based, returns the keyword value
+        instead of the pixel size.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): If
+        font-family is a generic family, return the generic family instead of
+        the the internal string -webkit-[serif|sans-serif|cursive|fantasy
+        |monospace].
+        (WebCore::CSSComputedStyleDeclaration::copyInheritableProperties):
+        For the font-size property, prefer a keyword value over a pixel size.
+        * css/CSSComputedStyleDeclaration.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::currentlyHasStyle): For the font-size property,
+        call getFontSizeCSSValuePreferringKeyword().
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::keywordSize): Changed the return type to
+        unsigned.
+        (WebCore::FontDescription::setKeywordSize): Changed the parameter type
+        to unsigned.
+        (WebCore::FontDescription::m_keywordSize): Changed the type of this
+        4-bit field to unsigned, because it takes values as high as 8.
+
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
