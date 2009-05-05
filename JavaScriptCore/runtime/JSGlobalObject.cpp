@@ -47,6 +47,7 @@
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "GlobalEvalFunction.h"
+#include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"
 #include "Interpreter.h"

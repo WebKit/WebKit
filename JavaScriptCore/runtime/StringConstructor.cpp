@@ -21,6 +21,7 @@
 #include "config.h"
 #include "StringConstructor.h"
 
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "PrototypeFunction.h"
 #include "StringPrototype.h"

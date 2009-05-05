@@ -1,5 +1,15 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (More build fixes).
+
+        * runtime/ErrorPrototype.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/StringConstructor.cpp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Will the fixes never end?).
 
         * runtime/FunctionPrototype.h:

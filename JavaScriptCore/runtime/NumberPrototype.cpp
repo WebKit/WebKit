@@ -23,6 +23,7 @@
 #include "NumberPrototype.h"
 
 #include "Error.h"
+#include "JSFunction.h"
 #include "JSString.h"
 #include "PrototypeFunction.h"
 #include "dtoa.h"
