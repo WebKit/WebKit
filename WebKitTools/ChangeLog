@@ -1,3 +1,20 @@
+2009-05-06  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17066
+        [GTK] Improve frameloader signals
+
+        Update GtkLauncher to use the new load-status and progress properties
+        instead of the previous loading signals.
+
+        * GtkLauncher/main.c:
+        (update_title):
+        (notify_load_status_cb):
+        (notify_progress_cb):
+        (create_browser):
+        (create_window):
+
 2009-05-05  Adam Roben  <aroben@apple.com>
 
         Don't use pdevenv when building with VC++ Express

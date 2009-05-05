@@ -32,7 +32,7 @@ static GtkWidget* uri_entry;
 static GtkStatusbar* main_statusbar;
 static WebKitWebView* web_view;
 static gchar* main_title;
-static gint load_progress;
+static gdouble load_progress;
 static guint status_context_id;
 
 static void
@@ -49,7 +49,7 @@ update_title (GtkWindow* window)
     GString* string = g_string_new (main_title);
     g_string_append (string, " - WebKit Launcher");
     if (load_progress < 100)
-        g_string_append_printf (string, " (%d%%)", load_progress);
+        g_string_append_printf (string, " (%f%%)", load_progress);
     gchar* title = g_string_free (string, FALSE);
     gtk_window_set_title (window, title);
     g_free (title);
@@ -74,18 +74,21 @@ title_change_cb (WebKitWebView* web_view, WebKitWebFrame* web_frame, const gchar
 }
 
 static void
-progress_change_cb (WebKitWebView* page, gint progress, gpointer data)
+notify_load_status_cb (WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    load_progress = progress;
-    update_title (GTK_WINDOW (main_window));
+    if (webkit_web_view_get_load_status (web_view) == WEBKIT_LOAD_COMMITTED) {
+        WebKitWebFrame* frame = webkit_web_view_get_main_frame (web_view);
+        const gchar* uri = webkit_web_frame_get_uri (frame);
+        if (uri)
+            gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
+    }
 }
 
 static void
-load_commit_cb (WebKitWebView* page, WebKitWebFrame* frame, gpointer data)
+notify_progress_cb (WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    const gchar* uri = webkit_web_frame_get_uri(frame);
-    if (uri)
-        gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
+    load_progress = webkit_web_view_get_progress (web_view);
+    update_title (GTK_WINDOW (main_window));
 }
 
 static void
@@ -115,10 +118,10 @@ create_browser ()
     web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
     gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
 
-    g_signal_connect (G_OBJECT (web_view), "title-changed", G_CALLBACK (title_change_cb), web_view);
-    g_signal_connect (G_OBJECT (web_view), "load-progress-changed", G_CALLBACK (progress_change_cb), web_view);
-    g_signal_connect (G_OBJECT (web_view), "load-committed", G_CALLBACK (load_commit_cb), web_view);
-    g_signal_connect (G_OBJECT (web_view), "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
+    g_signal_connect (web_view, "title-changed", G_CALLBACK (title_change_cb), web_view);
+    g_signal_connect (web_view, "notify::load-status", G_CALLBACK (notify_load_status_cb), web_view);
+    g_signal_connect (web_view, "notify::progress", G_CALLBACK (notify_progress_cb), web_view);
+    g_signal_connect (web_view, "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
 
     return scrolled_window;
 }
@@ -174,7 +177,7 @@ create_window ()
     GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
     gtk_widget_set_name (window, "GtkLauncher");
-    g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
+    g_signal_connect (window, "destroy", G_CALLBACK (destroy_cb), NULL);
 
     return window;
 }
