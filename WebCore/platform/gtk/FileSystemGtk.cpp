@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2009 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora, Ltd.
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -22,8 +22,8 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "GOwnPtr.h"
 #include "guriescape.h"
-#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "CString.h"
 
@@ -191,8 +191,10 @@ String pathGetFileName(const String& pathName)
 
 String directoryName(const String& path)
 {
-    notImplemented();
-    return String();
+    /* No null checking needed */
+    GOwnPtr<char> tmpFilename(filenameFromString(path));
+    GOwnPtr<char> dirname(g_path_get_dirname(tmpFilename.get()));
+    return String::fromUTF8(dirname.get());
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)

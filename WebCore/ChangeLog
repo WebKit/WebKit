@@ -1,3 +1,12 @@
+2009-05-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez and Gustavo Noronha.
+
+        Implement WebCore::directoryName for Gtk+.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::directoryName):
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
