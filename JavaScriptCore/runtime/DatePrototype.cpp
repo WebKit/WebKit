@@ -23,6 +23,7 @@
 #include "DatePrototype.h"
 
 #include "DateMath.h"
+#include "Error.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "DateInstance.h"
