@@ -1,3 +1,11 @@
+2009-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        <rdar://problem/6858340> REGRESSION: can't drag local HTML files into Safari because CFURLCreateWithFileSystemPath inserts "localhost"
+
+        * platform/win/ClipboardUtilitiesWin.cpp: (WebCore::urlFromPath): Remove localhost.
+
 2009-05-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Brady Eidson.

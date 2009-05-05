@@ -291,7 +291,12 @@ static bool urlFromPath(CFStringRef path, String& url)
     if (!cfURL)
         return false;
 
-    url = String(CFURLGetString(cfURL.get()));
+    url = CFURLGetString(cfURL.get());
+
+    // Work around <rdar://problem/6708300>, where CFURLCreateWithFileSystemPath makes URLs with "localhost".
+    if (url.startsWith("file://localhost/"))
+        url.remove(7, 9);
+
     return true;
 }
 
