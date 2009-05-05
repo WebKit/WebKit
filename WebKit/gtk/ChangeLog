@@ -1,3 +1,27 @@
+2009-05-06  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17066
+        [GTK] Improve frameloader signals
+
+        Implement load-status and progress properties on the view, as well as
+        load-status on the frame. This supersedes the different load signals
+        load-progress-changed, load-committed, load-done, load-started and
+        load-finished which are not only misnamed but broken by design.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::notifyStatus):
+        (WebKit::FrameLoaderClient::postProgressStartedNotification):
+        (WebKit::FrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::FrameLoaderClient::dispatchDidStartProvisionalLoad):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2009-05-05  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

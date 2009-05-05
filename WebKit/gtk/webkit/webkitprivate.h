@@ -113,6 +113,7 @@ extern "C" {
         GtkAdjustment* verticalAdjustment;
 
         gboolean zoomFullContent;
+        WebKitLoadStatus loadStatus;
         char* encoding;
         char* customEncoding;
 
@@ -128,6 +129,7 @@ extern "C" {
         gchar* name;
         gchar* title;
         gchar* uri;
+        WebKitLoadStatus loadStatus;
     };
 
     PassRefPtr<WebCore::Frame>

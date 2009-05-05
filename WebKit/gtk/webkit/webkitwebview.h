@@ -28,6 +28,7 @@
 
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitwebbackforwardlist.h>
+#include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebhistoryitem.h>
 #include <webkit/webkitwebsettings.h>
 
@@ -330,6 +331,12 @@ WEBKIT_API void
 webkit_web_view_move_cursor                     (WebKitWebView        * webView,
                                                  GtkMovementStep        step,
                                                  gint                   count);
+
+WEBKIT_API WebKitLoadStatus
+webkit_web_view_get_load_status                 (WebKitWebView        *web_view);
+
+WEBKIT_API gdouble
+webkit_web_view_get_progress                    (WebKitWebView        *web_view);
 
 G_END_DECLS
 

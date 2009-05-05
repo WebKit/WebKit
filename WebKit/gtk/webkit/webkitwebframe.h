@@ -59,6 +59,12 @@ struct _WebKitWebFrameClass {
     void (*_webkit_reserved6) (void);
 };
 
+typedef enum {
+    WEBKIT_LOAD_PROVISIONAL,
+    WEBKIT_LOAD_COMMITTED,
+    WEBKIT_LOAD_FINISHED
+} WebKitLoadStatus;
+
 WEBKIT_API GType
 webkit_web_frame_get_type           (void);
 
@@ -124,6 +130,9 @@ webkit_web_frame_print_full         (WebKitWebFrame       *frame,
 
 WEBKIT_API void
 webkit_web_frame_print              (WebKitWebFrame       *frame);
+
+WEBKIT_API WebKitLoadStatus
+webkit_web_frame_get_load_status    (WebKitWebFrame       *frame);
 
 G_END_DECLS
 

@@ -63,6 +63,7 @@
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
+#include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
@@ -158,6 +159,8 @@ enum {
     PROP_TRANSPARENT,
     PROP_ZOOM_LEVEL,
     PROP_FULL_CONTENT_ZOOM,
+    PROP_LOAD_STATUS,
+    PROP_PROGRESS,
     PROP_ENCODING,
     PROP_CUSTOM_ENCODING
 };
@@ -319,6 +322,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
         break;
     case PROP_CUSTOM_ENCODING:
         g_value_set_string(value, webkit_web_view_get_custom_encoding(webView));
+        break;
+    case PROP_LOAD_STATUS:
+        g_value_set_enum(value, webkit_web_view_get_load_status(webView));
+        break;
+    case PROP_PROGRESS:
+        g_value_set_double(value, webkit_web_view_get_progress(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1915,6 +1924,35 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         NULL,
                                                         WEBKIT_PARAM_READWRITE));
 
+    /**
+    * WebKitWebView:load-status:
+    *
+    * Determines the current status of the load.
+    *
+    * Since: 1.1.7
+    */
+    g_object_class_install_property(objectClass, PROP_LOAD_STATUS,
+                                    g_param_spec_enum("load-status",
+                                                      "Load Status",
+                                                      "Determines the current status of the load",
+                                                      WEBKIT_TYPE_LOAD_STATUS,
+                                                      WEBKIT_LOAD_FINISHED,
+                                                      WEBKIT_PARAM_READABLE));
+
+    /**
+    * WebKitWebView:progress:
+    *
+    * Determines the current progress of the load.
+    *
+    * Since: 1.1.7
+    */
+    g_object_class_install_property(objectClass, PROP_PROGRESS,
+                                    g_param_spec_double("progress",
+                                                        "Progress",
+                                                        "Determines the current progress of the load",
+                                                        0.0, 1.0, 1.0,
+                                                        WEBKIT_PARAM_READABLE));
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
@@ -3114,6 +3152,37 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoom
 SoupSession* webkit_get_default_session ()
 {
     return ResourceHandle::defaultSession();
+}
+
+/**
+ * webkit_web_view_get_load_status:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines the current status of the load.
+ *
+ * Since: 1.1.7
+ */
+WebKitLoadStatus webkit_web_view_get_load_status(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_LOAD_FINISHED);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->loadStatus;
+}
+
+/**
+ * webkit_web_view_get_progress:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines the current progress of the load.
+ *
+ * Since: 1.1.7
+ */
+gdouble webkit_web_view_get_progress(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1.0);
+
+    return lround(core(webView)->progress()->estimatedProgress() * 100);
 }
 
 }
