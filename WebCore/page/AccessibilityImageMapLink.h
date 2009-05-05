@@ -53,7 +53,7 @@ public:
     virtual AccessibilityObject* parentObject() const;
     virtual Element* anchorElement() const;
     virtual Element* actionElement() const;
-    
+    virtual KURL url() const;
     virtual bool isLink() const { return true; } 
     virtual String title() const;
     virtual String accessibilityDescription() const;

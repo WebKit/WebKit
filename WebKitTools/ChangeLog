@@ -1,3 +1,37 @@
+2009-05-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25574: AXImageMap children links don't respond properly to accessibilityHitTest:
+        https://bugs.webkit.org/show_bug.cgi?id=25574
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (elementAtPointCallback):
+        (getXCallback):
+        (getYCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (descriptionOfValue):
+        (AccessibilityUIElement::elementAtPoint):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::x):
+        (AccessibilityUIElement::y):
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        (AccessibilityUIElement::insertionPointLineNumber):
+        (AccessibilityUIElement::supportsPressAction):
+        (AccessibilityUIElement::lineForIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::elementAtPoint):
+        (AccessibilityUIElement::x):
+        (AccessibilityUIElement::y):
+
 2009-05-06  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.

@@ -80,6 +80,11 @@ int AccessibilityUIElement::childrenCount()
     return childCount;
 }
 
+AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
+{
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     COMPtr<IDispatch> child;
@@ -170,6 +175,22 @@ JSStringRef AccessibilityUIElement::description()
     wstring description(descriptionBSTR, SysStringLen(descriptionBSTR));
     ::SysFreeString(descriptionBSTR);
     return JSStringCreateWithCharacters(description.data(), description.length());
+}
+
+double AccessibilityUIElement::x()
+{
+    long x, y, width, height;
+    if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
+        return 0;
+    return x;
+}
+
+double AccessibilityUIElement::y()
+{
+    long x, y, width, height;
+    if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
+        return 0;
+    return y;
 }
 
 double AccessibilityUIElement::width()

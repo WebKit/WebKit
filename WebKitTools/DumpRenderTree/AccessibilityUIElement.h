@@ -62,6 +62,7 @@ public:
     void getChildren(Vector<AccessibilityUIElement>&);
     void getChildrenWithRange(Vector<AccessibilityUIElement>&, unsigned location, unsigned length);
     
+    AccessibilityUIElement elementAtPoint(int x, int y);
     AccessibilityUIElement getChildAtIndex(unsigned);
     int childrenCount();
     AccessibilityUIElement titleUIElement();
@@ -80,6 +81,8 @@ public:
     JSStringRef role();
     JSStringRef title();
     JSStringRef description();
+    double x();
+    double y();
     double width();
     double height();
     double intValue();

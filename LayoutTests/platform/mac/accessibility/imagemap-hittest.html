@@ -1,0 +1,40 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+
+<html>
+ 
+    <!-- This test makes sure that an image map can be hit tested -->
+ 
+    <IMG src="resources/cake.png" ismap="" usemap="#IHIP_NEW" width="190" height="260">
+
+    <MAP name="IHIP_NEW"><AREA shape="rect" coords="20,25,84,113" href="rectangle.html">
+    <AREA shape="polygon" coords="90,25,162,26,163,96,89,25,90,24" href="triangle.html">
+    <AREA shape="circle" coords="130,114,29" href="circle.html">
+    <AREA shape="default" href="test.html">
+    </MAP>
+    
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+
+            var imageMapLink = accessibilityController.focusedElement.elementAtPoint(30, 100);
+            var pattern = "AXRole: AXLink";
+            if (imageMapLink.allAttributes().indexOf(pattern) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n" + imageMapLink.allAttributes();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -831,7 +831,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isTextControl())
         return textAttrs;
 
-    if (m_object->isAnchor() || m_object->isImage())
+    if (m_object->isAnchor() || m_object->isImage() || m_object->isLink())
         return anchorAttrs;
 
     if (m_object->isDataTable())

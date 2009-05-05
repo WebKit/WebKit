@@ -78,6 +78,14 @@ Element* AccessibilityImageMapLink::anchorElement() const
     return m_areaElement;
 }
 
+KURL AccessibilityImageMapLink::url() const
+{
+    if (!m_areaElement)
+        return KURL();
+    
+    return m_areaElement->href();
+}
+    
 String AccessibilityImageMapLink::accessibilityDescription() const
 {
     if (!m_areaElement)

@@ -111,8 +111,8 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
 
     // Strip pointer locations
     if ([description rangeOfString:@"0x"].length) {
-        NSString* role = [focusedAccessibilityObject accessibilityAttributeValue:@"AXRole"];
-        NSString* title = [focusedAccessibilityObject accessibilityAttributeValue:@"AXTitle"];
+        NSString* role = [focusedAccessibilityObject accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+        NSString* title = [focusedAccessibilityObject accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         if ([title length])
             return [NSString stringWithFormat:@"<%@: '%@'>", role, title];
         return [NSString stringWithFormat:@"<%@>", role];
@@ -211,6 +211,15 @@ int AccessibilityUIElement::childrenCount()
     return children.size();
 }
 
+AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
+{
+    id element = [m_element accessibilityHitTest:NSMakePoint(x, y)];
+    if (!element)
+        return nil;
+    
+    return AccessibilityUIElement(element); 
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     Vector<AccessibilityUIElement> children;
@@ -293,37 +302,49 @@ JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
 
 JSStringRef AccessibilityUIElement::role()
 {
-    NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:@"AXRole"], m_element);
+    NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityRoleAttribute], m_element);
     return concatenateAttributeAndValue(@"AXRole", role);
 }
 
 JSStringRef AccessibilityUIElement::title()
 {
-    NSString* title = descriptionOfValue([m_element accessibilityAttributeValue:@"AXTitle"], m_element);
+    NSString* title = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityTitleAttribute], m_element);
     return concatenateAttributeAndValue(@"AXTitle", title);
 }
 
 JSStringRef AccessibilityUIElement::description()
 {
-    id description = descriptionOfValue([m_element accessibilityAttributeValue:@"AXDescription"], m_element);
+    id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityDescriptionAttribute], m_element);
     return concatenateAttributeAndValue(@"AXDescription", description);
+}
+
+double AccessibilityUIElement::x()
+{
+    NSValue* positionValue = [m_element accessibilityAttributeValue:NSAccessibilityPositionAttribute];
+    return static_cast<double>([positionValue pointValue].x);    
+}
+
+double AccessibilityUIElement::y()
+{
+    NSValue* positionValue = [m_element accessibilityAttributeValue:NSAccessibilityPositionAttribute];
+    return static_cast<double>([positionValue pointValue].y);    
 }
 
 double AccessibilityUIElement::width()
 {
-    NSValue* sizeValue = [m_element accessibilityAttributeValue:@"AXSize"];
+    NSValue* sizeValue = [m_element accessibilityAttributeValue:NSAccessibilitySizeAttribute];
     return static_cast<double>([sizeValue sizeValue].width);
 }
 
 double AccessibilityUIElement::height()
 {
-    NSValue* sizeValue = [m_element accessibilityAttributeValue:@"AXSize"];
+    NSValue* sizeValue = [m_element accessibilityAttributeValue:NSAccessibilitySizeAttribute];
     return static_cast<double>([sizeValue sizeValue].height);
 }
 
 double AccessibilityUIElement::intValue()
 {
-    id value = [m_element accessibilityAttributeValue:@"AXValue"];
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
     return 0.0f;
@@ -331,7 +352,7 @@ double AccessibilityUIElement::intValue()
 
 double AccessibilityUIElement::minValue()
 {
-    id value = [m_element accessibilityAttributeValue:@"AXMinValue"];
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityMinValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
     return 0.0f;
@@ -339,7 +360,7 @@ double AccessibilityUIElement::minValue()
 
 double AccessibilityUIElement::maxValue()
 {
-    id value = [m_element accessibilityAttributeValue:@"AXMaxValue"];
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityMaxValueAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber*)value doubleValue]; 
     return 0.0;
@@ -347,7 +368,7 @@ double AccessibilityUIElement::maxValue()
 
 int AccessibilityUIElement::insertionPointLineNumber()
 {
-    id value = [m_element accessibilityAttributeValue:@"AXInsertionPointLineNumber"];
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityInsertionPointLineNumberAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
     return -1;
@@ -356,13 +377,13 @@ int AccessibilityUIElement::insertionPointLineNumber()
 bool AccessibilityUIElement::supportsPressAction()
 {
     NSArray* actions = [m_element accessibilityActionNames];
-    return [actions containsObject:@"AXPress"];
+    return [actions containsObject:NSAccessibilityPressAction];
 }
 
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {
-    id value = [m_element accessibilityAttributeValue:@"AXLineForIndex" forParameter:[NSNumber numberWithInt:index]];
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityLineForIndexParameterizedAttribute forParameter:[NSNumber numberWithInt:index]];
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
     return -1;

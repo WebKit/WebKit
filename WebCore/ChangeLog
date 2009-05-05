@@ -1,3 +1,28 @@
+2009-05-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25574: AXImageMap children links don't respond properly to accessibilityHitTest:
+        https://bugs.webkit.org/show_bug.cgi?id=25574
+
+        Enable accessibility hit-testing for image map links. 
+        Allow image map links to return AXURLs and AXAccessKey information.
+
+        Test: platform/mac/accessibility/imagemap-hittest.html
+
+        * page/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::url):
+        * page/AccessibilityImageMapLink.h:
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::minValueForRange):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2009-05-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan Bernstein.
