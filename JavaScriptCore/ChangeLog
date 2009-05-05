@@ -1,3 +1,10 @@
+2009-05-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
