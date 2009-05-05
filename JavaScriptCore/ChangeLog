@@ -1,3 +1,42 @@
+2009-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25569: make ParserRefCounted use conventional reference counting
+        https://bugs.webkit.org/show_bug.cgi?id=25569
+
+        SunSpider speedup of about 1.6%.
+
+        * JavaScriptCore.exp: Updated.
+
+        * parser/Nodes.cpp:
+        (JSC::NodeReleaser::releaseAllNodes): ALWAYS_INLINE.
+        (JSC::NodeReleaser::adopt): Ditto.
+        (JSC::ParserRefCounted::ParserRefCounted): Removed most of the code.
+        Add the object to a Vector<RefPtr> that gets cleared after parsing.
+        (JSC::ParserRefCounted::~ParserRefCounted): Removed most of the code.
+
+        * parser/Nodes.h: Made ParserRefCounted inherit from RefCounted and
+        made inline versions of the constructor and destructor. Made the
+        Node constructor inline.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::parse): Call globalData->parserObjects.shrink(0) after
+        parsing, where it used to call ParserRefCounted::deleteNewObjects.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Eliminated code to manage the
+        newParserObjects and parserObjectExtraRefCounts.
+        (JSC::JSGlobalData::~JSGlobalData): Ditto.
+
+        * runtime/JSGlobalData.h: Replaced the HashSet and HashCountedSet
+        with a Vector.
+
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::~PassRefPtr): The most common thing to do with a
+        PassRefPtr in hot code is to pass it and then destroy it once it's
+        set to zero. Help the optimizer by telling it that's true.
+
 2009-05-05  Xan Lopez  <xlopez@igalia.com> and Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Oliver Hunt.

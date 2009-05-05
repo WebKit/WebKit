@@ -134,8 +134,6 @@ JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
 #endif
     , heap(this)
     , initializingLazyNumericCompareFunction(false)
-    , newParserObjects(0)
-    , parserObjectExtraRefCounts(0)
     , head(0)
     , dynamicGlobalObject(0)
     , scopeNodeBeingReparsed(0)
@@ -184,9 +182,6 @@ JSGlobalData::~JSGlobalData()
     delete propertyNames;
     deleteIdentifierTable(identifierTable);
 
-    delete newParserObjects;
-    delete parserObjectExtraRefCounts;
-    
     delete clientData;
 }
 

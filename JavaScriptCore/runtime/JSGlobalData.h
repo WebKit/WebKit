@@ -141,8 +141,7 @@ namespace JSC {
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
-        HashSet<ParserRefCounted*>* newParserObjects;
-        HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;
+        Vector<RefPtr<ParserRefCounted> > parserObjects;
 
         JSGlobalObject* head;
         JSGlobalObject* dynamicGlobalObject;

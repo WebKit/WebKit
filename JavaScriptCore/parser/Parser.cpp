@@ -60,7 +60,7 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
     int lineNumber = lexer.lineNumber();
     lexer.clear();
 
-    ParserRefCounted::deleteNewObjects(globalData);
+    globalData->parserObjects.shrink(0);
 
     if (parseError || lexError) {
         *errLine = lineNumber;

@@ -40,7 +40,7 @@ namespace WTF {
         PassRefPtr(const PassRefPtr& o) : m_ptr(o.releaseRef()) {}
         template <typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.releaseRef()) { }
 
-        ALWAYS_INLINE ~PassRefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
+        ALWAYS_INLINE ~PassRefPtr() { if (UNLIKELY(m_ptr != 0)) m_ptr->deref(); }
         
         template <class U> 
         PassRefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T* ptr = m_ptr) ptr->ref(); }

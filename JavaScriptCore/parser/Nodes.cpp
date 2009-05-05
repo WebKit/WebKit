@@ -28,23 +28,18 @@
 
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
+#include "Debugger.h"
 #include "JIT.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSStaticScopeObject.h"
 #include "LabelScope.h"
+#include "Operations.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
-#include "Debugger.h"
-#include "Lexer.h"
-#include "Operations.h"
-#include <math.h>
 #include <wtf/Assertions.h>
-#include <wtf/HashCountedSet.h>
-#include <wtf/HashSet.h>
-#include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
 
@@ -80,7 +75,7 @@ private:
     OwnPtr<NodeReleaseVector> m_vector;
 };
 
-void NodeReleaser::releaseAllNodes(ParserRefCounted* root)
+ALWAYS_INLINE void NodeReleaser::releaseAllNodes(ParserRefCounted* root)
 {
     ASSERT(root);
     NodeReleaser releaser;
@@ -96,7 +91,7 @@ void NodeReleaser::releaseAllNodes(ParserRefCounted* root)
     }
 }
 
-void NodeReleaser::adopt(PassRefPtr<ParserRefCounted> node)
+ALWAYS_INLINE void NodeReleaser::adopt(PassRefPtr<ParserRefCounted> node)
 {
     ASSERT(node);
     if (!node->hasOneRef())
@@ -121,103 +116,24 @@ void NodeReleaser::adoptFunctionBodyNode(RefPtr<FunctionBodyNode>& functionBodyN
 // ------------------------------ ParserRefCounted -----------------------------------------
 
 #ifndef NDEBUG
+
 static RefCountedLeakCounter parserRefCountedCounter("JSC::Node");
-#endif
 
-ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
-    : m_globalData(globalData)
+ALWAYS_INLINE ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
 {
-#ifndef NDEBUG
+    globalData->parserObjects.append(adoptRef(this));
     parserRefCountedCounter.increment();
-#endif
-    if (!m_globalData->newParserObjects)
-        m_globalData->newParserObjects = new HashSet<ParserRefCounted*>;
-    m_globalData->newParserObjects->add(this);
-    ASSERT(m_globalData->newParserObjects->contains(this));
 }
 
-ParserRefCounted::~ParserRefCounted()
+ALWAYS_INLINE ParserRefCounted::~ParserRefCounted()
 {
-#ifndef NDEBUG
     parserRefCountedCounter.decrement();
-#endif
 }
+
+#endif
 
 void ParserRefCounted::releaseNodes(NodeReleaser&)
 {
-}
-
-void ParserRefCounted::ref()
-{
-    // bumping from 0 to 1 is just removing from the new nodes set
-    if (m_globalData->newParserObjects) {
-        HashSet<ParserRefCounted*>::iterator it = m_globalData->newParserObjects->find(this);
-        if (it != m_globalData->newParserObjects->end()) {
-            m_globalData->newParserObjects->remove(it);
-            ASSERT(!m_globalData->parserObjectExtraRefCounts || !m_globalData->parserObjectExtraRefCounts->contains(this));
-            return;
-        }
-    }
-
-    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
-
-    if (!m_globalData->parserObjectExtraRefCounts)
-        m_globalData->parserObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
-    m_globalData->parserObjectExtraRefCounts->add(this);
-}
-
-void ParserRefCounted::deref()
-{
-    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
-
-    if (!m_globalData->parserObjectExtraRefCounts) {
-        delete this;
-        return;
-    }
-
-    HashCountedSet<ParserRefCounted*>::iterator it = m_globalData->parserObjectExtraRefCounts->find(this);
-    if (it == m_globalData->parserObjectExtraRefCounts->end())
-        delete this;
-    else
-        m_globalData->parserObjectExtraRefCounts->remove(it);
-}
-
-bool ParserRefCounted::hasOneRef()
-{
-    if (m_globalData->newParserObjects && m_globalData->newParserObjects->contains(this)) {
-        ASSERT(!m_globalData->parserObjectExtraRefCounts || !m_globalData->parserObjectExtraRefCounts->contains(this));
-        return false;
-    }
-
-    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
-
-    if (!m_globalData->parserObjectExtraRefCounts)
-        return true;
-
-    return !m_globalData->parserObjectExtraRefCounts->contains(this);
-}
-
-void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
-{
-    if (!globalData->newParserObjects)
-        return;
-
-#ifndef NDEBUG
-    HashSet<ParserRefCounted*>::iterator end = globalData->newParserObjects->end();
-    for (HashSet<ParserRefCounted*>::iterator it = globalData->newParserObjects->begin(); it != end; ++it)
-        ASSERT(!globalData->parserObjectExtraRefCounts || !globalData->parserObjectExtraRefCounts->contains(*it));
-#endif
-    deleteAllValues(*globalData->newParserObjects);
-    delete globalData->newParserObjects;
-    globalData->newParserObjects = 0;
-}
-
-// ------------------------------ Node --------------------------------
-
-Node::Node(JSGlobalData* globalData)
-    : ParserRefCounted(globalData)
-{
-    m_line = globalData->lexer->lineNumber();
 }
 
 // ------------------------------ ThrowableExpressionData --------------------------------
