@@ -1,3 +1,13 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix mappedAttributes() access without NULL check
+        https://bugs.webkit.org/show_bug.cgi?id=25553
+
+        * svg/custom/path-getPresentationAttribute-crash-expected.txt: Added.
+        * svg/custom/path-getPresentationAttribute-crash.html: Added.
+
 2009-05-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
