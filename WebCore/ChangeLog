@@ -1,3 +1,15 @@
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix http/tests/misc/DOMContentLoaded-event.html
+
+        The native call performance improvement removed a few places where we
+        unintentionally performed a toThisObject conversion.  This patch updates
+        the bindings codegen to not rely on this bug.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-05-05  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.

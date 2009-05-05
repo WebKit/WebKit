@@ -1,5 +1,13 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Expose toThisObject for the DOM Window
+
+        * JavaScriptCore.exp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Make windows go again until i work out the
         accursed calling convention).
 
