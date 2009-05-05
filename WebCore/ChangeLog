@@ -1,3 +1,14 @@
+2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Make convertValueToQVariant more robust against null JSValues.
+
+        Don't require the caller to do the null check.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         No review, just a revert.

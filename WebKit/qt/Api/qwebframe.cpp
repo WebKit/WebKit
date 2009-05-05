@@ -1127,10 +1127,8 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     QVariant rc;
     if (proxy) {
         JSC::JSValue v = proxy->evaluate(ScriptSourceCode(scriptSource)).jsValue();
-        if (v) {
-            int distance = 0;
-            rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
-        }
+        int distance = 0;
+        rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
     }
     return rc;
 }

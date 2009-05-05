@@ -1,3 +1,15 @@
+2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Simplify variant conversion by moving the null check into
+        convertValueToQVariant.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript): Moved null check into conversion function.
+        * tests/qwebframe/tst_qwebframe.cpp:
+        Added test to verify the correct conversion of null values to QVariant.
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Sam Weinig.
