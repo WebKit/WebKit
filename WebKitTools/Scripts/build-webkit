@@ -75,6 +75,7 @@ Usage: $programName [options] [options to pass to build system]
   --clean                           Cleanup the build directory
   --[no-]coverage                   Toggle code coverage support (default: $coverageSupport)
   --gtk                             Build the GTK+ port
+  --qt                              Build the Qt port
 
   --[no-]3d-rendering               Toggle 3D rendering support (default: $threeDRenderingSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)

@@ -1,3 +1,11 @@
+2009-05-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Mention --qt as an option in the build-webkit help
+
+        * Scripts/build-webkit:
+
 2009-05-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Alexey Proskuryakov.
