@@ -1,3 +1,12 @@
+2009-05-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        Implement WebCore::imageTitle for Gtk+.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::imageTitle):
+
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

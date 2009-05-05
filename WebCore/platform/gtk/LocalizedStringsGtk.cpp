@@ -30,6 +30,9 @@
 #include "config.h"
 
 #include "LocalizedStrings.h"
+#include "CString.h"
+#include "GOwnPtr.h"
+#include "IntSize.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 
@@ -335,8 +338,11 @@ String unknownFileSizeText()
 
 String imageTitle(const String& filename, const IntSize& size)
 {
-    notImplemented();
-    return String();
+    GOwnPtr<gchar> string(g_strdup_printf(C_("Title string for images", "%s  (%dx%d pixels)"),
+                                          filename.utf8().data(),
+                                          size.width(), size.height()));
+
+    return String::fromUTF8(string.get());
 }
 
 }
