@@ -66,17 +66,10 @@ void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
     SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
-bool RenderSVGText::calculateLocalTransform()
-{
-    TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGTextElement*>(node())->animatedLocalTransform();
-    return (oldTransform != m_localTransform);
-}
-
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
-    
+
     // FIXME: This is a hack to avoid the RenderBlock::layout() partial repainting code which is not (yet) SVG aware
     setNeedsLayout(true);
 
@@ -88,8 +81,8 @@ void RenderSVGText::layout()
     int xOffset = (int)(text->x()->getFirst().value(text));
     int yOffset = (int)(text->y()->getFirst().value(text));
     setLocation(xOffset, yOffset);
-    
-    calculateLocalTransform();
+
+    m_localTransform = text->animatedLocalTransform();
 
     RenderBlock::layout();
 

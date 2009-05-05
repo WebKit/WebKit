@@ -33,11 +33,11 @@ namespace WebCore {
 
         virtual TransformationMatrix localToParentTransform() const;
 
-        virtual bool calculateLocalTransform();
+    private:
+        virtual void calculateLocalTransform();
         // FIXME: This can be made non-virtual once SVGRenderTreeAsText stops using localTransform()
         virtual TransformationMatrix localTransform() const;
 
-    private:
         TransformationMatrix m_localTransform;
     };
 }

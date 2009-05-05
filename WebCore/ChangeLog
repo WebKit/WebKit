@@ -2,6 +2,39 @@
 
         Reviewed by Simon Fraser.
 
+        Remove the vestigial calculateLocalTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        RenderSVGContainer is now the only render which needs this
+        function, but it no longer returns the unused bool.
+
+        calculateLocalTransform() previously was called by the DOM before
+        transform updates were part of layout().
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::localTransform):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::calculateLocalTransform):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+
+2009-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Move more code into SVGRenderBase
         https://bugs.webkit.org/show_bug.cgi?id=25532
 

@@ -126,20 +126,14 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
     }
 }
 
-bool RenderSVGImage::calculateLocalTransform()
-{
-    TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGStyledTransformableElement*>(node())->animatedLocalTransform();
-    return (m_localTransform != oldTransform);
-}
-
 void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
-    
+
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    
-    calculateLocalTransform();
+
+    SVGImageElement* image = static_cast<SVGImageElement*>(node());
+    m_localTransform = image->animatedLocalTransform();
     
     // minimum height
     setHeight(errorOccurred() ? intrinsicSize().height() : 0);
@@ -147,7 +141,6 @@ void RenderSVGImage::layout()
     calcWidth();
     calcHeight();
 
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
 
     repainter.repaintAfterLayout();
@@ -181,7 +174,10 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
         finishRenderSVGContent(this, paintInfo, m_localBounds, filter, savedInfo.context);
     }
-    
+
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
+        paintOutline(paintInfo.context, 0, 0, width(), height(), style());
+
     paintInfo.context->restore();
 }
 

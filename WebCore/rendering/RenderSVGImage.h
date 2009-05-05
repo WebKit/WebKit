@@ -69,7 +69,6 @@ namespace WebCore {
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
     private:
-        bool calculateLocalTransform();
         virtual TransformationMatrix localTransform() const { return m_localTransform; }
 
         TransformationMatrix m_localTransform;

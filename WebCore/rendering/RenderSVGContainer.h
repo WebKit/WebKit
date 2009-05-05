@@ -57,7 +57,8 @@ public:
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
 protected:
-    virtual bool calculateLocalTransform();
+    // Allow RenderSVGTransformableContainer to hook in at the right time in layout()
+    virtual void calculateLocalTransform() { }
 
     // Allow RenderSVGViewportContainer to hook in at the right times in layout(), paint() and nodeAtFloatPoint()
     virtual void calcViewport() { }

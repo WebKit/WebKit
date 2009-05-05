@@ -56,12 +56,6 @@ void RenderSVGContainer::setDrawsContents(bool drawsContents)
     m_drawsContents = drawsContents;
 }
 
-bool RenderSVGContainer::calculateLocalTransform()
-{
-    // subclasses can override this to add transform support
-    return false;
-}
-
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());

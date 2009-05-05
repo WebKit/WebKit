@@ -64,7 +64,6 @@ public:
     FloatRect drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
 
 private:
-    bool calculateLocalTransform();
     virtual TransformationMatrix localTransform() const;
 
     mutable Path m_path;

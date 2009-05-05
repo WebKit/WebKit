@@ -147,23 +147,15 @@ const Path& RenderPath::path() const
     return m_path;
 }
 
-bool RenderPath::calculateLocalTransform()
-{
-    TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGStyledTransformableElement*>(node())->animatedLocalTransform();
-    return (m_localTransform != oldTransform);
-}
-
 void RenderPath::layout()
 {
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
-    
-    calculateLocalTransform();
 
-    setPath(static_cast<SVGStyledTransformableElement*>(node())->toPathData());
+    SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
+    m_localTransform = element->animatedLocalTransform();
+    setPath(element->toPathData());
 
     repainter.repaintAfterLayout();
-
     setNeedsLayout(false);
 }
 
