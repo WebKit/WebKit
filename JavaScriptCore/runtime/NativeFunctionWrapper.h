@@ -27,7 +27,7 @@
 #define NativeFunctionWrapper_h
 
 namespace JSC {
-#if ENABLE(JIT)
+#if ENABLE(JIT) && !PLATFORM(WIN)
     class JSFunction;
     typedef JSFunction NativeFunctionWrapper;
 #else

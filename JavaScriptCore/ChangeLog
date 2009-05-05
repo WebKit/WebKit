@@ -1,5 +1,14 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Make windows go again until i work out the
+        accursed calling convention).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * jit/JIT.cpp:
+        * runtime/NativeFunctionWrapper.h:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Fix windows debug builds).
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:

@@ -635,6 +635,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\NativeFunctionWrapper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\parser\NodeInfo.h"
 				>
 			</File>
