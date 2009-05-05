@@ -54,6 +54,14 @@ RenderThemeGtk::RenderThemeGtk()
     }
 }
 
+RenderThemeGtk::~RenderThemeGtk()
+{
+    if (mozGtkInitialized) {
+        moz_gtk_shutdown();
+        mozGtkInitialized = false;
+    }
+}
+
 static bool supportsFocus(ControlPart appearance)
 {
     switch (appearance) {

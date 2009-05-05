@@ -1,3 +1,13 @@
+2009-05-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        Call moz_gtk_shutdown on RenderThemeGtk destruction.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::~RenderThemeGtk):
+        * platform/gtk/RenderThemeGtk.h:
+
 2009-05-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve Falkenburg.

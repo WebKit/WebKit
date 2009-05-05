@@ -36,6 +36,7 @@ namespace WebCore {
 class RenderThemeGtk : public RenderTheme {
 public:
     RenderThemeGtk();
+    virtual ~RenderThemeGtk();
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
