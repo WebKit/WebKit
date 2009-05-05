@@ -1999,7 +1999,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, args) + FIELD_OFFSET(ArgList, m_argCount)));
     
     // Calculate the start of the callframe header, and store in regT1
-    addPtr(Imm32(-RegisterFile::CallFrameHeaderSize * sizeof(Register)), callFrameRegister, regT1);
+    addPtr(Imm32(-RegisterFile::CallFrameHeaderSize * (int)sizeof(Register)), callFrameRegister, regT1);
     
     // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT0)
     mul32(Imm32(sizeof(Register)), regT0, regT0);

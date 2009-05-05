@@ -1,5 +1,11 @@
 2009-05-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (More build fixes).
+
+        * jit/JIT.cpp:
+
+2009-05-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (More build fixing).
 
         * runtime/CallData.h:
