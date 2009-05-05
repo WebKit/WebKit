@@ -1,3 +1,13 @@
+2009-05-05  Maclolm MacLeod  <mmacleod@webmail.co.za>
+
+        Reviewed by Kevin Ollivier.
+
+        Have wxWebkit make use of gcc(4 and greater) hidden visibility feature
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24345
+
+        * wx/build-wxwebkit:
+
 2009-05-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

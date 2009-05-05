@@ -179,7 +179,7 @@ function do_make {
         cd $olddir
     else
         if [ -f $dir/GNUmakefile ]; then
-            make -C $dir -f GNUmakefile $MAKE_ARGS CXXFLAGS="$cxxflags" $@
+            make -C $dir -f GNUmakefile $MAKE_ARGS CXXFLAGS="$cxxflags -fvisibility=hidden -fvisibility-inlines-hidden" $@
         fi
     fi
     if [ $? != 0 ]; then
