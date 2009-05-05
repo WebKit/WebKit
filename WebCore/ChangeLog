@@ -1,3 +1,10 @@
+2009-05-05  Dan Bernstein  <mitz@apple.com>
+
+        - Tiger build fix
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::toCSSIdentifier):
+
 2009-05-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
