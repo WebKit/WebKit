@@ -1,3 +1,11 @@
+2009-05-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for Windows, add missing include.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24798
+
+        * platform/wx/wxcode/win/non-kerned-drawing.cpp:
+
 2009-05-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

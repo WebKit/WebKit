@@ -30,6 +30,7 @@
 
 #include <wx/defs.h>
 #include <wx/dcclient.h>
+#include <wx/dcgraph.h>
 #include <wx/gdicmn.h>
 #include <vector>
 
