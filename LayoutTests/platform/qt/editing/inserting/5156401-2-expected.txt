@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 424x19
             text run at (0,0) width 424: "Everything in this editable region should be in the same paragraph."
           RenderBR {BR} at (424,14) size 0x0
-caret: position 67 of child 0 {#text} of child 0 {A} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 67 of child 0 {#text} of child 0 {A} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

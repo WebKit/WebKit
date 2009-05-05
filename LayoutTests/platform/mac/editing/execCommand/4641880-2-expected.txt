@@ -24,5 +24,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 246x18
             text run at (0,0) width 246: "This paragraph should not be indented."
           RenderBR {BR} at (246,14) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 34 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 34 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 49x19 [color=#0000EE]
                   RenderText {#text} at (0,19) size 49x19
                     text run at (0,19) width 49: "Cached"
-caret: position 6 of child 0 {#text} of child 1 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 6 of child 0 {#text} of child 1 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

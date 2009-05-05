@@ -42,4 +42,4 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (6,6) size 0x18
               RenderTableCell {TD} at (71,98) size 34x30 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x18
-caret: position 0 of child 0 {BR} of child 0 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 0 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

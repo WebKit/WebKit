@@ -18,5 +18,5 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,92) size 784x18
         RenderText {#text} at (0,0) size 178x18
           text run at (0,0) width 178: "This text should be selected."
-selection start: position 0 of child 0 {#text} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 29 of child 0 {#text} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 29 of child 0 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

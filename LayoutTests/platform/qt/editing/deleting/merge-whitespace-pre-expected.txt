@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
         RenderBlock {PRE} at (0,33) size 784x19
           RenderText {#text} at (0,0) size 23x19
             text run at (0,0) width 23: "baz"
-caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

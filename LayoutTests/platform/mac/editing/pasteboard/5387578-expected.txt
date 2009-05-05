@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 79x18
                   text run at (2,2) width 79: "Hello World"
                   text run at (81,2) width 0: " \x{9}\x{9} \x{9}\x{9}"
-caret: position 11 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 11 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

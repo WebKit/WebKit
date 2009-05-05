@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,26) size 27x4
               RenderTableCell {TD} at (2,26) size 17x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderTableCell {TD} at (21,26) size 4x4 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-caret: position 2 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 2 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

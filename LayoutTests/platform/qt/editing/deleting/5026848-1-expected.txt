@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (0,19) width 324: "shouldn't see anything in the editable region below."
       RenderBlock {DIV} at (0,52) size 784x19
         RenderBR {BR} at (0,0) size 0x19
-caret: position 0 of child 0 {BR} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

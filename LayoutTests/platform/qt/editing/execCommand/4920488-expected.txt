@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x19
         RenderText {#text} at (0,0) size 52x19
           text run at (0,0) width 52: "dogfood"
-selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

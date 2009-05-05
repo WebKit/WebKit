@@ -28,4 +28,4 @@ layer at (13,47) size 122x13
   RenderBlock {DIV} at (3,3) size 122x13
 layer at (145,47) size 122x13
   RenderBlock {DIV} at (3,3) size 122x13
-caret: position 1 of child 1 {INPUT} of child 2 {DIV} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 1 {INPUT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

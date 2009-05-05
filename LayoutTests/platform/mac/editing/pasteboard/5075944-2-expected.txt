@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 168x18 [color=#FF0000]
             RenderText {#text} at (0,0) size 168x18
               text run at (0,0) width 168: "This should be underlined."
-caret: position 26 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 26 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

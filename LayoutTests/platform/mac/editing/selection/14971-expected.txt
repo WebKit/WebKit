@@ -17,5 +17,5 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 40x18
           RenderText {#text} at (39,0) size 40x18
             text run at (39,0) width 40: "World"
-selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -28,4 +28,4 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (197,2) size 4x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderTableCell {TD} at (203,2) size 4x23 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
         RenderBlock (anonymous) at (0,29) size 784x0
-caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -41,4 +41,4 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,38) size 784x18
           RenderText {#text} at (0,0) size 183x18
             text run at (0,0) width 183: "This shouldn't have a border."
-caret: position 29 of child 2 {#text} of child 5 {SPAN} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 29 of child 2 {#text} of child 5 {SPAN} of child 1 {BODY} of child 0 {HTML} of document

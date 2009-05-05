@@ -15,5 +15,5 @@ layer at (0,0) size 800x600
             text run at (324,0) width 140: "http://www.apple.com/"
         RenderText {#text} at (464,0) size 5x19
           text run at (464,0) width 5: "}"
-selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 21 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 21 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

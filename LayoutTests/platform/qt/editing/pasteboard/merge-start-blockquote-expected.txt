@@ -21,4 +21,4 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (40,0) size 704x21 [border: (1px solid #0000FF)]
           RenderText {#text} at (1,1) size 21x19
             text run at (1,1) width 21: "bar"
-caret: position 3 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 4 {DIV} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

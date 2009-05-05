@@ -12,4 +12,4 @@ layer at (0,0) size 800x600
         text run at (0,123) width 365: "several pictures above all in the same line/paragraph."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-caret: position 164 of child 4 {#text} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 164 of child 4 {#text} of child 1 {BODY} of child 0 {HTML} of document

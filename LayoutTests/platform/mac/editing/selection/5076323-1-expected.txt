@@ -20,4 +20,4 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,112) size 784x18
         RenderText {#text} at (0,0) size 563x18
           text run at (0,0) width 563: "In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it."
-caret: position 3 of child 1 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 1 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

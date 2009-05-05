@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
           text run at (363,18) width 407: "For example, set the caret inside of an editable div, and make the"
           text run at (0,36) width 492: "div invisible, then try to move the selection forward/backward by a paragraph."
       RenderBlock {DIV} at (0,70) size 784x18
-caret: position 0 of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

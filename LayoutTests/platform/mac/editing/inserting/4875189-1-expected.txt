@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
             RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 177x18
               text run at (0,0) width 177: "This should be in a list item."
-caret: position 30 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 30 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

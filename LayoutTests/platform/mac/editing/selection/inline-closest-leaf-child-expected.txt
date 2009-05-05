@@ -32,5 +32,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (46,31) size 38x18
             text run at (46,31) width 38: "ipsum"
         RenderText {#text} at (0,0) size 0x0
-selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 4 of child 2 {#text} of child 1 {SPAN} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 4 of child 2 {#text} of child 1 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

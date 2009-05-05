@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 518: "This tests for setting the selection at a position inside a document in designMode. "
           text run at (518,0) width 262: "You should see a caret at the start of the "
           text run at (0,19) width 35: "body."
-caret: position 0 of child 0 {#text} of child 1 {P} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document

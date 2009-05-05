@@ -29,5 +29,5 @@ layer at (0,0) size 800x600
                     text run at (2,2) width 53: "plaintext"
                 RenderText {#text} at (55,2) size 31x19
                   text run at (55,2) width 31: "-only"
-selection start: position 0 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 9 of child 0 {#text} of child 0 {SPAN} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 0 {#text} of child 0 {SPAN} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

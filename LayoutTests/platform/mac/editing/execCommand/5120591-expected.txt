@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 136x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 136x18
             text run at (0,0) width 136: "This should be a link."
-selection start: position 0 of child 0 {#text} of child 0 {A} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 22 of child 0 {#text} of child 0 {A} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 22 of child 0 {#text} of child 0 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

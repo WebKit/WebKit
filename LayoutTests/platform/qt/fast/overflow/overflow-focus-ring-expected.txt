@@ -45,5 +45,5 @@ layer at (8,27) size 500x400 scrollWidth 501 scrollHeight 684
       text run at (0,627) width 500: "............................................................................................................................."
       text run at (0,646) width 500: "............................................................................................................................."
       text run at (0,665) width 212: "....................................................."
-selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 4428 of child 0 {#text} of child 1 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 4428 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

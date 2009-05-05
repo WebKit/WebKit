@@ -30,5 +30,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (5,67) size 122x13
   RenderBlock {DIV} at (3,3) size 122x13 [color=#545454]
-selection start: position 0 of child 0 {#text} of child 7 {SPAN} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 9 of child 0 {#text} of child 7 {SPAN} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 7 {SPAN} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 0 {#text} of child 7 {SPAN} of child 1 {BODY} of child 0 {HTML} of document

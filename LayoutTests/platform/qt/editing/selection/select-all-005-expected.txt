@@ -10,5 +10,6 @@ layer at (0,0) size 800x600
         text run at (0,0) width 744: "VisiblePositions created at [html, x] where html is non-editable should descend into an editable body, for convenience."
         text run at (0,19) width 276: "Everything on this page should be selected."
       RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 164 of child 0 {#text} of child 0 {BODY} of child 0 {HTML} of document
+      RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 164 of child 0 {#text} of child 1 {BODY} of child 0 {HTML} of document

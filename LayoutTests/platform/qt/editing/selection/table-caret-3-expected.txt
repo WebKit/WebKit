@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
                   text run at (2,2) width 43: "a table"
         RenderText {#text} at (73,65) size 23x19
           text run at (73,65) width 23: "baz"
-caret: position 1 of child 1 {TABLE} of child 2 {DIV} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 1 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

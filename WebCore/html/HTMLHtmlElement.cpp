@@ -53,10 +53,8 @@ void HTMLHtmlElement::setVersion(const String &value)
 
 bool HTMLHtmlElement::checkDTD(const Node* newChild)
 {
-    // FIXME: Why is <script> allowed here?
     return newChild->hasTagName(headTag) || newChild->hasTagName(bodyTag) ||
-           newChild->hasTagName(framesetTag) || newChild->hasTagName(noframesTag) ||
-           newChild->hasTagName(scriptTag);
+           newChild->hasTagName(framesetTag) || newChild->hasTagName(noframesTag);
 }
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

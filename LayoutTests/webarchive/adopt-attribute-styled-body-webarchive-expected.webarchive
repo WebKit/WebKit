@@ -86,14 +86,15 @@ way of fulling testing the bug.  One should wait "awhile" before making the WebA
 			<key>WebMainResource</key>
 			<dict>
 				<key>WebResourceData</key>
-				<string>&lt;html&gt;&lt;script&gt;
+				<string>&lt;html&gt;&lt;head&gt;&lt;script&gt;
 if (!window.parent.bodyToAdopt) {
     alert("window.parent.bodyToAdopt is not set - Are you viewing this page as part of the adopt-attribute-styled-body test?");
     return;
 }
 document.getElementsByTagName("html")[0].appendChild(document.adoptNode(window.parent.bodyToAdopt));
 window.parent.bodyToAdopt = null;
-&lt;/script&gt;&lt;body id="otherBody" vlink="green" alink="green"&gt;
+&lt;/script&gt;
+&lt;/head&gt;&lt;body id="otherBody" vlink="green" alink="green"&gt;
 &lt;a href="SomeUnvisitedPage.html"&gt;Spaceballs: The Unvisited Link&lt;/a&gt;&lt;br&gt;
 &lt;a href="about:blank"&gt;Spaceballs: The Visited Link&lt;/a&gt;
 

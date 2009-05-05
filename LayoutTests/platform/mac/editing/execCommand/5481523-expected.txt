@@ -29,5 +29,5 @@ layer at (0,0) size 800x600
                       text run at (2,2) width 30: "Four"
             RenderBlock (anonymous) at (0,52) size 704x0
         RenderBlock (anonymous) at (0,52) size 784x0
-selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

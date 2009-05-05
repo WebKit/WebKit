@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
             text run at (21,0) width 11: "\x{9}"
         RenderBR {BR} at (32,14) size 0x0
         RenderBR {BR} at (0,18) size 0x18
-caret: position 0 of child 3 {BR} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 3 {BR} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

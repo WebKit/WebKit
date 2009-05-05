@@ -54,4 +54,4 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 43x18
             text run at (0,0) width 43: "Passed"
-caret: position 35 of child 0 {SELECT} of child 4 {DIV} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 35 of child 0 {SELECT} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

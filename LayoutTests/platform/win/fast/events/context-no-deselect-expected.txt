@@ -12,5 +12,5 @@ layer at (13,13) size 146x13
   RenderBlock {DIV} at (3,3) size 146x13
     RenderText {#text} at (1,0) size 96x13
       text run at (1,0) width 96: "some sample text"
-selection start: position 5 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 15 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 5 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 15 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 1 {BODY} of child 0 {HTML} of document

@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (13,11) size 122x4
   RenderBlock {DIV} at (3,3) size 122x4
-caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 1 {BODY} of child 0 {HTML} of document

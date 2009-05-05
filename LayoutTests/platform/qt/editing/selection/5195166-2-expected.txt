@@ -21,5 +21,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 365x19
           text run at (0,0) width 365: "There should be five characters selected in this sentence."
       RenderBlock {UL} at (0,66) size 784x0
-selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

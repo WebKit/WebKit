@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 237x18
                 text run at (0,0) width 237: "This should be an unordered list item."
           RenderBlock (anonymous) at (0,70) size 784x0
-selection start: position 0 of child 0 {BR} of child 0 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 38 of child 0 {#text} of child 2 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {BR} of child 0 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 38 of child 0 {#text} of child 2 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1591,10 +1591,14 @@ void Document::implicitClose()
     // Parser should have picked up all preloads by now
     m_docLoader->clearPreloads();
 
-    // Create a body element if we don't already have one. See Radar 3758785.
+    // Create a head and a body if we don't have those yet (e.g. for about:blank).
     if (!this->body() && isHTMLDocument()) {
         if (Node* documentElement = this->documentElement()) {
             ExceptionCode ec = 0;
+            if (!head()) {
+                documentElement->appendChild(new HTMLHeadElement(headTag, this), ec);
+                ASSERT(!ec);
+            }
             documentElement->appendChild(new HTMLBodyElement(bodyTag, this), ec);
             ASSERT(!ec);
         }

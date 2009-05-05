@@ -26,4 +26,4 @@ layer at (22,93) size 756x82 layerType: foreground only
     RenderBlock {DIV} at (0,0) size 756x0
 layer at (5,78) size 30x30
   RenderImage zI: 1000000 {IMG} at (-17,-15) size 30x30
-caret: position 403 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 403 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

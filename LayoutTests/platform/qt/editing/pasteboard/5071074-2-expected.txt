@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
             RenderText {#text} at (158,0) size 134x19
               text run at (158,0) width 134: "This should be a link."
         RenderBlock (anonymous) at (0,38) size 784x0
-caret: position 22 of child 0 {#text} of child 1 {A} of child 1 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 22 of child 0 {#text} of child 1 {A} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

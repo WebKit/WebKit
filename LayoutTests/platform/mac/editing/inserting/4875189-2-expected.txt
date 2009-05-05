@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
         RenderBlock (floating) {DIV} at (0,0) size 293x20 [border: (1px solid #0000FF)]
           RenderText {#text} at (1,1) size 291x18
             text run at (1,1) width 291: "This should be in a floating blue bordered div."
-caret: position 47 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 47 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

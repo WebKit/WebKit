@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 155x18 [color=#0000FF]
           RenderText {#text} at (148,0) size 155x18
             text run at (148,0) width 155: "This text should be blue."
-caret: position 25 of child 0 {#text} of child 1 {FONT} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 25 of child 0 {#text} of child 1 {FONT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

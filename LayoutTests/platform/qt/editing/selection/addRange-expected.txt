@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x19
         RenderText {#text} at (0,0) size 72x19
           text run at (0,0) width 72: "123456789"
-selection start: position 2 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 6 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 2 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

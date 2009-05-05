@@ -23,4 +23,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 23: "baz"
 layer at (13,104) size 162x19
   RenderBlock {DIV} at (3,3) size 162x19
-caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

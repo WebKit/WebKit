@@ -22,4 +22,4 @@ layer at (0,0) size 800x600
               text run at (712,1) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
               text run at (752,1) width 32: "1234"
           RenderBlock (anonymous) at (0,38) size 784x0
-caret: position 9 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 9 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

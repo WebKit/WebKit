@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
           text run at (32,0) width 4: " "
         RenderText {#text} at (36,0) size 37x19
           text run at (36,0) width 37: "World"
-caret: position 5 of child 2 {#text} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

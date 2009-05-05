@@ -14,5 +14,5 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (21,14) size 0x0
           RenderText {#text} at (0,18) size 20x18
             text run at (0,18) width 20: "bar"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 3 of child 2 {#text} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 3 of child 2 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

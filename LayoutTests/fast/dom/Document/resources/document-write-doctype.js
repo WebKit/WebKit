@@ -1,18 +1,5 @@
 description("Test that iframe.contentWindow.document.write() can convert a document to strict mode -- https://bugs.webkit.org/show_bug.cgi?id=24336");
 
-// Test if we're on FF and all HTMLHTMLElements have an implicit HEAD element
-function testForGeckoImplicitHeadQuirk(doc)
-{
-    window.hasImplicitHeadQuirk = false;
-    if (doc.firstChild && doc.firstChild.firstChild)
-        window.hasImplicitHeadQuirk = doc.firstChild.firstChild.tagName == "HEAD";
-}
-
-function implicitHeadString()
-{
-    return hasImplicitHeadQuirk ? "HEAD, " : "";
-}
-
 // Simple recurisve "give me a string to represent this tree" function
 function treeAsString(node) {
     var string = node.nodeName;
@@ -42,20 +29,17 @@ function doctypeNodeName(iframeDocument) {
 var iframe = document.createElement("iframe");
 document.body.appendChild(iframe);
 var iframeDocument = iframe.contentWindow.document;
-testForGeckoImplicitHeadQuirk(iframeDocument);
-if (hasImplicitHeadQuirk)
-    debug("WARNING: This browser adds implicit HEAD elements in every HTMLHTMLElement");
 
 debug("about:blank is quirksmode by default")
 shouldBeEqualToString("iframeDocument.compatMode", "BackCompat");
 debug("ensure that about:blank's DOM has an html and body element")
-shouldBeEqualToString("treeAsString(iframeDocument)", "#document [HTML [" + implicitHeadString() + "BODY]]");
+shouldBeEqualToString("treeAsString(iframeDocument)", "#document [HTML [HEAD, BODY]]");
 
 iframeDocument.write("<!DocType html><html><body>test</body></html>");
 debug("writing a doctype as the first document.write can change the document to standards")
 shouldBeEqualToString("iframeDocument.compatMode", "CSS1Compat");
 debug("ensure the written DOM has an html and body element")
-shouldBeEqualToString("treeAsString(iframeDocument)", "#document [" + doctypeNodeName(iframeDocument) + ", HTML [" + implicitHeadString() + "BODY [#text]]]");
+shouldBeEqualToString("treeAsString(iframeDocument)", "#document [" + doctypeNodeName(iframeDocument) + ", HTML [HEAD, BODY [#text]]]");
 
 // document.open() doesn't seem to clear the document as expected in Gecko
 // https://bugzilla.mozilla.org/show_bug.cgi?id=483908
@@ -72,7 +56,7 @@ iframeDocument.write("");
 shouldBeEqualToString("iframeDocument.compatMode", "BackCompat");
 shouldBeEqualToString("treeAsString(iframeDocument)", "#document");
 
-debug("document.write calls can change the doctype until an <html> is created")
+debug("document.write calls can change the doctype until an &lt;html> is created")
 iframeDocument.write("<!DocType html><html><body>test</body></html>");
 shouldBeEqualToString("iframeDocument.compatMode", "CSS1Compat");
 

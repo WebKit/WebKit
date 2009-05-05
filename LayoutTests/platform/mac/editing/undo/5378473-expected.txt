@@ -4,4 +4,4 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x18
-caret: position 0 of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

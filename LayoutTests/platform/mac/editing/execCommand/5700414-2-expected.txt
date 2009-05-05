@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,115) size 784x18
           RenderText {#text} at (0,0) size 310x18
             text run at (0,0) width 310: "There should be a single empty paragraph above."
-caret: position 0 of child 0 {BR} of child 0 {H1} of child 3 {DIV} of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 0 {H1} of child 3 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

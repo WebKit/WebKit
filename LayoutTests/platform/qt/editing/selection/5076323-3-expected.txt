@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 22x21 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 20x19
                   text run at (1,1) width 20: "foo"
-caret: position 1 of child 0 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

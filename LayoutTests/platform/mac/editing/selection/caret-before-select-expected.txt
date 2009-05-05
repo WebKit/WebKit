@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
               text run at (8,2) width 22: "One"
         RenderText {#text} at (94,38) size 26x18
           text run at (94,38) width 26: "blaa"
-caret: position 0 of child 0 {SELECT} of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {SELECT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

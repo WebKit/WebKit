@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 3 of HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 2 of HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
         text run at (0,19) width 519: "We set it inside the body because we don't want to allow editing outside the body. "
         text run at (519,19) width 263: "This test also does some editing to make "
         text run at (0,38) width 176: "sure it happens in the body."
-caret: position 153 of child 3 {#text} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 153 of child 3 {#text} of child 1 {BODY} of child 0 {HTML} of document

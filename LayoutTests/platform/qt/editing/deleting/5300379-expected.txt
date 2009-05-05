@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Success"
       RenderBlock {DIV} at (0,19) size 784x0
-caret: position 7 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (1,1) size 0x19
           RenderText {#text} at (1,20) size 20x19
             text run at (1,20) width 20: "foo"
-caret: position 0 of child 1 {#text} of child 0 {SPAN} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 1 {#text} of child 0 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

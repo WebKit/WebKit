@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (88,0) size 64x37
             text run at (88,0) width 64: "large"
       RenderBlock {UL} at (0,87) size 784x0
-caret: position 5 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

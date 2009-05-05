@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,68) size 784x18
           RenderText {#text} at (0,0) size 102x18
             text run at (0,0) width 102: "Paragraph Two."
-caret: position 0 of child 0 {LI} of child 2 {OL} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {LI} of child 2 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

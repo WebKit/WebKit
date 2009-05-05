@@ -27,4 +27,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 86: "This is a test. "
             text run at (86,0) width 94: "How are you? "
             text run at (180,0) width 85: "Life is sweet!"
-caret: position 30 of child 0 {#text} of child 9 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 30 of child 0 {#text} of child 9 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

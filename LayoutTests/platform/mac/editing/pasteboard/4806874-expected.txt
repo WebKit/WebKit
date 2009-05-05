@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
           text run at (167,2) width 4: ":"
 layer at (48,47) size 122x13
   RenderBlock {DIV} at (3,3) size 122x13
-caret: position 1 of child 1 {INPUT} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 1 {INPUT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -13,4 +13,4 @@ layer at (13,13) size 162x19
   RenderBlock {DIV} at (3,3) size 162x19
     RenderText {#text} at (1,0) size 35x19
       text run at (1,0) width 35: "word "
-caret: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of child 1 {BODY} of child 0 {HTML} of document

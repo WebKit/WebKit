@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (192,0) size 168x19
                 text run at (192,0) width 168: "This should be underlined."
         RenderBlock (anonymous) at (0,19) size 784x0
-caret: position 30 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 30 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

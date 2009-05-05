@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,19) size 784x19
           RenderText {#text} at (0,0) size 355x19
             text run at (0,0) width 355: "There should be a single space in the paragraph above."
-caret: position 1 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

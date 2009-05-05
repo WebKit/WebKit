@@ -26,5 +26,5 @@ layer at (13,201) size 176x13 scrollWidth 183
   RenderBlock {DIV} at (3,3) size 176x13
     RenderText {#text} at (1,0) size 181x13
       text run at (1,0) width 181: "This text field should be focused."
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 34 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 34 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of child 1 {BODY} of child 0 {HTML} of document

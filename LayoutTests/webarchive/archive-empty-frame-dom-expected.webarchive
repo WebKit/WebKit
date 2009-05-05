@@ -38,7 +38,7 @@ Here lies an `iframe` with no content/src:
 			<key>WebMainResource</key>
 			<dict>
 				<key>WebResourceData</key>
-				<string>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</string>
+				<string>&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
 				<string>emptyFrame</string>
 				<key>WebResourceMIMEType</key>

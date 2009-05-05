@@ -12,4 +12,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 769: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et "
           text run at (0,19) width 740: "netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. "
           text run at (0,38) width 660: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
-caret: position 241 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 241 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

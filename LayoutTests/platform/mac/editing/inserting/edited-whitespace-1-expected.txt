@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
           text run at (1,1) width 55: " Hello    "
           text run at (1,19) width 44: "World "
       RenderBlock {OL} at (0,106) size 784x0
-caret: position 17 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 17 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (0,29) size 744x19
               RenderListMarker at (-17,0) size 7x19: bullet
         RenderBlock (anonymous) at (0,62) size 784x0
-selection start: position 0 of child 0 {TABLE} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {TABLE} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {TABLE} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {TABLE} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

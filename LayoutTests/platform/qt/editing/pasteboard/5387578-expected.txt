@@ -20,4 +20,4 @@ layer at (0,0) size 800x600
                   text run at (51,2) width 24: "orld"
                 RenderText {#text} at (75,2) size 4x19
                   text run at (75,2) width 4: " "
-caret: position 4 of child 1 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 4 of child 1 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

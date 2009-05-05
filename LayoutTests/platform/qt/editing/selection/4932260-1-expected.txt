@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (131,0) size 76x103
         RenderText {#text} at (207,89) size 210x19
           text run at (207,89) width 210: "at the beginning of this sentence."
-caret: position 0 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

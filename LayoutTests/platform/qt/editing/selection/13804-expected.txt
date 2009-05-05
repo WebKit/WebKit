@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x19
         RenderText {#text} at (0,0) size 302x19
           text run at (0,0) width 302: "This sentence ends with a misspelled word asd."
-caret: position 40 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 40 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

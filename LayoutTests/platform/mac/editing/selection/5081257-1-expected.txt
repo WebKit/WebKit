@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (251,18) width 532: "The expected behavior is to create a selection at [body, 0]. There should be a caret at"
           text run at (783,18) width 1: " "
           text run at (0,36) width 163: "the start of this paragraph."
-caret: position 0 of child 0 {#text} of child 1 {P} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document

@@ -78,4 +78,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 7x19
             text run at (0,0) width 7: "c"
         RenderBlock {P} at (1,34) size 705x0
-caret: position 1 of child 0 {#text} of child 21 {DIV} of child 2 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 21 {DIV} of child 1 {BODY} of child 0 {HTML} of document
