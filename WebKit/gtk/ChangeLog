@@ -1,3 +1,12 @@
+2009-05-05  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix memory leaks.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::checkSpellingOfString):
+
 2009-05-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
