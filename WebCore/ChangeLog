@@ -1,3 +1,17 @@
+2009-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        <rdar://problem/6862823> Reduce size of RenderStyle in 64-bit
+        
+        Rearrange data members of RenderStyle to minimize padding
+        when building for 64-bit.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+
 2009-05-06  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -108,6 +108,45 @@ class RenderStyle: public RefCounted<RenderStyle> {
     friend class CSSStyleSelector;
 protected:
 
+    // The following bitfield is 32-bits long, which optimizes padding with the
+    // int refCount in the base class. Beware when adding more bits.
+    unsigned m_pseudoState : 3; // PseudoState
+    bool m_affectedByAttributeSelectors : 1;
+    bool m_unique : 1;
+
+    // Bits for dynamic child matching.
+    bool m_affectedByEmpty : 1;
+    bool m_emptyState : 1;
+
+    // We optimize for :first-child and :last-child.  The other positional child selectors like nth-child or
+    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
+    bool m_childrenAffectedByFirstChildRules : 1;
+    bool m_childrenAffectedByLastChildRules : 1;
+    bool m_childrenAffectedByDirectAdjacentRules : 1;
+    bool m_childrenAffectedByForwardPositionalRules : 1;
+    bool m_childrenAffectedByBackwardPositionalRules : 1;
+    bool m_firstChildState : 1;
+    bool m_lastChildState : 1;
+    unsigned m_childIndex : 18; // Plenty of bits to cache an index.
+
+    // non-inherited attributes
+    DataRef<StyleBoxData> box;
+    DataRef<StyleVisualData> visual;
+    DataRef<StyleBackgroundData> background;
+    DataRef<StyleSurroundData> surround;
+    DataRef<StyleRareNonInheritedData> rareNonInheritedData;
+
+    // inherited attributes
+    DataRef<StyleRareInheritedData> rareInheritedData;
+    DataRef<StyleInheritedData> inherited;
+
+    // list of associated pseudo styles
+    RefPtr<RenderStyle> m_cachedPseudoStyle;
+
+#if ENABLE(SVG)
+    DataRef<SVGRenderStyle> m_svgStyle;
+#endif
+
 // !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp
 
     // inherit
@@ -149,12 +188,14 @@ protected:
         bool _border_collapse : 1 ;
         unsigned _white_space : 3; // EWhiteSpace
         unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
-
+        // 32 bits
+        
         // non CSS2 inherited
         bool _visuallyOrdered : 1;
-        bool _htmlHacks :1;
+        bool _htmlHacks : 1;
         bool _force_backgrounds_to_white : 1;
         unsigned _pointerEvents : 4; // EPointerEvents
+        // 39 bits
     } inherited_flags;
 
 // don't inherit
@@ -201,44 +242,8 @@ protected:
         bool _affectedByDrag : 1;
         unsigned _pseudoBits : 7;
         unsigned _unicodeBidi : 2; // EUnicodeBidi
+        // 48 bits
     } noninherited_flags;
-
-    // non-inherited attributes
-    DataRef<StyleBoxData> box;
-    DataRef<StyleVisualData> visual;
-    DataRef<StyleBackgroundData> background;
-    DataRef<StyleSurroundData> surround;
-    DataRef<StyleRareNonInheritedData> rareNonInheritedData;
-
-    // inherited attributes
-    DataRef<StyleRareInheritedData> rareInheritedData;
-    DataRef<StyleInheritedData> inherited;
-
-    // list of associated pseudo styles
-    RefPtr<RenderStyle> m_cachedPseudoStyle;
-
-    unsigned m_pseudoState : 3; // PseudoState
-    bool m_affectedByAttributeSelectors : 1;
-    bool m_unique : 1;
-
-    // Bits for dynamic child matching.
-    bool m_affectedByEmpty : 1;
-    bool m_emptyState : 1;
-
-    // We optimize for :first-child and :last-child.  The other positional child selectors like nth-child or
-    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-    bool m_childrenAffectedByFirstChildRules : 1;
-    bool m_childrenAffectedByLastChildRules : 1;
-    bool m_childrenAffectedByDirectAdjacentRules : 1;
-    bool m_childrenAffectedByForwardPositionalRules : 1;
-    bool m_childrenAffectedByBackwardPositionalRules : 1;
-    bool m_firstChildState : 1;
-    bool m_lastChildState : 1;
-    unsigned m_childIndex : 18; // Plenty of bits to cache an index.
-
-#if ENABLE(SVG)
-    DataRef<SVGRenderStyle> m_svgStyle;
-#endif
 
 // !END SYNC!
 
