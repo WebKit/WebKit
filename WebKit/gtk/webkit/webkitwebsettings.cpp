@@ -49,8 +49,6 @@
 
 using namespace WebCore;
 
-extern "C" {
-
 G_DEFINE_TYPE(WebKitWebSettings, webkit_web_settings, G_TYPE_OBJECT)
 
 struct _WebKitWebSettingsPrivate {
@@ -743,6 +741,4 @@ GSList* webkit_web_settings_get_spell_languages(WebKitWebView *web_view)
     GSList* list = priv->spell_checking_languages_list;
 
     return list;
-}
-
 }

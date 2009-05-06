@@ -54,8 +54,6 @@
  * </programlisting></informalexample>
  */
 
-extern "C" {
-
 enum {
     PROP_0,
 
@@ -437,7 +435,4 @@ gboolean webkit_web_window_features_equal(WebKitWebWindowFeatures* features1, We
        (priv1->fullscreen == priv2->fullscreen))
         return TRUE;
     return FALSE;
-}
-
-
 }

@@ -34,8 +34,6 @@
  *
  */
 
-extern "C" {
-
 G_DEFINE_TYPE(WebKitNetworkRequest, webkit_network_request, G_TYPE_OBJECT);
 
 struct _WebKitNetworkRequestPrivate {
@@ -104,6 +102,4 @@ G_CONST_RETURN gchar* webkit_network_request_get_uri(WebKitNetworkRequest* reque
 
     WebKitNetworkRequestPrivate* priv = request->priv;
     return priv->uri;
-}
-
 }

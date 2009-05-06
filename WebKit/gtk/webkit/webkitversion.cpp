@@ -20,8 +20,6 @@
 #include "config.h"
 #include "webkitversion.h"
 
-extern "C" {
-
 /**
  * webkit_major_version:
  *
@@ -62,6 +60,4 @@ guint webkit_minor_version()
 guint webkit_micro_version()
 {
     return WEBKIT_MICRO_VERSION;
-}
-
 }

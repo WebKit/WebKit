@@ -51,8 +51,6 @@
 
 using namespace WebKit;
 
-extern "C" {
-
 struct _WebKitWebBackForwardListPrivate {
     WebCore::BackForwardList* backForwardList;
 };
@@ -408,8 +406,6 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
 
     backForwardList->addItem(historyItem);
 }
-
-} /* end extern "C" */
 
 WebCore::BackForwardList* WebKit::core(WebKitWebBackForwardList* webBackForwardList)
 {

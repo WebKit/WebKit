@@ -62,8 +62,6 @@ class DownloadClient : Noncopyable, public ResourceHandleClient {
         WebKitDownload* m_download;
 };
 
-extern "C" {
-
 #define WEBKIT_DOWNLOAD_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_DOWNLOAD, WebKitDownloadPrivate))
 
 struct _WebKitDownloadPrivate {
@@ -834,6 +832,4 @@ void DownloadClient::cannotShowURL(ResourceHandle*)
     // FIXME: Implement this when we have the new frame loader signals
     // and error handling.
     notImplemented();
-}
-
 }

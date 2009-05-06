@@ -38,8 +38,6 @@
  * clicked a link to start that navigation, and what mouse button was used.
  */
 
-extern "C" {
-
 struct _WebKitWebNavigationActionPrivate {
     WebKitWebNavigationReason reason;
     gchar* originalUri;
@@ -317,6 +315,4 @@ gint webkit_web_navigation_action_get_modifier_state(WebKitWebNavigationAction* 
     g_return_val_if_fail(WEBKIT_IS_WEB_NAVIGATION_ACTION(navigationAction), 0);
 
     return navigationAction->priv->modifier_state;
-}
-    
 }

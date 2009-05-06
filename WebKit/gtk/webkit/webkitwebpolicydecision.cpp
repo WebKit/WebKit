@@ -37,8 +37,6 @@ using namespace WebCore;
  * allowed. The application uses it to tell the engine what to do.
  */
 
-extern "C" {
-
 G_DEFINE_TYPE(WebKitWebPolicyDecision, webkit_web_policy_decision, G_TYPE_OBJECT);
 
 struct _WebKitWebPolicyDecisionPrivate {
@@ -134,6 +132,4 @@ void webkit_web_policy_decision_cancel(WebKitWebPolicyDecision* decision)
     WebKitWebPolicyDecisionPrivate* priv = decision->priv;
 
     priv->isCancelled = TRUE;
-}
-
 }

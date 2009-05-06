@@ -50,8 +50,6 @@
 
 using namespace WebKit;
 
-extern "C" {
-
 struct _WebKitWebHistoryItemPrivate {
     WebCore::HistoryItem* historyItem;
 
@@ -485,8 +483,6 @@ GList* webkit_web_history_item_get_children(WebKitWebHistoryItem* webHistoryItem
 
     return g_list_reverse(kids);
 }
-
-} /* end extern "C" */
 
 WebCore::HistoryItem* WebKit::core(WebKitWebHistoryItem* webHistoryItem)
 {

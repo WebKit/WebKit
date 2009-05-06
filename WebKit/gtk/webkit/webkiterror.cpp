@@ -21,8 +21,6 @@
 
 #include "webkiterror.h"
 
-extern "C" {
-
 GQuark webkit_network_error_quark(void)
 {
     return g_quark_from_static_string("webkit-network-error-quark");
@@ -36,6 +34,4 @@ GQuark webkit_policy_error_quark(void)
 GQuark webkit_plugin_error_quark(void)
 {
     return g_quark_from_static_string("webkit-plugin-error-quark");
-}
-
 }

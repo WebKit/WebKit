@@ -109,8 +109,6 @@ static const double defaultDPI = 96.0;
 using namespace WebKit;
 using namespace WebCore;
 
-extern "C" {
-
 enum {
     /* normal signals */
     NAVIGATION_REQUESTED,
@@ -3183,8 +3181,6 @@ gdouble webkit_web_view_get_progress(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1.0);
 
     return lround(core(webView)->progress()->estimatedProgress() * 100);
-}
-
 }
 
 /**

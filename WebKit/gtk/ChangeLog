@@ -2,6 +2,41 @@
 
         Reviewed by Holger Freyther.
 
+        GTK+ API implementation files have bogus extern "C" entries
+        https://bugs.webkit.org/show_bug.cgi?id=24322
+
+        Remove bogus extern "C" from the source files.
+
+        * webkit/webkitdownload.cpp:
+        (DownloadClient::cannotShowURL):
+        * webkit/webkiterror.cpp:
+        (webkit_plugin_error_quark):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_get_uri):
+        * webkit/webkitprivate.cpp:
+        (webkit_init):
+        * webkit/webkitversion.cpp:
+        (webkit_micro_version):
+        * webkit/webkitwebbackforwardlist.cpp:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_load_status):
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_set_inspector_client):
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_get_modifier_state):
+        * webkit/webkitwebpolicydecision.cpp:
+        (webkit_web_policy_decision_cancel):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_get_spell_languages):
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebwindowfeatures.cpp:
+        (webkit_web_window_features_equal):
+
+2009-05-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         Misc fixes to InspectorClientGtk.
 
         * WebCoreSupport/InspectorClientGtk.cpp:

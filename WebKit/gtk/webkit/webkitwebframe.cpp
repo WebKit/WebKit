@@ -74,8 +74,6 @@ using namespace WebKit;
 using namespace WebCore;
 using namespace std;
 
-extern "C" {
-
 enum {
     CLEARED,
     LOAD_COMMITTED,
@@ -831,6 +829,4 @@ WebKitLoadStatus webkit_web_frame_get_load_status(WebKitWebFrame* frame)
 
     WebKitWebFramePrivate* priv = frame->priv;
     return priv->loadStatus;
-}
-
 }
