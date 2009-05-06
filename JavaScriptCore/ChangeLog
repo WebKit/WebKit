@@ -1,5 +1,12 @@
 2009-05-06  Darin Adler  <darin@apple.com>
 
+        Fixed assertion seen a lot!
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::~FunctionBodyNode): Removed now-bogus assertion.
+
+2009-05-06  Darin Adler  <darin@apple.com>
+
         Working with Sam Weinig.
 
         Redo parse tree constructor optimization without breaking the Windows
