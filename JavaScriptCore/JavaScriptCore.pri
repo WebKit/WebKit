@@ -22,9 +22,9 @@ win32-* {
 
 # Default rules to turn JIT on/off
 !contains(DEFINES, ENABLE_JIT=.) {
-    CONFIG(release):isEqual(QT_ARCH,i386) {
+    isEqual(QT_ARCH,i386)|isEqual(QT_ARCH,windows) {
         # Require gcc >= 4.1
-        linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
+        CONFIG(release):linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
             DEFINES += ENABLE_JIT=1
         }
         win32-msvc* {

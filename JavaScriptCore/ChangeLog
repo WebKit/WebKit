@@ -1,5 +1,13 @@
 2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Ariya Hidayat.
+
+        Enable the JIT for the Qt build on Windows.
+
+        * JavaScriptCore.pri:
+
+2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         Tweak JavaScriptCore.pri for being able to override the generated sources dir for the
