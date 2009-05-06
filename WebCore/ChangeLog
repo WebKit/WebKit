@@ -1,3 +1,15 @@
+2009-05-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use $$GENERATED_SOURCES_DIR as output when running bison
+
+        A couple of the generators left the bison output file in the source
+        tree, and then moved it into $$GENERATED_SOURCES_DIR, which did not
+        work well when building release and debug configurations in parallel.
+
+        * WebCore.pro:
+
 2009-05-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.
