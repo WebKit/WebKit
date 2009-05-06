@@ -1,3 +1,15 @@
+2009-05-06  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25591
+        Upstream V8HTMLFormElement from the Chromium repository.
+
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER HTMLFormElement): Upstreamed from Chromium repository
+        (WebCore::NAMED_PROPERTY_GETTER HTMLFormElement): Changed empty element return case to return notHandledByInterceptor();
+        (WebCore::CALLBACK_FUNC_DECL HTMLFormElementSubmit): Upstreamed from Chromium repository
+
 2009-05-06  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Dimitri Glazkov.
