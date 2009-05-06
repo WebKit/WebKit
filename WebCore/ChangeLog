@@ -1,3 +1,12 @@
+2009-05-06  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25595
+        Upstream V8CanvasPixelArrayCustom from chromium port tree.
+
+        * bindings/v8/V8CanvasPixelArrayCustom.cpp: Added.
+
 2009-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
