@@ -1729,6 +1729,7 @@ fast/forms/search-event-delay.html
 fast/forms/search-hidden-cancel-button.html
 fast/forms/select-accesskey.html
 fast/forms/select-cache-desynchronization.html
+fast/forms/select-dirty-parent-pref-widths.html
 fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-enter-key.html
@@ -4925,6 +4926,9 @@ svg/text/text-tspan-01-b.svg
 svg/text/text-ws-01-t.svg
 svg/text/text-ws-02-t.svg
 svg/text/textPathBoundsBug.svg
+svg/transforms/animated-path-inside-transformed-html.xhtml
+svg/transforms/text-with-pattern-inside-transformed-html.xhtml
+svg/transforms/text-with-pattern-with-svg-transform.svg
 svg/webarchive/svg-cursor-subresources.svg
 svg/webarchive/svg-feimage-subresources.svg
 svg/webarchive/svg-script-subresouces.svg
