@@ -876,9 +876,9 @@ PseudoState CSSStyleSelector::SelectorChecker::checkPseudoState(Element* element
 
     // If the Qt4.4 interface for the history is used, we will have to fallback
     // to the old global history.
-    QWebHistoryInterface* interface = QWebHistoryInterface::defaultInterface();
-    if (interface)
-        return interface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? PseudoVisited : PseudoLink;
+    QWebHistoryInterface* iface = QWebHistoryInterface::defaultInterface();
+    if (iface)
+        return iface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? PseudoVisited : PseudoLink;
 
     LinkHash hash = visitedLinkHash(url.data(), url.size());
     if (!hash)

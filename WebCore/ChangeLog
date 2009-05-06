@@ -1,3 +1,13 @@
+2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix the Qt/Windows build, use iface instead of interface to avoid conflict
+        with VS2005 headers.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkPseudoState):
+
 2009-05-06  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.
