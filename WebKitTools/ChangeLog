@@ -1,3 +1,9 @@
+2009-05-05  Darin Adler  <darin@apple.com>
+
+        Try to fix Mac build.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp: (elementAtPointCallback): Initialize x and y.
+
 2009-05-05  Maclolm MacLeod  <mmacleod@webmail.co.za>
 
         Reviewed by Kevin Ollivier.

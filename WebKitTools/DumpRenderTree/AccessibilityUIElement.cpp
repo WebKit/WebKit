@@ -151,7 +151,8 @@ static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef functio
 
 static JSValueRef elementAtPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    int x, y;
+    int x = 0;
+    int y = 0;
     if (argumentCount == 2) {
         x = JSValueToNumber(context, arguments[0], exception);
         y = JSValueToNumber(context, arguments[1], exception);
