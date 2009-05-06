@@ -1,3 +1,12 @@
+2009-05-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Change default value of WebKitPaintNativeControls to true.
+        
+        Reviewed by Adam Roben.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2009-05-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

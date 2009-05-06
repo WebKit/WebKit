@@ -672,6 +672,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
         if (prefsPrivate) {
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
             prefsPrivate->setDeveloperExtrasEnabled(FALSE);
+            prefsPrivate->setShouldPaintNativeControls(FALSE); // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
         }
     }
 
