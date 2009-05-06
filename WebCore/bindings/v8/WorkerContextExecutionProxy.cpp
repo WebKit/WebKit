@@ -40,6 +40,7 @@
 #include "Event.h"
 #include "V8WorkerContextEventListener.h"
 #include "V8WorkerContextObjectEventListener.h"
+#include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
@@ -226,6 +227,19 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
     if (type == V8ClassIndex::WORKERCONTEXT)
         return WorkerContextToV8Object(static_cast<WorkerContext*>(impl));
 
+    if (type == V8ClassIndex::WORKER) {
+        v8::Persistent<v8::Object> result = getActiveDOMObjectMap().get(impl);
+        if (!result.IsEmpty())
+            return result;
+
+        v8::Local<v8::Object> object = toV8(type, type, impl);
+        if (!object.IsEmpty())
+            static_cast<Worker*>(impl)->ref();
+        result = v8::Persistent<v8::Object>::New(object);
+        V8Proxy::SetJSWrapperForDOMObject(impl, result);
+        return result;
+    }
+
     // Non DOM node
     v8::Persistent<v8::Object> result = domObjectMap().get(impl);
     if (result.IsEmpty()) {
@@ -275,7 +289,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventToV8Object(Event* event)
     return result;
 }
 
-// A JS object of type EventTarget in the worker context can only be WorkerContext.
+// A JS object of type EventTarget in the worker context can only be Worker or WorkerContext.
 v8::Handle<v8::Value> WorkerContextExecutionProxy::EventTargetToV8Object(EventTarget* target)
 {
     if (!target)
@@ -284,6 +298,10 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventTargetToV8Object(EventTa
     WorkerContext* workerContext = target->toWorkerContext();
     if (workerContext)
         return WorkerContextToV8Object(workerContext);
+
+    Worker* worker = target->toWorker();
+    if (worker)
+        return ToV8Object(V8ClassIndex::WORKER, worker);
 
     ASSERT_NOT_REACHED();
     return v8::Handle<v8::Value>();
