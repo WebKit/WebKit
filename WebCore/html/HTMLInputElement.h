@@ -50,7 +50,11 @@ public:
         IMAGE,
         BUTTON,
         SEARCH,
-        RANGE
+        RANGE,
+        EMAIL,
+        NUMBER,
+        TELEPHONE,
+        URL
     };
     
     enum AutoCompleteSetting {
@@ -88,7 +92,7 @@ public:
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
-    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX; }
+    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX || m_type == EMAIL || m_type == NUMBER || m_type == TELEPHONE || m_type == URL; }
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
@@ -232,7 +236,7 @@ private:
     short m_maxResults;
     OwnPtr<HTMLImageLoader> m_imageLoader;
     RefPtr<FileList> m_fileList;
-    unsigned m_type : 4; // InputType 
+    unsigned m_type : 5; // InputType 
     bool m_checked : 1;
     bool m_defaultChecked : 1;
     bool m_useDefaultChecked : 1;

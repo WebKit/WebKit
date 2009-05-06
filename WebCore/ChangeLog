@@ -1,3 +1,31 @@
+2009-05-05  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25554
+        
+        Support HTML5 text control input types: email, number, tel, url
+
+        Test: fast/html/text-field-input-types.html
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isTextField]): Call HTMLInputElement::isTextField directly.
+        * html/HTMLInputElement.cpp: Use the new types where appropriate.
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::type):
+        (WebCore::HTMLInputElement::saveState):
+        (WebCore::HTMLInputElement::restoreState):
+        (WebCore::HTMLInputElement::accessKeyAction):
+        (WebCore::HTMLInputElement::rendererIsNeeded):
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::valueWithDefault):
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLInputElement.h: Ditto.
+        (WebCore::HTMLInputElement::):
+        (WebCore::HTMLInputElement::isTextField):
+
 2009-04-01  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.
