@@ -339,6 +339,7 @@ namespace WebCore {
 #if PLATFORM(QT) && defined(Q_WS_WIN)
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
+        bool shouldIncludeChildWindows() const { return false; }
 #endif
 
 #if PLATFORM(QT)
