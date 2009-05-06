@@ -1,12 +1,19 @@
 # JavaScriptCore - Qt4 build info
 VPATH += $$PWD
 
-INCLUDEPATH += tmp
+CONFIG(debug, debug|release) {
+    GENERATED_SOURCES_DIR = generated/debug
+    OBJECTS_DIR = obj/debug
+} else { # Release
+    GENERATED_SOURCES_DIR = generated/release
+    OBJECTS_DIR = obj/release
+}
+
+INCLUDEPATH += $$GENERATED_SOURCES_DIR
 INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/interpreter $$PWD/jit $$PWD/profiler $$PWD/wrec $$PWD/API $$PWD/.. \
                $$PWD/ForwardingHeaders $$PWD/bytecode $$PWD/assembler
 DEFINES += BUILDING_QT__
 
-isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
 win32-* {
     GENERATED_SOURCES_DIR_SLASH ~= s|/|\|

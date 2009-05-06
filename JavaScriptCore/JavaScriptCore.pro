@@ -27,7 +27,11 @@ win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 INCLUDEPATH += $$GENERATED_SOURCES_DIR
 
 !CONFIG(QTDIR_build) {
-     OBJECTS_DIR = tmp
+    CONFIG(debug, debug|release) {
+        OBJECTS_DIR = obj/debug
+    } else { # Release
+        OBJECTS_DIR = obj/release
+    }
 }
 
 include($$OUTPUT_DIR/config.pri)

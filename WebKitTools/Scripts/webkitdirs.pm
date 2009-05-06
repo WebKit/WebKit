@@ -1155,7 +1155,12 @@ sub buildQMakeProject($@)
         push @buildArgs, "CONFIG+=debug";
     } else {
         push @buildArgs, "CONFIG+=release";
-        push @buildArgs, "CONFIG-=debug";
+        if (!isDarwin() || passedConfiguration() =~ m/release/i) {
+            push @buildArgs, "CONFIG-=debug";
+        } else {
+            push @buildArgs, "CONFIG+=debug_and_release";
+            push @buildArgs, "CONFIG+=build_all";
+        }
     }
 
     my $dir = baseProductDir();

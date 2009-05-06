@@ -2,6 +2,27 @@
 
         Reviewed by Simon Hausmann.
 
+        Build QtWebKit as a framework on Mac
+
+        This implies both debug and release build by default, unless
+        one of the --debug or --release config options are passed to
+        the build-webkit script.
+
+        Frameworks can be disabled by passing CONFIG+=webkit_no_framework
+        to the build-webkit script.
+
+        To be able to build both debug and release targets in parallel
+        we have to use separate output directories for the generated
+        sources, which is not optimal, but required to avoid race conditions.
+
+        An optimization would be to only require this spit-up on Mac.
+
+        * WebCore.pro:
+
+2009-05-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Use $$GENERATED_SOURCES_DIR as output when running bison
 
         A couple of the generators left the bison output file in the source

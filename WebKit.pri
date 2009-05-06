@@ -14,7 +14,12 @@ building-libs {
         QT += webkit
     } else {
         QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
-        LIBS += -lQtWebKit
+        mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+            LIBS += -framework QtWebKit
+            QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
+        } else {
+            LIBS += -lQtWebKit
+        }
     }
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }

@@ -15,17 +15,21 @@ CONFIG(QTDIR_build) {
     DEFINES *= NDEBUG
 } else {
     win32-*:!static: DEFINES += QT_MAKEDLL
+
+    CONFIG(debug, debug|release) {
+        GENERATED_SOURCES_DIR = generated/debug
+        OBJECTS_DIR = obj/debug
+    } else { # Release
+        GENERATED_SOURCES_DIR = generated/release
+        OBJECTS_DIR = obj/release
+    }
+
+    DESTDIR = $$OUTPUT_DIR/lib
 }
 
-isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
 win32-*|wince*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 unix:QMAKE_PKGCONFIG_REQUIRES = QtCore QtDBus QtGui QtNetwork QtXml
-
-!CONFIG(QTDIR_build) {
-     OBJECTS_DIR = tmp
-     DESTDIR = $$OUTPUT_DIR/lib
-}
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -2123,6 +2127,23 @@ HEADERS += $$WEBKIT_API_HEADERS
         lib_replace.match = $$DESTDIR
         lib_replace.replace = $$[QT_INSTALL_LIBS]
         QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
+    }
+
+    mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+        !build_pass {
+            message("Building QtWebKit as a framework, as that's how Qt was built. You can")
+            message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
+        } else {
+            debug_and_release:CONFIG(debug, debug|release) {
+                TARGET = $$qtLibraryTarget($$TARGET)
+            }
+        }
+
+        CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
+        FRAMEWORK_HEADERS.version = Versions
+        FRAMEWORK_HEADERS.files = $$WEBKIT_API_HEADERS
+        FRAMEWORK_HEADERS.path = Headers
+        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
     }
 }
 
