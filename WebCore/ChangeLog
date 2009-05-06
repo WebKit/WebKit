@@ -1,3 +1,13 @@
+2009-05-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Misc fixes to InspectorClientGtk.
+
+        * GNUmakefile.am: Add localizedStrings.js to webinspector_DATA.
+        This prevents copious amounts "Localized string not found" errors
+        in the console
+
 2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

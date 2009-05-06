@@ -1,3 +1,15 @@
+2009-05-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Misc fixes to InspectorClientGtk.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::createPage): use g_filename_to_uri to
+        get the URI and use web_view_load_uri instead of the deprecated
+        web_view_open method for loading the URI.
+        (WebKit::InspectorClient::localizedStringsURL): implement.
+
 2009-05-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

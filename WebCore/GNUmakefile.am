@@ -3187,6 +3187,7 @@ webcore_cppflags += -DDATA_DIR=\"${datadir}\"
 
 webinspectordir = ${datadir}/webkit-1.0/webinspector
 dist_webinspector_DATA = \
+	$(WebCore)/English.lproj/localizedStrings.js \
 	$(shell ls $(WebCore)/inspector/front-end/*.{js,html,css})
 
 webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
