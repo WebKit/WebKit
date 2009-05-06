@@ -1,3 +1,13 @@
+2009-05-04  Adam Roben  <aroben@apple.com>
+
+        Add a call to notify the UI delegate when the WebView gets invalidated
+
+        Reviewed by Steve Falkenburg.
+
+        * Interfaces/IWebUIDelegatePrivate.idl: Added webViewDidInvalidate.
+        * WebView.cpp:
+        (WebView::addToDirtyRegion): Call webViewDidInvalidate.
+
 2009-05-04  Darin Adler  <darin@apple.com>
 
         First try at fixing the Windows build.

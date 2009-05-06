@@ -103,4 +103,5 @@ interface IWebUIDelegatePrivate5 : IWebUIDelegatePrivate4
 {
     HRESULT webViewClosing([in] IWebView* sender);
     HRESULT webViewSetCursor([in] IWebView* sender, [in] OLE_HANDLE cursor);
+    HRESULT webViewDidInvalidate([in] IWebView* sender);
 }
