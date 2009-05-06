@@ -1,3 +1,17 @@
+2009-05-05  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+        [Gtk] Additional support is needed for caret browsing
+
+        Emit AtkText::text-caret-moved when selection changes.
+
+        * GNUmakefile.am:
+        * editing/SelectionController.h:
+        * editing/gtk/SelectionController.cpp: Added.
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+
 2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Gustavo Noronha.

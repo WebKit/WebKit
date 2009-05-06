@@ -147,7 +147,7 @@ private:
 
     int xPosForVerticalArrowNavigation(EPositionType);
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK)
     void notifyAccessibilityForSelectionChange();
 #else
     void notifyAccessibilityForSelectionChange() {};

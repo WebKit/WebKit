@@ -824,6 +824,7 @@ webcore_sources += \
 	WebCore/editing/markup.h \
 	WebCore/editing/visible_units.cpp \
 	WebCore/editing/visible_units.h \
+	WebCore/editing/gtk/SelectionControllerGtk.cpp \
 	WebCore/history/BackForwardList.cpp \
 	WebCore/history/BackForwardList.h \
 	WebCore/history/CachedFrame.cpp \
