@@ -1,3 +1,29 @@
+2009-05-05  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=25487
+
+        For euc-kr and other 8bit Korean encodings
+        (similar to euc-kr/windows-949), make document.charset return
+        EUC-KR instead of windows-949. The latter is not recognized by
+        Korean web servers.
+
+        Add domName method to TextEncoding to deal with cases where
+        our internal encoding name does not match what's widely recognized
+        by web servers. Currently, the only case is 'windows-949' (internal
+        name) vs 'EUC-KR'.
+
+        Test: fast/encoding/euckr-name.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::encoding): Call TextEncoding.domName() instead
+        of TextEncoding.name().
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::domName): For the canonical name 'windows-949',
+        return 'EUC-KR'. Otherwise, just return the canonical name.
+        * platform/text/TextEncoding.h:
+
 2009-05-05  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Adler.

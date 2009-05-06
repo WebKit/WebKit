@@ -116,6 +116,24 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
 #endif
 }
 
+const char* TextEncoding::domName() const
+{
+    if (noExtendedTextEncodingNameUsed())
+        return m_name;
+
+    // We treat EUC-KR as windows-949 (its superset), but need to expose 
+    // the name 'EUC-KR' because the name 'windows-949' is not recognized by
+    // most Korean web servers even though they do use the encoding
+    // 'windows-949' with the name 'EUC-KR'. 
+    // FIXME: This is not thread-safe. At the moment, this function is
+    // only accessed in a single thread, but eventually has to be made
+    // thread-safe along with usesVisualOrdering().
+    static const char* const a = atomicCanonicalTextEncodingName("windows-949");
+    if (m_name == a)
+        return "EUC-KR";
+    return m_name;
+}
+
 bool TextEncoding::usesVisualOrdering() const
 {
     if (noExtendedTextEncodingNameUsed())

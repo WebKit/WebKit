@@ -1,3 +1,16 @@
+2009-05-05  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=25487
+
+        Test if the name 'EUC-KR' is exposed via DOM although we internally
+        treat all EUC-KR-related encodings as the superset of EUC-KR,
+        'windows-949'.
+
+        * fast/encoding/euckr-name-expected.txt: Added.
+        * fast/encoding/euckr-name.html: Added.
+
 2009-05-05  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Adler.
