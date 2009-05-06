@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
+#include "HTMLCollection.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "ScriptSourceCode.h"
