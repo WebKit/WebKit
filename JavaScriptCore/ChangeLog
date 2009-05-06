@@ -1,3 +1,16 @@
+2009-05-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Moved all the JIT stub related code into one place.
+
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        * jit/JITStubs.cpp:
+        (JSC::):
+        * jit/JITStubs.h:
+
 2009-05-05  Sam Weinig  <sam@webkit.org>
 
         Try to fix Windows build.

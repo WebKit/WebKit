@@ -43,51 +43,6 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(X86_64)
-#define STUB_ARGS_offset 0x10
-#else
-#define STUB_ARGS_offset 0x0C
-#endif
-
-#define STUB_ARGS_code (STUB_ARGS_offset)
-#define STUB_ARGS_registerFile (STUB_ARGS_offset + 1)
-#define STUB_ARGS_callFrame (STUB_ARGS_offset + 2)
-#define STUB_ARGS_exception (STUB_ARGS_offset + 3)
-#define STUB_ARGS_profilerReference (STUB_ARGS_offset + 4)
-#define STUB_ARGS_globalData (STUB_ARGS_offset + 5)
-
-#define ARG_callFrame static_cast<CallFrame*>(ARGS[STUB_ARGS_callFrame])
-#define ARG_registerFile static_cast<RegisterFile*>(ARGS[STUB_ARGS_registerFile])
-#define ARG_exception static_cast<JSValue*>(ARGS[STUB_ARGS_exception])
-#define ARG_profilerReference static_cast<Profiler**>(ARGS[STUB_ARGS_profilerReference])
-#define ARG_globalData static_cast<JSGlobalData*>(ARGS[STUB_ARGS_globalData])
-
-#define ARG_setCallFrame(newCallFrame) (ARGS[STUB_ARGS_callFrame] = (newCallFrame))
-
-#define ARG_src1 JSValue::decode(static_cast<EncodedJSValue>(ARGS[1]))
-#define ARG_src2 JSValue::decode(static_cast<EncodedJSValue>(ARGS[2]))
-#define ARG_src3 JSValue::decode(static_cast<EncodedJSValue>(ARGS[3]))
-#define ARG_src4 JSValue::decode(static_cast<EncodedJSValue>(ARGS[4]))
-#define ARG_src5 JSValue::decode(static_cast<EncodedJSValue>(ARGS[5]))
-#define ARG_id1 static_cast<Identifier*>(ARGS[1])
-#define ARG_id2 static_cast<Identifier*>(ARGS[2])
-#define ARG_id3 static_cast<Identifier*>(ARGS[3])
-#define ARG_id4 static_cast<Identifier*>(ARGS[4])
-#define ARG_int1 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[1]))
-#define ARG_int2 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[2]))
-#define ARG_int3 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[3]))
-#define ARG_int4 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[4]))
-#define ARG_int5 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[5]))
-#define ARG_int6 static_cast<int32_t>(reinterpret_cast<intptr_t>(ARGS[6]))
-#define ARG_func1 static_cast<FuncDeclNode*>(ARGS[1])
-#define ARG_funcexp1 static_cast<FuncExprNode*>(ARGS[1])
-#define ARG_regexp1 static_cast<RegExp*>(ARGS[1])
-#define ARG_pni1 static_cast<JSPropertyNameIterator*>(ARGS[1])
-#define ARG_returnAddress2 static_cast<void*>(ARGS[2])
-#define ARG_codeBlock4 static_cast<CodeBlock*>(ARGS[4])
-
-#define STUB_RETURN_ADDRESS_SLOT (ARGS[-1])
-
 namespace JSC {
 
     class CodeBlock;
@@ -198,10 +153,6 @@ namespace JSC {
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label coldPathOther;
-    };
-
-    extern "C" {
-        void ctiVMThrowTrampoline();
     };
 
     void ctiSetReturnAddress(void** addressOfReturnAddress, void* newDestinationToReturnTo);
