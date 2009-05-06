@@ -1,0 +1,30 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();  
+</script>
+<body id="body">
+    <div id="outer">
+        Text in outer div Node.
+        <div id="inner">
+            Text in inner div Node.
+        </div>
+    </div>
+    <div id="result">
+    </div>
+<script>
+    if (window.accessibilityController) {
+        var body = document.getElementById("body");
+        var result = document.getElementById("result");
+        body.focus();
+        var testElement = accessibilityController.focusedElement;
+        testElement = testElement.childAtIndex(0);
+        if (testElement.role == "text")
+            result.innerText += "Anonymous Block is ignored. Test Passed\n";
+        else
+            result.innerText += "Anonymous Block is not ignored. Test Failed.\n"
+    }
+</script>
+</body>
+
+</html>

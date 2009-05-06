@@ -1,3 +1,17 @@
+2009-05-05  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Anonymous blocks should not be exposed in accessibility tree.
+        Part of https://bugs.webkit.org/show_bug.cgi?id=23072
+
+        Tests: accessibility/ignore-anonymous-block.html
+               platform/win/accessibility/document-role.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):Return
+        true for Anonymous blocks. Matching Firefox 2.0.0.14
+
 2009-05-05  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
