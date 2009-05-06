@@ -191,9 +191,11 @@ public:
     void setWidth(int w) { m_width = w; }
     int width() const { return m_width; }
 
+    // x() is the left side of the box in the parent's coordinate system.
     void setX(int x) { m_x = x; }
     int x() const { return m_x; }
 
+    // y() is the top of the box in the parent's coordinate system.
     void setY(int y) { m_y = y; }
     int y() const { return m_y; }
 
