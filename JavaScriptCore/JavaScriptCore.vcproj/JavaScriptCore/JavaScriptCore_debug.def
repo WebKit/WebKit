@@ -90,7 +90,6 @@ EXPORTS
     ?deleteProperty@JSVariableObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteProperty@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
-    ?deref@ParserRefCounted@JSC@@QAEXXZ
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
     ?detach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
@@ -193,7 +192,6 @@ EXPORTS
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
     ?recordExtraCost@Heap@JSC@@AAEXI@Z
-    ?ref@ParserRefCounted@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z

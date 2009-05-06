@@ -1,5 +1,16 @@
 2009-05-05  Darin Adler  <darin@apple.com>
 
+        Try to fix Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+        Try to fix Mac build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Made SegmentedVector.h private.
+
+2009-05-05  Darin Adler  <darin@apple.com>
+
         Try to fix Mac build.
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Made Lexer.h private.
