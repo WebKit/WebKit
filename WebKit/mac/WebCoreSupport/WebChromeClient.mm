@@ -502,6 +502,7 @@ void WebChromeClient::print(Frame* frame)
     CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
 }
 
+#if ENABLE(DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -517,6 +518,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+#endif
     
 void WebChromeClient::populateVisitedLinks()
 {

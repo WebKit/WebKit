@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(DATABASE)
+ 
 extern NSString *WebDatabaseDirectoryDefaultsKey;
 
 extern NSString *WebDatabaseDisplayNameKey;
@@ -62,3 +64,5 @@ extern NSString *WebDatabaseIdentifierKey;
 - (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin;
 
 @end
+
+#endif

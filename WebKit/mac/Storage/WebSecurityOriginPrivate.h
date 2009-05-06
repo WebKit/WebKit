@@ -49,4 +49,5 @@
 // This will simply prevent new data from being added to databases in that origin
 - (void)setQuota:(unsigned long long)quota;
 
+
 @end

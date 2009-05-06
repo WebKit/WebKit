@@ -28,6 +28,8 @@
  
 #import "WebDatabaseTrackerClient.h"
 
+#if ENABLE(DATABASE)
+
 #import "WebDatabaseManagerPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import <wtf/RetainPtr.h>
@@ -67,3 +69,5 @@ void WebDatabaseTrackerClient::dispatchDidModifyDatabase(SecurityOrigin* origin,
                                                         object:webSecurityOrigin.get()
                                                       userInfo:userInfo.get()];
 }
+
+#endif

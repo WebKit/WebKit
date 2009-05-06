@@ -29,6 +29,8 @@
 #ifndef JSCustomSQLTransactionErrorCallback_h
 #define JSCustomSQLTransactionErrorCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLTransactionErrorCallback.h"
 
 #include <runtime/JSObject.h>
@@ -58,5 +60,6 @@ private:
 };
 
 }
+#endif // ENABLE(DATABASE)
 
 #endif // JSCustomSQLTransactionErrorCallback_h

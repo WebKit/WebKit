@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ChangeVersionWrapper.h"
 
+#if ENABLE(DATABASE)
 #include "Database.h"
 
 namespace WebCore {
@@ -75,3 +76,5 @@ bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
 }
     
 } // namespace WebCore
+
+#endif // ENABLE(DATABASE)

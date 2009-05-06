@@ -71,12 +71,20 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
+#if ENABLE(DATABASE)
     return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+#else
+    return 0;
+#endif
 }
 
 - (unsigned long long)quota
 {
+#if ENABLE(DATABASE)
     return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+#else
+    return 0;
+#endif
 }
 
 // Sets the storage quota (in bytes)
@@ -84,7 +92,9 @@ using namespace WebCore;
 // This will simply prevent new data from being added to databases in that origin
 - (void)setQuota:(unsigned long long)quota
 {
+#if ENABLE(DATABASE)
     DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
+#endif
 }
 
 - (BOOL)isEqual:(id)anObject

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "DatabaseThread.h"
 
+#if ENABLE(DATABASE)
+
 #include "AutodrainedPool.h"
 #include "Database.h"
 #include "DatabaseTask.h"
@@ -135,3 +137,4 @@ void DatabaseThread::unscheduleDatabaseTasks(Database* database)
 }
 
 } // namespace WebCore
+#endif

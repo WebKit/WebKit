@@ -30,6 +30,8 @@
 #include "WebDatabaseManager.h"
 #include "WebKitDLL.h"
 
+#if ENABLE(DATABASE)
+
 #include "CFDictionaryPropertyBag.h"
 #include "COMEnumVariant.h"
 #include "MarshallingHelpers.h"
@@ -364,3 +366,5 @@ void WebKitSetWebDatabasesPathIfNecessary()
 
     pathSet = true;
 }
+
+#endif

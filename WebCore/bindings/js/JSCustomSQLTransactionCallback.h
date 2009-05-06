@@ -29,6 +29,8 @@
 #ifndef JSCustomSQLTransactionCallback_h
 #define JSCustomSQLTransactionCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLTransactionCallback.h"
 
 #include <wtf/PassRefPtr.h>
@@ -59,5 +61,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // JSCustomSQLTransactionCallback_h

@@ -1,3 +1,14 @@
+2009-05-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+        
+        Add #if ENABLE(DATABASE) guards around database code so toggling ENABLE_DATABASE off does not break builds.
+        https://bugs.webkit.org/show_bug.cgi?id=24776
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::exceededDatabaseQuota):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2009-05-06  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.

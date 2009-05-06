@@ -29,6 +29,8 @@
 #ifndef JSCustomSQLStatementErrorCallback_h
 #define JSCustomSQLStatementErrorCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLStatementErrorCallback.h"
 
 #include <runtime/JSObject.h>
@@ -58,6 +60,8 @@ private:
 };
     
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // JSCustomSQLStatementErrorCallback_h
 

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSCustomSQLTransactionCallback.h"
 
+#if ENABLE(DATABASE)
+
 #include "Frame.h"
 #include "ScriptController.h"
 #include "JSSQLTransaction.h"
@@ -134,3 +136,5 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
 }
     
 }
+
+#endif // ENABLE(DATABASE)

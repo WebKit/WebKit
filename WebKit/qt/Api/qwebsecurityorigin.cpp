@@ -101,7 +101,11 @@ int QWebSecurityOrigin::port() const
 */
 qint64 QWebSecurityOrigin::databaseUsage() const
 {
+#if ENABLE(DATABASE)
     return DatabaseTracker::tracker().usageForOrigin(d->origin.get());
+#else
+    return 0;
+#endif
 }
 
 /*!
@@ -109,7 +113,11 @@ qint64 QWebSecurityOrigin::databaseUsage() const
 */
 qint64 QWebSecurityOrigin::databaseQuota() const
 {
+#if ENABLE(DATABASE)
     return DatabaseTracker::tracker().quotaForOrigin(d->origin.get());
+#else
+    return 0;
+#endif
 }
 
 /*!
@@ -121,7 +129,9 @@ qint64 QWebSecurityOrigin::databaseQuota() const
 */
 void QWebSecurityOrigin::setDatabaseQuota(qint64 quota)
 {
+#if ENABLE(DATABASE)
     DatabaseTracker::tracker().setQuota(d->origin.get(), quota);
+#endif
 }
 
 /*!

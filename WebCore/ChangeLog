@@ -1,3 +1,45 @@
+2009-05-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+        
+        Add #if ENABLE(DATABASE) guards around database code so toggling ENABLE_DATABASE off does not break builds.
+        https://bugs.webkit.org/show_bug.cgi?id=24776
+
+        No functional changes, thus no tests.
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/js/JSDatabaseCustom.cpp:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * storage/ChangeVersionWrapper.cpp:
+        * storage/ChangeVersionWrapper.h:
+        * storage/Database.cpp:
+        (WebCore::Database::databaseInfoTableName):
+        * storage/Database.h:
+        * storage/Database.idl:
+        * storage/DatabaseTask.cpp:
+        * storage/DatabaseTask.h:
+        * storage/DatabaseThread.cpp:
+        * storage/DatabaseThread.h:
+        * storage/DatabaseTracker.cpp:
+        * storage/DatabaseTracker.h:
+        * storage/DatabaseTrackerClient.h:
+        * storage/OriginQuotaManager.cpp:
+        * storage/OriginQuotaManager.h:
+        * storage/SQLStatement.cpp:
+        * storage/SQLStatement.h:
+        * storage/SQLTransaction.cpp:
+        * storage/SQLTransaction.h:
+        * storage/SQLTransaction.idl:
+
 2009-05-05  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

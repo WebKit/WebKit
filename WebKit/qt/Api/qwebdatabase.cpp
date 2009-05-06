@@ -19,6 +19,9 @@
 
 #include "config.h"
 #include "qwebdatabase.h"
+
+#if ENABLE(DATABASE)
+
 #include "qwebdatabase_p.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
@@ -146,3 +149,5 @@ void QWebDatabase::removeDatabase(const QWebDatabase &db)
 QWebDatabase::~QWebDatabase()
 {
 }
+
+#endif

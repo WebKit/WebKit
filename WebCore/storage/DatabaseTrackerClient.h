@@ -28,6 +28,8 @@
 #ifndef DatabaseTrackerClient_h
 #define DatabaseTrackerClient_h
 
+#if ENABLE(DATABASE)
+
 namespace WebCore {
 
 class SecurityOrigin;
@@ -41,5 +43,7 @@ public:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // DatabaseTrackerClient_h

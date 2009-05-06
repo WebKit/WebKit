@@ -19,6 +19,8 @@
 #ifndef _WEBDATABASE_H_
 #define _WEBDATABASE_H_
 
+#if ENABLE(DATABASE)
+
 #include <QtCore/qstring.h>
 #include <QtCore/qshareddata.h>
 
@@ -54,6 +56,8 @@ private:
 private:
     QExplicitlySharedDataPointer<QWebDatabasePrivate> d;
 };
+
+#endif
 
 #endif
 

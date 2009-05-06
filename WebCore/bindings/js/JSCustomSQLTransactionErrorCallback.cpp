@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSCustomSQLTransactionErrorCallback.h"
 
+#if ENABLE(DATABASE)
+
 #include "Frame.h"
 #include "ScriptController.h"
 #include "JSSQLError.h"
@@ -88,3 +90,5 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
 }
     
 }
+
+#endif // ENABLE(DATABASE)

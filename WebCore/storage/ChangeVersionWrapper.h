@@ -28,6 +28,8 @@
 #ifndef ChangeVersionWrapper_h
 #define ChangeVersionWrapper_h
 
+#if ENABLE(DATABASE)
+
 #include "PlatformString.h"
 #include "SQLTransaction.h"
 
@@ -51,5 +53,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // ChangeVersionWrapper_h

@@ -28,6 +28,8 @@
 #ifndef SQLTransaction_h
 #define SQLTransaction_h
 
+#if ENABLE(DATABASE)
+
 #include <wtf/Threading.h>
 
 #include "SQLiteTransaction.h"
@@ -127,5 +129,7 @@ private:
 };
     
 } // namespace WebCore
+
+#endif
 
 #endif // SQLTransaction_h

@@ -387,15 +387,17 @@ void ChromeClientQt::print(Frame *frame)
     emit m_webPage->printRequested(QWebFramePrivate::kit(frame));
 }
 
+#if ENABLE(DATABASE)
 void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     quint64 quota = QWebSettings::offlineStorageDefaultQuota();
-#if ENABLE(DATABASE)
+
     if (!DatabaseTracker::tracker().hasEntryForOrigin(frame->document()->securityOrigin()))
         DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), quota);
-#endif
+
     emit m_webPage->databaseQuotaExceeded(QWebFramePrivate::kit(frame), databaseName);
 }
+#endif
 
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {

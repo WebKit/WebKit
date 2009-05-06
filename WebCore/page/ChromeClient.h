@@ -133,7 +133,9 @@ namespace WebCore {
 
         virtual void print(Frame*) = 0;
 
+#if ENABLE(DATABASE)
         virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         virtual void dashboardRegionsChanged();

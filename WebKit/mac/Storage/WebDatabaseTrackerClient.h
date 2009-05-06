@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(DATABASE) 
+
 #import <WebCore/DatabaseTrackerClient.h>
 
 class WebDatabaseTrackerClient : public WebCore::DatabaseTrackerClient {
@@ -38,3 +40,5 @@ public:
 private:
     WebDatabaseTrackerClient();
 };
+
+#endif

@@ -57,7 +57,7 @@ public:
         
     virtual HRESULT STDMETHODCALLTYPE port( 
         /* [retval][out] */ unsigned short* result);
-        
+
     virtual HRESULT STDMETHODCALLTYPE usage( 
         /* [retval][out] */ unsigned long long* result);
         
@@ -66,6 +66,7 @@ public:
         
     virtual HRESULT STDMETHODCALLTYPE setQuota( 
         /* [in] */ unsigned long long quota);
+
 private:
     WebSecurityOrigin(WebCore::SecurityOrigin*);
     ~WebSecurityOrigin();

@@ -45,10 +45,12 @@ public:
     QString host() const;
     int port() const;
 
+#if ENABLE(DATABASE)
     qint64 databaseUsage() const;
     qint64 databaseQuota() const;
 
     void setDatabaseQuota(qint64 quota);
+#endif
 
     QList<QWebDatabase> databases() const;
 

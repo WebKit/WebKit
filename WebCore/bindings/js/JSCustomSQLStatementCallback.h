@@ -29,6 +29,8 @@
 #ifndef JSCustomSQLStatementCallback_h
 #define JSCustomSQLStatementCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLStatementCallback.h"
 
 #include <runtime/JSObject.h>
@@ -58,5 +60,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // JSCustomSQLStatementCallback_h

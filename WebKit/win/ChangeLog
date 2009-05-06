@@ -1,3 +1,23 @@
+2009-05-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+        
+        Add #if ENABLE(DATABASE) guards around database code so toggling ENABLE_DATABASE off does not break builds.
+        https://bugs.webkit.org/show_bug.cgi?id=24776
+
+        * ForEachCoClass.h:
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebDatabaseManager.cpp:
+        * WebDatabaseManager.h:
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+        * WebSecurityOrigin.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2009-05-04  Adam Roben  <aroben@apple.com>
 
         Add a call to notify the UI delegate when the WebView gets invalidated

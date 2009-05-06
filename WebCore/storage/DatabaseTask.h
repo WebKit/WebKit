@@ -28,6 +28,7 @@
 #ifndef DatabaseTask_h
 #define DatabaseTask_h
 
+#if ENABLE(DATABASE)
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
@@ -148,4 +149,5 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(DATABASE)
 #endif // DatabaseTask_h

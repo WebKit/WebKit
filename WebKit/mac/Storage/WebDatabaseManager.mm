@@ -29,6 +29,8 @@
 #import "WebDatabaseManagerPrivate.h"
 #import "WebDatabaseManagerInternal.h"
 
+#if ENABLE(DATABASE)
+
 #import "WebDatabaseTrackerClient.h"
 #import "WebSecurityOriginInternal.h"
 
@@ -137,3 +139,5 @@ void WebKitInitializeDatabasesIfNecessary()
     
     initialized = YES;
 }
+
+#endif

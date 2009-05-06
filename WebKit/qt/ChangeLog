@@ -1,3 +1,22 @@
+2009-05-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+        
+        Add #if ENABLE(DATABASE) guards around database code so toggling ENABLE_DATABASE off does not break builds.
+        https://bugs.webkit.org/show_bug.cgi?id=24776
+
+        * Api/qwebdatabase.cpp:
+        * Api/qwebdatabase.h:
+        * Api/qwebdatabase_p.h:
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::databaseUsage):
+        (QWebSecurityOrigin::databaseQuota):
+        (QWebSecurityOrigin::setDatabaseQuota):
+        * Api/qwebsecurityorigin.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::exceededDatabaseQuota):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2009-05-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
