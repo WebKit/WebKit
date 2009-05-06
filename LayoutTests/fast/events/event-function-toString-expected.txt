@@ -3,10 +3,8 @@ Test serialization of event handlers for bug 25544.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL div.onclick should be function onclick(event) { test(); } (of type string). Was function onclick(event) { test();
-} (of type function).
-FAIL path.onclick should be function onclick(evt) { doIt(); } (of type string). Was function onclick(evt) { doIt();
-} (of type function).
+PASS normalizedFunctionString(div.onclick.toString()) is "function onclick(event) {test();}"
+PASS normalizedFunctionString(path.onclick.toString()) is "function onclick(evt) {test();}"
 PASS successfullyParsed is true
 
 TEST COMPLETE
