@@ -1,3 +1,14 @@
+2009-05-06  Hin-Chung Lam  <hclam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25593
+
+        Refactor for MediaPlayerPrivate for Chromium port. Remove
+        the implementation of MediaPlayerPrivateInferface from it.
+
+        * platform\graphics\chromium\MediaPlayerPrivateChromium.h:
+
 2009-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt, Dan Bernstein

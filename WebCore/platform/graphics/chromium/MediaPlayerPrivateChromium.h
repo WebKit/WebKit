@@ -37,69 +37,12 @@
 
 namespace WebCore {
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivate {
 public:
     static void registerMediaEngine(MediaEngineRegistrar);
-    ~MediaPlayerPrivate();
-
-    IntSize naturalSize() const;
-    bool hasVideo() const;
-
-    void load(const String& url);
-    void cancelLoad();
-
-    void play();
-    void pause();    
-
-    bool paused() const;
-    bool seeking() const;
-
-    float duration() const;
-    float currentTime() const;
-    void seek(float time);
-    void setEndTime(float);
-
-    void setRate(float);
-    void setVolume(float);
-
-    int dataRate() const;
-
-    MediaPlayer::NetworkState networkState() const;
-    MediaPlayer::ReadyState readyState() const;
-
-    float maxTimeBuffered() const;
-    float maxTimeSeekable() const;
-    unsigned bytesLoaded() const;
-    bool totalBytesKnown() const;
-    unsigned totalBytes() const;
-
-    void setVisible(bool);
-    void setSize(const IntSize&);
-
-    void paint(GraphicsContext*, const IntRect&);
-
-    // Public methods to be called by WebMediaPlayer
-    FrameView* frameView();
-    void repaint();
-    void networkStateChanged();
-    void readyStateChanged();
-    void volumeChanged();
-    void timeChanged();
-    void sizeChanged();
-    void rateChanged();
-    void durationChanged();
-
-private:
-    MediaPlayerPrivate(MediaPlayer*);
-    static MediaPlayerPrivateInterface* create(MediaPlayer* player);
-    static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
-
-    MediaPlayer* m_player;
-    void* m_data;
 };
 
-}  // namespace WebCore
+} // namespace WebCore
 
 #endif
 
