@@ -1,3 +1,44 @@
+2009-05-06  Darin Adler  <darin@apple.com>
+
+        Working with Sam Weinig.
+
+        Redo parse tree constructor optimization without breaking the Windows
+        build the way I did yesterday. The previous try broke the build by adding
+        an include of Lexer.h and all its dependencies that had to work outside
+        the JavaScriptCore project.
+
+        * GNUmakefile.am: Added NodeConstructors.h.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        Removed byteocde directory -- we no longer are trying to include Lexer.h
+        outside JavaScriptCore.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Change SegmentedVector.h
+        and Lexer.h back to internal files. Added NodeConstructors.h.
+
+        * parser/Grammar.y: Added include of NodeConstructors.h.
+        Changed use of ConstDeclNode to use public functions.
+
+        * parser/NodeConstructors.h: Copied from parser/Nodes.h.
+        Just contains the inlined constructors now.
+
+        * parser/Nodes.cpp: Added include of NodeConstructors.h.
+        Moved node constructors into the header.
+        (JSC::FunctionBodyNode::FunctionBodyNode): Removed m_refCount
+        initialization.
+
+        * parser/Nodes.h: Removed all the constructor definitions, and also
+        removed the JSC_FAST_CALL from them since these are all inlined, so the
+        calling convention is irrelevant. Made more things private. Used a data
+        member for operator opcodes instead of a virtual function. Removed the
+        special FunctionBodyNode::ref/deref functions since the default functions
+        are now just as fast.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::extractFunctionBody): Fixed types here so we don't typecast until
+        after we do type checking.
+
 2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
@@ -89,13 +130,6 @@
 
         * parser/Nodes.cpp: 
         * parser/Nodes.h:
-
-2009-05-05  Darin Adler  <darin@apple.com>
-
-        Try to fix Windows build.
-
-        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Added
-        bytecompiler to the list of directories where the headers get copied.
 
 2009-05-05  Darin Adler  <darin@apple.com>
 

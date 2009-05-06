@@ -164,7 +164,7 @@
 		969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07210ED1CE3300F1F681 /* BytecodeGenerator.h */; };
 		969A072A0ED1CE6900F1F681 /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07270ED1CE6900F1F681 /* Label.h */; };
 		969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07280ED1CE6900F1F681 /* RegisterID.h */; };
-		969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07290ED1CE6900F1F681 /* SegmentedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07290ED1CE6900F1F681 /* SegmentedVector.h */; };
 		969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */; };
 		969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07910ED1D3AE00F1F681 /* CodeBlock.h */; settings = {ATTRIBUTES = (); }; };
 		969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */; };
@@ -256,7 +256,7 @@
 		BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F252560D08DD8D004ECFFF /* JSVariableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8660255597D01FF60F7 /* Lexer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8660255597D01FF60F7 /* Lexer.h */; };
 		BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EB7450B708F540063461B /* ListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4360E16F5CD00B34460 /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79270D6C964500FEA3BA /* Locker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -632,6 +632,7 @@
 		930754BF08B0F68000AB3056 /* pcre_compile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_compile.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		930754CE08B0F74500AB3056 /* pcre_tables.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_tables.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		930754E908B0F78500AB3056 /* pcre_exec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_exec.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		930DAD030FB1EB1A0082D205 /* NodeConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstructors.h; sourceTree = "<group>"; };
 		9322A00306C341D3009067BB /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		932F5BD90822A1C700736975 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1245,6 +1246,7 @@
 				93F1981A08245AAE001E9ABC /* Keywords.table */,
 				F692A8650255597D01FF60F7 /* Lexer.cpp */,
 				F692A8660255597D01FF60F7 /* Lexer.h */,
+				930DAD030FB1EB1A0082D205 /* NodeConstructors.h */,
 				7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */,
 				F692A86D0255597D01FF60F7 /* Nodes.cpp */,
 				F692A86E0255597D01FF60F7 /* Nodes.h */,

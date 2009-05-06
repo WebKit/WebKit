@@ -294,6 +294,7 @@ javascriptcore_sources += \
 	JavaScriptCore/debugger/Debugger.h \
 	JavaScriptCore/parser/Lexer.cpp \
 	JavaScriptCore/parser/Lexer.h \
+	JavaScriptCore/parser/NodeConstructors.h \
 	JavaScriptCore/parser/NodeInfo.h \
 	JavaScriptCore/parser/Nodes.cpp \
 	JavaScriptCore/parser/Nodes.h \

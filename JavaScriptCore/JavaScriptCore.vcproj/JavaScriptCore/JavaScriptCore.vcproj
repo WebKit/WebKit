@@ -639,10 +639,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\parser\NodeInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\NumberConstructor.cpp"
 				>
 			</File>
@@ -1140,6 +1136,14 @@
 			</File>
 			<File
 				RelativePath="..\..\parser\Lexer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\NodeConstructors.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\NodeInfo.h"
 				>
 			</File>
 			<File

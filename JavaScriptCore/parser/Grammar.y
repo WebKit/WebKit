@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include "JSValue.h"
 #include "JSObject.h"
-#include "Nodes.h"
+#include "NodeConstructors.h"
 #include "Lexer.h"
 #include "JSString.h"
 #include "JSGlobalData.h"
@@ -147,9 +147,9 @@ static void appendToVarDeclarationList(void* globalPtr, ParserRefCountedData<Dec
 static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
 {
     unsigned attrs = DeclarationStacks::IsConstant;
-    if (decl->m_init)
+    if (decl->hasInitializer())
         attrs |= DeclarationStacks::HasInitializer;        
-    appendToVarDeclarationList(globalPtr, varDecls, decl->m_ident, attrs);
+    appendToVarDeclarationList(globalPtr, varDecls, decl->ident(), attrs);
 }
 
 %}

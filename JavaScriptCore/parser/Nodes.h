@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef NODES_H_
-#define NODES_H_
+#ifndef Nodes_h
+#define Nodes_h
 
 #include "Error.h"
 #include "JITCode.h"
@@ -103,7 +103,7 @@ namespace JSC {
 
     class ParserRefCounted : public RefCounted<ParserRefCounted> {
     protected:
-        ParserRefCounted(JSGlobalData*) JSC_FAST_CALL;
+        ParserRefCounted(JSGlobalData*);
 
     public:
         virtual ~ParserRefCounted();
@@ -113,11 +113,6 @@ namespace JSC {
     };
 
 #ifdef NDEBUG
-    inline ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
-    {
-        globalData->parserObjects.append(adoptRef(this));
-    }
-
     inline ParserRefCounted::~ParserRefCounted()
     {
     }
@@ -125,7 +120,7 @@ namespace JSC {
 
     class Node : public ParserRefCounted {
     public:
-        Node(JSGlobalData* globalData) JSC_FAST_CALL;
+        Node(JSGlobalData*);
 
         /*
             Return value: The register holding the production's value.
@@ -159,11 +154,7 @@ namespace JSC {
 
     class ExpressionNode : public Node {
     public:
-        ExpressionNode(JSGlobalData* globalData, ResultType resultDesc = ResultType::unknownType()) JSC_FAST_CALL
-            : Node(globalData)
-            , m_resultDesc(resultDesc)
-        {
-        }
+        ExpressionNode(JSGlobalData*, ResultType = ResultType::unknownType());
 
         virtual bool isNumber() const JSC_FAST_CALL { return false; }
         virtual bool isString() const JSC_FAST_CALL { return false; }
@@ -178,18 +169,19 @@ namespace JSC {
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
 
-        ResultType resultDescriptor() const JSC_FAST_CALL { return m_resultDesc; }
+        ResultType resultDescriptor() const JSC_FAST_CALL { return m_resultType; }
 
         // This needs to be in public in order to compile using GCC 3.x 
         typedef enum { EvalOperator, FunctionCall } CallerType;
 
     private:
-        ResultType m_resultDesc;
+        ResultType m_resultType;
     };
 
     class StatementNode : public Node {
     public:
-        StatementNode(JSGlobalData*) JSC_FAST_CALL;
+        StatementNode(JSGlobalData*);
+
         void setLoc(int line0, int line1) JSC_FAST_CALL;
         int firstLine() const JSC_FAST_CALL { return lineNo(); }
         int lastLine() const JSC_FAST_CALL { return m_lastLine; }
@@ -206,66 +198,54 @@ namespace JSC {
 
     class NullNode : public ExpressionNode {
     public:
-        NullNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::nullType())
-        {
-        }
+        NullNode(JSGlobalData*);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isNull() const JSC_FAST_CALL { return true; }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class BooleanNode : public ExpressionNode {
     public:
-        BooleanNode(JSGlobalData* globalData, bool value) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::booleanType())
-            , m_value(value)
-        {
-        }
+        BooleanNode(JSGlobalData*, bool value);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
 
-    private:
         bool m_value;
     };
 
     class NumberNode : public ExpressionNode {
     public:
-        NumberNode(JSGlobalData* globalData, double v) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::numberType())
-            , m_double(v)
-        {
-        }
+        NumberNode(JSGlobalData*, double v);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual bool isNumber() const JSC_FAST_CALL { return true; }
-        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
         double value() const JSC_FAST_CALL { return m_double; }
         void setValue(double d) JSC_FAST_CALL { m_double = d; }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        virtual bool isNumber() const JSC_FAST_CALL { return true; }
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
+
         double m_double;
     };
 
     class StringNode : public ExpressionNode {
     public:
-        StringNode(JSGlobalData* globalData, const Identifier& v) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::stringType())
-            , m_value(v)
-        {
-        }
+        StringNode(JSGlobalData*, const Identifier& v);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        
-        virtual bool isString() const JSC_FAST_CALL { return true; }
         const Identifier& value() { return m_value; }
         virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        
+        virtual bool isString() const JSC_FAST_CALL { return true; }
+
         Identifier m_value;
     };
     
@@ -368,74 +348,49 @@ namespace JSC {
 
     class RegExpNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        RegExpNode(JSGlobalData* globalData, const UString& pattern, const UString& flags) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_pattern(pattern)
-            , m_flags(flags)
-        {
-        }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        RegExpNode(JSGlobalData*, const UString& pattern, const UString& flags);
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         UString m_pattern;
         UString m_flags;
     };
 
     class ThisNode : public ExpressionNode {
     public:
-        ThisNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-        {
-        }
+        ThisNode(JSGlobalData*);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class ResolveNode : public ExpressionNode {
     public:
-        ResolveNode(JSGlobalData* globalData, const Identifier& ident, int startOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_ident(ident)
-            , m_startOffset(startOffset)
-        {
-        }
+        ResolveNode(JSGlobalData*, const Identifier&, int startOffset);
 
+        const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL;
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isResolveNode() const JSC_FAST_CALL { return true; }
-        const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
-    private:
         Identifier m_ident;
         int32_t m_startOffset;
     };
 
     class ElementNode : public ParserRefCounted {
     public:
-        ElementNode(JSGlobalData* globalData, int elision, ExpressionNode* node) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_elision(elision)
-            , m_node(node)
-        {
-        }
-
-        ElementNode(JSGlobalData* globalData, ElementNode* l, int elision, ExpressionNode* node) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_elision(elision)
-            , m_node(node)
-        {
-            l->m_next = this;
-        }
-
+        ElementNode(JSGlobalData*, int elision, ExpressionNode*);
+        ElementNode(JSGlobalData*, ElementNode*, int elision, ExpressionNode*);
         virtual ~ElementNode();
         virtual void releaseNodes(NodeReleaser&);
 
         int elision() const { return m_elision; }
         ExpressionNode* value() { return m_node.get(); }
-
         ElementNode* next() { return m_next.get(); }
 
     private:
@@ -446,37 +401,19 @@ namespace JSC {
 
     class ArrayNode : public ExpressionNode {
     public:
-        ArrayNode(JSGlobalData* globalData, int elision) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_elision(elision)
-            , m_optional(true)
-        {
-        }
-
-        ArrayNode(JSGlobalData* globalData, ElementNode* element) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_element(element)
-            , m_elision(0)
-            , m_optional(false)
-        {
-        }
-
-        ArrayNode(JSGlobalData* globalData, int elision, ElementNode* element) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_element(element)
-            , m_elision(elision)
-            , m_optional(true)
-        {
-        }
-
+        ArrayNode(JSGlobalData*, int elision);
+        ArrayNode(JSGlobalData*, ElementNode*);
+        ArrayNode(JSGlobalData*, int elision, ElementNode*);
         virtual ~ArrayNode();
         virtual void releaseNodes(NodeReleaser&);
 
+        PassRefPtr<ArgumentListNode> toArgumentList(JSGlobalData*) const;
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isSimpleArray() const JSC_FAST_CALL;
-        PassRefPtr<ArgumentListNode> toArgumentList(JSGlobalData*) const;
-    private:
+
         RefPtr<ElementNode> m_element;
         int m_elision;
         bool m_optional;
@@ -486,14 +423,7 @@ namespace JSC {
     public:
         enum Type { Constant, Getter, Setter };
 
-        PropertyNode(JSGlobalData* globalData, const Identifier& name, ExpressionNode* assign, Type type) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_name(name)
-            , m_assign(assign)
-            , m_type(type)
-        {
-        }
-
+        PropertyNode(JSGlobalData*, const Identifier& name, ExpressionNode* value, Type);
         virtual ~PropertyNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -508,19 +438,8 @@ namespace JSC {
 
     class PropertyListNode : public Node {
     public:
-        PropertyListNode(JSGlobalData* globalData, PropertyNode* node) JSC_FAST_CALL
-            : Node(globalData)
-            , m_node(node)
-        {
-        }
-
-        PropertyListNode(JSGlobalData* globalData, PropertyNode* node, PropertyListNode* list) JSC_FAST_CALL
-            : Node(globalData)
-            , m_node(node)
-        {
-            list->m_next = this;
-        }
-
+        PropertyListNode(JSGlobalData*, PropertyNode*);
+        PropertyListNode(JSGlobalData*, PropertyNode*, PropertyListNode*);
         virtual ~PropertyListNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -533,47 +452,32 @@ namespace JSC {
 
     class ObjectLiteralNode : public ExpressionNode {
     public:
-        ObjectLiteralNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-        {
-        }
-
-        ObjectLiteralNode(JSGlobalData* globalData, PropertyListNode* list) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_list(list)
-        {
-        }
-
+        ObjectLiteralNode(JSGlobalData*);
+        ObjectLiteralNode(JSGlobalData*, PropertyListNode*);
         virtual ~ObjectLiteralNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<PropertyListNode> m_list;
     };
     
     class BracketAccessorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        BracketAccessorNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_subscriptHasAssignments(subscriptHasAssignments)
-        {
-        }
-
+        BracketAccessorNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments);
         virtual ~BracketAccessorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual bool isLocation() const JSC_FAST_CALL { return true; }
-        virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return true; }
         ExpressionNode* base() JSC_FAST_CALL { return m_base.get(); }
         ExpressionNode* subscript() JSC_FAST_CALL { return m_subscript.get(); }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        virtual bool isLocation() const JSC_FAST_CALL { return true; }
+        virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return true; }
+
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         bool m_subscriptHasAssignments;
@@ -581,65 +485,41 @@ namespace JSC {
 
     class DotAccessorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DotAccessorNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_base(base)
-            , m_ident(ident)
-        {
-        }
-
+        DotAccessorNode(JSGlobalData*, ExpressionNode* base, const Identifier&);
         virtual ~DotAccessorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual bool isLocation() const JSC_FAST_CALL { return true; }
-        virtual bool isDotAccessorNode() const JSC_FAST_CALL { return true; }
         ExpressionNode* base() const JSC_FAST_CALL { return m_base.get(); }
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        virtual bool isLocation() const JSC_FAST_CALL { return true; }
+        virtual bool isDotAccessorNode() const JSC_FAST_CALL { return true; }
+
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
     };
 
     class ArgumentListNode : public Node {
     public:
-        ArgumentListNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : Node(globalData)
-            , m_expr(expr)
-        {
-        }
-
-        ArgumentListNode(JSGlobalData* globalData, ArgumentListNode* listNode, ExpressionNode* expr) JSC_FAST_CALL
-            : Node(globalData)
-            , m_expr(expr)
-        {
-            listNode->m_next = this;
-        }
-
+        ArgumentListNode(JSGlobalData*, ExpressionNode*);
+        ArgumentListNode(JSGlobalData*, ArgumentListNode*, ExpressionNode*);
         virtual ~ArgumentListNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
         RefPtr<ArgumentListNode> m_next;
         RefPtr<ExpressionNode> m_expr;
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class ArgumentsNode : public ParserRefCounted {
     public:
-        ArgumentsNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-        {
-        }
-
-        ArgumentsNode(JSGlobalData* globalData, ArgumentListNode* listNode) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_listNode(listNode)
-        {
-        }
-
+        ArgumentsNode(JSGlobalData*);
+        ArgumentsNode(JSGlobalData*, ArgumentListNode*);
         virtual ~ArgumentsNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -648,83 +528,53 @@ namespace JSC {
 
     class NewExprNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        NewExprNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
-        NewExprNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_expr(expr)
-            , m_args(args)
-        {
-        }
-
+        NewExprNode(JSGlobalData*, ExpressionNode*);
+        NewExprNode(JSGlobalData*, ExpressionNode*, ArgumentsNode*);
         virtual ~NewExprNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<ArgumentsNode> m_args;
     };
 
     class EvalFunctionCallNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        EvalFunctionCallNode(JSGlobalData* globalData, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_args(args)
-        {
-        }
-
+        EvalFunctionCallNode(JSGlobalData*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~EvalFunctionCallNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ArgumentsNode> m_args;
     };
 
     class FunctionCallValueNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        FunctionCallValueNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_expr(expr)
-            , m_args(args)
-        {
-        }
-
+        FunctionCallValueNode(JSGlobalData*, ExpressionNode*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~FunctionCallValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<ArgumentsNode> m_args;
     };
 
     class FunctionCallResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        FunctionCallResolveNode(JSGlobalData* globalData, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_ident(ident)
-            , m_args(args)
-        {
-        }
+        FunctionCallResolveNode(JSGlobalData*, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         virtual ~FunctionCallResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
         RefPtr<ArgumentsNode> m_args;
         size_t m_index; // Used by LocalVarFunctionCallNode.
@@ -733,21 +583,13 @@ namespace JSC {
     
     class FunctionCallBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_args(args)
-        {
-        }
-
+        FunctionCallBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~FunctionCallBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ArgumentsNode> m_args;
@@ -755,88 +597,62 @@ namespace JSC {
 
     class FunctionCallDotNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-            , m_args(args)
-        {
-        }
-
+        FunctionCallDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~FunctionCallDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     protected:
         RefPtr<ExpressionNode> m_base;
-        Identifier m_ident;
+        const Identifier m_ident;
         RefPtr<ArgumentsNode> m_args;
     };
 
     class CallFunctionCallDotNode : public FunctionCallDotNode {
     public:
-        CallFunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : FunctionCallDotNode(globalData, base, ident, args, divot, startOffset, endOffset)
-        {
-        }
+        CallFunctionCallDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
     
     class ApplyFunctionCallDotNode : public FunctionCallDotNode {
     public:
-        ApplyFunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-        : FunctionCallDotNode(globalData, base, ident, args, divot, startOffset, endOffset)
-        {
-        }
+        ApplyFunctionCallDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class PrePostResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        PrePostResolveNode(JSGlobalData* globalData, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::numberType()) // could be reusable for pre?
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_ident(ident)
-        {
-        }
+        PrePostResolveNode(JSGlobalData*, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     protected:
-        Identifier m_ident;
+        const Identifier m_ident;
     };
 
     class PostfixResolveNode : public PrePostResolveNode {
     public:
-        PostfixResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : PrePostResolveNode(globalData, ident, divot, startOffset, endOffset)
-            , m_operator(oper)
-        {
-        }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        PostfixResolveNode(JSGlobalData*, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         Operator m_operator;
     };
 
     class PostfixBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        PostfixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_operator(oper)
-        {
-        }
-
+        PostfixBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~PostfixBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         Operator m_operator;
@@ -844,21 +660,13 @@ namespace JSC {
 
     class PostfixDotNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        PostfixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-            , m_operator(oper)
-        {
-        }
-
+        PostfixDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~PostfixDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         Operator m_operator;
@@ -866,177 +674,121 @@ namespace JSC {
 
     class PostfixErrorNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        PostfixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_expr(expr)
-            , m_operator(oper)
-        {
-        }
-
+        PostfixErrorNode(JSGlobalData*, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~PostfixErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         Operator m_operator;
     };
 
     class DeleteResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteResolveNode(JSGlobalData* globalData, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_ident(ident)
-        {
-        }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        DeleteResolveNode(JSGlobalData*, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         Identifier m_ident;
     };
 
     class DeleteBracketNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-        {
-        }
-
+        DeleteBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~DeleteBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
     };
 
     class DeleteDotNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-        {
-        }
-
+        DeleteDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~DeleteDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
     };
 
     class DeleteValueNode : public ExpressionNode {
     public:
-        DeleteValueNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
+        DeleteValueNode(JSGlobalData*, ExpressionNode*);
         virtual ~DeleteValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
     };
 
     class VoidNode : public ExpressionNode {
     public:
-        VoidNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
+        VoidNode(JSGlobalData*, ExpressionNode*);
         virtual ~VoidNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
     };
 
     class TypeOfResolveNode : public ExpressionNode {
     public:
-        TypeOfResolveNode(JSGlobalData* globalData, const Identifier& ident) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::stringType())
-            , m_ident(ident)
-        {
-        }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        TypeOfResolveNode(JSGlobalData*, const Identifier&);
 
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         Identifier m_ident;
     };
 
     class TypeOfValueNode : public ExpressionNode {
     public:
-        TypeOfValueNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::stringType())
-            , m_expr(expr)
-        {
-        }
+        TypeOfValueNode(JSGlobalData*, ExpressionNode*);
 
         virtual ~TypeOfValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
     };
 
     class PrefixResolveNode : public PrePostResolveNode {
     public:
-        PrefixResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : PrePostResolveNode(globalData, ident, divot, startOffset, endOffset)
-            , m_operator(oper)
-        {
-        }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        PrefixResolveNode(JSGlobalData*, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         Operator m_operator;
     };
 
     class PrefixBracketNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
     public:
-        PrefixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_operator(oper)
-        {
-        }
-
+        PrefixBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~PrefixBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         Operator m_operator;
@@ -1044,21 +796,14 @@ namespace JSC {
 
     class PrefixDotNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
     public:
-        PrefixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-            , m_operator(oper)
-        {
-        }
+        PrefixDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         virtual ~PrefixDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         Operator m_operator;
@@ -1066,405 +811,237 @@ namespace JSC {
 
     class PrefixErrorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        PrefixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_expr(expr)
-            , m_operator(oper)
-        {
-        }
+        PrefixErrorNode(JSGlobalData*, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         virtual ~PrefixErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         Operator m_operator;
     };
 
     class UnaryOpNode : public ExpressionNode {
     public:
-        UnaryOpNode(JSGlobalData* globalData, ExpressionNode* expr)
-            : ExpressionNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
-        UnaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr)
-            : ExpressionNode(globalData, type)
-            , m_expr(expr)
-        {
-        }
-
+        UnaryOpNode(JSGlobalData*, ResultType, ExpressionNode*, OpcodeID);
         virtual ~UnaryOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL = 0;
-
     protected:
+        ExpressionNode* expr() { return m_expr.get(); }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        OpcodeID opcodeID() const { return m_opcodeID; }
+
         RefPtr<ExpressionNode> m_expr;
+        OpcodeID m_opcodeID;
     };
 
     class UnaryPlusNode : public UnaryOpNode {
     public:
-        UnaryPlusNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : UnaryOpNode(globalData, ResultType::numberType(), expr)
-        {
-        }
+        UnaryPlusNode(JSGlobalData*, ExpressionNode*);
 
-        virtual ExpressionNode* stripUnaryPlus() { return m_expr.get(); }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_to_jsnumber; }
+    private:
+        virtual ExpressionNode* stripUnaryPlus() { return expr(); }
     };
 
     class NegateNode : public UnaryOpNode {
     public:
-        NegateNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : UnaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_negate; }
+        NegateNode(JSGlobalData*, ExpressionNode*);
     };
 
     class BitwiseNotNode : public UnaryOpNode {
     public:
-        BitwiseNotNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : UnaryOpNode(globalData, ResultType::forBitOp(), expr)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_bitnot; }
+        BitwiseNotNode(JSGlobalData*, ExpressionNode*);
     };
 
     class LogicalNotNode : public UnaryOpNode {
     public:
-        LogicalNotNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : UnaryOpNode(globalData, ResultType::booleanType(), expr)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_not; }
+        LogicalNotNode(JSGlobalData*, ExpressionNode*);
     };
 
     class BinaryOpNode : public ExpressionNode {
     public:
-        BinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-            : ExpressionNode(globalData)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
-        BinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-            : ExpressionNode(globalData, type)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        BinaryOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
+        BinaryOpNode(JSGlobalData*, ResultType, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
         virtual ~BinaryOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL = 0;
+
+    protected:
+        OpcodeID opcodeID() const { return m_opcodeID; }
 
     protected:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
+    private:
+        OpcodeID m_opcodeID;
+    protected:
         bool m_rightHasAssignments;
     };
 
     class ReverseBinaryOpNode : public BinaryOpNode {
     public:
-        ReverseBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-            : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        ReverseBinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-            : BinaryOpNode(globalData, type, expr1, expr2, rightHasAssignments)
-        {
-        }
+        ReverseBinaryOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
+        ReverseBinaryOpNode(JSGlobalData*, ResultType, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class MultNode : public BinaryOpNode {
     public:
-        MultNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_mul; }
+        MultNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class DivNode : public BinaryOpNode {
     public:
-        DivNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_div; }
+        DivNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class ModNode : public BinaryOpNode {
     public:
-        ModNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_mod; }
+        ModNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class AddNode : public BinaryOpNode {
     public:
-        AddNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forAdd(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_add; }
+        AddNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class SubNode : public BinaryOpNode {
     public:
-        SubNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_sub; }
+        SubNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class LeftShiftNode : public BinaryOpNode {
     public:
-        LeftShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_lshift; }
+        LeftShiftNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class RightShiftNode : public BinaryOpNode {
     public:
-        RightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_rshift; }
+        RightShiftNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class UnsignedRightShiftNode : public BinaryOpNode {
     public:
-        UnsignedRightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_urshift; }
+        UnsignedRightShiftNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class LessNode : public BinaryOpNode {
     public:
-        LessNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_less; }
+        LessNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class GreaterNode : public ReverseBinaryOpNode {
     public:
-        GreaterNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : ReverseBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_less; }
+        GreaterNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class LessEqNode : public BinaryOpNode {
     public:
-        LessEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_lesseq; }
+        LessEqNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class GreaterEqNode : public ReverseBinaryOpNode {
     public:
-        GreaterEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : ReverseBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_lesseq; }
+        GreaterEqNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class ThrowableBinaryOpNode : public BinaryOpNode, public ThrowableExpressionData {
     public:
-        ThrowableBinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, type, expr1, expr2, rightHasAssignments)
-        {
-        }
-        ThrowableBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
-        {
-        }
+        ThrowableBinaryOpNode(JSGlobalData*, ResultType, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
+        ThrowableBinaryOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
     
     class InstanceOfNode : public ThrowableBinaryOpNode {
     public:
-        InstanceOfNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : ThrowableBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
+        InstanceOfNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_instanceof; }
-
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class InNode : public ThrowableBinaryOpNode {
     public:
-        InNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : ThrowableBinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_in; }
+        InNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class EqualNode : public BinaryOpNode {
     public:
-        EqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
+        EqualNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_eq; }
     };
 
     class NotEqualNode : public BinaryOpNode {
     public:
-        NotEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_neq; }
+        NotEqualNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class StrictEqualNode : public BinaryOpNode {
     public:
-        StrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
+        StrictEqualNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_stricteq; }
     };
 
     class NotStrictEqualNode : public BinaryOpNode {
     public:
-        NotStrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_nstricteq; }
+        NotStrictEqualNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class BitAndNode : public BinaryOpNode {
     public:
-        BitAndNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_bitand; }
+        BitAndNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class BitOrNode : public BinaryOpNode {
     public:
-        BitOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_bitor; }
+        BitOrNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     class BitXOrNode : public BinaryOpNode {
     public:
-        BitXOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) JSC_FAST_CALL
-            : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, rightHasAssignments)
-        {
-        }
-
-        virtual OpcodeID opcodeID() const JSC_FAST_CALL { return op_bitxor; }
+        BitXOrNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    /**
-     * m_expr1 && m_expr2, m_expr1 || m_expr2
-     */
+    // m_expr1 && m_expr2, m_expr1 || m_expr2
     class LogicalOpNode : public ExpressionNode {
     public:
-        LogicalOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper) JSC_FAST_CALL
-            : ExpressionNode(globalData, ResultType::booleanType())
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-            , m_operator(oper)
-        {
-        }
-
+        LogicalOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator);
         virtual ~LogicalOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
         LogicalOperator m_operator;
     };
 
-    /**
-     * The ternary operator, "m_logical ? m_expr1 : m_expr2"
-     */
+    // The ternary operator, "m_logical ? m_expr1 : m_expr2"
     class ConditionalNode : public ExpressionNode {
     public:
-        ConditionalNode(JSGlobalData* globalData, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_logical(logical)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-        {
-        }
-
+        ConditionalNode(JSGlobalData*, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2);
         virtual ~ConditionalNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_logical;
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
@@ -1472,45 +1049,29 @@ namespace JSC {
 
     class ReadModifyResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        ReadModifyResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_ident(ident)
-            , m_right(right)
-            , m_operator(oper)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        ReadModifyResolveNode(JSGlobalData*, const Identifier&, Operator, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~ReadModifyResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
-        Operator m_operator : 31;
-        bool m_rightHasAssignments : 1;
+        Operator m_operator;
+        bool m_rightHasAssignments;
     };
 
     class AssignResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignResolveNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_ident(ident)
-            , m_right(right)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        AssignResolveNode(JSGlobalData*, const Identifier&, ExpressionNode* right, bool rightHasAssignments);
         virtual ~AssignResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
@@ -1519,24 +1080,13 @@ namespace JSC {
 
     class ReadModifyBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        ReadModifyBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_right(right)
-            , m_operator(oper)
-            , m_subscriptHasAssignments(subscriptHasAssignments)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        ReadModifyBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~ReadModifyBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ExpressionNode> m_right;
@@ -1547,23 +1097,13 @@ namespace JSC {
 
     class AssignBracketNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_subscript(subscript)
-            , m_right(right)
-            , m_subscriptHasAssignments(subscriptHasAssignments)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        AssignBracketNode(JSGlobalData*, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~AssignBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ExpressionNode> m_right;
@@ -1573,22 +1113,13 @@ namespace JSC {
 
     class AssignDotNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-            , m_right(right)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        AssignDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~AssignDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
@@ -1597,23 +1128,13 @@ namespace JSC {
 
     class ReadModifyDotNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        ReadModifyDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableSubExpressionData(divot, startOffset, endOffset)
-            , m_base(base)
-            , m_ident(ident)
-            , m_right(right)
-            , m_operator(oper)
-            , m_rightHasAssignments(rightHasAssignments)
-        {
-        }
-
+        ReadModifyDotNode(JSGlobalData*, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~ReadModifyDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
@@ -1623,21 +1144,13 @@ namespace JSC {
 
     class AssignErrorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignErrorNode(JSGlobalData* globalData, ExpressionNode* left, Operator oper, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , ThrowableExpressionData(divot, startOffset, endOffset)
-            , m_left(left)
-            , m_operator(oper)
-            , m_right(right)
-        {
-        }
-
+        AssignErrorNode(JSGlobalData*, ExpressionNode* left, Operator, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset);
         virtual ~AssignErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_left;
         Operator m_operator;
         RefPtr<ExpressionNode> m_right;
@@ -1645,60 +1158,53 @@ namespace JSC {
 
     class CommaNode : public ExpressionNode {
     public:
-        CommaNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-        {
-        }
-
+        CommaNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2);
         virtual ~CommaNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
     };
     
     class VarDeclCommaNode : public CommaNode {
     public:
-        VarDeclCommaNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) JSC_FAST_CALL
-            : CommaNode(globalData, expr1, expr2)
-        {
-        }
+        VarDeclCommaNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2);
     };
 
     class ConstDeclNode : public ExpressionNode {
     public:
-        ConstDeclNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* in) JSC_FAST_CALL;
-
+        ConstDeclNode(JSGlobalData*, const Identifier&, ExpressionNode*);
         virtual ~ConstDeclNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        Identifier m_ident;
-        RefPtr<ConstDeclNode> m_next;
-        RefPtr<ExpressionNode> m_init;
-        
+        bool hasInitializer() const { return m_init; }
+        const Identifier& ident() { return m_ident; }
+
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual RegisterID* emitCodeSingle(BytecodeGenerator&) JSC_FAST_CALL;
+
+        Identifier m_ident;
+
+    public:
+        RefPtr<ConstDeclNode> m_next;
+
+    private:
+        RefPtr<ExpressionNode> m_init;
     };
 
     class ConstStatementNode : public StatementNode {
     public:
-        ConstStatementNode(JSGlobalData* globalData, ConstDeclNode* next) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_next(next)
-        {
-        }
-
+        ConstStatementNode(JSGlobalData*, ConstDeclNode* next);
         virtual ~ConstStatementNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ConstDeclNode> m_next;
     };
 
@@ -1706,7 +1212,7 @@ namespace JSC {
 
     class SourceElements : public ParserRefCounted {
     public:
-        SourceElements(JSGlobalData* globalData) : ParserRefCounted(globalData) {}
+        SourceElements(JSGlobalData*);
 
         void append(PassRefPtr<StatementNode>);
         void releaseContentsIntoVector(StatementVector& destination)
@@ -1722,28 +1228,26 @@ namespace JSC {
 
     class BlockNode : public StatementNode {
     public:
-        BlockNode(JSGlobalData*, SourceElements* children) JSC_FAST_CALL;
+        BlockNode(JSGlobalData*, SourceElements* children);
 
         virtual ~BlockNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
         StatementVector& children() { return m_children; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isBlock() const JSC_FAST_CALL { return true; }
 
-    private:
         StatementVector m_children;
     };
 
     class EmptyStatementNode : public StatementNode {
     public:
-        EmptyStatementNode(JSGlobalData* globalData) JSC_FAST_CALL // debug
-            : StatementNode(globalData)
-        {
-        }
+        EmptyStatementNode(JSGlobalData*);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return true; }
@@ -1751,142 +1255,98 @@ namespace JSC {
     
     class DebuggerStatementNode : public StatementNode {
     public:
-        DebuggerStatementNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : StatementNode(globalData)
-        {
-        }
+        DebuggerStatementNode(JSGlobalData*);
         
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class ExprStatementNode : public StatementNode {
     public:
-        ExprStatementNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
-        virtual bool isExprStatement() const JSC_FAST_CALL { return true; }
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        ExprStatementNode(JSGlobalData*, ExpressionNode*);
 
         ExpressionNode* expr() const { return m_expr.get(); }
 
     private:
+        virtual bool isExprStatement() const JSC_FAST_CALL { return true; }
+
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         RefPtr<ExpressionNode> m_expr;
     };
 
     class VarStatementNode : public StatementNode {
     public:
-        VarStatementNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-        {
-        }
-        
+        VarStatementNode(JSGlobalData*, ExpressionNode*);        
         virtual ~VarStatementNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
     };
 
     class IfNode : public StatementNode {
     public:
-        IfNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_condition(condition)
-            , m_ifBlock(ifBlock)
-        {
-        }
-
+        IfNode(JSGlobalData*, ExpressionNode* condition, StatementNode* ifBlock);
         virtual ~IfNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    protected:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    protected:
         RefPtr<ExpressionNode> m_condition;
         RefPtr<StatementNode> m_ifBlock;
     };
 
     class IfElseNode : public IfNode {
     public:
-        IfElseNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock) JSC_FAST_CALL
-            : IfNode(globalData, condition, ifBlock)
-            , m_elseBlock(elseBlock)
-        {
-        }
-
+        IfElseNode(JSGlobalData*, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock);
         virtual ~IfElseNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<StatementNode> m_elseBlock;
     };
 
     class DoWhileNode : public StatementNode {
     public:
-        DoWhileNode(JSGlobalData* globalData, StatementNode* statement, ExpressionNode* expr) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_statement(statement)
-            , m_expr(expr)
-        {
-        }
-
+        DoWhileNode(JSGlobalData*, StatementNode* statement, ExpressionNode*);
         virtual ~DoWhileNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<StatementNode> m_statement;
         RefPtr<ExpressionNode> m_expr;
     };
 
     class WhileNode : public StatementNode {
     public:
-        WhileNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-            , m_statement(statement)
-        {
-        }
-
+        WhileNode(JSGlobalData*, ExpressionNode*, StatementNode* statement);
         virtual ~WhileNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<StatementNode> m_statement;
     };
 
     class ForNode : public StatementNode {
     public:
-        ForNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-            , m_expr3(expr3)
-            , m_statement(statement)
-            , m_expr1WasVarDecl(expr1 && expr1WasVarDecl)
-        {
-            ASSERT(statement);
-        }
-
+        ForNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl);
         virtual ~ForNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
         RefPtr<ExpressionNode> m_expr3;
@@ -1896,15 +1356,14 @@ namespace JSC {
 
     class ForInNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ForInNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, StatementNode*) JSC_FAST_CALL;
-        ForInNode(JSGlobalData*, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, int divot, int startOffset, int endOffset) JSC_FAST_CALL;
-        
+        ForInNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, StatementNode*);
+        ForInNode(JSGlobalData*, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, int divot, int startOffset, int endOffset);
         virtual ~ForInNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_init;
         RefPtr<ExpressionNode> m_lexpr;
@@ -1915,77 +1374,49 @@ namespace JSC {
 
     class ContinueNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ContinueNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : StatementNode(globalData)
-        {
-        }
-
-        ContinueNode(JSGlobalData* globalData, const Identifier& ident) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_ident(ident)
-        {
-        }
+        ContinueNode(JSGlobalData*);
+        ContinueNode(JSGlobalData*, const Identifier&);
         
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
     };
 
     class BreakNode : public StatementNode, public ThrowableExpressionData {
     public:
-        BreakNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : StatementNode(globalData)
-        {
-        }
-
-        BreakNode(JSGlobalData* globalData, const Identifier& ident) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_ident(ident)
-        {
-        }
+        BreakNode(JSGlobalData*);
+        BreakNode(JSGlobalData*, const Identifier&);
         
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_ident;
     };
 
     class ReturnNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ReturnNode(JSGlobalData* globalData, ExpressionNode* value) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_value(value)
-        {
-        }
-
+        ReturnNode(JSGlobalData*, ExpressionNode* value);
         virtual ~ReturnNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         virtual bool isReturnNode() const JSC_FAST_CALL { return true; }
 
-    private:
         RefPtr<ExpressionNode> m_value;
     };
 
     class WithNode : public StatementNode {
     public:
-        WithNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement, uint32_t divot, uint32_t expressionLength) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-            , m_statement(statement)
-            , m_divot(divot)
-            , m_expressionLength(expressionLength)
-        {
-        }
-
+        WithNode(JSGlobalData*, ExpressionNode*, StatementNode*, uint32_t divot, uint32_t expressionLength);
         virtual ~WithNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<StatementNode> m_statement;
         uint32_t m_divot;
@@ -1994,58 +1425,38 @@ namespace JSC {
 
     class LabelNode : public StatementNode, public ThrowableExpressionData {
     public:
-        LabelNode(JSGlobalData* globalData, const Identifier& name, StatementNode* statement) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_name(name)
-            , m_statement(statement)
-        {
-        }
-
+        LabelNode(JSGlobalData*, const Identifier& name, StatementNode*);
         virtual ~LabelNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         Identifier m_name;
         RefPtr<StatementNode> m_statement;
     };
 
     class ThrowNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ThrowNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-        {
-        }
-
+        ThrowNode(JSGlobalData*, ExpressionNode*);
         virtual ~ThrowNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
     };
 
     class TryNode : public StatementNode {
     public:
-        TryNode(JSGlobalData* globalData, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_tryBlock(tryBlock)
-            , m_exceptionIdent(exceptionIdent)
-            , m_catchBlock(catchBlock)
-            , m_finallyBlock(finallyBlock)
-            , m_catchHasEval(catchHasEval)
-        {
-        }
-
+        TryNode(JSGlobalData*, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock);
         virtual ~TryNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<StatementNode> m_tryBlock;
         Identifier m_exceptionIdent;
         RefPtr<StatementNode> m_catchBlock;
@@ -2055,19 +1466,8 @@ namespace JSC {
 
     class ParameterNode : public ParserRefCounted {
     public:
-        ParameterNode(JSGlobalData* globalData, const Identifier& ident) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_ident(ident)
-        {
-        }
-
-        ParameterNode(JSGlobalData* globalData, ParameterNode* l, const Identifier& ident) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_ident(ident)
-        {
-            l->m_next = this;
-        }
-
+        ParameterNode(JSGlobalData*, const Identifier&);
+        ParameterNode(JSGlobalData*, ParameterNode*, const Identifier&);
         virtual ~ParameterNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -2205,22 +1605,19 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        bool isGenerated() JSC_FAST_CALL
+        bool isGenerated() const
         {
             return m_code;
         }
 
+        bool isHostFunction() const
+        {
 #if ENABLE(JIT)
-        bool isHostFunction() const JSC_FAST_CALL
-        {
             return m_jitCode && !m_code;
-        }
 #else
-        bool isHostFunction() const JSC_FAST_CALL
-        {
             return true;
-        }
 #endif
+        }
 
         virtual void mark();
 
@@ -2228,20 +1625,6 @@ namespace JSC {
         void finishParsing(Identifier* parameters, size_t parameterCount);
         
         UString toSourceString() const JSC_FAST_CALL { return source().toString(); }
-
-        // These objects are ref/deref'd a lot in the scope chain, so this is a faster ref/deref.
-        // If the virtual machine changes so this doesn't happen as much we can change back.
-        void ref()
-        {
-            if (++m_refCount == 1)
-                ScopeNode::ref();
-        }
-        void deref()
-        {
-            ASSERT(m_refCount);
-            if (!--m_refCount)
-                ScopeNode::deref();
-        }
 
         CodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*) JSC_FAST_CALL;
 #if ENABLE(JIT)
@@ -2266,7 +1649,7 @@ namespace JSC {
             return *m_code;
         }
         
-        CodeBlock& generatedBytecode() JSC_FAST_CALL
+        CodeBlock& generatedBytecode()
         {
             ASSERT(m_code);
             return *m_code;
@@ -2285,31 +1668,23 @@ namespace JSC {
         Identifier* m_parameters;
         size_t m_parameterCount;
         OwnPtr<CodeBlock> m_code;
-        unsigned m_refCount;
     };
 
     class FuncExprNode : public ExpressionNode {
     public:
-        FuncExprNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter = 0) JSC_FAST_CALL
-            : ExpressionNode(globalData)
-            , m_ident(ident)
-            , m_parameter(parameter)
-            , m_body(body)
-        {
-            m_body->finishParsing(source, m_parameter.get());
-        }
-
+        FuncExprNode(JSGlobalData*, const Identifier&, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter = 0);
         virtual ~FuncExprNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual bool isFuncExprNode() const JSC_FAST_CALL { return true; } 
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
 
         FunctionBodyNode* body() { return m_body.get(); }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        virtual bool isFuncExprNode() const JSC_FAST_CALL { return true; } 
+
         Identifier m_ident;
         RefPtr<ParameterNode> m_parameter;
         RefPtr<FunctionBodyNode> m_body;
@@ -2317,19 +1692,9 @@ namespace JSC {
 
     class FuncDeclNode : public StatementNode {
     public:
-        FuncDeclNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter = 0) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_ident(ident)
-            , m_parameter(parameter)
-            , m_body(body)
-        {
-            m_body->finishParsing(source, m_parameter.get());
-        }
-
+        FuncDeclNode(JSGlobalData*, const Identifier&, FunctionBodyNode*, const SourceCode&, ParameterNode* = 0);
         virtual ~FuncDeclNode();
         virtual void releaseNodes(NodeReleaser&);
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
 
@@ -2338,26 +1703,16 @@ namespace JSC {
         FunctionBodyNode* body() { return m_body.get(); }
 
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
         RefPtr<ParameterNode> m_parameter;
         RefPtr<FunctionBodyNode> m_body;
     };
 
     class CaseClauseNode : public ParserRefCounted {
     public:
-        CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_expr(expr)
-        {
-        }
-
-        CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr, SourceElements* children) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_expr(expr)
-        {
-            if (children)
-                children->releaseContentsIntoVector(m_children);
-        }
-
+        CaseClauseNode(JSGlobalData*, ExpressionNode*);
+        CaseClauseNode(JSGlobalData*, ExpressionNode*, SourceElements*);
         virtual ~CaseClauseNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -2371,19 +1726,8 @@ namespace JSC {
 
     class ClauseListNode : public ParserRefCounted {
     public:
-        ClauseListNode(JSGlobalData* globalData, CaseClauseNode* clause) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_clause(clause)
-        {
-        }
-
-        ClauseListNode(JSGlobalData* globalData, ClauseListNode* clauseList, CaseClauseNode* clause) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_clause(clause)
-        {
-            clauseList->m_next = this;
-        }
-
+        ClauseListNode(JSGlobalData*, CaseClauseNode*);
+        ClauseListNode(JSGlobalData*, ClauseListNode*, CaseClauseNode*);
         virtual ~ClauseListNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -2397,14 +1741,7 @@ namespace JSC {
 
     class CaseBlockNode : public ParserRefCounted {
     public:
-        CaseBlockNode(JSGlobalData* globalData, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2) JSC_FAST_CALL
-            : ParserRefCounted(globalData)
-            , m_list1(list1)
-            , m_defaultClause(defaultClause)
-            , m_list2(list2)
-        {
-        }
-
+        CaseBlockNode(JSGlobalData*, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2);
         virtual ~CaseBlockNode();
         virtual void releaseNodes(NodeReleaser&);
 
@@ -2419,19 +1756,13 @@ namespace JSC {
 
     class SwitchNode : public StatementNode {
     public:
-        SwitchNode(JSGlobalData* globalData, ExpressionNode* expr, CaseBlockNode* block) JSC_FAST_CALL
-            : StatementNode(globalData)
-            , m_expr(expr)
-            , m_block(block)
-        {
-        }
-
+        SwitchNode(JSGlobalData*, ExpressionNode*, CaseBlockNode*);
         virtual ~SwitchNode();
         virtual void releaseNodes(NodeReleaser&);
 
+    private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-    private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<CaseBlockNode> m_block;
     };
@@ -2468,4 +1799,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // NODES_H_
+#endif // Nodes_h
