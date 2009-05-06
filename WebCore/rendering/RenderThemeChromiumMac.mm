@@ -1779,15 +1779,23 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
     return false;
 }
 
+#if ENABLE(VIDEO)
+// FIXME: This enum is lifted from RenderThemeMac.mm  We need to decide which theme to use for the default controls, or decide to avoid wkDrawMediaUIPart and render our own.
+typedef enum {
+    MediaControllerThemeClassic   = 1,
+    MediaControllerThemeQT        = 2
+} MediaControllerThemeStyle;
+#endif
+
 bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaFullscreenButton, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(MediaFullscreenButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }
@@ -1795,7 +1803,7 @@ bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* o, const R
 bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
@@ -1805,7 +1813,7 @@ bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* o, const RenderO
         return false;
     
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(mediaElement->muted() ? MediaUnMuteButton : MediaMuteButton, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(mediaElement->muted() ? MediaUnMuteButton : MediaMuteButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }
@@ -1813,7 +1821,7 @@ bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* o, const RenderO
 bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
@@ -1823,7 +1831,7 @@ bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* o, const RenderO
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(mediaElement->canPlay() ? MediaPlayButton : MediaPauseButton, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(mediaElement->canPlay() ? MediaPlayButton : MediaPauseButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }
@@ -1831,12 +1839,12 @@ bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* o, const RenderO
 bool RenderThemeChromiumMac::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekBackButton, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(MediaSeekBackButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }
@@ -1844,12 +1852,12 @@ bool RenderThemeChromiumMac::paintMediaSeekBackButton(RenderObject* o, const Ren
 bool RenderThemeChromiumMac::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekForwardButton, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(MediaSeekForwardButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }
@@ -1857,7 +1865,7 @@ bool RenderThemeChromiumMac::paintMediaSeekForwardButton(RenderObject* o, const 
 bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
@@ -1875,7 +1883,7 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const Render
         currentTime = player->currentTime();
     }
 
-    wkDrawMediaSliderTrack(paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration);
+    wkDrawMediaSliderTrack(MediaControllerThemeClassic, paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration);
 #endif
     return false;
 }
@@ -1883,12 +1891,12 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const Render
 bool RenderThemeChromiumMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSliderThumb, paintInfo.context->platformContext(), r, node->active());
+    wkDrawMediaUIPart(MediaSliderThumb, MediaControllerThemeClassic, paintInfo.context->platformContext(), r, node->active());
 #endif
     return false;
 }

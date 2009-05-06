@@ -1,3 +1,22 @@
+2009-05-06  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25597
+        Fix API drift compile errors that occurred while this was ifdef-ed out.
+        The two big issues were that RenderObject::element() became
+        RenderObject::node() and some of the wk* drawing functions had
+        an extra theme parameter added to the argument list.
+
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderThumb):
+
 2009-05-06  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.
