@@ -132,11 +132,6 @@ namespace JSC {
 
         void clearEnumerationCache();
 
-        void* addressOfCount()
-        {
-            return &m_refCount;
-        }
-
         signed char transitionCount() const
         {
             // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.

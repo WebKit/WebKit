@@ -1,5 +1,15 @@
 2009-05-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Made RefCounted::m_refCount private.
+
+        * runtime/Structure.h: Removed addressOfCount.
+        * wtf/RefCounted.h: Made m_refCount private.
+        Added addressOfCount.
+
+2009-05-06  Darin Adler  <darin@apple.com>
+
         Fixed assertion seen a lot!
 
         * parser/Nodes.cpp:
