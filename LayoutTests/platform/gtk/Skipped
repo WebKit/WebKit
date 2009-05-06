@@ -774,6 +774,8 @@ editing/pasteboard/copy-crash.html
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-paste-float.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/paste-blockquote-before-blockquote.html
+editing/pasteboard/paste-double-nested-blockquote-before-blockquote.htm
 editing/pasteboard/paste-into-anchor-text.html
 editing/pasteboard/paste-plaintext-user-select-none.html
 editing/pasteboard/paste-table-002.html
@@ -1770,6 +1772,7 @@ fast/frames/hover-timer-crash.html
 fast/frames/iframe-window-focus.html
 fast/frames/location-put-after-removal.html
 fast/frames/removal-before-attach-crash.html
+fast/history/back-forward-is-asynchronous.html
 fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html

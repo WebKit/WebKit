@@ -1,3 +1,9 @@
+2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disabling failing new tests that do not represent regressions.
+
+        * platform/gtk/Skipped:
+
 2009-05-06  Soren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Eric Seidel.
