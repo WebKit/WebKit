@@ -36,13 +36,13 @@ class RootInlineBox;
 class InlineBox {
 public:
     InlineBox(RenderObject* obj)
-        : m_renderer(obj)
+        : m_next(0)
+        , m_prev(0)
+        , m_parent(0)
+        , m_renderer(obj)
         , m_x(0)
         , m_y(0)
         , m_width(0)
-        , m_next(0)
-        , m_prev(0)
-        , m_parent(0)
         , m_firstLine(false)
         , m_constructed(false)
         , m_bidiEmbeddingLevel(0)
@@ -69,13 +69,13 @@ public:
 
     InlineBox(RenderObject* obj, int x, int y, int width, bool firstLine, bool constructed,
               bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : m_renderer(obj)
+        : m_next(next)
+        , m_prev(prev)
+        , m_parent(parent)
+        , m_renderer(obj)
         , m_x(x)
         , m_y(y)
         , m_width(width)
-        , m_next(next)
-        , m_prev(prev)
-        , m_parent(parent)
         , m_firstLine(firstLine)
         , m_constructed(constructed)
         , m_bidiEmbeddingLevel(0)
@@ -247,18 +247,18 @@ protected:
     virtual int svgBoxHeight() const { return 0; }
 #endif
 
+private:
+    InlineBox* m_next; // The next element on the same line as us.
+    InlineBox* m_prev; // The previous element on the same line as us.
+
+    InlineFlowBox* m_parent; // The box that contains us.
+
 public:
     RenderObject* m_renderer;
 
     int m_x;
     int m_y;
     int m_width;
-
-private:
-    InlineBox* m_next; // The next element on the same line as us.
-    InlineBox* m_prev; // The previous element on the same line as us.
-
-    InlineFlowBox* m_parent; // The box that contains us.
     
     // Some of these bits are actually for subclasses and moved here to compact the structures.
 

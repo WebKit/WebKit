@@ -1,3 +1,14 @@
+2009-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler, Dan Bernstein
+
+        <rdar://problem/6860068> Reduce size of InlineBox in 64-bit
+
+        Re-order the data members of InlineBox to save 8 bytes when building 64-bit.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2009-05-06  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.
