@@ -109,7 +109,7 @@ void JIT::emitTimeoutCheck()
     m_bytecodeIndex += OPCODE_LENGTH(name); \
     break;
 
-#define CTI_COMPILE_BINARY_OP(name) \
+#define DEFINE_BINARY_OP(name) \
     case name: { \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2); \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2); \
@@ -118,7 +118,7 @@ void JIT::emitTimeoutCheck()
         NEXT_OPCODE(name); \
     }
 
-#define CTI_COMPILE_UNARY_OP(name) \
+#define DEFINE_UNARY_OP(name) \
     case name: { \
         emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2); \
         emitCTICall(JITStubs::cti_##name); \
@@ -153,6 +153,21 @@ void JIT::privateCompileMainPass()
         OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
 
         switch (opcodeID) {
+        DEFINE_BINARY_OP(op_del_by_val)
+        DEFINE_BINARY_OP(op_div)
+        DEFINE_BINARY_OP(op_in)
+        DEFINE_BINARY_OP(op_less)
+        DEFINE_BINARY_OP(op_lesseq)
+        DEFINE_BINARY_OP(op_urshift)
+        DEFINE_UNARY_OP(op_get_pnames)
+        DEFINE_UNARY_OP(op_is_boolean)
+        DEFINE_UNARY_OP(op_is_function)
+        DEFINE_UNARY_OP(op_is_number)
+        DEFINE_UNARY_OP(op_is_object)
+        DEFINE_UNARY_OP(op_is_string)
+        DEFINE_UNARY_OP(op_is_undefined)
+        DEFINE_UNARY_OP(op_negate)
+        DEFINE_UNARY_OP(op_typeof)
         case op_mov: {
             int src = currentInstruction[2].u.operand;
             int dst = currentInstruction[1].u.operand;
@@ -514,7 +529,6 @@ void JIT::privateCompileMainPass()
             storePtr(regT0, BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])));
             NEXT_OPCODE(op_put_by_val);
         }
-        CTI_COMPILE_BINARY_OP(op_lesseq)
         case op_loop_if_true: {
             emitTimeoutCheck();
 
@@ -536,12 +550,6 @@ void JIT::privateCompileMainPass()
             emitCTICall(JITStubs::cti_op_resolve_base);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_resolve_base);
-        }
-        case op_negate: {
-            emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
-            emitCTICall(JITStubs::cti_op_negate);
-            emitPutVirtualRegister(currentInstruction[1].u.operand);
-            NEXT_OPCODE(op_negate);
         }
         case op_resolve_skip: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
@@ -582,7 +590,6 @@ void JIT::privateCompileMainPass()
             end.link(this);
             NEXT_OPCODE(op_resolve_global);
         }
-        CTI_COMPILE_BINARY_OP(op_div)
         case op_pre_dec: {
             compileFastArith_op_pre_dec(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_pre_dec);
@@ -774,7 +781,6 @@ void JIT::privateCompileMainPass()
             RECORD_JUMP_TARGET(target + 2);
             NEXT_OPCODE(op_jtrue);
         }
-        CTI_COMPILE_BINARY_OP(op_less)
         case op_neq: {
             emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
             emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
@@ -789,7 +795,6 @@ void JIT::privateCompileMainPass()
             compileFastArith_op_post_dec(currentInstruction[1].u.operand, currentInstruction[2].u.operand);
             NEXT_OPCODE(op_post_dec);
         }
-        CTI_COMPILE_BINARY_OP(op_urshift)
         case op_bitxor: {
             emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
             emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
@@ -835,12 +840,6 @@ void JIT::privateCompileMainPass()
 #endif
             NEXT_OPCODE(op_throw);
         }
-        case op_get_pnames: {
-            emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
-            emitCTICall(JITStubs::cti_op_get_pnames);
-            emitPutVirtualRegister(currentInstruction[1].u.operand);
-            NEXT_OPCODE(op_get_pnames);
-        }
         case op_next_pname: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
             unsigned target = currentInstruction[3].u.operand;
@@ -861,13 +860,6 @@ void JIT::privateCompileMainPass()
             emitCTICall(JITStubs::cti_op_pop_scope);
             NEXT_OPCODE(op_pop_scope);
         }
-        CTI_COMPILE_UNARY_OP(op_typeof)
-        CTI_COMPILE_UNARY_OP(op_is_undefined)
-        CTI_COMPILE_UNARY_OP(op_is_boolean)
-        CTI_COMPILE_UNARY_OP(op_is_number)
-        CTI_COMPILE_UNARY_OP(op_is_string)
-        CTI_COMPILE_UNARY_OP(op_is_object)
-        CTI_COMPILE_UNARY_OP(op_is_function)
         case op_stricteq: {
             compileOpStrictEq(currentInstruction, OpStrictEq);
             NEXT_OPCODE(op_stricteq);
@@ -891,7 +883,6 @@ void JIT::privateCompileMainPass()
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_to_jsnumber);
         }
-        CTI_COMPILE_BINARY_OP(op_in)
         case op_push_new_scope: {
             Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
             emitPutJITStubArgConstant(ident, 1);
@@ -967,13 +958,6 @@ void JIT::privateCompileMainPass()
             emitCTICall(JITStubs::cti_op_switch_string);
             jump(regT0);
             NEXT_OPCODE(op_switch_string);
-        }
-        case op_del_by_val: {
-            emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 1, regT2);
-            emitPutJITStubArgFromVirtualRegister(currentInstruction[3].u.operand, 2, regT2);
-            emitCTICall(JITStubs::cti_op_del_by_val);
-            emitPutVirtualRegister(currentInstruction[1].u.operand);
-            NEXT_OPCODE(op_del_by_val);
         }
         case op_put_getter: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT2);

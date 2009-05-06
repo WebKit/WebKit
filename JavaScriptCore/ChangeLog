@@ -1,5 +1,14 @@
 2009-05-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+        
+        Simplified a bit of codegen.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
+2009-05-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Cameron Zwarich.
         
         Moved all the JIT stub related code into one place.
