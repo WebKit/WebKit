@@ -1,3 +1,21 @@
+2009-05-05  Antony Sargent  <asargent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Switch V8EventListenerList to use HashTable<T>.
+        https://bugs.webkit.org/show_bug.cgi?id=25496
+        
+        This avoids some tricky issues with event listener removal in the 
+        current implementation and has slightly better performance.
+
+        No new functionality so no new tests.
+
+        * bindings/v8/V8EventListenerList.cpp: Added V8EventListenerListIterator.
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::size):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+
 2009-05-05  Darin Fisher  <darin@chromium.org>
 
         Fixing build bustage.

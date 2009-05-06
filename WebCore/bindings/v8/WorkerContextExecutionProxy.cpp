@@ -199,7 +199,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     v8::Handle<v8::Object> globalObject = m_context->Global();
     globalObject->Set(implicitProtoString, jsWorkerContext);
 
-    m_listeners.set(new V8EventListenerList("m_listeners"));
+    m_listeners.set(new V8EventListenerList());
 }
 
 v8::Local<v8::Function> WorkerContextExecutionProxy::GetConstructor(V8ClassIndex::V8WrapperType type)

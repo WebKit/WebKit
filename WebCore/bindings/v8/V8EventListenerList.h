@@ -33,36 +33,64 @@
 
 #include <v8.h>
 #include <wtf/Vector.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
     class V8EventListener;
+    class V8EventListenerListIterator;
 
-    // This is a container for V8EventListener objects that also does some caching to speed up finding entries by v8::Object.
+    // This is a container for V8EventListener objects that uses the identity hash of the v8::Object to
+    // speed up lookups
     class V8EventListenerList {
     public:
-        static const size_t maxKeyNameLength = 254;
+        // Because v8::Object identity hashes are not guaranteed to be unique, we unfortunately can't just map
+        // an int to V8EventListener. Instead we define a HashMap of int to Vector of V8EventListener
+        // called a ListenerMultiMap.
+        typedef Vector<V8EventListener*>* Values;
+        struct ValuesTraits : HashTraits<Values> {
+            static const bool needsDestruction = true;
+        };
+        typedef HashMap<int, Values, DefaultHash<int>::Hash, HashTraits<int>, ValuesTraits> ListenerMultiMap;
 
-        // The name should be distinct from any other V8EventListenerList within the same process, and <= maxKeyNameLength characters.
-        explicit V8EventListenerList(const char* name);
+        V8EventListenerList();
         ~V8EventListenerList();
 
-        typedef Vector<V8EventListener*>::iterator iterator;
-        V8EventListenerList::iterator begin();
+        friend class V8EventListenerListIterator;
+        typedef V8EventListenerListIterator iterator;        
+
+        iterator begin();
         iterator end();
 
-        // In addition to adding the listener to this list, this also caches the V8EventListener as a hidden property on its wrapped
-        // v8 listener object, so we can quickly look it up later.
         void add(V8EventListener*);
         void remove(V8EventListener*);
-        V8EventListener* find(v8::Local<v8::Object>, bool isInline);
+        V8EventListener* find(v8::Local<v8::Object>, bool isAttribute);
         void clear();
-        size_t size() { return m_list.size(); }
+        size_t size() { return m_table.size(); }
 
     private:
-        v8::Handle<v8::String> getKey(bool isInline);
-        v8::Persistent<v8::String> m_inlineKey;
-        v8::Persistent<v8::String> m_nonInlineKey;
-        Vector<V8EventListener*> m_list;
+        ListenerMultiMap m_table;
+
+        // we also keep a reverse mapping of V8EventListener to v8::Object identity hash,
+        // in order to speed up removal by V8EventListener
+        HashMap<V8EventListener*, int> m_reverseTable;
+    };
+
+    class V8EventListenerListIterator {
+    public:
+        ~V8EventListenerListIterator();
+        void operator++();
+        bool operator==(const V8EventListenerListIterator&);
+        bool operator!=(const V8EventListenerListIterator&);
+        V8EventListener* operator*();
+    private:
+        friend class V8EventListenerList;
+        explicit V8EventListenerListIterator(V8EventListenerList*);
+        V8EventListenerListIterator(V8EventListenerList*, bool shouldSeekToEnd);
+        void seekToEnd();
+
+        V8EventListenerList* m_list;
+        V8EventListenerList::ListenerMultiMap::iterator m_iter;
+        size_t m_vectorIndex;
     };
 
 } // namespace WebCore

@@ -35,93 +35,149 @@
 
 namespace WebCore {
 
-V8EventListenerList::V8EventListenerList(const char* name)
+V8EventListenerListIterator::V8EventListenerListIterator(V8EventListenerList* list)
+    : m_list(list)
+    , m_vectorIndex(0)
+    , m_iter(list->m_table.begin())
 {
-    ASSERT(strlen(name) <= maxKeyNameLength);
-    v8::HandleScope handleScope;
+}
 
-    // Write the name into a temporary buffer, leaving 1 space at the beginning
-    // for a prefix we'll vary between the inline and non-inline keys.
-    char keyBuffer[maxKeyNameLength + 2] = { 0 };
-    strncpy(keyBuffer + 1, name, maxKeyNameLength);
-    keyBuffer[0] = '1';
-    m_inlineKey = v8::Persistent<v8::String>::New(v8::String::New(keyBuffer));
-    keyBuffer[0] = '2';
-    m_nonInlineKey = v8::Persistent<v8::String>::New(v8::String::New(keyBuffer));
+V8EventListenerListIterator::V8EventListenerListIterator(V8EventListenerList* list, bool shouldSeekToEnd)
+    : m_list(list)
+    , m_vectorIndex(0)
+    , m_iter(list->m_table.begin())
+{
+    if (shouldSeekToEnd)
+        seekToEnd();
+}
+
+V8EventListenerListIterator::~V8EventListenerListIterator() { }
+
+void V8EventListenerListIterator::operator++()
+{
+    if (m_iter != m_list->m_table.end()) {
+        Vector<V8EventListener*>* vector = m_iter->second;
+        if (m_vectorIndex + 1 < vector->size()) {
+            m_vectorIndex++;
+            return;
+        }
+        m_vectorIndex = 0;
+        ++m_iter;
+    }
+}
+
+bool V8EventListenerListIterator::operator==(const V8EventListenerListIterator& other)
+{
+    return other.m_iter == m_iter && other.m_vectorIndex == m_vectorIndex && other.m_list == m_list;
+}
+
+bool V8EventListenerListIterator::operator!=(const V8EventListenerListIterator& other)
+{
+    return !operator==(other);
+}
+
+V8EventListener* V8EventListenerListIterator::operator*()
+{
+    if (m_iter != m_list->m_table.end()) {
+        Vector<V8EventListener*>* vector = m_iter->second;
+        if (m_vectorIndex < vector->size())
+            return vector->at(m_vectorIndex);
+    }
+    return 0;
+}
+
+void V8EventListenerListIterator::seekToEnd()
+{
+    m_iter = m_list->m_table.end();
+    m_vectorIndex = 0;
+}
+
+
+V8EventListenerList::V8EventListenerList()
+{
 }
 
 V8EventListenerList::~V8EventListenerList()
 {
-    m_inlineKey.Dispose();
-    m_nonInlineKey.Dispose();
 }
 
-V8EventListenerList::iterator V8EventListenerList::begin()
+V8EventListenerListIterator V8EventListenerList::begin()
 {
-    return m_list.begin();
+    return iterator(this);
 }
 
-V8EventListenerList::iterator V8EventListenerList::end()
+V8EventListenerListIterator V8EventListenerList::end()
 {
-    return m_list.end();
+    return iterator(this, true);
 }
 
-v8::Handle<v8::String> V8EventListenerList::getKey(bool isInline)
+
+static int getKey(v8::Local<v8::Object> object)
 {
-    return isInline ? m_inlineKey : m_nonInlineKey;
+    // 0 is a sentinel value for the HashMap key, so we map it to 1.
+    int hash = object->GetIdentityHash();
+    if (!hash)
+        return 1;
+    return hash;
 }
 
-// See comment in .h file for this function, and update accordingly if implementation details change here.
 void V8EventListenerList::add(V8EventListener* listener)
 {
     ASSERT(v8::Context::InContext());
-    m_list.append(listener);
-
     v8::HandleScope handleScope;
+
     v8::Local<v8::Object> object = listener->getListenerObject();
-    v8::Local<v8::Value> value = v8::External::Wrap(listener);
-    object->SetHiddenValue(getKey(listener->isAttribute()), value);
+    int key = getKey(object);
+    Vector<V8EventListener*>* vector = m_table.get(key);
+    if (!vector) {
+        vector = new Vector<V8EventListener*>();
+        m_table.set(key, vector);
+    }
+    vector->append(listener);
+    m_reverseTable.set(listener, key);
 }
 
 void V8EventListenerList::remove(V8EventListener* listener)
 {
-    ASSERT(v8::Context::InContext());
-    v8::HandleScope handleScope;
-    v8::Handle<v8::String> key = getKey(listener->isAttribute());
-    for (size_t i = 0; i < m_list.size(); i++) {
-        V8EventListener* element = m_list.at(i);
-        if (element->isAttribute() == listener->isAttribute() && element == listener) {
-            v8::Local<v8::Object> object = listener->getListenerObject();
+    if (m_reverseTable.contains(listener)) {
+        int key = m_reverseTable.get(listener);
+        Vector<V8EventListener*>* vector = m_table.get(key);
+        if (!vector)
+            return;
+        for (size_t j = 0; j < vector->size(); j++) {
+            if (vector->at(j) == listener) {
+                vector->remove(j);
+                if (!vector->size())
+                    m_table.remove(key);
 
-            // FIXME(asargent) this check for hidden value being !empty is a workaround for
-            // http://code.google.com/p/v8/issues/detail?id=300
-            // Once the fix for that is pulled into chromium we can remove the check here.
-            if (!object->GetHiddenValue(key).IsEmpty())
-                object->DeleteHiddenValue(getKey(listener->isAttribute()));
-            m_list.remove(i);
-            break;
+                m_reverseTable.remove(listener);
+                return;
+            }
         }
     }
 }
 
 void V8EventListenerList::clear()
 {
-    ASSERT(v8::Context::InContext());
-    v8::HandleScope handleScope;
-    for (size_t i = 0; i < m_list.size(); i++) {
-        V8EventListener* element = m_list.at(i);
-        v8::Local<v8::Object> object = element->getListenerObject();
-        object->DeleteHiddenValue(getKey(element->isAttribute()));
-    }
-    m_list.clear();
+    m_table.clear();
+    m_reverseTable.clear();
 }
 
-V8EventListener* V8EventListenerList::find(v8::Local<v8::Object> object, bool isInline)
+V8EventListener* V8EventListenerList::find(v8::Local<v8::Object> object, bool isAttribute)
 {
-    v8::Local<v8::Value> value = object->GetHiddenValue(getKey(isInline));
-    if (value.IsEmpty())
+    ASSERT(v8::Context::InContext());
+    int key = getKey(object);
+
+    Vector<V8EventListener*>* vector = m_table.get(key);
+    if (!vector)
         return 0;
-    return reinterpret_cast<V8EventListener*>(v8::External::Unwrap(value));
+
+    for (size_t i = 0; i < vector->size(); i++) {
+        V8EventListener* element = vector->at(i);
+        if (isAttribute == element->isAttribute() && object == element->getListenerObject())
+            return element;
+    }
+    return 0;
 }
 
 } // namespace WebCore
