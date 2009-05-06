@@ -66,10 +66,10 @@ private:
     void releaseFontData();
 
     mutable Vector<pair<const FontData*, bool>, 1> m_fontList;
+    RefPtr<FontSelector> m_fontSelector;
     mutable int m_familyIndex;
     mutable Pitch m_pitch;
     mutable bool m_loadingCustomFonts;
-    RefPtr<FontSelector> m_fontSelector;
     unsigned m_generation;
 
     friend class Font;

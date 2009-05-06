@@ -1,5 +1,17 @@
 2009-05-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt, Dan Bernstein
+        
+        <rdar://problem/6860197> Reduce the size of FontFallbackList in 64-bit
+
+        Re-order the data members of FontFallbackList to save 8 bytes when building 64-bit.
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        * platform/graphics/FontFallbackList.h:
+
+2009-05-06  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler, Dan Bernstein
 
         <rdar://problem/6860068> Reduce size of InlineBox in 64-bit
