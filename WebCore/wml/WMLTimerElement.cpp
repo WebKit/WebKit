@@ -24,6 +24,7 @@
 #include "WMLTimerElement.h"
 
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"

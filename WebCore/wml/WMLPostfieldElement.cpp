@@ -26,6 +26,7 @@
 #include "CString.h"
 #include "TextEncoding.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "WMLDocument.h"
 #include "WMLGoElement.h"
 #include "WMLNames.h"

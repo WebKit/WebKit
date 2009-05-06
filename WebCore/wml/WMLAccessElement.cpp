@@ -23,6 +23,7 @@
 #if ENABLE(WML)
 #include "WMLAccessElement.h"
 
+#include "MappedAttribute.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"
 #include "WMLVariables.h"

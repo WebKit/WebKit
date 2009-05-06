@@ -25,6 +25,7 @@
 
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderObject.h"
 #include "WMLErrorHandling.h"
 #include "WMLNames.h"

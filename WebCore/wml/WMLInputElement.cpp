@@ -28,6 +28,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextEvent.h"
 #include "WMLDocument.h"

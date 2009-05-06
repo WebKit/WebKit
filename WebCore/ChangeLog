@@ -1,3 +1,28 @@
+2009-05-06  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Fix WML enabled builds by including "MappedAttribute.h" in several places.
+
+        * wml/WMLAElement.cpp:
+        * wml/WMLAccessElement.cpp:
+        * wml/WMLBRElement.cpp:
+        * wml/WMLCardElement.cpp:
+        * wml/WMLDoElement.cpp:
+        * wml/WMLElement.cpp:
+        * wml/WMLFieldSetElement.cpp:
+        * wml/WMLGoElement.cpp:
+        * wml/WMLImageElement.cpp:
+        * wml/WMLInputElement.cpp:
+        * wml/WMLMetaElement.cpp:
+        * wml/WMLOnEventElement.cpp:
+        * wml/WMLOptGroupElement.cpp:
+        * wml/WMLOptionElement.cpp:
+        * wml/WMLPElement.cpp:
+        * wml/WMLPostfieldElement.cpp:
+        * wml/WMLSetvarElement.cpp:
+        * wml/WMLTableElement.cpp:
+        * wml/WMLTemplateElement.cpp:
+        * wml/WMLTimerElement.cpp:
+
 2009-05-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

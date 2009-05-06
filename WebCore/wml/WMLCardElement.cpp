@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "NodeList.h"
 #include "RenderStyle.h"
 #include "WMLDocument.h"

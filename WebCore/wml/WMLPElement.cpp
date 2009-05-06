@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "NodeList.h"
 #include "WMLNames.h"
 

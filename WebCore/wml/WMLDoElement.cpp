@@ -27,6 +27,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderButton.h"
 #include "WMLCardElement.h"

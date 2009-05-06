@@ -30,6 +30,7 @@
 
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderBR.h"
 
 namespace WebCore {

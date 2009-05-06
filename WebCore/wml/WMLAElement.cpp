@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "RenderBox.h"
 #include "WMLNames.h"

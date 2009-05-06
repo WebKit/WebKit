@@ -24,6 +24,7 @@
 #include "WMLOnEventElement.h"
 
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "WMLErrorHandling.h"
 #include "WMLEventHandlingElement.h"
 #include "WMLIntrinsicEventHandler.h"

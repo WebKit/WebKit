@@ -28,6 +28,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "ResourceRequest.h"
 #include "TextEncoding.h"
 #include "WMLCardElement.h"

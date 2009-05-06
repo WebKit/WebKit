@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "RenderImage.h"
 #include "WMLNames.h"
 #include "WMLVariables.h"

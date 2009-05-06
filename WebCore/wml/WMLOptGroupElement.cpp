@@ -24,6 +24,7 @@
 #include "WMLOptGroupElement.h"
 
 #include "Document.h"
+#include "MappedAttribute.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "RenderStyle.h"

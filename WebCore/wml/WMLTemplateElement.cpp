@@ -23,6 +23,7 @@
 #if ENABLE(WML)
 #include "WMLTemplateElement.h"
 
+#include "MappedAttribute.h"
 #include "NodeList.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
