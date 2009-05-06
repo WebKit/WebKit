@@ -1,3 +1,10 @@
+2009-05-06  Kevin McCullough  <kmccullough@apple.com>
+
+        -Clarified a comment
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2009-05-06  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Fix WML enabled builds by including "MappedAttribute.h" in several places.

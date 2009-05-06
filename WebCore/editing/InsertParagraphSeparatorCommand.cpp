@@ -180,7 +180,8 @@ void InsertParagraphSeparatorCommand::doApply()
             }
             appendNode(blockToInsert, startBlock);
         } else {
-            // If we are pasting a mail blockquote in this, unquoted, area then we don't want the newline within the blockquote or else it will also be quoted.
+            // We can get here if we pasted a copied portion of a blockquote with a newline at the end and are trying to paste it
+            // into an unquoted area. We then don't want the newline within the blockquote or else it will also be quoted.
             Node* highestBlockquote = highestEnclosingNodeOfType(canonicalPos, &isMailBlockquote);
             insertNodeAfter(blockToInsert, highestBlockquote ? highestBlockquote : startBlock);
         }
