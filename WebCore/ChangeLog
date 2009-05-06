@@ -1,3 +1,17 @@
+2009-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - fix an assertion failure in RemoveNodeCommand() when deleting a <br>
+          between a block and a mail blockquote
+
+        Test: editing/deleting/removeNodeCommand-assert.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Pass the start block
+        to prune() instead of passing m_upstreamStart.node(), because the latter
+        may have been removed already.
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         No review, roll out only.

@@ -1,3 +1,13 @@
+2009-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - test for an assertion failure in RemoveNodeCommand() when deleting a
+          <br> between a block and a mail blockquote
+
+        * editing/deleting/removeNodeCommand-assert-expected.txt: Added.
+        * editing/deleting/removeNodeCommand-assert.html: Added.
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         No review, roll out only.
