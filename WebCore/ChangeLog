@@ -1,3 +1,27 @@
+2009-05-05  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Adler.
+
+        Rendering fix for <select> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=25558
+
+        When switching a <select> element from display:none to default
+        display, we would fail to invalidate the parent's pref widths in some
+        situations:
+
+        When attaching the element, RenderMenuList::updateOptionsWidth would
+        call setNeedsLayoutAndPrefWidthsRecalc before the parent pointer was
+        set. This would mark the pref widths as dirty, but not for any parent
+        objects.
+
+        When RenderObjectChildList::appendChildNode later calls
+        setNeedsLayoutAndPrefWidthsRecalc again, with a valid parent pointer,
+        nothing would be done because the pref widths were already dirty for.
+        the RenderMenuList.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+
 2009-05-05  Antony Sargent  <asargent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
