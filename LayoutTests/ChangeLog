@@ -1,3 +1,14 @@
+2009-05-06  Soren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Changed the toString behaviour for non document dom node event handlers in the V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=25544
+
+        * fast/events/event-function-toString.html: Added.
+        * fast/events/resources/event-function-toString.js: Added.
+        (normalizedFunctionString):
+
 2009-05-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.

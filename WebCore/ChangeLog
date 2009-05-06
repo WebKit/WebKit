@@ -1,3 +1,29 @@
+2009-05-06  Soren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Changed the toString behaviour for non document dom node event handlers in the V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=25544
+
+        In the V8 bindings non document dom node event handlers are wrapped in a number of with blocks and uses an inner
+        function. This causes the default toString on such a handler to return all this wrapper code. As some web sites
+        use the source of an event handler to create new functions this wrapper code causes compatibility problems.
+
+        Create a specific toString function for these handlers which will return a function source compatible with the
+        source returned by the JSC bindings and other browsers.
+
+        Test: fast/events/event-function-toString.html
+
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener):
+        (WebCore::V8LazyEventListener::getListenerFunction):
+        (WebCore::V8LazyEventListenerToString):
+        (WebCore::V8LazyEventListener::getWrappedListenerFunction):
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::create):
+
 2009-05-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -37,10 +37,11 @@
 
 namespace WebCore {
 
-V8LazyEventListener::V8LazyEventListener(Frame *frame, const String& code, const String& functionName)
+V8LazyEventListener::V8LazyEventListener(Frame *frame, const String& code, const String& functionName, bool isSVGEvent)
     : V8AbstractEventListener(frame, true)
     , m_code(code)
     , m_functionName(functionName)
+    , m_isSVGEvent(isSVGEvent)
     , m_compiled(false)
     , m_wrappedFunctionCompiled(false)
 {
@@ -93,7 +94,7 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
         // See issue 944690.
         //
         // The ECMAScript spec says (very obliquely) that the parameter to an event handler is named "evt".
-        String code = "(function (evt) {\n";
+        String code = "(function (evt) {\n  ";
         code.append(m_code);
         code.append("\n})");
 
@@ -132,6 +133,13 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Va
     V8Proxy* proxy = V8Proxy::retrieve(m_frame);
     return proxy->CallFunction(handlerFunction, receiver, 1, parameters);
 }
+
+
+static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& args)
+{
+    return args.Callee()->GetHiddenValue(v8::String::New("toStringString"));
+}
+
 
 v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
 {
@@ -183,6 +191,26 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
                 ASSERT(value->IsFunction());
 
                 m_wrappedFunction = v8::Persistent<v8::Function>::New(v8::Local<v8::Function>::Cast(value));
+
+                // Change the toString function on the wrapper function to avoid it returning the source for the actual wrapper function. Instead
+                // it returns source for a clean wrapper function with the event argument wrapping the event source code. The reason for this
+                // is that some web sites uses toString on event functions and the evals the source returned (some times a RegExp is applied as
+                // well) for some other use. That fails miserably if the actual wrapper source is returned.
+                v8::Local<v8::FunctionTemplate> toStringTemplate = v8::FunctionTemplate::New(V8LazyEventListenerToString);
+                v8::Local<v8::Function> toStringFunction = toStringTemplate->GetFunction();
+                String toStringResult = "function ";
+                toStringResult.append(m_functionName);
+                toStringResult.append("(");
+                if (m_isSVGEvent)
+                    toStringResult.append("evt");
+                else
+                    toStringResult.append("event");
+                toStringResult.append(") {\n  ");
+                toStringResult.append(m_code);
+                toStringResult.append(  "\n}");
+                toStringFunction->SetHiddenValue(v8::String::New("toStringString"), v8ExternalString(toStringResult));
+                m_wrappedFunction->Set(v8::String::New("toString"), toStringFunction);
+
 #ifndef NDEBUG
                 V8Proxy::RegisterGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
 #endif

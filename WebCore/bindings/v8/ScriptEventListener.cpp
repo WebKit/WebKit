@@ -46,7 +46,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
     if (!frame)
         return 0;
 
-    return V8LazyEventListener::create(frame, attr->value(), attr->localName().string());
+    return V8LazyEventListener::create(frame, attr->value(), attr->localName().string(), node->isSVGElement());
 }
 
 PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
@@ -54,7 +54,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (!frame)
         return 0;
 
-    return V8LazyEventListener::create(frame, attr->value(), attr->localName().string());
+    return V8LazyEventListener::create(frame, attr->value(), attr->localName().string(), frame->document()->isSVGDocument());
 }
 
 } // namespace WebCore
