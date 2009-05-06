@@ -1,3 +1,11 @@
+2009-05-06  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        We need to include StringExtras.h on Windows CE to access the strdup function.
+
+        * plugins/PluginStream.cpp:
+
 2009-05-06  Soren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Eric Seidel.
