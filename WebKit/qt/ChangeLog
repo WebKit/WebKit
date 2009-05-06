@@ -1,3 +1,13 @@
+2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt build fix.
+
+        Dont' use ENABLE() in Qt API headers, as they are not available when building
+        against the API.
+
+        * Api/qwebdatabase.h:
+        * Api/qwebsecurityorigin.h:
+
 2009-05-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.
