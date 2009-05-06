@@ -1,5 +1,11 @@
 2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Fixing typo in my last commit.
+
+        * platform/gtk/Skipped:
+
+2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Disabling failing new tests that do not represent regressions.
 
         * platform/gtk/Skipped:
