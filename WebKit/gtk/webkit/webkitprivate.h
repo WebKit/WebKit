@@ -168,7 +168,10 @@ extern "C" {
     webkit_web_view_notify_ready (WebKitWebView* web_view);
 
     void
-    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request);
+    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request, const WebCore::ResourceResponse& response = WebCore::ResourceResponse());
+
+    void
+    webkit_download_set_suggested_filename(WebKitDownload* download, const gchar* suggestedFilename);
 
     WebKitWebPolicyDecision*
     webkit_web_policy_decision_new (WebKitWebFrame*, WebCore::FramePolicyFunction);

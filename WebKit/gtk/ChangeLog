@@ -1,3 +1,23 @@
+2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24786
+        WebKitDownload sometimes suggests peculiar filenames
+
+        When a download is requested by an ongoing request, use the already
+        provided response to set the suggested filename for the WebKitDownload
+        object, if available.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::download):
+        * webkit/webkitdownload.cpp:
+        (_WebKitDownloadPrivate::webkit_download_set_property):
+        (_WebKitDownloadPrivate::webkit_download_get_suggested_filename):
+        (_WebKitDownloadPrivate::webkit_download_set_suggested_filename):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+
 2009-05-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

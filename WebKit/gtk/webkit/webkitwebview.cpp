@@ -2143,11 +2143,14 @@ void webkit_web_view_notify_ready(WebKitWebView* webView)
     g_signal_emit(webView, webkit_web_view_signals[WEB_VIEW_READY], 0, &isHandled);
 }
 
-void webkit_web_view_request_download(WebKitWebView* webView, WebKitNetworkRequest* request)
+void webkit_web_view_request_download(WebKitWebView* webView, WebKitNetworkRequest* request, const ResourceResponse& response)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WebKitDownload* download = webkit_download_new(request);
+
+    if (!response.isNull() && !response.suggestedFilename().isEmpty())
+        webkit_download_set_suggested_filename(download, response.suggestedFilename().utf8().data());
 
     gboolean handled;
     g_signal_emit(webView, webkit_web_view_signals[DOWNLOAD_REQUESTED], 0, download, &handled);

@@ -184,17 +184,10 @@ static void webkit_download_set_property(GObject* object, guint prop_id, const G
 {
     WebKitDownload* download = WEBKIT_DOWNLOAD(object);
     WebKitDownloadPrivate* priv = download->priv;
-    KURL url;
 
     switch(prop_id) {
     case PROP_NETWORK_REQUEST:
         priv->networkRequest = WEBKIT_NETWORK_REQUEST(g_value_dup_object(value));
-        // This is safe as network-request is a construct only property and
-        // suggestedFilename is initially null.
-        url = KURL(KURL(), webkit_network_request_get_uri(priv->networkRequest));
-        url.setQuery(String());
-        url.removeRef();
-        priv->suggestedFilename = g_strdup(decodeURLEscapeSequences(url.lastPathComponent()).utf8().data());
         break;
     case PROP_DESTINATION_URI:
         webkit_download_set_destination_uri(download, g_value_get_string(value));
@@ -532,8 +525,24 @@ const gchar* webkit_download_get_suggested_filename(WebKitDownload* download)
     g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), NULL);
 
     WebKitDownloadPrivate* priv = download->priv;
+    if (priv->suggestedFilename)
+        return priv->suggestedFilename;
+
+    KURL url = KURL(KURL(), webkit_network_request_get_uri(priv->networkRequest));
+    url.setQuery(String());
+    url.removeRef();
+    priv->suggestedFilename = g_strdup(decodeURLEscapeSequences(url.lastPathComponent()).utf8().data());
     return priv->suggestedFilename;
 }
+
+// for internal use only
+void webkit_download_set_suggested_filename(WebKitDownload* download, const gchar* suggestedFilename)
+{
+    WebKitDownloadPrivate* priv = download->priv;
+    g_free(priv->suggestedFilename);
+    priv->suggestedFilename = g_strdup(suggestedFilename);
+}
+
 
 /**
  * webkit_download_get_destination_uri:

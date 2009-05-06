@@ -909,13 +909,18 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     g_signal_emit_by_name(m_frame, "load-done", false);
 }
 
-void FrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse&)
+void FrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse& response)
 {
     // FIXME: We could reuse the same handle here, but when I tried
     // implementing that the main load would fail and stop, so I have
     // simplified this case for now.
     handle->cancel();
-    startDownload(request);
+
+    WebKitNetworkRequest* networkRequest = webkit_network_request_new(request.url().string().utf8().data());
+    WebKitWebView* view = getViewFromFrame(m_frame);
+
+    webkit_web_view_request_download(view, networkRequest, response);
+    g_object_unref(networkRequest);
 }
 
 ResourceError FrameLoaderClient::cancelledError(const ResourceRequest& request)
