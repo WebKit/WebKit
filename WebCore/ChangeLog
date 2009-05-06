@@ -1,3 +1,18 @@
+2009-05-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+        [Gtk] Additional support is needed for caret browsing
+
+        Emit AtkText::text-selection-changed when the selection changes
+        and the current selection is of Range (ie, the start and end
+        positions are different) type. This seems to match what Gecko
+        does.
+
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+
 2009-05-05  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
