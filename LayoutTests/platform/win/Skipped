@@ -591,3 +591,7 @@ http/tests/navigation/redirect-cycle.html
 # disable until 25220 is fixed: Loading a .ogv file into Safari downloads the file instead of playing it in a media document, even if XiphQT is installed (25220)
 media/video-click-dblckick-standalone.html
 media/video-document-types.html
+
+# Bug 25583: New SVG regression tests added in r43269 fail on Windows <https://bugs.webkit.org/show_bug.cgi?id=25583>
+svg/transforms/text-with-pattern-inside-transformed-html.xhtml
+svg/transforms/text-with-pattern-with-svg-transform.svg

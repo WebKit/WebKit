@@ -1,3 +1,15 @@
+2009-05-05  Adam Roben  <aroben@apple.com>
+
+        Skip newly-added SVG tests that fail on Windows
+
+        See Bug 25583: New SVG regression tests added in r43269 fail on
+        Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25583>
+
+        Rubber-stamped in advance by Eric Seidel.
+
+        * platform/win/Skipped: Added the two new SVG tests.
+
 2009-05-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
