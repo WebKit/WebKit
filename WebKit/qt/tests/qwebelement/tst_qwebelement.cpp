@@ -119,7 +119,7 @@ void tst_QWebElement::cleanup()
 
 void tst_QWebElement::textHtml()
 {
-    QString html = "<body><p>test</p></body>";
+    QString html = "<head></head><body><p>test</p></body>";
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
     QVERIFY(!body.isNull());

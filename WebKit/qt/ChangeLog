@@ -1,3 +1,13 @@
+2009-05-06  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        After commit rev @43215, setHtml() without a <head> tag,
+        automatically adds it, so update our test case to respect this.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::textHtml):
+
 2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt build fix.
