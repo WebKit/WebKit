@@ -2,10 +2,10 @@
 VPATH += $$PWD
 
 CONFIG(debug, debug|release) {
-    GENERATED_SOURCES_DIR = generated/debug
+    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/debug
     OBJECTS_DIR = obj/debug
 } else { # Release
-    GENERATED_SOURCES_DIR = generated/release
+    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/release
     OBJECTS_DIR = obj/release
 }
 
