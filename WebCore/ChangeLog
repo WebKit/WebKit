@@ -1,3 +1,13 @@
+2009-05-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, fixes for wx trunk builds.
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/wx/RenderThemeWx.cpp:
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+
 2009-05-06  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Darin Fisher.

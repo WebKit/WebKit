@@ -309,7 +309,7 @@ bool MyApp::OnInit()
     }
 
     time(&startTime);
-    if (argc == optind+1 && strcmp((char*)argv[optind], "-") == 0) {
+    if (argc == optind+1 && argv[optind].Find("-") == 0) {
         char filenameBuffer[2048];
         while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
             wxString filename = wxString::FromUTF8(filenameBuffer);

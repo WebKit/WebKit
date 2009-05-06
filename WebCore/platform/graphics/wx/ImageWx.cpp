@@ -132,7 +132,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
     gc->Clip(dst.x(), dst.y(), dst.width(), dst.height());
 #if wxCHECK_VERSION(2,9,0)
-    gc->DrawGraphicsBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
+    gc->DrawBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
 #else
     gc->DrawGraphicsBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
 #endif

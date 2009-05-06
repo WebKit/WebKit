@@ -45,7 +45,7 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
     CGFontRef cgFont;
 
 #ifdef wxOSX_USE_CORE_TEXT && wxOSX_USE_CORE_TEXT
-    cgFont = CTFontCopyGraphicsFont((CTFontRef)font->MacGetCTFont(), NULL);
+    cgFont = CTFontCopyGraphicsFont((CTFontRef)font->OSXGetCTFont(), NULL);
 #else
     ATSFontRef fontRef;
     

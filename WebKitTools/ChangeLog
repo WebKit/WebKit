@@ -1,3 +1,11 @@
+2009-05-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, fixes for wx trunk builds.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (MyApp::OnInit):
+        * wx/build-wxwebkit:
+
 2009-05-06  Steve Falkenburg  <sfalken@apple.com>
 
         Explicitly set WebKitPaintNativeControls to false to allow Windows results to match Mac.

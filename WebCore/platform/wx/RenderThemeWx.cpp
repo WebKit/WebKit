@@ -32,10 +32,10 @@
 #include "NotImplemented.h"
 #include "RenderView.h"
 
-#include "WebKit/wx/WebView.h"
-
-#include <wx/dcgraph.h>
 #include <wx/defs.h>
+
+#include <wx/dc.h>
+#include <wx/dcgraph.h>
 #include <wx/renderer.h>
 #include <wx/dcclient.h>
 #include <wx/scrolwin.h>
