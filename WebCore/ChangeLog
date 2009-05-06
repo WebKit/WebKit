@@ -1,3 +1,18 @@
+2009-05-06  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25513
+        The V8 bindings convert every javascript property to its associated css style
+        name. It then calls functions that convert that name to an id. This makes
+        getting or setting css styles on elements slow.
+        
+        The patch fixes this by caching the results of the transformation, mapping a
+        javascript property name to its css property id. It then calls the already
+        public webkit methods that take the id in place of the string property names.
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+
 2009-05-06  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.

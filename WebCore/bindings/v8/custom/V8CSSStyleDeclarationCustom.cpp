@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSStyleDeclaration.h"
 
+#include "CSSParser.h"
 #include "CSSValue.h"
 #include "CSSPrimitiveValue.h"
 #include "EventTarget.h"
@@ -42,6 +43,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -75,6 +77,13 @@ static bool hasCSSPropertyNamePrefix(const String& propertyName, const char* pre
     return false;
 }
 
+class CSSPropertyInfo {
+public:
+    int propID;
+    bool hadPixelOrPosPrefix;
+    bool wasFilter;
+};
+
 // When getting properties on CSSStyleDeclarations, the name used from
 // Javascript and the actual name of the property are not the same, so
 // we have to do the following translation.  The translation turns upper
@@ -86,47 +95,61 @@ static bool hasCSSPropertyNamePrefix(const String& propertyName, const char* pre
 // Also, certain prefixes such as 'pos', 'css-' and 'pixel-' are stripped
 // and the hadPixelOrPosPrefix out parameter is used to indicate whether or
 // not the property name was prefixed with 'pos-' or 'pixel-'.
-static String cssPropertyName(const String& propertyName, bool& hadPixelOrPosPrefix)
+static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
 {
-    hadPixelOrPosPrefix = false;
+    String propertyName = toWebCoreString(v8PropertyName);
+    typedef HashMap<String, CSSPropertyInfo*> CSSPropertyInfoMap;
+    DEFINE_STATIC_LOCAL(CSSPropertyInfoMap, map, ());
+    CSSPropertyInfo* propInfo = map.get(propertyName);
+    if (!propInfo) {
+        unsigned length = propertyName.length();
+        bool hadPixelOrPosPrefix = false;
+        if (!length)
+            return 0;
 
-    unsigned length = propertyName.length();
-    if (!length)
-        return String();
+        Vector<UChar> name;
+        name.reserveCapacity(length);
 
-    Vector<UChar> name;
-    name.reserveCapacity(length);
+        unsigned i = 0;
 
-    unsigned i = 0;
-
-    if (hasCSSPropertyNamePrefix(propertyName, "css"))
-        i += 3;
-    else if (hasCSSPropertyNamePrefix(propertyName, "pixel")) {
-        i += 5;
-        hadPixelOrPosPrefix = true;
-    } else if (hasCSSPropertyNamePrefix(propertyName, "pos")) {
-        i += 3;
-        hadPixelOrPosPrefix = true;
-    } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
-            || hasCSSPropertyNamePrefix(propertyName, "khtml")
-            || hasCSSPropertyNamePrefix(propertyName, "apple"))
-        name.append('-');
-    else if (WTF::isASCIIUpper(propertyName[0]))
-        return String();
-
-    name.append(WTF::toASCIILower(propertyName[i++]));
-
-    for (; i < length; ++i) {
-        UChar c = propertyName[i];
-        if (!WTF::isASCIIUpper(c))
-            name.append(c);
-        else {
+        if (hasCSSPropertyNamePrefix(propertyName, "css"))
+            i += 3;
+        else if (hasCSSPropertyNamePrefix(propertyName, "pixel")) {
+            i += 5;
+            hadPixelOrPosPrefix = true;
+        } else if (hasCSSPropertyNamePrefix(propertyName, "pos")) {
+            i += 3;
+            hadPixelOrPosPrefix = true;
+        } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
+                || hasCSSPropertyNamePrefix(propertyName, "khtml")
+                || hasCSSPropertyNamePrefix(propertyName, "apple"))
             name.append('-');
-            name.append(WTF::toASCIILower(c));
+        else if (WTF::isASCIIUpper(propertyName[0]))
+            return 0;
+
+        name.append(WTF::toASCIILower(propertyName[i++]));
+
+        for (; i < length; ++i) {
+            UChar c = propertyName[i];
+            if (!WTF::isASCIIUpper(c))
+                name.append(c);
+            else {
+                name.append('-');
+                name.append(WTF::toASCIILower(c));
+            }
+        }
+
+        String propName = String::adopt(name);
+        int propertyID = cssPropertyID(propName);
+        if (propertyID) {
+            propInfo = new CSSPropertyInfo();
+            propInfo->hadPixelOrPosPrefix = hadPixelOrPosPrefix;
+            propInfo->wasFilter = (propName == "filter");
+            propInfo->propID = propertyID;
+            map.add(propertyName, propInfo);
         }
     }
-
-    return String::adopt(name);
+    return propInfo;
 }
 
 NAMED_PROPERTY_GETTER(CSSStyleDeclaration)
@@ -137,30 +160,32 @@ NAMED_PROPERTY_GETTER(CSSStyleDeclaration)
         return notHandledByInterceptor();
 
     // Search the style declaration.
-    CSSStyleDeclaration* imp = V8Proxy::ToNativeObject<CSSStyleDeclaration>(V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
-
-    bool hadPixelOrPosPrefix = false;
-    String propertyName = cssPropertyName(toWebCoreString(name), hadPixelOrPosPrefix);
+    CSSStyleDeclaration* imp =
+        V8Proxy::ToNativeObject<CSSStyleDeclaration>(V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
+    CSSPropertyInfo* propInfo = cssPropertyInfo(name);
 
     // Do not handle non-property names.
-    if (!CSSStyleDeclaration::isPropertyName(propertyName))
+    if (!propInfo)
         return notHandledByInterceptor();
 
 
-    RefPtr<CSSValue> cssValue = imp->getPropertyCSSValue(propertyName);
+    RefPtr<CSSValue> cssValue = imp->getPropertyCSSValue(propInfo->propID);
     if (cssValue) {
-        if (hadPixelOrPosPrefix && cssValue->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-            return v8::Number::New(static_cast<CSSPrimitiveValue*>(cssValue.get())->getFloatValue(CSSPrimitiveValue::CSS_PX));
+        if (propInfo->hadPixelOrPosPrefix &&
+            cssValue->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+            return v8::Number::New(static_cast<CSSPrimitiveValue*>(
+                cssValue.get())->getFloatValue(CSSPrimitiveValue::CSS_PX));
+        }
         return v8StringOrNull(cssValue->cssText());
     }
 
-    String result = imp->getPropertyValue(propertyName);
+    String result = imp->getPropertyValue(propInfo->propID);
     if (result.isNull())
         result = "";  // convert null to empty string.
 
     // The 'filter' attribute is made undetectable in KJS/WebKit
     // to avoid confusion with IE's filter extension.
-    if (propertyName == "filter")
+    if (propInfo->wasFilter)
         return v8UndetectableString(result);
 
     return v8String(result);
@@ -169,19 +194,25 @@ NAMED_PROPERTY_GETTER(CSSStyleDeclaration)
 NAMED_PROPERTY_SETTER(CSSStyleDeclaration)
 {
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertySetter");
-    CSSStyleDeclaration* imp = V8Proxy::ToNativeObject<CSSStyleDeclaration>(V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
-
-    bool hadPixelOrPosPrefix = false;
-    String prop = cssPropertyName(toWebCoreString(name), hadPixelOrPosPrefix);
-    if (!CSSStyleDeclaration::isPropertyName(prop))
+    CSSStyleDeclaration* imp =
+        V8Proxy::ToNativeObject<CSSStyleDeclaration>(
+            V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
+    CSSPropertyInfo* propInfo = cssPropertyInfo(name);
+    if (!propInfo)
         return notHandledByInterceptor();
 
     String propertyValue = valueToStringWithNullCheck(value);
-    if (hadPixelOrPosPrefix)
+    if (propInfo->hadPixelOrPosPrefix)
         propertyValue.append("px");
 
     ExceptionCode ec = 0;
-    imp->setProperty(prop, propertyValue, ec);
+    int importantIndex = propertyValue.find("!important", 0, false);
+    bool important = false;
+    if (importantIndex != -1) {
+        important = true;
+        propertyValue = propertyValue.left(importantIndex - 1);
+    }
+    imp->setProperty(propInfo->propID, propertyValue, important, ec);
 
     if (ec)
         throwError(ec);
