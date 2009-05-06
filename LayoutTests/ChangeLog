@@ -1,3 +1,27 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add an ASSERT(useTransforms) to mapLocalToContainer implementations in SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+
+        This required a change to SVGPaintServerPattern::setup
+        That change fixed drawing of transformed SVG text with objectBoundingBox patterns.
+        text-with-pattern-with-svg-transform.svg shows the improvement from this change
+        text-with-pattern-inside-transformed-html.xhtml shows no change, but documents
+        that this change does not break CSS transformed pattern text.
+
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum: Added.
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt: Added.
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum: Added.
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.txt: Added.
+        * svg/transforms/text-with-pattern-inside-transformed-html.xhtml: Added.
+        * svg/transforms/text-with-pattern-with-svg-transform.svg: Added.
+
 2009-05-05  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

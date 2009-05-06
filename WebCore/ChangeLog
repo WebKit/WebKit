@@ -1,3 +1,27 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add an ASSERT(useTransforms) to mapLocalToContainer implementations in SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=25532
+        https://bugs.webkit.org/show_bug.cgi?id=25568
+
+        Adding this ASSERT exposed a bug in SVGPaintServerPattern::setup
+        which was causing transformed SVG text when filled/stroked with a
+        pattern using patternUnits=objectBoundingBox to draw incorrectly.
+
+        I fixed the incorrect drawing (by removing the broken code) and added
+        two test cases to test the fix:
+        * svg/transforms/text-with-pattern-inside-transformed-html.xhtml
+        * svg/transforms/text-with-pattern-with-svg-transform.svg
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::mapLocalToContainer):
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2009-05-05  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

@@ -97,12 +97,7 @@ TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
-    FloatRect targetRect;
-    if (isPaintingText) {
-        IntRect textBoundary = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
-        targetRect = object->absoluteTransform().inverse().mapRect(textBoundary);
-    } else
-        targetRect = object->objectBoundingBox();
+    FloatRect targetRect = object->objectBoundingBox();
 
     const SVGRenderStyle* style = object->style()->svgStyle();
     bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();
