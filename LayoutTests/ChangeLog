@@ -1,3 +1,12 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        No review, roll out only.
+
+        Roll out r23072 since it broke layout tests
+
+        * accessibility/ignore-anonymous-block-expected.txt: Removed.
+        * accessibility/ignore-anonymous-block.html: Removed.
+
 2009-05-05  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 
         Reviewed by Eric Seidel.

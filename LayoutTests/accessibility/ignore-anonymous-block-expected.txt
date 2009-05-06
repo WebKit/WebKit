@@ -1,4 +1,0 @@
-Text in outer div Node.
-Text in inner div Node.
-Anonymous Block is ignored. Test Passed
-

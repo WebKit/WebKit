@@ -1177,9 +1177,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
                 return true;
         }
     }
-
-    if (m_renderer->isAnonymousBlock())
-        return true;
         
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole == TextAreaRole || ariaRole == StaticTextRole) {

@@ -1,3 +1,12 @@
+2009-05-05  Eric Seidel  <eric@webkit.org>
+
+        No review, roll out only.
+
+        Roll out r23072 since it broke layout tests
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2009-05-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.
