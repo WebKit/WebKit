@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CursorGtk.h"
 
-#include "NotImplemented.h"
 #include <wtf/Assertions.h>
 
 #include <gdk/gdk.h>
@@ -274,8 +273,8 @@ const Cursor& verticalTextCursor()
 
 const Cursor& cellCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = gdk_cursor_new(GDK_PLUS);
+    return c;
 }
 
 const Cursor& contextMenuCursor()
@@ -286,8 +285,8 @@ const Cursor& contextMenuCursor()
 
 const Cursor& noDropCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorNoDrop);
+    return c;
 }
 
 const Cursor& copyCursor()
@@ -298,8 +297,8 @@ const Cursor& copyCursor()
 
 const Cursor& progressCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorProgress);
+    return c;
 }
 
 const Cursor& aliasCursor()
@@ -310,14 +309,13 @@ const Cursor& aliasCursor()
 
 const Cursor& noneCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorNone);
+    return c;
 }
 
 const Cursor& notAllowedCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    return noDropCursor();
 }
 
 const Cursor& zoomInCursor()
@@ -334,14 +332,14 @@ const Cursor& zoomOutCursor()
 
 const Cursor& grabCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorGrab);
+    return c;
 }
 
 const Cursor& grabbingCursor()
 {
-    notImplemented();
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorGrabbing);
+    return c;
 }
 
 }

@@ -1,5 +1,23 @@
 2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Gustavo Noronha.
+
+        Use mozilla cursors for the previously not implemented
+        cursors. The manual-tests/cursor.html is looking complete
+        now.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::cellCursor):
+        (WebCore::noDropCursor):
+        (WebCore::progressCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/gtk/CursorGtk.h:
+
+2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Xan Lopez.
 
         Properly indent the header file.
