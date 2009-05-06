@@ -1429,18 +1429,6 @@ void FrameLoader::scheduleHistoryNavigation(int steps)
         return;
     }
 
-    // If the steps to navigate is not zero (which needs to force a reload), and if we think the navigation is going to be a fragment load
-    // (when the URL we're going to navigate to is the same as the current one, except for the fragment part - but not exactly the same because that's a reload),
-    // then we don't need to schedule the navigation.
-    if (steps != 0) {
-        KURL destination = historyURL(steps);
-        // FIXME: This doesn't seem like a reliable way to tell whether or not the load will be a fragment load.
-        if (equalIgnoringRef(m_URL, destination) && m_URL != destination) {
-            goBackOrForward(steps);
-            return;
-        }
-    }
-    
     scheduleRedirection(new ScheduledRedirection(steps));
 }
 
@@ -4181,28 +4169,6 @@ int FrameLoader::getHistoryLength()
     if (Page* page = m_frame->page())
         return page->backForwardList()->backListCount() + 1;
     return 0;
-}
-
-KURL FrameLoader::historyURL(int distance)
-{
-    if (Page* page = m_frame->page()) {
-        BackForwardList* list = page->backForwardList();
-        HistoryItem* item = list->itemAtIndex(distance);
-        if (!item) {
-            if (distance > 0) {
-                int forwardListCount = list->forwardListCount();
-                if (forwardListCount > 0)
-                    item = list->itemAtIndex(forwardListCount);
-            } else {
-                int backListCount = list->backListCount();
-                if (backListCount > 0)
-                    item = list->itemAtIndex(-backListCount);
-            }
-        }
-        if (item)
-            return item->url();
-    }
-    return KURL();
 }
 
 void FrameLoader::addHistoryItemForFragmentScroll()

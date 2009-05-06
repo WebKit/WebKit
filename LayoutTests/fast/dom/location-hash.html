@@ -24,7 +24,7 @@
     
     function step() {
         switch (state) {
-            case 0:
+        case 0:
             shouldBe('window.history.length == originalHistoryLength', true);
             shouldBe('window.location.hash', '');
             window.location.hash = 'foo';
@@ -45,21 +45,33 @@
             shouldBe('window.history.length == originalHistoryLength + 2', true);
             break;        
         case 3:
-            window.history.back();
+            window.history.back(); // This should take effect asynchronously
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            break;
+        case 4:
             shouldBe('window.location.hash', '#foo');
             shouldBe("window.location == originalLocation + '#foo'", true);
             break;
-        case 4:
-            window.history.back();
-            shouldBe('window.location.hash', '');
-            shouldBe("window.location == originalLocation", true);
-            break;
         case 5:
-            window.history.forward();
+            window.history.back(); // This should take effect asynchronously
             shouldBe('window.location.hash', '#foo');
             shouldBe("window.location == originalLocation + '#foo'", true);
             break;
         case 6:
+            shouldBe('window.location.hash', '');
+            shouldBe("window.location == originalLocation", true);
+            break;
+        case 7:
+            window.history.forward(); // This should take effect asynchronously
+            shouldBe('window.location.hash', '');
+            shouldBe("window.location == originalLocation", true);
+            break;
+        case 8:
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            break;
+        case 9:
             window.location.hash = '';
             if (numErrors == 0)
                 print("SUCCESS!", "green")
@@ -73,7 +85,7 @@
         }
         
         state ++;
-        step();
+        setTimeout(step, 0);
     }
         
     function runTests() {

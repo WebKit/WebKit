@@ -525,8 +525,6 @@ namespace WebCore {
 
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
-        KURL historyURL(int distance);
-
         // Returns true if argument is a JavaScript URL.
         bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
 

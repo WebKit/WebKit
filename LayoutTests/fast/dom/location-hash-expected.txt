@@ -11,8 +11,14 @@ PASS: window.history.length == originalHistoryLength + 2 should be true and is.
 PASS: window.location.hash should be #bar and is.
 PASS: window.location == originalLocation + '#bar' should be true and is.
 PASS: window.history.length == originalHistoryLength + 2 should be true and is.
+PASS: window.location.hash should be #bar and is.
+PASS: window.location == originalLocation + '#bar' should be true and is.
 PASS: window.location.hash should be #foo and is.
 PASS: window.location == originalLocation + '#foo' should be true and is.
+PASS: window.location.hash should be #foo and is.
+PASS: window.location == originalLocation + '#foo' should be true and is.
+PASS: window.location.hash should be and is.
+PASS: window.location == originalLocation should be true and is.
 PASS: window.location.hash should be and is.
 PASS: window.location == originalLocation should be true and is.
 PASS: window.location.hash should be #foo and is.

@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>
+var scrollCounter = 0;
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    // This takes effect synchronously, and the result is that we scroll to "foo".
+    location.hash = "#foo";
+
+    // This should take effect asynchronously, and the result should be that we
+    // scroll back to the top of the page.  If this happens synchronously, then
+    // scrollCounter will be incremented again by the time history.back returns.
+    history.back();
+
+    var didScrollAgain = scrollCounter != 1;
+  
+    document.body.replaceChild(
+        document.createTextNode(didScrollAgain ? "FAIL" : "PASS"),
+        document.body.getElementsByTagName("DIV")[0])
+
+    // Defer calling notifyDone until the history.back() call completes.  This
+    // should not be necessary, but the test framework might get confused if it
+    // navigates to the next test before the history.back() call completes.
+    if (window.layoutTestController)
+        setTimeout(function() { layoutTestController.notifyDone() }, 0);
+}
+</script>
+</head>
+<body onload="runTest()" onscroll="scrollCounter++">
+    <div style="padding-top: 10000px">
+        <a name="foo">foo</a>
+    </div>
+</body>
+</html>
