@@ -1,3 +1,12 @@
+2009-05-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Disable all the SVG features for WebKit/Qt if ENABLE_SVG=0 
+        https://bugs.webkit.org/show_bug.cgi?id=24693
+
+        * WebCore.pro:
+
 2009-05-05  Sankar Aditya Tanguturi  <sankaraditya@gmail.com>
 
         Reviewed by Eric Seidel.
