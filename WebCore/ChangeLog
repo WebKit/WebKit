@@ -1,3 +1,19 @@
+2009-04-01  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Mouse wheel scrolling and keyboard shortcut support for wx.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24797
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformSetScrollPosition):
+
 2009-05-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for Windows, add missing include.

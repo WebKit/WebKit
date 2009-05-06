@@ -49,6 +49,81 @@
 
 namespace WebCore {
 
+static const unsigned CtrlKey = 1 << 0;
+static const unsigned AltKey = 1 << 1;
+static const unsigned ShiftKey = 1 << 2;
+
+struct KeyDownEntry {
+    unsigned virtualKey;
+    unsigned modifiers;
+    const char* name;
+};
+
+struct KeyPressEntry {
+    unsigned charCode;
+    unsigned modifiers;
+    const char* name;
+};
+
+static const KeyDownEntry keyDownEntries[] = {
+    { VK_LEFT,   0,                  "MoveLeft"                                    },
+    { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"                  },
+    { VK_LEFT,   CtrlKey,            "MoveWordLeft"                                },
+    { VK_LEFT,   CtrlKey | ShiftKey, "MoveWordLeftAndModifySelection"              },
+    { VK_RIGHT,  0,                  "MoveRight"                                   },
+    { VK_RIGHT,  ShiftKey,           "MoveRightAndModifySelection"                 },
+    { VK_RIGHT,  CtrlKey,            "MoveWordRight"                               },
+    { VK_RIGHT,  CtrlKey | ShiftKey, "MoveWordRightAndModifySelection"             },
+    { VK_UP,     0,                  "MoveUp"                                      },
+    { VK_UP,     ShiftKey,           "MoveUpAndModifySelection"                    },
+    { VK_PRIOR,  ShiftKey,           "MovePageUpAndModifySelection"                },
+    { VK_DOWN,   0,                  "MoveDown"                                    },
+    { VK_DOWN,   ShiftKey,           "MoveDownAndModifySelection"                  },
+    { VK_NEXT,   ShiftKey,           "MovePageDownAndModifySelection"              },
+    { VK_PRIOR,  0,                  "MovePageUp"                                  },
+    { VK_NEXT,   0,                  "MovePageDown"                                },
+    { VK_HOME,   0,                  "MoveToBeginningOfLine"                       },
+    { VK_HOME,   ShiftKey,           "MoveToBeginningOfLineAndModifySelection"     },
+    { VK_HOME,   CtrlKey,            "MoveToBeginningOfDocument"                   },
+    { VK_HOME,   CtrlKey | ShiftKey, "MoveToBeginningOfDocumentAndModifySelection" },
+
+    { VK_END,    0,                  "MoveToEndOfLine"                             },
+    { VK_END,    ShiftKey,           "MoveToEndOfLineAndModifySelection"           },
+    { VK_END,    CtrlKey,            "MoveToEndOfDocument"                         },
+    { VK_END,    CtrlKey | ShiftKey, "MoveToEndOfDocumentAndModifySelection"       },
+
+    { VK_BACK,   0,                  "DeleteBackward"                              },
+    { VK_BACK,   ShiftKey,           "DeleteBackward"                              },
+    { VK_DELETE, 0,                  "DeleteForward"                               },
+    { VK_BACK,   CtrlKey,            "DeleteWordBackward"                          },
+    { VK_DELETE, CtrlKey,            "DeleteWordForward"                           },
+    
+    { 'B',       CtrlKey,            "ToggleBold"                                  },
+    { 'I',       CtrlKey,            "ToggleItalic"                                },
+
+    { VK_ESCAPE, 0,                  "Cancel"                                      },
+    //FIXME: this'll never happen. We can trash it or make it a normal period
+    { VK_OEM_PERIOD, CtrlKey,        "Cancel"                                      },
+    { VK_TAB,    0,                  "InsertTab"                                   },
+    { VK_TAB,    ShiftKey,           "InsertBacktab"                               },
+    { VK_RETURN, 0,                  "InsertNewline"                               },
+    { VK_RETURN, CtrlKey,            "InsertNewline"                               },
+    { VK_RETURN, AltKey,             "InsertNewline"                               },
+    { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
+    { 'A',       CtrlKey,            "SelectAll"                                   },
+    { 'Z',       CtrlKey,            "Undo"                                        },
+    { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
+};
+
+static const KeyPressEntry keyPressEntries[] = {
+    { '\t',   0,                  "InsertTab"                                   },
+    { '\t',   ShiftKey,           "InsertBacktab"                               },
+    { '\r',   0,                  "InsertNewline"                               },
+    { '\r',   CtrlKey,            "InsertNewline"                               },
+    { '\r',   AltKey,             "InsertNewline"                               },
+    { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
+};
+
 EditorClientWx::~EditorClientWx()
 {
     m_page = NULL;
@@ -286,6 +361,74 @@ void EditorClientWx::redo()
     }
 }
 
+bool EditorClientWx::handleEditingKeyboardEvent(KeyboardEvent* event)
+{
+    Node* node = event->target()->toNode();
+    ASSERT(node);
+    Frame* frame = node->document()->frame();
+    ASSERT(frame);
+
+    const PlatformKeyboardEvent* keyEvent = event->keyEvent();
+
+    //NB: this is what windows does, but they also have a keypress event for Alt+Enter which clearly won't get hit with this
+    if (!keyEvent || keyEvent->altKey())  // do not treat this as text input if Alt is down
+        return false;
+
+    Editor::Command command = frame->editor()->command(interpretKeyEvent(event));
+
+    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+        // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
+        // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or if not to let a CHAR event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        return !command.isTextInsertion() && command.execute(event);
+    }
+
+     if (command.execute(event))
+        return true;
+
+    // Don't insert null or control characters as they can result in unexpected behaviour
+    if (event->charCode() < ' ')
+        return false;
+
+    return frame->editor()->insertText(event->keyEvent()->text(), event);
+}
+
+const char* EditorClientWx::interpretKeyEvent(const KeyboardEvent* evt)
+{
+    ASSERT(evt->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown || evt->keyEvent()->type() == PlatformKeyboardEvent::Char);
+
+    static HashMap<int, const char*>* keyDownCommandsMap = 0;
+    static HashMap<int, const char*>* keyPressCommandsMap = 0;
+
+    if (!keyDownCommandsMap) {
+        keyDownCommandsMap = new HashMap<int, const char*>;
+        keyPressCommandsMap = new HashMap<int, const char*>;
+
+        for (unsigned i = 0; i < WXSIZEOF(keyDownEntries); i++)
+            keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
+
+        for (unsigned i = 0; i < WXSIZEOF(keyPressEntries); i++)
+            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
+    }
+
+    unsigned modifiers = 0;
+    if (evt->shiftKey())
+        modifiers |= ShiftKey;
+    if (evt->altKey())
+        modifiers |= AltKey;
+    if (evt->ctrlKey())
+        modifiers |= CtrlKey;
+
+    if (evt->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown) {
+        int mapKey = modifiers << 16 | evt->keyCode();
+        return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
+    }
+
+    int mapKey = modifiers << 16 | evt->charCode();
+    return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
+}
+
+
 void EditorClientWx::handleInputMethodKeydown(KeyboardEvent* event)
 {
 // NOTE: we don't currently need to handle this. When key events occur,
@@ -295,63 +438,8 @@ void EditorClientWx::handleInputMethodKeydown(KeyboardEvent* event)
 
 void EditorClientWx::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame)
-        return;
-
-    const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (kevent->type() != PlatformKeyboardEvent::KeyUp) {
-        Node* start = frame->selection()->start().node();
-        if (!start || !start->isContentEditable())
-            return; 
-        
-        if (kevent->type() == PlatformKeyboardEvent::Char && !kevent->ctrlKey() && !kevent->altKey()) {
-            switch (kevent->windowsVirtualKeyCode()) {
-                // we handled these on key down, ignore them for char events
-                case VK_BACK:
-                case VK_DELETE:
-                case VK_LEFT:
-                case VK_RIGHT:
-                case VK_UP:
-                case VK_DOWN:
-                case VK_RETURN:
-                    break;
-                default:
-                    frame->editor()->insertText(kevent->text(), event);
-            }
-            event->setDefaultHandled();
-            return; 
-        }
-        
-        switch (kevent->windowsVirtualKeyCode()) {
-            case VK_BACK:
-                frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
-                                                     CharacterGranularity, false, true);
-                break;
-            case VK_DELETE:
-                frame->editor()->deleteWithDirection(SelectionController::FORWARD,
-                                                     CharacterGranularity, false, true);
-                break;
-            case VK_LEFT:
-                frame->editor()->command("MoveLeft").execute();
-                break;
-            case VK_RIGHT:
-                frame->editor()->command("MoveRight").execute();
-                break;
-            case VK_UP:
-                frame->editor()->command("MoveUp").execute();
-                break;
-            case VK_DOWN:
-                frame->editor()->command("MoveDown").execute();
-                break;
-            case VK_RETURN:
-                frame->editor()->command("InsertLineBreak").execute();
-            default:
-                break;
-        }
-            
+    if (handleEditingKeyboardEvent(event))
         event->setDefaultHandled();
-    }
 }
 
 void EditorClientWx::textFieldDidBeginEditing(Element*)

@@ -87,6 +87,8 @@ public:
     virtual void undo();
     virtual void redo();
     
+    virtual const char* interpretKeyEvent(const KeyboardEvent*);
+    virtual bool handleEditingKeyboardEvent(KeyboardEvent*);
     virtual void handleKeyboardEvent(KeyboardEvent*);
     virtual void handleInputMethodKeydown(KeyboardEvent*);
     

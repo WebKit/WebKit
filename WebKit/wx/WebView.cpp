@@ -46,6 +46,7 @@
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SubstituteData.h"
@@ -638,7 +639,7 @@ void wxWebView::Copy()
 bool wxWebView::CanCut()
 {
     if (m_mainFrame)
-        m_mainFrame->CanCut();
+        return m_mainFrame->CanCut();
 
     return false;
 }
@@ -652,7 +653,7 @@ void wxWebView::Cut()
 bool wxWebView::CanPaste()
 {
     if (m_mainFrame)
-        m_mainFrame->CanPaste();
+        return m_mainFrame->CanPaste();
 
     return false;
 }
@@ -661,7 +662,6 @@ void wxWebView::Paste()
 {
     if (m_mainFrame)
         m_mainFrame->Paste();
-
 }
 
 void wxWebView::OnKeyEvents(wxKeyEvent& event)
@@ -669,40 +669,137 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
     WebCore::Frame* frame = 0;
     if (m_mainFrame)
         frame = m_mainFrame->GetFrame();
-        
-    if (frame && frame->view()) {
-        // WebCore doesn't handle these events itself, so we need to do
-        // it and not send the event down or else CTRL+C will erase the text
-        // and replace it with c.
-        if (event.CmdDown() && event.GetEventType() == wxEVT_KEY_UP) {
-            if (event.GetKeyCode() == static_cast<int>('C'))
+
+    if (!(frame && frame->view()))
+        return;
+
+    if (event.GetKeyCode() == WXK_CAPITAL)
+        frame->eventHandler()->capsLockStateMayHaveChanged();
+
+    WebCore::PlatformKeyboardEvent wkEvent(event);
+
+    if (frame->eventHandler()->keyEvent(wkEvent))
+        return;
+
+    //Some things WebKit won't do for us... Copy/Cut/Paste and KB scrolling
+    if (event.GetEventType() == wxEVT_KEY_DOWN) {
+        switch (event.GetKeyCode()) {
+        case 67: //"C"
+            if (CanCopy() && event.GetModifiers() == wxMOD_CMD) {
                 Copy();
-            else if (event.GetKeyCode() == static_cast<int>('X'))
-                Cut();
-            else if (event.GetKeyCode() == static_cast<int>('V'))
-                Paste();
-            else if (event.GetKeyCode() == static_cast<int>('Z')) {
-                if (event.ShiftDown()) {
-                    if (m_mainFrame->CanRedo())
-                        m_mainFrame->Redo();
-                }
-                else {
-                    if (m_mainFrame->CanUndo())
-                        m_mainFrame->Undo();
-                }
+                return;
             }
-        } else {    
-            WebCore::PlatformKeyboardEvent wkEvent(event);
-            if (wkEvent.type() == WebCore::PlatformKeyboardEvent::Char && wkEvent.altKey())
-                frame->eventHandler()->handleAccessKey(wkEvent);
-            else
-                frame->eventHandler()->keyEvent(wkEvent);
+            break;
+        case 86: //"V"
+            if (CanPaste() && event.GetModifiers() == wxMOD_CMD) {
+                Paste();
+                return;
+            }
+            break;
+        case 88: //"X"
+            if (CanCut() && event.GetModifiers() == wxMOD_CMD) {
+                Cut();
+                return;
+            }
+            break;
+        case WXK_INSERT:
+            if (CanCopy() && event.GetModifiers() == wxMOD_CMD) {
+                Copy();
+                return;
+            }
+            if (CanPaste() && event.GetModifiers() == wxMOD_SHIFT) {
+                Paste();
+                return;
+            }
+            return; //Insert shall not become a char
+        case WXK_DELETE:
+            if (CanCut() && event.GetModifiers() == wxMOD_SHIFT) {
+                Cut();
+                return;
+            }
+            break;
+        case WXK_LEFT:
+        case WXK_NUMPAD_LEFT:
+            frame->view()->scrollBy(WebCore::IntSize(-WebCore::cScrollbarPixelsPerLineStep, 0));
+            return;
+        case WXK_UP:
+        case WXK_NUMPAD_UP:
+            frame->view()->scrollBy(WebCore::IntSize(0, -WebCore::cScrollbarPixelsPerLineStep));
+            return;
+        case WXK_RIGHT:
+        case WXK_NUMPAD_RIGHT:
+            frame->view()->scrollBy(WebCore::IntSize(WebCore::cScrollbarPixelsPerLineStep, 0));
+            return;
+        case WXK_DOWN:
+        case WXK_NUMPAD_DOWN:
+            frame->view()->scrollBy(WebCore::IntSize(0, WebCore::cScrollbarPixelsPerLineStep));
+            return;
+        case WXK_END:
+        case WXK_NUMPAD_END:
+            frame->view()->setScrollPosition(WebCore::IntPoint(frame->view()->scrollX(), frame->view()->maximumScrollPosition().y()));
+            return;
+        case WXK_HOME:
+        case WXK_NUMPAD_HOME:
+            frame->view()->setScrollPosition(WebCore::IntPoint(frame->view()->scrollX(), 0));
+            return;
+        case WXK_PAGEUP:
+        case WXK_NUMPAD_PAGEUP:
+            frame->view()->scrollBy(WebCore::IntSize(0, -frame->view()->visibleHeight() + WebCore::cAmountToKeepWhenPaging));
+            return;
+        case WXK_PAGEDOWN:
+        case WXK_NUMPAD_PAGEDOWN:
+            frame->view()->scrollBy(WebCore::IntSize(0, frame->view()->visibleHeight() - WebCore::cAmountToKeepWhenPaging));
+            return;
+        //These we don't want turning into char events, stuff 'em
+        case WXK_ESCAPE:
+        case WXK_LBUTTON:
+        case WXK_RBUTTON:
+        case WXK_CANCEL:
+        case WXK_MENU:
+        case WXK_MBUTTON:
+        case WXK_CLEAR:
+        case WXK_PAUSE:
+        case WXK_SELECT:
+        case WXK_PRINT:
+        case WXK_EXECUTE:
+        case WXK_SNAPSHOT:
+        case WXK_HELP:
+        case WXK_F1:
+        case WXK_F2:
+        case WXK_F3:
+        case WXK_F4:
+        case WXK_F5:
+        case WXK_F6:
+        case WXK_F7:
+        case WXK_F8:
+        case WXK_F9:
+        case WXK_F10:
+        case WXK_F11:
+        case WXK_F12:
+        case WXK_F13:
+        case WXK_F14:
+        case WXK_F15:
+        case WXK_F16:
+        case WXK_F17:
+        case WXK_F18:
+        case WXK_F19:
+        case WXK_F20:
+        case WXK_F21:
+        case WXK_F22:
+        case WXK_F23:
+        case WXK_F24:
+        case WXK_NUMPAD_F1:
+        case WXK_NUMPAD_F2:
+        case WXK_NUMPAD_F3:
+        case WXK_NUMPAD_F4:
+        //When numlock is off Numpad 5 becomes BEGIN, or HOME on Char
+        case WXK_NUMPAD_BEGIN:
+        case WXK_NUMPAD_INSERT:
+            return;
         }
     }
-    
-    // make sure we get the character event.
-    if (event.GetEventType() != wxEVT_CHAR)
-        event.Skip();
+
+    event.Skip();
 }
 
 void wxWebView::OnSetFocus(wxFocusEvent& event)

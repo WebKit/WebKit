@@ -67,6 +67,9 @@ enum {
 };
 
 BEGIN_EVENT_TABLE(wxWebBrowserShell, wxFrame)
+    EVT_MENU(wxID_CUT, wxWebBrowserShell::OnCut)
+    EVT_MENU(wxID_COPY, wxWebBrowserShell::OnCopy)
+    EVT_MENU(wxID_PASTE, wxWebBrowserShell::OnPaste)
     EVT_MENU(wxID_EXIT,  wxWebBrowserShell::OnQuit)
     EVT_MENU(wxID_ABOUT, wxWebBrowserShell::OnAbout)
     EVT_MENU(ID_LOADFILE, wxWebBrowserShell::OnLoadFile)
@@ -250,6 +253,24 @@ void wxWebBrowserShell::OnSearchCtrlEnter(wxCommandEvent& event)
     if (webview) {
         webview->LoadURL(wxString::Format(wxT("http://www.google.com/search?rls=en&q=%s&ie=UTF-8&oe=UTF-8"), searchCtrl->GetValue().wc_str()));
     }
+}
+
+void wxWebBrowserShell::OnCut(wxCommandEvent& event)
+{
+    if (webview && webview->CanCut())
+        webview->Cut();
+}
+
+void wxWebBrowserShell::OnCopy(wxCommandEvent& event)
+{
+    if (webview && webview->CanCopy())
+        webview->Copy();
+}
+
+void wxWebBrowserShell::OnPaste(wxCommandEvent& event)
+{
+    if (webview && webview->CanPaste())
+        webview->Paste();
 }
 
 void wxWebBrowserShell::OnBack(wxCommandEvent& event)

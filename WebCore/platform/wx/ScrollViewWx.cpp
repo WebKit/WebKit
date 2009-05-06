@@ -191,12 +191,12 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
     if (newScrollOffset.x < 0)
         newScrollOffset.x = 0;
     else if (newScrollOffset.x + cRect.width > vRect.width)
-        newScrollOffset.x = max(0, vRect.width - cRect.width - 1);
+        newScrollOffset.x = max(0, vRect.width - cRect.width);
 
     if (newScrollOffset.y < 0)
         newScrollOffset.y = 0;
     else if (newScrollOffset.y + cRect.height > vRect.height)
-        newScrollOffset.y = max(0, vRect.height - cRect.height - 1);
+        newScrollOffset.y = max(0, vRect.height - cRect.height);
 
     if (newScrollOffset == scrollOffset)
         return;

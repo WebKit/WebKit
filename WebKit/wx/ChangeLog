@@ -1,3 +1,30 @@
+2009-04-01  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Full Keyboard shortcut support.
+        Implement wxBrowser Cut/Copy/Paste menu items.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24797
+
+        * WebBrowserShell.cpp:
+        (wxWebBrowserShell::OnSearchCtrlEnter):
+        (wxWebBrowserShell::OnCut):
+        (wxWebBrowserShell::OnCopy):
+        (wxWebBrowserShell::OnPaste):
+        * WebBrowserShell.h:
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::):
+        (WebCore::EditorClientWx::handleEditingKeyboardEvent):
+        (WebCore::EditorClientWx::interpretKeyEvent):
+        (WebCore::EditorClientWx::handleKeyboardEvent):
+        * WebKitSupport/EditorClientWx.h:
+        * WebView.cpp:
+        (wxWebView::CanCut):
+        (wxWebView::CanPaste):
+        (wxWebView::Paste):
+        (wxWebView::OnKeyEvents):
+
 2009-05-05  Maclolm MacLeod  <mmacleod@webmail.co.za>
 
         Reviewed by Kevin Ollivier.

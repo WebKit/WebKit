@@ -162,14 +162,17 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_DECIMAL; // (6E) Decimal key
         case WXK_DIVIDE:
             return VK_DIVIDE; // (6F) Divide key
-
+        case WXK_NUMPAD_SEPARATOR:
+            return VK_SEPARATOR;
         
         case WXK_BACK:
             return VK_BACK; // (08) BACKSPACE key
         case WXK_TAB:
+        case WXK_NUMPAD_TAB:
             return VK_TAB; // (09) TAB key
         case WXK_CLEAR:
             return VK_CLEAR; // (0C) CLEAR key
+        case WXK_NUMPAD_ENTER:
         case WXK_RETURN:
             return VK_RETURN; //(0D) Return key
         case WXK_SHIFT:
@@ -203,22 +206,31 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             // VK_NONCONVERT (1D) IME nonconvert
             // VK_ACCEPT (1E) IME accept
             // VK_MODECHANGE (1F) IME mode change request
+        case WXK_NUMPAD_SPACE:
         case WXK_SPACE:
             return VK_SPACE; // (20) SPACEBAR
+        case WXK_NUMPAD_PAGEUP:
         case WXK_PAGEUP:
             return VK_PRIOR; // (21) PAGE UP key
+        case WXK_NUMPAD_PAGEDOWN:
         case WXK_PAGEDOWN:
             return VK_NEXT; // (22) PAGE DOWN key
+        case WXK_NUMPAD_END:
         case WXK_END:
             return VK_END; // (23) END key
+        case WXK_NUMPAD_HOME:
         case WXK_HOME:
             return VK_HOME; // (24) HOME key
+        case WXK_NUMPAD_LEFT:
         case WXK_LEFT:
             return VK_LEFT; // (25) LEFT ARROW key
+        case WXK_NUMPAD_UP:
         case WXK_UP:
             return VK_UP; // (26) UP ARROW key
+        case WXK_NUMPAD_RIGHT:
         case WXK_RIGHT:
             return VK_RIGHT; // (27) RIGHT ARROW key
+        case WXK_NUMPAD_DOWN:
         case WXK_DOWN:
             return VK_DOWN; // (28) DOWN ARROW key
         case WXK_SELECT:
@@ -227,11 +239,12 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_PRINT; // (2A) PRINT key
         case WXK_EXECUTE:
             return VK_EXECUTE;// (2B) EXECUTE key
-            //dunno on this
-            //case WXK_PrintScreen:
-            //      return VK_SNAPSHOT; // (2C) PRINT SCREEN key
+        case WXK_SNAPSHOT:
+             return VK_SNAPSHOT; // (2C) PRINT SCREEN key
+        case WXK_NUMPAD_INSERT:
         case WXK_INSERT:
             return VK_INSERT; // (2D) INS key
+        case WXK_NUMPAD_DELETE:
         case WXK_DELETE:
             return VK_DELETE; // (2E) DEL key
         case WXK_HELP:
@@ -335,7 +348,15 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
     if (m_type != Char)
         m_keyIdentifier = keyIdentifierForWxKeyCode(event.GetKeyCode());
     else {
-        m_text = wxString(event.GetUnicodeKey());
+        //ENTER is an editing command processed as a char (only Enter and Tab are)
+        //unfortunately the unicode key for numpad_enter (370) is NOT what we want here (13)
+        //The unicode values for normal enter and tab are the same as the ASCII values, thus ok
+        //Note that I think this a wx bug, as the Character Code is actually 13 when
+        //numpad_enter is a CHAR event.
+        if (event.GetKeyCode() == 13 && event.GetUnicodeKey() == wxChar(370))
+            m_text = "\r";
+        else
+            m_text = wxString(event.GetUnicodeKey());
         m_unmodifiedText = m_text;
     }
     m_autoRepeat = false; // FIXME: not correct.
