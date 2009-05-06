@@ -2,6 +2,13 @@
 
         Try to fix Windows build.
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Added
+        bytecompiler to the list of directories where the headers get copied.
+
+2009-05-05  Darin Adler  <darin@apple.com>
+
+        Try to fix Windows build.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
 
