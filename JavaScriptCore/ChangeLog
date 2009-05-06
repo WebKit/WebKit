@@ -1,5 +1,11 @@
 2009-05-05  Darin Adler  <darin@apple.com>
 
+        Try to fix Mac build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Made Lexer.h private.
+
+2009-05-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 25569: make ParserRefCounted use conventional reference counting
