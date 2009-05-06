@@ -1,3 +1,17 @@
+2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Move PluginView::invalidateRegion from the
+        TemporaryLinkStubs to PluginViewGtk.cpp and implement
+        it with a call to Widget::invalidate() just like
+        mac is doing. Optimisations would have to be window
+        system specific.
+
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::invalidateRegion):
+
 2009-05-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
