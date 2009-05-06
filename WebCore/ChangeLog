@@ -1,5 +1,13 @@
 2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Xan Lopez.
+
+        Properly indent the header file.
+
+        * platform/gtk/CursorGtk.h:
+
+2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Gustavo Noronha.
 
         Use the mozilla copyright header. Use MPL1.1/GPL2.0

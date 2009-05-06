@@ -209,30 +209,30 @@ static const char moz_zoom_out_mask_bits[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 enum CustomCursorType {
-  CustomCursorCopy = 0,
-  CustomCursorAlias,
-  CustomCursorContextMenu,
-  CustomCursorZoomIn,
-  CustomCursorZoomOut,
-  CustomCursorVerticalText
-} ;
+    CustomCursorCopy = 0,
+    CustomCursorAlias,
+    CustomCursorContextMenu,
+    CustomCursorZoomIn,
+    CustomCursorZoomOut,
+    CustomCursorVerticalText
+};
 
 typedef struct {
-  const char* name;
-  const char* bits;
-  const char* mask_bits;
-  int hot_x;
-  int hot_y;
+    const char* name;
+    const char* bits;
+    const char* mask_bits;
+    int hot_x;
+    int hot_y;
 } CustomCursor;
 
 // create custom pixmap cursor from cursors in nsGTKCursorData.h
 static const CustomCursor CustomCursors[] = {
-  { "copy", moz_copy_bits, moz_copy_mask_bits, 2, 2 },
-  { "alias", moz_alias_bits, moz_alias_mask_bits, 2, 2 },
-  { "context-menu", moz_menu_bits, moz_menu_mask_bits, 2, 2 },
-  { "zoom-in", moz_zoom_in_bits, moz_zoom_in_mask_bits, 6, 6 },
-  { "zoom-out", moz_zoom_out_bits, moz_zoom_out_mask_bits, 6, 6 },
-  { "vertical-text", moz_vertical_text_bits, moz_vertical_text_mask_bits, 8, 4 },
+    { "copy", moz_copy_bits, moz_copy_mask_bits, 2, 2 },
+    { "alias", moz_alias_bits, moz_alias_mask_bits, 2, 2 },
+    { "context-menu", moz_menu_bits, moz_menu_mask_bits, 2, 2 },
+    { "zoom-in", moz_zoom_in_bits, moz_zoom_in_mask_bits, 6, 6 },
+    { "zoom-out", moz_zoom_out_bits, moz_zoom_out_mask_bits, 6, 6 },
+    { "vertical-text", moz_vertical_text_bits, moz_vertical_text_mask_bits, 8, 4 },
 };
 
 #endif // CursorGtk_h
