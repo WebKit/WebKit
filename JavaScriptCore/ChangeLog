@@ -2,6 +2,15 @@
 
         Reviewed by Ariya Hidayat.
 
+        Fix the Qt build on Windows.
+
+        * JavaScriptCore.pri: Define BUILDING_JavaScriptCore/WTF to get the meaning
+        of the JS_EXPORTDATA macros correct
+
+2009-05-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         Enable the JIT for the Qt build on Windows.
 
         * JavaScriptCore.pri:
