@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        Use the mozilla copyright header. Use MPL1.1/GPL2.0
+        and LGPL2.1 as the license compared to LGPL2.0.
+
+        * platform/gtk/CursorGtk.h:
+
+2009-05-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
         Move PluginView::invalidateRegion from the
         TemporaryLinkStubs to PluginViewGtk.cpp and implement
         it with a call to Widget::invalidate() just like
