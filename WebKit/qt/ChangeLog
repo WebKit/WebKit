@@ -1,3 +1,21 @@
+2009-05-05  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Improve behaviour of the QWebElement enclose* functions, to work
+        similar to the jQuery wrap functions. We now enclose the contents
+        of the element in the child of the deepest descendant element
+        within the structure of the enclose element structure given.
+
+        * Api/qwebelement.cpp:
+        (findInsertionPoint):
+        (QWebElement::encloseContentsWith):
+        (QWebElement::encloseWith):
+        (QWebElement::replace):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::encloseContentsWith):
+        (tst_QWebElement::encloseWith):
+
 2009-05-06  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.

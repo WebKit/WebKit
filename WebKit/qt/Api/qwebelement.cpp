@@ -1235,29 +1235,66 @@ void QWebElement::removeChildren()
     m_element->removeAllChildren();
 }
 
+static RefPtr<Node> findInsertionPoint(PassRefPtr<Node> root)
+{
+    RefPtr<Node> node = root;
+
+    // Go as far down the tree as possible.
+    while (node->hasChildNodes() && node->firstChild()->isElementNode())
+        node = node->firstChild();
+
+    // TODO: Implement SVG support
+    if (node->isHTMLElement()) {
+        HTMLElement* element = static_cast<HTMLElement*>(node.get());
+
+        // The insert point could be a non-enclosable tag and it can thus
+        // never have children, so go one up. Get the parent element, and not
+        // note as a root note will always exist.
+        if (element->endTagRequirement() == TagStatusForbidden)
+            node = node->parentElement();
+    }
+
+    return node;
+}
+
 /*!
-    Makes the children of this element children of \a element,
-    and then makes \a element the only child of this element.
+    Enclose the contents of this element in \a element as the child
+    of the deepest descendant element within the structure of the
+    first element provided.
+
+    \sa encloseWith()
 */
 void QWebElement::encloseContentsWith(const QWebElement &element)
 {
     if (!m_element || element.isNull())
         return;
 
-    QWebElement other = element;
-    for (QWebElement child = firstChild(); !child.isNull();) {
-        QWebElement next = child.nextSibling();
-        other.appendInside(child);
+    RefPtr<Node> insertionPoint = findInsertionPoint(element.m_element);
+
+    if (!insertionPoint)
+        return;
+
+    ExceptionCode exception = 0;
+
+    // reparent children
+    for (RefPtr<Node> child = m_element->firstChild(); child;) {
+        RefPtr<Node> next = child->nextSibling();
+        insertionPoint->appendChild(child, exception);
         child = next;
     }
 
-    appendInside(other);
+    if (m_element->hasChildNodes())
+        m_element->insertBefore(element.m_element, m_element->firstChild(), exception);
+    else
+        m_element->appendChild(element.m_element, exception);
 }
 
 /*!
-    Parses the \a markup and makes the children of this element
-    children of the parsed markup. Afterwards the element parsed
-    from the markup becomes the only child of this element.
+    Enclose the contents of this element in the result of parsing
+    \a markup as the child of the deepest descendant element within
+    the structure of the first element provided.
+
+    \sa encloseWith()
 */
 void QWebElement::encloseContentsWith(const QString &markup)
 {
@@ -1276,12 +1313,17 @@ void QWebElement::encloseContentsWith(const QString &markup)
     if (!fragment || !fragment->firstChild())
         return;
 
+    RefPtr<Node> insertionPoint = findInsertionPoint(fragment->firstChild());
+
+    if (!insertionPoint)
+        return;
+
     ExceptionCode exception = 0;
 
     // reparent children
     for (RefPtr<Node> child = m_element->firstChild(); child;) {
         RefPtr<Node> next = child->nextSibling();
-        fragment->firstChild()->appendChild(child, exception);
+        insertionPoint->appendChild(child, exception);
         child = next;
     }
 
@@ -1292,7 +1334,9 @@ void QWebElement::encloseContentsWith(const QString &markup)
 }
 
 /*!
-    Enclose this element in \a element as the last child.
+    Enclose this element in \a element as the child of the deepest
+    descendant element within the structure of the first element
+    provided.
 
     \sa replace()
 */
@@ -1301,18 +1345,30 @@ void QWebElement::encloseWith(const QWebElement &element)
     if (!m_element || element.isNull())
         return;
 
-    appendOutside(element);
-    QWebElement other = element;
-    other.appendInside(*this);
+    RefPtr<Node> insertionPoint = findInsertionPoint(element.m_element);
+
+    if (!insertionPoint)
+        return;
+
+    // Keep reference to these two nodes before pulling out this element and
+    // wrapping it in the fragment. The reason for doing it in this order is
+    // that once the fragment has been added to the document it is empty, so
+    // we no longer have access to the nodes it contained.
+    Node* parentNode = m_element->parent();
+    Node* siblingNode = m_element->nextSibling();
+
+    ExceptionCode exception = 0;
+    insertionPoint->appendChild(m_element, exception);
+    parentNode->insertBefore(element.m_element, siblingNode, exception);
 }
 
 /*!
-    Enclose this element in the result of parsing \a html,
+    Enclose this element in the result of parsing \a markup,
     as the last child.
 
     \sa replace()
 */
-void QWebElement::encloseWith(const QString &html)
+void QWebElement::encloseWith(const QString &markup)
 {
     if (!m_element)
         return;
@@ -1324,9 +1380,14 @@ void QWebElement::encloseWith(const QString &html)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(html);
+    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
 
     if (!fragment || !fragment->firstChild())
+        return;
+
+    RefPtr<Node> insertionPoint = findInsertionPoint(fragment->firstChild());
+
+    if (!insertionPoint)
         return;
 
     // Keep reference to these two nodes before pulling out this element and
@@ -1336,14 +1397,9 @@ void QWebElement::encloseWith(const QString &html)
     Node* parentNode = m_element->parent();
     Node* siblingNode = m_element->nextSibling();
 
-    // Elements with forbidden tag status can never have children
-    HTMLElement* element = static_cast<HTMLElement*>(fragment->firstChild());
-    if (element->endTagRequirement() == TagStatusForbidden)
-        return;
-
     ExceptionCode exception = 0;
-    fragment->firstChild()->appendChild(m_element, exception);
-    parentNode->insertBefore(element, siblingNode, exception);
+    insertionPoint->appendChild(m_element, exception);
+    parentNode->insertBefore(fragment, siblingNode, exception);
 }
 
 /*!
@@ -1364,19 +1420,19 @@ void QWebElement::replace(const QWebElement &element)
 }
 
 /*!
-    Replaces this element with the result of parsing \a html.
+    Replaces this element with the result of parsing \a markup.
 
     It is not possible to replace the <html>, <head>, or <body>
     elements using this method.
 
     \sa encloseWith()
 */
-void QWebElement::replace(const QString &html)
+void QWebElement::replace(const QString &markup)
 {
     if (!m_element)
         return;
 
-    appendOutside(html);
+    appendOutside(markup);
     takeFromDocument();
 }
 

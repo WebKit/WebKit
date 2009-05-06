@@ -633,6 +633,7 @@ void tst_QWebElement::encloseContentsWith()
         "</p>"
         "<u></u>"
         "<b></b>"
+        "<em>hey</em>"
     "</body>";
 
     m_mainFrame->setHtml(html);
@@ -649,6 +650,23 @@ void tst_QWebElement::encloseContentsWith()
     body.findFirst("div").encloseContentsWith("<span></span>");
     QCOMPARE(body.findAll("div span i").count(), 2);
     QCOMPARE(body.findFirst("div span i").toPlainText(), QString("yeah"));
+
+    QString snippet = ""
+        "<table>"
+            "<tbody>"
+                "<tr>"
+                    "<td></td>"
+                    "<td></td>"
+                "</tr>"
+                "<tr>"
+                    "<td></td>"
+                    "<td></td>"
+                "<tr>"
+            "</tbody>"
+        "</table>";
+
+    body.findFirst("em").encloseContentsWith(snippet);
+    QCOMPARE(body.findFirst("em table tbody tr td").toPlainText(), QString("hey"));
 }
 
 void tst_QWebElement::encloseWith()
@@ -663,6 +681,8 @@ void tst_QWebElement::encloseWith()
         "<p>"
             "<span>bar</span>"
         "</p>"
+        "<em>hey</em>"
+        "<h1>hello</h1>"
     "</body>";
 
     m_mainFrame->setHtml(html);
@@ -681,6 +701,23 @@ void tst_QWebElement::encloseWith()
     QCOMPARE(body.findAll("code").count(), 1);
     QCOMPARE(body.findAll("code div").count(), 1);
     QCOMPARE(body.findFirst("code div").toPlainText(), QString("yeah"));
+
+    QString snippet = ""
+        "<table>"
+            "<tbody>"
+                "<tr>"
+                    "<td></td>"
+                    "<td></td>"
+                "</tr>"
+                "<tr>"
+                    "<td></td>"
+                    "<td></td>"
+                "<tr>"
+            "</tbody>"
+        "</table>";
+
+    body.findFirst("em").encloseWith(snippet);
+    QCOMPARE(body.findFirst("table tbody tr td em").toPlainText(), QString("hey"));
 }
 
 void tst_QWebElement::nullSelect()
