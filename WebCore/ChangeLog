@@ -1,3 +1,19 @@
+2009-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser and Justin Garcia.
+
+        - fix another part of <rdar://problem/6703873> Triple-click quoted line
+          and type Return creates an extra quoted blank line
+
+        Test: editing/inserting/6703873-2.html
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Corrected the logic for
+        determining the first node that should go into the new blockquote
+        given the split position: if it is at the end of a container, use the
+        next node after the container. Otherwise, use the child at the
+        position's offset.
+
 2009-05-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, fixes for wx trunk builds.

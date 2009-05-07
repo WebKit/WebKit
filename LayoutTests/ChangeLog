@@ -1,3 +1,13 @@
+2009-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser and Justin Garcia.
+
+        - test for another part of <rdar://problem/6703873> Triple-click quoted
+          line and type Return creates an extra quoted blank line
+
+        * editing/inserting/6703873-2-expected.txt: Added.
+        * editing/inserting/6703873-2.html: Added.
+
 2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Disable more new tests.
