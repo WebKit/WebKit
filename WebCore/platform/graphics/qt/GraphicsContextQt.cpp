@@ -575,7 +575,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
 
     QPainter *p = m_data->p();
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
-    p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
+    p->setRenderHint(QPainter::Antialiasing, true);
 
     p->drawArc(rect, startAngle * 16, angleSpan * 16);
 
@@ -1111,7 +1111,13 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
                            rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
 
     path.setFillRule(Qt::OddEvenFill);
-    m_data->p()->setClipPath(path, Qt::IntersectClip);
+
+    QPainter *p = m_data->p();
+
+    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::Antialiasing, true);
+    p->setClipPath(path, Qt::IntersectClip);
+    p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
 
 void GraphicsContext::concatCTM(const TransformationMatrix& transform)

@@ -1,3 +1,26 @@
+2009-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix support for antialiased CSS border-radius
+        
+        WebKit implements border-radius by drawing a double-size border,
+        and then letting the clip constrain the border to the right width
+        and position. This requires support for antialiased clipping, as
+        well as painting, to get a nice smooth border.
+        
+        Qt only does antialiased clipping if the anti-alias flag is set
+        at the time of clipping, so we have to enable this in the method
+        addInnerRoundedRectClip(), as well as when we draw the border.
+        
+        Currently the raster-engine is the only Qt paint engine to support
+        anti-aliased clipping, but the OpenGL and Mac paint engines could
+        potentially support this in the future.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+
 2009-05-07  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.
