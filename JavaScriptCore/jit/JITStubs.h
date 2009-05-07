@@ -144,12 +144,22 @@ namespace JSC {
     #endif
 #endif
 
+#if PLATFORM(X86_64)
+    struct VoidPtrPair {
+        void* first;
+        void* second;
+    };
+    #define RETURN_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
+#else
+    // MSVC doesn't support returning a two-value struct in two registers, so
+    // we cast the struct to int64_t instead.
     typedef uint64_t VoidPtrPair;
     union VoidPtrPairValue {
         struct { void* first; void* second; } s;
         VoidPtrPair i;
     };
     #define RETURN_PAIR(a,b) VoidPtrPairValue pair = {{ a, b }}; return pair.i
+#endif
 
     extern "C" void ctiVMThrowTrampoline();
     extern "C" EncodedJSValue ctiTrampoline(

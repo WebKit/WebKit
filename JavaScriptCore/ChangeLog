@@ -1,3 +1,11 @@
+2009-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Rolled out a portion of r43352 because it broke 64bit.
+
+        * jit/JITStubs.h:
+
 2009-05-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix for functions reaturning ThreadIdentifier.
