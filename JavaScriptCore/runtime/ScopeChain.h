@@ -45,7 +45,8 @@ namespace JSC {
         // Due to the number of subtle and timing dependent bugs that have occurred due
         // to deleted but still "valid" ScopeChainNodes we now deliberately clobber the
         // contents in debug builds.
-        ~ScopeChainNode() {
+        ~ScopeChainNode()
+        {
             next = 0;
             object = 0;
             globalData = 0;
