@@ -1,0 +1,34 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <!-- This test checks that if a radio button has a title and a title ui element label, both are exposed -->
+    <input type="radio" name="r1" id="r1" title="TITLE">Test<br>
+    <label for="r1">LABEL</label>
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            // radio button 1
+            var r1 = document.getElementById("r1");
+            r1.focus();
+            var focusedElement = accessibilityController.focusedElement;
+            var titleUIElement = focusedElement.titleUIElement();
+
+            var pattern = "AXTitle: TITLE";
+            if (focusedElement.allAttributes().indexOf(pattern) != -1 && titleUIElement.allAttributes().length > 0) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

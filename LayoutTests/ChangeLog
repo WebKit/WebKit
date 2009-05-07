@@ -1,3 +1,13 @@
+2009-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25598: AX: if a radio button has a label and a title, the label is not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=25598
+
+        * accessibility/radio-button-title-label-expected.txt: Added.
+        * accessibility/radio-button-title-label.html: Added.
+
 2009-05-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser and Justin Garcia.

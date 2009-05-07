@@ -270,6 +270,7 @@ public:
     virtual AccessibilityObject* observableObject() const;
     virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual AccessibilityObject* titleUIElement() const;
+    virtual bool exposesTitleUIElement() const { return true; }
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
     virtual bool ariaRoleHasPresentationalChildren() const;
