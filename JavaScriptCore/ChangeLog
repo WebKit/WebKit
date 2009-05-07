@@ -1,5 +1,14 @@
 2009-05-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex): Fix missing braces. This would make us always
+        take the slower case for string parsing and Visual Studio correctly
+        noticed unreachable code.
+
+2009-05-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 25589: goto instead of state machine in lexer

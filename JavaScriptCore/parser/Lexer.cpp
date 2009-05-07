@@ -575,9 +575,10 @@ startString: {
         // Fast check for characters that require special handling.
         // Catches -1, \n, \r, \, 0x2028, and 0x2029 as efficiently
         // as possible, and lets through all common ASCII characters.
-        if (UNLIKELY(m_current == '\\') || UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000)))
+        if (UNLIKELY(m_current == '\\') || UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000))) {
             m_buffer16.append(stringStart, currentCharacter() - stringStart);
             goto inString;
+        }
         shift1();
     }
     lvalp->ident = makeIdentifier(stringStart, currentCharacter() - stringStart);
