@@ -122,7 +122,7 @@ public:
     }
 
     const FontData* fontDataAt(unsigned) const;
-    const GlyphData& glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
+    GlyphData glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 

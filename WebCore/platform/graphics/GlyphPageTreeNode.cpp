@@ -220,8 +220,8 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                         if (scratchPage) {
                             ASSERT(to <=  static_cast<int>(GlyphPage::size));
                             for (int j = from; j < to; j++) {
-                                if (!m_page->m_glyphs[j].glyph && pageToFill->m_glyphs[j].glyph)
-                                    m_page->m_glyphs[j] = pageToFill->m_glyphs[j];
+                                if (!m_page->glyphAt(j) && pageToFill->glyphAt(j))
+                                    m_page->setGlyphDataForIndex(j, pageToFill->glyphDataForIndex(j));
                             }
                         }
                     }
@@ -265,15 +265,13 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 // has added anything.
                 bool newGlyphs = false;
                 for (unsigned i = 0; i < GlyphPage::size; i++) {
-                    if (parentPage->m_glyphs[i].glyph)
-                        m_page->m_glyphs[i] = parentPage->m_glyphs[i];
-                    else  if (fallbackPage->m_glyphs[i].glyph) {
-                        m_page->m_glyphs[i] = fallbackPage->m_glyphs[i];
+                    if (parentPage->glyphAt(i))
+                        m_page->setGlyphDataForIndex(i, parentPage->glyphDataForIndex(i));
+                    else  if (fallbackPage->glyphAt(i)) {
+                        m_page->setGlyphDataForIndex(i, fallbackPage->glyphDataForIndex(i));
                         newGlyphs = true;
-                    } else {
-                        const GlyphData data = { 0, 0 };
-                        m_page->m_glyphs[i] = data;
-                    }
+                    } else
+                        m_page->setGlyphDataForIndex(i, 0, 0);
                 }
 
                 if (!newGlyphs)
@@ -288,12 +286,9 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
         // ever finds it needs a glyph out of the system fallback page, it will
         // ask the system for the best font to use and fill that glyph in for us.
         if (parentPage)
-            memcpy(m_page->m_glyphs, parentPage->m_glyphs, GlyphPage::size * sizeof(m_page->m_glyphs[0]));
-        else {
-            const GlyphData data = { 0, 0 };
-            for (unsigned i = 0; i < GlyphPage::size; i++)
-                m_page->m_glyphs[i] = data;
-        }
+            m_page->copyFrom(*parentPage);
+        else
+            m_page->clear();
     }
 }
 

@@ -1,3 +1,41 @@
+2009-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6864062> Shrink GlyphPage from 4112 to 2576 bytes in 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=25605
+
+        Shrink GlyphPage by splitting the array of GlyphData, which has lots
+        of padding, into separate Glyph and SimpleFontData* arrays.
+
+        * platform/graphics/Font.h:
+        glyphDataForCharacter has to return a GlyphData by value now.
+        
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        Return GlyphData by value.
+        
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        Better encapsulation of GlyphPage, using the new methods.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/GlyphPageTreeNode.h:
+        (WebCore::GlyphData::GlyphData):
+        (WebCore::GlyphPage::indexForCharacter):
+        (WebCore::GlyphPage::glyphDataForCharacter):
+        (WebCore::GlyphPage::glyphDataForIndex):
+        (WebCore::GlyphPage::glyphAt):
+        (WebCore::GlyphPage::fontDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+        (WebCore::GlyphPage::copyFrom):
+        (WebCore::GlyphPage::clear):
+
 2009-05-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.

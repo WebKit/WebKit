@@ -45,6 +45,11 @@ typedef unsigned short Glyph;
 // Holds the glyph index and the corresponding SimpleFontData information for a given
 // character.
 struct GlyphData {
+    GlyphData(Glyph g = 0, const SimpleFontData* f = 0)
+        : glyph(g)
+        , fontData(f)
+    {
+    }
     Glyph glyph;
     const SimpleFontData* fontData;
 };
@@ -54,30 +59,69 @@ struct GlyphData {
 // starting from 0 and incrementing for each 256 glyphs.
 //
 // One page may actually include glyphs from other fonts if the characters are
-// missing in the parimary font. It is owned by exactly one GlyphPageTreeNode,
+// missing in the primary font. It is owned by exactly one GlyphPageTreeNode,
 // although multiple nodes may reference it as their "page" if they are supposed
 // to be overriding the parent's node, but provide no additional information.
-struct GlyphPage : public RefCounted<GlyphPage> {
+class GlyphPage : public RefCounted<GlyphPage> {
+public:
     static PassRefPtr<GlyphPage> create(GlyphPageTreeNode* owner)
     {
         return adoptRef(new GlyphPage(owner));
     }
 
     static const size_t size = 256; // Covers Latin-1 in a single page.
-    GlyphData m_glyphs[size];
-    GlyphPageTreeNode* m_owner;
 
-    const GlyphData& glyphDataForCharacter(UChar32 c) const { return m_glyphs[c % size]; }
+    unsigned indexForCharacter(UChar32 c) const { return c % size; }
+    GlyphData glyphDataForCharacter(UChar32 c) const
+    {
+        unsigned index = indexForCharacter(c);
+        return GlyphData(m_glyphs[index], m_glyphFontData[index]);
+    }
+
+    GlyphData glyphDataForIndex(unsigned index) const
+    {
+        ASSERT(index < size);
+        return GlyphData(m_glyphs[index], m_glyphFontData[index]);
+    }
+
+    Glyph glyphAt(unsigned index) const
+    {
+        ASSERT(index < size);
+        return m_glyphs[index];
+    }
+
+    const SimpleFontData* fontDataForCharacter(UChar32 c) const
+    {
+        return m_glyphFontData[indexForCharacter(c)];
+    }
+
     void setGlyphDataForCharacter(UChar32 c, Glyph g, const SimpleFontData* f)
     {
-        setGlyphDataForIndex(c % size, g, f);
+        setGlyphDataForIndex(indexForCharacter(c), g, f);
     }
     void setGlyphDataForIndex(unsigned index, Glyph g, const SimpleFontData* f)
     {
         ASSERT(index < size);
-        m_glyphs[index].glyph = g;
-        m_glyphs[index].fontData = f;
+        m_glyphs[index] = g;
+        m_glyphFontData[index] = f;
     }
+    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    {
+        setGlyphDataForIndex(index, glyphData.glyph, glyphData.fontData);
+    }
+    
+    void copyFrom(const GlyphPage& other)
+    {
+        memcpy(m_glyphs, other.m_glyphs, sizeof(m_glyphs));
+        memcpy(m_glyphFontData, other.m_glyphFontData, sizeof(m_glyphFontData));
+    }
+
+    void clear()
+    {
+        memset(m_glyphs, 0, sizeof(m_glyphs));
+        memset(m_glyphFontData, 0, sizeof(m_glyphFontData));
+    }
+    
     GlyphPageTreeNode* owner() const { return m_owner; }
 
     // Implemented by the platform.
@@ -88,6 +132,12 @@ private:
         : m_owner(owner)
     {
     }
+
+    // Separate arrays, rather than array of GlyphData, to save space.
+    Glyph m_glyphs[size];
+    const SimpleFontData* m_glyphFontData[size];
+
+    GlyphPageTreeNode* m_owner;
 };
 
 // The glyph page tree is a data structure that maps (FontData, glyph page number)
