@@ -64,49 +64,11 @@ namespace JSC {
         Lexer(JSGlobalData*);
         ~Lexer();
 
-        enum State {
-            Start,
-            IdentifierOrKeyword,
-            Identifier,
-            InIdentifierOrKeyword,
-            InIdentifier,
-            InIdentifierStartUnicodeEscapeStart,
-            InIdentifierStartUnicodeEscape,
-            InIdentifierPartUnicodeEscapeStart,
-            InIdentifierPartUnicodeEscape,
-            InSingleLineComment,
-            InMultiLineComment,
-            InNum,
-            InNum0,
-            InHex,
-            InOctal,
-            InDecimal,
-            InExponentIndicator,
-            InExponent,
-            Hex,
-            Octal,
-            Number,
-            String,
-            Eof,
-            InString,
-            InEscapeSequence,
-            InHexEscape,
-            InUnicodeEscape,
-            Other,
-            Bad
-        };
-
-        void setDone(State);
         void shift1();
         void shift2();
         void shift3();
         void shift4();
-        void nextLine();
-        int lookupKeyword(const char *);
-
-        bool isLineTerminator();
-
-        int matchPunctuator(int& charPos);
+        void shiftLineTerminator();
 
         void record8(int);
         void record16(int);
@@ -115,8 +77,9 @@ namespace JSC {
         void copyCodeWithoutBOMs();
 
         int currentOffset() const;
+        const UChar* currentCharacter() const;
 
-        JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer);
+        JSC::Identifier* makeIdentifier(const UChar* buffer, size_t length);
 
         bool lastTokenWasRestrKeyword() const;
 
@@ -125,15 +88,12 @@ namespace JSC {
 
         int m_lineNumber;
 
-        bool m_done;
         Vector<char> m_buffer8;
         Vector<UChar> m_buffer16;
         bool m_terminator;
         bool m_delimited; // encountered delimiter like "'" and "}" on last run
-        unsigned char m_skipLineEnd;
         int m_lastToken;
 
-        State m_state;
         const SourceCode* m_source;
         const UChar* m_code;
         const UChar* m_codeStart;
@@ -167,7 +127,7 @@ namespace JSC {
 
     inline bool Lexer::isLineTerminator(int ch)
     {
-        return ch == '\r' || ch == '\n' || ch == 0x2028 || ch == 0x2029;
+        return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
     }
 
     inline unsigned char Lexer::convertHex(int c1, int c2)

@@ -322,25 +322,26 @@ JSValue stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue thisValue, co
                 }
             } while (global);
         }
+
+        if (!lastIndex && replacements.isEmpty())
+            return sourceVal;
+
         if (lastIndex < source.size())
             sourceRanges.append(UString::Range(lastIndex, source.size() - lastIndex));
 
-        UString result = source.spliceSubstringsWithSeparators(sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
-
-        if (result == source)
-            return sourceVal;
-
-        return jsString(exec, result);
+        return jsString(exec, source.spliceSubstringsWithSeparators(sourceRanges.data(), sourceRanges.size(),
+            replacements.data(), replacements.size()));
     }
 
-    // First arg is a string
+    // Not a regular expression, so treat the pattern as a string.
+
     UString patternString = pattern.toString(exec);
     int matchPos = source.find(patternString);
-    int matchLen = patternString.size();
-    // Do the replacement
+
     if (matchPos == -1)
         return sourceVal;
 
+    int matchLen = patternString.size();
     if (callType != CallTypeNone) {
         MarkedArgumentBuffer args;
         args.append(jsSubstring(exec, source, matchPos, matchLen));

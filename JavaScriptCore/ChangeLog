@@ -1,3 +1,44 @@
+2009-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25589: goto instead of state machine in lexer
+        https://bugs.webkit.org/show_bug.cgi?id=25589
+
+        SunSpider is 0.8% faster.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::currentCharacter): Added.
+        (JSC::Lexer::currentOffset): Changed to call currentCharacter for clarity.
+        (JSC::Lexer::setCode): Removed code to set now-obsolete m_skipLineEnd.
+        (JSC::Lexer::shiftLineTerminator): Added. Handles line numbers and the
+        two-character line terminators.
+        (JSC::Lexer::makeIdentifier): Changed to take characters and length rather
+        than a vector, since we now make these directly out of the source buffer
+        when possible.
+        (JSC::Lexer::lastTokenWasRestrKeyword): Added.
+        (JSC::isNonASCIIIdentStart): Broke out the non-inline part.
+        (JSC::isIdentStart): Moved here.
+        (JSC::isNonASCIIIdentPart): Broke out the non-inline part.
+        (JSC::isIdentPart): Moved here.
+        (JSC::singleEscape): Moved here, and removed some unneeded cases.
+        (JSC::Lexer::record8): Moved here.
+        (JSC::Lexer::record16): Moved here.
+        (JSC::Lexer::lex): Rewrote this whole function to use goto and not use
+        a state machine. Got rid of most of the local variables. Also rolled the
+        matchPunctuator function in here.
+        (JSC::Lexer::scanRegExp): Changed to use the new version of isLineTerminator.
+        Clear m_buffer16 after using it instead of before.
+
+        * parser/Lexer.h: Removed State enum, setDone function, nextLine function,
+        lookupKeywordFunction, one of the isLineTerminator functions, m_done data member,
+        m_skipLineEnd data member, and m_state data member. Added shiftLineTerminator
+        function, currentCharacter function, and changed the arguments to the makeIdentifier
+        function. Removed one branch from the isLineTerminator function.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace): Streamlined the case where we don't replace anything.
+
 2009-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

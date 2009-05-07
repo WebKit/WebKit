@@ -56,12 +56,6 @@ namespace JSC {
 
 static const UChar byteOrderMark = 0xFEFF;
 
-// Values for m_skipLineEnd.
-static const unsigned char SkipLFShift = 0;
-static const unsigned char SkipCRShift = 1;
-static const unsigned char SkipLF = 1 << SkipLFShift;
-static const unsigned char SkipCR = 1 << SkipCRShift;
-
 Lexer::Lexer(JSGlobalData* globalData)
     : m_isReparsing(false)
     , m_globalData(globalData)
@@ -76,9 +70,14 @@ Lexer::~Lexer()
     m_keywordTable.deleteTable();
 }
 
+inline const UChar* Lexer::currentCharacter() const
+{
+    return m_code - 4;
+}
+
 inline int Lexer::currentOffset() const
 {
-    return m_code - 4 - m_codeStart;
+    return currentCharacter() - m_codeStart;
 }
 
 ALWAYS_INLINE void Lexer::shift1()
@@ -154,7 +153,6 @@ void Lexer::setCode(const SourceCode& source)
     m_codeStart = data;
     m_code = data + source.startOffset();
     m_codeEnd = data + source.endOffset();
-    m_skipLineEnd = 0;
     m_error = false;
     m_atLineStart = true;
 
@@ -193,213 +191,23 @@ void Lexer::copyCodeWithoutBOMs()
     m_codeEnd = m_codeWithoutBOMs.data() + m_codeWithoutBOMs.size();
 }
 
-// called on each new line
-void Lexer::nextLine()
+void Lexer::shiftLineTerminator()
 {
+    ASSERT(isLineTerminator(m_current));
+
+    // Allow both CRLF and LFCR.
+    if (m_current + m_next1 == '\n' + '\r')
+        shift2();
+    else
+        shift1();
+
     ++m_lineNumber;
-    m_atLineStart = true;
 }
 
-void Lexer::setDone(State s)
+ALWAYS_INLINE Identifier* Lexer::makeIdentifier(const UChar* characters, size_t length)
 {
-    m_state = s;
-    m_done = true;
-}
-
-ALWAYS_INLINE JSC::Identifier* Lexer::makeIdentifier(const Vector<UChar>& buffer)
-{
-    m_identifiers.append(JSC::Identifier(m_globalData, buffer.data(), buffer.size()));
+    m_identifiers.append(Identifier(m_globalData, characters, length));
     return &m_identifiers.last();
-}
-
-ALWAYS_INLINE int Lexer::matchPunctuator(int& charPos)
-{
-    switch (m_current) {
-        case '>':
-            if (m_next1 == '>' && m_next2 == '>') {
-                if (m_next3 == '=') {
-                    shift4();
-                    return URSHIFTEQUAL;
-                }
-                shift3();
-                return URSHIFT;
-            }
-            if (m_next1 == '>') {
-                if (m_next2 == '=') {
-                    shift3();
-                    return RSHIFTEQUAL;
-                }
-                shift2();
-                return RSHIFT;
-            }
-            if (m_next1 == '=') {
-                shift2();
-                return GE;
-            }
-            shift1();
-            return '>';
-        case '=':
-            if (m_next1 == '=') {
-                if (m_next2 == '=') {
-                    shift3();
-                    return STREQ;
-                }
-                shift2();
-                return EQEQ;
-            }
-            shift1();
-            return '=';
-        case '!':
-            if (m_next1 == '=') {
-                if (m_next2 == '=') {
-                    shift3();
-                    return STRNEQ;
-                }
-                shift2();
-                return NE;
-            }
-            shift1();
-            return '!';
-        case '<':
-            if (m_next1 == '<') {
-                if (m_next2 == '=') {
-                    shift3();
-                    return LSHIFTEQUAL;
-                }
-                shift2();
-                return LSHIFT;
-            }
-            if (m_next1 == '=') {
-                shift2();
-                return LE;
-            }
-            shift1();
-            return '<';
-        case '+':
-            if (m_next1 == '+') {
-                shift2();
-                if (m_terminator)
-                    return AUTOPLUSPLUS;
-                return PLUSPLUS;
-            }
-            if (m_next1 == '=') {
-                shift2();
-                return PLUSEQUAL;
-            }
-            shift1();
-            return '+';
-        case '-':
-            if (m_next1 == '-') {
-                shift2();
-                if (m_terminator)
-                    return AUTOMINUSMINUS;
-                return MINUSMINUS;
-            }
-            if (m_next1 == '=') {
-                shift2();
-                return MINUSEQUAL;
-            }
-            shift1();
-            return '-';
-        case '*':
-            if (m_next1 == '=') {
-                shift2();
-                return MULTEQUAL;
-            }
-            shift1();
-            return '*';
-        case '/':
-            if (m_next1 == '=') {
-                shift2();
-                return DIVEQUAL;
-            }
-            shift1();
-            return '/';
-        case '&':
-            if (m_next1 == '&') {
-                shift2();
-                return AND;
-            }
-            if (m_next1 == '=') {
-                shift2();
-                return ANDEQUAL;
-            }
-            shift1();
-            return '&';
-        case '^':
-            if (m_next1 == '=') {
-                shift2();
-                return XOREQUAL;
-            }
-            shift1();
-            return '^';
-        case '%':
-            if (m_next1 == '=') {
-                shift2();
-                return MODEQUAL;
-            }
-            shift1();
-            return '%';
-        case '|':
-            if (m_next1 == '=') {
-                shift2();
-                return OREQUAL;
-            }
-            if (m_next1 == '|') {
-                shift2();
-                return OR;
-            }
-            shift1();
-            return '|';
-        case ',':
-            shift1();
-            return ',';
-        case '~':
-            shift1();
-            return '~';
-        case '?':
-            shift1();
-            return '?';
-        case ':':
-            shift1();
-            return ':';
-        case '.':
-            shift1();
-            return '.';
-        case '(':
-            shift1();
-            return '(';
-        case ')':
-            shift1();
-            return ')';
-        case '[':
-            shift1();
-            return '[';
-        case ']':
-            shift1();
-            return ']';
-        case ';':
-            shift1();
-            return ';';
-        case '{':
-            charPos = currentOffset();
-            shift1();
-            return OPENBRACE;
-        case '}':
-            charPos = currentOffset();
-            shift1();
-            return CLOSEBRACE;
-    }
-
-    return -1;
-}
-
-ALWAYS_INLINE bool Lexer::isLineTerminator()
-{
-    bool cr = m_current == '\r';
-    bool lf = m_current == '\n';
-    m_skipLineEnd |= (cr << SkipLFShift) | (lf << SkipCRShift);
-    return cr | lf | ((m_current & ~1) == 0x2028);
 }
 
 inline bool Lexer::lastTokenWasRestrKeyword() const
@@ -428,7 +236,7 @@ static inline bool isIdentPart(int c)
     return isASCII(c) ? isASCIIAlphanumeric(c) || c == '$' || c == '_' : isNonASCIIIdentPart(c);
 }
 
-static int singleEscape(int c)
+static inline int singleEscape(int c)
 {
     switch (c) {
         case 'b':
@@ -443,20 +251,9 @@ static int singleEscape(int c)
             return 0x0C;
         case 'r':
             return 0x0D;
-        case '"':
-            return 0x22;
-        case '\'':
-            return 0x27;
-        case '\\':
-            return 0x5C;
         default:
             return c;
     }
-}
-
-static inline int convertOctal(int c1, int c2, int c3)
-{
-    return (c1 - '0') * 64 + (c2 - '0') * 8 + c3 - '0';
 }
 
 inline void Lexer::record8(int c)
@@ -466,6 +263,11 @@ inline void Lexer::record8(int c)
     m_buffer8.append(static_cast<char>(c));
 }
 
+inline void Lexer::record16(UChar c)
+{
+    m_buffer16.append(c);
+}
+
 inline void Lexer::record16(int c)
 {
     ASSERT(c >= 0);
@@ -473,447 +275,649 @@ inline void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
-inline void Lexer::record16(UChar c)
-{
-    m_buffer16.append(c);
-}
-
 int Lexer::lex(void* p1, void* p2)
 {
+    ASSERT(!m_error);
+    ASSERT(m_buffer8.isEmpty());
+    ASSERT(m_buffer16.isEmpty());
+
     YYSTYPE* lvalp = static_cast<YYSTYPE*>(p1);
     YYLTYPE* llocp = static_cast<YYLTYPE*>(p2);
     int token = 0;
-    m_state = Start;
-    int stringType = 0; // either single or double quotes
-    m_buffer8.resize(0);
-    m_buffer16.resize(0);
-    m_done = false;
     m_terminator = false;
-    m_skipLineEnd = 0;
+
+start:
+    while (isWhiteSpace(m_current))
+        shift1();
 
     int startOffset = currentOffset();
 
-    while (true) {
-        if (m_skipLineEnd) {
-            if (m_current != '\n') // found \r but not \n afterwards
-                m_skipLineEnd &= ~SkipLF;
-            if (m_current != '\r') // found \n but not \r afterwards
-                m_skipLineEnd &= ~SkipCR;
-            if (m_skipLineEnd) { // found \r\n or \n\r -> eat the second one
-                m_skipLineEnd = 0;
-                shift1();
-            }
+    if (m_current == -1) {
+        if (!m_terminator && !m_delimited && !m_isReparsing) {
+            // automatic semicolon insertion if program incomplete
+            token = ';';
+            goto doneSemicolon;
         }
-        switch (m_state) {
-            case Start:
-                startOffset = currentOffset();
-                if (isWhiteSpace(m_current)) {
-                    // do nothing
-                } else if (m_current == '/' && m_next1 == '/') {
-                    shift1();
-                    m_state = InSingleLineComment;
-                } else if (m_current == '/' && m_next1 == '*') {
-                    shift1();
-                    m_state = InMultiLineComment;
-                } else if (m_current == -1) {
-                    if (!m_terminator && !m_delimited && !m_isReparsing) {
-                        // automatic semicolon insertion if program incomplete
-                        token = ';';
-                        setDone(Other);
-                    } else
-                        setDone(Eof);
-                } else if (isLineTerminator()) {
-                    nextLine();
-                    m_terminator = true;
-                    if (lastTokenWasRestrKeyword()) {
-                        token = ';';
-                        setDone(Other);
-                    }
-                } else if (m_current == '"' || m_current == '\'') {
-                    m_state = InString;
-                    stringType = m_current;
-                } else if (isIdentStart(m_current)) {
-                    record16(m_current);
-                    m_state = InIdentifierOrKeyword;
-                } else if (m_current == '\\')
-                    m_state = InIdentifierStartUnicodeEscapeStart;
-                else if (m_current == '0') {
-                    record8(m_current);
-                    m_state = InNum0;
-                } else if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    m_state = InNum;
-                } else if (m_current == '.' && isASCIIDigit(m_next1)) {
-                    record8(m_current);
-                    m_state = InDecimal;
-                } else if (m_current == '<' && m_next1 == '!' && m_next2 == '-' && m_next3 == '-') {
-                    // <!-- marks the beginning of a line comment (for www usage)
-                    shift3();
-                    m_state = InSingleLineComment;
-                } else if (m_atLineStart && m_current == '-' && m_next1 == '-' && m_next2 == '>') {
-                    // same for -->
-                    shift2();
-                    m_state = InSingleLineComment;
-                } else {
-                    token = matchPunctuator(lvalp->intValue);
-                    if (token != -1)
-                        setDone(Other);
-                    else
-                        setDone(Bad);
-                }
-                goto stillAtLineStart;
-            case InString:
-                if (m_current == stringType) {
-                    shift1();
-                    setDone(String);
-                } else if (isLineTerminator() || m_current == -1)
-                    setDone(Bad);
-                else if (m_current == '\\')
-                    m_state = InEscapeSequence;
-                else
-                    record16(m_current);
-                break;
-            // Escape Sequences inside of strings
-            case InEscapeSequence:
-                if (isASCIIOctalDigit(m_current)) {
-                    if (m_current >= '0' && m_current <= '3' && isASCIIOctalDigit(m_next1) && isASCIIOctalDigit(m_next2)) {
-                        record16(convertOctal(m_current, m_next1, m_next2));
-                        shift2();
-                        m_state = InString;
-                    } else if (isASCIIOctalDigit(m_current) && isASCIIOctalDigit(m_next1)) {
-                        record16(convertOctal('0', m_current, m_next1));
-                        shift1();
-                        m_state = InString;
-                    } else if (isASCIIOctalDigit(m_current)) {
-                        record16(convertOctal('0', '0', m_current));
-                        m_state = InString;
-                    } else
-                        setDone(Bad);
-                } else if (m_current == 'x')
-                    m_state = InHexEscape;
-                else if (m_current == 'u')
-                    m_state = InUnicodeEscape;
-                else if (isLineTerminator()) {
-                    nextLine();
-                    m_state = InString;
-                } else {
-                    record16(singleEscape(m_current));
-                    m_state = InString;
-                }
-                break;
-            case InHexEscape:
-                if (isASCIIHexDigit(m_current) && isASCIIHexDigit(m_next1)) {
-                    m_state = InString;
-                    record16(convertHex(m_current, m_next1));
-                    shift1();
-                } else if (m_current == stringType) {
-                    record16('x');
-                    shift1();
-                    setDone(String);
-                } else {
-                    record16('x');
-                    record16(m_current);
-                    m_state = InString;
-                }
-                break;
-            case InUnicodeEscape:
-                if (isASCIIHexDigit(m_current) && isASCIIHexDigit(m_next1) && isASCIIHexDigit(m_next2) && isASCIIHexDigit(m_next3)) {
-                    record16(convertUnicode(m_current, m_next1, m_next2, m_next3));
-                    shift3();
-                    m_state = InString;
-                } else if (m_current == stringType) {
-                    record16('u');
-                    shift1();
-                    setDone(String);
-                } else
-                    setDone(Bad);
-                break;
-            case InSingleLineComment:
-                if (isLineTerminator()) {
-                    nextLine();
-                    m_terminator = true;
-                    if (lastTokenWasRestrKeyword()) {
-                        token = ';';
-                        setDone(Other);
-                    } else
-                        m_state = Start;
-                } else if (m_current == -1)
-                    setDone(Eof);
-                goto stillAtLineStart;
-            case InMultiLineComment:
-                if (isLineTerminator())
-                    nextLine();
-                else if (m_current == '*' && m_next1 == '/') {
-                    m_state = Start;
-                    shift1();
-                } else if (m_current == -1)
-                    setDone(Bad);
-                break;
-            case InIdentifierOrKeyword:
-                if (isIdentPart(m_current)) {
-                    record16(m_current);
-                    while (isIdentPart(m_next1)) {
-                        shift1();
-                        record16(m_current);
-                    }
-                } else if (m_current == '\\')
-                    m_state = InIdentifierPartUnicodeEscapeStart;
-                else
-                    setDone(IdentifierOrKeyword);
-                break;
-            case InIdentifier:
-                if (isIdentPart(m_current)) {
-                    record16(m_current);
-                    while (isIdentPart(m_next1)) {
-                        shift1();
-                        record16(m_current);
-                    }
-                } else if (m_current == '\\')
-                    m_state = InIdentifierPartUnicodeEscapeStart;
-                else
-                    setDone(Identifier);
-                break;
-            case InNum0:
-                if (m_current == 'x' || m_current == 'X') {
-                    record8(m_current);
-                    m_state = InHex;
-                } else if (m_current == '.') {
-                    record8(m_current);
-                    m_state = InDecimal;
-                } else if (m_current == 'e' || m_current == 'E') {
-                    record8(m_current);
-                    m_state = InExponentIndicator;
-                } else if (isASCIIOctalDigit(m_current)) {
-                    record8(m_current);
-                    m_state = InOctal;
-                } else if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    m_state = InDecimal;
-                } else
-                    setDone(Number);
-                break;
-            case InHex:
-                if (isASCIIHexDigit(m_current)) {
-                    record8(m_current);
-                    while (isASCIIHexDigit(m_next1)) {
-                        shift1();
-                        record8(m_current);
-                    }
-                } else
-                    setDone(Hex);
-                break;
-            case InOctal:
-                if (isASCIIOctalDigit(m_current)) {
-                    record8(m_current);
-                    while (isASCIIOctalDigit(m_next1)) {
-                        shift1();
-                        record8(m_current);
-                    }
-                } else if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    m_state = InDecimal;
-                } else
-                    setDone(Octal);
-                break;
-            case InNum:
-                if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    while (isASCIIDigit(m_next1)) {
-                        shift1();
-                        record8(m_current);
-                    }
-                } else if (m_current == '.') {
-                    record8(m_current);
-                    m_state = InDecimal;
-                } else if (m_current == 'e' || m_current == 'E') {
-                    record8(m_current);
-                    m_state = InExponentIndicator;
-                } else
-                    setDone(Number);
-                break;
-            case InDecimal:
-                if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    while (isASCIIDigit(m_next1)) {
-                        shift1();
-                        record8(m_current);
-                    }
-                } else if (m_current == 'e' || m_current == 'E') {
-                    record8(m_current);
-                    m_state = InExponentIndicator;
-                } else
-                    setDone(Number);
-                break;
-            case InExponentIndicator:
-                if (m_current == '+' || m_current == '-')
-                    record8(m_current);
-                else if (isASCIIDigit(m_current)) {
-                    record8(m_current);
-                    m_state = InExponent;
-                } else
-                    setDone(Bad);
-                break;
-            case InExponent:
-                if (isASCIIDigit(m_current))
-                    record8(m_current);
-                else
-                    setDone(Number);
-                break;
-            case InIdentifierStartUnicodeEscapeStart:
-                if (m_current == 'u')
-                    m_state = InIdentifierStartUnicodeEscape;
-                else
-                    setDone(Bad);
-                break;
-            case InIdentifierPartUnicodeEscapeStart:
-                if (m_current == 'u')
-                    m_state = InIdentifierPartUnicodeEscape;
-                else
-                    setDone(Bad);
-                break;
-            case InIdentifierStartUnicodeEscape:
-                if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(m_next1) || !isASCIIHexDigit(m_next2) || !isASCIIHexDigit(m_next3)) {
-                    setDone(Bad);
-                    break;
-                }
-                token = convertUnicode(m_current, m_next1, m_next2, m_next3);
-                shift3();
-                if (!isIdentStart(token)) {
-                    setDone(Bad);
-                    break;
-                }
-                record16(token);
-                m_state = InIdentifier;
-                break;
-            case InIdentifierPartUnicodeEscape:
-                if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(m_next1) || !isASCIIHexDigit(m_next2) || !isASCIIHexDigit(m_next3)) {
-                    setDone(Bad);
-                    break;
-                }
-                token = convertUnicode(m_current, m_next1, m_next2, m_next3);
-                shift3();
-                if (!isIdentPart(token)) {
-                    setDone(Bad);
-                    break;
-                }
-                record16(token);
-                m_state = InIdentifier;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-        }
-
-        m_atLineStart = false;
-
-stillAtLineStart:
-        if (m_done)
-            break;
-
-        shift1();
-    }
-
-    if (m_state == Number || m_state == Octal || m_state == Hex) {
-        // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
-        if (isIdentStart(m_current))
-            m_state = Bad;
-        else {
-            // terminate string
-            m_buffer8.append('\0');
-
-            if (m_state == Number)
-                lvalp->doubleValue = WTF::strtod(m_buffer8.data(), 0L);
-            else if (m_state == Hex) { // scan hex numbers
-                double dval = 0;
-
-                const char* p = m_buffer8.data() + 2;
-                while (char c = *p++) {
-                    dval *= 16;
-                    dval += toASCIIHexValue(c);
-                }
-
-                if (dval >= mantissaOverflowLowerBound)
-                    dval = parseIntOverflow(m_buffer8.data() + 2, p - (m_buffer8.data() + 3), 16);
-
-                m_state = Number;
-                lvalp->doubleValue = dval;
-            } else {   // scan octal number
-                double dval = 0;
-
-                const char* p = m_buffer8.data() + 1;
-                while (char c = *p++) {
-                    dval *= 8;
-                    dval += c - '0';
-                }
-
-                if (dval >= mantissaOverflowLowerBound)
-                    dval = parseIntOverflow(m_buffer8.data() + 1, p - (m_buffer8.data() + 2), 8);
-
-                m_state = Number;
-                lvalp->doubleValue = dval;
-            }
-        }
+        return 0;
     }
 
     m_delimited = false;
+    switch (m_current) {
+        case '>':
+            if (m_next1 == '>' && m_next2 == '>') {
+                if (m_next3 == '=') {
+                    shift4();
+                    token = URSHIFTEQUAL;
+                    break;
+                }
+                shift3();
+                token = URSHIFT;
+                break;
+            }
+            if (m_next1 == '>') {
+                if (m_next2 == '=') {
+                    shift3();
+                    token = RSHIFTEQUAL;
+                    break;
+                }
+                shift2();
+                token = RSHIFT;
+                break;
+            }
+            if (m_next1 == '=') {
+                shift2();
+                token = GE;
+                break;
+            }
+            shift1();
+            token = '>';
+            break;
+        case '=':
+            if (m_next1 == '=') {
+                if (m_next2 == '=') {
+                    shift3();
+                    token = STREQ;
+                    break;
+                }
+                shift2();
+                token = EQEQ;
+                break;
+            }
+            shift1();
+            token = '=';
+            break;
+        case '!':
+            if (m_next1 == '=') {
+                if (m_next2 == '=') {
+                    shift3();
+                    token = STRNEQ;
+                    break;
+                }
+                shift2();
+                token = NE;
+                break;
+            }
+            shift1();
+            token = '!';
+            break;
+        case '<':
+            if (m_next1 == '!' && m_next2 == '-' && m_next3 == '-') {
+                // <!-- marks the beginning of a line comment (for www usage)
+                shift4();
+                goto inSingleLineComment;
+            }
+            if (m_next1 == '<') {
+                if (m_next2 == '=') {
+                    shift3();
+                    token = LSHIFTEQUAL;
+                    break;
+                }
+                shift2();
+                token = LSHIFT;
+                break;
+            }
+            if (m_next1 == '=') {
+                shift2();
+                token = LE;
+                break;
+            }
+            shift1();
+            token = '<';
+            break;
+        case '+':
+            if (m_next1 == '+') {
+                shift2();
+                if (m_terminator) {
+                    token = AUTOPLUSPLUS;
+                    break;
+                }
+                token = PLUSPLUS;
+                break;
+            }
+            if (m_next1 == '=') {
+                shift2();
+                token = PLUSEQUAL;
+                break;
+            }
+            shift1();
+            token = '+';
+            break;
+        case '-':
+            if (m_next1 == '-') {
+                if (m_atLineStart && m_next2 == '>') {
+                    shift3();
+                    goto inSingleLineComment;
+                }
+                shift2();
+                if (m_terminator) {
+                    token = AUTOMINUSMINUS;
+                    break;
+                }
+                token = MINUSMINUS;
+                break;
+            }
+            if (m_next1 == '=') {
+                shift2();
+                token = MINUSEQUAL;
+                break;
+            }
+            shift1();
+            token = '-';
+            break;
+        case '*':
+            if (m_next1 == '=') {
+                shift2();
+                token = MULTEQUAL;
+                break;
+            }
+            shift1();
+            token = '*';
+            break;
+        case '/':
+            if (m_next1 == '/') {
+                shift2();
+                goto inSingleLineComment;
+            }
+            if (m_next1 == '*')
+                goto inMultiLineComment;
+            if (m_next1 == '=') {
+                shift2();
+                token = DIVEQUAL;
+                break;
+            }
+            shift1();
+            token = '/';
+            break;
+        case '&':
+            if (m_next1 == '&') {
+                shift2();
+                token = AND;
+                break;
+            }
+            if (m_next1 == '=') {
+                shift2();
+                token = ANDEQUAL;
+                break;
+            }
+            shift1();
+            token = '&';
+            break;
+        case '^':
+            if (m_next1 == '=') {
+                shift2();
+                token = XOREQUAL;
+                break;
+            }
+            shift1();
+            token = '^';
+            break;
+        case '%':
+            if (m_next1 == '=') {
+                shift2();
+                token = MODEQUAL;
+                break;
+            }
+            shift1();
+            token = '%';
+            break;
+        case '|':
+            if (m_next1 == '=') {
+                shift2();
+                token = OREQUAL;
+                break;
+            }
+            if (m_next1 == '|') {
+                shift2();
+                token = OR;
+                break;
+            }
+            shift1();
+            token = '|';
+            break;
+        case '.':
+            if (isASCIIDigit(m_next1)) {
+                record8('.');
+                shift1();
+                goto inNumberAfterDecimalPoint;
+            }
+            token = '.';
+            shift1();
+            break;
+        case ',':
+        case '~':
+        case '?':
+        case ':':
+        case '(':
+        case ')':
+        case '[':
+        case ']':
+            token = m_current;
+            shift1();
+            break;
+        case ';':
+            shift1();
+            m_delimited = true;
+            token = ';';
+            break;
+        case '{':
+            lvalp->intValue = currentOffset();
+            shift1();
+            token = OPENBRACE;
+            break;
+        case '}':
+            lvalp->intValue = currentOffset();
+            shift1();
+            m_delimited = true;
+            token = CLOSEBRACE;
+            break;
+        case '\\':
+            goto startIdentifierWithBackslash;
+        case '0':
+            goto startNumberWithZeroDigit;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            goto startNumber;
+        case '"':
+        case '\'':
+            goto startString;
+        default:
+            if (isIdentStart(m_current))
+                goto startIdentifierOrKeyword;
+            if (isLineTerminator(m_current)) {
+                shiftLineTerminator();
+                m_atLineStart = true;
+                m_terminator = true;
+                if (lastTokenWasRestrKeyword()) {
+                    token = ';';
+                    goto doneSemicolon;
+                }
+                goto start;
+            }
+            goto returnError;
+    }
 
+    m_atLineStart = false;
+    goto returnToken;
+
+startString: {
+    int stringQuoteCharacter = m_current;
+    shift1();
+
+    const UChar* stringStart = currentCharacter();
+    while (m_current != stringQuoteCharacter) {
+        // Fast check for characters that require special handling.
+        // Catches -1, \n, \r, \, 0x2028, and 0x2029 as efficiently
+        // as possible, and lets through all common ASCII characters.
+        if (UNLIKELY(m_current == '\\') || UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000)))
+            m_buffer16.append(stringStart, currentCharacter() - stringStart);
+            goto inString;
+        shift1();
+    }
+    lvalp->ident = makeIdentifier(stringStart, currentCharacter() - stringStart);
+    shift1();
+    m_atLineStart = false;
+    m_delimited = false;
+    token = STRING;
+    goto returnToken;
+
+inString:
+    while (m_current != stringQuoteCharacter) {
+        if (m_current == '\\')
+            goto inStringEscapeSequence;
+        if (UNLIKELY(isLineTerminator(m_current)))
+            goto returnError;
+        if (UNLIKELY(m_current == -1))
+            goto returnError;
+        record16(m_current);
+        shift1();
+    }
+    goto doneString;
+
+inStringEscapeSequence:
+    shift1();
+    if (m_current == 'x') {
+        shift1();
+        if (isASCIIHexDigit(m_current) && isASCIIHexDigit(m_next1)) {
+            record16(convertHex(m_current, m_next1));
+            shift2();
+            goto inString;
+        }
+        record16('x');
+        if (m_current == stringQuoteCharacter)
+            goto doneString;
+        goto inString;
+    }
+    if (m_current == 'u') {
+        shift1();
+        if (isASCIIHexDigit(m_current) && isASCIIHexDigit(m_next1) && isASCIIHexDigit(m_next2) && isASCIIHexDigit(m_next3)) {
+            record16(convertUnicode(m_current, m_next1, m_next2, m_next3));
+            shift4();
+            goto inString;
+        }
+        if (m_current == stringQuoteCharacter) {
+            record16('u');
+            goto doneString;
+        }
+        goto returnError;
+    }
+    if (isASCIIOctalDigit(m_current)) {
+        if (m_current >= '0' && m_current <= '3' && isASCIIOctalDigit(m_next1) && isASCIIOctalDigit(m_next2)) {
+            record16((m_current - '0') * 64 + (m_next1 - '0') * 8 + m_next2 - '0');
+            shift3();
+            goto inString;
+        }
+        if (isASCIIOctalDigit(m_next1)) {
+            record16((m_current - '0') * 8 + m_next1 - '0');
+            shift2();
+            goto inString;
+        }
+        record16(m_current - '0');
+        shift1();
+        goto inString;
+    }
+    if (isLineTerminator(m_current)) {
+        shiftLineTerminator();
+        goto inString;
+    }
+    record16(singleEscape(m_current));
+    shift1();
+    goto inString;
+}
+
+startIdentifierWithBackslash:
+    shift1();
+    if (UNLIKELY(m_current != 'u'))
+        goto returnError;
+    shift1();
+    if (UNLIKELY(!isASCIIHexDigit(m_current) || !isASCIIHexDigit(m_next1) || !isASCIIHexDigit(m_next2) || !isASCIIHexDigit(m_next3)))
+        goto returnError;
+    token = convertUnicode(m_current, m_next1, m_next2, m_next3);
+    if (UNLIKELY(!isIdentStart(token)))
+        goto returnError;
+    goto inIdentifierAfterCharacterCheck;
+
+startIdentifierOrKeyword: {
+    const UChar* identifierStart = currentCharacter();
+    shift1();
+    while (isIdentPart(m_current))
+        shift1();
+    if (LIKELY(m_current != '\\')) {
+        lvalp->ident = makeIdentifier(identifierStart, currentCharacter() - identifierStart);
+        goto doneIdentifierOrKeyword;
+    }
+    m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
+}
+
+    do {
+        shift1();
+        if (UNLIKELY(m_current != 'u'))
+            goto returnError;
+        shift1();
+        if (UNLIKELY(!isASCIIHexDigit(m_current) || !isASCIIHexDigit(m_next1) || !isASCIIHexDigit(m_next2) || !isASCIIHexDigit(m_next3)))
+            goto returnError;
+        token = convertUnicode(m_current, m_next1, m_next2, m_next3);
+        if (UNLIKELY(!isIdentPart(token)))
+            goto returnError;
+inIdentifierAfterCharacterCheck:
+        record16(token);
+        shift4();
+
+        while (isIdentPart(m_current)) {
+            record16(m_current);
+            shift1();
+        }
+    } while (UNLIKELY(m_current == '\\'));
+    goto doneIdentifier;
+
+inSingleLineComment:
+    while (!isLineTerminator(m_current)) {
+        if (UNLIKELY(m_current == -1))
+            return 0;
+        shift1();
+    }
+    shiftLineTerminator();
+    m_atLineStart = true;
+    m_terminator = true;
+    if (lastTokenWasRestrKeyword())
+        goto doneSemicolon;
+    goto start;
+
+inMultiLineComment:
+    shift2();
+    while (m_current != '*' || m_next1 != '/') {
+        if (isLineTerminator(m_current))
+            shiftLineTerminator();
+        else {
+            shift1();
+            if (UNLIKELY(m_current == -1))
+                goto returnError;
+        }
+    }
+    shift2();
+    m_atLineStart = false;
+    goto start;
+
+startNumberWithZeroDigit:
+    shift1();
+    if ((m_current | 0x20) == 'x' && isASCIIHexDigit(m_next1)) {
+        shift1();
+        goto inHex;
+    }
+    if (m_current == '.') {
+        record8('0');
+        record8('.');
+        shift1();
+        goto inNumberAfterDecimalPoint;
+    }
+    if ((m_current | 0x20) == 'e') {
+        record8('0');
+        record8('e');
+        shift1();
+        goto inExponentIndicator;
+    }
+    if (isASCIIOctalDigit(m_current))
+        goto inOctal;
+    if (isASCIIDigit(m_current))
+        goto startNumber;
+    lvalp->doubleValue = 0;
+    goto doneNumeric;
+
+inNumberAfterDecimalPoint:
+    while (isASCIIDigit(m_current)) {
+        record8(m_current);
+        shift1();
+    }
+    if ((m_current | 0x20) == 'e') {
+        record8('e');
+        shift1();
+        goto inExponentIndicator;
+    }
+    goto doneNumber;
+
+inExponentIndicator:
+    if (m_current == '+' || m_current == '-') {
+        record8(m_current);
+        shift1();
+    }
+    if (!isASCIIDigit(m_current))
+        goto returnError;
+    do {
+        record8(m_current);
+        shift1();
+    } while (isASCIIDigit(m_current));
+    goto doneNumber;
+
+inOctal: {
+    do {
+        record8(m_current);
+        shift1();
+    } while (isASCIIOctalDigit(m_current));
+    if (isASCIIDigit(m_current))
+        goto startNumber;
+
+    double dval = 0;
+
+    const char* end = m_buffer8.end();
+    for (const char* p = m_buffer8.data(); p < end; ++p) {
+        dval *= 8;
+        dval += *p - '0';
+    }
+    if (dval >= mantissaOverflowLowerBound)
+        dval = parseIntOverflow(m_buffer8.data(), end - m_buffer8.data(), 8);
+
+    m_buffer8.resize(0);
+
+    lvalp->doubleValue = dval;
+    goto doneNumeric;
+}
+
+inHex: {
+    do {
+        record8(m_current);
+        shift1();
+    } while (isASCIIHexDigit(m_current));
+
+    double dval = 0;
+
+    const char* end = m_buffer8.end();
+    for (const char* p = m_buffer8.data(); p < end; ++p) {
+        dval *= 16;
+        dval += toASCIIHexValue(*p);
+    }
+    if (dval >= mantissaOverflowLowerBound)
+        dval = parseIntOverflow(m_buffer8.data(), end - m_buffer8.data(), 16);
+
+    m_buffer8.resize(0);
+
+    lvalp->doubleValue = dval;
+    goto doneNumeric;
+}
+
+startNumber:
+    record8(m_current);
+    shift1();
+    while (isASCIIDigit(m_current)) {
+        record8(m_current);
+        shift1();
+    }
+    if (m_current == '.') {
+        record8('.');
+        shift1();
+        goto inNumberAfterDecimalPoint;
+    }
+    if ((m_current | 0x20) == 'e') {
+        record8('e');
+        shift1();
+        goto inExponentIndicator;
+    }
+
+    // Fall through into doneNumber.
+
+doneNumber:
+    // Null-terminate string for strtod.
+    m_buffer8.append('\0');
+    lvalp->doubleValue = WTF::strtod(m_buffer8.data(), 0);
+    m_buffer8.resize(0);
+
+    // Fall through into doneNumeric.
+
+doneNumeric:
+    // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
+    if (UNLIKELY(isIdentStart(m_current)))
+        goto returnError;
+
+    m_atLineStart = false;
+    m_delimited = false;
+    token = NUMBER;
+    goto returnToken;
+
+doneSemicolon:
+    token = ';';
+    m_delimited = true;
+    goto returnToken;
+
+doneIdentifier:
+    m_atLineStart = false;
+    m_delimited = false;
+    lvalp->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+    m_buffer16.resize(0);
+    token = IDENT;
+    goto returnToken;
+
+doneIdentifierOrKeyword: {
+    m_atLineStart = false;
+    m_delimited = false;
+    m_buffer16.resize(0);
+    const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
+    token = entry ? entry->lexerValue() : IDENT;
+    goto returnToken;
+}
+
+doneString:
+    // Atomize constant strings in case they're later used in property lookup.
+    shift1();
+    m_atLineStart = false;
+    m_delimited = false;
+    lvalp->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+    m_buffer16.resize(0);
+    token = STRING;
+
+    // Fall through into returnToken.
+
+returnToken: {
     int lineNumber = m_lineNumber;
     llocp->first_line = lineNumber;
     llocp->last_line = lineNumber;
     llocp->first_column = startOffset;
     llocp->last_column = currentOffset();
 
-    switch (m_state) {
-        case Eof:
-            token = 0;
-            break;
-        case Other:
-            m_delimited = (token == '}') | (token == ';');
-            break;
-        case Identifier:
-            lvalp->ident = makeIdentifier(m_buffer16);
-            token = IDENT;
-            break;
-        case IdentifierOrKeyword: {
-            lvalp->ident = makeIdentifier(m_buffer16);
-            const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
-            if (!entry) {
-                // Lookup for keyword failed, means this is an identifier.
-                token = IDENT;
-                break;
-            }
-            token = entry->lexerValue();
-            break;
-        }
-        case String:
-            // Atomize constant strings in case they're later used in property lookup.
-            lvalp->ident = makeIdentifier(m_buffer16);
-            token = STRING;
-            break;
-        case Number:
-            token = NUMBER;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            // Fall through.
-        case Bad:
-            m_error = true;
-            return -1;
-    }
-
     m_lastToken = token;
     return token;
 }
 
+returnError:
+    m_error = true;
+    return -1;
+}
+
 bool Lexer::scanRegExp()
 {
-    m_buffer16.resize(0);
+    ASSERT(m_buffer16.isEmpty());
+
     bool lastWasEscape = false;
     bool inBrackets = false;
 
-    while (1) {
-        if (isLineTerminator() || m_current == -1)
+    while (true) {
+        if (isLineTerminator(m_current) || m_current == -1)
             return false;
-        else if (m_current != '/' || lastWasEscape || inBrackets) {
+        if (m_current != '/' || lastWasEscape || inBrackets) {
             // keep track of '[' and ']'
             if (!lastWasEscape) {
                 if (m_current == '[' && !inBrackets)
@@ -937,6 +941,7 @@ bool Lexer::scanRegExp()
         shift1();
     }
     m_flags = UString(m_buffer16);
+    m_buffer16.resize(0);
 
     return true;
 }
