@@ -1,3 +1,10 @@
+2009-05-07  Darin Fisher  <darin@chromium.org>
+
+        Fix Chromium build bustage.
+
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp: Add missing
+        HTMLCollection.h include.
+
 2009-05-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

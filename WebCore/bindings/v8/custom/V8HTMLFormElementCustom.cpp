@@ -31,6 +31,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "HTMLCollection.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8NamedNodesCollection.h"
