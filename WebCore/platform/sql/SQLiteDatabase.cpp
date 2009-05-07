@@ -47,7 +47,6 @@ SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
     , m_pageSize(-1)
     , m_transactionInProgress(false)
-    , m_openingThread(0)
 {
 }
 
@@ -89,7 +88,7 @@ void SQLiteDatabase::close()
         m_db = 0;
     }
 
-    m_openingThread = 0;
+    m_openingThread.invalidate();
 }
 
 void SQLiteDatabase::setFullsync(bool fsync) 

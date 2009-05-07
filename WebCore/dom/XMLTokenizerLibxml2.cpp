@@ -326,13 +326,17 @@ private:
 // --------------------------------
 
 static int globalDescriptor = 0;
-static ThreadIdentifier libxmlLoaderThread = 0;
+
+static ThreadIdentifier& libxmlLoaderThread() {
+    DEFINE_STATIC_LOCAL(ThreadIdentifier, staticLibxmlLoaderThread, ());
+    return staticLibxmlLoaderThread;
+}
 
 static int matchFunc(const char*)
 {
     // Only match loads initiated due to uses of libxml2 from within XMLTokenizer to avoid
     // interfering with client applications that also use libxml2.  http://bugs.webkit.org/show_bug.cgi?id=17353
-    return XMLTokenizerScope::currentDocLoader && currentThread() == libxmlLoaderThread;
+    return XMLTokenizerScope::currentDocLoader && currentThread() == libxmlLoaderThread();
 }
 
 class OffsetBuffer {
@@ -393,7 +397,7 @@ static bool shouldAllowExternalLoad(const KURL& url)
 static void* openFunc(const char* uri)
 {
     ASSERT(XMLTokenizerScope::currentDocLoader);
-    ASSERT(currentThread() == libxmlLoaderThread);
+    ASSERT(currentThread() == libxmlLoaderThread());
 
     KURL url(KURL(), uri);
 
@@ -462,7 +466,7 @@ static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* user
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
-        libxmlLoaderThread = currentThread();
+        libxmlLoaderThread() = currentThread();
         didInit = true;
     }
 
@@ -484,7 +488,7 @@ static xmlParserCtxtPtr createMemoryParser(xmlSAXHandlerPtr handlers, void* user
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
-        libxmlLoaderThread = currentThread();
+        libxmlLoaderThread() = currentThread();
         didInit = true;
     }
 

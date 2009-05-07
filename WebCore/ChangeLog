@@ -1,3 +1,41 @@
+2009-05-07  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov and Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25348
+        Change WTF::ThreadIdentifier to be an actual (but wrapped) thread id, remove ThreadMap.
+
+        Most of the change is in WTF.
+        Unless noted, all the following files changed to use the new ThreadIdentifier::isValid()
+        method instead of just doing 'if(m_threadID)' kind of checks, since ThreadIdentifier
+        is now a class rather then an integer.
+        Also, there is no need to initialize threadID in constructors to 0 now.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::libxmlLoaderThread): use DEFINE_STATIC_LOCAL and accessor function for static thread id,
+        since now ThreadIdentifier needs construction and we avoid having global initializers.
+        (WebCore::matchFunc): use the new accessor function.
+        (WebCore::openFunc): ditto.
+        (WebCore::createStringParser): ditto.
+        (WebCore::createMemoryParser): ditto.
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::close):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::databaseThread): remove m_threadID from debug output.
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::start):
+        (WebCore::LocalStorageThread::scheduleImport):
+        (WebCore::LocalStorageThread::scheduleSync):
+        (WebCore::LocalStorageThread::terminate):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::start):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::start):
+
 2009-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber Stamped by Dave Hyatt

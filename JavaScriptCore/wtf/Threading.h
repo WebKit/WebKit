@@ -85,12 +85,14 @@
 #include <wtf/GOwnPtr.h>
 typedef struct _GMutex GMutex;
 typedef struct _GCond GCond;
+typedef struct _GThread GThread;
 #endif
 
 #if PLATFORM(QT)
 #include <qglobal.h>
 QT_BEGIN_NAMESPACE
 class QMutex;
+class QThread;
 class QWaitCondition;
 QT_END_NAMESPACE
 #endif
@@ -105,34 +107,18 @@ QT_END_NAMESPACE
 
 namespace WTF {
 
-typedef uint32_t ThreadIdentifier;
-typedef void* (*ThreadFunction)(void* argument);
-
-// Returns 0 if thread creation failed.
-// The thread name must be a literal since on some platforms it's passed in to the thread.
-ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
-
-// Internal platform-specific createThread implementation.
-ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
-
-// Called in the thread during initialization.
-// Helpful for platforms where the thread name must be set from within the thread.
-void setThreadNameInternal(const char* threadName);
-
-ThreadIdentifier currentThread();
-bool isMainThread();
-int waitForThreadCompletion(ThreadIdentifier, void**);
-void detachThread(ThreadIdentifier);
-
 #if USE(PTHREADS)
 typedef pthread_mutex_t PlatformMutex;
 typedef pthread_cond_t PlatformCondition;
+typedef pthread_t PlatformThreadIdentifier;
 #elif PLATFORM(GTK)
 typedef GOwnPtr<GMutex> PlatformMutex;
 typedef GOwnPtr<GCond> PlatformCondition;
+typedef GThread* PlatformThreadIdentifier;
 #elif PLATFORM(QT)
 typedef QT_PREPEND_NAMESPACE(QMutex)* PlatformMutex;
 typedef QT_PREPEND_NAMESPACE(QWaitCondition)* PlatformCondition;
+typedef QT_PREPEND_NAMESPACE(QThread)* PlatformThreadIdentifier;
 #elif PLATFORM(WIN_OS)
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;
@@ -149,11 +135,61 @@ struct PlatformCondition {
     bool timedWait(PlatformMutex&, DWORD durationMilliseconds);
     void signal(bool unblockAll);
 };
+typedef unsigned PlatformThreadIdentifier;
 #else
 typedef void* PlatformMutex;
 typedef void* PlatformCondition;
 #endif
     
+// Platform-independent wrapper for thread id. Assignable and copyable.
+// The only way to obtain a valid ThreadIdentifier is from createThread(...) or currentThread() functions.
+// ThreadIdentifier remains valid for as long as its thread is alive and is not automatically invalidated
+// when thread terminates. Since platform-dependent thread ids can be recycled, stale ThreadIdentifier
+// may reference a completely unrelated thread after its original thread terminates.
+class ThreadIdentifier {
+public:
+    ThreadIdentifier()
+        : m_platformId(0)
+    {
+        ASSERT(!isValid());
+    }
+
+    explicit ThreadIdentifier(PlatformThreadIdentifier platformId)
+        : m_platformId(platformId)
+    {
+        ASSERT(isValid());
+    }
+
+    bool isValid() const  { return m_platformId; }
+    void invalidate() { m_platformId = 0; }
+
+    bool operator==(const ThreadIdentifier&) const;
+    bool operator!=(const ThreadIdentifier&) const;
+
+    PlatformThreadIdentifier platformId() const { return m_platformId;  }
+
+private:
+    PlatformThreadIdentifier m_platformId;
+};
+
+typedef void* (*ThreadFunction)(void* argument);
+
+// Returns invalid identifier if thread creation failed.
+// The thread name must be a literal since on some platforms it's passed in to the thread.
+ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+
+// Internal platform-specific createThread implementation.
+ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
+
+// Called in the thread during initialization.
+// Helpful for platforms where the thread name must be set from within the thread.
+void setThreadNameInternal(const char* threadName);
+
+ThreadIdentifier currentThread();
+bool isMainThread();
+int waitForThreadCompletion(ThreadIdentifier, void**);
+void detachThread(ThreadIdentifier);
+
 class Mutex : Noncopyable {
 public:
     Mutex();

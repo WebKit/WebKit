@@ -42,15 +42,19 @@
 
 namespace WTF {
 
+bool ThreadIdentifier::operator==(const ThreadIdentifier& another) const
+{
+    return m_platformId == another.m_platformId;
+}
+
+bool ThreadIdentifier::operator!=(const ThreadIdentifier& another) const
+{
+    return m_platformId != another.m_platformId;
+}
+
 static Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
-
-static Mutex& threadMapMutex()
-{
-    static Mutex mutex;
-    return mutex;
-}
 
 void initializeThreading()
 {
@@ -60,7 +64,6 @@ void initializeThreading()
 
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
-        threadMapMutex();
         initializeRandomNumberGenerator();
         mainThreadIdentifier = currentThread();
         initializeMainThread();
@@ -78,64 +81,15 @@ void unlockAtomicallyInitializedStaticMutex()
     atomicallyInitializedStaticMutex->unlock();
 }
 
-static HashMap<ThreadIdentifier, GThread*>& threadMap()
-{
-    static HashMap<ThreadIdentifier, GThread*> map;
-    return map;
-}
-
-static ThreadIdentifier identifierByGthreadHandle(GThread*& thread)
-{
-    MutexLocker locker(threadMapMutex());
-
-    HashMap<ThreadIdentifier, GThread*>::iterator i = threadMap().begin();
-    for (; i != threadMap().end(); ++i) {
-        if (i->second == thread)
-            return i->first;
-    }
-
-    return 0;
-}
-
-static ThreadIdentifier establishIdentifierForThread(GThread*& thread)
-{
-    ASSERT(!identifierByGthreadHandle(thread));
-
-    MutexLocker locker(threadMapMutex());
-
-    static ThreadIdentifier identifierCount = 1;
-
-    threadMap().add(identifierCount, thread);
-
-    return identifierCount++;
-}
-
-static GThread* threadForIdentifier(ThreadIdentifier id)
-{
-    MutexLocker locker(threadMapMutex());
-
-    return threadMap().get(id);
-}
-
-static void clearThreadForIdentifier(ThreadIdentifier id)
-{
-    MutexLocker locker(threadMapMutex());
-
-    ASSERT(threadMap().contains(id));
-
-    threadMap().remove(id);
-}
-
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     GThread* thread;
     if (!(thread = g_thread_create(entryPoint, data, TRUE, 0))) {
         LOG_ERROR("Failed to create thread at entry point %p with data %p", entryPoint, data);
-        return 0;
+        return ThreadIdentifier();
     }
 
-    ThreadIdentifier threadID = establishIdentifierForThread(thread);
-    return threadID;
+    return ThreadIdentifier(thread);
 }
 
 void setThreadNameInternal(const char*)
@@ -144,15 +98,14 @@ void setThreadNameInternal(const char*)
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
-    ASSERT(threadID);
+    ASSERT(threadID.isValid());
 
-    GThread* thread = threadForIdentifier(threadID);
+    GThread* thread = threadID.platformId();
 
     void* joinResult = g_thread_join(thread);
     if (result)
         *result = joinResult;
 
-    clearThreadForIdentifier(threadID);
     return 0;
 }
 
@@ -162,10 +115,7 @@ void detachThread(ThreadIdentifier)
 
 ThreadIdentifier currentThread()
 {
-    GThread* currentThread = g_thread_self();
-    if (ThreadIdentifier id = identifierByGthreadHandle(currentThread))
-        return id;
-    return establishIdentifierForThread(currentThread);
+    return ThreadIdentifier(g_thread_self());
 }
 
 bool isMainThread()
