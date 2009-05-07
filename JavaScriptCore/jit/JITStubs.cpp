@@ -220,7 +220,7 @@ extern "C" {
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)
-    #define CTI_SAMPLER ARG_globalData->interpreter->sampler()
+    #define CTI_SAMPLER stackFrame.globalData->interpreter->sampler()
 #else
     #define CTI_SAMPLER 0
 #endif
@@ -452,62 +452,65 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         RETURN_PAIR(0, 0); \
     } while (0)
 #define VM_THROW_EXCEPTION_AT_END() \
-    returnToThrowTrampoline(ARG_globalData, STUB_RETURN_ADDRESS, STUB_RETURN_ADDRESS)
+    returnToThrowTrampoline(stackFrame.globalData, STUB_RETURN_ADDRESS, STUB_RETURN_ADDRESS)
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != JSValue())) \
+        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) \
             VM_THROW_EXCEPTION(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != JSValue())) \
+        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) \
             VM_THROW_EXCEPTION_AT_END(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_VOID() \
     do { \
-        if (UNLIKELY(ARG_globalData->exception != JSValue())) { \
+        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
         } \
     } while (0)
 
-JSObject* JITStubs::cti_op_convert_this(STUB_ARGS)
+JSObject* JITStubs::cti_op_convert_this(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v1 = ARG_src1;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue v1 = stackFrame.args[0].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     JSObject* result = v1.toThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
 
-void JITStubs::cti_op_end(STUB_ARGS)
+void JITStubs::cti_op_end(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ScopeChainNode* scopeChain = ARG_callFrame->scopeChain();
+    ScopeChainNode* scopeChain = stackFrame.callFrame->scopeChain();
     ASSERT(scopeChain->refCount > 1);
     scopeChain->deref();
 }
 
-EncodedJSValue JITStubs::cti_op_add(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_add(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v1 = ARG_src1;
-    JSValue v2 = ARG_src2;
+    JSValue v1 = stackFrame.args[0].jsValue();
+    JSValue v2 = stackFrame.args[1].jsValue();
 
     double left;
     double right = 0.0;
 
     bool rightIsNumber = v2.getNumber(right);
     if (rightIsNumber && v1.getNumber(left))
-        return JSValue::encode(jsNumber(ARG_globalData, left + right));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left + right));
     
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool leftIsString = v1.isString();
     if (leftIsString && v2.isString()) {
@@ -517,7 +520,7 @@ EncodedJSValue JITStubs::cti_op_add(STUB_ARGS)
             VM_THROW_EXCEPTION();
         }
 
-        return JSValue::encode(jsString(ARG_globalData, value.release()));
+        return JSValue::encode(jsString(stackFrame.globalData, value.release()));
     }
 
     if (rightIsNumber & leftIsString) {
@@ -529,7 +532,7 @@ EncodedJSValue JITStubs::cti_op_add(STUB_ARGS)
             throwOutOfMemoryError(callFrame);
             VM_THROW_EXCEPTION();
         }
-        return JSValue::encode(jsString(ARG_globalData, value.release()));
+        return JSValue::encode(jsString(stackFrame.globalData, value.release()));
     }
 
     // All other cases are pretty uncommon
@@ -538,26 +541,28 @@ EncodedJSValue JITStubs::cti_op_add(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_pre_inc(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_pre_inc(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v = ARG_src1;
+    JSValue v = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, v.toNumber(callFrame) + 1);
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, v.toNumber(callFrame) + 1);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-int JITStubs::cti_timeout_check(STUB_ARGS)
+int JITStubs::cti_timeout_check(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
     
-    JSGlobalData* globalData = ARG_globalData;
+    JSGlobalData* globalData = stackFrame.globalData;
     TimeoutChecker& timeoutChecker = globalData->timeoutChecker;
 
-    if (timeoutChecker.didTimeOut(ARG_callFrame)) {
+    if (timeoutChecker.didTimeOut(stackFrame.callFrame)) {
         globalData->exception = createInterruptedExecutionException(globalData);
         VM_THROW_EXCEPTION_AT_END();
     }
@@ -565,70 +570,76 @@ int JITStubs::cti_timeout_check(STUB_ARGS)
     return timeoutChecker.ticksUntilNextCheck();
 }
 
-void JITStubs::cti_register_file_check(STUB_ARGS)
+void JITStubs::cti_register_file_check(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    if (LIKELY(ARG_registerFile->grow(ARG_callFrame + ARG_callFrame->codeBlock()->m_numCalleeRegisters)))
+    if (LIKELY(stackFrame.registerFile->grow(stackFrame.callFrame + stackFrame.callFrame->codeBlock()->m_numCalleeRegisters)))
         return;
 
     // Rewind to the previous call frame because op_call already optimistically
     // moved the call frame forward.
-    CallFrame* oldCallFrame = ARG_callFrame->callerFrame();
-    ARG_setCallFrame(oldCallFrame);
-    throwStackOverflowError(oldCallFrame, ARG_globalData, oldCallFrame->returnPC(), STUB_RETURN_ADDRESS);
+    CallFrame* oldCallFrame = stackFrame.callFrame->callerFrame();
+    stackFrame.callFrame = oldCallFrame;
+    throwStackOverflowError(oldCallFrame, stackFrame.globalData, oldCallFrame->returnPC(), STUB_RETURN_ADDRESS);
 }
 
-int JITStubs::cti_op_loop_if_less(STUB_ARGS)
+int JITStubs::cti_op_loop_if_less(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool result = jsLess(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
 
-int JITStubs::cti_op_loop_if_lesseq(STUB_ARGS)
+int JITStubs::cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool result = jsLessEq(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
 
-JSObject* JITStubs::cti_op_new_object(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_object(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return constructEmptyObject(ARG_callFrame);
+    return constructEmptyObject(stackFrame.callFrame);
 }
 
-void JITStubs::cti_op_put_by_id_generic(STUB_ARGS)
+void JITStubs::cti_op_put_by_id_generic(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
     PutPropertySlot slot;
-    ARG_src1.put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
+    stackFrame.args[0].jsValue().put(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_generic(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_generic(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
@@ -638,52 +649,56 @@ EncodedJSValue JITStubs::cti_op_get_by_id_generic(STUB_ARGS)
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
-void JITStubs::cti_op_put_by_id(STUB_ARGS)
+void JITStubs::cti_op_put_by_id(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
     PutPropertySlot slot;
-    ARG_src1.put(callFrame, ident, ARG_src3, slot);
+    stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
 
     ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_id_second));
 
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-void JITStubs::cti_op_put_by_id_second(STUB_ARGS)
+void JITStubs::cti_op_put_by_id_second(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
     PutPropertySlot slot;
-    ARG_src1.put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
-    tryCachePutByID(ARG_callFrame, ARG_callFrame->codeBlock(), STUB_RETURN_ADDRESS, ARG_src1, slot);
+    stackFrame.args[0].jsValue().put(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
+    tryCachePutByID(stackFrame.callFrame, stackFrame.callFrame->codeBlock(), STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-void JITStubs::cti_op_put_by_id_fail(STUB_ARGS)
+void JITStubs::cti_op_put_by_id_fail(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
     PutPropertySlot slot;
-    ARG_src1.put(callFrame, ident, ARG_src3, slot);
+    stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
@@ -693,14 +708,15 @@ EncodedJSValue JITStubs::cti_op_get_by_id(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_second(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_second(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
@@ -710,14 +726,15 @@ EncodedJSValue JITStubs::cti_op_get_by_id_second(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_self_fail(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_self_fail(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
@@ -785,15 +802,16 @@ static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(Str
     return prototypeStructureList;
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(callFrame, *ARG_id2, slot);
+    JSValue result = baseValue.get(callFrame, stackFrame.args[1].identifier(), slot);
 
     CHECK_FOR_EXCEPTION();
 
@@ -837,49 +855,53 @@ EncodedJSValue JITStubs::cti_op_get_by_id_proto_list(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_proto_list_full(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_proto_list_full(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(ARG_callFrame, *ARG_id2, slot);
+    JSValue result = baseValue.get(stackFrame.callFrame, stackFrame.args[1].identifier(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_proto_fail(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(ARG_callFrame, *ARG_id2, slot);
+    JSValue result = baseValue.get(stackFrame.callFrame, stackFrame.args[1].identifier(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_array_fail(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_array_fail(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(ARG_callFrame, *ARG_id2, slot);
+    JSValue result = baseValue.get(stackFrame.callFrame, stackFrame.args[1].identifier(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(ARG_callFrame, *ARG_id2, slot);
+    JSValue result = baseValue.get(stackFrame.callFrame, stackFrame.args[1].identifier(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
@@ -887,14 +909,15 @@ EncodedJSValue JITStubs::cti_op_get_by_id_string_fail(STUB_ARGS)
 
 #endif
 
-EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue value = ARG_src1;
-    JSValue baseVal = ARG_src2;
-    JSValue proto = ARG_src3;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue value = stackFrame.args[0].jsValue();
+    JSValue baseVal = stackFrame.args[1].jsValue();
+    JSValue proto = stackFrame.args[2].jsValue();
 
     // at least one of these checks must have failed to get to the slow case
     ASSERT(!value.isCell() || !baseVal.isCell() || !proto.isCell()
@@ -902,10 +925,10 @@ EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS)
            || (asObject(baseVal)->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
 
     if (!baseVal.isObject()) {
-        CallFrame* callFrame = ARG_callFrame;
+        CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
         unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-        ARG_globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal, vPCIndex, codeBlock);
+        stackFrame.globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
 
@@ -930,54 +953,58 @@ EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_del_by_id(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_del_by_id(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     
-    JSObject* baseObj = ARG_src1.toObject(callFrame);
+    JSObject* baseObj = stackFrame.args[0].jsValue().toObject(callFrame);
 
-    JSValue result = jsBoolean(baseObj->deleteProperty(callFrame, *ARG_id2));
+    JSValue result = jsBoolean(baseObj->deleteProperty(callFrame, stackFrame.args[1].identifier()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_mul(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_mul(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     double left;
     double right;
     if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left * right));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left * right));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, src1.toNumber(callFrame) * src2.toNumber(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, src1.toNumber(callFrame) * src2.toNumber(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-JSObject* JITStubs::cti_op_new_func(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_func(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return ARG_func1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
+    return stackFrame.args[0].funcDeclNode()->makeFunction(stackFrame.callFrame, stackFrame.callFrame->scopeChain());
 }
 
-void* JITStubs::cti_op_call_JSFunction(STUB_ARGS)
+void* JITStubs::cti_op_call_JSFunction(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
 #ifndef NDEBUG
     CallData callData;
-    ASSERT(ARG_src1.getCallData(callData) == CallTypeJS);
+    ASSERT(stackFrame.args[0].jsValue().getCallData(callData) == CallTypeJS);
 #endif
 
-    JSFunction* function = asFunction(ARG_src1);
+    JSFunction* function = asFunction(stackFrame.args[0].jsValue());
     FunctionBodyNode* body = function->body();
     ScopeChainNode* callDataScopeChain = function->scope().node();
     body->jitCode(callDataScopeChain);
@@ -985,13 +1012,14 @@ void* JITStubs::cti_op_call_JSFunction(STUB_ARGS)
     return &(body->generatedBytecode());
 }
 
-VoidPtrPair JITStubs::cti_op_call_arityCheck(STUB_ARGS)
+VoidPtrPair JITStubs::cti_op_call_arityCheck(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    CodeBlock* newCodeBlock = ARG_codeBlock4;
-    int argCount = ARG_int3;
+    CallFrame* callFrame = stackFrame.callFrame;
+    CodeBlock* newCodeBlock = stackFrame.args[3].codeBlock();
+    int argCount = stackFrame.args[2].int32();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
 
@@ -1011,11 +1039,11 @@ VoidPtrPair JITStubs::cti_op_call_arityCheck(STUB_ARGS)
         size_t omittedArgCount = newCodeBlock->m_numParameters - argCount;
         Register* r = callFrame->registers() + omittedArgCount;
         Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
-        if (!ARG_registerFile->grow(newEnd)) {
+        if (!stackFrame.registerFile->grow(newEnd)) {
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
-            ARG_setCallFrame(oldCallFrame);
-            throwStackOverflowError(oldCallFrame, ARG_globalData, ARG_returnAddress2, STUB_RETURN_ADDRESS);
+            stackFrame.callFrame = oldCallFrame;
+            throwStackOverflowError(oldCallFrame, stackFrame.globalData, stackFrame.args[1].returnAddress(), STUB_RETURN_ADDRESS);
             RETURN_PAIR(0, 0);
         }
 
@@ -1030,25 +1058,27 @@ VoidPtrPair JITStubs::cti_op_call_arityCheck(STUB_ARGS)
     RETURN_PAIR(newCodeBlock, callFrame);
 }
 
-void* JITStubs::cti_vm_dontLazyLinkCall(STUB_ARGS)
+void* JITStubs::cti_vm_dontLazyLinkCall(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSGlobalData* globalData = ARG_globalData;
-    JSFunction* callee = asFunction(ARG_src1);
+    JSGlobalData* globalData = stackFrame.globalData;
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
     JITCode jitCode = callee->body()->generatedJITCode();
     ASSERT(jitCode);
 
-    ctiPatchNearCallByReturnAddress(ARG_returnAddress2, globalData->jitStubs.ctiVirtualCallLink());
+    ctiPatchNearCallByReturnAddress(stackFrame.args[1].returnAddress(), globalData->jitStubs.ctiVirtualCallLink());
 
     return jitCode.addressForCall();
 }
 
-void* JITStubs::cti_vm_lazyLinkCall(STUB_ARGS)
+void* JITStubs::cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSFunction* callee = asFunction(ARG_src1);
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
     JITCode jitCode = callee->body()->generatedJITCode();
     ASSERT(jitCode);
     
@@ -1056,26 +1086,28 @@ void* JITStubs::cti_vm_lazyLinkCall(STUB_ARGS)
     if (!callee->isHostFunction())
         codeBlock = &callee->body()->bytecode(callee->scope().node());
 
-    CallLinkInfo* callLinkInfo = &ARG_callFrame->callerFrame()->codeBlock()->getCallLinkInfo(ARG_returnAddress2);
-    JIT::linkCall(callee, codeBlock, jitCode, callLinkInfo, ARG_int3);
+    CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
+    JIT::linkCall(callee, codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32());
 
     return jitCode.addressForCall();
 }
 
-JSObject* JITStubs::cti_op_push_activation(STUB_ARGS)
+JSObject* JITStubs::cti_op_push_activation(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSActivation* activation = new (ARG_globalData) JSActivation(ARG_callFrame, static_cast<FunctionBodyNode*>(ARG_callFrame->codeBlock()->ownerNode()));
-    ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->copy()->push(activation));
+    JSActivation* activation = new (stackFrame.globalData) JSActivation(stackFrame.callFrame, static_cast<FunctionBodyNode*>(stackFrame.callFrame->codeBlock()->ownerNode()));
+    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->copy()->push(activation));
     return activation;
 }
 
-EncodedJSValue JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue funcVal = ARG_src1;
+    JSValue funcVal = stackFrame.args[0].jsValue();
 
     CallData callData;
     CallType callType = funcVal.getCallData(callData);
@@ -1083,15 +1115,15 @@ EncodedJSValue JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
     ASSERT(callType != CallTypeJS);
 
     if (callType == CallTypeHost) {
-        int registerOffset = ARG_int2;
-        int argCount = ARG_int3;
-        CallFrame* previousCallFrame = ARG_callFrame;
+        int registerOffset = stackFrame.args[1].int32();
+        int argCount = stackFrame.args[2].int32();
+        CallFrame* previousCallFrame = stackFrame.callFrame;
         CallFrame* callFrame = CallFrame::create(previousCallFrame->registers() + registerOffset);
 
         callFrame->init(0, static_cast<Instruction*>(STUB_RETURN_ADDRESS), previousCallFrame->scopeChain(), previousCallFrame, 0, argCount, 0);
-        ARG_setCallFrame(callFrame);
+        stackFrame.callFrame = callFrame;
 
-        Register* argv = ARG_callFrame->registers() - RegisterFile::CallFrameHeaderSize - argCount;
+        Register* argv = stackFrame.callFrame->registers() - RegisterFile::CallFrameHeaderSize - argCount;
         ArgList argList(argv + 1, argCount - 1);
 
         JSValue returnValue;
@@ -1105,7 +1137,7 @@ EncodedJSValue JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
 
             returnValue = callData.native.function(callFrame, asObject(funcVal), thisValue, argList);
         }
-        ARG_setCallFrame(previousCallFrame);
+        stackFrame.callFrame = previousCallFrame;
         CHECK_FOR_EXCEPTION();
 
         return JSValue::encode(returnValue);
@@ -1113,91 +1145,100 @@ EncodedJSValue JITStubs::cti_op_call_NotJSFunction(STUB_ARGS)
 
     ASSERT(callType == CallTypeNone);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createNotAFunctionError(ARG_callFrame, funcVal, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createNotAFunctionError(stackFrame.callFrame, funcVal, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
 
-void JITStubs::cti_op_create_arguments(STUB_ARGS)
+void JITStubs::cti_op_create_arguments(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    Arguments* arguments = new (ARG_globalData) Arguments(ARG_callFrame);
-    ARG_callFrame->setCalleeArguments(arguments);
-    ARG_callFrame[RegisterFile::ArgumentsRegister] = arguments;
+    Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame);
+    stackFrame.callFrame->setCalleeArguments(arguments);
+    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = arguments;
 }
 
-void JITStubs::cti_op_create_arguments_no_params(STUB_ARGS)
+void JITStubs::cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    Arguments* arguments = new (ARG_globalData) Arguments(ARG_callFrame, Arguments::NoParameters);
-    ARG_callFrame->setCalleeArguments(arguments);
-    ARG_callFrame[RegisterFile::ArgumentsRegister] = arguments;
+    Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame, Arguments::NoParameters);
+    stackFrame.callFrame->setCalleeArguments(arguments);
+    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = arguments;
 }
 
-void JITStubs::cti_op_tear_off_activation(STUB_ARGS)
+void JITStubs::cti_op_tear_off_activation(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ASSERT(ARG_callFrame->codeBlock()->needsFullScopeChain());
-    asActivation(ARG_src1)->copyRegisters(ARG_callFrame->optionalCalleeArguments());
+    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    asActivation(stackFrame.args[0].jsValue())->copyRegisters(stackFrame.callFrame->optionalCalleeArguments());
 }
 
-void JITStubs::cti_op_tear_off_arguments(STUB_ARGS)
+void JITStubs::cti_op_tear_off_arguments(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ASSERT(ARG_callFrame->codeBlock()->usesArguments() && !ARG_callFrame->codeBlock()->needsFullScopeChain());
-    ARG_callFrame->optionalCalleeArguments()->copyRegisters();
+    ASSERT(stackFrame.callFrame->codeBlock()->usesArguments() && !stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    stackFrame.callFrame->optionalCalleeArguments()->copyRegisters();
 }
 
-void JITStubs::cti_op_profile_will_call(STUB_ARGS)
+void JITStubs::cti_op_profile_will_call(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ASSERT(*ARG_profilerReference);
-    (*ARG_profilerReference)->willExecute(ARG_callFrame, ARG_src1);
+    ASSERT(*stackFrame.enabledProfilerReference);
+    (*stackFrame.enabledProfilerReference)->willExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
-void JITStubs::cti_op_profile_did_call(STUB_ARGS)
+void JITStubs::cti_op_profile_did_call(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ASSERT(*ARG_profilerReference);
-    (*ARG_profilerReference)->didExecute(ARG_callFrame, ARG_src1);
+    ASSERT(*stackFrame.enabledProfilerReference);
+    (*stackFrame.enabledProfilerReference)->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
-void JITStubs::cti_op_ret_scopeChain(STUB_ARGS)
+void JITStubs::cti_op_ret_scopeChain(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ASSERT(ARG_callFrame->codeBlock()->needsFullScopeChain());
-    ARG_callFrame->scopeChain()->deref();
+    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    stackFrame.callFrame->scopeChain()->deref();
 }
 
-JSObject* JITStubs::cti_op_new_array(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_array(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ArgList argList(&ARG_callFrame->registers()[ARG_int1], ARG_int2);
-    return constructArray(ARG_callFrame, argList);
+    ArgList argList(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()], stackFrame.args[1].int32());
+    return constructArray(stackFrame.callFrame, argList);
 }
 
-EncodedJSValue JITStubs::cti_op_resolve(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_resolve(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
 
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
 
-    Identifier& ident = *ARG_id1;
+    Identifier& ident = stackFrame.args[0].identifier();
     do {
         JSObject* o = *iter;
         PropertySlot slot(o);
@@ -1210,20 +1251,21 @@ EncodedJSValue JITStubs::cti_op_resolve(STUB_ARGS)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
 
-JSObject* JITStubs::cti_op_construct_JSConstruct(STUB_ARGS)
+JSObject* JITStubs::cti_op_construct_JSConstruct(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSFunction* constructor = asFunction(ARG_src1);
+    JSFunction* constructor = asFunction(stackFrame.args[0].jsValue());
     if (constructor->isHostFunction()) {
-        CallFrame* callFrame = ARG_callFrame;
+        CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
         unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-        ARG_globalData->exception = createNotAConstructorError(callFrame, constructor, vPCIndex, codeBlock);
+        stackFrame.globalData->exception = createNotAConstructorError(callFrame, constructor, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
 
@@ -1233,22 +1275,23 @@ JSObject* JITStubs::cti_op_construct_JSConstruct(STUB_ARGS)
 #endif
 
     Structure* structure;
-    if (ARG_src4.isObject())
-        structure = asObject(ARG_src4)->inheritorID();
+    if (stackFrame.args[3].jsValue().isObject())
+        structure = asObject(stackFrame.args[3].jsValue())->inheritorID();
     else
         structure = constructor->scope().node()->globalObject()->emptyObjectStructure();
-    return new (ARG_globalData) JSObject(structure);
+    return new (stackFrame.globalData) JSObject(structure);
 }
 
-EncodedJSValue JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue constrVal = ARG_src1;
-    int argCount = ARG_int3;
-    int thisRegister = ARG_int5;
+    JSValue constrVal = stackFrame.args[0].jsValue();
+    int argCount = stackFrame.args[2].int32();
+    int thisRegister = stackFrame.args[4].int32();
 
     ConstructData constructData;
     ConstructType constructType = constrVal.getConstructData(constructData);
@@ -1270,19 +1313,20 @@ EncodedJSValue JITStubs::cti_op_construct_NotJSConstruct(STUB_ARGS)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createNotAConstructorError(callFrame, constrVal, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createNotAConstructorError(callFrame, constrVal, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
 
-EncodedJSValue JITStubs::cti_op_get_by_val(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_val(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSGlobalData* globalData = ARG_globalData;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
 
-    JSValue baseValue = ARG_src1;
-    JSValue subscript = ARG_src2;
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
 
     JSValue result;
 
@@ -1297,7 +1341,7 @@ EncodedJSValue JITStubs::cti_op_get_by_val(STUB_ARGS)
         } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_string));
-            result = asString(baseValue)->getIndex(ARG_globalData, i);
+            result = asString(baseValue)->getIndex(stackFrame.globalData, i);
         } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));
@@ -1313,46 +1357,48 @@ EncodedJSValue JITStubs::cti_op_get_by_val(STUB_ARGS)
     return JSValue::encode(result);
 }
     
-    EncodedJSValue JITStubs::cti_op_get_by_val_string(STUB_ARGS)
-    {
-        BEGIN_STUB_FUNCTION();
-        
-        CallFrame* callFrame = ARG_callFrame;
-        JSGlobalData* globalData = ARG_globalData;
-        
-        JSValue baseValue = ARG_src1;
-        JSValue subscript = ARG_src2;
-        
-        JSValue result;
-        
-        if (LIKELY(subscript.isUInt32Fast())) {
-            uint32_t i = subscript.getUInt32Fast();
-            if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
-                result = asString(baseValue)->getIndex(ARG_globalData, i);
-            else {
-                result = baseValue.get(callFrame, i);
-                if (!isJSString(globalData, baseValue))
-                    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
-            }
-        } else {
-            Identifier property(callFrame, subscript.toString(callFrame));
-            result = baseValue.get(callFrame, property);
-        }
-        
-        CHECK_FOR_EXCEPTION_AT_END();
-        return JSValue::encode(result);
-    }
-    
-
-EncodedJSValue JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_get_by_val_string(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
     
-    CallFrame* callFrame = ARG_callFrame;
-    JSGlobalData* globalData = ARG_globalData;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
     
-    JSValue baseValue = ARG_src1;
-    JSValue subscript = ARG_src2;
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    
+    JSValue result;
+    
+    if (LIKELY(subscript.isUInt32Fast())) {
+        uint32_t i = subscript.getUInt32Fast();
+        if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
+            result = asString(baseValue)->getIndex(stackFrame.globalData, i);
+        else {
+            result = baseValue.get(callFrame, i);
+            if (!isJSString(globalData, baseValue))
+                ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
+        }
+    } else {
+        Identifier property(callFrame, subscript.toString(callFrame));
+        result = baseValue.get(callFrame, property);
+    }
+    
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
+}
+    
+
+EncodedJSValue JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS_DECLARATION)
+{
+    BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
+    
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
+    
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
     
     JSValue result;
 
@@ -1375,11 +1421,12 @@ EncodedJSValue JITStubs::cti_op_get_by_val_byte_array(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS)
+VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
 
     ScopeChainIterator iter = scopeChain->begin();
@@ -1389,7 +1436,7 @@ VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS)
 
     ASSERT(iter != end);
 
-    Identifier& ident = *ARG_id1;
+    Identifier& ident = stackFrame.args[0].identifier();
     JSObject* base;
     do {
         base = *iter;
@@ -1413,38 +1460,40 @@ VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION_2();
 }
 
-EncodedJSValue JITStubs::cti_op_sub(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_sub(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     double left;
     double right;
     if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left - right));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left - right));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, src1.toNumber(callFrame) - src2.toNumber(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, src1.toNumber(callFrame) - src2.toNumber(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-void JITStubs::cti_op_put_by_val(STUB_ARGS)
+void JITStubs::cti_op_put_by_val(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSGlobalData* globalData = ARG_globalData;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
 
-    JSValue baseValue = ARG_src1;
-    JSValue subscript = ARG_src2;
-    JSValue value = ARG_src3;
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    JSValue value = stackFrame.args[2].jsValue();
 
     if (LIKELY(subscript.isUInt32Fast())) {
         uint32_t i = subscript.getUInt32Fast();
@@ -1474,7 +1523,7 @@ void JITStubs::cti_op_put_by_val(STUB_ARGS)
             baseValue.put(callFrame, i, value);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame));
-        if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
+        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue.put(callFrame, property, value, slot);
         }
@@ -1483,16 +1532,17 @@ void JITStubs::cti_op_put_by_val(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-void JITStubs::cti_op_put_by_val_array(STUB_ARGS)
+void JITStubs::cti_op_put_by_val_array(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue baseValue = ARG_src1;
-    int i = ARG_int2;
-    JSValue value = ARG_src3;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    int i = stackFrame.args[1].int32();
+    JSValue value = stackFrame.args[2].jsValue();
 
-    ASSERT(isJSArray(ARG_globalData, baseValue));
+    ASSERT(isJSArray(stackFrame.globalData, baseValue));
 
     if (LIKELY(i >= 0))
         asArray(baseValue)->JSArray::put(callFrame, i, value);
@@ -1501,7 +1551,7 @@ void JITStubs::cti_op_put_by_val_array(STUB_ARGS)
         ASSERT(JSValue::makeInt32Fast(i));
         Identifier property(callFrame, JSValue::makeInt32Fast(i).toString(callFrame));
         // FIXME: can toString throw an exception here?
-        if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
+        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue.put(callFrame, property, value, slot);
         }
@@ -1510,16 +1560,17 @@ void JITStubs::cti_op_put_by_val_array(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-void JITStubs::cti_op_put_by_val_byte_array(STUB_ARGS)
+void JITStubs::cti_op_put_by_val_byte_array(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
     
-    CallFrame* callFrame = ARG_callFrame;
-    JSGlobalData* globalData = ARG_globalData;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalData* globalData = stackFrame.globalData;
     
-    JSValue baseValue = ARG_src1;
-    JSValue subscript = ARG_src2;
-    JSValue value = ARG_src3;
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    JSValue value = stackFrame.args[2].jsValue();
     
     if (LIKELY(subscript.isUInt32Fast())) {
         uint32_t i = subscript.getUInt32Fast();
@@ -1544,7 +1595,7 @@ void JITStubs::cti_op_put_by_val_byte_array(STUB_ARGS)
         baseValue.put(callFrame, i, value);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame));
-        if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
+        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue.put(callFrame, property, value, slot);
         }
@@ -1553,42 +1604,45 @@ void JITStubs::cti_op_put_by_val_byte_array(STUB_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-EncodedJSValue JITStubs::cti_op_lesseq(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_lesseq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsBoolean(jsLessEq(callFrame, ARG_src1, ARG_src2));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsBoolean(jsLessEq(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-int JITStubs::cti_op_loop_if_true(STUB_ARGS)
+int JITStubs::cti_op_loop_if_true(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
+    JSValue src1 = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool result = src1.toBoolean(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
     
-int JITStubs::cti_op_load_varargs(STUB_ARGS)
+int JITStubs::cti_op_load_varargs(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
-    CallFrame* callFrame = ARG_callFrame;
-    RegisterFile* registerFile = ARG_registerFile;
-    int argsOffset = ARG_int1;
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
+    CallFrame* callFrame = stackFrame.callFrame;
+    RegisterFile* registerFile = stackFrame.registerFile;
+    int argsOffset = stackFrame.args[0].int32();
     JSValue arguments = callFrame[argsOffset].jsValue();
     uint32_t argCount = 0;
     if (!arguments.isUndefinedOrNull()) {
         if (!arguments.isObject()) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-            ARG_globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
+            stackFrame.globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
             VM_THROW_EXCEPTION();
         }
         if (asObject(arguments)->classInfo() == &Arguments::info) {
@@ -1597,7 +1651,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
-                ARG_globalData->exception = createStackOverflowError(callFrame);
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
                 VM_THROW_EXCEPTION();
             }
             argsObject->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
@@ -1607,7 +1661,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
-                ARG_globalData->exception = createStackOverflowError(callFrame);
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
                 VM_THROW_EXCEPTION();
             }
             array->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
@@ -1617,7 +1671,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
-                ARG_globalData->exception = createStackOverflowError(callFrame);
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
                 VM_THROW_EXCEPTION();
             }
             Register* argsBuffer = callFrame->registers() + argsOffset;
@@ -1628,7 +1682,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
         } else {
             CodeBlock* codeBlock = callFrame->codeBlock();
             unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-            ARG_globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
+            stackFrame.globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPCIndex, codeBlock);
             VM_THROW_EXCEPTION();
         }
     }
@@ -1636,37 +1690,40 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS)
     return argCount + 1;
 }
 
-EncodedJSValue JITStubs::cti_op_negate(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_negate(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src = ARG_src1;
+    JSValue src = stackFrame.args[0].jsValue();
 
     double v;
     if (src.getNumber(v))
-        return JSValue::encode(jsNumber(ARG_globalData, -v));
+        return JSValue::encode(jsNumber(stackFrame.globalData, -v));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, -src.toNumber(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, -src.toNumber(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_resolve_base(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_resolve_base(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(JSC::resolveBase(ARG_callFrame, *ARG_id1, ARG_callFrame->scopeChain()));
+    return JSValue::encode(JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain()));
 }
 
-EncodedJSValue JITStubs::cti_op_resolve_skip(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_resolve_skip(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
 
-    int skip = ARG_int2;
+    int skip = stackFrame.args[1].int32();
 
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
@@ -1675,7 +1732,7 @@ EncodedJSValue JITStubs::cti_op_resolve_skip(STUB_ARGS)
         ++iter;
         ASSERT(iter != end);
     }
-    Identifier& ident = *ARG_id1;
+    Identifier& ident = stackFrame.args[0].identifier();
     do {
         JSObject* o = *iter;
         PropertySlot slot(o);
@@ -1688,18 +1745,19 @@ EncodedJSValue JITStubs::cti_op_resolve_skip(STUB_ARGS)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
 }
 
-EncodedJSValue JITStubs::cti_op_resolve_global(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_resolve_global(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSGlobalObject* globalObject = asGlobalObject(ARG_src1);
-    Identifier& ident = *ARG_id2;
-    unsigned globalResolveInfoIndex = ARG_int3;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSGlobalObject* globalObject = asGlobalObject(stackFrame.args[0].jsValue());
+    Identifier& ident = stackFrame.args[1].identifier();
+    unsigned globalResolveInfoIndex = stackFrame.args[2].int32();
     ASSERT(globalObject->isGlobalObject());
 
     PropertySlot slot(globalObject);
@@ -1720,101 +1778,108 @@ EncodedJSValue JITStubs::cti_op_resolve_global(STUB_ARGS)
     }
 
     unsigned vPCIndex = callFrame->codeBlock()->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, callFrame->codeBlock());
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, callFrame->codeBlock());
     VM_THROW_EXCEPTION();
 }
 
-EncodedJSValue JITStubs::cti_op_div(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_div(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     double left;
     double right;
     if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left / right));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left / right));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, src1.toNumber(callFrame) / src2.toNumber(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, src1.toNumber(callFrame) / src2.toNumber(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_pre_dec(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_pre_dec(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v = ARG_src1;
+    JSValue v = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, v.toNumber(callFrame) - 1);
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, v.toNumber(callFrame) - 1);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-int JITStubs::cti_op_jless(STUB_ARGS)
+int JITStubs::cti_op_jless(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool result = jsLess(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
 
-EncodedJSValue JITStubs::cti_op_not(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_not(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src = ARG_src1;
+    JSValue src = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     JSValue result = jsBoolean(!src.toBoolean(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-int JITStubs::cti_op_jtrue(STUB_ARGS)
+int JITStubs::cti_op_jtrue(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
+    JSValue src1 = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     bool result = src1.toBoolean(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
 
-VoidPtrPair JITStubs::cti_op_post_inc(STUB_ARGS)
+VoidPtrPair JITStubs::cti_op_post_inc(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v = ARG_src1;
+    JSValue v = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     JSValue number = v.toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    RETURN_PAIR(JSValue::encode(number), JSValue::encode(jsNumber(ARG_globalData, number.uncheckedGetNumber() + 1)));
+    RETURN_PAIR(JSValue::encode(number), JSValue::encode(jsNumber(stackFrame.globalData, number.uncheckedGetNumber() + 1)));
 }
 
-EncodedJSValue JITStubs::cti_op_eq(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_eq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     ASSERT(!JSValue::areBothInt32Fast(src1, src2));
     JSValue result = jsBoolean(JSValue::equalSlowCaseInline(callFrame, src1, src2));
@@ -1822,85 +1887,90 @@ EncodedJSValue JITStubs::cti_op_eq(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_lshift(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_lshift(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue val = ARG_src1;
-    JSValue shift = ARG_src2;
+    JSValue val = stackFrame.args[0].jsValue();
+    JSValue shift = stackFrame.args[1].jsValue();
 
     int32_t left;
     uint32_t right;
     if (JSValue::areBothInt32Fast(val, shift))
-        return JSValue::encode(jsNumber(ARG_globalData, val.getInt32Fast() << (shift.getInt32Fast() & 0x1f)));
+        return JSValue::encode(jsNumber(stackFrame.globalData, val.getInt32Fast() << (shift.getInt32Fast() & 0x1f)));
     if (val.numberToInt32(left) && shift.numberToUInt32(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left << (right & 0x1f)));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left << (right & 0x1f)));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, (val.toInt32(callFrame)) << (shift.toUInt32(callFrame) & 0x1f));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, (val.toInt32(callFrame)) << (shift.toUInt32(callFrame) & 0x1f));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_bitand(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_bitand(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     int32_t left;
     int32_t right;
     if (src1.numberToInt32(left) && src2.numberToInt32(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left & right));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left & right));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, src1.toInt32(callFrame) & src2.toInt32(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, src1.toInt32(callFrame) & src2.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_rshift(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_rshift(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue val = ARG_src1;
-    JSValue shift = ARG_src2;
+    JSValue val = stackFrame.args[0].jsValue();
+    JSValue shift = stackFrame.args[1].jsValue();
 
     int32_t left;
     uint32_t right;
     if (JSFastMath::canDoFastRshift(val, shift))
         return JSValue::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
     if (val.numberToInt32(left) && shift.numberToUInt32(right))
-        return JSValue::encode(jsNumber(ARG_globalData, left >> (right & 0x1f)));
+        return JSValue::encode(jsNumber(stackFrame.globalData, left >> (right & 0x1f)));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, (val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, (val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_bitnot(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_bitnot(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src = ARG_src1;
+    JSValue src = stackFrame.args[0].jsValue();
 
     int value;
     if (src.numberToInt32(value))
-        return JSValue::encode(jsNumber(ARG_globalData, ~value));
+        return JSValue::encode(jsNumber(stackFrame.globalData, ~value));
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsNumber(ARG_globalData, ~src.toInt32(callFrame));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsNumber(stackFrame.globalData, ~src.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-VoidPtrPair JITStubs::cti_op_resolve_with_base(STUB_ARGS)
+VoidPtrPair JITStubs::cti_op_resolve_with_base(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
 
     ScopeChainIterator iter = scopeChain->begin();
@@ -1910,7 +1980,7 @@ VoidPtrPair JITStubs::cti_op_resolve_with_base(STUB_ARGS)
 
     ASSERT(iter != end);
 
-    Identifier& ident = *ARG_id1;
+    Identifier& ident = stackFrame.args[0].identifier();
     JSObject* base;
     do {
         base = *iter;
@@ -1926,135 +1996,145 @@ VoidPtrPair JITStubs::cti_op_resolve_with_base(STUB_ARGS)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION_2();
 }
 
-JSObject* JITStubs::cti_op_new_func_exp(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_func_exp(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return ARG_funcexp1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
+    return stackFrame.args[0].funcExprNode()->makeFunction(stackFrame.callFrame, stackFrame.callFrame->scopeChain());
 }
 
-EncodedJSValue JITStubs::cti_op_mod(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_mod(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue dividendValue = ARG_src1;
-    JSValue divisorValue = ARG_src2;
+    JSValue dividendValue = stackFrame.args[0].jsValue();
+    JSValue divisorValue = stackFrame.args[1].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     double d = dividendValue.toNumber(callFrame);
-    JSValue result = jsNumber(ARG_globalData, fmod(d, divisorValue.toNumber(callFrame)));
+    JSValue result = jsNumber(stackFrame.globalData, fmod(d, divisorValue.toNumber(callFrame)));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_less(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_less(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue result = jsBoolean(jsLess(callFrame, ARG_src1, ARG_src2));
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue result = jsBoolean(jsLess(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_neq(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_neq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     ASSERT(!JSValue::areBothInt32Fast(src1, src2));
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsBoolean(!JSValue::equalSlowCaseInline(callFrame, src1, src2));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-VoidPtrPair JITStubs::cti_op_post_dec(STUB_ARGS)
+VoidPtrPair JITStubs::cti_op_post_dec(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v = ARG_src1;
+    JSValue v = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     JSValue number = v.toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    RETURN_PAIR(JSValue::encode(number), JSValue::encode(jsNumber(ARG_globalData, number.uncheckedGetNumber() - 1)));
+    RETURN_PAIR(JSValue::encode(number), JSValue::encode(jsNumber(stackFrame.globalData, number.uncheckedGetNumber() - 1)));
 }
 
-EncodedJSValue JITStubs::cti_op_urshift(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_urshift(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue val = ARG_src1;
-    JSValue shift = ARG_src2;
+    JSValue val = stackFrame.args[0].jsValue();
+    JSValue shift = stackFrame.args[1].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
     if (JSFastMath::canDoFastUrshift(val, shift))
         return JSValue::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
     else {
-        JSValue result = jsNumber(ARG_globalData, (val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+        JSValue result = jsNumber(stackFrame.globalData, (val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
         CHECK_FOR_EXCEPTION_AT_END();
         return JSValue::encode(result);
     }
 }
 
-EncodedJSValue JITStubs::cti_op_bitxor(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_bitxor(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue result = jsNumber(ARG_globalData, src1.toInt32(callFrame) ^ src2.toInt32(callFrame));
+    JSValue result = jsNumber(stackFrame.globalData, src1.toInt32(callFrame) ^ src2.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-JSObject* JITStubs::cti_op_new_regexp(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_regexp(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return new (ARG_globalData) RegExpObject(ARG_callFrame->lexicalGlobalObject()->regExpStructure(), ARG_regexp1);
+    return new (stackFrame.globalData) RegExpObject(stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), stackFrame.args[0].regExp());
 }
 
-EncodedJSValue JITStubs::cti_op_bitor(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_bitor(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue result = jsNumber(ARG_globalData, src1.toInt32(callFrame) | src2.toInt32(callFrame));
+    JSValue result = jsNumber(stackFrame.globalData, src1.toInt32(callFrame) | src2.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_call_eval(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_call_eval(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    RegisterFile* registerFile = ARG_registerFile;
+    CallFrame* callFrame = stackFrame.callFrame;
+    RegisterFile* registerFile = stackFrame.registerFile;
 
-    Interpreter* interpreter = ARG_globalData->interpreter;
+    Interpreter* interpreter = stackFrame.globalData->interpreter;
     
-    JSValue funcVal = ARG_src1;
-    int registerOffset = ARG_int2;
-    int argCount = ARG_int3;
+    JSValue funcVal = stackFrame.args[0].jsValue();
+    int registerOffset = stackFrame.args[1].int32();
+    int argCount = stackFrame.args[2].int32();
 
     Register* newCallFrame = callFrame->registers() + registerOffset;
     Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
@@ -2065,7 +2145,7 @@ EncodedJSValue JITStubs::cti_op_call_eval(STUB_ARGS)
         JSValue exceptionValue;
         JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset, exceptionValue);
         if (UNLIKELY(exceptionValue != JSValue())) {
-            ARG_globalData->exception = exceptionValue;
+            stackFrame.globalData->exception = exceptionValue;
             VM_THROW_EXCEPTION_AT_END();
         }
         return JSValue::encode(result);
@@ -2074,179 +2154,197 @@ EncodedJSValue JITStubs::cti_op_call_eval(STUB_ARGS)
     return JSValue::encode(JSValue());
 }
 
-EncodedJSValue JITStubs::cti_op_throw(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_throw(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
 
-    JSValue exceptionValue = ARG_src1;
+    JSValue exceptionValue = stackFrame.args[0].jsValue();
     ASSERT(exceptionValue);
 
-    HandlerInfo* handler = ARG_globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex, true);
+    HandlerInfo* handler = stackFrame.globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex, true);
 
     if (!handler) {
-        *ARG_exception = exceptionValue;
+        *stackFrame.exception = exceptionValue;
         return JSValue::encode(jsNull());
     }
 
-    ARG_setCallFrame(callFrame);
+    stackFrame.callFrame = callFrame;
     void* catchRoutine = handler->nativeCode.addressForExceptionHandler();
     ASSERT(catchRoutine);
     STUB_SET_RETURN_ADDRESS(catchRoutine);
     return JSValue::encode(exceptionValue);
 }
 
-JSPropertyNameIterator* JITStubs::cti_op_get_pnames(STUB_ARGS)
+JSPropertyNameIterator* JITStubs::cti_op_get_pnames(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSPropertyNameIterator::create(ARG_callFrame, ARG_src1);
+    return JSPropertyNameIterator::create(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
-EncodedJSValue JITStubs::cti_op_next_pname(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_next_pname(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSPropertyNameIterator* it = ARG_pni1;
-    JSValue temp = it->next(ARG_callFrame);
+    JSPropertyNameIterator* it = stackFrame.args[0].propertyNameIterator();
+    JSValue temp = it->next(stackFrame.callFrame);
     if (!temp)
         it->invalidate();
     return JSValue::encode(temp);
 }
 
-JSObject* JITStubs::cti_op_push_scope(STUB_ARGS)
+JSObject* JITStubs::cti_op_push_scope(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSObject* o = ARG_src1.toObject(ARG_callFrame);
+    JSObject* o = stackFrame.args[0].jsValue().toObject(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION();
-    ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->push(o));
+    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(o));
     return o;
 }
 
-void JITStubs::cti_op_pop_scope(STUB_ARGS)
+void JITStubs::cti_op_pop_scope(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->pop());
+    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->pop());
 }
 
-EncodedJSValue JITStubs::cti_op_typeof(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_typeof(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsTypeStringForValue(ARG_callFrame, ARG_src1));
+    return JSValue::encode(jsTypeStringForValue(stackFrame.callFrame, stackFrame.args[0].jsValue()));
 }
 
-EncodedJSValue JITStubs::cti_op_is_undefined(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_undefined(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue v = ARG_src1;
+    JSValue v = stackFrame.args[0].jsValue();
     return JSValue::encode(jsBoolean(v.isCell() ? v.asCell()->structure()->typeInfo().masqueradesAsUndefined() : v.isUndefined()));
 }
 
-EncodedJSValue JITStubs::cti_op_is_boolean(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_boolean(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsBoolean(ARG_src1.isBoolean()));
+    return JSValue::encode(jsBoolean(stackFrame.args[0].jsValue().isBoolean()));
 }
 
-EncodedJSValue JITStubs::cti_op_is_number(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_number(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsBoolean(ARG_src1.isNumber()));
+    return JSValue::encode(jsBoolean(stackFrame.args[0].jsValue().isNumber()));
 }
 
-EncodedJSValue JITStubs::cti_op_is_string(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_string(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsBoolean(isJSString(ARG_globalData, ARG_src1)));
+    return JSValue::encode(jsBoolean(isJSString(stackFrame.globalData, stackFrame.args[0].jsValue())));
 }
 
-EncodedJSValue JITStubs::cti_op_is_object(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_object(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsBoolean(jsIsObjectType(ARG_src1)));
+    return JSValue::encode(jsBoolean(jsIsObjectType(stackFrame.args[0].jsValue())));
 }
 
-EncodedJSValue JITStubs::cti_op_is_function(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_is_function(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(jsBoolean(jsIsFunctionType(ARG_src1)));
+    return JSValue::encode(jsBoolean(jsIsFunctionType(stackFrame.args[0].jsValue())));
 }
 
-EncodedJSValue JITStubs::cti_op_stricteq(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_stricteq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     return JSValue::encode(jsBoolean(JSValue::strictEqual(src1, src2)));
 }
 
-EncodedJSValue JITStubs::cti_op_to_primitive(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_to_primitive(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(ARG_src1.toPrimitive(ARG_callFrame));
+    return JSValue::encode(stackFrame.args[0].jsValue().toPrimitive(stackFrame.callFrame));
 }
 
-EncodedJSValue JITStubs::cti_op_strcat(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_strcat(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    return JSValue::encode(concatenateStrings(ARG_callFrame, &ARG_callFrame->registers()[ARG_int1], ARG_int2));
+    return JSValue::encode(concatenateStrings(stackFrame.callFrame, &stackFrame.callFrame->registers()[stackFrame.args[0].int32()], stackFrame.args[1].int32()));
 }
 
-EncodedJSValue JITStubs::cti_op_nstricteq(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_nstricteq(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src1 = ARG_src1;
-    JSValue src2 = ARG_src2;
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
 
     return JSValue::encode(jsBoolean(!JSValue::strictEqual(src1, src2)));
 }
 
-EncodedJSValue JITStubs::cti_op_to_jsnumber(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_to_jsnumber(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue src = ARG_src1;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue src = stackFrame.args[0].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     JSValue result = src.toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
 
-EncodedJSValue JITStubs::cti_op_in(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_in(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    JSValue baseVal = ARG_src2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue baseVal = stackFrame.args[1].jsValue();
 
     if (!baseVal.isObject()) {
-        CallFrame* callFrame = ARG_callFrame;
+        CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
         unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-        ARG_globalData->exception = createInvalidParamError(callFrame, "in", baseVal, vPCIndex, codeBlock);
+        stackFrame.globalData->exception = createInvalidParamError(callFrame, "in", baseVal, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
 
-    JSValue propName = ARG_src1;
+    JSValue propName = stackFrame.args[0].jsValue();
     JSObject* baseObj = asObject(baseVal);
 
     uint32_t i;
@@ -2258,23 +2356,25 @@ EncodedJSValue JITStubs::cti_op_in(STUB_ARGS)
     return JSValue::encode(jsBoolean(baseObj->hasProperty(callFrame, property)));
 }
 
-JSObject* JITStubs::cti_op_push_new_scope(STUB_ARGS)
+JSObject* JITStubs::cti_op_push_new_scope(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSObject* scope = new (ARG_globalData) JSStaticScopeObject(ARG_callFrame, *ARG_id1, ARG_src2, DontDelete);
+    JSObject* scope = new (stackFrame.globalData) JSStaticScopeObject(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].jsValue(), DontDelete);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     callFrame->setScopeChain(callFrame->scopeChain()->push(scope));
     return scope;
 }
 
-void JITStubs::cti_op_jmp_scopes(STUB_ARGS)
+void JITStubs::cti_op_jmp_scopes(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    unsigned count = ARG_int1;
-    CallFrame* callFrame = ARG_callFrame;
+    unsigned count = stackFrame.args[0].int32();
+    CallFrame* callFrame = stackFrame.callFrame;
 
     ScopeChainNode* tmp = callFrame->scopeChain();
     while (count--)
@@ -2282,23 +2382,25 @@ void JITStubs::cti_op_jmp_scopes(STUB_ARGS)
     callFrame->setScopeChain(tmp);
 }
 
-void JITStubs::cti_op_put_by_index(STUB_ARGS)
+void JITStubs::cti_op_put_by_index(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
-    unsigned property = ARG_int2;
+    CallFrame* callFrame = stackFrame.callFrame;
+    unsigned property = stackFrame.args[1].int32();
 
-    ARG_src1.put(callFrame, property, ARG_src3);
+    stackFrame.args[0].jsValue().put(callFrame, property, stackFrame.args[2].jsValue());
 }
 
-void* JITStubs::cti_op_switch_imm(STUB_ARGS)
+void* JITStubs::cti_op_switch_imm(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue scrutinee = ARG_src1;
-    unsigned tableIndex = ARG_int2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue scrutinee = stackFrame.args[0].jsValue();
+    unsigned tableIndex = stackFrame.args[1].int32();
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     if (scrutinee.isInt32Fast())
@@ -2313,13 +2415,14 @@ void* JITStubs::cti_op_switch_imm(STUB_ARGS)
     }
 }
 
-void* JITStubs::cti_op_switch_char(STUB_ARGS)
+void* JITStubs::cti_op_switch_char(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue scrutinee = ARG_src1;
-    unsigned tableIndex = ARG_int2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue scrutinee = stackFrame.args[0].jsValue();
+    unsigned tableIndex = stackFrame.args[1].int32();
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     void* result = codeBlock->characterSwitchJumpTable(tableIndex).ctiDefault.addressForSwitch();
@@ -2333,13 +2436,14 @@ void* JITStubs::cti_op_switch_char(STUB_ARGS)
     return result;
 }
 
-void* JITStubs::cti_op_switch_string(STUB_ARGS)
+void* JITStubs::cti_op_switch_string(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    JSValue scrutinee = ARG_src1;
-    unsigned tableIndex = ARG_int2;
-    CallFrame* callFrame = ARG_callFrame;
+    JSValue scrutinee = stackFrame.args[0].jsValue();
+    unsigned tableIndex = stackFrame.args[1].int32();
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     void* result = codeBlock->stringSwitchJumpTable(tableIndex).ctiDefault.addressForSwitch();
@@ -2352,16 +2456,17 @@ void* JITStubs::cti_op_switch_string(STUB_ARGS)
     return result;
 }
 
-EncodedJSValue JITStubs::cti_op_del_by_val(STUB_ARGS)
+EncodedJSValue JITStubs::cti_op_del_by_val(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue baseValue = ARG_src1;
+    JSValue baseValue = stackFrame.args[0].jsValue();
     JSObject* baseObj = baseValue.toObject(callFrame); // may throw
 
-    JSValue subscript = ARG_src2;
+    JSValue subscript = stackFrame.args[1].jsValue();
     JSValue result;
     uint32_t i;
     if (subscript.getUInt32(i))
@@ -2377,64 +2482,69 @@ EncodedJSValue JITStubs::cti_op_del_by_val(STUB_ARGS)
     return JSValue::encode(result);
 }
 
-void JITStubs::cti_op_put_getter(STUB_ARGS)
+void JITStubs::cti_op_put_getter(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    ASSERT(ARG_src1.isObject());
-    JSObject* baseObj = asObject(ARG_src1);
-    ASSERT(ARG_src3.isObject());
-    baseObj->defineGetter(callFrame, *ARG_id2, asObject(ARG_src3));
+    ASSERT(stackFrame.args[0].jsValue().isObject());
+    JSObject* baseObj = asObject(stackFrame.args[0].jsValue());
+    ASSERT(stackFrame.args[2].jsValue().isObject());
+    baseObj->defineGetter(callFrame, stackFrame.args[1].identifier(), asObject(stackFrame.args[2].jsValue()));
 }
 
-void JITStubs::cti_op_put_setter(STUB_ARGS)
+void JITStubs::cti_op_put_setter(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    ASSERT(ARG_src1.isObject());
-    JSObject* baseObj = asObject(ARG_src1);
-    ASSERT(ARG_src3.isObject());
-    baseObj->defineSetter(callFrame, *ARG_id2, asObject(ARG_src3));
+    ASSERT(stackFrame.args[0].jsValue().isObject());
+    JSObject* baseObj = asObject(stackFrame.args[0].jsValue());
+    ASSERT(stackFrame.args[2].jsValue().isObject());
+    baseObj->defineSetter(callFrame, stackFrame.args[1].identifier(), asObject(stackFrame.args[2].jsValue()));
 }
 
-JSObject* JITStubs::cti_op_new_error(STUB_ARGS)
+JSObject* JITStubs::cti_op_new_error(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned type = ARG_int1;
-    JSValue message = ARG_src2;
-    unsigned bytecodeOffset = ARG_int3;
+    unsigned type = stackFrame.args[0].int32();
+    JSValue message = stackFrame.args[1].jsValue();
+    unsigned bytecodeOffset = stackFrame.args[2].int32();
 
     unsigned lineNumber = codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
     return Error::create(callFrame, static_cast<ErrorType>(type), message.toString(callFrame), lineNumber, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
 }
 
-void JITStubs::cti_op_debug(STUB_ARGS)
+void JITStubs::cti_op_debug(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    int debugHookID = ARG_int1;
-    int firstLine = ARG_int2;
-    int lastLine = ARG_int3;
+    int debugHookID = stackFrame.args[0].int32();
+    int firstLine = stackFrame.args[1].int32();
+    int lastLine = stackFrame.args[2].int32();
 
-    ARG_globalData->interpreter->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
+    stackFrame.globalData->interpreter->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 }
 
-EncodedJSValue JITStubs::cti_vm_throw(STUB_ARGS)
+EncodedJSValue JITStubs::cti_vm_throw(STUB_ARGS_DECLARATION)
 {
     BEGIN_STUB_FUNCTION();
+    JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
 
-    CallFrame* callFrame = ARG_callFrame;
+    CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    JSGlobalData* globalData = ARG_globalData;
+    JSGlobalData* globalData = stackFrame.globalData;
 
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, globalData->exceptionLocation);
 
@@ -2445,11 +2555,11 @@ EncodedJSValue JITStubs::cti_vm_throw(STUB_ARGS)
     HandlerInfo* handler = globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex, false);
 
     if (!handler) {
-        *ARG_exception = exceptionValue;
+        *stackFrame.exception = exceptionValue;
         return JSValue::encode(jsNull());
     }
 
-    ARG_setCallFrame(callFrame);
+    stackFrame.callFrame = callFrame;
     void* catchRoutine = handler->nativeCode.addressForExceptionHandler();
     ASSERT(catchRoutine);
     STUB_SET_RETURN_ADDRESS(catchRoutine);

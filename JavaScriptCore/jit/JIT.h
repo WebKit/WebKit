@@ -61,12 +61,12 @@ namespace JSC {
     struct PolymorphicAccessStructureList;
     struct StructureStubInfo;
 
-    typedef JSObject* (JIT_STUB *CTIHelper_o)(STUB_ARGS);
-    typedef JSPropertyNameIterator* (JIT_STUB *CTIHelper_p)(STUB_ARGS);
-    typedef void (JIT_STUB *CTIHelper_v)(STUB_ARGS);
-    typedef void* (JIT_STUB *CTIHelper_s)(STUB_ARGS);
-    typedef int (JIT_STUB *CTIHelper_b)(STUB_ARGS);
-    typedef VoidPtrPair (JIT_STUB *CTIHelper_2)(STUB_ARGS);
+    typedef JSObject* (JIT_STUB *CTIHelper_o)(STUB_ARGS_DECLARATION);
+    typedef JSPropertyNameIterator* (JIT_STUB *CTIHelper_p)(STUB_ARGS_DECLARATION);
+    typedef void (JIT_STUB *CTIHelper_v)(STUB_ARGS_DECLARATION);
+    typedef void* (JIT_STUB *CTIHelper_s)(STUB_ARGS_DECLARATION);
+    typedef int (JIT_STUB *CTIHelper_b)(STUB_ARGS_DECLARATION);
+    typedef VoidPtrPair (JIT_STUB *CTIHelper_2)(STUB_ARGS_DECLARATION);
 
     struct CallRecord {
         MacroAssembler::Call from;

@@ -1,3 +1,128 @@
+2009-05-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin "++" Barraclough.
+        
+        Added some abstraction around the JIT stub calling convention by creating
+        a struct to represent the persistent stack frame JIT code shares with
+        JIT stubs.
+        
+        SunSpider reports no change.
+
+        * jit/JIT.h:
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_convert_this):
+        (JSC::JITStubs::cti_op_end):
+        (JSC::JITStubs::cti_op_add):
+        (JSC::JITStubs::cti_op_pre_inc):
+        (JSC::JITStubs::cti_timeout_check):
+        (JSC::JITStubs::cti_register_file_check):
+        (JSC::JITStubs::cti_op_loop_if_less):
+        (JSC::JITStubs::cti_op_loop_if_lesseq):
+        (JSC::JITStubs::cti_op_new_object):
+        (JSC::JITStubs::cti_op_put_by_id_generic):
+        (JSC::JITStubs::cti_op_get_by_id_generic):
+        (JSC::JITStubs::cti_op_put_by_id):
+        (JSC::JITStubs::cti_op_put_by_id_second):
+        (JSC::JITStubs::cti_op_put_by_id_fail):
+        (JSC::JITStubs::cti_op_get_by_id):
+        (JSC::JITStubs::cti_op_get_by_id_second):
+        (JSC::JITStubs::cti_op_get_by_id_self_fail):
+        (JSC::JITStubs::cti_op_get_by_id_proto_list):
+        (JSC::JITStubs::cti_op_get_by_id_proto_list_full):
+        (JSC::JITStubs::cti_op_get_by_id_proto_fail):
+        (JSC::JITStubs::cti_op_get_by_id_array_fail):
+        (JSC::JITStubs::cti_op_get_by_id_string_fail):
+        (JSC::JITStubs::cti_op_instanceof):
+        (JSC::JITStubs::cti_op_del_by_id):
+        (JSC::JITStubs::cti_op_mul):
+        (JSC::JITStubs::cti_op_new_func):
+        (JSC::JITStubs::cti_op_call_JSFunction):
+        (JSC::JITStubs::cti_op_call_arityCheck):
+        (JSC::JITStubs::cti_vm_dontLazyLinkCall):
+        (JSC::JITStubs::cti_vm_lazyLinkCall):
+        (JSC::JITStubs::cti_op_push_activation):
+        (JSC::JITStubs::cti_op_call_NotJSFunction):
+        (JSC::JITStubs::cti_op_create_arguments):
+        (JSC::JITStubs::cti_op_create_arguments_no_params):
+        (JSC::JITStubs::cti_op_tear_off_activation):
+        (JSC::JITStubs::cti_op_tear_off_arguments):
+        (JSC::JITStubs::cti_op_profile_will_call):
+        (JSC::JITStubs::cti_op_profile_did_call):
+        (JSC::JITStubs::cti_op_ret_scopeChain):
+        (JSC::JITStubs::cti_op_new_array):
+        (JSC::JITStubs::cti_op_resolve):
+        (JSC::JITStubs::cti_op_construct_JSConstruct):
+        (JSC::JITStubs::cti_op_construct_NotJSConstruct):
+        (JSC::JITStubs::cti_op_get_by_val):
+        (JSC::JITStubs::cti_op_get_by_val_string):
+        (JSC::JITStubs::cti_op_get_by_val_byte_array):
+        (JSC::JITStubs::cti_op_resolve_func):
+        (JSC::JITStubs::cti_op_sub):
+        (JSC::JITStubs::cti_op_put_by_val):
+        (JSC::JITStubs::cti_op_put_by_val_array):
+        (JSC::JITStubs::cti_op_put_by_val_byte_array):
+        (JSC::JITStubs::cti_op_lesseq):
+        (JSC::JITStubs::cti_op_loop_if_true):
+        (JSC::JITStubs::cti_op_load_varargs):
+        (JSC::JITStubs::cti_op_negate):
+        (JSC::JITStubs::cti_op_resolve_base):
+        (JSC::JITStubs::cti_op_resolve_skip):
+        (JSC::JITStubs::cti_op_resolve_global):
+        (JSC::JITStubs::cti_op_div):
+        (JSC::JITStubs::cti_op_pre_dec):
+        (JSC::JITStubs::cti_op_jless):
+        (JSC::JITStubs::cti_op_not):
+        (JSC::JITStubs::cti_op_jtrue):
+        (JSC::JITStubs::cti_op_post_inc):
+        (JSC::JITStubs::cti_op_eq):
+        (JSC::JITStubs::cti_op_lshift):
+        (JSC::JITStubs::cti_op_bitand):
+        (JSC::JITStubs::cti_op_rshift):
+        (JSC::JITStubs::cti_op_bitnot):
+        (JSC::JITStubs::cti_op_resolve_with_base):
+        (JSC::JITStubs::cti_op_new_func_exp):
+        (JSC::JITStubs::cti_op_mod):
+        (JSC::JITStubs::cti_op_less):
+        (JSC::JITStubs::cti_op_neq):
+        (JSC::JITStubs::cti_op_post_dec):
+        (JSC::JITStubs::cti_op_urshift):
+        (JSC::JITStubs::cti_op_bitxor):
+        (JSC::JITStubs::cti_op_new_regexp):
+        (JSC::JITStubs::cti_op_bitor):
+        (JSC::JITStubs::cti_op_call_eval):
+        (JSC::JITStubs::cti_op_throw):
+        (JSC::JITStubs::cti_op_get_pnames):
+        (JSC::JITStubs::cti_op_next_pname):
+        (JSC::JITStubs::cti_op_push_scope):
+        (JSC::JITStubs::cti_op_pop_scope):
+        (JSC::JITStubs::cti_op_typeof):
+        (JSC::JITStubs::cti_op_is_undefined):
+        (JSC::JITStubs::cti_op_is_boolean):
+        (JSC::JITStubs::cti_op_is_number):
+        (JSC::JITStubs::cti_op_is_string):
+        (JSC::JITStubs::cti_op_is_object):
+        (JSC::JITStubs::cti_op_is_function):
+        (JSC::JITStubs::cti_op_stricteq):
+        (JSC::JITStubs::cti_op_to_primitive):
+        (JSC::JITStubs::cti_op_strcat):
+        (JSC::JITStubs::cti_op_nstricteq):
+        (JSC::JITStubs::cti_op_to_jsnumber):
+        (JSC::JITStubs::cti_op_in):
+        (JSC::JITStubs::cti_op_push_new_scope):
+        (JSC::JITStubs::cti_op_jmp_scopes):
+        (JSC::JITStubs::cti_op_put_by_index):
+        (JSC::JITStubs::cti_op_switch_imm):
+        (JSC::JITStubs::cti_op_switch_char):
+        (JSC::JITStubs::cti_op_switch_string):
+        (JSC::JITStubs::cti_op_del_by_val):
+        (JSC::JITStubs::cti_op_put_getter):
+        (JSC::JITStubs::cti_op_put_setter):
+        (JSC::JITStubs::cti_op_new_error):
+        (JSC::JITStubs::cti_op_debug):
+        (JSC::JITStubs::cti_vm_throw):
+        * jit/JITStubs.h:
+        (JSC::):
+
 2009-05-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak & Darin Adler.
