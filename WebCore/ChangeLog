@@ -1,3 +1,15 @@
+2009-05-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25625
+        Implement Image/Option constructors in V8 bindings.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER): Removed old JS-based code.
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp: Added.
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp: Added.
+
 2009-05-07  Brady Eidson  <beidson@apple.com>
 
         I hate myself for doing this, but need to fix that ChangeLog entry.

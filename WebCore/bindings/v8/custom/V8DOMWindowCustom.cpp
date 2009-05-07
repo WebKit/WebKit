@@ -566,66 +566,6 @@ NAMED_PROPERTY_GETTER(DOMWindow)
     if (!result.IsEmpty())
         return result;
 
-    // Lazy initialization map keeps global properties that can be lazily
-    // initialized. The value is the code to instantiate the property.
-    // It must return the value of property after initialization.
-    static HashMap<String, String> lazyInitMap;
-    if (lazyInitMap.isEmpty()) {
-      // "new Image()" does not appear to be well-defined in a spec, but Safari,
-      // Opera, and Firefox all consider it to always create an HTML image
-      // element, regardless of the current doctype.
-      lazyInitMap.set("Image",
-                       "function Image() { \
-                          return document.createElementNS( \
-                            'http://www.w3.org/1999/xhtml', 'img'); \
-                        }; \
-                        Image");
-      lazyInitMap.set("Option",
-        "function Option(text, value, defaultSelected, selected) { \
-           var option = document.createElement('option'); \
-           if (text == null) return option; \
-           option.text = text; \
-           if (value == null) return option; \
-           option.value = value; \
-           if (defaultSelected == null) return option; \
-           option.defaultSelected = defaultSelected; \
-           if (selected == null) return option; \
-           option.selected = selected; \
-           return option; \
-         }; \
-         Option");
-    }
-
-    String code = lazyInitMap.get(propName);
-    if (!code.isEmpty()) {
-        v8::Local<v8::Context> context = V8Proxy::GetContext(window->frame());
-        // Bail out if we cannot get the context for the frame.
-        if (context.IsEmpty())
-            return notHandledByInterceptor();
-  
-        // switch to the target object's environment.
-        v8::Context::Scope scope(context);
-
-        // Set the property name to undefined to make sure that the
-        // property exists.  This is necessary because this getter
-        // might be called when evaluating 'var RangeException = value'
-        // to figure out if we have a property named 'RangeException' before
-        // we set RangeException to the new value.  In that case, we will
-        // evaluate 'var RangeException = {}' and enter an infinite loop.
-        // Setting the property name to undefined on the global object
-        // ensures that we do not have to ask this getter to figure out
-        // that we have the property.
-        //
-        // TODO(ager): We probably should implement the Has method
-        // for the interceptor instead of using the default Has method
-        // that calls Get.
-        context->Global()->Set(name, v8::Undefined());
-        V8Proxy* proxy = V8Proxy::retrieve(window->frame());
-        ASSERT(proxy);
-
-        return proxy->evaluate(WebCore::ScriptSourceCode(code), 0);
-    }
-
     // Search named items in the document.
     Document* doc = frame->document();
     if (doc) {
