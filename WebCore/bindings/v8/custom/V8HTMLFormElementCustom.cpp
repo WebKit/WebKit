@@ -41,7 +41,7 @@ namespace WebCore {
 INDEXED_PROPERTY_GETTER(HTMLFormElement)
 {
     INC_STATS("DOM.HTMLFormElement.IndexedPropertyGetter");
-    HTMLFormElement* form = V8Proxy:DOMWrapperToNode<HTMLFormElement>(info.Holder());
+    HTMLFormElement* form = V8Proxy::DOMWrapperToNode<HTMLFormElement>(info.Holder());
     
     RefPtr<Node> formElement = form->elements()->item(index);
     if (!formElement)

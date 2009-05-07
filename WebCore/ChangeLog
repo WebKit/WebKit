@@ -1,3 +1,10 @@
+2009-05-07  Darin Fisher  <darin@chromium.org>
+
+        Fix Chromium build bustage.
+
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER): ":" should be "::"
+
 2009-05-07  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
