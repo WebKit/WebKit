@@ -206,7 +206,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(void* function)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
-    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
+    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
@@ -220,13 +220,13 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     poke(stackPointerRegister);
-    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
+    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #else // JIT_STUB_ARGUMENT_VA_LIST
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
-    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
+    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #endif

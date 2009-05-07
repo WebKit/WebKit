@@ -65,8 +65,11 @@ namespace JSC {
 
 #if COMPILER(GCC) && PLATFORM(X86)
 
-COMPILE_ASSERT(STUB_ARGS_code == 0x0C, STUB_ARGS_code_is_0x0C);
-COMPILE_ASSERT(STUB_ARGS_callFrame == 0x0E, STUB_ARGS_callFrame_is_0x0E);
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x38, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 #if PLATFORM(DARWIN)
 #define SYMBOL_STRING(name) "_" #name
@@ -84,8 +87,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebx" "\n"
     "subl $0x1c, %esp" "\n"
     "movl $512, %esi" "\n"
-    "movl 0x38(%esp), %edi" "\n" // Ox38 = 0x0E * 4, 0x0E = STUB_ARGS_callFrame (see assertion above)
-    "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = STUB_ARGS_code (see assertion above)
+    "movl 0x38(%esp), %edi" "\n"
+    "call *0x30(%esp)" "\n"
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -117,8 +120,11 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     
 #elif COMPILER(GCC) && PLATFORM(X86_64)
 
-COMPILE_ASSERT(STUB_ARGS_code == 0x10, STUB_ARGS_code_is_0x10);
-COMPILE_ASSERT(STUB_ARGS_callFrame == 0x12, STUB_ARGS_callFrame_is_0x12);
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 #if PLATFORM(DARWIN)
 #define SYMBOL_STRING(name) "_" #name
@@ -140,8 +146,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "movq $512, %r12" "\n"
     "movq $0xFFFF000000000000, %r14" "\n"
     "movq $0xFFFF000000000002, %r15" "\n"
-    "movq 0x90(%rsp), %r13" "\n" // Ox90 = 0x12 * 8, 0x12 = STUB_ARGS_callFrame (see assertion above)
-    "call *0x80(%rsp)" "\n" // Ox80 = 0x10 * 8, 0x10 = STUB_ARGS_code (see assertion above)
+    "movq 0x90(%rsp), %r13" "\n"
+    "call *0x80(%rsp)" "\n"
     "addq $0x48, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
@@ -170,8 +176,14 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
 );
-    
+
 #elif COMPILER(MSVC)
+
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x38, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 extern "C" {
     
@@ -187,7 +199,7 @@ extern "C" {
             mov esi, 512;
             mov ecx, esp;
             mov edi, [esp + 0x38];
-            call [esp + 0x30]; // Ox30 = 0x0C * 4, 0x0C = STUB_ARGS_code (see assertion above)
+            call [esp + 0x30];
             add esp, 0x1c;
             pop ebx;
             pop edi;
