@@ -378,6 +378,13 @@ static inline size_t expandedSize(size_t size, size_t otherSize)
         return overflowIndicator();
 
     size_t expandedSize = ((size + 10) / 10 * 11) + 1;
+
+    // If 'size' was originally just less than maxUChars() then we may have just overflowed.
+    // The next check won't catch this, since the subtraction will underflow.  Alternatively,
+    // rather than failing we could just back off from the expansion here?
+    if (expandedSize > maxUChars())
+        return overflowIndicator();
+
     if (maxUChars() - expandedSize < otherSize)
         return overflowIndicator();
 
@@ -404,6 +411,33 @@ static inline bool expandCapacity(UString::Rep* rep, int requiredLength)
         base->usedCapacity = requiredLength;
 
     rep->checkConsistency();
+    return true;
+}
+
+bool UString::Rep::reserveCapacity(int capacity)
+{
+    // If this is an empty string there is no point 'growing' it - just allocate a new one.
+    // If the BaseString is shared with another string that is using more capacity than this
+    // string is, then growing the buffer won't help.
+    if (!m_baseString->buf || !m_baseString->capacity || (offset + len) != m_baseString->usedCapacity)
+        return false;
+    
+    // If there is already sufficient capacity, no need to grow!
+    if (capacity <= m_baseString->capacity)
+        return true;
+
+    checkConsistency();
+
+    size_t newCapacity = expandedSize(capacity, m_baseString->preCapacity);
+    UChar* oldBuf = m_baseString->buf;
+    m_baseString->buf = reallocChars(m_baseString->buf, newCapacity);
+    if (!m_baseString->buf) {
+        m_baseString->buf = oldBuf;
+        return false;
+    }
+    m_baseString->capacity = newCapacity - m_baseString->preCapacity;
+
+    checkConsistency();
     return true;
 }
 

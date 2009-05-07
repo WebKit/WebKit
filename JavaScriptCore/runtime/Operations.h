@@ -296,8 +296,19 @@ namespace JSC {
                 bufferSize += 11;
         }
 
-        // Allocate output the string into which all other strings will be copied.
-        UString result(UString::Rep::createEmptyBuffer(bufferSize));
+        // Allocate an output string to store the result.
+        // If the first argument is a String, and if it has the capacity (or can grow
+        // its capacity) to hold the entire result then use this as a base to concatenate
+        // onto.  Otherwise, allocate a new empty output buffer.
+        JSValue firstValue = strings[0].jsValue();
+        RefPtr<UString::Rep> resultRep;
+        if (firstValue.isString() && (resultRep = asString(firstValue)->value().rep())->reserveCapacity(bufferSize)) {
+            // We're going to concatenate onto the first string - remove it from the list of items to be appended.
+            ++strings;
+            --count;
+        } else
+            resultRep = UString::Rep::createEmptyBuffer(bufferSize);
+        UString result(resultRep);
 
         // Loop over the openards, writing them into the output buffer.
         for (unsigned i = 0; i < count; ++i) {

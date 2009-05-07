@@ -1,3 +1,27 @@
+2009-05-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Enable op_strcat across += assignments.  This patch allows the lhs of a read/modify node
+        to be included within the concatenation operation, and also modifies the implementation
+        of the concatenation to attempt to reuse and cat onto the leftmost string, rather than
+        always allocating a new empty output string to copy into (as was previously the behaviour).
+
+        ~0.5% progression, due to a 3%-3.5% progression on the string tests (particularly validate).
+
+        * parser/Nodes.cpp:
+        (JSC::BinaryOpNode::emitStrcat):
+        (JSC::emitReadModifyAssignment):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        * parser/Nodes.h:
+        * runtime/Operations.h:
+        (JSC::concatenateStrings):
+        * runtime/UString.cpp:
+        (JSC::UString::reserveCapacity):
+        * runtime/UString.h:
+
 2009-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Oliver Hunt.
