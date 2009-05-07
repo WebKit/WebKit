@@ -1,5 +1,13 @@
 2009-05-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Rubber Stamped by Dave Hyatt
+        
+        Shuffle the data members to minimize padding.
+
+        * dom/ClassNames.h:
+
+2009-05-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         <rdar://problem/6864062> Shrink GlyphPage from 4112 to 2576 bytes in 64-bit
