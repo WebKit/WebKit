@@ -26,8 +26,6 @@
 #ifndef ExecutableAllocator_h
 #define ExecutableAllocator_h
 
-#if ENABLE(ASSEMBLER)
-
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -51,6 +49,12 @@ inline size_t roundUpAllocationSize(size_t request, size_t granularity)
     ASSERT(size >= request);
     return size;
 }
+
+}
+
+#if ENABLE(ASSEMBLER)
+
+namespace JSC {
 
 class ExecutablePool : public RefCounted<ExecutablePool> {
 private:
