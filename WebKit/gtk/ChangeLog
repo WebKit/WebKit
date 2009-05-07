@@ -1,3 +1,12 @@
+2009-05-07  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad): Add missing
+        call to notifyStatus in the committed case and a missing property notify.
+
 2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
