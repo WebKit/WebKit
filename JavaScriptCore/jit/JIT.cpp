@@ -1102,7 +1102,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_convert_this);
         }
         case op_profile_will_call: {
-            emitGetCTIParam(STUB_ARGS_profilerReference, regT0);
+            emitGetCTIParam(FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*), regT0);
             Jump noProfiler = branchTestPtr(Zero, Address(regT0));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT0);
             emitCTICall(JITStubs::cti_op_profile_will_call);
@@ -1111,7 +1111,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_profile_will_call);
         }
         case op_profile_did_call: {
-            emitGetCTIParam(STUB_ARGS_profilerReference, regT0);
+            emitGetCTIParam(FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*), regT0);
             Jump noProfiler = branchTestPtr(Zero, Address(regT0));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, regT0);
             emitCTICall(JITStubs::cti_op_profile_did_call);
@@ -1523,7 +1523,7 @@ void JIT::privateCompile()
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
-        emitGetCTIParam(STUB_ARGS_registerFile, regT0);
+        emitGetCTIParam(FIELD_OFFSET(JITStackFrame, registerFile) / sizeof (void*), regT0);
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
         
         slowRegisterFileCheck = branch32(GreaterThan, regT1, Address(regT0, FIELD_OFFSET(RegisterFile, m_end)));

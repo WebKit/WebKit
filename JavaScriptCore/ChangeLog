@@ -1,3 +1,20 @@
+2009-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Removed a few more special constants, and replaced them with uses of
+        the JITStackFrame struct.
+
+        Removed one of the two possible definitions of VoidPtrPair. The Mac
+        definition was more elegant, but SunSpider doesn't think it's any
+        faster, and it's net less elegant to have two ways of doing things.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.h:
+        (JSC::):
+
 2009-05-07  Darin Adler  <darin@apple.com>
 
         * runtime/ScopeChain.h:
