@@ -1,3 +1,16 @@
+2009-05-07  Antony Sargent  <asargent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix a memory leak in V8EventListenerList::remove.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25618
+
+        No new functionality so no new tests. 
+
+        * bindings/v8/V8EventListenerList.cpp:
+        (WebCore::V8EventListenerList::remove):
+
 2009-05-07  Darin Fisher  <darin@chromium.org>
 
         Fix Chromium build bustage.

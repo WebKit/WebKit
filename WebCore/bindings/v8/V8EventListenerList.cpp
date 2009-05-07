@@ -147,9 +147,11 @@ void V8EventListenerList::remove(V8EventListener* listener)
         for (size_t j = 0; j < vector->size(); j++) {
             if (vector->at(j) == listener) {
                 vector->remove(j);
-                if (!vector->size())
+                if (!vector->size()) {
                     m_table.remove(key);
-
+                    delete vector;
+                    vector = 0;
+                }
                 m_reverseTable.remove(listener);
                 return;
             }
