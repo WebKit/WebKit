@@ -1,3 +1,30 @@
+2009-05-07  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Render empty optgroup elements.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24900
+
+        Currently, optgroup elements which are empty are not rendered. The
+        HTML specification gives no guidance on this situation.
+
+        However, the test for being empty is that they have no children, thus
+        this will not render:
+          <optgroup label="test"></optgroup>
+        while this /will/ render (because of the text node child):
+          <optgroup label="test"> </optgroup>
+
+        This patch will cause both cases to render which matches IE's and
+        Firefox's behaviour.
+
+        The difference only appears when opening the select element and does
+        not appear in the render tree. Thus, a manual layout-test is required.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems):
+        * manual-tests/optgroup-empty-and-nested.html: Added.
+
 2009-05-06  Julie Parent  <jparent@google.com>
 
         Reviewed by Eric Seidel.
