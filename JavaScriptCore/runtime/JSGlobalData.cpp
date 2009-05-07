@@ -183,6 +183,8 @@ JSGlobalData::~JSGlobalData()
     deleteIdentifierTable(identifierTable);
 
     delete clientData;
+    
+    ASSERT(parserObjects.isEmpty());
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::create(bool isShared)

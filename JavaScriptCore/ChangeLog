@@ -2,6 +2,25 @@
 
         Reviewed by Cameron Zwarich.
         
+        Fixed a minor sequencing error introduced by recent Parser speedups.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        (JSC::Parser::reparse): Shrink the parsedObjects vector after allocating
+        the root node, to avoid leaving a stray node in the vector, since that's
+        a slight memory leak, and it causes problems during JSGlobalData teardown.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): ASSERT that we're not being torn
+        down while we think we're still parsing, since that would cause lots of
+        bad memory references during our destruction.
+
+2009-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
         Replaced two more macros with references to the JITStackFrame structure.
 
         * jit/JIT.cpp:
