@@ -1,3 +1,14 @@
+2009-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the build thread stack base determination build on Symbian,
+        by moving the code block before PLATFORM(UNIX), which is also
+        enabled on Symbian builds.
+
+        * runtime/Collector.cpp:
+        (JSC::currentThreadStackBase):
+
 2009-05-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
