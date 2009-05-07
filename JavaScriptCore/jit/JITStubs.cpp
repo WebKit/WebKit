@@ -2195,6 +2195,20 @@ EncodedJSValue JITStubs::cti_op_stricteq(STUB_ARGS)
     return JSValue::encode(jsBoolean(JSValue::strictEqual(src1, src2)));
 }
 
+EncodedJSValue JITStubs::cti_op_to_primitive(STUB_ARGS)
+{
+    BEGIN_STUB_FUNCTION();
+
+    return JSValue::encode(ARG_src1.toPrimitive(ARG_callFrame));
+}
+
+EncodedJSValue JITStubs::cti_op_strcat(STUB_ARGS)
+{
+    BEGIN_STUB_FUNCTION();
+
+    return JSValue::encode(concatenateStrings(ARG_callFrame, &ARG_callFrame->registers()[ARG_int1], ARG_int2));
+}
+
 EncodedJSValue JITStubs::cti_op_nstricteq(STUB_ARGS)
 {
     BEGIN_STUB_FUNCTION();

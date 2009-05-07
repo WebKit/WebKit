@@ -211,6 +211,8 @@ namespace JSC {
         static EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS);
         static EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS);
         static EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS);
+        static EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS);
+        static EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS);
         static EncodedJSValue JIT_STUB cti_op_sub(STUB_ARGS);
         static EncodedJSValue JIT_STUB cti_op_throw(STUB_ARGS);
         static EncodedJSValue JIT_STUB cti_op_to_jsnumber(STUB_ARGS);

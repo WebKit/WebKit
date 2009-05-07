@@ -3449,6 +3449,25 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += 3;
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_strcat) {
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        int count = (++vPC)->u.operand;
+
+        callFrame[dst] = concatenateStrings(callFrame, &callFrame->registers()[src], count);
+        ++vPC;
+
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_to_primitive) {
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+
+        callFrame[dst] = callFrame[src].jsValue().toPrimitive(callFrame);
+        ++vPC;
+
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_push_scope) {
         /* push_scope scope(r)
 

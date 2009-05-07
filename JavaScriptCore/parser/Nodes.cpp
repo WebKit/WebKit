@@ -1147,9 +1147,130 @@ void BinaryOpNode::releaseNodes(NodeReleaser& releaser)
     releaser.release(m_expr2);
 }
 
+// BinaryOpNode::emitStrcat:
+//
+// This node generates an op_strcat operation.  This opcode can handle concatenation of three or
+// more values, where we can determine a set of separate op_add operations would be operating on
+// string values.
+//
+// This function expects to be operating on a graph of AST nodes looking something like this:
+//
+//     (a)...     (b)
+//          \   /
+//           (+)     (c)
+//              \   /
+//      [d]     ((+))
+//         \    /
+//          [+=]
+//
+// The assignment operation is optional, if it exists the register holding the value on the
+// lefthand side of the assignment should be passing as the optional 'lhs' argument.
+//
+// The method should be called on the node at the root of the tree of regular binary add
+// operations (marked in the diagram with a double set of parentheses).  This node must
+// be performing a string concatenation (determined by statically detecting that at least
+// one child must be a string).  
+//
+// Since the minimum number of values being concatenated together is expected to be 3, if
+// a lhs to a concatenating assignment is not provided then the  root add should have at
+// least one left child that is also an add that can be determined to be operating on strings.
+//
+// Fixme: This method should correctly support concatenation on read-modify nodes (+=)
+//        but disabling this due to performance degradation (op_strcat needs to be able
+//        to append to the existing string).
+//
+RegisterID* BinaryOpNode::emitStrcat(BytecodeGenerator& generator, RegisterID* dst, RegisterID* lhs)
+{
+    ASSERT(isAdd());
+    ASSERT(resultDescriptor().definitelyIsString());
+
+    // Create a list of expressions for all the adds in the tree of nodes we can convert into
+    // a string concatenation.  The rightmost node (c) is added first.  The rightmost node is
+    // added first, and the leftmost child is never added, so the vector produced for the
+    // example above will be [ c, b ].
+    Vector<ExpressionNode*, 16> reverseExpressionList;
+    reverseExpressionList.append(m_expr2.get());
+
+    // Examine the left child of the add.  So long as this is a string add, add its right-child
+    // to the list, and keep processing along the left fork.
+    ExpressionNode* leftMostAddChild = m_expr1.get();
+    while (leftMostAddChild->isAdd() && leftMostAddChild->resultDescriptor().definitelyIsString()) {
+        reverseExpressionList.append(static_cast<AddNode*>(leftMostAddChild)->m_expr2.get());
+        leftMostAddChild = static_cast<AddNode*>(leftMostAddChild)->m_expr1.get();
+    }
+
+    Vector<RefPtr<RegisterID>, 16> temporaryRegisters;
+
+    // If there is an assignment, allocate a temporary to hold the lhs after conversion.
+    // We could possibly avoid this (the lhs is converted last anyway, we could let the
+    // op_strcat node handle its conversion if required).
+    if (lhs)
+        temporaryRegisters.append(generator.newTemporary());
+
+    // Emit code for the leftmost node ((a) in the example).
+    temporaryRegisters.append(generator.newTemporary());
+    RegisterID* leftMostAddChildTempRegister = temporaryRegisters.last().get();
+    generator.emitNode(leftMostAddChildTempRegister, leftMostAddChild);
+
+    // Note on ordering of conversions:
+    //
+    // We maintain the same ordering of conversions as we would see if the concatenations
+    // was performed as a sequence of adds (otherwise this optimization could change
+    // behaviour should an object have been provided a valueOf or toString method).
+    //
+    // Considering the above example, the sequnce of execution is:
+    //     * evaluate operand (a)
+    //     * evaluate operand (b)
+    //     * convert (a) to primitive   <-  (this would be triggered by the first add)
+    //     * convert (b) to primitive   <-  (ditto)
+    //     * evaluate operand (c)
+    //     * convert (c) to primitive   <-  (this would be triggered by the second add)
+    // And optionally, if there is an assignment:
+    //     * convert (d) to primitive   <-  (this would be triggered by the assigning addition)
+    //
+    // As such we do not plant an op to convert the leftmost child now.  Instead, use
+    // 'leftMostAddChildTempRegister' as a flag to trigger generation of the conversion
+    // once the second node has been generated.  However, if the leftmost child is an
+    // immediate we can trivially determine that no conversion will be required.
+    // If this is the case
+    if (leftMostAddChild->isString())
+        leftMostAddChildTempRegister = 0;
+
+    while (reverseExpressionList.size()) {
+        ExpressionNode* node = reverseExpressionList.last();
+        reverseExpressionList.removeLast();
+
+        // Emit the code for the current node.
+        temporaryRegisters.append(generator.newTemporary());
+        generator.emitNode(temporaryRegisters.last().get(), node);
+
+        // On the first iteration of this loop, when we first reach this point we have just
+        // generated the second node, which means it is time to convert the leftmost operand.
+        if (leftMostAddChildTempRegister) {
+            generator.emitToPrimitive(leftMostAddChildTempRegister, leftMostAddChildTempRegister);
+            leftMostAddChildTempRegister = 0; // Only do this once.
+        }
+        // Plant a conversion for this node, if necessary.
+        if (!node->isString())
+            generator.emitToPrimitive(temporaryRegisters.last().get(), temporaryRegisters.last().get());
+    }
+    ASSERT(temporaryRegisters.size() >= 3);
+
+    // If there is an assignment convert the lhs now.  This will also copy lhs to
+    // the temporary register we allocated for it.
+    if (lhs)
+        generator.emitToPrimitive(temporaryRegisters[0].get(), lhs);
+
+    return generator.emitStrcat(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get(), temporaryRegisters.size());
+}
+
 RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     OpcodeID opcodeID = this->opcodeID();
+
+    if (opcodeID == op_add && m_expr1->isAdd() && m_expr1->resultDescriptor().definitelyIsString())
+        return emitStrcat(generator, dst);
+
     if (opcodeID == op_neq) {
         if (m_expr1->isNull() || m_expr2->isNull()) {
             RefPtr<RegisterID> src = generator.tempDestination(dst);

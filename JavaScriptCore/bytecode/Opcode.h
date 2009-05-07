@@ -148,6 +148,8 @@ namespace JSC {
         \
         macro(op_construct, 7) \
         macro(op_construct_verify, 3) \
+        macro(op_strcat, 4) \
+        macro(op_to_primitive, 3) \
         \
         macro(op_get_pnames, 3) \
         macro(op_next_pname, 4) \

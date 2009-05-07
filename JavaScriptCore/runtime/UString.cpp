@@ -1061,6 +1061,18 @@ UString& UString::append(const UChar* tData, int tSize)
     return *this;
 }
 
+UString& UString::appendNumeric(int i)
+{
+    m_rep = concatenate(rep(), i);
+    return *this;
+}
+
+UString& UString::appendNumeric(double d)
+{
+    m_rep = concatenate(rep(), d);
+    return *this;
+}
+
 UString& UString::append(const char* t)
 {
     m_rep = concatenate(m_rep.release(), t);

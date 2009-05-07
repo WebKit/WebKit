@@ -296,6 +296,8 @@ namespace JSC {
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
         RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
+        void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
         PassRefPtr<Label> emitLabel(Label*);
         PassRefPtr<Label> emitJump(Label* target);

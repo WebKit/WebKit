@@ -463,6 +463,29 @@ void JIT::privateCompileMainPass()
 
             NEXT_OPCODE(op_construct_verify);
         }
+        case op_to_primitive: {
+            int dst = currentInstruction[1].u.operand;
+            int src = currentInstruction[2].u.operand;
+
+            emitGetVirtualRegister(src, regT0);
+            
+            Jump isImm = emitJumpIfNotJSCell(regT0);
+            addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr)));
+            isImm.link(this);
+
+            if (dst != src)
+                emitPutVirtualRegister(dst);
+
+            NEXT_OPCODE(op_to_primitive);
+        }
+        case op_strcat: {
+            emitPutJITStubArgConstant(currentInstruction[2].u.operand, 1);
+            emitPutJITStubArgConstant(currentInstruction[3].u.operand, 2);
+            emitCTICall(JITStubs::cti_op_strcat);
+            emitPutVirtualRegister(currentInstruction[1].u.operand);
+
+            NEXT_OPCODE(op_strcat);
+        }
         case op_get_by_val: {
             emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
             emitJumpSlowCaseIfNotImmediateInteger(regT1);
@@ -1165,6 +1188,15 @@ void JIT::privateCompileSlowCases()
             emitPutVirtualRegister(currentInstruction[1].u.operand);
 
             NEXT_OPCODE(op_construct_verify);
+        }
+        case op_to_primitive: {
+            linkSlowCase(iter);
+
+            emitPutJITStubArg(regT0, 1);
+            emitCTICall(JITStubs::cti_op_to_primitive);
+            emitPutVirtualRegister(currentInstruction[1].u.operand);
+
+            NEXT_OPCODE(op_to_primitive);
         }
         case op_get_by_val: {
             // The slow case that handles accesses to arrays (below) may jump back up to here. 

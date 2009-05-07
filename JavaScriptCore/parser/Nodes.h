@@ -166,6 +166,7 @@ namespace JSC {
         virtual bool isDotAccessorNode() const JSC_FAST_CALL { return false; }
         virtual bool isFuncExprNode() const JSC_FAST_CALL { return false; } 
         virtual bool isSimpleArray() const JSC_FAST_CALL { return false; }
+        virtual bool isAdd() const JSC_FAST_CALL { return false; }
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
 
@@ -873,6 +874,7 @@ namespace JSC {
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        RegisterID* emitStrcat(BytecodeGenerator& generator, RegisterID* dst, RegisterID* lhs= 0);
 
     protected:
         OpcodeID opcodeID() const { return m_opcodeID; }
@@ -912,6 +914,8 @@ namespace JSC {
     class AddNode : public BinaryOpNode {
     public:
         AddNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
+
+        virtual bool isAdd() const JSC_FAST_CALL { return true; }
     };
 
     class SubNode : public BinaryOpNode {

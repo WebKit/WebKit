@@ -1533,6 +1533,23 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitStrcat(RegisterID* dst, RegisterID* src, int count)
+{
+    emitOpcode(op_strcat);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+    instructions().append(count);
+
+    return dst;
+}
+
+void BytecodeGenerator::emitToPrimitive(RegisterID* dst, RegisterID* src)
+{
+    emitOpcode(op_to_primitive);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+}
+
 RegisterID* BytecodeGenerator::emitPushScope(RegisterID* scope)
 {
     ASSERT(scope->isTemporary());

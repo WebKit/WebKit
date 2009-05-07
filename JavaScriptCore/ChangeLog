@@ -1,3 +1,65 @@
+2009-05-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak & Darin Adler.
+
+        Improve string concatenation (as coded in JS as a sequence of adds).
+
+        Detect patterns corresponding to string concatenation, and change the bytecode
+        generation to emit a new op_strcat instruction.  By handling the full set of
+        additions within a single function we do not need allocate JSString wrappers
+        for intermediate results, and we can calculate the size of the output string
+        prior to allocating storage, in order to prevent reallocation of the buffer.
+
+        1.5%-2% progression on Sunspider, largely due to a 30% progression on date-format-xparb.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+            Add new opcodes.
+        * bytecode/Opcode.h:
+            Add new opcodes.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitStrcat):
+        (JSC::BytecodeGenerator::emitToPrimitive):
+            Add generation of new opcodes.
+        * bytecompiler/BytecodeGenerator.h:
+            Add generation of new opcodes.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+            Add implmentation of new opcodes.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+            Add implmentation of new opcodes.
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_to_primitive):
+        (JSC::JITStubs::cti_op_strcat):
+            Add implmentation of new opcodes.
+        * jit/JITStubs.h:
+            Add implmentation of new opcodes.
+        * parser/Nodes.cpp:
+        (JSC::BinaryOpNode::emitStrcat):
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+            Add generation of new opcodes.
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::):
+        (JSC::AddNode::):
+            Add methods to allow identification of add nodes.
+        * parser/ResultType.h:
+        (JSC::ResultType::definitelyIsString):
+        (JSC::ResultType::forAdd):
+            Fix error in detection of adds that will produce string results.
+        * runtime/Operations.h:
+        (JSC::concatenateStrings):
+            Add implmentation of new opcodes.
+        * runtime/UString.cpp:
+        (JSC::UString::appendNumeric):
+            Add methods to append numbers to an existing string.
+        * runtime/UString.h:
+        (JSC::UString::Rep::createEmptyBuffer):
+        (JSC::UString::BaseString::BaseString):
+            Add support for creating an empty string with a non-zero capacity available in the BaseString.
+
 2009-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
