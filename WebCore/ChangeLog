@@ -80,6 +80,16 @@
 
 2009-05-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Rubber-stampted by Eric Seidel
+
+        Add braces to clarify logic flow in RenderObject::adjustStyleDifference.
+        Only affects ACCELERATED_COMPOSITING builds.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustStyleDifference):
+
+2009-05-06  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
 
         <rdar://problem/6862550> Reduce size of RenderText in 64-bit

@@ -1451,7 +1451,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
 {
 #if USE(ACCELERATED_COMPOSITING)
     // If transform changed, and we are not composited, need to do a layout.
-    if (contextSensitiveProperties & ContextSensitivePropertyTransform)
+    if (contextSensitiveProperties & ContextSensitivePropertyTransform) {
         // Text nodes share style with their parents but transforms don't apply to them,
         // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
@@ -1459,14 +1459,16 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
             diff = StyleDifferenceLayout;
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
+    }
 
     // If opacity changed, and we are not composited, need to repaint (also
     // ignoring text nodes)
-    if (contextSensitiveProperties & ContextSensitivePropertyOpacity)
+    if (contextSensitiveProperties & ContextSensitivePropertyOpacity) {
         if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited()))
             diff = StyleDifferenceRepaintLayer;
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
+    }
 #else
     UNUSED_PARAM(contextSensitiveProperties);
 #endif
