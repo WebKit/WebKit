@@ -44,11 +44,6 @@ using namespace std;
 
 namespace JSC {
 
-void ctiSetReturnAddress(void** addressOfReturnAddress, void* newDestinationToReturnTo)
-{
-    *addressOfReturnAddress = newDestinationToReturnTo;
-}
-
 void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction)
 {
     returnAddress.relinkCallerToFunction(newCalleeFunction);

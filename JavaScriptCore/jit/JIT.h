@@ -155,7 +155,6 @@ namespace JSC {
         MacroAssembler::Label coldPathOther;
     };
 
-    void ctiSetReturnAddress(void** addressOfReturnAddress, void* newDestinationToReturnTo);
     void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
     void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
 

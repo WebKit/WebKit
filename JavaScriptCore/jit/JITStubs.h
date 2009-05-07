@@ -88,6 +88,9 @@ namespace JSC {
         JSValue* exception;
         Profiler** enabledProfilerReference;
         JSGlobalData* globalData;
+
+        // When JIT code makes a call, it pushes its return address just below the rest of the stack.
+        void** returnAddressSlot() { return reinterpret_cast<void**>(this) - 1; }
     };
 #else
     struct JITStackFrame {
@@ -106,13 +109,14 @@ namespace JSC {
         JSValue* exception;
         Profiler** enabledProfilerReference;
         JSGlobalData* globalData;
+        
+        // When JIT code makes a call, it pushes its return address just below the rest of the stack.
+        void** returnAddressSlot() { return reinterpret_cast<void**>(this) - 1; }
     };
 #endif
 
 #define STUB_ARGS_code (offsetof(struct JITStackFrame, code) / sizeof (void*))
 #define STUB_ARGS_callFrame (offsetof(struct JITStackFrame, callFrame) / sizeof (void*))
-
-#define STUB_RETURN_ADDRESS_SLOT (STUB_ARGS[-1])
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
     #define STUB_ARGS_DECLARATION void* args, ...
