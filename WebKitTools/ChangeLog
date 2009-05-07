@@ -1,3 +1,9 @@
+2009-05-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Remove manifest fixup from r42729 to fix clean builds.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2009-05-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, fixes for wx trunk builds.
