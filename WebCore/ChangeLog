@@ -1,3 +1,18 @@
+2009-05-07  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25610
+        [GTK] text.caretOffset is reportedly always 0
+
+        Use the right function to get the caret offset in an
+        element. selectionStart() would only work for text
+        controls (there's even an ASSERT when calculating the selected
+        text range). Instead just get the selection and get the offset of
+        the start position.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
 2009-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

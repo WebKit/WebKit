@@ -487,8 +487,8 @@ static gchar* webkit_accessible_text_get_text_before_offset(AtkText* text, gint 
 
 static gint webkit_accessible_text_get_caret_offset(AtkText* text)
 {
-    // TODO: Verify this, especially for RTL text.
-    return core(text)->selectionStart();
+    // TODO: Verify this for RTL text.
+    return core(text)->selection().start().offsetInContainerNode();
 }
 
 static AtkAttributeSet* webkit_accessible_text_get_run_attributes(AtkText* text, gint offset, gint* start_offset, gint* end_offset)
