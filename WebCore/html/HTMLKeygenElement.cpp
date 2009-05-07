@@ -55,7 +55,7 @@ HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* doc
     }
 }
 
-const AtomicString& HTMLKeygenElement::type() const
+const AtomicString& HTMLKeygenElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, keygen, ("keygen"));
     return keygen;

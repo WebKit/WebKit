@@ -357,8 +357,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     }
     
     if (HTMLInputElement* fileInput = asFileInput(element)) {
-        
-        if (!fileInput->isEnabled())
+        if (!fileInput->isEnabledFormControl())
             return false;
         
         if (!dragData->containsFiles())

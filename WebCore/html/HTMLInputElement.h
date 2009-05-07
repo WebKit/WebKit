@@ -78,7 +78,7 @@ public:
     virtual void aboutToUnload();
     virtual bool shouldUseInputMethod() const;
 
-    virtual const AtomicString& name() const;
+    virtual const AtomicString& formControlName() const;
  
     bool autoComplete() const;
 
@@ -86,9 +86,9 @@ public:
     virtual bool isChecked() const { return checked() && (inputType() == CHECKBOX || inputType() == RADIO); }
     virtual bool isIndeterminate() const { return indeterminate(); }
     
-    bool readOnly() const { return isReadOnlyControl(); }
+    bool readOnly() const { return isReadOnlyFormControl(); }
 
-    virtual bool isTextControl() const { return isTextField(); }
+    virtual bool isTextFormControl() const { return isTextField(); }
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
@@ -102,7 +102,7 @@ public:
     bool indeterminate() const { return m_indeterminate; }
     void setIndeterminate(bool);
     virtual int size() const;
-    virtual const AtomicString& type() const;
+    virtual const AtomicString& formControlType() const;
     void setType(const String&);
 
     virtual String value() const;
@@ -116,8 +116,8 @@ public:
     virtual void setValueFromRenderer(const String&);
     void setFileListFromRenderer(const Vector<String>&);
 
-    virtual bool saveState(String& value) const;
-    virtual void restoreState(const String&);
+    virtual bool saveFormControlState(String& value) const;
+    virtual void restoreFormControlState(const String&);
 
     virtual bool canStartSelection() const;
     

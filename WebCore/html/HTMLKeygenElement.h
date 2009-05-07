@@ -33,7 +33,7 @@ public:
     HTMLKeygenElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual int tagPriority() const { return 0; }
-    virtual const AtomicString& type() const;
+    virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return false; }
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool appendFormData(FormDataList&, bool);

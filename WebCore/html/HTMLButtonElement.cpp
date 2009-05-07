@@ -57,7 +57,7 @@ RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderButton(this);
 }
 
-const AtomicString& HTMLButtonElement::type() const
+const AtomicString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
         case SUBMIT: {

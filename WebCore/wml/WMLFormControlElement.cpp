@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-// WMLFormControlElement
 WMLFormControlElement::WMLFormControlElement(const QualifiedName& tagName, Document* document)
     : WMLElement(tagName, document)
     , m_valueMatchesRenderer(false)
@@ -54,16 +53,6 @@ bool WMLFormControlElement::isFocusable() const
     }
 
     return true;
-}
-
-// WMLFormControlElementWithState
-WMLFormControlElementWithState::WMLFormControlElementWithState(const QualifiedName& tagName, Document* document)
-    : WMLFormControlElement(tagName, document)
-{
-}
-
-WMLFormControlElementWithState::~WMLFormControlElementWithState()
-{
 }
 
 }

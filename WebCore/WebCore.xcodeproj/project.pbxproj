@@ -64,7 +64,6 @@
 		084CE5CE0F27DADC00E6240E /* WMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
 		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
-		085773350F0846010080583E /* FormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 085773340F0846010080583E /* FormControlElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08591AA50F085C4E009BACB1 /* InputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08591AA40F085C4E009BACB1 /* InputElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		085AFDC80F2977350061F2B3 /* WMLFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AFDC60F2977350061F2B3 /* WMLFormControlElement.cpp */; };
 		085AFDC90F2977350061F2B3 /* WMLFormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 085AFDC70F2977350061F2B3 /* WMLFormControlElement.h */; settings = {ATTRIBUTES = (); }; };
@@ -116,9 +115,6 @@
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
-		08B93F750F293481000720C2 /* FormControlElementWithState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08B93F730F293481000720C2 /* FormControlElementWithState.cpp */; };
-		08B93F760F293481000720C2 /* FormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B93F740F293481000720C2 /* FormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		08BFDFC40F099E70007DC2BF /* FormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08BFDFC30F099E70007DC2BF /* FormControlElement.cpp */; };
 		08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */; };
 		08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5150EF19A4000E4840F /* WMLImageElement.h */; };
 		08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */; };
@@ -4949,7 +4945,6 @@
 		084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptionElement.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
-		085773340F0846010080583E /* FormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormControlElement.h; sourceTree = "<group>"; };
 		08591AA40F085C4E009BACB1 /* InputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputElement.h; sourceTree = "<group>"; };
 		085AFDC60F2977350061F2B3 /* WMLFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLFormControlElement.cpp; sourceTree = "<group>"; };
 		085AFDC70F2977350061F2B3 /* WMLFormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLFormControlElement.h; sourceTree = "<group>"; };
@@ -4989,9 +4984,6 @@
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
-		08B93F730F293481000720C2 /* FormControlElementWithState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormControlElementWithState.cpp; sourceTree = "<group>"; };
-		08B93F740F293481000720C2 /* FormControlElementWithState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormControlElementWithState.h; sourceTree = "<group>"; };
-		08BFDFC30F099E70007DC2BF /* FormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormControlElement.cpp; sourceTree = "<group>"; };
 		08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageElement.cpp; sourceTree = "<group>"; };
 		08C4C5150EF19A4000E4840F /* WMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageElement.h; sourceTree = "<group>"; };
 		08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageLoader.cpp; sourceTree = "<group>"; };
@@ -14482,10 +14474,6 @@
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
-				08BFDFC30F099E70007DC2BF /* FormControlElement.cpp */,
-				085773340F0846010080583E /* FormControlElement.h */,
-				08B93F730F293481000720C2 /* FormControlElementWithState.cpp */,
-				08B93F740F293481000720C2 /* FormControlElementWithState.h */,
 				08700BE60F086C5300919419 /* InputElement.cpp */,
 				08591AA40F085C4E009BACB1 /* InputElement.h */,
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
@@ -15614,8 +15602,6 @@
 				B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */,
 				3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */,
 				A80E6CED0A1989CA007FB8C5 /* FontValue.h in Headers */,
-				085773350F0846010080583E /* FormControlElement.h in Headers */,
-				08B93F760F293481000720C2 /* FormControlElementWithState.h in Headers */,
 				514C76700CE923A1007EF3CD /* FormData.h in Headers */,
 				085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */,
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
@@ -17650,8 +17636,6 @@
 				3724CA7E0E68B20500DB4384 /* FontMacCoreText.cpp in Sources */,
 				B2AFFC820D00A5C10030074D /* FontPlatformDataMac.mm in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* FontValue.cpp in Sources */,
-				08BFDFC40F099E70007DC2BF /* FormControlElement.cpp in Sources */,
-				08B93F750F293481000720C2 /* FormControlElementWithState.cpp in Sources */,
 				514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */,
 				085B92BA0EFDE73D00E6123C /* FormDataBuilder.cpp in Sources */,
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,

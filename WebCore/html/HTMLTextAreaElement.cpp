@@ -67,23 +67,23 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
     , m_cachedSelectionEnd(-1)
 {
     ASSERT(hasTagName(textareaTag));
-    setValueMatchesRenderer();
+    setFormControlValueMatchesRenderer(true);
     notifyFormStateChanged(this);
 }
 
-const AtomicString& HTMLTextAreaElement::type() const
+const AtomicString& HTMLTextAreaElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, textarea, ("textarea"));
     return textarea;
 }
 
-bool HTMLTextAreaElement::saveState(String& result) const
+bool HTMLTextAreaElement::saveFormControlState(String& result) const
 {
     result = value();
     return true;
 }
 
-void HTMLTextAreaElement::restoreState(const String& state)
+void HTMLTextAreaElement::restoreFormControlState(const String& state)
 {
     setDefaultValue(state);
 }
@@ -266,12 +266,12 @@ void HTMLTextAreaElement::rendererWillBeDestroyed()
 
 void HTMLTextAreaElement::updateValue() const
 {
-    if (valueMatchesRenderer())
+    if (formControlValueMatchesRenderer())
         return;
 
     ASSERT(renderer());
     m_value = toRenderTextControl(renderer())->text();
-    const_cast<HTMLTextAreaElement*>(this)->setValueMatchesRenderer();
+    const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     notifyFormStateChanged(this);
 }
 
@@ -295,7 +295,7 @@ void HTMLTextAreaElement::setValue(const String& value)
         return;
 
     m_value = normalizedValue;
-    setValueMatchesRenderer();
+    setFormControlValueMatchesRenderer(true);
     if (inDocument())
         document()->updateStyleIfNeeded();
     if (renderer())

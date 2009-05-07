@@ -126,7 +126,6 @@ public:
     void normalizeAttributes();
 
     virtual bool isFormControlElement() const { return false; }
-    virtual bool isFormControlElementWithState() const { return false; }
 
     String nodeNamePreservingCase() const;
 
@@ -202,6 +201,20 @@ public:
     Element* previousElementSibling() const;
     Element* nextElementSibling() const;
     unsigned childElementCount() const;
+
+    // FormControlElement API
+    virtual bool isEnabledFormControl() const { return true; }
+    virtual bool isReadOnlyFormControl() const { return false; }
+    virtual bool isTextFormControl() const { return false; }
+
+    virtual bool formControlValueMatchesRenderer() const { return false; }
+    virtual void setFormControlValueMatchesRenderer(bool) { }
+
+    virtual const AtomicString& formControlName() const { return nullAtom; }
+    virtual const AtomicString& formControlType() const { return nullAtom; }
+
+    virtual bool saveFormControlState(String&) const { return false; }
+    virtual void restoreFormControlState(const String&) { }
 
 private:
     virtual void createAttributeMap() const;

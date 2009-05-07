@@ -33,7 +33,7 @@ public:
     WMLOptionElement(const QualifiedName& tagName, Document*);
     virtual ~WMLOptionElement();
 
-    virtual const AtomicString& type() const;
+    virtual const AtomicString& formControlType() const;
 
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 

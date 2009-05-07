@@ -1321,11 +1321,7 @@ void RenderThemeChromiumMac::adjustMenuListStyle(CSSStyleSelector* selector, Ren
 
     // Set the foreground color to black or gray when we have the aqua look.
     // Cast to RGB32 is to work around a compiler bug.
-    bool isEnabled = true;
-    if (FormControlElement* formControlElement = toFormControlElement(e))
-        isEnabled = formControlElement->isEnabled();
-
-    style->setColor(isEnabled ? static_cast<RGBA32>(Color::black) : Color::darkGray);
+    style->setColor(e && e->isEnabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
 
     // Set the button's vertical size.
     setSizeFromFont(style, menuListButtonSizes());

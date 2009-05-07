@@ -43,7 +43,7 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
 void RenderTextControlMultiLine::subtreeHasChanged()
 {
     RenderTextControl::subtreeHasChanged();
-    formControlElement()->setValueMatchesRenderer(false);
+    static_cast<Element*>(node())->setFormControlValueMatchesRenderer(false);
 
     if (!node()->focused())
         return;

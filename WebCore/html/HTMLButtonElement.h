@@ -33,7 +33,7 @@ public:
     HTMLButtonElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
     virtual ~HTMLButtonElement();
 
-    virtual const AtomicString& type() const;
+    virtual const AtomicString& formControlType() const;
         
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

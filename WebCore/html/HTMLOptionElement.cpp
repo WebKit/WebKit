@@ -72,7 +72,7 @@ bool HTMLOptionElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-const AtomicString& HTMLOptionElement::type() const
+const AtomicString& HTMLOptionElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, option, ("option"));
     return option;

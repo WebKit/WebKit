@@ -47,7 +47,7 @@ bool HTMLLegendElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-const AtomicString& HTMLLegendElement::type() const
+const AtomicString& HTMLLegendElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, legend, ("legend"));
     return legend;

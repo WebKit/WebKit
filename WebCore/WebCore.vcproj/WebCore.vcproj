@@ -8888,22 +8888,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\FormControlElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\FormControlElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\FormControlElementWithState.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\FormControlElementWithState.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\InputElement.cpp"
 				>
 			</File>

@@ -29,7 +29,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
-#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "RenderLayer.h"
@@ -109,11 +108,9 @@ static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
     bool isReadOnlyControl = false;
 
     if (node->isElementNode()) {
-        FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(node));
-        ASSERT(formControlElement);
-
-        isEnabled = formControlElement->isEnabled();
-        isReadOnlyControl = formControlElement->isReadOnlyControl();
+        Element* element = static_cast<Element*>(node);
+        isEnabled = element->isEnabledFormControl();
+        isReadOnlyControl = element->isReadOnlyFormControl();
     }
 
     style->setUserModify((isReadOnlyControl || !isEnabled) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
@@ -193,7 +190,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
         m_userEdited = false;
     }
 
-    formControlElement()->setValueMatchesRenderer();
+    static_cast<Element*>(node())->setFormControlValueMatchesRenderer(true);
 }
 
 void RenderTextControl::setUserEdited(bool isUserEdited)
@@ -531,11 +528,6 @@ void RenderTextControl::addFocusRingRects(GraphicsContext* graphicsContext, int 
 HTMLElement* RenderTextControl::innerTextElement() const
 {
     return m_innerText.get();
-}
-
-FormControlElement* RenderTextControl::formControlElement() const
-{
-    return toFormControlElement(static_cast<Element*>(node()));
 }
 
 } // namespace WebCore

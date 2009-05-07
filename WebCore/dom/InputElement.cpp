@@ -26,7 +26,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "FormControlElement.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -144,9 +143,7 @@ void InputElement::setValueFromRenderer(InputElementData& data, Document* docume
         data.setValue(value);
 
     Element* element = data.element();
-    FormControlElement* formControlElement = toFormControlElement(element);
-    ASSERT(formControlElement);
-    formControlElement->setValueMatchesRenderer();
+    element->setFormControlValueMatchesRenderer(true);
 
     // Fire the "input" DOM event
     element->dispatchEvent(eventNames().inputEvent, true, false);

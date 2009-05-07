@@ -49,7 +49,7 @@ bool HTMLOptGroupElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-const AtomicString& HTMLOptGroupElement::type() const
+const AtomicString& HTMLOptGroupElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup"));
     return optgroup;

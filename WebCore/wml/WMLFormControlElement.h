@@ -22,40 +22,26 @@
 #define WMLFormControlElement_h
 
 #if ENABLE(WML)
-#include "FormControlElementWithState.h"
-#include "FormControlElement.h"
 #include "WMLElement.h"
 
 namespace WebCore {
 
-class WMLFormControlElement : public WMLElement, public FormControlElement {
+class WMLFormControlElement : public WMLElement {
 public:
     WMLFormControlElement(const QualifiedName& tagName, Document* document);
     virtual ~WMLFormControlElement();
 
-    virtual bool isEnabled() const { return true; }
     virtual bool isFormControlElement() const { return true; }
-    virtual bool isReadOnlyControl() const { return false; }
-    virtual bool isTextControl() const { return false; }
+    virtual bool isReadOnlyFormControl() const { return false; }
+    virtual bool isTextFormControl() const { return false; }
 
-    virtual bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    virtual void setValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
-
-    virtual const AtomicString& name() const { return emptyAtom; }
+    virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    virtual void setFormControlValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
     virtual bool isFocusable() const;
 
 private:
     bool m_valueMatchesRenderer;
-};
-
-class WMLFormControlElementWithState : public WMLFormControlElement, public FormControlElementWithState {
-public:
-    WMLFormControlElementWithState(const QualifiedName& tagName, Document*);
-    virtual ~WMLFormControlElementWithState();
-
-    virtual bool isFormControlElementWithState() const { return true; }
-    virtual FormControlElement* toFormControlElement() { return this; }
 };
 
 }

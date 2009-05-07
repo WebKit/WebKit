@@ -617,8 +617,6 @@ SOURCES += \
     dom/EventTarget.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
-    dom/FormControlElementWithState.cpp \
-    dom/FormControlElement.cpp \
     dom/InputElement.cpp \
     dom/KeyboardEvent.cpp \
     dom/MappedAttribute.cpp \

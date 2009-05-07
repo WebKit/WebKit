@@ -53,7 +53,7 @@ bool HTMLFieldSetElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-const AtomicString& HTMLFieldSetElement::type() const
+const AtomicString& HTMLFieldSetElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, fieldset, ("fieldset"));
     return fieldset;

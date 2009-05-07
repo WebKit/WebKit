@@ -486,7 +486,7 @@ void RenderTextControlSingleLine::updateFromElement()
         ExceptionCode ec = 0;
         innerTextElement()->setInnerText(inputElement()->placeholderValue(), ec);
         ASSERT(!ec);
-    } else if (!formControlElement()->valueMatchesRenderer() || placeholderVisibilityShouldChange)
+    } else if (!static_cast<Element*>(node())->formControlValueMatchesRenderer() || placeholderVisibilityShouldChange)
         setInnerTextValue(inputElement()->value());
 
     if (m_searchPopupIsVisible)

@@ -1,3 +1,181 @@
+2009-05-07  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=25617
+
+        Fix memory/performance regression because of too much form control related abstraction just for WMLs sake.
+
+        Remove FormControlElement and FormControlElementWithState base classes, as the overhead is too high for the
+        gain. HTML has no benefit of that kind of abstraction, so we're going to move the functionality to Element directly.
+
+        The functions now living in FormControlElement(WithState) lived in Node/Element/HTMLFormControlElement before.
+        This patches moves all of them in a central place in Element.h, as virtual functions with an inline default implementation.
+        To avoid confusion like isEnabled() living on Node, before the creation of the FormControlElement abstraction layer, all
+        methods are renamed to clarify where they belong to. All renames are listed here:
+
+        From FormControlElement:
+        - isEnabled() -> isEnabledFormControl()
+        - isReadOnly() -> isReadOnlyFormControl()
+        - isTextControl() -> isTextFormControl()
+        - valueMatchesRenderer() -> formControlValueMatchesRenderer()
+        - setValueMatchesRenderer() -> setFormControlValueMatchesRenderer()
+        - name() -> formControlName()
+        - type() -> formControlType()
+
+        From FormControlElementWithState:
+        - saveState() -> saveFormControlState()
+        - restoreState() -> restoreFormControlState()
+
+        A lot of Element -> FormControlElement(WithState) casting is gone again, so it's not only a memory, but also a performance progression.
+
+        No testcases affected, no new tests needed.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState):
+        * dom/Document.h:
+        (WebCore::Document::registerFormElementWithState):
+        (WebCore::Document::unregisterFormElementWithState):
+        * dom/Element.h:
+        (WebCore::Element::isFormControlElement):
+        (WebCore::Element::isEnabledFormControl):
+        (WebCore::Element::isReadOnlyFormControl):
+        (WebCore::Element::isTextFormControl):
+        (WebCore::Element::formControlValueMatchesRenderer):
+        (WebCore::Element::setFormControlValueMatchesRenderer):
+        (WebCore::Element::formControlName):
+        (WebCore::Element::formControlType):
+        (WebCore::Element::saveFormControlState):
+        (WebCore::Element::restoreFormControlState):
+        * dom/FormControlElement.cpp: Removed.
+        * dom/FormControlElement.h: Removed.
+        * dom/FormControlElementWithState.cpp: Removed.
+        * dom/FormControlElementWithState.h: Removed.
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType):
+        * html/HTMLButtonElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::formControlType):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach):
+        (WebCore::HTMLFormControlElement::formControlName):
+        (WebCore::HTMLFormControlElement::willValidate):
+        (WebCore::HTMLFormControlElementWithState::HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::~HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::willMoveToNewOwnerDocument):
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewOwnerDocument):
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isTextFormControl):
+        (WebCore::HTMLFormControlElement::isEnabledFormControl):
+        (WebCore::HTMLFormControlElement::formControlValueMatchesRenderer):
+        (WebCore::HTMLFormControlElement::setFormControlValueMatchesRenderer):
+        (WebCore::HTMLFormControlElement::isReadOnlyFormControl):
+        (WebCore::HTMLFormControlElement::type):
+        (WebCore::HTMLFormControlElement::name):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::formControlName):
+        (WebCore::HTMLInputElement::formControlType):
+        (WebCore::HTMLInputElement::saveFormControlState):
+        (WebCore::HTMLInputElement::restoreFormControlState):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::detach):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::readOnly):
+        (WebCore::HTMLInputElement::isTextFormControl):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::formControlType):
+        * html/HTMLKeygenElement.h:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::formControlType):
+        * html/HTMLLegendElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::formControlType):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::formControlType):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::formControlType):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::formControlType):
+        (WebCore::HTMLTextAreaElement::saveFormControlState):
+        (WebCore::HTMLTextAreaElement::restoreFormControlState):
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::setValue):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::readOnly):
+        (WebCore::HTMLTextAreaElement::isTextFormControl):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isEnabled):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemIsEnabled):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::updateUserModifyProperty):
+        (WebCore::RenderTextControl::setInnerTextValue):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isEnabled):
+        (WebCore::RenderTheme::isReadOnlyControl):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::adjustMenuListStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::adjustMenuListStyle):
+        * wml/WMLFormControlElement.cpp:
+        * wml/WMLFormControlElement.h:
+        (WebCore::WMLFormControlElement::isReadOnlyFormControl):
+        (WebCore::WMLFormControlElement::isTextFormControl):
+        (WebCore::WMLFormControlElement::formControlValueMatchesRenderer):
+        (WebCore::WMLFormControlElement::setFormControlValueMatchesRenderer):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::WMLInputElement):
+        (WebCore::WMLInputElement::isKeyboardFocusable):
+        (WebCore::WMLInputElement::isMouseFocusable):
+        (WebCore::WMLInputElement::dispatchBlurEvent):
+        (WebCore::WMLInputElement::formControlType):
+        (WebCore::WMLInputElement::formControlName):
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::saveFormControlState):
+        (WebCore::WMLInputElement::restoreFormControlState):
+        (WebCore::WMLInputElement::parseMappedAttribute):
+        (WebCore::WMLInputElement::detach):
+        (WebCore::WMLInputElement::appendFormData):
+        (WebCore::WMLInputElement::init):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::isTextFormControl):
+        * wml/WMLOptGroupElement.cpp:
+        (WebCore::WMLOptGroupElement::formControlType):
+        * wml/WMLOptGroupElement.h:
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::formControlType):
+        * wml/WMLOptionElement.h:
+
 2009-05-07  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov and Adam Roben.
