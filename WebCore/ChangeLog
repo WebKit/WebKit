@@ -1,3 +1,9 @@
+2009-05-07  Dmitry Titov  <dimich@chromium.org>
+
+        Attempt to fix GTK build.
+
+        * platform/graphics/GlyphPageTreeNode.h: add #include <string.h> to ensure memcpy and memset are defined.
+
 2009-05-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

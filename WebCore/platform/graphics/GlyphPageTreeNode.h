@@ -29,6 +29,7 @@
 #ifndef GlyphPageTreeNode_h
 #define GlyphPageTreeNode_h
 
+#include <string.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
