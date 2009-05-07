@@ -281,7 +281,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
             m_assembler.cvtsi2sd_rr(regT1, X86::xmm1);
 
             m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
-            emitJumpSlowToHot(Jump(m_assembler.jbe()), target + 3);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jbe()), target + 3);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
@@ -322,7 +322,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
             m_assembler.cvtsi2sd_rr(regT0, X86::xmm0);
 
             m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
-            emitJumpSlowToHot(Jump(m_assembler.jbe()), target + 3);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jbe()), target + 3);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
@@ -367,7 +367,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
 #endif
 
             m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
-            emitJumpSlowToHot(Jump(m_assembler.jbe()), target + 3);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jbe()), target + 3);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
