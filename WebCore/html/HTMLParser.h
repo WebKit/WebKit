@@ -188,7 +188,7 @@ private:
     OwnPtr<HTMLParserQuirks> m_parserQuirks;
 };
 
-#if BUILDING_ON_LEOPARD || BUILDING_ON_TIGER
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_TIGER)
 bool shouldCreateImplicitHead(Document*);
 #else
 inline bool shouldCreateImplicitHead(Document*) { return true; }

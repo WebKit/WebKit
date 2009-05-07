@@ -1655,7 +1655,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
         message, lineNumber, m_document->url().string());
 }
 
-#if BUILDING_ON_LEOPARD
+#ifdef BUILDING_ON_LEOPARD
 bool shouldCreateImplicitHead(Document* document)
 {
     ASSERT(document);
@@ -1663,7 +1663,7 @@ bool shouldCreateImplicitHead(Document* document)
     Settings* settings = document->page() ? document->page()->settings() : 0;
     return settings ? !settings->needsLeopardMailQuirks() : true;
 }
-#elif BUILDING_ON_TIGER
+#elif defined(BUILDING_ON_TIGER)
 bool shouldCreateImplicitHead(Document* document)
 {
     ASSERT(document);
