@@ -1,3 +1,12 @@
+2009-05-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John Honeycutt.
+        
+        - enable optimization case im the last patch that I accidentally had disabled.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArithSlow_op_jnless):
+
 2009-05-07  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov and Adam Roben.

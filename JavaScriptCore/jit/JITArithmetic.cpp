@@ -298,10 +298,11 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
         emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
         emitCTICall(JITStubs::cti_op_jless);
         emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
+
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
 
-        if (0 && isSSE2Present()) {
+        if (isSSE2Present()) {
 #if USE(ALTERNATE_JSIMMEDIATE)
             Jump fail1 = emitJumpIfNotImmediateNumber(regT1);
             addPtr(tagTypeNumberRegister, regT1);
@@ -338,6 +339,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
         emitPutJITStubArg(regT1, 2);
         emitCTICall(JITStubs::cti_op_jless);
         emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
+
     } else {
         linkSlowCase(iter);
 
