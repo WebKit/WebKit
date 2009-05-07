@@ -2121,7 +2121,7 @@
 
         Reviewed by Geoff Garen.
 
-        Bug fix for rdar:/68455379.  If a case-insensitive regex contains
+        Bug fix for rdar:/6845379.  If a case-insensitive regex contains
         a character class containing a range with an upper bound of \uFFFF
         the parser will infinite-loop whist adding other-case characters
         for characters in the range that do have another case.
