@@ -1,8 +1,14 @@
 2009-05-07  Brady Eidson  <beidson@apple.com>
 
+        I hate myself for doing this, but need to fix that ChangeLog entry.
+
+        * ChangeLog:
+
+2009-05-07  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Darin Adler
 
-        * html/HTMLParser.cpp: Use the correct style of BUILD_ON_* for WebCore.
+        * html/HTMLParser.cpp: Use the correct style of BUILDING_ON_* for WebCore.
         * html/HTMLParser.h: Ditto
 
 2009-05-07  David Hyatt  <hyatt@apple.com>
