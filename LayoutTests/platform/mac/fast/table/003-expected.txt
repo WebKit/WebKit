@@ -19,22 +19,22 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 96x96
           RenderTableRow {TR} at (0,2) size 96x92
             RenderTableCell {TD} at (2,46) size 92x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-      RenderTable {TABLE} at (0,151) size 141x120 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 137x116
-          RenderTableRow {TR} at (0,2) size 137x22
-            RenderTableCell {TD} at (2,2) size 133x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,151) size 145x120 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 141x116
+          RenderTableRow {TR} at (0,2) size 141x22
+            RenderTableCell {TD} at (2,2) size 137x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x18
                 text run at (2,2) width 31: "hello"
-          RenderTableRow {TR} at (0,26) size 137x22
-            RenderTableCell {TD} at (2,26) size 133x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 141x22
+            RenderTableCell {TD} at (2,26) size 137x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 67x18
                 text run at (2,2) width 67: "more hello"
-          RenderTableRow {TR} at (0,50) size 137x22
-            RenderTableCell {TD} at (2,50) size 133x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,50) size 141x22
+            RenderTableCell {TD} at (2,50) size 137x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x18
                 text run at (2,2) width 37: "world"
-          RenderTableRow {TR} at (0,74) size 137x40
-            RenderTableCell {TD} at (2,76) size 133x36 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,74) size 141x40
+            RenderTableCell {TD} at (2,77) size 137x34 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,271) size 106x78
         RenderTableSection {TBODY} at (0,0) size 106x78
@@ -76,6 +76,6 @@ layer at (0,0) size 800x600
                   text run at (243,0) width 120: "Definitely. Should."
 layer at (74,16) size 712x13
   RenderBlock {DIV} at (3,3) size 712x13
-layer at (14,240) size 129x30 clip at (15,241) size 127x28
-  RenderTextControl {TEXTAREA} at (2,3) size 129x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (16,240) size 129x30 clip at (17,241) size 127x28
+  RenderTextControl {TEXTAREA} at (4,2) size 129x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13

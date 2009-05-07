@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,27) size 129x84 clip at (9,28) size 112x82 scrollHeight 121
-  RenderTextControl {TEXTAREA} at (0,19) size 129x84 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,28) size 129x84 clip at (11,29) size 112x82 scrollHeight 121
+  RenderTextControl {TEXTAREA} at (2,20) size 129x84 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 108x117
       RenderText {#text} at (0,0) size 7x52
         text run at (0,0) width 7: "1"

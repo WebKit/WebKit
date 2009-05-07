@@ -35,12 +35,10 @@
 input:not([type]), 
 input[type="text"],
 input[type="password"] {
-    margin:0;
     padding:1px 0;
 }
 
 input[type="search"] {
-    margin:0;
     padding:1px;
 }
 
@@ -86,7 +84,6 @@ input[type="search"]::-webkit-search-results-button {
 input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
     /* Matches Firefox */
     padding: 0 6px;
-    margin: 0;
 }
 
 /* Windows selects are not rounded. Custom borders for them shouldn't be either. */
@@ -95,7 +92,6 @@ select,
 select[size="0"],
 select[size="1"] {
     -webkit-border-radius: 0;
-    margin: 0;
 }
 
 /* Option font must be inherited because we depend on computing the size of the

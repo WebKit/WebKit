@@ -275,17 +275,17 @@ cols=1000 clientWidth=4890
 
 Times New Roman
 input
-size=1 clientWidth=26
-size=2 clientWidth=31
-size=3 clientWidth=35
-size=4 clientWidth=40
-size=5 clientWidth=45
-size=10 clientWidth=68
-size=20 clientWidth=114
-size=50 clientWidth=253
-size=100 clientWidth=485
-size=500 clientWidth=2341
-size=1000 clientWidth=4660
+size=1 clientWidth=15
+size=2 clientWidth=20
+size=3 clientWidth=24
+size=4 clientWidth=29
+size=5 clientWidth=34
+size=10 clientWidth=57
+size=20 clientWidth=103
+size=50 clientWidth=242
+size=100 clientWidth=474
+size=500 clientWidth=2330
+size=1000 clientWidth=4649
 
 textarea
 cols=1 clientWidth=24
@@ -302,17 +302,17 @@ cols=1000 clientWidth=4658
 
 Trebuchet MS
 input
-size=1 clientWidth=16
-size=2 clientWidth=21
-size=3 clientWidth=26
-size=4 clientWidth=31
-size=5 clientWidth=36
-size=10 clientWidth=60
-size=20 clientWidth=108
-size=50 clientWidth=254
-size=100 clientWidth=496
-size=500 clientWidth=2436
-size=1000 clientWidth=4860
+size=1 clientWidth=15
+size=2 clientWidth=20
+size=3 clientWidth=25
+size=4 clientWidth=30
+size=5 clientWidth=35
+size=10 clientWidth=59
+size=20 clientWidth=107
+size=50 clientWidth=253
+size=100 clientWidth=495
+size=500 clientWidth=2435
+size=1000 clientWidth=4859
 
 textarea
 cols=1 clientWidth=24

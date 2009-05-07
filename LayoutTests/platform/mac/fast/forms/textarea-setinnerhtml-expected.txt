@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 0x0
-layer at (8,9) size 129x32 clip at (9,10) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,10) size 129x32 clip at (11,11) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13
       RenderText {#text} at (0,0) size 63x13
         text run at (0,0) width 63: "Test Passed"

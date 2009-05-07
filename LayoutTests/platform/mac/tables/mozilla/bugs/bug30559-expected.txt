@@ -7,17 +7,17 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 716x18
           text run at (0,0) width 716: "The bug causes the nested table containing the textarea to be positioned away from the left edge of the outer table "
         RenderBR {BR} at (716,14) size 0x0
-      RenderTable {TABLE} at (242,18) size 300x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x52
-          RenderTableRow {TR} at (0,2) size 298x48
-            RenderTableCell {TD} at (2,2) size 294x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 58x44 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 56x42
-                  RenderTableRow {TR} at (0,2) size 56x38
-                    RenderTableCell {TD} at (2,2) size 52x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (242,18) size 300x56 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x54
+          RenderTableRow {TR} at (0,2) size 298x50
+            RenderTableCell {TD} at (2,2) size 294x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 62x46 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 60x44
+                  RenderTableRow {TR} at (0,2) size 60x40
+                    RenderTableCell {TD} at (2,2) size 56x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (0,0) size 0x0
-layer at (260,37) size 48x32 clip at (261,38) size 46x30
-  RenderTextControl {TEXTAREA} at (2,3) size 48x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (262,38) size 48x32 clip at (263,39) size 46x30
+  RenderTextControl {TEXTAREA} at (4,4) size 48x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 42x13
       RenderText {#text} at (0,0) size 18x13
         text run at (0,0) width 18: "bar"

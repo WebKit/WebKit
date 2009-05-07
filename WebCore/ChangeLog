@@ -1,3 +1,14 @@
+2009-05-07  David Hyatt  <hyatt@apple.com>
+
+        Restore intrinsic margins to all form controls on Mac and Windows.  Some of this regressed in 43007
+        when textareas were given explicit margins.  Some of it had already regressed earlier whenever intrinsic
+        margins were turned off in themeWin.css.
+
+        Reviewed by Beth Dakin.
+
+        * css/html4.css:
+        * css/themeWin.css:
+
 2009-05-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler and Alexey Proskuryakov.

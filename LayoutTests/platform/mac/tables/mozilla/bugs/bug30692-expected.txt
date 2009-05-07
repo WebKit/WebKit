@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,36) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
-              RenderTableCell {TD} at (2,13) size 780x73 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,14) size 780x71 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
         RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,154) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
-              RenderTableCell {TD} at (2,8) size 780x84 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,9) size 780x82 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
         RenderBlock {HR} at (0,262) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,272) size 784x100
@@ -45,12 +45,12 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 222x18
                     text run at (0,0) width 222: "OK: the height of the P is 80 pixels"
 layer at (11,95) size 622x69 clip at (12,96) size 620x67
-  RenderTextControl {TEXTAREA} at (1,2) size 622x69 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,1) size 622x69 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 616x13
       RenderText {#text} at (0,0) size 224x13
         text run at (0,0) width 224: "BUG: the height of the textarea is not 80%"
 layer at (11,208) size 622x80 clip at (12,209) size 620x78
-  RenderTextControl {TEXTAREA} at (1,2) size 622x80 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,1) size 622x80 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 616x13
       RenderText {#text} at (0,0) size 224x13
         text run at (0,0) width 224: "OK: the height of the textarea is 80 pixels"

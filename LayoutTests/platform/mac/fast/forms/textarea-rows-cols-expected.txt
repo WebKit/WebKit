@@ -1,87 +1,87 @@
-layer at (0,0) size 785x624
+layer at (0,0) size 785x656
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x624
-  RenderBlock {HTML} at (0,0) size 785x624
-    RenderBody {BODY} at (8,8) size 769x608
+layer at (0,0) size 785x656
+  RenderBlock {HTML} at (0,0) size 785x656
+    RenderBody {BODY} at (8,8) size 769x640
       RenderBlock {DIV} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 364x18
           text run at (0,0) width 364: "Test for edge cases of <textarea> rows and cols attributes."
       RenderBlock {HR} at (0,26) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,36) size 769x34
-      RenderBlock {DIV} at (0,70) size 769x21
-      RenderBlock {DIV} at (0,91) size 769x34
-      RenderBlock {DIV} at (0,125) size 769x47
-      RenderBlock {DIV} at (0,172) size 769x34
-      RenderBlock {DIV} at (0,206) size 769x34
-      RenderBlock {DIV} at (0,240) size 769x34
-      RenderBlock {DIV} at (0,274) size 769x34
-      RenderBlock {HR} at (0,316) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,326) size 769x34
-      RenderBlock {DIV} at (0,360) size 769x34
-      RenderBlock {DIV} at (0,394) size 769x34
-      RenderBlock {DIV} at (0,428) size 769x34
-      RenderBlock {DIV} at (0,462) size 769x34
-      RenderBlock {DIV} at (0,496) size 769x34
-      RenderBlock {DIV} at (0,530) size 769x34
-      RenderBlock {DIV} at (0,564) size 769x34
-      RenderBlock {HR} at (0,606) size 769x2 [border: (1px inset #000000)]
-layer at (8,45) size 129x32 clip at (9,46) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,36) size 769x36
+      RenderBlock {DIV} at (0,72) size 769x23
+      RenderBlock {DIV} at (0,95) size 769x36
+      RenderBlock {DIV} at (0,131) size 769x49
+      RenderBlock {DIV} at (0,180) size 769x36
+      RenderBlock {DIV} at (0,216) size 769x36
+      RenderBlock {DIV} at (0,252) size 769x36
+      RenderBlock {DIV} at (0,288) size 769x36
+      RenderBlock {HR} at (0,332) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,342) size 769x36
+      RenderBlock {DIV} at (0,378) size 769x36
+      RenderBlock {DIV} at (0,414) size 769x36
+      RenderBlock {DIV} at (0,450) size 769x36
+      RenderBlock {DIV} at (0,486) size 769x36
+      RenderBlock {DIV} at (0,522) size 769x36
+      RenderBlock {DIV} at (0,558) size 769x36
+      RenderBlock {DIV} at (0,594) size 769x36
+      RenderBlock {HR} at (0,638) size 769x2 [border: (1px inset #000000)]
+layer at (10,46) size 129x32 clip at (11,47) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13
       RenderText {#text} at (0,0) size 75x13
         text run at (0,0) width 75: "default height"
-layer at (8,79) size 129x19 clip at (9,80) size 127x17
-  RenderTextControl {TEXTAREA} at (0,1) size 129x19 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,82) size 129x19 clip at (11,83) size 127x17
+  RenderTextControl {TEXTAREA} at (2,2) size 129x19 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13
       RenderText {#text} at (0,0) size 48x13
         text run at (0,0) width 48: "rows = 1"
-layer at (8,100) size 129x32 clip at (9,101) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,105) size 129x32 clip at (11,106) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 111x26
         text run at (0,0) width 92: "rows = 2; should"
         text run at (92,0) width 3: " "
         text run at (0,13) width 111: "match default height"
-layer at (8,134) size 129x45 clip at (9,135) size 127x43
-  RenderTextControl {TEXTAREA} at (0,1) size 129x45 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,141) size 129x45 clip at (11,142) size 127x43
+  RenderTextControl {TEXTAREA} at (2,2) size 129x45 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13
       RenderText {#text} at (0,0) size 48x13
         text run at (0,0) width 48: "rows = 3"
-layer at (8,181) size 129x32 clip at (9,182) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,190) size 129x32 clip at (11,191) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 89x26
         text run at (0,0) width 86: "rows; should be"
         text run at (86,0) width 3: " "
         text run at (0,13) width 75: "default height"
-layer at (8,215) size 129x32 clip at (9,216) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,226) size 129x32 clip at (11,227) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 112x26
         text run at (0,0) width 109: "rows = 0; should be"
         text run at (109,0) width 3: " "
         text run at (0,13) width 75: "default height"
-layer at (8,249) size 129x32 clip at (9,250) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,262) size 129x32 clip at (11,263) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 119x26
         text run at (0,0) width 116: "rows = -1; should be"
         text run at (116,0) width 3: " "
         text run at (0,13) width 75: "default height"
-layer at (8,283) size 129x32 clip at (9,284) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,298) size 129x32 clip at (11,299) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 112x26
         text run at (0,0) width 109: "rows = x; should be"
         text run at (109,0) width 3: " "
         text run at (0,13) width 75: "default height"
-layer at (8,335) size 129x32 clip at (9,336) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,352) size 129x32 clip at (11,353) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x13
       RenderText {#text} at (0,0) size 71x13
         text run at (0,0) width 71: "default width"
-layer at (8,369) size 27x32 clip at (9,370) size 10x15 scrollWidth 11 scrollHeight 82
-  RenderTextControl {TEXTAREA} at (0,1) size 27x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,388) size 27x32 clip at (11,389) size 10x15 scrollWidth 11 scrollHeight 82
+  RenderTextControl {TEXTAREA} at (2,2) size 27x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 6x78
       RenderText {#text} at (0,0) size 9x78
         text run at (0,0) width 6: "c"
@@ -91,41 +91,41 @@ layer at (8,369) size 27x32 clip at (9,370) size 10x15 scrollWidth 11 scrollHeig
         text run at (6,39) width 0: " "
         text run at (0,52) width 9: "="
         text run at (0,65) width 7: "1"
-layer at (8,403) size 129x32 clip at (9,404) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,424) size 129x32 clip at (11,425) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 107x26
         text run at (0,0) width 95: "cols = 20; should"
         text run at (95,0) width 3: " "
         text run at (0,13) width 107: "match default width"
-layer at (8,437) size 237x32 clip at (9,438) size 235x30
-  RenderTextControl {TEXTAREA} at (0,1) size 237x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,460) size 237x32 clip at (11,461) size 235x30
+  RenderTextControl {TEXTAREA} at (2,2) size 237x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 231x13
       RenderText {#text} at (0,0) size 51x13
         text run at (0,0) width 51: "cols = 40"
-layer at (8,471) size 129x32 clip at (9,472) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,496) size 129x32 clip at (11,497) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 123x26
         text run at (0,0) width 123: "cols; should be default"
         text run at (123,0) width 0: " "
         text run at (0,13) width 30: "width"
-layer at (8,505) size 129x32 clip at (9,506) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,532) size 129x32 clip at (11,533) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 108x26
         text run at (0,0) width 105: "cols = 0; should be"
         text run at (105,0) width 3: " "
         text run at (0,13) width 71: "default width"
-layer at (8,539) size 129x32 clip at (9,540) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,568) size 129x32 clip at (11,569) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 115x26
         text run at (0,0) width 112: "cols = -1; should be"
         text run at (112,0) width 3: " "
         text run at (0,13) width 71: "default width"
-layer at (8,573) size 129x32 clip at (9,574) size 127x30
-  RenderTextControl {TEXTAREA} at (0,1) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,604) size 129x32 clip at (11,605) size 127x30
+  RenderTextControl {TEXTAREA} at (2,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 123x26
       RenderText {#text} at (0,0) size 108x26
         text run at (0,0) width 105: "cols = x; should be"
