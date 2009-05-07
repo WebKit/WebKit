@@ -1,3 +1,14 @@
+2009-05-06  Julie Parent  <jparent@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 25608: Unused m_frame in ChromiumClipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=25608
+
+        * platform/chromium/ClipboardChromium.h:
+        
+        No tests added as this is only removing dead code, no functional changes.
+
 2009-05-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser and Justin Garcia.
