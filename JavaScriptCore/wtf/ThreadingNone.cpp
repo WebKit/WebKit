@@ -36,11 +36,11 @@ bool ThreadIdentifier::operator==(const ThreadIdentifier&) const { return true; 
 bool ThreadIdentifier::operator!=(const ThreadIdentifier&) const { return false; }
 
 void initializeThreading() { }
-ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char*) { return 0; }
+ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char*) { return ThreadIdentifier(); }
 void setThreadNameInternal(const char*) { }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
-ThreadIdentifier currentThread() { return 0; }
+ThreadIdentifier currentThread() { return ThreadIdentifier(); }
 bool isMainThread() { return true; }
 
 Mutex::Mutex() { }
