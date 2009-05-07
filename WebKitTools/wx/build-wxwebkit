@@ -363,17 +363,18 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             cp webview.py $WEBKITOUTPUTDIR/webview.py
                                    
             PY_INCLUDE=`python -c "import sys,distutils.sysconfig; sys.stdout.write(distutils.sysconfig.get_python_inc())"`
-            PY_VERSION=`python -c "import sys;  sys.stdout.write(str(sys.version_info[0]) + str(sys.version_info[1]))"`
+            PY_LIB=`python -c "import sys; sys.stdout.write('python' + sys.version[:3])"`
             PY_LIBDIR=`python -c "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.PREFIX)"`
             
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 PY_LIBDIR="$PY_LIBDIR\\Libs"
+                PY_LIB=`python -c "sys.stdout.write('$PY_LIB'.replace('.', ''))"`
             else
                 PY_LIBDIR="$PY_LIBDIR/lib"
             fi
             
             do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE $EXTRA_CPPFLAGS" \
-                WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
+                WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_LIB=$PY_LIB PYTHON_LIBDIR=$PY_LIBDIR $other_args
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 if [ -f $WEBKITOUTPUTDIR/_webview.pyd -a -f $WEBKITOUTPUTDIR/_webview.dll ]; then
                     rm $WEBKITOUTPUTDIR/_webview.pyd

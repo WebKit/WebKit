@@ -1,3 +1,11 @@
+2009-05-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes for Python extension and DRT.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (MyApp::OnInit):
+        * wx/build-wxwebkit:
+
 2009-05-07  Steve Falkenburg  <sfalken@apple.com>
 
         Remove manifest fixup from r42729 to fix clean builds.

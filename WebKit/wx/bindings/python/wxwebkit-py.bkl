@@ -40,12 +40,11 @@ Bakefile for wxWebKit Python bindings.
         <set var="WX_PYTHON">1</set>
     </if>
     
-    <if cond="not isdefined('PYTHON_VERSION')">
-        <option name="PYTHON_VERSION">
-            <values>24,25</values>
-            <default-value>25</default-value>
+    <if cond="not isdefined('PYTHON_LIB')">
+        <option name="PYTHON_LIB" never_empty="1">
+            <default-value>python26</default-value>
             <description>
-                Python version we're building against. 
+                The name of the Python library file. 
             </description>
         </option>
     </if>
@@ -84,24 +83,15 @@ Bakefile for wxWebKit Python bindings.
                 <if cond="PLATFORM_OS=='mac'">-bundle -undefined dynamic_lookup</if>
             </set>
             
-            <sys-lib>python2.5</sys-lib>
             <ldflags>$(MAC_FLAGS)</ldflags>
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
-            <set var="PY_LIBNAME">
-                <if cond="PYTHON_VERSION=='24'">
-                    python24
-                </if>
-                <if cond="PYTHON_VERSION=='25'">
-                    python25
-                </if>
-            </set>
             <sys-lib>libpng</sys-lib>
-            <sys-lib>$(PY_LIBNAME)</sys-lib>
             <lib-path>$(WK_ROOT)/libpng</lib-path>
             <lib-path>$(PYTHON_LIBDIR)</lib-path>
         </if>
         
+        <sys-lib>$(PYTHON_LIB)</sys-lib>
         <sys-lib>wxwebkit</sys-lib>
         <lib-path>$(WKOUTPUTDIR)</lib-path>
         
