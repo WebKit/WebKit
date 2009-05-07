@@ -188,6 +188,12 @@ private:
     OwnPtr<HTMLParserQuirks> m_parserQuirks;
 };
 
+#if BUILDING_ON_LEOPARD || BUILDING_ON_TIGER
+bool shouldCreateImplicitHead(Document*);
+#else
+inline bool shouldCreateImplicitHead(Document*) { return true; }
+#endif
+
 }
     
 #endif // HTMLParser_h

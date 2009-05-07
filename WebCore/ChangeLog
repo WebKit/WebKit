@@ -1,3 +1,19 @@
+2009-05-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler and Alexey Proskuryakov.
+
+        <rdar://problem/6863795> Exception occurs in Mail when attempting to create signatures due to <head> element creation
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Check shouldCreateImplicitHead() before creating it.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Check shouldCreateImplicitHead() before creating it.
+        (WebCore::HTMLParser::bodyCreateErrorCheck): Ditto.
+        (WebCore::shouldCreateImplicitHead): For Tiger/Leopard when running under Mail, the implicit <head> shouldn't be created.
+        * html/HTMLParser.h:
+        (WebCore::shouldCreateImplicitHead): Inline implementation for non-Tiger/Leopard platforms
+
 2009-05-07  Antony Sargent  <asargent@chromium.org>
 
         Reviewed by Darin Fisher.
