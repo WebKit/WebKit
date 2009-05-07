@@ -1,3 +1,32 @@
+2009-05-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        - optimize various cases of branch-fused less
+        
+        1% speedup on SunSpider overall
+        13% speedup on math-cordic
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        op_loop_if_less: Optimize case of constant as first operand, just as case of constant as
+        second operand.
+        op_jnless: Factored out into compileFastArith_op_jnless.
+        (JSC::JIT::privateCompileSlowCases):
+        op_jnless: Factored out into compileFastArithSlow_op_jnless.
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_jnless): Factored out from main compile loop.
+        - Generate inline code for comparison of constant immediate int as first operand to another
+        immediate int, as for loop_if_less
+
+        (JSC::JIT::compileFastArithSlow_op_jnless):
+        - Generate inline code for comparing two floating point numbers.
+        - Generate code for both cases of comparing a floating point number to a constant immediate 
+        int.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Fix dumping of op_jnless (tangentially related bugfix).
+
 2009-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

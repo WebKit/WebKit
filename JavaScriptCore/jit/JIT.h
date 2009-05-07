@@ -379,6 +379,7 @@ namespace JSC {
         void compileFastArith_op_bitand(unsigned result, unsigned op1, unsigned op2);
         void compileFastArith_op_lshift(unsigned result, unsigned op1, unsigned op2);
         void compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2);
+        void compileFastArith_op_jnless(unsigned op1, unsigned op2, unsigned target);
         void compileFastArith_op_pre_inc(unsigned srcDst);
         void compileFastArith_op_pre_dec(unsigned srcDst);
         void compileFastArith_op_post_inc(unsigned result, unsigned srcDst);
@@ -390,6 +391,7 @@ namespace JSC {
         void compileFastArithSlow_op_bitand(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_lshift(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_rshift(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator&);
+        void compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned target, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_pre_inc(unsigned srcDst, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_pre_dec(unsigned srcDst, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_post_inc(unsigned result, unsigned srcDst, Vector<SlowCaseEntry>::iterator&);

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
@@ -228,6 +229,15 @@ void JIT::privateCompileMainPass()
                 int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
 #endif
                 addJump(branch32(LessThan, regT0, Imm32(op2imm)), target + 3);
+            } else if (isOperandConstantImmediateInt(op1)) {
+                emitGetVirtualRegister(op2, regT1);
+                emitJumpSlowCaseIfNotImmediateInteger(regT1);
+#if USE(ALTERNATE_JSIMMEDIATE)
+                int32_t op1imm = getConstantOperandImmediateInt(op1);
+#else
+                int32_t op1imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op1)));
+#endif
+                addJump(branch32(GreaterThan, regT1, Imm32(op1imm)), target + 3);
             } else {
                 emitGetVirtualRegisters(op1, regT0, op2, regT1);
                 emitJumpSlowCaseIfNotImmediateInteger(regT0);
@@ -613,24 +623,8 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_pre_dec);
         }
         case op_jnless: {
-            unsigned op1 = currentInstruction[1].u.operand;
-            unsigned op2 = currentInstruction[2].u.operand;
             unsigned target = currentInstruction[3].u.operand;
-            if (isOperandConstantImmediateInt(op2)) {
-                emitGetVirtualRegister(op1, regT0);
-                emitJumpSlowCaseIfNotImmediateInteger(regT0);
-#if USE(ALTERNATE_JSIMMEDIATE)
-                int32_t op2imm = getConstantOperandImmediateInt(op2);
-#else
-                int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
-#endif
-                addJump(branch32(GreaterThanOrEqual, regT0, Imm32(op2imm)), target + 3);
-            } else {
-                emitGetVirtualRegisters(op1, regT0, op2, regT1);
-                emitJumpSlowCaseIfNotImmediateInteger(regT0);
-                emitJumpSlowCaseIfNotImmediateInteger(regT1);
-                addJump(branch32(GreaterThanOrEqual, regT0, regT1), target + 3);
-            }
+            compileFastArith_op_jnless(currentInstruction[1].u.operand, currentInstruction[2].u.operand, target);
             RECORD_JUMP_TARGET(target + 3);
             NEXT_OPCODE(op_jnless);
         }
@@ -1235,12 +1229,19 @@ void JIT::privateCompileSlowCases()
             NEXT_OPCODE(op_lshift);
         }
         case op_loop_if_less: {
+            unsigned op1 = currentInstruction[1].u.operand;
             unsigned op2 = currentInstruction[2].u.operand;
             unsigned target = currentInstruction[3].u.operand;
             if (isOperandConstantImmediateInt(op2)) {
                 linkSlowCase(iter);
                 emitPutJITStubArg(regT0, 1);
                 emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
+                emitCTICall(JITStubs::cti_op_loop_if_less);
+                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+            } else if (isOperandConstantImmediateInt(op1)) {
+                linkSlowCase(iter);
+                emitPutJITStubArgFromVirtualRegister(op1, 1, regT1);
+                emitPutJITStubArg(regT0, 2);
                 emitCTICall(JITStubs::cti_op_loop_if_less);
                 emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
             } else {
@@ -1322,22 +1323,7 @@ void JIT::privateCompileSlowCases()
             NEXT_OPCODE(op_pre_dec);
         }
         case op_jnless: {
-            unsigned op2 = currentInstruction[2].u.operand;
-            unsigned target = currentInstruction[3].u.operand;
-            if (isOperandConstantImmediateInt(op2)) {
-                linkSlowCase(iter);
-                emitPutJITStubArg(regT0, 1);
-                emitPutJITStubArgFromVirtualRegister(currentInstruction[2].u.operand, 2, regT2);
-                emitCTICall(JITStubs::cti_op_jless);
-                emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
-            } else {
-                linkSlowCase(iter);
-                linkSlowCase(iter);
-                emitPutJITStubArg(regT0, 1);
-                emitPutJITStubArg(regT1, 2);
-                emitCTICall(JITStubs::cti_op_jless);
-                emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
-            }
+            compileFastArithSlow_op_jnless(currentInstruction[1].u.operand, currentInstruction[2].u.operand, currentInstruction[3].u.operand, iter);
             NEXT_OPCODE(op_jnless);
         }
         case op_not: {
