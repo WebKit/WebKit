@@ -48,9 +48,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
-static JSValue dateParse(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue dateNow(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue dateUTC(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL dateParse(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL dateNow(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL dateUTC(ExecState*, JSObject*, JSValue, const ArgList&);
 
 DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, datePrototype->classInfo()->className))
@@ -124,7 +124,7 @@ ConstructType DateConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.9.2
-static JSValue callDate(ExecState* exec, JSObject*, JSValue, const ArgList&)
+static JSValue JSC_HOST_CALL callDate(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
     time_t localTime = time(0);
     tm localTM;
@@ -139,17 +139,17 @@ CallType DateConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-static JSValue dateParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL dateParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     return jsNumber(exec, parseDate(args.at(0).toString(exec)));
 }
 
-static JSValue dateNow(ExecState* exec, JSObject*, JSValue, const ArgList&)
+static JSValue JSC_HOST_CALL dateNow(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
     return jsNumber(exec, getCurrentUTCTime());
 }
 
-static JSValue dateUTC(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL dateUTC(ExecState* exec, JSObject*, JSValue, const ArgList& args) 
 {
     int n = args.size();
     if (isnan(args.at(0).toNumber(exec))

@@ -1,3 +1,25 @@
+2009-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve native call performance
+
+        Add calling convention declarations where necessary, and update bindings
+        script to generate them as well.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::callPlugin):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::callRuntimeObject):
+
 2009-05-07  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Dave Hyatt.

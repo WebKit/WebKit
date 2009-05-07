@@ -83,6 +83,10 @@ namespace JSC {
 #else
         bool isHostFunction() const { return false; }
 #endif
+        NativeFunction nativeFunction()
+        {
+            return *reinterpret_cast<NativeFunction*>(m_data);
+        }
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 
@@ -113,10 +117,6 @@ namespace JSC {
         {
             ASSERT(!isHostFunction());
             *reinterpret_cast<ScopeChain*>(m_data) = sc;
-        }
-        NativeFunction nativeFunction()
-        {
-            return *reinterpret_cast<NativeFunction*>(m_data);
         }
         void setNativeFunction(NativeFunction func)
         {

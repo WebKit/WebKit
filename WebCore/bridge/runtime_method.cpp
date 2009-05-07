@@ -70,7 +70,7 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     return InternalFunction::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-static JSValue callRuntimeMethod(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
 {
     RuntimeMethod* method = static_cast<RuntimeMethod*>(function);
 

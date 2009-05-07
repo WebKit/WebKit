@@ -69,7 +69,7 @@ ConstructType ArrayConstructor::getConstructData(ConstructData& constructData)
     return ConstructTypeHost;
 }
 
-static JSValue callArrayConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     return constructArrayWithSizeQuirk(exec, args);
 }

@@ -39,27 +39,27 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ArrayPrototype);
 
-static JSValue arrayProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncToLocaleString(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncConcat(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncJoin(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncPop(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncPush(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncReverse(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncShift(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncSlice(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncSort(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncSplice(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncUnShift(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncEvery(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncForEach(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncSome(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncIndexOf(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncFilter(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncMap(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncReduce(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncReduceRight(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue arrayProtoFuncLastIndexOf(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*, JSObject*, JSValue, const ArgList&);
 
 }
 
@@ -142,7 +142,7 @@ static void putProperty(ExecState* exec, JSObject* obj, const Identifier& proper
     obj->put(exec, propertyName, value, slot);
 }
 
-JSValue arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     if (!thisValue.isObject(&JSArray::info))
         return throwError(exec, TypeError);
@@ -186,7 +186,7 @@ JSValue arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, co
     return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     if (!thisValue.isObject(&JSArray::info))
         return throwError(exec, TypeError);
@@ -238,7 +238,7 @@ JSValue arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue thisVal
     return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -284,7 +284,7 @@ JSValue arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thisValue, const 
     return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSArray* arr = constructEmptyArray(exec);
     int n = 0;
@@ -313,7 +313,7 @@ JSValue arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue thisValue, cons
     return arr;
 }
 
-JSValue arrayProtoFuncPop(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     if (isJSArray(&exec->globalData(), thisValue))
         return asArray(thisValue)->pop();
@@ -332,7 +332,7 @@ JSValue arrayProtoFuncPop(ExecState* exec, JSObject*, JSValue thisValue, const A
     return result;
 }
 
-JSValue arrayProtoFuncPush(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     if (isJSArray(&exec->globalData(), thisValue) && args.size() == 1) {
         JSArray* array = asArray(thisValue);
@@ -349,7 +349,7 @@ JSValue arrayProtoFuncPush(ExecState* exec, JSObject*, JSValue thisValue, const 
     return jsNumber(exec, length);
 }
 
-JSValue arrayProtoFuncReverse(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
@@ -373,7 +373,7 @@ JSValue arrayProtoFuncReverse(ExecState* exec, JSObject*, JSValue thisValue, con
     return thisObj;
 }
 
-JSValue arrayProtoFuncShift(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
     JSValue result;
@@ -396,7 +396,7 @@ JSValue arrayProtoFuncShift(ExecState* exec, JSObject*, JSValue thisValue, const
     return result;
 }
 
-JSValue arrayProtoFuncSlice(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
 
@@ -441,7 +441,7 @@ JSValue arrayProtoFuncSlice(ExecState* exec, JSObject*, JSValue thisValue, const
     return result;
 }
 
-JSValue arrayProtoFuncSort(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -499,7 +499,7 @@ JSValue arrayProtoFuncSort(ExecState* exec, JSObject*, JSValue thisValue, const 
     return thisObj;
 }
 
-JSValue arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -554,7 +554,7 @@ JSValue arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue thisValue, cons
     return result;
 }
 
-JSValue arrayProtoFuncUnShift(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -576,7 +576,7 @@ JSValue arrayProtoFuncUnShift(ExecState* exec, JSObject*, JSValue thisValue, con
     return result;
 }
 
-JSValue arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -634,7 +634,7 @@ JSValue arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValue thisValue, cons
     return resultArray;
 }
 
-JSValue arrayProtoFuncMap(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -691,7 +691,7 @@ JSValue arrayProtoFuncMap(ExecState* exec, JSObject*, JSValue thisValue, const A
 // http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:forEach
 // http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:some
 
-JSValue arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -747,7 +747,7 @@ JSValue arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValue thisValue, const
     return result;
 }
 
-JSValue arrayProtoFuncForEach(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -792,7 +792,7 @@ JSValue arrayProtoFuncForEach(ExecState* exec, JSObject*, JSValue thisValue, con
     return jsUndefined();
 }
 
-JSValue arrayProtoFuncSome(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 
@@ -845,7 +845,7 @@ JSValue arrayProtoFuncSome(ExecState* exec, JSObject*, JSValue thisValue, const 
     return result;
 }
 
-JSValue arrayProtoFuncReduce(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
     
@@ -915,7 +915,7 @@ JSValue arrayProtoFuncReduce(ExecState* exec, JSObject*, JSValue thisValue, cons
     return rv;
 }
 
-JSValue arrayProtoFuncReduceRight(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
     
@@ -984,7 +984,7 @@ JSValue arrayProtoFuncReduceRight(ExecState* exec, JSObject*, JSValue thisValue,
     return rv;        
 }
 
-JSValue arrayProtoFuncIndexOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     // JavaScript 1.5 Extension by Mozilla
     // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:indexOf
@@ -1015,7 +1015,7 @@ JSValue arrayProtoFuncIndexOf(ExecState* exec, JSObject*, JSValue thisValue, con
     return jsNumber(exec, -1);
 }
 
-JSValue arrayProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     // JavaScript 1.6 Extension by Mozilla
     // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf

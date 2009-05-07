@@ -57,7 +57,7 @@ ConstructType BooleanConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.6.1
-static JSValue callBooleanConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callBooleanConstructor(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     return jsBoolean(args.at(0).toBoolean(exec));
 }

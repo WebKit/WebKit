@@ -119,7 +119,7 @@ JSValue RegExpObject::exec(ExecState* exec, const ArgList& args)
     return jsNull();
 }
 
-static JSValue callRegExpObject(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callRegExpObject(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
 {
     return asRegExpObject(function)->exec(exec, args);
 }

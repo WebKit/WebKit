@@ -79,7 +79,7 @@ private:
  
     static JSCallbackObject* asCallbackObject(JSValue);
  
-    static JSValue call(ExecState*, JSObject* functionObject, JSValue thisValue, const ArgList&);
+    static JSValue JSC_HOST_CALL call(ExecState*, JSObject* functionObject, JSValue thisValue, const ArgList&);
     static JSObject* construct(ExecState*, JSObject* constructor, const ArgList&);
    
     static JSValue staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);

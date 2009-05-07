@@ -690,7 +690,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "JSC::JSValue ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);\n");
+            push(@headerContent, "JSC::JSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);\n");
         }
     }
 
@@ -1325,7 +1325,7 @@ sub GenerateImplementation
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "JSValue ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
+            push(@implContent, "JSValue JSC_HOST_CALL ${functionName}(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)\n");
             push(@implContent, "{\n");
             push(@implContent, "    UNUSED_PARAM(args);\n");
 

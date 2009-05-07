@@ -51,7 +51,7 @@ static JSValue getNamedItems(ExecState* exec, HTMLCollection* impl, const Identi
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-static JSValue callHTMLCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();

@@ -31,7 +31,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
-static JSValue errorProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
 
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
@@ -45,7 +45,7 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure,
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-JSValue errorProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSObject* thisObj = thisValue.toThisObject(exec);
 

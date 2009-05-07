@@ -1822,14 +1822,42 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #else
     emitGetFromCallFrameHeader(RegisterFile::ArgumentCount, regT0);
 
-    struct NativeFunctionSignature {
-        CallFrame* callFrame;
+    /* We have two structs that we use to describe the stackframe we set up for our
+     * call to native code.  NativeCallFrameStructure describes the how we set up the stack
+     * in advance of the call.  NativeFunctionCalleeSignature describes the callframe
+     * as the native code expects it.  We do this as we are using the fastcall calling
+     * convention which results in the callee popping its arguments off the stack, but
+     * not the rest of the callframe so we need a nice way to ensure we increment the
+     * stack pointer by the right amount after the call.
+     */
+#if COMPILER(MSVC)
+    struct NativeCallFrameStructure {
+      //  CallFrame* callFrame; // passed in EDX
         JSObject* callee;
         JSValue thisValue;
         ArgList* argPointer;
         ArgList args;
+        JSValue result;
     };
-    const int NativeCallFrameSize = (sizeof(NativeFunctionSignature) + 15) & ~15;
+    struct NativeFunctionCalleeSignature {
+        JSObject* callee;
+        JSValue thisValue;
+        ArgList* argPointer;
+    };
+#else
+    struct NativeCallFrameStructure {
+      //  CallFrame* callFrame; // passed in ECX
+      //  JSObject* callee; // passed in EDX
+        JSValue thisValue;
+        ArgList* argPointer;
+        ArgList args;
+    };
+    struct NativeFunctionCalleeSignature {
+        JSValue thisValue;
+        ArgList* argPointer;
+    };
+#endif
+    const int NativeCallFrameSize = (sizeof(NativeCallFrameStructure) + 15) & ~15;
     // Allocate system stack frame
     subPtr(Imm32(NativeCallFrameSize), stackPointerRegister);
 
@@ -1837,7 +1865,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
 
     // push argcount
-    storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, args) + FIELD_OFFSET(ArgList, m_argCount)));
+    storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, args) + FIELD_OFFSET(ArgList, m_argCount)));
     
     // Calculate the start of the callframe header, and store in regT1
     addPtr(Imm32(-RegisterFile::CallFrameHeaderSize * (int)sizeof(Register)), callFrameRegister, regT1);
@@ -1845,26 +1873,44 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT0)
     mul32(Imm32(sizeof(Register)), regT0, regT0);
     subPtr(regT0, regT1);
-    storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, args) + FIELD_OFFSET(ArgList, m_args)));
+    storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, args) + FIELD_OFFSET(ArgList, m_args)));
 
     // ArgList is passed by reference so is stackPointerRegister + 4 * sizeof(Register)
-    addPtr(Imm32(FIELD_OFFSET(NativeFunctionSignature, args)), stackPointerRegister, regT0);
-    storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, argPointer)));
+    addPtr(Imm32(FIELD_OFFSET(NativeCallFrameStructure, args)), stackPointerRegister, regT0);
+    storePtr(regT0, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, argPointer)));
 
     // regT1 currently points to the first argument, regT1 - sizeof(Register) points to 'this'
     loadPtr(Address(regT1, -(int)sizeof(Register)), regT1);
-    poke(regT1, 2);
-    storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, thisValue)));
+    storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, thisValue)));
+
+#if COMPILER(MSVC)
+    // ArgList is passed by reference so is stackPointerRegister + 4 * sizeof(Register)
+    addPtr(Imm32(FIELD_OFFSET(NativeCallFrameStructure, result)), stackPointerRegister, X86::ecx);
 
     // Plant callee
-    emitGetFromCallFrameHeader(RegisterFile::Callee, regT2);
-    storePtr(regT2, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, callee)));
+    emitGetFromCallFrameHeader(RegisterFile::Callee, X86::eax);
+    storePtr(X86::eax, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, callee)));
 
     // Plant callframe
-    storePtr(callFrameRegister, Address(stackPointerRegister, FIELD_OFFSET(NativeFunctionSignature, callFrame)));
+    move(callFrameRegister, X86::edx);
 
-    call(Address(regT2, FIELD_OFFSET(JSFunction, m_data)));
-    addPtr(Imm32(NativeCallFrameSize), stackPointerRegister);
+    call(Address(X86::eax, FIELD_OFFSET(JSFunction, m_data)));
+
+    // JSValue is a non-POD type
+    loadPtr(Address(X86::eax), X86::eax);
+#else
+    // Plant callee
+    emitGetFromCallFrameHeader(RegisterFile::Callee, X86::edx);
+
+    // Plant callframe
+    move(callFrameRegister, X86::ecx);
+    call(Address(X86::edx, FIELD_OFFSET(JSFunction, m_data)));
+#endif
+
+    // We've put a few temporaries on the stack in addition to the actual arguments
+    // so pull them off now
+    addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
+
 #endif
 
     // Check for an exception

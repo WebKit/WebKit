@@ -97,7 +97,7 @@ bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSV
     return true;
 }
 
-static JSValue callPlugin(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callPlugin(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
 {
     Instance* instance = pluginInstance(static_cast<JSHTMLElement*>(function)->impl());
     instance->begin();

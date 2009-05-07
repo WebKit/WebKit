@@ -1,3 +1,11 @@
+2009-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add calling convention annotation
+
+        * JSObject.cpp:
+
 2009-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Sam Weinig.

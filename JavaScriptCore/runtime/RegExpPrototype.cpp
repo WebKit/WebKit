@@ -36,10 +36,10 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-static JSValue regExpProtoFuncTest(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue regExpProtoFuncExec(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue regExpProtoFuncCompile(ExecState*, JSObject*, JSValue, const ArgList&);
-static JSValue regExpProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
 
 // ECMA 15.10.5
 
@@ -56,21 +56,21 @@ RegExpPrototype::RegExpPrototype(ExecState* exec, PassRefPtr<Structure> structur
 
 // ------------------------------ Functions ---------------------------
     
-JSValue regExpProtoFuncTest(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     if (!thisValue.isObject(&RegExpObject::info))
         return throwError(exec, TypeError);
     return asRegExpObject(thisValue)->test(exec, args);
 }
 
-JSValue regExpProtoFuncExec(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     if (!thisValue.isObject(&RegExpObject::info))
         return throwError(exec, TypeError);
     return asRegExpObject(thisValue)->exec(exec, args);
 }
 
-JSValue regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+JSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     if (!thisValue.isObject(&RegExpObject::info))
         return throwError(exec, TypeError);
@@ -97,7 +97,7 @@ JSValue regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue thisValue, co
     return jsUndefined();
 }
 
-JSValue regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     if (!thisValue.isObject(&RegExpObject::info)) {
         if (thisValue.isObject(&RegExpPrototype::info))

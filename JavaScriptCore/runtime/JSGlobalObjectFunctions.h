@@ -36,19 +36,19 @@ namespace JSC {
     // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
     // is a 0.5% reduction.
 
-    JSValue globalFuncEval(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncParseInt(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncParseFloat(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncIsNaN(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncIsFinite(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncDecodeURI(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncDecodeURIComponent(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncEncodeURI(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncEncodeURIComponent(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncEscape(ExecState*, JSObject*, JSValue, const ArgList&);
-    JSValue globalFuncUnescape(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncEval(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncParseInt(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncEscape(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncUnescape(ExecState*, JSObject*, JSValue, const ArgList&);
 #ifndef NDEBUG
-    JSValue globalFuncJSCPrint(ExecState*, JSObject*, JSValue, const ArgList&);
+    JSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState*, JSObject*, JSValue, const ArgList&);
 #endif
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;

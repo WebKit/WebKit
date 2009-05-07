@@ -6,8 +6,11 @@ EXPORTS
     ??0DropAllLocks@JSLock@JSC@@QAE@_N@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
     ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
+    ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
+    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V41@ABVArgList@1@@Z@Z
+    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
+    ??0JSFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
     ??0Mutex@WTF@@QAE@XZ
-    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@HABVIdentifier@1@P6A?AVJSValue@1@0PAVJSObject@1@V41@ABVArgList@1@@Z@Z
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0StringObject@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVUString@1@@Z
     ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@@Z
@@ -171,7 +174,6 @@ EXPORTS
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
     ?nonInlineNaN@JSImmediate@JSC@@CANXZ
     ?objectCount@Heap@JSC@@QAEIXZ
-    ?objectProtoFuncToString@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?primaryHeapBegin@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?primaryHeapEnd@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
@@ -259,7 +261,6 @@ EXPORTS
     WTFReportAssertionFailureWithMessage
     WTFReportError
     ?constructEmptyArray@JSC@@YAPAVJSArray@1@PAVExecState@1@@Z
-    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6A?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
     ?substr@UString@JSC@@QBE?AV12@HH@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?putDirectFunction@JSObject@JSC@@QAEXPAVExecState@2@PAVInternalFunction@2@I@Z

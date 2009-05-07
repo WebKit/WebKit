@@ -46,7 +46,7 @@ namespace JSC {
         CallTypeJS
     };
 
-    typedef JSValue (*NativeFunction)(ExecState*, JSObject*, JSValue thisValue, const ArgList&);
+    typedef JSValue (JSC_HOST_CALL *NativeFunction)(ExecState*, JSObject*, JSValue thisValue, const ArgList&);
 
     union CallData {
         struct {

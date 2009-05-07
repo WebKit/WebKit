@@ -1,3 +1,230 @@
+2009-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve native call performance
+
+        Fix the windows build by adding calling convention declarations everywhere,
+        chose fastcall as that seemed most sensible given we were having to declare
+        the convention explicitly.  In addition switched to fastcall on mac in the
+        deluded belief that documented fastcall behavior on windows would match 
+        actual its actual behavior.
+
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::argumentCount):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionGC):
+        (functionVersion):
+        (functionRun):
+        (functionLoad):
+        (functionSetSamplingFlags):
+        (functionClearSamplingFlags):
+        (functionReadline):
+        (functionQuit):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::callArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::callBooleanConstructor):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/CallData.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        (JSC::dateParse):
+        (JSC::dateNow):
+        (JSC::dateUTC):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::callErrorConstructor):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::callFunctionConstructor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::callFunctionPrototype):
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::setScopeChain):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncIsNaN):
+        (JSC::globalFuncIsFinite):
+        (JSC::globalFuncDecodeURI):
+        (JSC::globalFuncDecodeURIComponent):
+        (JSC::globalFuncEncodeURI):
+        (JSC::globalFuncEncodeURIComponent):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::globalFuncJSCPrint):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncAbs):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCeil):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncFloor):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        (JSC::mathProtoFuncRandom):
+        (JSC::mathProtoFuncRound):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::callNativeErrorConstructor):
+        * runtime/NativeFunctionWrapper.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::callNumberConstructor):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::callObjectConstructor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpObject.cpp:
+        (JSC::callRegExpObject):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+        (JSC::callStringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        * wtf/Platform.h:
+
 2009-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

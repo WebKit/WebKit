@@ -499,6 +499,20 @@
 #endif
 #endif
 
+#if PLATFORM(X86_64)
+    #define JSC_HOST_CALL
+#elif COMPILER(MSVC)
+    #define JSC_HOST_CALL __fastcall
+#elif COMPILER(GCC) && PLATFORM(X86)
+    #define JSC_HOST_CALL __attribute__ ((fastcall))
+#else
+    #if ENABLE(JIT)
+    #error Need to support register calling convention in this compiler
+    #else
+    #define JSC_HOST_CALL
+    #endif
+#endif
+
 /* Yet Another Regex Runtime. */
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
 #if (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(MAC)) \

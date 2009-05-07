@@ -58,8 +58,8 @@ ConstructType NativeErrorConstructor::getConstructData(ConstructData& constructD
     constructData.native.function = constructWithNativeErrorConstructor;
     return ConstructTypeHost;
 }
-
-static JSValue callNativeErrorConstructor(ExecState* exec, JSObject* constructor, JSValue, const ArgList& args)
+    
+static JSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState* exec, JSObject* constructor, JSValue, const ArgList& args)
 {
     return static_cast<NativeErrorConstructor*>(constructor)->construct(exec, args);
 }

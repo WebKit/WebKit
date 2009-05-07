@@ -40,6 +40,7 @@ namespace JSC  {
         JSFunction* callee() const { return this[RegisterFile::Callee].function(); }
         CodeBlock* codeBlock() const { return this[RegisterFile::CodeBlock].Register::codeBlock(); }
         ScopeChainNode* scopeChain() const { return this[RegisterFile::ScopeChain].Register::scopeChain(); }
+        int argumentCount() const { return this[RegisterFile::ArgumentCount].i(); }
 
         JSValue thisValue();
 
@@ -107,7 +108,6 @@ namespace JSC  {
 
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
-        int argumentCount() const { return this[RegisterFile::ArgumentCount].i(); }
         CallFrame* callerFrame() const { return this[RegisterFile::CallerFrame].callFrame(); }
         Arguments* optionalCalleeArguments() const { return this[RegisterFile::OptionalCalleeArguments].arguments(); }
         Instruction* returnPC() const { return this[RegisterFile::ReturnPC].vPC(); }
