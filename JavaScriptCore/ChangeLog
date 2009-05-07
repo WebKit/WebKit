@@ -1,3 +1,27 @@
+2009-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix crash due to incorrectly using an invalid scopechain 
+
+        stringProtoFuncReplace was checking for an exception on a CachedCall
+        by asking for the cached callframes exception.  Unfortunately this
+        could crash in certain circumstances as CachedCall does not guarantee
+        a valid callframe following a call.  Even more unfortunately the check
+        was entirely unnecessary as there is only a single exception slot per
+        global data, so it was already checked via the initial exec->hadException()
+        check.
+
+        To make bugs like this more obvious, i've added a debug only destructor
+        to ScopeChainNode that 0's all of its fields.  This exposed a crash in
+        the standard javascriptcore tests.
+
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::~ScopeChainNode):
+        (JSC::ScopeChain::~ScopeChain):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2009-05-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
