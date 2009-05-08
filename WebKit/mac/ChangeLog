@@ -1,3 +1,13 @@
+2009-05-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/6868773> NPN_GetAuthenticationInfo does not work with non-permanent credentials
+
+        * Plugins/WebBaseNetscapePluginView.mm: (WebKit::getAuthenticationInfo): Ask WebCore for
+        credentials first (but also ask NSURLCredentialStorage, because WebCore won't know about
+        permanent credentials).
+
 2009-05-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

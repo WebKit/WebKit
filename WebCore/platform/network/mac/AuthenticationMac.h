@@ -45,6 +45,24 @@ AuthenticationChallenge core(NSURLAuthenticationChallenge *);
 ProtectionSpace core(NSURLProtectionSpace *);
 Credential core(NSURLCredential *);
 
+class WebCoreCredentialStorage {
+public:
+    static void set(NSURLCredential *credential, NSURLProtectionSpace *protectionSpace)
+    {
+        if (!m_storage)
+            m_storage = [[NSMutableDictionary alloc] init];
+        [m_storage setObject:credential forKey:protectionSpace];
+    }
+
+    static NSURLCredential *get(NSURLProtectionSpace *protectionSpace)
+    {
+        return static_cast<NSURLCredential *>([m_storage objectForKey:protectionSpace]);
+    }
+
+private:
+    static NSMutableDictionary* m_storage;
+};
+
 }
 #endif
 

@@ -48,26 +48,6 @@ typedef int NSInteger;
 
 using namespace WebCore;
 
-class WebCoreCredentialStorage {
-public:
-    static void set(NSURLCredential *credential, NSURLProtectionSpace *protectionSpace)
-    {
-        if (!m_storage)
-            m_storage = [[NSMutableDictionary alloc] init];
-        [m_storage setObject:credential forKey:protectionSpace];
-    }
-
-    static NSURLCredential *get(NSURLProtectionSpace *protectionSpace)
-    {
-        return static_cast<NSURLCredential *>([m_storage objectForKey:protectionSpace]);
-    }
-
-private:
-    static NSMutableDictionary* m_storage;
-};
-
-NSMutableDictionary* WebCoreCredentialStorage::m_storage;
-
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
 {
     ResourceHandle* m_handle;

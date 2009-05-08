@@ -42,6 +42,7 @@
 #import "WebViewInternal.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/AuthenticationMac.h>
 #import <WebCore/CString.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
@@ -817,7 +818,9 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
     
     RetainPtr<NSURLProtectionSpace> protectionSpace(AdoptNS, [[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
     
-    NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
+    NSURLCredential *credential = WebCoreCredentialStorage::get(protectionSpace.get());
+    if (!credential)
+        credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
     if (!credential)
         return false;
   

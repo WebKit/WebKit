@@ -1,3 +1,17 @@
+2009-05-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/6868773> NPN_GetAuthenticationInfo does not work with non-permanent credentials
+
+        * WebCore.base.exp:
+        * platform/network/mac/AuthenticationMac.h:
+        (WebCore::WebCoreCredentialStorage::set):
+        (WebCore::WebCoreCredentialStorage::get):
+        * platform/network/mac/AuthenticationMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        Moved WebCoreCredentialStorage to AuthenticationMac, so that it could be used from WebKit.
+
 2009-05-08  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
