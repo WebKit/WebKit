@@ -1,5 +1,19 @@
 2009-05-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Oliver Hunt.
+
+        Removing an empty constructor and an uncalled, empty function seems to be a
+        pretty solid 1% regeression on my machine, so I'm going to put them back.
+        Um.  Yeah, this this pretty pointles and makes no sense at all.  I officially
+        lose the will to live in 3... 2...
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::notifyOfScope):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::~SamplingTool):
+
+2009-05-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver "I see lots of ifdefs" Hunt.
 
         Fix (kinda) for sampling tool breakage.  The codeblock sampling tool has become

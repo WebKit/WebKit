@@ -199,17 +199,17 @@ namespace JSC {
             memset(m_opcodeSamplesInCTIFunctions, 0, sizeof(m_opcodeSamplesInCTIFunctions));
         }
 
-#if ENABLE(CODEBLOCK_SAMPLING)
         ~SamplingTool()
         {
+#if ENABLE(CODEBLOCK_SAMPLING)
             deleteAllValues(*m_scopeSampleMap);
-        }
-
-        void notifyOfScope(ScopeNode* scope);
 #endif
+        }
 
         void setup();
         void dump(ExecState*);
+
+        void notifyOfScope(ScopeNode* scope);
 
         void sample(CodeBlock* codeBlock, Instruction* vPC)
         {
