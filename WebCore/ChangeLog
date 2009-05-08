@@ -1,3 +1,17 @@
+2009-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Bug 25575: Registered mutation event listener crashes HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=25575
+
+        Test: fast/media/video-controls-with-mutation-event-handler.html
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement): Don't call setAttribute.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createTimeline): Call setAttribute here.
+
 2009-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber Stamped by Dave Hyatt

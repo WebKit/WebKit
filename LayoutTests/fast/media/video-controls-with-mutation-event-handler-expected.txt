@@ -1,0 +1,6 @@
+This tests that we don't crash while creating a video element while a DOMSubtreeModified even handler is registered.
+
+If you can see the movie below, the test passed.
+
+
+SUCCESS: The test ran without crashing

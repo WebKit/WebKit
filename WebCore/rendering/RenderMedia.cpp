@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,23 +28,19 @@
 #if ENABLE(VIDEO)
 #include "RenderMedia.h"
 
-#include "CSSStyleSelector.h"
-#include "Event.h"
 #include "EventNames.h"
 #include "FloatConversion.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
-#include "MediaPlayer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
@@ -216,6 +212,7 @@ void RenderMedia::createTimeline()
 {
     ASSERT(!m_timeline);
     m_timeline = new MediaControlTimelineElement(document(), mediaElement());
+    m_timeline->setAttribute(precisionAttr, "float");
     m_timeline->attachToParent(m_timelineContainer.get());
 }
   
