@@ -1,3 +1,16 @@
+2009-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - Fix <rdar://problem/6866712>.
+
+        Instead of just caching whether a plug-in object _has_ a field or method, also add an entry to the cache
+        if it _doesn't_ have a certain field or method. This way we have to make fewer calls to the plug-in host.
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodsNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+
 2009-05-08  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Darin Adler.

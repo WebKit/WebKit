@@ -266,57 +266,82 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
 MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
 {
-    if (Method* method = m_methods.get(identifier.ustring().rep())) {
+    pair<MethodMap::iterator, bool> result = m_methods.add(identifier.ustring().rep(), 0);
+
+    if (!result.second) {
+        // The method is already in the map.
         MethodList methodList;
-        methodList.append(method);
+        
+        if (result.first->second)
+            methodList.append(result.first->second);
         return methodList;
     }
-
+    
     uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
                                m_instanceProxy->pluginID(), requestID,
-                               m_objectID, methodName) != KERN_SUCCESS)
+                               m_objectID, methodName) != KERN_SUCCESS) {
+        // If we just added the method, remove it.
+        if (result.second)
+            m_methods.remove(result.first);
         return MethodList();
+    }
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (reply.get() && reply->m_result) {
-        Method* method = new ProxyMethod(methodName);
-        
-        m_methods.set(identifier.ustring().rep(), method);
-    
-        MethodList methodList;
-        methodList.append(method);
-        return methodList;
+    if (!reply.get()) {
+        // If we just added the method, remove it.
+        if (result.second)
+            m_methods.remove(result.first);
+        return MethodList();
     }
-
-    return MethodList();
+    
+    MethodList methodList;
+    
+    if (reply->m_result) {
+        result.first->second = new ProxyMethod(methodName);
+        methodList.append(result.first->second);
+    }
+    
+    return methodList;
 }
 
 Field* ProxyInstance::fieldNamed(const Identifier& identifier)
 {
-    if (Field* field = m_fields.get(identifier.ustring().rep()))
-        return field;
+    pair<FieldMap::iterator, bool> result = m_fields.add(identifier.ustring().rep(), 0);
+    
+    if (!result.second) {
+        // The field is already in the map.
+        return result.first->second;
+    }
     
     uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
                                  m_instanceProxy->pluginID(), requestID,
-                                 m_objectID, propertyName) != KERN_SUCCESS)
+                                 m_objectID, propertyName) != KERN_SUCCESS) {
+        // If we just added the field, remove it.
+        if (result.second)
+            m_fields.remove(result.first);
+        
         return 0;
-        
-    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (reply.get() && reply->m_result) {
-        Field* field = new ProxyField(propertyName);
-        
-        m_fields.set(identifier.ustring().rep(), field);
-    
-        return field;
     }
     
-    return 0;
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    if (!reply.get()) {
+        // If we just added the field, remove it.
+        if (result.second)
+            m_fields.remove(result.first);
+
+        return 0;
+    }
+    
+    if (reply->m_result)
+        result.first->second = new ProxyField(propertyName);
+    
+    return result.first->second;
 }
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
