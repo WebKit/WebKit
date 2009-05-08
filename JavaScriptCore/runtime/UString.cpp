@@ -368,27 +368,50 @@ void UString::Rep::checkConsistency() const
 }
 #endif
 
-// put these early so they can be inlined
-static inline size_t expandedSize(size_t size, size_t otherSize)
+// Put these early so they can be inlined.
+static inline size_t expandedSize(size_t capacitySize, size_t precapacitySize)
 {
-    // Do the size calculation in two parts, returning overflowIndicator if
-    // we overflow the maximum value that we can handle.
-
-    if (size > maxUChars())
+    // Combine capacitySize & precapacitySize to produce a single size to allocate,
+    // check that doing so does not result in overflow.
+    size_t size = capacitySize + precapacitySize;
+    if (size < capacitySize)
         return overflowIndicator();
 
-    size_t expandedSize = ((size + 10) / 10 * 11) + 1;
+    // Small Strings (up to 4 pages):
+    // Expand the allocation size to 112.5% of the amount requested.  This is largely sicking
+    // to our previous policy, however 112.5% is cheaper to calculate.
+    if (size < 0x4000) {
+        size_t expandedSize = ((size + (size >> 3)) | 15) + 1;
+        // Given the limited range within which we calculate the expansion in this
+        // fashion the above calculation should never overflow.
+        ASSERT(expandedSize >= size);
+        ASSERT(expandedSize < maxUChars());
+        return expandedSize;
+    }
 
-    // If 'size' was originally just less than maxUChars() then we may have just overflowed.
-    // The next check won't catch this, since the subtraction will underflow.  Alternatively,
-    // rather than failing we could just back off from the expansion here?
-    if (expandedSize > maxUChars())
-        return overflowIndicator();
+    // Medium Strings (up to 128 pages):
+    // For pages covering multiple pages over-allocation is less of a concern - any unused
+    // space will not be paged in if it is not used, so this is purely a VM overhead.  For
+    // these strings allocate 2x the requested size.
+    if (size < 0x80000) {
+        size_t expandedSize = ((size + size) | 0xfff) + 1;
+        // Given the limited range within which we calculate the expansion in this
+        // fashion the above calculation should never overflow.
+        ASSERT(expandedSize >= size);
+        ASSERT(expandedSize < maxUChars());
+        return expandedSize;
+    }
 
-    if (maxUChars() - expandedSize < otherSize)
-        return overflowIndicator();
+    // Large Strings (to infinity and beyond!):
+    // Revert to our 112.5% policy - probably best to limit the amount of unused VM we allow
+    // any individual string be responsible for.
+    size_t expandedSize = ((size + (size >> 3)) | 0xfff) + 1;
 
-    return expandedSize + otherSize;
+    // Check for overflow - any result that is at least as large as requested (but
+    // still below the limit) is okay.
+    if ((expandedSize >= size) && (expandedSize < maxUChars()))
+        return expandedSize;
+    return overflowIndicator();
 }
 
 static inline bool expandCapacity(UString::Rep* rep, int requiredLength)

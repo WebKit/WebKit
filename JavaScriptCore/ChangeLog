@@ -1,3 +1,32 @@
+2009-05-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Previously, when appending to an existing string and growing the underlying buffer,
+        we would actually allocate 110% of the required size in order to give us some space
+        to expand into.  Now we treat strings differently based on their size:
+
+        Small Strings (up to 4 pages):
+        Expand the allocation size to 112.5% of the amount requested.  This is largely sicking
+        to our previous policy, however 112.5% is cheaper to calculate.
+
+        Medium Strings (up to 128 pages):
+        For pages covering multiple pages over-allocation is less of a concern - any unused
+        space will not be paged in if it is not used, so this is purely a VM overhead.  For
+        these strings allocate 2x the requested size.
+
+        Large Strings (to infinity and beyond!):
+        Revert to our 112.5% policy - probably best to limit the amount of unused VM we allow
+        any individual string be responsible for.
+
+        Additionally, round small allocations up to a multiple of 16 bytes, and medium and
+        large allocations up to a multiple of page size.
+
+        ~1.5% progression on Sunspider, due to 5% improvement on tagcloud & 15% on validate.
+
+        * runtime/UString.cpp:
+        (JSC::expandedSize):
+
 2009-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
