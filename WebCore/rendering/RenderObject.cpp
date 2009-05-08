@@ -1860,8 +1860,10 @@ void RenderObject::destroy()
 
     // FIXME: Would like to do this in RenderBoxModelObject, but the timing is so complicated that this can't easily
     // be moved into RenderBoxModelObject::destroy.
-    if (hasLayer())
+    if (hasLayer()) {
+        setHasLayer(false);
         toRenderBoxModelObject(this)->destroyLayer();
+    }
     arenaDelete(renderArena(), this);
 }
 

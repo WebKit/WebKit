@@ -1,3 +1,34 @@
+2009-05-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix regression caused by r41469, add test case to prevent it from 
+        happening again.
+        https://bugs.webkit.org/show_bug.cgi?id=25252
+  
+        hasLayer() was true during removeOnlyThisLayer()/
+        updateLayerPositions()
+        which caused updateLayerPosition()'s walk up the render tree to 
+        include offsets from the layer we were about to remove.
+  
+        I'm not 100% convinced that this wasn't a bug in 
+        updateLayerPosition() or in RenderBoxModelObject::styleDidChange, 
+        because the layer in question is not the containing block for the 
+        block which gets laid out wrong. But this restores the previous 
+        behavior and adds a test.  So the next time someone is in here re-
+        factoring, they will at least know if they break something.
+  
+        Test: fast/layers/remove-only-this-layer-update.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::destroyLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2009-05-07  Dmitry Titov  <dimich@chromium.org>
 
         Attempt to fix GTK build.

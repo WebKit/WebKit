@@ -57,11 +57,10 @@ RenderBoxModelObject::~RenderBoxModelObject()
 
 void RenderBoxModelObject::destroyLayer()
 {
-    ASSERT(hasLayer());
+    ASSERT(!hasLayer()); // Callers should have already called setHasLayer(false)
     ASSERT(m_layer);
     m_layer->destroy(renderArena());
     m_layer = 0;
-    setHasLayer(false);
 }
 
 void RenderBoxModelObject::destroy()

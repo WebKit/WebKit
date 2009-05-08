@@ -1,3 +1,16 @@
+2009-05-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix regression caused by r41469, add test case to prevent it from 
+        happening again.
+        https://bugs.webkit.org/show_bug.cgi?id=25252
+
+        * fast/layers/remove-only-this-layer-update.html: Added.
+        * platform/mac/fast/layers/remove-only-this-layer-update-expected.checksum: Added.
+        * platform/mac/fast/layers/remove-only-this-layer-update-expected.png: Added.
+        * platform/mac/fast/layers/remove-only-this-layer-update-expected.txt: Added.
+
 2009-05-07  David Hyatt  <hyatt@apple.com>
 
         Restore intrinsic margins to all form controls on Mac and Windows.
