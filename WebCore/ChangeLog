@@ -1,3 +1,18 @@
+2009-05-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6857446> REGRESSION (r37591): Cannot print or 
+        preview from maps.yandex.ru
+
+        We need to fall into the stretchesToViewHeight() quirk when we are 
+        printing and we are the root and the root has percentage height OR 
+        when we are the body and the root has percentage height. Otherwise 
+        we have a height of 0 and can run into painting troubles.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+
 2009-05-08  Douglas Davidson  <ddavidso@apple.com>
 
         Reviewed by Darin Adler.
