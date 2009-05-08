@@ -1,3 +1,12 @@
+2009-05-08  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Qt build, add missing JSC_HOST_CALL macros to the runtime
+        call methods.
+
+        * bridge/qt/qt_runtime.h:
+
 2009-05-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.
