@@ -1,3 +1,14 @@
+2009-05-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add missing strings to localizedStrings.js
+        https://bugs.webkit.org/show_bug.cgi?id=25635
+
+        Add the strings "Delete", "Key", "Refresh" and "Value".
+
+        * English.lproj/localizedStrings.js:
+
 2009-05-08  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed, tweaked and landed by Alexey Proskuryakov.
