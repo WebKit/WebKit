@@ -1,5 +1,12 @@
 2009-05-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        * wtf/Platform.h: Reverted an accidental (and performance-catastrophic)
+        change.
+
+2009-05-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Cameron Zwarich.
         
         Fixed a minor sequencing error introduced by recent Parser speedups.
