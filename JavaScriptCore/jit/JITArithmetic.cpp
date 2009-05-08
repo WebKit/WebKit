@@ -347,6 +347,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
 #if USE(ALTERNATE_JSIMMEDIATE)
             Jump fail1 = emitJumpIfNotImmediateNumber(regT0);
             Jump fail2 = emitJumpIfNotImmediateNumber(regT1);
+            Jump fail3 = emitJumpIfImmediateInteger(regT1);
             addPtr(tagTypeNumberRegister, regT0);
             addPtr(tagTypeNumberRegister, regT1);
             m_assembler.movq_rr(regT0, X86::xmm0);
@@ -374,6 +375,7 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
 #if USE(ALTERNATE_JSIMMEDIATE)
             fail1.link(this);
             fail2.link(this);
+            fail3.link(this);
 #else
             if (!m_codeBlock->isKnownNotImmediate(op1))
                 fail1.link(this);

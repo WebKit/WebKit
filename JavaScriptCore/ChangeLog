@@ -1,3 +1,13 @@
+2009-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - fix test failures on 64-bit
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArithSlow_op_jnless): Avoid accidentaly treating an
+        immediate int as an immediate float in the 64-bit value representation.
+
 2009-05-08  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.
