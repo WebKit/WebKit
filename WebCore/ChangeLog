@@ -1,3 +1,12 @@
+2009-05-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for memory leak on Mac.
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+
 2009-05-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

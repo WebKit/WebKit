@@ -82,6 +82,9 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
         m_lineSpacing = m_ascent + m_descent + m_lineGap;
 
     }
+    
+    if (cgFont)
+        CGFontRelease(cgFont);
 
 }
 
