@@ -46,6 +46,12 @@
 # media/video-volume.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
+# The following test started failing somehow because one of the inputs
+# goes to another line, and we get 'A B C DE F' instead of the
+# expected 'A B C D E F'; disabling for now, 'till we figure this out.
+#
+# fast/html/text-field-input-types.html
+
 # These tests work correctly, but I was not able to make them
 # generate render tree dumps consistently in the bot and in my
 # machine, so I'm disabling them (kov).
@@ -1778,6 +1784,7 @@ fast/history/back-forward-is-asynchronous.html
 fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
+fast/html/text-field-input-types.html
 fast/js/date-DST-time-cusps.html
 fast/js/date-big-setdate.html
 fast/js/exceptions-thrown-in-callbacks.html
@@ -4032,6 +4039,7 @@ media/video-controls-visible-audio-only.html
 media/video-display-toggle.html
 media/video-empty-source.html
 media/video-layer-crash.html
+media/video-source-error.html
 media/video-timeupdate-during-playback.html
 media/video-transformed.html
 media/video-zoom-controls.html

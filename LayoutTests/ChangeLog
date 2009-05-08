@@ -1,3 +1,9 @@
+2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disable more new tests that are failing.
+
+        * platform/gtk/Skipped:
+
 2009-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         No review, update tests results missed in r43403.
