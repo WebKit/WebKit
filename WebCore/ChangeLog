@@ -2,6 +2,16 @@
 
         Rubber Stamped by Dave Hyatt
         
+        Shuffle the data members to minimize padding.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        * rendering/RenderTableSection.h:
+
+2009-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber Stamped by Dave Hyatt
+        
         Shuffle the data members to make Events 8 bytes smaller in 64-bit.
 
         * dom/Event.cpp:
