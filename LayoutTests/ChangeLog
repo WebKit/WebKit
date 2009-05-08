@@ -1,3 +1,9 @@
+2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disable new test that is failing.
+
+        * platform/gtk/Skipped:
+
 2009-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

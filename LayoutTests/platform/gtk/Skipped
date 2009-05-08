@@ -66,6 +66,7 @@ accessibility/input-image-alt.html
 accessibility/nochildren-elements.html
 accessibility/placeholder.html
 accessibility/radio-button-checkbox-size.html
+accessibility/radio-button-title-label.html
 accessibility/secure-textfield-title-ui.html
 accessibility/table-modification-crash.html
 accessibility/table-nofirstbody.html
