@@ -98,16 +98,6 @@
 
 namespace WTF {
 
-bool ThreadIdentifier::operator==(const ThreadIdentifier& another) const
-{
-    return m_platformId == another.m_platformId;
-}
-
-bool ThreadIdentifier::operator!=(const ThreadIdentifier& another) const
-{
-    return m_platformId != another.m_platformId;
-}
-
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadNameInternal all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
 static const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
@@ -149,15 +139,48 @@ void unlockAtomicallyInitializedStaticMutex()
 
 static ThreadIdentifier mainThreadIdentifier;
 
+static Mutex& threadMapMutex()
+{
+    static Mutex mutex;
+    return mutex;
+}
+
 void initializeThreading()
 {
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
+        threadMapMutex();
         initializeRandomNumberGenerator();
         initializeMainThread();
         mainThreadIdentifier = currentThread();
         setThreadNameInternal("Main Thread");
     }
+}
+
+static HashMap<DWORD, HANDLE>& threadMap()
+{
+    static HashMap<DWORD, HANDLE> map;
+    return map;
+}
+
+static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
+{
+    MutexLocker locker(threadMapMutex());
+    ASSERT(!threadMap().contains(threadID));
+    threadMap().add(threadID, threadHandle);
+}
+
+static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    return threadMap().get(id);
+}
+
+static void clearThreadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    ASSERT(threadMap().contains(id));
+    threadMap().remove(id);
 }
 
 struct ThreadFunctionInvocation {
@@ -185,44 +208,51 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
 {
     unsigned threadIdentifier = 0;
+    ThreadIdentifier threadID = 0;
     ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);
     HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation, 0, &threadIdentifier));
     if (!threadHandle) {
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);
-        return ThreadIdentifier();
+        return 0;
     }
-    // Closes handle only, since we don't need it. The new thread runs until it exits.
-    CloseHandle(threadHandle);
 
-    return ThreadIdentifier(threadIdentifier);
+    threadID = static_cast<ThreadIdentifier>(threadIdentifier);
+    storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
+
+    return threadID;
 }
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
-    ASSERT(threadID.isValid());
+    ASSERT(threadID);
     
-    unsigned threadIdentifier = threadID.platformId();
-    HANDLE threadHandle = OpenThread(SYNCHRONIZE, FALSE, threadIdentifier);
-    // If thread already exited, return immediately.
+    HANDLE threadHandle = threadHandleForIdentifier(threadID);
     if (!threadHandle)
-        return WAIT_OBJECT_0;
+        LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
  
     DWORD joinResult = WaitForSingleObject(threadHandle, INFINITE);
     if (joinResult == WAIT_FAILED)
-        LOG_ERROR("ThreadIdentifier %p was found to be deadlocked trying to quit", threadHandle);
+        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
 
     CloseHandle(threadHandle);
+    clearThreadHandleForIdentifier(threadID);
 
     return joinResult;
 }
 
-void detachThread(ThreadIdentifier)
+void detachThread(ThreadIdentifier threadID)
 {
+    ASSERT(threadID);
+    
+    HANDLE threadHandle = threadHandleForIdentifier(threadID);
+    if (threadHandle)
+        CloseHandle(threadHandle);
+    clearThreadHandleForIdentifier(threadID);
 }
 
 ThreadIdentifier currentThread()
 {
-    return ThreadIdentifier(GetCurrentThreadId());
+    return static_cast<ThreadIdentifier>(GetCurrentThreadId());
 }
 
 bool isMainThread()
@@ -438,46 +468,6 @@ void ThreadCondition::signal()
 void ThreadCondition::broadcast()
 {
     m_condition.signal(true); // Unblock all threads.
-}
-
-// Deprecated functions. The current build of Safari 4 beta is linked with them so we need to provide
-// the implementation taking PlatformThreadIdentifier instead of ThreadIdentifier. These are not declared
-// in .h file so the next time Safari is built it will 'automatically' switch to new functions.
-// Then deprecated ones can be removed from this file and from JavaScriptCore.def and WebKit.def files.
-// In WebKit.def file, these functions are 'renamed' so their name does not have 'Deprecated' part - this
-// is to avoid having 2 functions with only different type of return value.
-void detachThreadDeprecated(PlatformThreadIdentifier)
-{
-}
-
-int waitForThreadCompletionDeprecated(PlatformThreadIdentifier threadID, void** result)
-{
-    ASSERT(threadID);
-
-    unsigned threadIdentifier = static_cast<unsigned>(threadID);
-    HANDLE threadHandle = OpenThread(SYNCHRONIZE, FALSE, threadIdentifier);
-    // If thread already exited, return immediately.
-    if (!threadHandle)
-        return WAIT_OBJECT_0;
-
-    DWORD joinResult = WaitForSingleObject(threadHandle, INFINITE);
-    if (joinResult == WAIT_FAILED)
-        LOG_ERROR("ThreadIdentifier %p was found to be deadlocked trying to quit", threadHandle);
-
-    CloseHandle(threadHandle);
-
-    return joinResult;
-}
-
-PlatformThreadIdentifier currentThreadDeprecated()
-{
-    return static_cast<PlatformThreadIdentifier>(GetCurrentThreadId());
-}
-
-PlatformThreadIdentifier createThreadDeprecated(ThreadFunction entryPoint, void* data, const char* name)
-{
-    ThreadIdentifier threadID = createThread(entryPoint, data, name);
-    return static_cast<PlatformThreadIdentifier>(threadID.platformId());
 }
 
 } // namespace WTF

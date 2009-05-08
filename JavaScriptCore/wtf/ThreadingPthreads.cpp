@@ -48,15 +48,7 @@
 
 namespace WTF {
 
-bool ThreadIdentifier::operator==(const ThreadIdentifier& another) const
-{
-    return pthread_equal(m_platformId, another.m_platformId);
-}
-
-bool ThreadIdentifier::operator!=(const ThreadIdentifier& another) const
-{
-    return !pthread_equal(m_platformId, another.m_platformId);
-}
+typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
 
 static Mutex* atomicallyInitializedStaticMutex;
 
@@ -64,10 +56,17 @@ static Mutex* atomicallyInitializedStaticMutex;
 static ThreadIdentifier mainThreadIdentifier; // The thread that was the first to call initializeThreading(), which must be the main thread.
 #endif
 
+static Mutex& threadMapMutex()
+{
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    return mutex;
+}
+
 void initializeThreading()
 {
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
+        threadMapMutex();
         initializeRandomNumberGenerator();
 #if !PLATFORM(DARWIN) || PLATFORM(CHROMIUM)
         mainThreadIdentifier = currentThread();
@@ -85,6 +84,54 @@ void lockAtomicallyInitializedStaticMutex()
 void unlockAtomicallyInitializedStaticMutex()
 {
     atomicallyInitializedStaticMutex->unlock();
+}
+
+static ThreadMap& threadMap()
+{
+    DEFINE_STATIC_LOCAL(ThreadMap, map, ());
+    return map;
+}
+
+static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle)
+{
+    MutexLocker locker(threadMapMutex());
+
+    ThreadMap::iterator i = threadMap().begin();
+    for (; i != threadMap().end(); ++i) {
+        if (pthread_equal(i->second, pthreadHandle))
+            return i->first;
+    }
+
+    return 0;
+}
+
+static ThreadIdentifier establishIdentifierForPthreadHandle(pthread_t& pthreadHandle)
+{
+    ASSERT(!identifierByPthreadHandle(pthreadHandle));
+
+    MutexLocker locker(threadMapMutex());
+
+    static ThreadIdentifier identifierCount = 1;
+
+    threadMap().add(identifierCount, pthreadHandle);
+    
+    return identifierCount++;
+}
+
+static pthread_t pthreadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    
+    return threadMap().get(id);
+}
+
+static void clearPthreadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+
+    ASSERT(threadMap().contains(id));
+    
+    threadMap().remove(id);
 }
 
 #if PLATFORM(ANDROID)
@@ -117,9 +164,9 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
     if (pthread_create(&threadHandle, 0, runThreadWithRegistration, static_cast<void*>(threadData))) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
-        return ThreadIdentifier();
+        return 0;
     }
-    return ThreadIdentifier(threadHandle);
+    return establishIdentifierForPthreadHandle(threadHandle);
 }
 #else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
@@ -127,10 +174,10 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     pthread_t threadHandle;
     if (pthread_create(&threadHandle, 0, entryPoint, data)) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
-        return ThreadIdentifier();
+        return 0;
     }
 
-    return ThreadIdentifier(threadHandle);
+    return establishIdentifierForPthreadHandle(threadHandle);
 }
 #endif
 
@@ -145,29 +192,35 @@ void setThreadNameInternal(const char* threadName)
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
-    ASSERT(threadID.isValid());
+    ASSERT(threadID);
     
-    pthread_t pthreadHandle = threadID.platformId();
+    pthread_t pthreadHandle = pthreadHandleForIdentifier(threadID);
  
     int joinResult = pthread_join(pthreadHandle, result);
     if (joinResult == EDEADLK)
-        LOG_ERROR("ThreadIdentifier %p was found to be deadlocked trying to quit", pthreadHandle);
+        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
         
+    clearPthreadHandleForIdentifier(threadID);
     return joinResult;
 }
 
 void detachThread(ThreadIdentifier threadID)
 {
-    ASSERT(threadID.isValid());
+    ASSERT(threadID);
     
-    pthread_t pthreadHandle = threadID.platformId();
+    pthread_t pthreadHandle = pthreadHandleForIdentifier(threadID);
     
     pthread_detach(pthreadHandle);
+    
+    clearPthreadHandleForIdentifier(threadID);
 }
 
 ThreadIdentifier currentThread()
 {
-    return ThreadIdentifier(pthread_self());
+    pthread_t currentThread = pthread_self();
+    if (ThreadIdentifier id = identifierByPthreadHandle(currentThread))
+        return id;
+    return establishIdentifierForPthreadHandle(currentThread);
 }
 
 bool isMainThread()

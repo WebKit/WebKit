@@ -125,8 +125,7 @@ namespace JSC {
         // Sampling thread state.
         static bool s_running;
         static unsigned s_hertz;
-
-        static ThreadIdentifier& samplingThread();
+        static ThreadIdentifier s_samplingThread;
 
         static void start(unsigned hertz=10000);
         static void stop();

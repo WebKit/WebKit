@@ -32,9 +32,6 @@
 
 namespace WTF {
 
-bool ThreadIdentifier::operator==(const ThreadIdentifier&) const { return true; }
-bool ThreadIdentifier::operator!=(const ThreadIdentifier&) const { return false; }
-
 void initializeThreading() { }
 ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char*) { return ThreadIdentifier(); }
 void setThreadNameInternal(const char*) { }
