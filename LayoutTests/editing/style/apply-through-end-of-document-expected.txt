@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 53x18
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 747x36
+          RenderInline {A} at (0,0) size 154x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 154x18
+              text run at (53,0) width 154: "rdar://problem/6864786"
+          RenderText {#text} at (207,0) size 747x36
+            text run at (207,0) width 540: ": REGRESSION: Crash below ApplyStyleCommand::applyInlineStyleToRange when"
+            text run at (0,18) width 185: "reviewing a patch in Bugzilla"
+        RenderText {#text} at (185,18) size 4x18
+          text run at (185,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 217x18
+          text run at (0,0) width 217: "The test passes if it does not crash."
+      RenderBlock {DIV} at (0,86) size 784x41
+        RenderText {#text} at (0,0) size 563x41
+          text run at (0,0) width 563: "Copy the second word in this sentence."
+      RenderBlock {PRE} at (0,140) size 784x15
+        RenderText {#text} at (0,0) size 24x15
+          text run at (0,0) width 24: "the"
+caret: position 3 of child 0 {#text} of child 7 {PRE} of child 1 {BODY} of child 0 {HTML} of document

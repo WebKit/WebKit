@@ -1,3 +1,18 @@
+2009-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6864786> REGRESSION: Crash below
+          ApplyStyleCommand::applyInlineStyleToRange when reviewing a patch in
+          Bugzilla
+
+        Test: editing/style/apply-through-end-of-document.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToRange): Added a null
+        check for the case of a range extending through the end of the document,
+        in which pastEndNode is 0.
+
 2009-05-08  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Beth Dakin.

@@ -901,7 +901,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
                 // This is a plaintext-only region. Only proceed if it's fully selected.
                 // pastEndNode is the node after the last fully selected node, so if it's inside node then
                 // node isn't fully selected.
-                if (pastEndNode->isDescendantOf(node))
+                if (pastEndNode && pastEndNode->isDescendantOf(node))
                     break;
                 // Add to this element's inline style and skip over its contents.
                 HTMLElement* element = static_cast<HTMLElement*>(node);
