@@ -1,3 +1,20 @@
+2009-05-07  John Grabowski  <jrg@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25573
+        Rebaseline of spelling tests for Mac.  Tests pass even without this
+        change but checksums don't match.  Non-Mac does not need a new baseline.
+
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.checksum:
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png:
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.checksum:
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.png:
+        * platform/mac/editing/spelling/spelling-expected.checksum:
+        * platform/mac/editing/spelling/spelling-expected.png:
+        * platform/mac/editing/spelling/spelling-linebreak-expected.checksum:
+        * platform/mac/editing/spelling/spelling-linebreak-expected.png:
+
 2009-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Simon Fraser.

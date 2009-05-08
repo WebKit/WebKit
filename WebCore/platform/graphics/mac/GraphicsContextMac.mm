@@ -32,11 +32,6 @@
 
 #import "WebCoreSystemInterface.h"
 
-@class NSColor;
-
-// FIXME: More of this should use CoreGraphics instead of AppKit.
-// FIXME: More of this should move into GraphicsContextCG.cpp.
-
 namespace WebCore {
 
 // NSColor, NSBezierPath, and NSGraphicsContext
@@ -84,75 +79,5 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     [pool drain];
 }
 #endif
-
-static NSColor* createPatternColor(NSString* name, NSColor* defaultColor, bool& usingDot)
-{
-    NSImage *image = [NSImage imageNamed:name];
-    ASSERT(image); // if image is not available, we want to know
-    NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
-    if (color)
-        usingDot = true;
-    else
-        color = defaultColor;
-    return color;
-}
-    
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
-{
-    if (paintingDisabled())
-        return;
-        
-    // These are the same for misspelling or bad grammar
-    int patternHeight = cMisspellingLineThickness;
-    int patternWidth = cMisspellingLinePatternWidth;
- 
-    bool usingDot;
-    NSColor *patternColor;
-    if (grammar) {
-        // Constants for grammar pattern color
-        static bool usingDotForGrammar = false;
-        DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
-        
-        usingDot = usingDotForGrammar;
-        patternColor = grammarPatternColor.get();
-    } else {
-        // Constants for spelling pattern color
-        static bool usingDotForSpelling = false;
-        DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"SpellingDot", [NSColor redColor], usingDotForSpelling)));
-        
-        usingDot = usingDotForSpelling;
-        patternColor = spellingPatternColor.get();
-    }
-
-    // Make sure to draw only complete dots.
-    // NOTE: Code here used to shift the underline to the left and increase the width
-    // to make sure everything gets underlined, but that results in drawing out of
-    // bounds (e.g. when at the edge of a view) and could make it appear that the
-    // space between adjacent misspelled words was underlined.
-    if (usingDot) {
-        // allow slightly more considering that the pattern ends with a transparent pixel
-        int widthMod = width % patternWidth;
-        if (patternWidth - widthMod > cMisspellingLinePatternGapWidth)
-            width -= widthMod;
-    }
-    
-    // FIXME: This code should not use NSGraphicsContext currentContext
-    // In order to remove this requirement we will need to use CGPattern instead of NSColor
-    // FIXME: This code should not be using wkSetPatternPhaseInUserSpace, as this approach is wrong
-    // for transforms.
-
-    // Draw underline
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    CGContextRef context = (CGContextRef)[currentContext graphicsPort];
-    CGContextSaveGState(context);
-
-    [patternColor set];
-
-    wkSetPatternPhaseInUserSpace(context, point);
-
-    NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
-    
-    CGContextRestoreGState(context);
-}
 
 }

@@ -1,3 +1,18 @@
+2009-05-07  John Grabowski  <jrg@chromium.org>
+
+        Reviewed by Simon Fraser.
+  
+        https://bugs.webkit.org/show_bug.cgi?id=25573
+        Unify use of CG-common routine for drawLineForMisspellingOrBadGrammar.
+        Cleanup for WebKit, but required for Chromium happiness.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::spellingPatternColor):
+        (WebCore::grammarPatternColor):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+
 2009-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Simon Fraser.
