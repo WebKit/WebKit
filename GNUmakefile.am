@@ -455,6 +455,7 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 
 # Files that will be distributed
 EXTRA_DIST = \
+	$(srcdir)/gtk-doc.make \
 	WebKit/LICENSE \
 	$(javascriptcore_dist) \
 	$(webcore_dist) \

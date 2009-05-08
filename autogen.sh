@@ -8,6 +8,7 @@ test -z "$srcdir" && srcdir=.
 ORIGDIR=`pwd`
 cd $srcdir
 
+GTKDOCIZE_FLAGS="--copy"
 LIBTOOLIZE_FLAGS="--force --automake"
 ACLOCAL_FLAGS="-I autotools"
 AUTOMAKE_FLAGS="--foreign --add-missing"
@@ -58,7 +59,7 @@ rm -rf $top_srcdir/autom4te.cache
 
 touch README INSTALL
 
-gtkdocize || exit $?
+gtkdocize $GTKDOCIZE_FLAGS || exit $?
 aclocal $ACLOCAL_FLAGS || exit $?
 $LIBTOOLIZE $LIBTOOLIZE_FLAGS || exit $?
 autoheader || exit $?
