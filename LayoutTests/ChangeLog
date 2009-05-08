@@ -1,3 +1,15 @@
+2009-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - test for <rdar://problem/6859955> Undoing typed text after selecting
+          all leaves non-text areas highlighted
+
+        * fast/repaint/selection-clear.html: Added.
+        * platform/mac/fast/repaint/selection-clear-expected.checksum: Added.
+        * platform/mac/fast/repaint/selection-clear-expected.png: Added.
+        * platform/mac/fast/repaint/selection-clear-expected.txt: Added.
+
 2009-05-07  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY.

@@ -68,7 +68,8 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
 
-    void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos);
+    enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld };
+    void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
     void clearSelection();
     virtual RenderObject* selectionStart() const { return m_selectionStart; }
     virtual RenderObject* selectionEnd() const { return m_selectionEnd; }
@@ -192,6 +193,8 @@ protected:
     RenderWidgetSet m_widgets;
 
 private:
+    IntRect m_cachedSelectionBounds;
+
     int m_bestTruncatedAt;
     int m_truncatorWidth;
     bool m_forcedPageBreak;

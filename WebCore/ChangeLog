@@ -1,3 +1,36 @@
+2009-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix <rdar://problem/6859955> Undoing typed text after selecting all
+          leaves non-text areas highlighted
+
+        Test: fast/repaint/selection-clear.html
+
+        When RenderView::clearSelection() is called from
+        SelectionController::nodeWillBeRemoved(), selected renderers may already
+        be marked for layout, which means that they can no longer compute
+        their selection repaint info. Instead, an empty IntRect (or GapRects) is
+        returned, leading to incomplete repaint.
+
+        The fix is not to rely on individual renderers when clearing the
+        selection, but instead, cache the bounding rectangle of the selected
+        blocks' GapRects when setting the selection, and invalidate that
+        entire rectangle when clearing it.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Added a parameter saying whether
+        the repainting of selected blocks should include both
+        previously-selected areas and newly-selected areas or only
+        newly-selected areas. The default is both. Also compute
+        m_cachedSelectionBounds to be the bounding rectangle of the
+        new selection's BlockSelectionInfos' GapRects.
+        (WebCore::RenderView::clearSelection): Repaint m_cachedSelectionBounds,
+        and tell setSelection() that it should not paint areas that were in
+        the old selection's BlockSelectionInfos' GapRects.
+        * rendering/RenderView.h:
+        (WebCore::RenderView::):
+
 2009-05-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
