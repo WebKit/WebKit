@@ -459,11 +459,6 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         VM_THROW_EXCEPTION_AT_END(); \
         return 0; \
     } while (0)
-#define VM_THROW_EXCEPTION_2() \
-    do { \
-        VM_THROW_EXCEPTION_AT_END(); \
-        RETURN_PAIR(0, 0); \
-    } while (0)
 #define VM_THROW_EXCEPTION_AT_END() \
     returnToThrowTrampoline(stackFrame.globalData, STUB_RETURN_ADDRESS, STUB_RETURN_ADDRESS)
 
@@ -1428,7 +1423,8 @@ VoidPtrPair JITStubs::cti_op_resolve_func(STUB_ARGS_DECLARATION)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
-    VM_THROW_EXCEPTION_2();
+    VM_THROW_EXCEPTION_AT_END();
+    RETURN_PAIR(0, 0);
 }
 
 EncodedJSValue JITStubs::cti_op_sub(STUB_ARGS_DECLARATION)
@@ -1954,7 +1950,8 @@ VoidPtrPair JITStubs::cti_op_resolve_with_base(STUB_ARGS_DECLARATION)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
-    VM_THROW_EXCEPTION_2();
+    VM_THROW_EXCEPTION_AT_END();
+    RETURN_PAIR(0, 0);
 }
 
 JSObject* JITStubs::cti_op_new_func_exp(STUB_ARGS_DECLARATION)

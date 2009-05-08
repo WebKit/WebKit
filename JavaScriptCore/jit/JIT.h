@@ -32,6 +32,7 @@
 
 #define WTF_USE_CTI_REPATCH_PIC 1
 
+#include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JITCode.h"
 #include "JITStubs.h"
@@ -46,6 +47,7 @@
 namespace JSC {
 
     class CodeBlock;
+    class JIT;
     class JSPropertyNameIterator;
     class Interpreter;
     class Register;
@@ -60,13 +62,6 @@ namespace JSC {
     struct OperandTypes;
     struct PolymorphicAccessStructureList;
     struct StructureStubInfo;
-
-    typedef JSObject* (JIT_STUB *CTIHelper_o)(STUB_ARGS_DECLARATION);
-    typedef JSPropertyNameIterator* (JIT_STUB *CTIHelper_p)(STUB_ARGS_DECLARATION);
-    typedef void (JIT_STUB *CTIHelper_v)(STUB_ARGS_DECLARATION);
-    typedef void* (JIT_STUB *CTIHelper_s)(STUB_ARGS_DECLARATION);
-    typedef int (JIT_STUB *CTIHelper_b)(STUB_ARGS_DECLARATION);
-    typedef VoidPtrPair (JIT_STUB *CTIHelper_2)(STUB_ARGS_DECLARATION);
 
     struct CallRecord {
         MacroAssembler::Call from;
@@ -159,6 +154,9 @@ namespace JSC {
     void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
 
     class JIT : private MacroAssembler {
+        friend class JITStubCall;
+        friend class CallEvalJITStub;
+
         using MacroAssembler::Jump;
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
@@ -332,6 +330,17 @@ namespace JSC {
         static void unlinkCall(CallLinkInfo*);
 
     private:
+        struct JSRInfo {
+            DataLabelPtr storeLocation;
+            Label target;
+
+            JSRInfo(DataLabelPtr storeLocation, Label targetLocation)
+                : storeLocation(storeLocation)
+                , target(targetLocation)
+            {
+            }
+        };
+
         JIT(JSGlobalData*, CodeBlock* = 0);
 
         void privateCompileMainPass();
@@ -365,7 +374,6 @@ namespace JSC {
         void compileOpCallInitializeCallFrame();
         void compileOpCallSetupArgs(Instruction*);
         void compileOpCallVarargsSetupArgs(Instruction*);
-        void compileOpCallEvalSetupArgs(Instruction*);
         void compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID);
         void compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter);
         void compileOpConstructSetupArgs(Instruction*);
@@ -482,13 +490,6 @@ namespace JSC {
         void restoreArgumentReferenceForTrampoline();
 
         Call emitNakedCall(void* function);
-        Call emitCTICall_internal(void*);
-        Call emitCTICall(CTIHelper_o helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Call emitCTICall(CTIHelper_p helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Call emitCTICall(CTIHelper_v helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Call emitCTICall(CTIHelper_s helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Call emitCTICall(CTIHelper_b helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Call emitCTICall(CTIHelper_2 helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
 
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);
@@ -538,17 +539,6 @@ namespace JSC {
         Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
-        struct JSRInfo {
-            DataLabelPtr storeLocation;
-            Label target;
-
-            JSRInfo(DataLabelPtr storeLocation, Label targetLocation)
-                : storeLocation(storeLocation)
-                , target(targetLocation)
-            {
-            }
-        };
-
         unsigned m_bytecodeIndex;
         Vector<JSRInfo> m_jsrSites;
         Vector<SlowCaseEntry> m_slowCases;
@@ -556,6 +546,141 @@ namespace JSC {
 
         int m_lastResultBytecodeRegister;
         unsigned m_jumpTargetsPosition;
+    };
+
+    class JITStubCall {
+    public:
+        JITStubCall(JIT* jit, JSObject* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Default)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        JITStubCall(JIT* jit, JSPropertyNameIterator* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Default)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        JITStubCall(JIT* jit, void* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Default)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        JITStubCall(JIT* jit, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Default)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        JITStubCall(JIT* jit, void (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Void)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        JITStubCall(JIT* jit, VoidPtrPair (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
+            : m_jit(jit)
+            , m_stub(reinterpret_cast<void*>(stub))
+            , m_returnType(Pair)
+            , m_argumentIndex(1) // Index 0 is reserved for restoreArgumentReference();
+        {
+        }
+
+        // Arguments are added first to last.
+
+        template <typename T> void addArgument(T argument)
+        {
+            m_jit->poke(argument, m_argumentIndex);
+            ++m_argumentIndex;
+        }
+
+        void addArgument(unsigned src, JIT::RegisterID scratchRegister) // src is a virtual register.
+        {
+            if (m_jit->m_codeBlock->isConstantRegisterIndex(src))
+                addArgument(JIT::ImmPtr(JSValue::encode(m_jit->m_codeBlock->getConstant(src))));
+            else {
+                m_jit->loadPtr(JIT::Address(JIT::callFrameRegister, src * sizeof(Register)), scratchRegister);
+                addArgument(scratchRegister);
+            }
+            m_jit->killLastResultRegister();
+        }
+
+        JIT::Call call()
+        {
+            ASSERT(m_jit->m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
+#if ENABLE(OPCODE_SAMPLING)
+            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, true);
+#endif
+
+            m_jit->restoreArgumentReference();
+            JIT::Call call = m_jit->call();
+            m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeIndex, m_stub));
+
+#if ENABLE(OPCODE_SAMPLING)
+            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, false);
+#endif
+
+            m_jit->killLastResultRegister();
+            return call;
+        }
+
+        JIT::Call call(unsigned dst) // dst is a virtual register.
+        {
+            JIT::Call call = this->call();
+            m_jit->emitPutVirtualRegister(dst);
+            return call;
+        }
+
+        // Used for stubs that return two values encoded as a VoidPtrPair.
+        JIT::Call call(unsigned dst1, unsigned dst2) // dst1 and dst1 are virtual registers.
+        {
+            JIT::Call call = this->call();
+            m_jit->emitPutVirtualRegister(dst1);
+            m_jit->emitPutVirtualRegister(dst2, JIT::regT1);
+            return call;
+        }
+
+        JIT::Call call(JIT::RegisterID dst)
+        {
+            JIT::Call call = this->call();
+            if (dst != JIT::returnValueRegister)
+                m_jit->move(JIT::returnValueRegister, dst);
+            return call;
+        }
+
+    private:
+        JIT* m_jit;
+        void* m_stub;
+        enum { Default, Void, Pair } m_returnType;
+        size_t m_argumentIndex;
+    };
+
+    class CallEvalJITStub : public JITStubCall {
+    public:
+        CallEvalJITStub(JIT* jit, Instruction* instruction)
+            : JITStubCall(jit, JITStubs::cti_op_call_eval)
+        {
+            int callee = instruction[2].u.operand;
+            int argCount = instruction[3].u.operand;
+            int registerOffset = instruction[4].u.operand;
+
+            addArgument(callee, JIT::regT2);
+            addArgument(JIT::Imm32(registerOffset));
+            addArgument(JIT::Imm32(argCount));
+        }
     };
 }
 

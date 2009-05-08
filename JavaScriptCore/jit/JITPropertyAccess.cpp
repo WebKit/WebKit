@@ -55,12 +55,11 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
 
     emitGetVirtualRegister(baseVReg, regT0);
 
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArgConstant(ident, 2);
-    emitCTICall(JITStubs::cti_op_get_by_id_generic);
-    emitPutVirtualRegister(resultVReg);
+    JITStubCall stubCall(this, JITStubs::cti_op_get_by_id_generic);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(ImmPtr(ident));
+    stubCall.call(resultVReg);
 }
-
 
 void JIT::compileGetByIdSlowCase(int, int, Identifier*, Vector<SlowCaseEntry>::iterator&, unsigned)
 {
@@ -75,10 +74,11 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
 
     emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
-    emitPutJITStubArgConstant(ident, 2);
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 3);
-    emitCTICall(JITStubs::cti_op_put_by_id_generic);
+    JITStubCall stubCall(this, JITStubs::cti_op_put_by_id_generic);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(ImmPtr(ident));
+    stubCall.addArgument(regT1);
+    stubCall.call(resultVReg);
 }
 
 void JIT::compilePutByIdSlowCase(int, Identifier*, int, Vector<SlowCaseEntry>::iterator&, unsigned)
@@ -132,10 +132,10 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
 #ifndef NDEBUG
     Label coldPathBegin(this);
 #endif
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArgConstant(ident, 2);
-    Call call = emitCTICall(JITStubs::cti_op_get_by_id);
-    emitPutVirtualRegister(resultVReg);
+    JITStubCall stubCall(this, JITStubs::cti_op_get_by_id);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(ImmPtr(ident));
+    Call call = stubCall.call(resultVReg);
 
     ASSERT(differenceBetween(coldPathBegin, call) == patchOffsetGetByIdSlowCaseCall);
 
@@ -173,10 +173,11 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, Vector<Sl
     linkSlowCaseIfNotJSCell(iter, baseVReg);
     linkSlowCase(iter);
 
-    emitPutJITStubArgConstant(ident, 2);
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 3);
-    Call call = emitCTICall(JITStubs::cti_op_put_by_id);
+    JITStubCall stubCall(this, JITStubs::cti_op_put_by_id);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(ImmPtr(ident));
+    stubCall.addArgument(regT1);
+    Call call = stubCall.call();
 
     // Track the location of the call; this will be used to recover patch information.
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;

@@ -1,3 +1,55 @@
+2009-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        More abstraction for JITStub calls from JITed code.
+        
+        Added a JITStubCall class that automatically handles things like assigning
+        arguments to different stack slots and storing return values. Deployed
+        the class in about a billion places. A bunch more places remain to be
+        fixed up, but this is a good stopping point for now.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::emitTimeoutCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::JSRInfo::JSRInfo):
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::addArgument):
+        (JSC::JITStubCall::call):
+        (JSC::JITStubCall::):
+        (JSC::CallEvalJITStub::CallEvalJITStub):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArithSlow_op_lshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_jnless):
+        (JSC::JIT::compileFastArithSlow_op_bitand):
+        (JSC::JIT::compileFastArithSlow_op_mod):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArithSlow_op_post_inc):
+        (JSC::JIT::compileFastArithSlow_op_post_dec):
+        (JSC::JIT::compileFastArithSlow_op_pre_inc):
+        (JSC::JIT::compileFastArithSlow_op_pre_dec):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArith_op_sub):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::compileFastArithSlow_op_add):
+        (JSC::JIT::compileFastArithSlow_op_mul):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_resolve_func):
+        (JSC::JITStubs::cti_op_resolve_with_base):
+
 2009-05-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

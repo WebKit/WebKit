@@ -231,24 +231,6 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #endif
 
-ALWAYS_INLINE JIT::Call JIT::emitCTICall_internal(void* helper)
-{
-    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-
-#if ENABLE(OPCODE_SAMPLING)
-    sampleInstruction(m_codeBlock->instructions().begin() + m_bytecodeIndex, true);
-#endif
-    restoreArgumentReference();
-    Call ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, m_bytecodeIndex, helper));
-#if ENABLE(OPCODE_SAMPLING)
-    sampleInstruction(m_codeBlock->instructions().begin() + m_bytecodeIndex, false);
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
     return branchPtr(NotEqual, Address(reg, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(structure));
