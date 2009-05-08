@@ -1,3 +1,22 @@
+2009-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25627
+        Bug 25627: HTMLMediaElement: some errors should fire on <source> elements
+
+        Update tests for MEDIA_ERR_NONE_SUPPORTED change to MEDIA_ERR_SRC_NOT_SUPPORTED.
+        Add video-source-error.html to test errors fired on <source> elements .
+
+        * media/media-constants-expected.txt:
+        * media/media-constants.html:
+        * media/unsupported-rtsp.html:
+        * media/video-error-does-not-exist.html:
+        * media/video-source-error.html: Added.
+        * media/video-src-change.html:
+        * media/video-src-invalid-remove.html:
+        * media/video-src-plus-source.html:
+
 2009-05-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Disable new test that is failing.

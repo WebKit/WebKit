@@ -1,3 +1,60 @@
+2009-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25627
+        Bug 25627: HTMLMediaElement: some errors should fire on <source> elements
+
+        Update for HTML5 spec change to fire 'error' events on <source> element
+        when there is a failure while processing/loading a <source>.
+
+        Test: media/video-source-error.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enqueueEvent): Remove white-space.
+        (WebCore::HTMLMediaElement::loadInternal): Call cancelPendingEventsAndCallbacks instead
+        of just calling m_pendingEvents.clear() as we now also need to cancel pending errors on
+        all <source> element. 
+        (WebCore::HTMLMediaElement::selectMediaResource): Call isSafeToLoadURL() here instead of in
+        loadResource() as we need to report errors differently depending on the type of failure. Use
+        KURL instead of String.
+        (WebCore::HTMLMediaElement::loadNextSourceChild): nextSourceChild -> selectNextSourceChild.
+        Fail silently when there are no more <source> canditates because that is what spec mandates.
+        Keep url as KURL instead of converting to String.
+        (WebCore::HTMLMediaElement::loadResource): ASSERT that the URL is safe to load as we now 
+        assume the safety check now done before this function. Takes KURL instead of String.
+        (WebCore::HTMLMediaElement::isSafeToLoadURL): New, checks to see if a url is safe to load, logs
+        failure if not.
+        (WebCore::HTMLMediaElement::noneSupported): MEDIA_ERR_NONE_SUPPORTED -> MEDIA_ERR_SRC_NOT_SUPPORTED
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks): New, clear all events pending on
+        the media and all source elements.
+        (WebCore::HTMLMediaElement::setNetworkState): Fire an error on the source element when the 
+        the failure happened while processing one. Only call nonSupported() when the failure happened
+        while processing media element 'src' attribute.
+        (WebCore::HTMLMediaElement::havePotentialSourceChild): nextSourceChild -> selectNextSourceChild.
+        Deal with selectNextSourceChild returning a KURL instead of a String.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Renamed from nextSourceChild, add optional
+        param to control whether or not errors are fired on a source element when it will not be used.
+        Check safety of url here instead of waiting until loadResource(). Return a KURL instead of a
+        String.
+        (WebCore::HTMLMediaElement::initialURL): nextSourceChild -> selectNextSourceChild. Keep url as
+        a KURL instead of a String.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::):
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::HTMLSourceElement): Initialize timer related variables.
+        (WebCore::HTMLSourceElement::scheduleErrorEvent): New, start one-shot timer to fire an error
+        event ASAP.
+        (WebCore::HTMLSourceElement::cancelPendingErrorEvent): New, cancel pending error event.
+        (WebCore::HTMLSourceElement::errorEventTimerFired): New, fire error event if it has not been
+        cancelled.
+        * html/HTMLSourceElement.h:
+
+        * html/MediaError.h: 
+        (WebCore::MediaError::): MEDIA_ERR_NONE_SUPPORTED -> MEDIA_ERR_SRC_NOT_SUPPORTED
+        * html/MediaError.idl: Ditto
+
 2009-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

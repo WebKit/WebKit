@@ -34,7 +34,7 @@
 
         function errorEvent()
         {
-            testExpected("video.error.code", MediaError.MEDIA_ERR_NONE_SUPPORTED);
+            testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
             setTimeout(function () { endTest(); } , 500) ;
             run("video.removeAttribute('src')");
             consoleWrite("");

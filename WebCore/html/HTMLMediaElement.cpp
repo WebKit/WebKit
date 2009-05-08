@@ -244,7 +244,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 void HTMLMediaElement::enqueueEvent(RefPtr<Event> event)
 {
     m_pendingEvents.append(event);
-    if (!m_asyncEventTimer.isActive())                            
+    if (!m_asyncEventTimer.isActive())
         m_asyncEventTimer.startOneShot(0);
 }
 
@@ -375,7 +375,7 @@ void HTMLMediaElement::loadInternal()
 
     // 3 - If there are any tasks from the media element's media element event task source in 
     // one of the task queues, then remove those tasks.
-    m_pendingEvents.clear();
+    cancelPendingEventsAndCallbacks();
     
     // 4 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, set the 
     // error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED, 
@@ -446,9 +446,13 @@ void HTMLMediaElement::selectMediaResource()
     // 5 - If the media element has a src attribute, then run these substeps
     ContentType contentType("");
     if (!mediaSrc.isEmpty()) {
-        mediaSrc = document()->completeURL(mediaSrc).string();
-        m_loadState = LoadingFromSrcAttr;
-        loadResource(mediaSrc, contentType);
+        KURL mediaURL = document()->completeURL(mediaSrc);
+        if (isSafeToLoadURL(mediaURL, Complain)) {
+            m_loadState = LoadingFromSrcAttr;
+            loadResource(mediaURL, contentType);
+        } else 
+            noneSupported();
+
         return;
     }
 
@@ -460,36 +464,21 @@ void HTMLMediaElement::selectMediaResource()
 void HTMLMediaElement::loadNextSourceChild()
 {
     ContentType contentType("");
-    String mediaSrc;
-
-    mediaSrc = nextSourceChild(&contentType);
-    if (mediaSrc.isEmpty()) {
-        noneSupported();
+    KURL mediaURL = selectNextSourceChild(&contentType, Complain);
+    if (!mediaURL.isValid()) {
+        // It seems wrong to fail silently when we give up because no suitable <source>
+        // element can be found and set the error attribute if the element's 'src' attribute
+        // fails, but that is what the spec says.
         return;
     }
 
     m_loadState = LoadingFromSourceElement;
-    loadResource(mediaSrc, contentType);
+    loadResource(mediaURL, contentType);
 }
 
-void HTMLMediaElement::loadResource(String url, ContentType& contentType)
+void HTMLMediaElement::loadResource(const KURL& url, ContentType& contentType)
 {
-    Frame* frame = document()->frame();
-    FrameLoader* loader = frame ? frame->loader() : 0;
-
-    // don't allow remote to local urls
-    if (!loader || !loader->canLoad(KURL(KURL(), url), String(), document())) {
-        FrameLoader::reportLocalLoadFailed(frame, url);
-
-        // If we rejected the url from a <source> element and there are more <source> children, schedule
-        // the next one without reporting an error
-        if (m_loadState == LoadingFromSourceElement && havePotentialSourceChild())
-            scheduleLoad();
-        else
-            noneSupported();
-
-        return;
-    }
+    ASSERT(isSafeToLoadURL(url, Complain));
 
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
@@ -515,6 +504,21 @@ void HTMLMediaElement::loadResource(String url, ContentType& contentType)
         renderer()->updateFromElement();
 }
 
+bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction actionIfInvalid)
+{
+    Frame* frame = document()->frame();
+    FrameLoader* loader = frame ? frame->loader() : 0;
+
+    // don't allow remote to local urls
+    if (!loader || !loader->canLoad(url, String(), document())) {
+        if (actionIfInvalid == Complain)
+            FrameLoader::reportLocalLoadFailed(frame, url.string());
+        return false;
+    }
+    
+    return true;
+}
+
 void HTMLMediaElement::startProgressEventTimer()
 {
     if (m_progressEventTimer.isActive())
@@ -534,8 +538,8 @@ void HTMLMediaElement::noneSupported()
 
     // 3 - Reaching this step indicates that either the URL failed to resolve, or the media 
     // resource failed to load. Set the error attribute to a new MediaError object whose 
-    // code attribute is set to MEDIA_ERR_NONE_SUPPORTED.
-    m_error = MediaError::create(MediaError::MEDIA_ERR_NONE_SUPPORTED);
+    // code attribute is set to MEDIA_ERR_SRC_NOT_SUPPORTED.
+    m_error = MediaError::create(MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED);
 
     // 4- Set the element's networkState attribute to the NETWORK_NO_SOURCE value.
     m_networkState = NETWORK_NO_SOURCE;
@@ -580,6 +584,16 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 
 }
 
+void HTMLMediaElement::cancelPendingEventsAndCallbacks()
+{
+    m_pendingEvents.clear();
+
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(sourceTag))
+            static_cast<HTMLSourceElement*>(node)->cancelPendingErrorEvent();
+    }
+}
+
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
@@ -599,9 +613,11 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         stopPeriodicTimers();
 
         // If we failed while trying to load a <source> element, the movie was never parsed, and there are more
-        // <source> children, schedule the next one without reporting an error
-        if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement && havePotentialSourceChild()) {
-            scheduleLoad();
+        // <source> children, schedule the next one
+        if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
+            m_currentSourceNode->scheduleErrorEvent();
+            if (havePotentialSourceChild())
+                scheduleLoad();
             return;
         }
 
@@ -609,7 +625,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
             mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_NETWORK));
         else if (state == MediaPlayer::DecodeError)
             mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_DECODE));
-        else if (state == MediaPlayer::FormatError)
+        else if (state == MediaPlayer::FormatError && m_loadState == LoadingFromSrcAttr)
             noneSupported();
 
         if (isVideo())
@@ -1113,55 +1129,65 @@ bool HTMLMediaElement::havePotentialSourceChild()
 {
     // Stash the current <source> node so we can restore it after checking
     // to see there is another potential
-    Node* currentSourceNode = m_currentSourceNode;
-    String nextUrl = nextSourceChild();
+    HTMLSourceElement* currentSourceNode = m_currentSourceNode;
+    KURL nextURL = selectNextSourceChild(0, DoNothing);
     m_currentSourceNode = currentSourceNode;
 
-    return !nextUrl.isEmpty();
+    return nextURL.isValid();
 }
 
-String HTMLMediaElement::nextSourceChild(ContentType *contentType)
+KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSourceAction actionIfInvalid)
 {
-    String mediaSrc;
+    KURL mediaURL;
+    Node* node;
     bool lookingForPreviousNode = m_currentSourceNode;
+    bool canUse = false;
 
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+    for (node = firstChild(); !canUse && node; node = node->nextSibling()) {
         if (!node->hasTagName(sourceTag))
             continue;
 
         if (lookingForPreviousNode) {
-            if (m_currentSourceNode == node)
+            if (m_currentSourceNode == static_cast<HTMLSourceElement*>(node))
                 lookingForPreviousNode = false;
             continue;
         }
-        
+
         HTMLSourceElement* source = static_cast<HTMLSourceElement*>(node);
         if (!source->hasAttribute(srcAttr))
-            continue; 
+            goto check_again; 
+
         if (source->hasAttribute(mediaAttr)) {
             MediaQueryEvaluator screenEval("screen", document()->frame(), renderer() ? renderer()->style() : 0);
             RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(source->media());
-            if (!screenEval.eval(media.get()))
-                continue;
+            if (!screenEval.eval(media.get())) 
+                goto check_again;
         }
-        if (source->hasAttribute(typeAttr)) {
-            ContentType type(source->type());
-            if (!MediaPlayer::supportsType(type))
-                continue;
 
-            // return type with all parameters in place so the media engine can use them
-            if (contentType)
-                *contentType = type;
+        if (source->hasAttribute(typeAttr)) {
+            if (!MediaPlayer::supportsType(ContentType(source->type())))
+                goto check_again;
         }
-        mediaSrc = source->src().string();
-        m_currentSourceNode = node;
-        break;
+
+        // Is it safe to load this url?
+        mediaURL = source->src();
+        if (!mediaURL.isValid() || !isSafeToLoadURL(mediaURL, actionIfInvalid))
+            goto check_again;
+
+        // Making it this far means the <source> looks reasonable
+        canUse = true;
+        if (contentType)
+            *contentType = ContentType(source->type());
+
+check_again:
+        if (!canUse && actionIfInvalid == Complain)
+            source->scheduleErrorEvent();
+        m_currentSourceNode = static_cast<HTMLSourceElement*>(node);
     }
 
-    if (!mediaSrc.isEmpty())
-        mediaSrc = document()->completeURL(mediaSrc).string();
-
-    return mediaSrc;
+    if (!canUse)
+        m_currentSourceNode = 0;
+    return canUse ? mediaURL : KURL();
 }
 
 void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
@@ -1491,15 +1517,12 @@ void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 
 String HTMLMediaElement::initialURL()
 {
-    String initialSrc = mediaSrc = getAttribute(srcAttr);
+    KURL initialSrc = document()->completeURL(getAttribute(srcAttr));
     
-    if (initialSrc.isEmpty())
-        initialSrc = nextSourceChild();
+    if (!initialSrc.isValid())
+        initialSrc = selectNextSourceChild(0, DoNothing).string();
 
-    if (!initialSrc.isEmpty())
-        initialSrc = document()->completeURL(initialSrc).string();
-
-    m_currentSrc = initialSrc;
+    m_currentSrc = initialSrc.string();
 
     return initialSrc;
 }

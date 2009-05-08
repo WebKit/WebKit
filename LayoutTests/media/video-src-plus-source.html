@@ -20,7 +20,7 @@
 
         waitForEvent('error', function () { 
             testExpected("relativeURL(video.currentSrc)", "content/bogus.mpeg");
-            testExpected("media.error.code", MediaError.MEDIA_ERR_NONE_SUPPORTED);
+            testExpected("media.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
             setTimeout(endTest, 200) ;
             consoleWrite("");
         });

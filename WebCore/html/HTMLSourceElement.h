@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLElement.h"
+#include "Timer.h"
 #include <limits>
 
 namespace WebCore {
@@ -51,6 +52,14 @@ public:
     void setSrc(const String&);    
     void setMedia(const String&);
     void setType(const String&);
+    
+    void scheduleErrorEvent();
+    void cancelPendingErrorEvent();
+
+private:
+    void errorEventTimerFired(Timer<HTMLSourceElement>*);
+
+    Timer<HTMLSourceElement> m_errorEventTimer;
 };
 
 } //namespace
