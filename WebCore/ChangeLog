@@ -1,3 +1,13 @@
+2009-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber Stamped by Dave Hyatt
+        
+        Shuffle the data members to make Events 8 bytes smaller in 64-bit.
+
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+
 2009-05-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Beth Dakin.
