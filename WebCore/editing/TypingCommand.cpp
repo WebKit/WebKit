@@ -311,9 +311,15 @@ void TypingCommand::markMisspellingsAfterTyping()
 
 void TypingCommand::typingAddedToOpenCommand()
 {
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     document()->frame()->editor()->appliedEditing(this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
     markMisspellingsAfterTyping();
+#else
+    // The old spellchecking code requires that checking be done first, to prevent issues like that in 6864072, where <doesn't> is marked as misspelled.
+    markMisspellingsAfterTyping();
+    document()->frame()->editor()->appliedEditing(this);
+#endif
 }
 
 void TypingCommand::insertText(const String &text, bool selectInsertedText)

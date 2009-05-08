@@ -1,3 +1,15 @@
+2009-05-08  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/6857446> REGRESSION (Safari 3-4): Contraction base 
+        marked as misspelled even though contraction is a word
+        Make sure spelling underline does not persist on words like 
+        <doesn't>.  
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+
 2009-05-08  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
