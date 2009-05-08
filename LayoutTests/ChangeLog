@@ -1,3 +1,10 @@
+2009-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        No review, update tests results missed in r43403.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-05-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         GTK+ test results for two new tests.
