@@ -1,5 +1,15 @@
 2009-05-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+        
+        Restored a Mozilla JS test I accidentally gutted.
+
+        * tests/mozilla/ecma/Array/15.4.4.2.js:
+        (getTestCases):
+        (test):
+
+2009-05-08  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Gavin Barraclough.
         
         More abstraction for JITStub calls from JITed code.
