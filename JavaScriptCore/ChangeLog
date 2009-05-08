@@ -5,6 +5,15 @@
         Fixed a minor sequencing error introduced by recent Parser speedups.
 
         * parser/Parser.cpp:
+        (JSC::Parser::reparseInPlace): Missed a spot in my last patch.
+
+2009-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed a minor sequencing error introduced by recent Parser speedups.
+
+        * parser/Parser.cpp:
         (JSC::Parser::parse):
         * parser/Parser.h:
         (JSC::Parser::parse):
