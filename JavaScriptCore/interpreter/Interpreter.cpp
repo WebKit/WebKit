@@ -2839,6 +2839,29 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ++vPC;
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_jnlesseq) {
+        /* jnlesseq src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is less than or equal to
+           register src2, as with the ECMAScript '<=' operator,
+           and then jumps to offset target from the current instruction,
+           if and only if theresult of the comparison is false.
+        */
+        JSValue src1 = callFrame[(++vPC)->u.operand].jsValue();
+        JSValue src2 = callFrame[(++vPC)->u.operand].jsValue();
+        int target = (++vPC)->u.operand;
+
+        bool result = jsLessEq(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        
+        if (!result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+
+        ++vPC;
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_switch_imm) {
         /* switch_imm tableIndex(n) defaultOffset(offset) scrutinee(r)
 

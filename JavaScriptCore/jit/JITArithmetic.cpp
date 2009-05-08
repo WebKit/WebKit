@@ -394,6 +394,182 @@ void JIT::compileFastArithSlow_op_jnless(unsigned op1, unsigned op2, unsigned ta
     }
 }
 
+void JIT::compileFastArith_op_jnlesseq(unsigned op1, unsigned op2, unsigned target)
+{
+    // We generate inline code for the following cases in the fast path:
+    // - int immediate to constant int immediate
+    // - constant int immediate to int immediate
+    // - int immediate to int immediate
+
+    if (isOperandConstantImmediateInt(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
+#if USE(ALTERNATE_JSIMMEDIATE)
+        int32_t op2imm = getConstantOperandImmediateInt(op2);
+#else
+        int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
+#endif
+        addJump(branch32(GreaterThan, regT0, Imm32(op2imm)), target + 3);
+    } else if (isOperandConstantImmediateInt(op1)) {
+        emitGetVirtualRegister(op2, regT1);
+        emitJumpSlowCaseIfNotImmediateInteger(regT1);
+#if USE(ALTERNATE_JSIMMEDIATE)
+        int32_t op1imm = getConstantOperandImmediateInt(op1);
+#else
+        int32_t op1imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op1)));
+#endif
+        addJump(branch32(LessThan, regT1, Imm32(op1imm)), target + 3);
+    } else {
+        emitGetVirtualRegisters(op1, regT0, op2, regT1);
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
+        emitJumpSlowCaseIfNotImmediateInteger(regT1);
+
+        addJump(branch32(GreaterThan, regT0, regT1), target + 3);
+    }
+}
+void JIT::compileFastArithSlow_op_jnlesseq(unsigned op1, unsigned op2, unsigned target, Vector<SlowCaseEntry>::iterator& iter)
+{
+    // We generate inline code for the following cases in the slow path:
+    // - floating-point number to constant int immediate
+    // - constant int immediate to floating-point number
+    // - floating-point number to floating-point number.
+
+    if (isOperandConstantImmediateInt(op2)) {
+        linkSlowCase(iter);
+
+        if (isSSE2Present()) {
+#if USE(ALTERNATE_JSIMMEDIATE)
+            Jump fail1 = emitJumpIfNotImmediateNumber(regT0);
+            addPtr(tagTypeNumberRegister, regT0);
+            m_assembler.movq_rr(regT0, X86::xmm0);
+#else
+            Jump fail1;
+            if (!m_codeBlock->isKnownNotImmediate(op1))
+                fail1 = emitJumpIfNotJSCell(regT0);
+
+            Jump fail2 = checkStructure(regT0, m_globalData->numberStructure.get());
+            m_assembler.movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), regT0, X86::xmm0);
+#endif
+            
+            int32_t op2imm = getConstantOperand(op2).getInt32Fast();;
+                    
+            m_assembler.movl_i32r(op2imm, regT1);
+            m_assembler.cvtsi2sd_rr(regT1, X86::xmm1);
+
+            m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jb()), target + 3);
+
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
+
+#if USE(ALTERNATE_JSIMMEDIATE)
+            fail1.link(this);
+#else
+            if (!m_codeBlock->isKnownNotImmediate(op1))
+                fail1.link(this);
+            fail2.link(this);
+#endif
+        }
+
+        emitPutJITStubArg(regT0, 1);
+        emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
+        emitCTICall(JITStubs::cti_op_jlesseq);
+        emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
+
+    } else if (isOperandConstantImmediateInt(op1)) {
+        linkSlowCase(iter);
+
+        if (isSSE2Present()) {
+#if USE(ALTERNATE_JSIMMEDIATE)
+            Jump fail1 = emitJumpIfNotImmediateNumber(regT1);
+            addPtr(tagTypeNumberRegister, regT1);
+            m_assembler.movq_rr(regT1, X86::xmm1);
+#else
+            Jump fail1;
+            if (!m_codeBlock->isKnownNotImmediate(op2))
+                fail1 = emitJumpIfNotJSCell(regT1);
+            
+            Jump fail2 = checkStructure(regT1, m_globalData->numberStructure.get());
+            m_assembler.movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), regT1, X86::xmm1);
+#endif
+            
+            int32_t op1imm = getConstantOperand(op1).getInt32Fast();;
+                    
+            m_assembler.movl_i32r(op1imm, regT0);
+            m_assembler.cvtsi2sd_rr(regT0, X86::xmm0);
+
+            m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jb()), target + 3);
+
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
+
+#if USE(ALTERNATE_JSIMMEDIATE)
+            fail1.link(this);
+#else
+            if (!m_codeBlock->isKnownNotImmediate(op2))
+                fail1.link(this);
+            fail2.link(this);
+#endif
+        }
+
+        emitPutJITStubArgFromVirtualRegister(op1, 1, regT2);
+        emitPutJITStubArg(regT1, 2);
+        emitCTICall(JITStubs::cti_op_jlesseq);
+        emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
+
+    } else {
+        linkSlowCase(iter);
+
+        if (isSSE2Present()) {
+#if USE(ALTERNATE_JSIMMEDIATE)
+            Jump fail1 = emitJumpIfNotImmediateNumber(regT0);
+            Jump fail2 = emitJumpIfNotImmediateNumber(regT1);
+            Jump fail3 = emitJumpIfImmediateInteger(regT1);
+            addPtr(tagTypeNumberRegister, regT0);
+            addPtr(tagTypeNumberRegister, regT1);
+            m_assembler.movq_rr(regT0, X86::xmm0);
+            m_assembler.movq_rr(regT1, X86::xmm1);
+#else
+            Jump fail1;
+            if (!m_codeBlock->isKnownNotImmediate(op1))
+                fail1 = emitJumpIfNotJSCell(regT0);
+
+            Jump fail2;
+            if (!m_codeBlock->isKnownNotImmediate(op2))
+                fail2 = emitJumpIfNotJSCell(regT1);
+
+            Jump fail3 = checkStructure(regT0, m_globalData->numberStructure.get());
+            Jump fail4 = checkStructure(regT1, m_globalData->numberStructure.get());
+            m_assembler.movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), regT0, X86::xmm0);
+            m_assembler.movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), regT1, X86::xmm1);
+#endif
+
+            m_assembler.ucomisd_rr(X86::xmm0, X86::xmm1);
+            emitJumpSlowToHot(Jump::Jump(m_assembler.jb()), target + 3);
+
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
+
+#if USE(ALTERNATE_JSIMMEDIATE)
+            fail1.link(this);
+            fail2.link(this);
+            fail3.link(this);
+#else
+            if (!m_codeBlock->isKnownNotImmediate(op1))
+                fail1.link(this);
+            if (!m_codeBlock->isKnownNotImmediate(op2))
+                fail2.link(this);
+            fail3.link(this);
+            fail4.link(this);
+#endif
+        }
+
+        linkSlowCase(iter);
+        emitPutJITStubArg(regT0, 1);
+        emitPutJITStubArg(regT1, 2);
+        emitCTICall(JITStubs::cti_op_jlesseq);
+        emitJumpSlowToHot(branchTest32(Zero, regT0), target + 3);
+    }
+}
+
 void JIT::compileFastArith_op_bitand(unsigned result, unsigned op1, unsigned op2)
 {
     if (isOperandConstantImmediateInt(op1)) {

@@ -652,6 +652,21 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
             instructions().append(target->offsetFrom(instructions().size()));
             return target;
         }
+    } else if (m_lastOpcodeID == op_lesseq) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+            emitOpcode(op_jnlesseq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
     } else if (m_lastOpcodeID == op_not) {
         int dstIndex;
         int srcIndex;

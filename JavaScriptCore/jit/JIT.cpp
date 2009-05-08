@@ -628,6 +628,12 @@ void JIT::privateCompileMainPass()
             RECORD_JUMP_TARGET(target + 3);
             NEXT_OPCODE(op_jnless);
         }
+        case op_jnlesseq: {
+            unsigned target = currentInstruction[3].u.operand;
+            compileFastArith_op_jnlesseq(currentInstruction[1].u.operand, currentInstruction[2].u.operand, target);
+            RECORD_JUMP_TARGET(target + 3);
+            NEXT_OPCODE(op_jnlesseq);
+        }
         case op_not: {
             emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
             xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
@@ -1325,6 +1331,10 @@ void JIT::privateCompileSlowCases()
         case op_jnless: {
             compileFastArithSlow_op_jnless(currentInstruction[1].u.operand, currentInstruction[2].u.operand, currentInstruction[3].u.operand, iter);
             NEXT_OPCODE(op_jnless);
+        }
+        case op_jnlesseq: {
+            compileFastArithSlow_op_jnlesseq(currentInstruction[1].u.operand, currentInstruction[2].u.operand, currentInstruction[3].u.operand, iter);
+            NEXT_OPCODE(op_jnlesseq);
         }
         case op_not: {
             linkSlowCase(iter);

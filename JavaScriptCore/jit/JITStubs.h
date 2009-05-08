@@ -247,6 +247,7 @@ namespace JSC {
         static VoidPtrPair JIT_STUB cti_op_resolve_func(STUB_ARGS_DECLARATION);
         static VoidPtrPair JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
         static int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
         static int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
         static int JIT_STUB cti_op_loop_if_less(STUB_ARGS_DECLARATION);
         static int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);

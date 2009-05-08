@@ -1781,6 +1781,19 @@ int JITStubs::cti_op_jless(STUB_ARGS_DECLARATION)
     return result;
 }
 
+int JITStubs::cti_op_jlesseq(STUB_ARGS_DECLARATION)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
+    CallFrame* callFrame = stackFrame.callFrame;
+
+    bool result = jsLessEq(callFrame, src1, src2);
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
 EncodedJSValue JITStubs::cti_op_not(STUB_ARGS_DECLARATION)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

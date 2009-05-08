@@ -1,3 +1,32 @@
+2009-05-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a new opcode jnlesseq, and optimize its compilation in the JIT using
+        techniques similar to what were used to optimize jnless in r43363.
+
+        This gives a 0.7% speedup on SunSpider, particularly on the tests 3d-cube,
+        control-flow-recursive, date-format-xparb, and string-base64.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Add support for dumping op_jnlesseq.
+        * bytecode/Opcode.h: Add op_jnlesseq to the list of opcodes.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfFalse): Add a peephole optimization
+        for op_jnlesseq when emitting lesseq followed by a jump.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Add case for op_jnlesseq.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Add case for op_jnlesseq.
+        (JSC::JIT::privateCompileSlowCases): Add case for op_jnlesseq.
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_jnlesseq): Added.
+        (JSC::JIT::compileFastArithSlow_op_jnlesseq): Added.
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_jlesseq): Added.
+        * jit/JITStubs.h:
+
 2009-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
