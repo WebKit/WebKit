@@ -66,11 +66,12 @@ Path::Path()
 
 Path::~Path()
 {
+    clear();
 }
 
 Path::Path(const Path& path)
 { 
-    m_path = (PlatformPath*)&path.m_path;
+    m_path = new wxGraphicsPath(*path.m_path);
 }
 
 bool Path::contains(const FloatPoint& point, const WindRule rule) const
@@ -89,7 +90,7 @@ bool Path::contains(const FloatPoint& point, const WindRule rule) const
 
 void Path::translate(const FloatSize&)
 { 
-    notImplemented(); 
+    notImplemented();
 }
 
 FloatRect Path::boundingRect() const 

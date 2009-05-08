@@ -1,8 +1,23 @@
 2009-05-08  Kevin Watters  <kevinwatters@gmail.com>
 
+        Reviewed by Kevin Ollivier.
+
+        Make sure the path's refdata isn't deleted before we're done with the object.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25652
+
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::~Path):
+        (WebCore::Path::Path):
+        (WebCore::Path::translate):
+
+2009-05-08  Kevin Watters  <kevinwatters@gmail.com>
+
         Reviewed by Darin Adler.
 
         Fix for memory leak on Mac.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25650
 
         * platform/wx/wxcode/mac/carbon/fontprops.cpp:
         (wxFontProperties::wxFontProperties):
