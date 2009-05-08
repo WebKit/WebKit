@@ -775,6 +775,7 @@ void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, b
 
 void Frame::setJSStatusBarText(const String& text)
 {
+    ASSERT(m_doc); // Client calls shouldn't be made when the frame is in inconsistent state.
     m_kjsStatusBarText = text;
     if (m_page)
         m_page->chrome()->setStatusbarText(this, m_kjsStatusBarText);
@@ -782,6 +783,7 @@ void Frame::setJSStatusBarText(const String& text)
 
 void Frame::setJSDefaultStatusBarText(const String& text)
 {
+    ASSERT(m_doc); // Client calls shouldn't be made when the frame is in inconsistent state.
     m_kjsDefaultStatusBarText = text;
     if (m_page)
         m_page->chrome()->setStatusbarText(this, m_kjsDefaultStatusBarText);

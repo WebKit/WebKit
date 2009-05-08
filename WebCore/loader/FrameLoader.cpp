@@ -721,9 +721,13 @@ bool FrameLoader::didOpenURL(const KURL& url)
     m_isLoadingMainResource = true;
     m_didCallImplicitClose = false;
 
-    m_frame->setJSStatusBarText(String());
-    m_frame->setJSDefaultStatusBarText(String());
-
+    // If we are still in the process of initializing an empty document then
+    // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
+    // since it may cause clients to attempt to render the frame.
+    if (!m_creatingInitialEmptyDocument) {
+        m_frame->setJSStatusBarText(String());
+        m_frame->setJSDefaultStatusBarText(String());
+    }
     m_URL = url;
     if ((m_URL.protocolIs("http") || m_URL.protocolIs("https")) && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
         m_URL.setPath("/");
