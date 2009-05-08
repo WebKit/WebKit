@@ -36,13 +36,11 @@
 #include "KURL.h"
 #include "Path.h"
 #include "Pattern.h"
-#include "WebCoreSystemInterface.h"
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
@@ -1199,75 +1197,6 @@ void GraphicsContext::setCompositeOperation(CompositeOperator mode)
     CGContextSetBlendMode(platformContext(), target);
 }
 #endif
-
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
-{
-    if (paintingDisabled())
-        return;
-
-    // Make sure to draw only complete dots.
-    // NOTE: Code here used to shift the underline to the left and increase the width
-    // to make sure everything gets underlined, but that results in drawing out of
-    // bounds (e.g. when at the edge of a view) and could make it appear that the
-    // space between adjacent misspelled words was underlined.
-    // allow slightly more considering that the pattern ends with a transparent pixel
-    int widthMod = width % cMisspellingLinePatternWidth;
-    if (cMisspellingLinePatternWidth - widthMod > cMisspellingLinePatternGapWidth)
-        width -= widthMod;
-
-    // Draw the underline.
-    CGContextRef context = platformContext();
-    CGContextSaveGState(context);
-
-    DEFINE_STATIC_LOCAL(Color, spellingPatternColor, (255, 0, 0));
-    DEFINE_STATIC_LOCAL(Color, grammarPatternColor, (0, 128, 0));
-
-    const Color& patternColor = grammar ? grammarPatternColor : spellingPatternColor;
-    setCGStrokeColor(context, patternColor);
-
-    wkSetPatternPhaseInUserSpace(context, point);
-    CGContextSetBlendMode(context, kCGBlendModeNormal);
-
-    // 3 rows, each offset by half a pixel for blending purposes.
-    const CGPoint upperPoints [] = {{point.x(), point.y() + cMisspellingLineThickness - 2.5f },
-                                    {point.x() + width, point.y() + cMisspellingLineThickness - 2.5f}};
-    const CGPoint middlePoints [] = {{point.x(), point.y() + cMisspellingLineThickness - 1.5f },
-                                     {point.x() + width, point.y() + cMisspellingLineThickness - 1.5f}};
-    const CGPoint lowerPoints [] = {{point.x(), point.y() + cMisspellingLineThickness - 0.5f },
-                                    {point.x() + width, point.y() + cMisspellingLineThickness - 0.5f}};
-
-    // Dash lengths for the top and bottom of the error underline are the same.
-    // These are magic.
-    static const float edge_dash_lengths[] = {2.0f, 2.0f};
-    static const float middle_dash_lengths[] = {2.76f, 1.24f};
-    static const float edge_offset = -(edge_dash_lengths[1] - 1.0f) / 2.0f;
-    static const float middle_offset = -(middle_dash_lengths[1] - 1.0f) / 2.0f;
-
-    // Line opacities.  Once again, these are magic.
-    const float upperOpacity = 0.33f;
-    const float middleOpacity = 0.75f;
-    const float lowerOpacity = 0.88f;
-
-    // Top line.
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths,
-                         sizeof(edge_dash_lengths) / sizeof(edge_dash_lengths[0]));
-    CGContextSetAlpha(context, upperOpacity);
-    CGContextStrokeLineSegments(context, upperPoints, 2);
-
-    // Middle line.
-    CGContextSetLineDash(context, middle_offset, middle_dash_lengths,
-                         sizeof(middle_dash_lengths) / sizeof(middle_dash_lengths[0]));
-    CGContextSetAlpha(context, middleOpacity);
-    CGContextStrokeLineSegments(context, middlePoints, 2);
-
-    // Bottom line.
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths,
-                         sizeof(edge_dash_lengths) / sizeof(edge_dash_lengths[0]));
-    CGContextSetAlpha(context, lowerOpacity);
-    CGContextStrokeLineSegments(context, lowerPoints, 2);
-
-    CGContextRestoreGState(context);
-}
 
 }
 

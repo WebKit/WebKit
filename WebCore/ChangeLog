@@ -1,3 +1,21 @@
+2009-05-07  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY.
+        Suggested by Oliver Hunt.
+
+        Rolling back http://trac.webkit.org/changeset/43385
+        because we have to use mac artwork for the underline on OSX.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::createPatternColor):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::setCGStrokeColor):
+        (WebCore::spellingPatternColor):
+        (WebCore::grammarPatternColor):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+
 2009-05-07  John Grabowski  <jrg@chromium.org>
 
         Reviewed by Simon Fraser.

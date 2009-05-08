@@ -1,3 +1,20 @@
+2009-05-07  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY.
+        Suggested by Oliver Hunt.
+
+        Rolling back http://trac.webkit.org/changeset/43385
+        because we have to use mac artwork for the underline on OSX.
+
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.checksum:
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png:
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.checksum:
+        * platform/mac/editing/spelling/spellcheck-attribute-expected.png:
+        * platform/mac/editing/spelling/spelling-expected.checksum:
+        * platform/mac/editing/spelling/spelling-expected.png:
+        * platform/mac/editing/spelling/spelling-linebreak-expected.checksum:
+        * platform/mac/editing/spelling/spelling-linebreak-expected.png:
+
 2009-05-07  John Grabowski  <jrg@chromium.org>
 
         Reviewed by Simon Fraser.
