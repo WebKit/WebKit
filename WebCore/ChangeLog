@@ -1,3 +1,15 @@
+2009-05-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Unify scrolling code via adjustments and keys. Use the WebCore
+        defined constants, since that's what people are most used to at
+        this point.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformHandleHorizontalAdjustment):
+        (WebCore::ScrollView::platformHandleVerticalAdjustment):
+
 2009-05-07  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY.

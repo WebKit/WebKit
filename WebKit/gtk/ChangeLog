@@ -1,3 +1,15 @@
+2009-05-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Unify scrolling code via adjustments and keys. Use the WebCore
+        defined constants, since that's what people are most used to at
+        this point.
+
+        * ChangeLog:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_real_move_cursor):
+
 2009-05-07  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.

@@ -147,8 +147,8 @@ bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
 {
     if (m_horizontalAdjustment) {
         m_horizontalAdjustment->page_size = visibleWidth();
-        m_horizontalAdjustment->step_increment = visibleWidth() / 10.0;
-        m_horizontalAdjustment->page_increment = visibleWidth() * 0.9;
+        m_horizontalAdjustment->step_increment = cScrollbarPixelsPerLineStep;
+        m_horizontalAdjustment->page_increment = visibleWidth() - cAmountToKeepWhenPaging;
         m_horizontalAdjustment->lower = 0;
         m_horizontalAdjustment->upper = contentsWidth();
         gtk_adjustment_changed(m_horizontalAdjustment);
@@ -166,8 +166,8 @@ bool ScrollView::platformHandleVerticalAdjustment(const IntSize& scroll)
 {
     if (m_verticalAdjustment) {
         m_verticalAdjustment->page_size = visibleHeight();
-        m_verticalAdjustment->step_increment = visibleHeight() / 10.0;
-        m_verticalAdjustment->page_increment = visibleHeight() * 0.9;
+        m_verticalAdjustment->step_increment = cScrollbarPixelsPerLineStep;
+        m_verticalAdjustment->page_increment = visibleHeight() - cAmountToKeepWhenPaging;
         m_verticalAdjustment->lower = 0;
         m_verticalAdjustment->upper = contentsHeight();
         gtk_adjustment_changed(m_verticalAdjustment);
