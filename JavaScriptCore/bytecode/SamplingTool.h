@@ -191,21 +191,25 @@ namespace JSC {
             , m_sample(0)
             , m_sampleCount(0)
             , m_opcodeSampleCount(0)
+#if ENABLE(CODEBLOCK_SAMPLING)
             , m_scopeSampleMap(new ScopeSampleRecordMap())
+#endif
         {
             memset(m_opcodeSamples, 0, sizeof(m_opcodeSamples));
             memset(m_opcodeSamplesInCTIFunctions, 0, sizeof(m_opcodeSamplesInCTIFunctions));
         }
 
+#if ENABLE(CODEBLOCK_SAMPLING)
         ~SamplingTool()
         {
             deleteAllValues(*m_scopeSampleMap);
         }
 
+        void notifyOfScope(ScopeNode* scope);
+#endif
+
         void setup();
         void dump(ExecState*);
-
-        void notifyOfScope(ScopeNode* scope);
 
         void sample(CodeBlock* codeBlock, Instruction* vPC)
         {
@@ -260,8 +264,10 @@ namespace JSC {
         unsigned m_opcodeSamples[numOpcodeIDs];
         unsigned m_opcodeSamplesInCTIFunctions[numOpcodeIDs];
         
+#if ENABLE(CODEBLOCK_SAMPLING)
         Mutex m_scopeSampleMapMutex;
         OwnPtr<ScopeSampleRecordMap> m_scopeSampleMap;
+#endif
     };
 
 } // namespace JSC

@@ -1,3 +1,28 @@
+2009-05-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver "I see lots of ifdefs" Hunt.
+
+        Fix (kinda) for sampling tool breakage.  The codeblock sampling tool has become
+        b0rked due to recent changes in native function calling.  The initialization of
+        a ScopeNode appears to now occur before the sampling tool (or possibly the
+        interpreter has been brought into existence, wihich leads to crashyness).
+
+        This patch doesn't fix the problem.  The crash occurs when tracking a Scope, but
+        we shouldn't need to track scopes when we're just sampling opcodes, not
+        codeblocks.  Not retaining Scopes when just opcode sampling will reduce sampling
+        overhead reducing any instrumentation skew, which is a good thing.  As a side
+        benefit this patch also gets the opcode sampling going again, albeit in a bit of
+        a lame way.  Will come back later with a proper fix from codeblock sampling. 
+
+        * JavaScriptCore.exp:
+        * bytecode/SamplingTool.cpp:
+        (JSC::compareLineCountInfoSampling):
+        (JSC::SamplingTool::dump):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::SamplingTool):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+
 2009-05-07  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.

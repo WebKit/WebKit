@@ -2548,7 +2548,7 @@ ScopeNode::ScopeNode(JSGlobalData* globalData)
     : StatementNode(globalData)
     , m_features(NoFeatures)
 {
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(CODEBLOCK_SAMPLING)
     globalData->interpreter->sampler()->notifyOfScope(this);
 #endif
 }
@@ -2559,7 +2559,7 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceE
     , m_features(features)
     , m_source(source)
 {
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(CODEBLOCK_SAMPLING)
     globalData->interpreter->sampler()->notifyOfScope(this);
 #endif
 }

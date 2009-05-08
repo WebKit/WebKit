@@ -209,11 +209,13 @@ void SamplingTool::sample()
     s_samplingTool->doRun();
 }
 
+#if ENABLE(CODEBLOCK_SAMPLING)
 void SamplingTool::notifyOfScope(ScopeNode* scope)
 {
     MutexLocker locker(m_scopeSampleMapMutex);
     m_scopeSampleMap->set(scope, new ScopeSampleRecord(scope));
 }
+#endif
 
 void SamplingTool::setup()
 {
@@ -233,20 +235,21 @@ struct LineCountInfo {
     unsigned count;
 };
 
-static int compareLineCountInfoSampling(const void* left, const void* right)
-{
-    const LineCountInfo* leftLineCount = reinterpret_cast<const LineCountInfo*>(left);
-    const LineCountInfo* rightLineCount = reinterpret_cast<const LineCountInfo*>(right);
-
-    return (leftLineCount->line > rightLineCount->line) ? 1 : (leftLineCount->line < rightLineCount->line) ? -1 : 0;
-}
-
 static int compareOpcodeIndicesSampling(const void* left, const void* right)
 {
     const OpcodeSampleInfo* leftSampleInfo = reinterpret_cast<const OpcodeSampleInfo*>(left);
     const OpcodeSampleInfo* rightSampleInfo = reinterpret_cast<const OpcodeSampleInfo*>(right);
 
     return (leftSampleInfo->count < rightSampleInfo->count) ? 1 : (leftSampleInfo->count > rightSampleInfo->count) ? -1 : 0;
+}
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+static int compareLineCountInfoSampling(const void* left, const void* right)
+{
+    const LineCountInfo* leftLineCount = reinterpret_cast<const LineCountInfo*>(left);
+    const LineCountInfo* rightLineCount = reinterpret_cast<const LineCountInfo*>(right);
+
+    return (leftLineCount->line > rightLineCount->line) ? 1 : (leftLineCount->line < rightLineCount->line) ? -1 : 0;
 }
 
 static int compareScopeSampleRecords(const void* left, const void* right)
@@ -256,6 +259,7 @@ static int compareScopeSampleRecords(const void* left, const void* right)
 
     return (leftValue->m_sampleCount < rightValue->m_sampleCount) ? 1 : (leftValue->m_sampleCount > rightValue->m_sampleCount) ? -1 : 0;
 }
+#endif
 
 void SamplingTool::dump(ExecState* exec)
 {
@@ -307,6 +311,8 @@ void SamplingTool::dump(ExecState* exec)
     printf("\tcti count:\tsamples inside a CTI function called by this opcode\n");
     printf("\tcti %% of self:\tcti count / sample count\n");
     
+#if ENABLE(CODEBLOCK_SAMPLING)
+
     // (3) Build and sort 'codeBlockSamples' array.
 
     int scopeCount = m_scopeSampleMap->size();
@@ -365,6 +371,9 @@ void SamplingTool::dump(ExecState* exec)
             }
         }
     }
+#else
+    UNUSED_PARAM(exec);
+#endif
 }
 
 #else
