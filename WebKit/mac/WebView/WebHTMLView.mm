@@ -339,6 +339,30 @@ static CachedResourceClient* promisedDataClient()
 - (void)_web_clearPrintingModeRecursive;
 @end
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+@interface WebHTMLView (WebHTMLViewTextCheckingInternal)
+- (void)orderFrontSubstitutionsPanel:(id)sender;
+- (BOOL)smartInsertDeleteEnabled;
+- (void)setSmartInsertDeleteEnabled:(BOOL)flag;
+- (void)toggleSmartInsertDelete:(id)sender;
+- (BOOL)isAutomaticQuoteSubstitutionEnabled;
+- (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag;
+- (void)toggleAutomaticQuoteSubstitution:(id)sender;
+- (BOOL)isAutomaticLinkDetectionEnabled;
+- (void)setAutomaticLinkDetectionEnabled:(BOOL)flag;
+- (void)toggleAutomaticLinkDetection:(id)sender;
+- (BOOL)isAutomaticDashSubstitutionEnabled;
+- (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag;
+- (void)toggleAutomaticDashSubstitution:(id)sender;
+- (BOOL)isAutomaticTextReplacementEnabled;
+- (void)setAutomaticTextReplacementEnabled:(BOOL)flag;
+- (void)toggleAutomaticTextReplacement:(id)sender;
+- (BOOL)isAutomaticSpellingCorrectionEnabled;
+- (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
+- (void)toggleAutomaticSpellingCorrection:(id)sender;
+@end
+#endif
+
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
@@ -2672,35 +2696,41 @@ WEBCORE_COMMAND(yankAndSelect)
     // FIXME 4799134: WebView is the bottleneck for this logic, but we must validate 
     // the selector here because we implement it here, and we must implement it here because the AppKit 
     // code checks the first responder.
+    if (action == @selector(toggleSmartInsertDelete:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self smartInsertDeleteEnabled] ? NSOnState : NSOffState];
+        return [self _canEdit];
+    }
     if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
             [menuItem setState:[self isAutomaticQuoteSubstitutionEnabled] ? NSOnState : NSOffState];
-        return YES;
+        return [self _canEdit];
     }
     if (action == @selector(toggleAutomaticLinkDetection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
             [menuItem setState:[self isAutomaticLinkDetectionEnabled] ? NSOnState : NSOffState];
-        return YES;
+        return [self _canEdit];
     }
     if (action == @selector(toggleAutomaticDashSubstitution:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
             [menuItem setState:[self isAutomaticDashSubstitutionEnabled] ? NSOnState : NSOffState];
-        return YES;
+        return [self _canEdit];
     }
     if (action == @selector(toggleAutomaticTextReplacement:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
             [menuItem setState:[self isAutomaticTextReplacementEnabled] ? NSOnState : NSOffState];
-        return YES;
+        return [self _canEdit];
     }
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
             [menuItem setState:[self isAutomaticSpellingCorrectionEnabled] ? NSOnState : NSOffState];
-        return YES;
+        return [self _canEdit];
     }
 #endif
     
@@ -5022,6 +5052,21 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 // FIXME 4799134: WebView is the bottleneck for this logic, but we must implement these methods here because
 // the AppKit code checks the first responder.
+
+- (BOOL)smartInsertDeleteEnabled
+{
+    return [[self _webView] smartInsertDeleteEnabled];
+}
+
+- (void)setSmartInsertDeleteEnabled:(BOOL)flag
+{
+    [[self _webView] setSmartInsertDeleteEnabled:flag];
+}
+
+- (void)toggleSmartInsertDelete:(id)sender
+{
+    [[self _webView] toggleSmartInsertDelete:sender];
+}
 
 - (BOOL)isAutomaticQuoteSubstitutionEnabled
 {

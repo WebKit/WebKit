@@ -1,3 +1,17 @@
+2009-05-08  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes for <rdar://problem/6852771>.
+        Disable text checking menu items if view is not editable.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView smartInsertDeleteEnabled]):
+        (-[WebHTMLView setSmartInsertDeleteEnabled:]):
+        (-[WebHTMLView toggleSmartInsertDelete:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2009-05-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

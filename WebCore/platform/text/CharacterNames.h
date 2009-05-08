@@ -37,6 +37,7 @@ namespace WebCore {
 
     const UChar blackSquare = 0x25A0;
     const UChar bullet = 0x2022;
+    const UChar hebrewPunctuationGershayim = 0x05F4;
     const UChar horizontalEllipsis = 0x2026;
     const UChar ideographicSpace = 0x3000;
     const UChar ideographicComma = 0x3001;
@@ -49,6 +50,7 @@ namespace WebCore {
     const UChar objectReplacementCharacter = 0xFFFC;
     const UChar popDirectionalFormatting = 0x202C;
     const UChar replacementCharacter = 0xFFFD;
+    const UChar rightSingleQuotationMark = 0x2019;
     const UChar rightToLeftMark = 0x200F;
     const UChar rightToLeftEmbed = 0x202B;
     const UChar rightToLeftOverride = 0x202E;

@@ -1,3 +1,14 @@
+2009-05-08  Douglas Davidson  <ddavidso@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes for <rdar://problem/6852771>.
+        Prevent text checking replacement immediately after an apostrophe
+        and automatic link addition except immediately after typing.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+
 2009-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
