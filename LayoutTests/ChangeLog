@@ -1,3 +1,10 @@
+2009-05-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        GTK+ test results for two new tests.
+
+        * platform/gtk/fast/layers/remove-only-this-layer-update-expected.txt: Added.
+        * platform/gtk/fast/repaint/selection-clear-expected.txt: Added.
+
 2009-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
