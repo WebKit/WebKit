@@ -232,6 +232,7 @@ void JSGlobalData::createNativeThunk()
 {
 #if ENABLE(JIT)
     lazyNativeFunctionThunk = FunctionBodyNode::createNativeThunk(this);
+    parserObjects.shrink(0);
 #endif
 }
 
