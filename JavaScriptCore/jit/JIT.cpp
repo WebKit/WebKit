@@ -1830,7 +1830,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
      * not the rest of the callframe so we need a nice way to ensure we increment the
      * stack pointer by the right amount after the call.
      */
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || PLATFORM(LINUX)
     struct NativeCallFrameStructure {
       //  CallFrame* callFrame; // passed in EDX
         JSObject* callee;
@@ -1883,7 +1883,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(regT1, -(int)sizeof(Register)), regT1);
     storePtr(regT1, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, thisValue)));
 
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || PLATFORM(LINUX)
     // ArgList is passed by reference so is stackPointerRegister + 4 * sizeof(Register)
     addPtr(Imm32(FIELD_OFFSET(NativeCallFrameStructure, result)), stackPointerRegister, X86::ecx);
 

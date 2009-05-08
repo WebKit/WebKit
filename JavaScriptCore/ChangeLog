@@ -1,3 +1,13 @@
+2009-05-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Suggested by Oliver Hunt.
+
+        Also check for Linux for the special-cased calling convention.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * wtf/Platform.h:
+
 2009-05-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.

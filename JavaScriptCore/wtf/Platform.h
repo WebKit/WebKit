@@ -63,6 +63,13 @@
 #define WTF_PLATFORM_WIN_CE 1
 #endif
 
+/* PLATFORM(LINUX) */
+/* Operating system level dependencies for Linux-like systems that */
+/* should be used regardless of operating environment */
+#ifdef __linux__
+#define WTF_PLATFORM_LINUX 1
+#endif
+
 /* PLATFORM(FREEBSD) */
 /* Operating system level dependencies for FreeBSD-like systems that */
 /* should be used regardless of operating environment */
