@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (145,21) size 246x20
-        text run at (145,21) width 246: " This should not be part of the textarea."
+      RenderText {#text} at (165,22) size 246x18
+        text run at (165,22) width 246: " This should not be part of the textarea."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (10,10) size 141x34 clip at (11,11) size 124x32 scrollHeight 60
-  RenderTextControl {TEXTAREA} at (2,2) size 141x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 120x56
-      RenderText {#text} at (0,0) size 120x42
-        text run at (0,0) width 18: "<!--"
-        text run at (18,0) width 0: " "
-        text run at (0,14) width 119: "This should be part of the"
-        text run at (119,14) width 1: " "
-        text run at (0,28) width 39: "textarea."
-        text run at (39,28) width 0: " "
-      RenderBR {BR} at (0,42) size 0x14
+layer at (10,10) size 161x32 clip at (11,11) size 144x30 scrollHeight 56
+  RenderTextControl {TEXTAREA} at (2,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 140x52
+      RenderText {#text} at (0,0) size 140x39
+        text run at (0,0) width 27: "<!--"
+        text run at (27,0) width 0: " "
+        text run at (0,13) width 140: "This should be part of the"
+        text run at (140,13) width 0: " "
+        text run at (0,26) width 48: "textarea."
+        text run at (48,26) width 0: " "
+      RenderBR {BR} at (0,39) size 0x13

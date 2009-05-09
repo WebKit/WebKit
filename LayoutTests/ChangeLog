@@ -1,5 +1,9 @@
 2009-05-09  Dan Bernstein  <mitz@apple.com>
 
+        - correct the results from the previous patch
+
+2009-05-09  Dan Bernstein  <mitz@apple.com>
+
         - update Windows-specific layout test results for textarea
           intrinsic margin change (r43355)
 
