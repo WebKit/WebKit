@@ -515,7 +515,8 @@ void JIT::privateCompileMainPass()
         case op_resolve_func: {
             JITStubCall stubCall(this, JITStubs::cti_op_resolve_func);
             stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
-            stubCall.call(currentInstruction[1].u.operand, currentInstruction[2].u.operand);
+            stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+            stubCall.call(currentInstruction[2].u.operand);
             NEXT_OPCODE(op_resolve_func);
         }
         case op_sub: {
@@ -760,7 +761,8 @@ void JIT::privateCompileMainPass()
         case op_resolve_with_base: {
             JITStubCall stubCall(this, JITStubs::cti_op_resolve_with_base);
             stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
-            stubCall.call(currentInstruction[1].u.operand, currentInstruction[2].u.operand);
+            stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+            stubCall.call(currentInstruction[2].u.operand);
             NEXT_OPCODE(op_resolve_with_base);
         }
         case op_new_func_exp: {

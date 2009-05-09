@@ -1,3 +1,31 @@
+2009-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Changed all our JIT stubs so that they return a maximum of 1 JS value or
+        two non-JS pointers, and do all other value returning through out
+        parameters, in preparation for 64bit JS values on a 32bit system.
+
+        Stubs that used to return two JSValues now return one JSValue and take
+        and out parameter specifying where in the register array the second
+        value should go.
+        
+        SunSpider reports no change.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArithSlow_op_post_inc):
+        (JSC::JIT::compileFastArithSlow_op_post_dec):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_call_arityCheck):
+        (JSC::JITStubs::cti_op_resolve_func):
+        (JSC::JITStubs::cti_op_post_inc):
+        (JSC::JITStubs::cti_op_resolve_with_base):
+        (JSC::JITStubs::cti_op_post_dec):
+        * jit/JITStubs.h:
+        (JSC::):
+
 2009-05-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

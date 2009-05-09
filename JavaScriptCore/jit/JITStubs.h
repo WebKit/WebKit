@@ -146,16 +146,16 @@ namespace JSC {
         void* first;
         void* second;
     };
-    #define RETURN_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
+    #define RETURN_POINTER_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
 #else
     // MSVC doesn't support returning a two-value struct in two registers, so
     // we cast the struct to int64_t instead.
     typedef uint64_t VoidPtrPair;
-    union VoidPtrPairValue {
+    union VoidPtrPairUnion {
         struct { void* first; void* second; } s;
         VoidPtrPair i;
     };
-    #define RETURN_PAIR(a,b) VoidPtrPairValue pair = {{ a, b }}; return pair.i
+    #define RETURN_POINTER_PAIR(a,b) VoidPtrPairUnion pair = {{ a, b }}; return pair.i
 #endif
 
     extern "C" void ctiVMThrowTrampoline();
@@ -171,6 +171,42 @@ namespace JSC {
     public:
         JITStubs(JSGlobalData*);
 
+        static void JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_end(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_jmp_scopes(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_pop_scope(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_profile_did_call(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_profile_will_call(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_id(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_id_fail(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_id_generic(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_id_second(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_val_array(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_by_val_byte_array(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_getter(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_put_setter(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_ret_scopeChain(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
+        static void JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_loop_if_less(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_op_loop_if_true(STUB_ARGS_DECLARATION);
+        static int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_op_call_JSFunction(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_op_switch_imm(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_op_switch_string(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_vm_dontLazyLinkCall(STUB_ARGS_DECLARATION);
+        static void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION);
         static JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS_DECLARATION);
         static JSObject* JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
         static JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
@@ -232,56 +268,20 @@ namespace JSC {
         static EncodedJSValue JIT_STUB cti_op_resolve_global(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);
-        static EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION);
-        static EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_sub(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_to_jsnumber(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_typeof(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_post_dec(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_post_inc(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_resolve_func(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
         static VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
-        static VoidPtrPair JIT_STUB cti_op_post_dec(STUB_ARGS_DECLARATION);
-        static VoidPtrPair JIT_STUB cti_op_post_inc(STUB_ARGS_DECLARATION);
-        static VoidPtrPair JIT_STUB cti_op_resolve_func(STUB_ARGS_DECLARATION);
-        static VoidPtrPair JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_loop_if_less(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_loop_if_true(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
-        static int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_end(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_jmp_scopes(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_pop_scope(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_profile_did_call(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_profile_will_call(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_id(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_id_fail(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_id_generic(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_id_second(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_val_array(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_by_val_byte_array(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_getter(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_put_setter(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_ret_scopeChain(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
-        static void JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_op_call_JSFunction(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_op_switch_imm(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_op_switch_string(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_vm_dontLazyLinkCall(STUB_ARGS_DECLARATION);
-        static void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION);
 
         static void tryCacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
         static void tryCachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue baseValue, const PutPropertySlot&);

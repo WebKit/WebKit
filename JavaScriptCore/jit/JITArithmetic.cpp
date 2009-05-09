@@ -704,7 +704,8 @@ void JIT::compileFastArithSlow_op_post_inc(unsigned result, unsigned srcDst, Vec
     linkSlowCase(iter);
     JITStubCall stubCall(this, JITStubs::cti_op_post_inc);
     stubCall.addArgument(regT0);
-    stubCall.call(result, srcDst);
+    stubCall.addArgument(Imm32(srcDst));
+    stubCall.call(result);
 }
 
 void JIT::compileFastArith_op_post_dec(unsigned result, unsigned srcDst)
@@ -728,7 +729,8 @@ void JIT::compileFastArithSlow_op_post_dec(unsigned result, unsigned srcDst, Vec
     linkSlowCase(iter);
     JITStubCall stubCall(this, JITStubs::cti_op_post_dec);
     stubCall.addArgument(regT0);
-    stubCall.call(result, srcDst);
+    stubCall.addArgument(Imm32(srcDst));
+    stubCall.call(result);
 }
 
 void JIT::compileFastArith_op_pre_inc(unsigned srcDst)
