@@ -37,6 +37,7 @@ class AbstractMacroAssembler {
 public:
     class Jump;
     class PatchBuffer;
+    class CodeLocationInstruction;
     class CodeLocationLabel;
     class CodeLocationJump;
     class CodeLocationCall;
@@ -406,6 +407,7 @@ public:
         // and the labels will always be a fixed distance apart, these
         // methods may be used to recover a handle that has nopw been
         // retained, based on a known fixed relative offset from one that has.
+        CodeLocationInstruction instructionAtOffset(int offset);
         CodeLocationLabel labelAtOffset(int offset);
         CodeLocationJump jumpAtOffset(int offset);
         CodeLocationCall callAtOffset(int offset);
@@ -422,6 +424,27 @@ public:
         }
 
         void* m_location;
+    };
+
+    // CodeLocationInstruction:
+    //
+    // An arbitrary instruction in the JIT code.
+    class CodeLocationInstruction : public CodeLocationCommon {
+        friend class CodeLocationCommon;
+    public:
+        CodeLocationInstruction()
+        {
+        }
+
+        void patchLoadToLEA() {
+            AssemblerType::patchLoadToLEA(reinterpret_cast<intptr_t>(this->m_location));
+        }
+
+    private:
+        explicit CodeLocationInstruction(void* location)
+            : CodeLocationCommon(location)
+        {
+        }
     };
 
     // CodeLocationLabel:
@@ -802,6 +825,12 @@ protected:
     AssemblerType m_assembler;
 };
 
+
+template <class AssemblerType>
+typename AbstractMacroAssembler<AssemblerType>::CodeLocationInstruction AbstractMacroAssembler<AssemblerType>::CodeLocationCommon::instructionAtOffset(int offset)
+{
+    return typename AbstractMacroAssembler::CodeLocationInstruction(reinterpret_cast<char*>(m_location) + offset);
+}
 
 template <class AssemblerType>
 typename AbstractMacroAssembler<AssemblerType>::CodeLocationLabel AbstractMacroAssembler<AssemblerType>::CodeLocationCommon::labelAtOffset(int offset)

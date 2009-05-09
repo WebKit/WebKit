@@ -70,6 +70,11 @@ public:
         m_assembler.movl_i32m(imm.m_value, address);
     }
 
+    void store32(RegisterID src, void* address)
+    {
+        m_assembler.movl_rm(src, address);
+    }
+
     Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)
     {
         m_assembler.cmpl_rm(right, left.m_ptr);

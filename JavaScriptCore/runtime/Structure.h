@@ -95,6 +95,7 @@ namespace JSC {
         void growPropertyStorageCapacity();
         size_t propertyStorageCapacity() const { return m_propertyStorageCapacity; }
         size_t propertyStorageSize() const { return m_propertyTable ? m_propertyTable->keyCount + (m_propertyTable->deletedOffsets ? m_propertyTable->deletedOffsets->size() : 0) : m_offset + 1; }
+        bool isUsingInlineStorage() const;
 
         size_t get(const Identifier& propertyName);
         size_t get(const Identifier& propertyName, unsigned& attributes);

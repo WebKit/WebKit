@@ -226,10 +226,14 @@ namespace JSC {
 #if PLATFORM(X86_64)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
+        static const int patchOffsetPutByIdExternalLoad = 20;
+        static const int patchLengthPutByIdExternalLoad = 4;
         static const int patchOffsetPutByIdPropertyMapOffset = 31;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 20;
+        static const int patchOffsetGetByIdExternalLoad = 20;
+        static const int patchLengthGetByIdExternalLoad = 4;
         static const int patchOffsetGetByIdPropertyMapOffset = 31;
         static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
@@ -241,10 +245,14 @@ namespace JSC {
 #else
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
+        static const int patchOffsetPutByIdExternalLoad = 13;
+        static const int patchLengthPutByIdExternalLoad = 3;
         static const int patchOffsetPutByIdPropertyMapOffset = 22;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 7;
         static const int patchOffsetGetByIdBranchToSlowCase = 13;
+        static const int patchOffsetGetByIdExternalLoad = 13;
+        static const int patchLengthGetByIdExternalLoad = 3;
         static const int patchOffsetGetByIdPropertyMapOffset = 22;
         static const int patchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
@@ -379,6 +387,10 @@ namespace JSC {
         void compileOpConstructSetupArgs(Instruction*);
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
+
+        void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
+        void compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID result, size_t cachedOffset);
+        void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
 
         void compileFastArith_op_add(Instruction*);
         void compileFastArith_op_sub(Instruction*);

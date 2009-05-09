@@ -1,3 +1,72 @@
+2009-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        Original patch by John McCall. Updated by Cameron Zwarich. Further refined by me.
+        
+        - Assorted speedups to property access
+        
+        ~.3%-1% speedup on SunSpider
+        
+        1) When we know from the structure ID that an object is using inline storage, plant direct
+        loads and stores against it; no need to indirect through storage pointer.
+        
+        2) Also because of the above, union the property storage pointer with the first inline property
+        slot and add an extra inline property slot.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::CodeLocationInstruction):
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::patchLoadToLEA):
+        (JSC::::CodeLocationCommon::instructionAtOffset):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::storePtr):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::store32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movq_EAXm):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::patchLoadToLEA):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::mark):
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSC::JSObject::propertyStorage):
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getOffset):
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::locationForOffset):
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::putDirectOffset):
+        (JSC::JSObject::isUsingInlineStorage):
+        (JSC::JSObject::):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::~JSObject):
+        (JSC::Structure::isUsingInlineStorage):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::allocatePropertyStorageInline):
+        * runtime/Structure.h:
+
 2009-05-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -241,6 +241,17 @@ public:
     {
         m_assembler.movq_rm(src, address.offset, address.base, address.index, address.scale);
     }
+    
+    void storePtr(RegisterID src, void* address)
+    {
+        if (src == X86::eax)
+            m_assembler.movq_EAXm(address);
+        else {
+            swap(X86::eax, src);
+            m_assembler.movq_EAXm(address);
+            swap(X86::eax, src);
+        }
+    }
 
     void storePtr(ImmPtr imm, ImplicitAddress address)
     {

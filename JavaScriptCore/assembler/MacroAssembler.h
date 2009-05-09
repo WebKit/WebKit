@@ -242,6 +242,11 @@ public:
         store32(src, address);
     }
 
+    void storePtr(RegisterID src, void* address)
+    {
+        store32(src, address);
+    }
+
     void storePtr(ImmPtr imm, ImplicitAddress address)
     {
         store32(Imm32(imm), address);

@@ -69,9 +69,11 @@ void JSObject::mark()
     JSCell::mark();
     m_structure->mark();
 
+    PropertyStorage storage = propertyStorage();
+
     size_t storageSize = m_structure->propertyStorageSize();
     for (size_t i = 0; i < storageSize; ++i) {
-        JSValue v = m_propertyStorage[i];
+        JSValue v = JSValue::decode(storage[i]);
         if (!v.marked())
             v.mark();
     }
@@ -471,14 +473,14 @@ void JSObject::removeDirect(const Identifier& propertyName)
     if (m_structure->isDictionary()) {
         offset = m_structure->removePropertyWithoutTransition(propertyName);
         if (offset != WTF::notFound)
-            m_propertyStorage[offset] = jsUndefined();
+            putDirectOffset(offset, jsUndefined());
         return;
     }
 
     RefPtr<Structure> structure = Structure::removePropertyTransition(m_structure, propertyName, offset);
-    if (offset != WTF::notFound)
-        m_propertyStorage[offset] = jsUndefined();
     setStructure(structure.release());
+    if (offset != WTF::notFound)
+        putDirectOffset(offset, jsUndefined());
 }
 
 void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
