@@ -28,6 +28,7 @@
 #include "CallFrame.h"
 #include "GlobalEvalFunction.h"
 #include "JSGlobalObject.h"
+#include "LiteralParser.h"
 #include "JSString.h"
 #include "Interpreter.h"
 #include "Parser.h"
@@ -280,6 +281,10 @@ JSValue JSC_HOST_CALL globalFuncEval(ExecState* exec, JSObject* function, JSValu
         return x;
 
     UString s = x.toString(exec);
+
+    LiteralParser preparser(exec, s);
+    if (JSValue parsedObject = preparser.tryLiteralParse())
+        return parsedObject;
 
     int errLine;
     UString errMsg;

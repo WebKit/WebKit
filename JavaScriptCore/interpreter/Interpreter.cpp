@@ -47,6 +47,7 @@
 #include "JSFunction.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
+#include "LiteralParser.h"
 #include "JSStaticScopeObject.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
@@ -336,6 +337,11 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
 
     UString programSource = asString(program)->value();
 
+    LiteralParser preparser(callFrame, programSource);
+    if (JSValue parsedObject = preparser.tryLiteralParse())
+        return parsedObject;
+    
+    
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     CodeBlock* codeBlock = callFrame->codeBlock();
     RefPtr<EvalNode> evalNode = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);

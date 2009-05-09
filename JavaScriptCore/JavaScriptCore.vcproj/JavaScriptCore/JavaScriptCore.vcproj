@@ -603,6 +603,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\LiteralParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\LiteralParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\Lookup.cpp"
 				>
 			</File>

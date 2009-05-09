@@ -1,3 +1,42 @@
+2009-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Darin Adler.
+
+        Add a limited literal parser for eval to handle object and array literals fired at eval
+
+        This is a simplified parser and lexer that we can throw at strings passed to eval
+        in case a site is using eval to parse JSON (eg. json2.js).  The lexer is intentionally
+        limited (in effect it's whitelisting a limited "common" subset of the JSON grammar)
+        as this decreases the likelihood of us wating time attempting to parse any significant
+        amount of non-JSON content.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/LiteralParser.cpp: Added.
+        (JSC::isStringCharacter):
+        (JSC::LiteralParser::Lexer::lex):
+        (JSC::LiteralParser::Lexer::lexString):
+        (JSC::LiteralParser::Lexer::lexNumber):
+        (JSC::LiteralParser::parseStatement):
+        (JSC::LiteralParser::parseExpression):
+        (JSC::LiteralParser::parseArray):
+        (JSC::LiteralParser::parseObject):
+        (JSC::LiteralParser::StackGuard::StackGuard):
+        (JSC::LiteralParser::StackGuard::~StackGuard):
+        (JSC::LiteralParser::StackGuard::isSafe):
+        * runtime/LiteralParser.h: Added.
+        (JSC::LiteralParser::LiteralParser):
+        (JSC::LiteralParser::attemptJSONParse):
+        (JSC::LiteralParser::):
+        (JSC::LiteralParser::Lexer::Lexer):
+        (JSC::LiteralParser::Lexer::next):
+        (JSC::LiteralParser::Lexer::currentToken):
+        (JSC::LiteralParser::abortParse):
+
 2009-05-08  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
