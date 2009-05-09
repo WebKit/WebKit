@@ -44,11 +44,12 @@
 
 using namespace std;
 
-#if PLATFORM(MAC)
+// All X86 Macs are guaranteed to support at least SSE2
+#if PLATFORM(X86_64) || (PLATFORM(X86) && PLATFORM(MAC))
 
 static inline bool isSSE2Present()
 {
-    return true; // All X86 Macs are guaranteed to support at least SSE2
+    return true;
 }
 
 #else

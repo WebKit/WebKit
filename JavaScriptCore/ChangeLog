@@ -1,5 +1,14 @@
 2009-05-09  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Suggested by Geoffrey Garen.
+
+        Assume SSE2 is present on X86-64 and on MAC X86-32. This fixes a
+        build breakage on non-Mac X86-64 when JIT is enabled.
+
+        * jit/JITArithmetic.cpp:
+
+2009-05-09  Gustavo Noronha Silva  <gns@gnome.org>
+
         Build fix, adding missing files to make dist.
 
         * GNUmakefile.am:
