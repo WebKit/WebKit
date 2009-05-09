@@ -1,3 +1,30 @@
+2009-05-09  Dan Bernstein  <mitz@apple.com>
+
+        - update Windows-specific layout test results for textarea
+          intrinsic margin change (r43355)
+
+        * platform/win/editing/inserting/4960120-1-expected.txt:
+        * platform/win/editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * platform/win/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/win/fast/css/resize-corner-tracking-expected.txt:
+        * platform/win/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/win/fast/dynamic/008-expected.txt:
+        * platform/win/fast/forms/basic-textareas-expected.txt:
+        * platform/win/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/win/fast/forms/textarea-align-expected.txt:
+        * platform/win/fast/forms/textarea-rows-cols-expected.txt:
+        * platform/win/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/win/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/win/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/win/fast/forms/textarea-width-expected.txt:
+        * platform/win/fast/overflow/overflow-x-y-expected.txt:
+        * platform/win/fast/parser/comment-in-textarea-expected.txt:
+        * platform/win/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/win/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/win/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/win/fast/table/003-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug30559-expected.txt:
+
 2009-05-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Skip failing render tree test that was added in r43420.
