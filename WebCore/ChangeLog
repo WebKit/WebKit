@@ -1,3 +1,9 @@
+2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Used sort-Xcode-project-file to sort the XCode project file - it hasn't been done for a while.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
