@@ -1,3 +1,13 @@
+2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by George Staikos.
+
+        Update WML <input> layout test result, as input field metrics have changed recently.
+
+        * platform/mac/fast/wml/input-expected.checksum:
+        * platform/mac/fast/wml/input-expected.png:
+        * platform/mac/fast/wml/input-expected.txt:
+
 2009-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
