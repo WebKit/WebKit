@@ -1,3 +1,13 @@
+2009-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Removed the last non-call-related manually managed JIT stub call.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArithSlow_op_rshift): Fully use the JITStubCall
+        abstraction, instead of emitPutJITStubArg.
+
 2009-05-09  Sebastian Andrzej Siewior  <sebastian@breakpoint.cc>
 
         Reviewed by Gustavo Noronha.

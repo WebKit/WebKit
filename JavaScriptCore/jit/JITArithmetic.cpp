@@ -188,12 +188,16 @@ void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2
 #endif
     emitPutVirtualRegister(result);
 }
+
 void JIT::compileFastArithSlow_op_rshift(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    if (isOperandConstantImmediateInt(op2))
-        emitPutJITStubArgFromVirtualRegister(op2, 2, regT2);
-    else {
+    JITStubCall stubCall(this, JITStubs::cti_op_rshift);
+
+    if (isOperandConstantImmediateInt(op2)) {
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(op2, regT2);
+    } else {
         if (isSSE2Present()) {
 #if USE(ALTERNATE_JSIMMEDIATE)
             linkSlowCase(iter);
@@ -206,16 +210,16 @@ void JIT::compileFastArithSlow_op_rshift(unsigned result, unsigned op1, unsigned
             // We're reloading op1 to regT0 as we can no longer guarantee that
             // we have not munged the operand.  It may have already been shifted
             // correctly, but it still will not have been tagged.
-            emitGetVirtualRegister(op1, regT0);
+            stubCall.addArgument(op1, regT0);
+            stubCall.addArgument(regT2);
         } else {
             linkSlowCase(iter);
             linkSlowCase(iter);
+            stubCall.addArgument(regT0);
+            stubCall.addArgument(regT2);
         }
-        emitPutJITStubArg(regT2, 2);
     }
 
-    JITStubCall stubCall(this, JITStubs::cti_op_rshift);
-    stubCall.addArgument(regT0);
     stubCall.call(result);
 }
 
