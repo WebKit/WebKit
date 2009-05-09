@@ -83,7 +83,7 @@ public:
     bool containsVariables() const { return m_variablesCount; }
 
 private:
-    Vector<CSSParserValue, 16> m_values;
+    Vector<CSSParserValue, 4> m_values;
     unsigned m_current;
     unsigned m_variablesCount;
 };

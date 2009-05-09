@@ -1,3 +1,14 @@
+2009-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25656
+        
+        Reduce the inline capacity of CSSParserValueList's m_values
+        vector to reduce the size of CSSParserValueList from 544 to 160 bytes in 64-bit.
+
+        * css/CSSParserValues.h:
+
 2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Used sort-Xcode-project-file to sort the XCode project file - it hasn't been done for a while.
