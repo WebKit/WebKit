@@ -278,7 +278,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     AtomicString targetName = name;
     for (unsigned i = 0; i < elements.size(); i++) {
         HTMLFormControlElement* elt = elements[i];
-        if (elt->name() == targetName)
+        if (elt->formControlName() == targetName)
             return kit(elt);
     }
     return nil;

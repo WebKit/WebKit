@@ -1,3 +1,10 @@
+2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Fix clean builds, forgot to land name() -> formControlName() rename patch in WebKit. Only landed the WebCore side.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation elementWithName:inForm:]):
+
 2009-05-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
