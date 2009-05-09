@@ -220,7 +220,6 @@
 
 /* PLATFORM(X86_64) */
 #if   defined(__x86_64__) \
-   || defined(__ia64__) \
    || defined(_M_X64)
 #define WTF_PLATFORM_X86_64 1
 #endif

@@ -1,3 +1,17 @@
+2009-05-09  Sebastian Andrzej Siewior  <sebastian@breakpoint.cc>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25653
+        PLATFORM(X86_64) inherits ia64
+
+        __ia64__ is defined by gcc in an IA64 arch and has completely
+        nothing in common with X86-64 exept both are from Intel and have
+        an 64bit address space. That's it. Since code seems to expect x86
+        here, ia64 has to go.
+
+        * wtf/Platform.h:
+
 2009-05-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         Suggested by Geoffrey Garen.
