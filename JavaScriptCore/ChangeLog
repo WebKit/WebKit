@@ -1,3 +1,10 @@
+2009-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::patchLoadToLEA):
+
 2009-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gavin Barraclough.

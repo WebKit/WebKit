@@ -1305,7 +1305,7 @@ public:
     static void patchLoadToLEA(intptr_t where)
     {
         char* ptr = reinterpret_cast<char*>(where);
-        ptr[0] = OP_LEA;
+        ptr[0] = static_cast<char>(OP_LEA);
     }
     
     static void patchJump(intptr_t where, void* destination)
