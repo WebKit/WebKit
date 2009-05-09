@@ -326,7 +326,7 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url, curl_easy_strerror(msg->data.result));
 #endif
             if (d->client())
-                d->client()->didFail(job, ResourceError());
+                d->client()->didFail(job, ResourceError(String(), msg->data.result, String(url), String(curl_easy_strerror(msg->data.result))));
         }
 
         removeFromCurl(job);

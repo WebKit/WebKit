@@ -1,3 +1,25 @@
+2009-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebCore::DocumentLoader::mainReceivedError now asserts if error.isNull(), so
+        make sure wx does not create empty ResourceError() objects.
+        
+        Also make sure we fire a state changed event to notify when the load fails.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24927
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::cancelledError):
+        (WebCore::FrameLoaderClientWx::blockedError):
+        (WebCore::FrameLoaderClientWx::cannotShowURLError):
+        (WebCore::FrameLoaderClientWx::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientWx::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientWx::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientWx::pluginWillHandleLoadError):
+        * WebView.h:
+
 2009-05-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix for building the Python extension. 

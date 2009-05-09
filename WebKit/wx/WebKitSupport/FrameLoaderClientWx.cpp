@@ -560,40 +560,39 @@ void FrameLoaderClientWx::committedLoad(WebCore::DocumentLoader* loader, const c
     fl->addData(data, length);
 }
 
-WebCore::ResourceError FrameLoaderClientWx::cancelledError(const WebCore::ResourceRequest&)
+WebCore::ResourceError FrameLoaderClientWx::cancelledError(const WebCore::ResourceRequest& request)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::blockedError(const ResourceRequest&)
+WebCore::ResourceError FrameLoaderClientWx::blockedError(const ResourceRequest& request)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::cannotShowURLError(const WebCore::ResourceRequest&)
+WebCore::ResourceError FrameLoaderClientWx::cannotShowURLError(const WebCore::ResourceRequest& request)
 {
-    notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::interruptForPolicyChangeError(const WebCore::ResourceRequest&)
+WebCore::ResourceError FrameLoaderClientWx::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::cannotShowMIMETypeError(const WebCore::ResourceResponse&)
+WebCore::ResourceError FrameLoaderClientWx::cannotShowMIMETypeError(const WebCore::ResourceResponse& response)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::fileDoesNotExistError(const WebCore::ResourceResponse&)
+WebCore::ResourceError FrameLoaderClientWx::fileDoesNotExistError(const WebCore::ResourceResponse& response)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotShowURL, response.url().string(), String());
 }
 
 bool FrameLoaderClientWx::shouldFallBack(const WebCore::ResourceError& error)
@@ -657,7 +656,12 @@ void FrameLoaderClientWx::dispatchDidFinishLoading(DocumentLoader*, unsigned lon
 
 void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&)
 {
-    notImplemented();
+    if (m_webView) {
+        wxWebViewLoadEvent wkEvent(m_webView);
+        wkEvent.SetState(wxWEBVIEW_LOAD_FAILED);
+        wkEvent.SetURL(m_frame->loader()->documentLoader()->request().url().string());
+        m_webView->GetEventHandler()->ProcessEvent(wkEvent);
+    }
 }
 
 bool FrameLoaderClientWx::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int)
@@ -818,10 +822,10 @@ void FrameLoaderClientWx::redirectDataToPlugin(Widget* pluginWidget)
     return;
 }
 
-ResourceError FrameLoaderClientWx::pluginWillHandleLoadError(const ResourceResponse&)
+ResourceError FrameLoaderClientWx::pluginWillHandleLoadError(const ResourceResponse& response)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError(String(), WebKitErrorCannotLoadPlugIn, response.url().string(), String());
 }
 
 Widget* FrameLoaderClientWx::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,

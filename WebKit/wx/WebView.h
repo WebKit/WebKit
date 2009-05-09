@@ -65,6 +65,17 @@ namespace WebCore {
 extern WXDLLIMPEXP_WEBKIT const wxChar* wxWebViewNameStr;
 #endif
 
+// copied from WebKit/mac/Misc/WebKitErrors[Private].h
+enum {
+    WebKitErrorCannotShowMIMEType =                             100,
+    WebKitErrorCannotShowURL =                                  101,
+    WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
+    WebKitErrorCannotUseRestrictedPort = 103,
+    WebKitErrorCannotFindPlugIn =                               200,
+    WebKitErrorCannotLoadPlugIn =                               201,
+    WebKitErrorJavaUnavailable =                                202,
+};
+
 class WXDLLIMPEXP_WEBKIT wxWebView : public wxWindow
 {
     // ChromeClientWx needs to get the Page* stored by the wxWebView

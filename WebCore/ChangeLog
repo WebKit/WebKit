@@ -1,3 +1,15 @@
+2009-03-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebCore::DocumentLoader::mainReceivedError now asserts if error.isNull(), so
+        make sure CURL does not create empty ResourceError() objects.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24927
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2009-05-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fix, adding missing files to make dist.
