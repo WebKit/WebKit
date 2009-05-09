@@ -1,3 +1,9 @@
+2009-05-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Skip failing render tree test that was added in r43420.
+
+        * platform/gtk/Skipped:
+
 2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by George Staikos.
