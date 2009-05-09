@@ -1,3 +1,15 @@
+2009-05-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by NOBODY (BuildFix).
+
+        Gtk fix: add LiteralParser to the build script per r43424.
+
+        Add LiteralParser to the Qt and Wx build scripts too.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCoreSources.bkl:
+
 2009-05-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough and Darin Adler.

@@ -180,6 +180,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSNotAnObject.h \
 	JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
+	JavaScriptCore/runtime/LiteralParser.cpp \
+	JavaScriptCore/runtime/LiteralParser.h \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/Structure.cpp \

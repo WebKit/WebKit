@@ -121,6 +121,7 @@ Source files for JSCore.
         runtime/JSValue.cpp
         runtime/JSVariableObject.cpp
         runtime/JSWrapperObject.cpp
+        runtime/LiteralParser.cpp
         runtime/Lookup.cpp
         runtime/MathObject.cpp
         runtime/NativeErrorConstructor.cpp
