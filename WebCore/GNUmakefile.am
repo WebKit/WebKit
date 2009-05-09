@@ -961,6 +961,7 @@ webcore_sources += \
 	WebCore/html/HTMLParser.h \
 	WebCore/html/HTMLParserErrorCodes.cpp \
 	WebCore/html/HTMLParserErrorCodes.h \
+	WebCore/html/HTMLParserQuirks.h \
 	WebCore/html/HTMLPlugInElement.cpp \
 	WebCore/html/HTMLPlugInElement.h \
 	WebCore/html/HTMLPlugInImageElement.cpp \

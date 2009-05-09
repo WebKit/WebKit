@@ -1,3 +1,9 @@
+2009-05-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Build fix, adding missing files to make dist.
+
+        * GNUmakefile.am:
+
 2009-05-09  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix.

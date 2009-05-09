@@ -397,6 +397,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/NativeErrorConstructor.h \
 	JavaScriptCore/runtime/NativeErrorPrototype.cpp \
 	JavaScriptCore/runtime/NativeErrorPrototype.h \
+	JavaScriptCore/runtime/NativeFunctionWrapper.h \
 	JavaScriptCore/runtime/NumberConstructor.cpp \
 	JavaScriptCore/runtime/NumberConstructor.h \
 	JavaScriptCore/runtime/NumberObject.cpp \
