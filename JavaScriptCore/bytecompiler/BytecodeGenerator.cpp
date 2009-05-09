@@ -1726,14 +1726,10 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
             emitLabel(nextInsn.get());
         }
 
-        // To get here there must be at least one finally block present
-        do {
-            ASSERT(topScope->isFinallyBlock);
+        while (topScope > bottomScope && topScope->isFinallyBlock) {
             emitJumpSubroutine(topScope->finallyContext.retAddrDst, topScope->finallyContext.finallyAddr);
             --topScope;
-            if (!topScope->isFinallyBlock)
-                break;
-        } while (topScope > bottomScope);
+        }
     }
     return emitJump(target);
 }
