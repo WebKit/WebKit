@@ -1,3 +1,18 @@
+2009-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen and Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=25666
+          Assertion failure in Node::setDocument()
+          (willMoveToNewOwnerDocumentWasCalled) when adopting a <form> element
+
+        Test: fast/dom/HTMLFormElement/adopt-assertion.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::willMoveToNewOwnerDocument): Overrides of
+        this method are required to call the base class implementation. Do it.
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument): Ditto.
+
 2009-03-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Maciej Stachowiak.

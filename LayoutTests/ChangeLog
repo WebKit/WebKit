@@ -1,3 +1,14 @@
+2009-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen and Mark Rowe.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=25666
+          Assertion failure in Node::setDocument()
+          (willMoveToNewOwnerDocumentWasCalled) when adopting a <form> element
+
+        * fast/dom/HTMLFormElement/adopt-assertion-expected.txt: Added.
+        * fast/dom/HTMLFormElement/adopt-assertion.html: Added.
+
 2009-05-09  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.
