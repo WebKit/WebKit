@@ -1863,13 +1863,6 @@ void dtoa(char* result, double dd, int ndigits, int* decpt, int* sign, char** rv
     int inexact, oldinexact;
 #endif
 
-#if !ENABLE(JSC_MULTIPLE_THREADS)
-    if (dtoa_result) {
-        freedtoa(dtoa_result);
-        dtoa_result = 0;
-    }
-#endif
-
     u.d = dd;
     if (word0(&u) & Sign_bit) {
         /* set sign for everything, including 0's and NaNs */

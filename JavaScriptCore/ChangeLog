@@ -1,3 +1,13 @@
+2009-05-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25670
+        Remove no longer valid chunk of code from dtoa.
+
+        * wtf/dtoa.cpp:
+        (WTF::dtoa): Removed invalid code.
+
 2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
