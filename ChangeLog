@@ -1,3 +1,15 @@
+2009-05-09  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        WebKit-r43163 won't build for gtk-directfb
+        https://bugs.webkit.org/show_bug.cgi?id=25538
+
+        Move the ENCHANT check out of the with_target conditional since it
+        applies to all targets
+
+        * configure.ac:
+
 2009-05-09  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Geoffrey Garen. Landed by Jan Alonzo.

@@ -216,6 +216,10 @@ PKG_CHECK_MODULES(PANGO,
 AC_SUBST(PANGO_CFLAGS)
 AC_SUBST(PANGO_LIBS)
 
+PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION)
+AC_SUBST(ENCHANT_CFLAGS)
+AC_SUBST(ENCHANT_LIBS)
+
 # check for target-specific dependencies
 if test "$with_target" = "directfb"; then
    PKG_CHECK_MODULES(CAIRO, cairo-directfb >= $CAIRO_REQUIRED_VERSION)
@@ -224,7 +228,6 @@ if test "$with_target" = "directfb"; then
 else
    PKG_CHECK_MODULES(CAIRO, cairo >= $CAIRO_REQUIRED_VERSION)
    PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION)
-   PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION)
 
    if test "$with_target" = "x11" && test "$os_win32" = "no"; then
       # check for XT
@@ -251,8 +254,6 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 AC_SUBST(CAIRO_LIBS)
-AC_SUBST(ENCHANT_CFLAGS)
-AC_SUBST(ENCHANT_LIBS)
 
 # check whether to build with debugging enabled
 AC_MSG_CHECKING([whether to do a debug build])
