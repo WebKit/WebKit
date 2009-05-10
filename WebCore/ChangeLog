@@ -2,6 +2,24 @@
 
         Reviewed by Dan Bernstein.
 
+        <rdar://problem/6867598> REGRESSION (r42483): Have to enter credentials twice when trying
+        to view protected MobileMe video
+
+        Add a temporary workaround.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        Added an m_useSiteSpecificQuirks boolean (Mac-only). A Frame pointer is only available when
+        starting a request, so we need to store this data for later use.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start): Initialize m_useSiteSpecificQuirks.
+        (WebCore::ResourceHandle::receivedCredential): Use per-session credentials with gallery.me.com.
+
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         <rdar://problem/6870383> Have to enter credentials twice when downloading from a protected page
 
         * platform/network/cf/AuthenticationCF.cpp:

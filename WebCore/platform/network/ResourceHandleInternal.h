@@ -127,6 +127,7 @@ namespace WebCore {
 #endif
 #if PLATFORM(MAC)
             , m_startWhenScheduled(false)
+            , m_needsSiteSpecificQuirks(false)
             , m_currentMacChallenge(nil)
 #elif USE(CFNETWORK)
             , m_currentCFChallenge(0)
@@ -162,6 +163,7 @@ namespace WebCore {
         RetainPtr<WebCoreResourceHandleAsDelegate> m_delegate;
         RetainPtr<id> m_proxy;
         bool m_startWhenScheduled;
+        bool m_needsSiteSpecificQuirks;
 #endif
 #if USE(WININET)
         HANDLE m_fileHandle;
