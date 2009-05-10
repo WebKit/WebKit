@@ -1,3 +1,12 @@
+2009-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Beth Dakin.
+        
+        Added a test for a math edge case I just came across.
+
+        * fast/js/postfix-syntax-expected.txt:
+        * fast/js/resources/postfix-syntax.js:
+
 2009-05-09  Dan Bernstein  <mitz@apple.com>
 
         - correct the results from the previous patch

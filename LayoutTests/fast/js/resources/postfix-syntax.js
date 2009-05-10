@@ -20,5 +20,13 @@ shouldThrow('(y, x)++');
 shouldThrow('(true ? x : y)++');
 shouldThrow('x++++');
 
+x = 0;
+x = x++;
+shouldBe("x", "0");
+
+y = 0;
+y = y--;
+shouldBe("y", "0");
+
 var successfullyParsed = true;
 

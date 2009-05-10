@@ -16,6 +16,8 @@ PASS ((window["x"]))++ is 9
 PASS (y, x)++ threw exception ReferenceError: Postfix ++ operator applied to value that is not a reference..
 PASS (true ? x : y)++ threw exception ReferenceError: Postfix ++ operator applied to value that is not a reference..
 PASS x++++ threw exception SyntaxError: Parse error.
+PASS x is 0
+PASS y is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
