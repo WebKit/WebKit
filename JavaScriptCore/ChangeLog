@@ -1,5 +1,14 @@
 2009-05-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Quick fix for failures seen on buildbot. Maciej plans a better fix later.
+
+        * wtf/dtoa.cpp: Change the hardcoded number of 32-bit words in a BigInt
+        from 32 to 64. Parsing "1e500", for example, requires more than 32 words.
+
+2009-05-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 25674: syntax tree nodes should use arena allocation
