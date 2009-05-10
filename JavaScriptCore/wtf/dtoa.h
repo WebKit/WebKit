@@ -30,8 +30,7 @@ namespace WTF {
     extern WTF::Mutex* s_dtoaP5Mutex;
 
     double strtod(const char* s00, char** se);
-    char* dtoa(double d, int ndigits, int* decpt, int* sign, char** rve);
-    void freedtoa(char* s);
+    void dtoa(char* result, double d, int ndigits, int* decpt, int* sign, char** rve);
 
 } // namespace WTF
 

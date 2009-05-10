@@ -68,7 +68,8 @@ static UString integerPartNoExp(double d)
 {
     int decimalPoint;
     int sign;
-    char* result = WTF::dtoa(d, 0, &decimalPoint, &sign, NULL);
+    char result[80];
+    WTF::dtoa(result, d, 0, &decimalPoint, &sign, NULL);
     bool resultIsInfOrNan = (decimalPoint == 9999);
     size_t length = strlen(result);
 
@@ -89,8 +90,6 @@ static UString integerPartNoExp(double d)
         buf[decimalPoint] = '\0';
         str.append(buf.data());
     }
-
-    WTF::freedtoa(result);
 
     return str;
 }
@@ -345,7 +344,8 @@ JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec, JSObject*, J
 
     int decimalPoint;
     int sign;
-    char* result = WTF::dtoa(x, 0, &decimalPoint, &sign, NULL);
+    char result[80];
+    WTF::dtoa(result, x, 0, &decimalPoint, &sign, NULL);
     size_t resultLength = strlen(result);
     decimalPoint += decimalAdjust;
 
@@ -367,8 +367,6 @@ JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec, JSObject*, J
         buf[i++] = '\0';
     }
     ASSERT(i <= 80);
-
-    WTF::freedtoa(result);
 
     return jsString(exec, buf);
 }

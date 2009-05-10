@@ -1,3 +1,41 @@
+2009-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        - speedup dtoa/strtod
+        
+        Added a bunch of inlining, and replaced malloc with stack allocation.
+        
+        0.5% SunSpider speedup (7% on string-tagcloud).
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::integerPartNoExp):
+        (JSC::numberProtoFuncToExponential):
+        * runtime/UString.cpp:
+        (JSC::concatenate):
+        (JSC::UString::from):
+        * wtf/dtoa.cpp:
+        (WTF::BigInt::BigInt):
+        (WTF::BigInt::operator=):
+        (WTF::Balloc):
+        (WTF::Bfree):
+        (WTF::multadd):
+        (WTF::s2b):
+        (WTF::i2b):
+        (WTF::mult):
+        (WTF::pow5mult):
+        (WTF::lshift):
+        (WTF::cmp):
+        (WTF::diff):
+        (WTF::b2d):
+        (WTF::d2b):
+        (WTF::ratio):
+        (WTF::strtod):
+        (WTF::quorem):
+        (WTF::freedtoa):
+        (WTF::dtoa):
+        * wtf/dtoa.h:
+
 2009-05-09  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Geoffrey Garen. Landed by Jan Alonzo.
