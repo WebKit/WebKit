@@ -52,7 +52,7 @@ namespace JSC {
     };
 
     typedef EncodedJSValue* PropertyStorage;
-    typedef EncodedJSValue const * ConstPropertyStorage;
+    typedef const EncodedJSValue* ConstPropertyStorage;
 
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
@@ -149,12 +149,12 @@ namespace JSC {
 
         size_t offsetForLocation(JSValue* location) const
         {
-            return location - reinterpret_cast<JSValue const *>(propertyStorage());
+            return location - reinterpret_cast<const JSValue*>(propertyStorage());
         }
 
-        JSValue const * locationForOffset(size_t offset) const
+        const JSValue* locationForOffset(size_t offset) const
         {
-            return reinterpret_cast<JSValue const *>(&propertyStorage()[offset]);
+            return reinterpret_cast<const JSValue*>(&propertyStorage()[offset]);
         }
 
         JSValue* locationForOffset(size_t offset)

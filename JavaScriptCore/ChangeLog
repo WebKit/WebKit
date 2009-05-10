@@ -1,3 +1,17 @@
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        "Class const *" is the same as "const Class*", use the latter syntax consistently.
+
+        See <http://www.parashift.com/c++-faq-lite/const-correctness.html#faq-18.9>.
+
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::locationForOffset):
+
 2009-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey Proskuryakov.
