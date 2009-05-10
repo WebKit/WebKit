@@ -287,6 +287,16 @@ void XMLHttpRequest::callReadyStateChangeListener()
         dispatchLoadEvent();
 }
 
+void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
+{
+    if (m_state != OPENED || m_loader) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    m_includeCredentials = value;
+}
+
 void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
 {
     internalAbort();

@@ -1,3 +1,17 @@
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Match newer XMLHttpRequest draft and make withCredential setter raise an exception when
+        called at a wrong time.
+
+        No test, because we are waiting for a newer version of system frameworks to test the attribute.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::setWithCredentials):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+        Raise INVALID_STATE_ERR if the state is not OPENED, or if the send() flag is true.
+
 2009-05-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Kilzer.
