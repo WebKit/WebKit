@@ -2,6 +2,20 @@
 
         Reviewed by Dan Bernstein.
 
+        <rdar://problem/6870383> Have to enter credentials twice when downloading from a protected page
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        * platform/network/cf/AuthenticationCF.h:
+        (WebCore::WebCoreCredentialStorage::set):
+        (WebCore::WebCoreCredentialStorage::get):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        Move WebCore credential storage to AuthenticationCF, so that WebKit could use it (macthing
+        an earlier Mac change).
+
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Match newer XMLHttpRequest draft and make withCredential setter raise an exception when
         called at a wrong time.
 

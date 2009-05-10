@@ -1,3 +1,12 @@
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6870383> Have to enter credentials twice when downloading from a protected page
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed Misc/WebDownload.m as WebDownload.mm, so that
+        it could use C++ code from AuthenticaitonMac.h.
+
 2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
 
         Add localizable strings for 

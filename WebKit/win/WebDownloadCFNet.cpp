@@ -379,6 +379,15 @@ CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLRespo
 
 void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef challenge)
 {
+    // Try previously stored credential first.
+    if (!CFURLAuthChallengeGetPreviousFailureCount(challenge)) {
+        CFURLCredentialRef credential = WebCoreCredentialStorage::get(CFURLAuthChallengeGetProtectionSpace(challenge));
+        if (credential) {
+            CFURLDownloadUseCredential(m_download.get(), credential, challenge);
+            return;
+        }
+    }
+
     COMPtr<IWebURLAuthenticationChallenge> webChallenge(AdoptCOM,
         WebURLAuthenticationChallenge::createInstance(AuthenticationChallenge(challenge, 0), this));
 

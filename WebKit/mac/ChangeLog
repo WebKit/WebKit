@@ -1,3 +1,14 @@
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6870383> Have to enter credentials twice when downloading from a protected page
+
+        * Misc/WebDownload.m: Removed.
+        * Misc/WebDownload.mm: Copied from WebKit/mac/Misc/WebDownload.m.
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]): Try to use
+        credentials from WebCore storage.
+
 2009-05-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Fix clean builds, forgot to land name() -> formControlName() rename patch in WebKit. Only landed the WebCore side.

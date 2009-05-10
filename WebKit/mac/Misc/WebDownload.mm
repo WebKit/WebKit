@@ -30,10 +30,13 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
+#import <WebCore/AuthenticationMac.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <wtf/Assertions.h>
 
 #import "WebTypesInternal.h"
+
+using namespace WebCore;
 
 @class NSURLConnectionDelegateProxy;
 
@@ -106,6 +109,15 @@
 
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    // Try previously stored credential first.
+    if (![challenge previousFailureCount]) {
+        NSURLCredential *credential = WebCoreCredentialStorage::get([challenge protectionSpace]);
+        if (credential) {
+            [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            return;
+        }
+    }
+
     if ([realDelegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:)]) {
         [realDelegate download:download didReceiveAuthenticationChallenge:challenge];
     } else {

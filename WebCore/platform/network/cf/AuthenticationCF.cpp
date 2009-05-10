@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+CFMutableDictionaryRef WebCoreCredentialStorage::m_storage;
+
 AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
                                                  const Credential& proposedCredential,
                                                  unsigned previousFailureCount,
