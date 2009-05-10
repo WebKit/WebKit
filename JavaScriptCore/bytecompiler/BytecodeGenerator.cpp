@@ -262,7 +262,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
         m_nextGlobalIndex -= symbolTable->size();
 
         for (size_t i = 0; i < functionStack.size(); ++i) {
-            FuncDeclNode* funcDecl = functionStack[i].get();
+            FuncDeclNode* funcDecl = functionStack[i];
             globalObject->removeDirect(funcDecl->m_ident); // Make sure our new function is not shadowed by an old property.
             emitNewFunction(addGlobalVar(funcDecl->m_ident, false), funcDecl);
         }
@@ -278,7 +278,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
             emitLoad(newVars[i], jsUndefined());
     } else {
         for (size_t i = 0; i < functionStack.size(); ++i) {
-            FuncDeclNode* funcDecl = functionStack[i].get();
+            FuncDeclNode* funcDecl = functionStack[i];
             globalObject->putWithAttributes(exec, funcDecl->m_ident, funcDecl->makeFunction(exec, scopeChain.node()), DontDelete);
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
@@ -337,7 +337,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
 
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i) {
-        FuncDeclNode* funcDecl = functionStack[i].get();
+        FuncDeclNode* funcDecl = functionStack[i];
         const Identifier& ident = funcDecl->m_ident;
         m_functions.add(ident.ustring().rep());
         emitNewFunction(addVar(ident, false), funcDecl);
@@ -1374,7 +1374,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     // Generate code for arguments.
     Vector<RefPtr<RegisterID>, 16> argv;
     argv.append(thisRegister);
-    for (ArgumentListNode* n = argumentsNode->m_listNode.get(); n; n = n->m_next.get()) {
+    for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next) {
         argv.append(newTemporary());
         // op_call requires the arguments to be a sequential range of registers
         ASSERT(argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);
@@ -1497,7 +1497,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     // Generate code for arguments.
     Vector<RefPtr<RegisterID>, 16> argv;
     argv.append(newTemporary()); // reserve space for "this"
-    for (ArgumentListNode* n = argumentsNode ? argumentsNode->m_listNode.get() : 0; n; n = n->m_next.get()) {
+    for (ArgumentListNode* n = argumentsNode ? argumentsNode->m_listNode : 0; n; n = n->m_next) {
         argv.append(newTemporary());
         // op_construct requires the arguments to be a sequential range of registers
         ASSERT(argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);

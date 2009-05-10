@@ -32,4 +32,6 @@ namespace WTF {
 
 } // namespace WTF
 
+using WTF::notFound;
+
 #endif // NotFound_h

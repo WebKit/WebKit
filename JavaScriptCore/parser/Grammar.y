@@ -138,7 +138,7 @@ template <typename T> T mergeDeclarationLists(T decls1, T decls2)
 static void appendToVarDeclarationList(void* globalPtr, ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
 {
     if (!varDecls)
-        varDecls = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+        varDecls = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
 
     varDecls->data.append(make_pair(ident, attrs));
 
@@ -287,16 +287,16 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 // In the mean time, make sure to make any changes to the grammar in both versions.
 
 Literal:
-    NULLTOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new NullNode(GLOBAL_DATA), 0, 1); }
-  | TRUETOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new BooleanNode(GLOBAL_DATA, true), 0, 1); }
-  | FALSETOKEN                          { $$ = createNodeInfo<ExpressionNode*>(new BooleanNode(GLOBAL_DATA, false), 0, 1); }
+    NULLTOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NullNode(GLOBAL_DATA), 0, 1); }
+  | TRUETOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BooleanNode(GLOBAL_DATA, true), 0, 1); }
+  | FALSETOKEN                          { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BooleanNode(GLOBAL_DATA, false), 0, 1); }
   | NUMBER                              { $$ = createNodeInfo<ExpressionNode*>(makeNumberNode(GLOBAL_DATA, $1), 0, 1); }
-  | STRING                              { $$ = createNodeInfo<ExpressionNode*>(new StringNode(GLOBAL_DATA, *$1), 0, 1); }
+  | STRING                              { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StringNode(GLOBAL_DATA, *$1), 0, 1); }
   | '/' /* regexp */                    {
                                             Lexer& l = *LEXER;
                                             if (!l.scanRegExp())
                                                 YYABORT;
-                                            RegExpNode* node = new RegExpNode(GLOBAL_DATA, l.pattern(), l.flags());
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, l.pattern(), l.flags());
                                             int size = l.pattern().size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
@@ -305,7 +305,7 @@ Literal:
                                             Lexer& l = *LEXER;
                                             if (!l.scanRegExp())
                                                 YYABORT;
-                                            RegExpNode* node = new RegExpNode(GLOBAL_DATA, "=" + l.pattern(), l.flags());
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, "=" + l.pattern(), l.flags());
                                             int size = l.pattern().size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
@@ -313,9 +313,9 @@ Literal:
 ;
 
 Property:
-    IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
+    IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
+  | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
+  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
                                                              {
@@ -329,46 +329,46 @@ Property:
 ;
 
 PropertyList:
-    Property                            { $$.m_node.head = new PropertyListNode(GLOBAL_DATA, $1.m_node); 
+    Property                            { $$.m_node.head = new (GLOBAL_DATA) PropertyListNode(GLOBAL_DATA, $1.m_node); 
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_features = $1.m_features;
                                           $$.m_numConstants = $1.m_numConstants; }
   | PropertyList ',' Property           { $$.m_node.head = $1.m_node.head;
-                                          $$.m_node.tail = new PropertyListNode(GLOBAL_DATA, $3.m_node, $1.m_node.tail);
+                                          $$.m_node.tail = new (GLOBAL_DATA) PropertyListNode(GLOBAL_DATA, $3.m_node, $1.m_node.tail);
                                           $$.m_features = $1.m_features | $3.m_features;
                                           $$.m_numConstants = $1.m_numConstants + $3.m_numConstants; }
 ;
 
 PrimaryExpr:
     PrimaryExprNoBrace
-  | OPENBRACE CLOSEBRACE                             { $$ = createNodeInfo<ExpressionNode*>(new ObjectLiteralNode(GLOBAL_DATA), 0, 0); }
-  | OPENBRACE PropertyList CLOSEBRACE                { $$ = createNodeInfo<ExpressionNode*>(new ObjectLiteralNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
+  | OPENBRACE CLOSEBRACE                             { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ObjectLiteralNode(GLOBAL_DATA), 0, 0); }
+  | OPENBRACE PropertyList CLOSEBRACE                { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ObjectLiteralNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | OPENBRACE PropertyList ',' CLOSEBRACE            { $$ = createNodeInfo<ExpressionNode*>(new ObjectLiteralNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
+  | OPENBRACE PropertyList ',' CLOSEBRACE            { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ObjectLiteralNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
 ;
 
 PrimaryExprNoBrace:
-    THISTOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new ThisNode(GLOBAL_DATA), ThisFeature, 0); }
+    THISTOKEN                           { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ThisNode(GLOBAL_DATA), ThisFeature, 0); }
   | Literal
   | ArrayLiteral
-  | IDENT                               { $$ = createNodeInfo<ExpressionNode*>(new ResolveNode(GLOBAL_DATA, *$1, @1.first_column), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
+  | IDENT                               { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ResolveNode(GLOBAL_DATA, *$1, @1.first_column), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
   | '(' Expr ')'                        { $$ = $2; }
 ;
 
 ArrayLiteral:
-    '[' ElisionOpt ']'                  { $$ = createNodeInfo<ExpressionNode*>(new ArrayNode(GLOBAL_DATA, $2), 0, $2 ? 1 : 0); }
-  | '[' ElementList ']'                 { $$ = createNodeInfo<ExpressionNode*>(new ArrayNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
-  | '[' ElementList ',' ElisionOpt ']'  { $$ = createNodeInfo<ExpressionNode*>(new ArrayNode(GLOBAL_DATA, $4, $2.m_node.head), $2.m_features, $4 ? $2.m_numConstants + 1 : $2.m_numConstants); }
+    '[' ElisionOpt ']'                  { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ArrayNode(GLOBAL_DATA, $2), 0, $2 ? 1 : 0); }
+  | '[' ElementList ']'                 { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ArrayNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
+  | '[' ElementList ',' ElisionOpt ']'  { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ArrayNode(GLOBAL_DATA, $4, $2.m_node.head), $2.m_features, $4 ? $2.m_numConstants + 1 : $2.m_numConstants); }
 ;
 
 ElementList:
-    ElisionOpt AssignmentExpr           { $$.m_node.head = new ElementNode(GLOBAL_DATA, $1, $2.m_node);
+    ElisionOpt AssignmentExpr           { $$.m_node.head = new (GLOBAL_DATA) ElementNode(GLOBAL_DATA, $1, $2.m_node);
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_features = $2.m_features;
                                           $$.m_numConstants = $2.m_numConstants; }
   | ElementList ',' ElisionOpt AssignmentExpr
                                         { $$.m_node.head = $1.m_node.head;
-                                          $$.m_node.tail = new ElementNode(GLOBAL_DATA, $1.m_node.tail, $3, $4.m_node);
+                                          $$.m_node.tail = new (GLOBAL_DATA) ElementNode(GLOBAL_DATA, $1.m_node.tail, $3, $4.m_node);
                                           $$.m_features = $1.m_features | $4.m_features;
                                           $$.m_numConstants = $1.m_numConstants + $4.m_numConstants; }
 ;
@@ -386,15 +386,15 @@ Elision:
 MemberExpr:
     PrimaryExpr
   | FunctionExpr                        { $$ = createNodeInfo<ExpressionNode*>($1.m_node, $1.m_features, $1.m_numConstants); }
-  | MemberExpr '[' Expr ']'             { BracketAccessorNode* node = new BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | MemberExpr '[' Expr ']'             { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
                                         }
-  | MemberExpr '.' IDENT                { DotAccessorNode* node = new DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
+  | MemberExpr '.' IDENT                { DotAccessorNode* node = new (GLOBAL_DATA) DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features, $1.m_numConstants);
                                         }
-  | NEW MemberExpr Arguments            { NewExprNode* node = new NewExprNode(GLOBAL_DATA, $2.m_node, $3.m_node);
+  | NEW MemberExpr Arguments            { NewExprNode* node = new (GLOBAL_DATA) NewExprNode(GLOBAL_DATA, $2.m_node, $3.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $2.m_features | $3.m_features, $2.m_numConstants + $3.m_numConstants);
                                         }
@@ -402,15 +402,15 @@ MemberExpr:
 
 MemberExprNoBF:
     PrimaryExprNoBrace
-  | MemberExprNoBF '[' Expr ']'         { BracketAccessorNode* node = new BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | MemberExprNoBF '[' Expr ']'         { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
                                         }
-  | MemberExprNoBF '.' IDENT            { DotAccessorNode* node = new DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
+  | MemberExprNoBF '.' IDENT            { DotAccessorNode* node = new (GLOBAL_DATA) DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features, $1.m_numConstants);
                                         }
-  | NEW MemberExpr Arguments            { NewExprNode* node = new NewExprNode(GLOBAL_DATA, $2.m_node, $3.m_node);
+  | NEW MemberExpr Arguments            { NewExprNode* node = new (GLOBAL_DATA) NewExprNode(GLOBAL_DATA, $2.m_node, $3.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $2.m_features | $3.m_features, $2.m_numConstants + $3.m_numConstants);
                                         }
@@ -418,7 +418,7 @@ MemberExprNoBF:
 
 NewExpr:
     MemberExpr
-  | NEW NewExpr                         { NewExprNode* node = new NewExprNode(GLOBAL_DATA, $2.m_node);
+  | NEW NewExpr                         { NewExprNode* node = new (GLOBAL_DATA) NewExprNode(GLOBAL_DATA, $2.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $2.m_features, $2.m_numConstants); 
                                         }
@@ -426,7 +426,7 @@ NewExpr:
 
 NewExprNoBF:
     MemberExprNoBF
-  | NEW NewExpr                         { NewExprNode* node = new NewExprNode(GLOBAL_DATA, $2.m_node);
+  | NEW NewExpr                         { NewExprNode* node = new (GLOBAL_DATA) NewExprNode(GLOBAL_DATA, $2.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $2.m_features, $2.m_numConstants);
                                         }
@@ -435,11 +435,11 @@ NewExprNoBF:
 CallExpr:
     MemberExpr Arguments                { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
   | CallExpr Arguments                  { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
-  | CallExpr '[' Expr ']'               { BracketAccessorNode* node = new BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | CallExpr '[' Expr ']'               { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
                                         }
-  | CallExpr '.' IDENT                  { DotAccessorNode* node = new DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
+  | CallExpr '.' IDENT                  { DotAccessorNode* node = new (GLOBAL_DATA) DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features, $1.m_numConstants); }
 ;
@@ -447,28 +447,28 @@ CallExpr:
 CallExprNoBF:
     MemberExprNoBF Arguments            { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
   | CallExprNoBF Arguments              { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
-  | CallExprNoBF '[' Expr ']'           { BracketAccessorNode* node = new BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | CallExprNoBF '[' Expr ']'           { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
                                         }
-  | CallExprNoBF '.' IDENT              { DotAccessorNode* node = new DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
+  | CallExprNoBF '.' IDENT              { DotAccessorNode* node = new (GLOBAL_DATA) DotAccessorNode(GLOBAL_DATA, $1.m_node, *$3);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @3.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features, $1.m_numConstants); 
                                         }
 ;
 
 Arguments:
-    '(' ')'                             { $$ = createNodeInfo<ArgumentsNode*>(new ArgumentsNode(GLOBAL_DATA), 0, 0); }
-  | '(' ArgumentList ')'                { $$ = createNodeInfo<ArgumentsNode*>(new ArgumentsNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
+    '(' ')'                             { $$ = createNodeInfo<ArgumentsNode*>(new (GLOBAL_DATA) ArgumentsNode(GLOBAL_DATA), 0, 0); }
+  | '(' ArgumentList ')'                { $$ = createNodeInfo<ArgumentsNode*>(new (GLOBAL_DATA) ArgumentsNode(GLOBAL_DATA, $2.m_node.head), $2.m_features, $2.m_numConstants); }
 ;
 
 ArgumentList:
-    AssignmentExpr                      { $$.m_node.head = new ArgumentListNode(GLOBAL_DATA, $1.m_node);
+    AssignmentExpr                      { $$.m_node.head = new (GLOBAL_DATA) ArgumentListNode(GLOBAL_DATA, $1.m_node);
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_features = $1.m_features;
                                           $$.m_numConstants = $1.m_numConstants; }
   | ArgumentList ',' AssignmentExpr     { $$.m_node.head = $1.m_node.head;
-                                          $$.m_node.tail = new ArgumentListNode(GLOBAL_DATA, $1.m_node.tail, $3.m_node);
+                                          $$.m_node.tail = new (GLOBAL_DATA) ArgumentListNode(GLOBAL_DATA, $1.m_node.tail, $3.m_node);
                                           $$.m_features = $1.m_features | $3.m_features;
                                           $$.m_numConstants = $1.m_numConstants + $3.m_numConstants; }
 ;
@@ -497,16 +497,16 @@ PostfixExprNoBF:
 
 UnaryExprCommon:
     DELETETOKEN UnaryExpr               { $$ = createNodeInfo<ExpressionNode*>(makeDeleteNode(GLOBAL_DATA, $2.m_node, @1.first_column, @2.last_column, @2.last_column), $2.m_features, $2.m_numConstants); }
-  | VOIDTOKEN UnaryExpr                 { $$ = createNodeInfo<ExpressionNode*>(new VoidNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants + 1); }
+  | VOIDTOKEN UnaryExpr                 { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) VoidNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants + 1); }
   | TYPEOF UnaryExpr                    { $$ = createNodeInfo<ExpressionNode*>(makeTypeOfNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
   | PLUSPLUS UnaryExpr                  { $$ = createNodeInfo<ExpressionNode*>(makePrefixNode(GLOBAL_DATA, $2.m_node, OpPlusPlus, @1.first_column, @2.first_column + 1, @2.last_column), $2.m_features | AssignFeature, $2.m_numConstants); }
   | AUTOPLUSPLUS UnaryExpr              { $$ = createNodeInfo<ExpressionNode*>(makePrefixNode(GLOBAL_DATA, $2.m_node, OpPlusPlus, @1.first_column, @2.first_column + 1, @2.last_column), $2.m_features | AssignFeature, $2.m_numConstants); }
   | MINUSMINUS UnaryExpr                { $$ = createNodeInfo<ExpressionNode*>(makePrefixNode(GLOBAL_DATA, $2.m_node, OpMinusMinus, @1.first_column, @2.first_column + 1, @2.last_column), $2.m_features | AssignFeature, $2.m_numConstants); }
   | AUTOMINUSMINUS UnaryExpr            { $$ = createNodeInfo<ExpressionNode*>(makePrefixNode(GLOBAL_DATA, $2.m_node, OpMinusMinus, @1.first_column, @2.first_column + 1, @2.last_column), $2.m_features | AssignFeature, $2.m_numConstants); }
-  | '+' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(new UnaryPlusNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
+  | '+' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) UnaryPlusNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
   | '-' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(makeNegateNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
   | '~' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(makeBitwiseNotNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
-  | '!' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(new LogicalNotNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
+  | '!' UnaryExpr                       { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalNotNode(GLOBAL_DATA, $2.m_node), $2.m_features, $2.m_numConstants); }
 
 UnaryExpr:
     PostfixExpr
@@ -522,7 +522,7 @@ MultiplicativeExpr:
     UnaryExpr
   | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeInfo<ExpressionNode*>(makeMultNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeInfo<ExpressionNode*>(makeDivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeInfo<ExpressionNode*>(new ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 MultiplicativeExprNoBF:
@@ -532,7 +532,7 @@ MultiplicativeExprNoBF:
   | MultiplicativeExprNoBF '/' UnaryExpr
                                         { $$ = createNodeInfo<ExpressionNode*>(makeDivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | MultiplicativeExprNoBF '%' UnaryExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 AdditiveExpr:
@@ -553,188 +553,188 @@ ShiftExpr:
     AdditiveExpr
   | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeInfo<ExpressionNode*>(makeLeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeInfo<ExpressionNode*>(makeRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeInfo<ExpressionNode*>(new UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ShiftExprNoBF:
     AdditiveExprNoBF
   | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(makeLeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(makeRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeInfo<ExpressionNode*>(new UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 RelationalExpr:
     ShiftExpr
-  | RelationalExpr '<' ShiftExpr        { $$ = createNodeInfo<ExpressionNode*>(new LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExpr '>' ShiftExpr        { $$ = createNodeInfo<ExpressionNode*>(new GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExpr LE ShiftExpr         { $$ = createNodeInfo<ExpressionNode*>(new LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExpr GE ShiftExpr         { $$ = createNodeInfo<ExpressionNode*>(new GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExpr INSTANCEOF ShiftExpr { InstanceOfNode* node = new InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | RelationalExpr '<' ShiftExpr        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExpr '>' ShiftExpr        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExpr LE ShiftExpr         { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExpr GE ShiftExpr         { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExpr INSTANCEOF ShiftExpr { InstanceOfNode* node = new (GLOBAL_DATA) InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @3.first_column, @3.last_column);  
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExpr INTOKEN ShiftExpr    { InNode* node = new InNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+  | RelationalExpr INTOKEN ShiftExpr    { InNode* node = new (GLOBAL_DATA) InNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @3.first_column, @3.last_column);  
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 RelationalExprNoIn:
     ShiftExpr
-  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | RelationalExprNoIn INSTANCEOF ShiftExpr
-                                        { InstanceOfNode* node = new InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+                                        { InstanceOfNode* node = new (GLOBAL_DATA) InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @3.first_column, @3.last_column);  
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 RelationalExprNoBF:
     ShiftExprNoBF
-  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LessEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) GreaterEqNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | RelationalExprNoBF INSTANCEOF ShiftExpr
-                                        { InstanceOfNode* node = new InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+                                        { InstanceOfNode* node = new (GLOBAL_DATA) InstanceOfNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @3.first_column, @3.last_column);  
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | RelationalExprNoBF INTOKEN ShiftExpr 
-                                        { InNode* node = new InNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
+                                        { InNode* node = new (GLOBAL_DATA) InNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @3.first_column, @3.last_column);  
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 EqualityExpr:
     RelationalExpr
-  | EqualityExpr EQEQ RelationalExpr    { $$ = createNodeInfo<ExpressionNode*>(new EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | EqualityExpr NE RelationalExpr      { $$ = createNodeInfo<ExpressionNode*>(new NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | EqualityExpr STREQ RelationalExpr   { $$ = createNodeInfo<ExpressionNode*>(new StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | EqualityExpr STRNEQ RelationalExpr  { $$ = createNodeInfo<ExpressionNode*>(new NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | EqualityExpr EQEQ RelationalExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | EqualityExpr NE RelationalExpr      { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | EqualityExpr STREQ RelationalExpr   { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | EqualityExpr STRNEQ RelationalExpr  { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 EqualityExprNoIn:
     RelationalExprNoIn
   | EqualityExprNoIn EQEQ RelationalExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | EqualityExprNoIn NE RelationalExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | EqualityExprNoIn STREQ RelationalExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | EqualityExprNoIn STRNEQ RelationalExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 EqualityExprNoBF:
     RelationalExprNoBF
   | EqualityExprNoBF EQEQ RelationalExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | EqualityExprNoBF NE RelationalExpr  { $$ = createNodeInfo<ExpressionNode*>(new NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) EqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | EqualityExprNoBF NE RelationalExpr  { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | EqualityExprNoBF STREQ RelationalExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | EqualityExprNoBF STRNEQ RelationalExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) NotStrictEqualNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseANDExpr:
     EqualityExpr
-  | BitwiseANDExpr '&' EqualityExpr     { $$ = createNodeInfo<ExpressionNode*>(new BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | BitwiseANDExpr '&' EqualityExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseANDExprNoIn:
     EqualityExprNoIn
   | BitwiseANDExprNoIn '&' EqualityExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseANDExprNoBF:
     EqualityExprNoBF
-  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = createNodeInfo<ExpressionNode*>(new BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitAndNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseXORExpr:
     BitwiseANDExpr
-  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = createNodeInfo<ExpressionNode*>(new BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseXORExprNoIn:
     BitwiseANDExprNoIn
   | BitwiseXORExprNoIn '^' BitwiseANDExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseXORExprNoBF:
     BitwiseANDExprNoBF
   | BitwiseXORExprNoBF '^' BitwiseANDExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitXOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseORExpr:
     BitwiseXORExpr
-  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = createNodeInfo<ExpressionNode*>(new BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseORExprNoIn:
     BitwiseXORExprNoIn
   | BitwiseORExprNoIn '|' BitwiseXORExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 BitwiseORExprNoBF:
     BitwiseXORExprNoBF
   | BitwiseORExprNoBF '|' BitwiseXORExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) BitOrNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalANDExpr:
     BitwiseORExpr
-  | LogicalANDExpr AND BitwiseORExpr    { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | LogicalANDExpr AND BitwiseORExpr    { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalANDExprNoIn:
     BitwiseORExprNoIn
   | LogicalANDExprNoIn AND BitwiseORExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalANDExprNoBF:
     BitwiseORExprNoBF
   | LogicalANDExprNoBF AND BitwiseORExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalORExpr:
     LogicalANDExpr
-  | LogicalORExpr OR LogicalANDExpr     { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | LogicalORExpr OR LogicalANDExpr     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalORExprNoIn:
     LogicalANDExprNoIn
   | LogicalORExprNoIn OR LogicalANDExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 LogicalORExprNoBF:
     LogicalANDExprNoBF
-  | LogicalORExprNoBF OR LogicalANDExpr { $$ = createNodeInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | LogicalORExprNoBF OR LogicalANDExpr { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ConditionalExpr:
     LogicalORExpr
   | LogicalORExpr '?' AssignmentExpr ':' AssignmentExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
 ;
 
 ConditionalExprNoIn:
     LogicalORExprNoIn
   | LogicalORExprNoIn '?' AssignmentExprNoIn ':' AssignmentExprNoIn
-                                        { $$ = createNodeInfo<ExpressionNode*>(new ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
 ;
 
 ConditionalExprNoBF:
     LogicalORExprNoBF
   | LogicalORExprNoBF '?' AssignmentExpr ':' AssignmentExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) ConditionalNode(GLOBAL_DATA, $1.m_node, $3.m_node, $5.m_node), $1.m_features | $3.m_features | $5.m_features, $1.m_numConstants + $3.m_numConstants + $5.m_numConstants); }
 ;
 
 AssignmentExpr:
@@ -778,17 +778,17 @@ AssignmentOperator:
 
 Expr:
     AssignmentExpr
-  | Expr ',' AssignmentExpr             { $$ = createNodeInfo<ExpressionNode*>(new CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | Expr ',' AssignmentExpr             { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ExprNoIn:
     AssignmentExprNoIn
-  | ExprNoIn ',' AssignmentExprNoIn     { $$ = createNodeInfo<ExpressionNode*>(new CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ExprNoIn ',' AssignmentExprNoIn     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ExprNoBF:
     AssignmentExprNoBF
-  | ExprNoBF ',' AssignmentExpr         { $$ = createNodeInfo<ExpressionNode*>(new CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ExprNoBF ',' AssignmentExpr         { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 Statement:
@@ -812,9 +812,9 @@ Statement:
 ;
 
 Block:
-    OPENBRACE CLOSEBRACE                             { $$ = createNodeDeclarationInfo<StatementNode*>(new BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
+    OPENBRACE CLOSEBRACE                             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | OPENBRACE SourceElements CLOSEBRACE              { $$ = createNodeDeclarationInfo<StatementNode*>(new BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
+  | OPENBRACE SourceElements CLOSEBRACE              { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
                                           DBG($$.m_node, @1, @3); }
 ;
 
@@ -828,16 +828,16 @@ VariableStatement:
 
 VariableDeclarationList:
     IDENT                               { $$.m_node = 0;
-                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
                                           $$.m_numConstants = 0;
                                         }
-  | IDENT Initializer                   { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
+  | IDENT Initializer                   { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.first_column + 1, @2.last_column);
                                           $$.m_node = node;
-                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features;
@@ -852,7 +852,7 @@ VariableDeclarationList:
                                           $$.m_numConstants = $1.m_numConstants;
                                         }
   | VariableDeclarationList ',' IDENT Initializer
-                                        { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
+                                        { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @3.first_column, @4.first_column + 1, @4.last_column);
                                           $$.m_node = combineVarInitializers(GLOBAL_DATA, $1.m_node, node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
@@ -865,16 +865,16 @@ VariableDeclarationList:
 
 VariableDeclarationListNoIn:
     IDENT                               { $$.m_node = 0;
-                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
                                           $$.m_numConstants = 0;
                                         }
-  | IDENT InitializerNoIn               { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
+  | IDENT InitializerNoIn               { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.first_column + 1, @2.last_column);
                                           $$.m_node = node;
-                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features;
@@ -889,7 +889,7 @@ VariableDeclarationListNoIn:
                                           $$.m_numConstants = $1.m_numConstants;
                                         }
   | VariableDeclarationListNoIn ',' IDENT InitializerNoIn
-                                        { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
+                                        { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @3.first_column, @4.first_column + 1, @4.last_column);
                                           $$.m_node = combineVarInitializers(GLOBAL_DATA, $1.m_node, node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
@@ -901,24 +901,24 @@ VariableDeclarationListNoIn:
 ;
 
 ConstStatement:
-    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeDeclarationInfo<StatementNode*>(new ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
+    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
                                           DBG($$.m_node, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
                                           DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
     ConstDeclaration                    { $$.m_node.head = $1.m_node;
                                           $$.m_node.tail = $$.m_node.head;
-                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, $1.m_node);
                                           $$.m_funcDeclarations = 0; 
                                           $$.m_features = $1.m_features;
                                           $$.m_numConstants = $1.m_numConstants;
     }
   | ConstDeclarationList ',' ConstDeclaration
-                                        {  $$.m_node.head = $1.m_node.head;
+                                        { $$.m_node.head = $1.m_node.head;
                                           $1.m_node.tail->m_next = $3.m_node;
                                           $$.m_node.tail = $3.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
@@ -929,8 +929,8 @@ ConstDeclarationList:
 ;
 
 ConstDeclaration:
-    IDENT                               { $$ = createNodeInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, 0), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
-  | IDENT Initializer                   { $$ = createNodeInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, $2.m_node), ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features, $2.m_numConstants); }
+    IDENT                               { $$ = createNodeInfo<ConstDeclNode*>(new (GLOBAL_DATA) ConstDeclNode(GLOBAL_DATA, *$1, 0), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
+  | IDENT Initializer                   { $$ = createNodeInfo<ConstDeclNode*>(new (GLOBAL_DATA) ConstDeclNode(GLOBAL_DATA, *$1, $2.m_node), ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features, $2.m_numConstants); }
 ;
 
 Initializer:
@@ -942,22 +942,22 @@ InitializerNoIn:
 ;
 
 EmptyStatement:
-    ';'                                 { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(GLOBAL_DATA), 0, 0, 0, 0); }
+    ';'                                 { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) EmptyStatementNode(GLOBAL_DATA), 0, 0, 0, 0); }
 ;
 
 ExprStatement:
-    ExprNoBF ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
+    ExprNoBF ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
                                           DBG($$.m_node, @1, @2); }
-  | ExprNoBF error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
+  | ExprNoBF error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 IfStatement:
     IF '(' Expr ')' Statement %prec IF_WITHOUT_ELSE
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new IfNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) IfNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
                                           DBG($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new IfElseNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node), 
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) IfElseNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node), 
                                                                                          mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations),
                                                                                          $3.m_features | $5.m_features | $7.m_features,
                                                                                          $3.m_numConstants + $5.m_numConstants + $7.m_numConstants); 
@@ -965,20 +965,20 @@ IfStatement:
 ;
 
 IterationStatement:
-    DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeDeclarationInfo<StatementNode*>(new DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
+    DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
                                              DBG($$.m_node, @1, @3); }
-  | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeDeclarationInfo<StatementNode*>(new DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
+  | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
                                              DBG($$.m_node, @1, @3); } // Always performs automatic semicolon insertion.
-  | WHILE '(' Expr ')' Statement        { $$ = createNodeDeclarationInfo<StatementNode*>(new WhileNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
+  | WHILE '(' Expr ')' Statement        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) WhileNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
                                           DBG($$.m_node, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ForNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations, 
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ForNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations, 
                                                                                          $3.m_features | $5.m_features | $7.m_features | $9.m_features,
                                                                                          $3.m_numConstants + $5.m_numConstants + $7.m_numConstants + $9.m_numConstants);
                                           DBG($$.m_node, @1, @8); 
                                         }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ForNode(GLOBAL_DATA, $4.m_node, $6.m_node, $8.m_node, $10.m_node, true),
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ForNode(GLOBAL_DATA, $4.m_node, $6.m_node, $8.m_node, $10.m_node, true),
                                                                                          mergeDeclarationLists($4.m_varDeclarations, $10.m_varDeclarations),
                                                                                          mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations),
                                                                                          $4.m_features | $6.m_features | $8.m_features | $10.m_features,
@@ -986,7 +986,7 @@ IterationStatement:
                                           DBG($$.m_node, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
-                                            ForInNode* node = new ForInNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node);
+                                            ForInNode* node = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node);
                                             SET_EXCEPTION_LOCATION(node, @3.first_column, @3.last_column, @5.last_column);
                                             $$ = createNodeDeclarationInfo<StatementNode*>(node, $7.m_varDeclarations, $7.m_funcDeclarations,
                                                                                            $3.m_features | $5.m_features | $7.m_features,
@@ -994,13 +994,13 @@ IterationStatement:
                                             DBG($$.m_node, @1, @6);
                                         }
   | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
-                                        { ForInNode *forIn = new ForInNode(GLOBAL_DATA, *$4, 0, $6.m_node, $8.m_node, @5.first_column, @5.first_column - @4.first_column, @6.last_column - @5.first_column);
+                                        { ForInNode *forIn = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, *$4, 0, $6.m_node, $8.m_node, @5.first_column, @5.first_column - @4.first_column, @6.last_column - @5.first_column);
                                           SET_EXCEPTION_LOCATION(forIn, @4.first_column, @5.first_column + 1, @6.last_column);
                                           appendToVarDeclarationList(GLOBAL_DATA, $8.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations, ((*$4 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $6.m_features | $8.m_features, $6.m_numConstants + $8.m_numConstants);
                                           DBG($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
-                                        { ForInNode *forIn = new ForInNode(GLOBAL_DATA, *$4, $5.m_node, $7.m_node, $9.m_node, @5.first_column, @5.first_column - @4.first_column, @5.last_column - @5.first_column);
+                                        { ForInNode *forIn = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, *$4, $5.m_node, $7.m_node, $9.m_node, @5.first_column, @5.first_column - @4.first_column, @5.last_column - @5.first_column);
                                           SET_EXCEPTION_LOCATION(forIn, @4.first_column, @6.first_column + 1, @7.last_column);
                                           appendToVarDeclarationList(GLOBAL_DATA, $9.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations,
@@ -1020,70 +1020,70 @@ ExprNoInOpt:
 ;
 
 ContinueStatement:
-    CONTINUE ';'                        { ContinueNode* node = new ContinueNode(GLOBAL_DATA);
+    CONTINUE ';'                        { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | CONTINUE error                      { ContinueNode* node = new ContinueNode(GLOBAL_DATA);
+  | CONTINUE error                      { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | CONTINUE IDENT ';'                  { ContinueNode* node = new ContinueNode(GLOBAL_DATA, *$2);
+  | CONTINUE IDENT ';'                  { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA, *$2);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @3); }
-  | CONTINUE IDENT error                { ContinueNode* node = new ContinueNode(GLOBAL_DATA, *$2);
+  | CONTINUE IDENT error                { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA, *$2);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 BreakStatement:
-    BREAK ';'                           { BreakNode* node = new BreakNode(GLOBAL_DATA);
+    BREAK ';'                           { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @2); }
-  | BREAK error                         { BreakNode* node = new BreakNode(GLOBAL_DATA);
+  | BREAK error                         { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(GLOBAL_DATA), 0, 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | BREAK IDENT ';'                     { BreakNode* node = new BreakNode(GLOBAL_DATA, *$2);
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA), 0, 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | BREAK IDENT ';'                     { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @3); }
-  | BREAK IDENT error                   { BreakNode* node = new BreakNode(GLOBAL_DATA, *$2);
+  | BREAK IDENT error                   { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(GLOBAL_DATA, *$2), 0, 0, 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2), 0, 0, 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ReturnStatement:
-    RETURN ';'                          { ReturnNode* node = new ReturnNode(GLOBAL_DATA, 0); 
+    RETURN ';'                          { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, 0); 
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @2); }
-  | RETURN error                        { ReturnNode* node = new ReturnNode(GLOBAL_DATA, 0); 
+  | RETURN error                        { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, 0); 
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | RETURN Expr ';'                     { ReturnNode* node = new ReturnNode(GLOBAL_DATA, $2.m_node); 
+  | RETURN Expr ';'                     { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, $2.m_node); 
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @3); }
-  | RETURN Expr error                   { ReturnNode* node = new ReturnNode(GLOBAL_DATA, $2.m_node); 
+  | RETURN Expr error                   { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, $2.m_node); 
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 WithStatement:
-    WITH '(' Expr ')' Statement         { $$ = createNodeDeclarationInfo<StatementNode*>(new WithNode(GLOBAL_DATA, $3.m_node, $5.m_node, @3.last_column, @3.last_column - @3.first_column),
+    WITH '(' Expr ')' Statement         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) WithNode(GLOBAL_DATA, $3.m_node, $5.m_node, @3.last_column, @3.last_column - @3.first_column),
                                                                                          $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features | WithFeature, $3.m_numConstants + $5.m_numConstants);
                                           DBG($$.m_node, @1, @4); }
 ;
 
 SwitchStatement:
-    SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeDeclarationInfo<StatementNode*>(new SwitchNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations,
+    SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) SwitchNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations,
                                                                                          $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
                                           DBG($$.m_node, @1, @4); }
 ;
 
 CaseBlock:
-    OPENBRACE CaseClausesOpt CLOSEBRACE              { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new CaseBlockNode(GLOBAL_DATA, $2.m_node.head, 0, 0), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants); }
+    OPENBRACE CaseClausesOpt CLOSEBRACE              { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new (GLOBAL_DATA) CaseBlockNode(GLOBAL_DATA, $2.m_node.head, 0, 0), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants); }
   | OPENBRACE CaseClausesOpt DefaultClause CaseClausesOpt CLOSEBRACE
-                                        { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new CaseBlockNode(GLOBAL_DATA, $2.m_node.head, $3.m_node, $4.m_node.head),
+                                        { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new (GLOBAL_DATA) CaseBlockNode(GLOBAL_DATA, $2.m_node.head, $3.m_node, $4.m_node.head),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $3.m_varDeclarations), $4.m_varDeclarations),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $3.m_funcDeclarations), $4.m_funcDeclarations),
                                                                                          $2.m_features | $3.m_features | $4.m_features,
@@ -1096,14 +1096,14 @@ CaseClausesOpt:
 ;
 
 CaseClauses:
-    CaseClause                          { $$.m_node.head = new ClauseListNode(GLOBAL_DATA, $1.m_node);
+    CaseClause                          { $$.m_node.head = new (GLOBAL_DATA) ClauseListNode(GLOBAL_DATA, $1.m_node);
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           $$.m_funcDeclarations = $1.m_funcDeclarations; 
                                           $$.m_features = $1.m_features;
                                           $$.m_numConstants = $1.m_numConstants; }
   | CaseClauses CaseClause              { $$.m_node.head = $1.m_node.head;
-                                          $$.m_node.tail = new ClauseListNode(GLOBAL_DATA, $1.m_node.tail, $2.m_node);
+                                          $$.m_node.tail = new (GLOBAL_DATA) ClauseListNode(GLOBAL_DATA, $1.m_node.tail, $2.m_node);
                                           $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
                                           $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
                                           $$.m_features = $1.m_features | $2.m_features;
@@ -1112,47 +1112,47 @@ CaseClauses:
 ;
 
 CaseClause:
-    CASE Expr ':'                       { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(GLOBAL_DATA, $2.m_node), 0, 0, $2.m_features, $2.m_numConstants); }
-  | CASE Expr ':' SourceElements        { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(GLOBAL_DATA, $2.m_node, $4.m_node), $4.m_varDeclarations, $4.m_funcDeclarations, $2.m_features | $4.m_features, $2.m_numConstants + $4.m_numConstants); }
+    CASE Expr ':'                       { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new (GLOBAL_DATA) CaseClauseNode(GLOBAL_DATA, $2.m_node), 0, 0, $2.m_features, $2.m_numConstants); }
+  | CASE Expr ':' SourceElements        { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new (GLOBAL_DATA) CaseClauseNode(GLOBAL_DATA, $2.m_node, $4.m_node), $4.m_varDeclarations, $4.m_funcDeclarations, $2.m_features | $4.m_features, $2.m_numConstants + $4.m_numConstants); }
 ;
 
 DefaultClause:
-    DEFAULT ':'                         { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(GLOBAL_DATA, 0), 0, 0, 0, 0); }
-  | DEFAULT ':' SourceElements          { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(GLOBAL_DATA, 0, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations, $3.m_features, $3.m_numConstants); }
+    DEFAULT ':'                         { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new (GLOBAL_DATA) CaseClauseNode(GLOBAL_DATA, 0), 0, 0, 0, 0); }
+  | DEFAULT ':' SourceElements          { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new (GLOBAL_DATA) CaseClauseNode(GLOBAL_DATA, 0, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations, $3.m_features, $3.m_numConstants); }
 ;
 
 LabelledStatement:
-    IDENT ':' Statement                 { LabelNode* node = new LabelNode(GLOBAL_DATA, *$1, $3.m_node);
+    IDENT ':' Statement                 { LabelNode* node = new (GLOBAL_DATA) LabelNode(GLOBAL_DATA, *$1, $3.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, $3.m_varDeclarations, $3.m_funcDeclarations, $3.m_features, $3.m_numConstants); }
 ;
 
 ThrowStatement:
-    THROW Expr ';'                      { ThrowNode* node = new ThrowNode(GLOBAL_DATA, $2.m_node);
+    THROW Expr ';'                      { ThrowNode* node = new (GLOBAL_DATA) ThrowNode(GLOBAL_DATA, $2.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2);
                                         }
-  | THROW Expr error                    { ThrowNode* node = new ThrowNode(GLOBAL_DATA, $2.m_node);
+  | THROW Expr error                    { ThrowNode* node = new (GLOBAL_DATA) ThrowNode(GLOBAL_DATA, $2.m_node);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.last_column, @2.last_column);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; 
                                         }
 ;
 
 TryStatement:
-    TRY Block FINALLY Block             { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode(GLOBAL_DATA, $2.m_node, GLOBAL_DATA->propertyNames->nullIdentifier, false, 0, $4.m_node),
+    TRY Block FINALLY Block             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, GLOBAL_DATA->propertyNames->nullIdentifier, false, 0, $4.m_node),
                                                                                          mergeDeclarationLists($2.m_varDeclarations, $4.m_varDeclarations),
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations),
                                                                                          $2.m_features | $4.m_features,
                                                                                          $2.m_numConstants + $4.m_numConstants);
                                           DBG($$.m_node, @1, @2); }
-  | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, 0),
+  | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, 0),
                                                                                          mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations),
                                                                                          $2.m_features | $7.m_features | CatchFeature,
                                                                                          $2.m_numConstants + $7.m_numConstants);
                                           DBG($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
-                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, $9.m_node),
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, $9.m_node),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations),
                                                                                          $2.m_features | $7.m_features | $9.m_features | CatchFeature,
@@ -1161,17 +1161,17 @@ TryStatement:
 ;
 
 DebuggerStatement:
-    DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
+    DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
+  | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       { 
-          $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments(); 
           DBG($7, @6, @8);
@@ -1180,18 +1180,18 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
     | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
       { 
-          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0); 
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0); 
           if ($3.m_features & ArgumentsFeature) 
               $6->setUsesArguments();
           DBG($6, @5, @7); 
       }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
       { 
-          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
           DBG($7, @6, @8); 
@@ -1199,12 +1199,12 @@ FunctionExpr:
 ;
 
 FormalParameterList:
-    IDENT                               { $$.m_node.head = new ParameterNode(GLOBAL_DATA, *$1);
+    IDENT                               { $$.m_node.head = new (GLOBAL_DATA) ParameterNode(GLOBAL_DATA, *$1);
                                           $$.m_features = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
                                           $$.m_node.tail = $$.m_node.head; }
   | FormalParameterList ',' IDENT       { $$.m_node.head = $1.m_node.head;
                                           $$.m_features = $1.m_features | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0);
-                                          $$.m_node.tail = new ParameterNode(GLOBAL_DATA, $1.m_node.tail, *$3);  }
+                                          $$.m_node.tail = new (GLOBAL_DATA) ParameterNode(GLOBAL_DATA, $1.m_node.tail, *$3);  }
 ;
 
 FunctionBody:
@@ -1213,13 +1213,13 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { GLOBAL_DATA->parser->didFinishParsing(new SourceElements(GLOBAL_DATA), 0, 0, NoFeatures, @0.last_line, 0); }
+    /* not in spec */                   { GLOBAL_DATA->parser->didFinishParsing(new (GLOBAL_DATA) SourceElements(GLOBAL_DATA), 0, 0, NoFeatures, @0.last_line, 0); }
     | SourceElements                    { GLOBAL_DATA->parser->didFinishParsing($1.m_node, $1.m_varDeclarations, $1.m_funcDeclarations, $1.m_features, 
                                                                                 @1.last_line, $1.m_numConstants); }
 ;
 
 SourceElements:
-    Statement                           { $$.m_node = new SourceElements(GLOBAL_DATA);
+    Statement                           { $$.m_node = new (GLOBAL_DATA) SourceElements(GLOBAL_DATA);
                                           $$.m_node->append($1.m_node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           $$.m_funcDeclarations = $1.m_funcDeclarations;
@@ -1828,23 +1828,23 @@ SourceElements_NoNode:
 static ExpressionNode* makeAssignNode(void* globalPtr, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
 {
     if (!loc->isLocation())
-        return new AssignErrorNode(GLOBAL_DATA, loc, op, expr, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) AssignErrorNode(GLOBAL_DATA, loc, op, expr, divot, divot - start, end - divot);
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
-            AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, resolve->identifier(), expr, exprHasAssignments);
+            AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, resolve->identifier(), expr, exprHasAssignments);
             SET_EXCEPTION_LOCATION(node, start, divot, end);
             return node;
         } else
-            return new ReadModifyResolveNode(GLOBAL_DATA, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+            return new (GLOBAL_DATA) ReadModifyResolveNode(GLOBAL_DATA, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
         if (op == OpEqual)
-            return new AssignBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
+            return new (GLOBAL_DATA) AssignBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
         else {
-            ReadModifyBracketNode* node = new ReadModifyBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
+            ReadModifyBracketNode* node = new (GLOBAL_DATA) ReadModifyBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
             node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
             return node;
         }
@@ -1852,9 +1852,9 @@ static ExpressionNode* makeAssignNode(void* globalPtr, ExpressionNode* loc, Oper
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
     if (op == OpEqual)
-        return new AssignDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
+        return new (GLOBAL_DATA) AssignDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
 
-    ReadModifyDotNode* node = new ReadModifyDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+    ReadModifyDotNode* node = new (GLOBAL_DATA) ReadModifyDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
@@ -1862,21 +1862,21 @@ static ExpressionNode* makeAssignNode(void* globalPtr, ExpressionNode* loc, Oper
 static ExpressionNode* makePrefixNode(void* globalPtr, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new PrefixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PrefixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new PrefixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PrefixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PrefixBracketNode* node = new PrefixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PrefixBracketNode* node = new (GLOBAL_DATA) PrefixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->startOffset());
         return node;
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PrefixDotNode* node = new PrefixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PrefixDotNode* node = new (GLOBAL_DATA) PrefixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->startOffset());
     return node;
 }
@@ -1884,22 +1884,22 @@ static ExpressionNode* makePrefixNode(void* globalPtr, ExpressionNode* expr, Ope
 static ExpressionNode* makePostfixNode(void* globalPtr, ExpressionNode* expr, Operator op, int start, int divot, int end)
 { 
     if (!expr->isLocation())
-        return new PostfixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PostfixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new PostfixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PostfixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PostfixBracketNode* node = new PostfixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PostfixBracketNode* node = new (GLOBAL_DATA) PostfixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return node;
         
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PostfixDotNode* node = new PostfixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PostfixDotNode* node = new (GLOBAL_DATA) PostfixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
@@ -1909,17 +1909,17 @@ static ExpressionNodeInfo makeFunctionCallNode(void* globalPtr, ExpressionNodeIn
     CodeFeatures features = func.m_features | args.m_features;
     int numConstants = func.m_numConstants + args.m_numConstants;
     if (!func.m_node->isLocation())
-        return createNodeInfo<ExpressionNode*>(new FunctionCallValueNode(GLOBAL_DATA, func.m_node, args.m_node, divot, divot - start, end - divot), features, numConstants);
+        return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) FunctionCallValueNode(GLOBAL_DATA, func.m_node, args.m_node, divot, divot - start, end - divot), features, numConstants);
     if (func.m_node->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func.m_node);
         const Identifier& identifier = resolve->identifier();
         if (identifier == GLOBAL_DATA->propertyNames->eval)
-            return createNodeInfo<ExpressionNode*>(new EvalFunctionCallNode(GLOBAL_DATA, args.m_node, divot, divot - start, end - divot), EvalFeature | features, numConstants);
-        return createNodeInfo<ExpressionNode*>(new FunctionCallResolveNode(GLOBAL_DATA, identifier, args.m_node, divot, divot - start, end - divot), features, numConstants);
+            return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) EvalFunctionCallNode(GLOBAL_DATA, args.m_node, divot, divot - start, end - divot), EvalFeature | features, numConstants);
+        return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) FunctionCallResolveNode(GLOBAL_DATA, identifier, args.m_node, divot, divot - start, end - divot), features, numConstants);
     }
     if (func.m_node->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func.m_node);
-        FunctionCallBracketNode* node = new FunctionCallBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), args.m_node, divot, divot - start, end - divot);
+        FunctionCallBracketNode* node = new (GLOBAL_DATA) FunctionCallBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), args.m_node, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return createNodeInfo<ExpressionNode*>(node, features, numConstants);
     }
@@ -1927,11 +1927,11 @@ static ExpressionNodeInfo makeFunctionCallNode(void* globalPtr, ExpressionNodeIn
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(func.m_node);
     FunctionCallDotNode* node;
     if (dot->identifier() == GLOBAL_DATA->propertyNames->call)
-        node = new CallFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+        node = new (GLOBAL_DATA) CallFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     else if (dot->identifier() == GLOBAL_DATA->propertyNames->apply)
-        node = new ApplyFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+        node = new (GLOBAL_DATA) ApplyFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     else
-        node = new FunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+        node = new (GLOBAL_DATA) FunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return createNodeInfo<ExpressionNode*>(node, features, numConstants);
 }
@@ -1940,26 +1940,26 @@ static ExpressionNode* makeTypeOfNode(void* globalPtr, ExpressionNode* expr)
 {
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new TypeOfResolveNode(GLOBAL_DATA, resolve->identifier());
+        return new (GLOBAL_DATA) TypeOfResolveNode(GLOBAL_DATA, resolve->identifier());
     }
-    return new TypeOfValueNode(GLOBAL_DATA, expr);
+    return new (GLOBAL_DATA) TypeOfValueNode(GLOBAL_DATA, expr);
 }
 
 static ExpressionNode* makeDeleteNode(void* globalPtr, ExpressionNode* expr, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new DeleteValueNode(GLOBAL_DATA, expr);
+        return new (GLOBAL_DATA) DeleteValueNode(GLOBAL_DATA, expr);
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new DeleteResolveNode(GLOBAL_DATA, resolve->identifier(), divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) DeleteResolveNode(GLOBAL_DATA, resolve->identifier(), divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new DeleteBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) DeleteBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new DeleteDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), divot, divot - start, end - divot);
+    return new (GLOBAL_DATA) DeleteDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), divot, divot - start, end - divot);
 }
 
 static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Identifier& getOrSet, const Identifier& name, ParameterNode* params, FunctionBodyNode* body, const SourceCode& source)
@@ -1971,7 +1971,7 @@ static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Ident
         type = PropertyNode::Setter;
     else
         return 0;
-    return new PropertyNode(GLOBAL_DATA, name, new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
+    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
 }
 
 static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)
@@ -1985,19 +1985,19 @@ static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)
         }
     }
 
-    return new NegateNode(GLOBAL_DATA, n);
+    return new (GLOBAL_DATA) NegateNode(GLOBAL_DATA, n);
 }
 
 static NumberNode* makeNumberNode(void* globalPtr, double d)
 {
-    return new NumberNode(GLOBAL_DATA, d);
+    return new (GLOBAL_DATA) NumberNode(GLOBAL_DATA, d);
 }
 
 static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
 {
     if (expr->isNumber())
         return makeNumberNode(globalPtr, ~toInt32(static_cast<NumberNode*>(expr)->value()));
-    return new BitwiseNotNode(GLOBAL_DATA, expr);
+    return new (GLOBAL_DATA) BitwiseNotNode(GLOBAL_DATA, expr);
 }
 
 static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
@@ -2009,12 +2009,12 @@ static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, Expr
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
 
     if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
-        return new UnaryPlusNode(GLOBAL_DATA, expr2);
+        return new (GLOBAL_DATA) UnaryPlusNode(GLOBAL_DATA, expr2);
 
     if (expr2->isNumber() && static_cast<NumberNode*>(expr2)->value() == 1)
-        return new UnaryPlusNode(GLOBAL_DATA, expr1);
+        return new (GLOBAL_DATA) UnaryPlusNode(GLOBAL_DATA, expr1);
 
-    return new MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
@@ -2024,14 +2024,14 @@ static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, Expre
 
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
-    return new DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
-    return new AddNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) AddNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
@@ -2041,21 +2041,21 @@ static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, Expre
 
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
-    return new SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeLeftShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new LeftShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) LeftShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeRightShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 /* called by yyparse on error */
@@ -2074,7 +2074,7 @@ static ExpressionNode* combineVarInitializers(void* globalPtr, ExpressionNode* l
 {
     if (!list)
         return init;
-    return new VarDeclCommaNode(GLOBAL_DATA, list, init);
+    return new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, list, init);
 }
 
 // We turn variable declarations into either assignments or empty
@@ -2083,8 +2083,8 @@ static ExpressionNode* combineVarInitializers(void* globalPtr, ExpressionNode* l
 static StatementNode* makeVarStatementNode(void* globalPtr, ExpressionNode* expr)
 {
     if (!expr)
-        return new EmptyStatementNode(GLOBAL_DATA);
-    return new VarStatementNode(GLOBAL_DATA, expr);
+        return new (GLOBAL_DATA) EmptyStatementNode(GLOBAL_DATA);
+    return new (GLOBAL_DATA) VarStatementNode(GLOBAL_DATA, expr);
 }
 
 #undef GLOBAL_DATA

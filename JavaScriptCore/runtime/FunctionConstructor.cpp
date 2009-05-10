@@ -75,7 +75,7 @@ FunctionBodyNode* extractFunctionBody(ProgramNode* program)
     if (children.size() != 1)
         return 0;
 
-    StatementNode* exprStatement = children[0].get();
+    StatementNode* exprStatement = children[0];
     ASSERT(exprStatement);
     ASSERT(exprStatement->isExprStatement());
     if (!exprStatement || !exprStatement->isExprStatement())

@@ -120,7 +120,8 @@ namespace JSC {
         Interpreter* interpreter;
 #if ENABLE(JIT)
         JITStubs jitStubs;
-        FunctionBodyNode* nativeFunctionThunk() {
+        FunctionBodyNode* nativeFunctionThunk()
+        {
             if (!lazyNativeFunctionThunk)
                 createNativeThunk();
             return lazyNativeFunctionThunk.get();
@@ -141,13 +142,12 @@ namespace JSC {
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
-        Vector<RefPtr<ParserRefCounted> > parserObjects;
-
         JSGlobalObject* head;
         JSGlobalObject* dynamicGlobalObject;
 
         HashSet<JSObject*> arrayVisitedElements;
 
+        Vector<RefPtr<ParserRefCounted> > parserArena;
         ScopeNode* scopeNodeBeingReparsed;
 
     private:

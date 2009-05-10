@@ -1,3 +1,145 @@
+2009-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25674: syntax tree nodes should use arena allocation
+        Part one: Change lifetimes so we won't have to use reference
+        counting so much, but don't eliminate the reference counts
+        entirely yet.
+
+        * JavaScriptCore.exp: Updated.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Update for use of raw pointers
+        instead of RefPtr.
+        (JSC::BytecodeGenerator::emitCall): Ditto.
+        (JSC::BytecodeGenerator::emitConstruct): Ditto.
+
+        * parser/Grammar.y: Update node creating code to use new (JSGlobalData*)
+        instead of the plain new. At the moment this is just a hook for future
+        arena allocation; it's inline and JSGlobalData* is not used.
+
+        * parser/NodeConstructors.h: Updated for name change of parserObjects to
+        parserArena. Also added explicit initialization for raw pointers that used
+        to be RefPtr. Also removed some uses of get() that aren't needed now that
+        the pointers are raw pointers. Also eliminated m_parameter from FuncExprNode
+        and FuncDeclNode. Also changed node-creating code to use new (JSGlobalData*)
+        as above.
+
+        * parser/Nodes.cpp: Eliminated NodeReleaser and all use of it.
+        (JSC::ParserRefCounted::ParserRefCounted): Updated for name change of
+        parserObjects to parserArena.
+        (JSC::SourceElements::append): Use raw pointers.
+        (JSC::ArrayNode::emitBytecode): Ditto.
+        (JSC::ArrayNode::isSimpleArray): Ditto.
+        (JSC::ArrayNode::toArgumentList): Ditto.
+        (JSC::ObjectLiteralNode::emitBytecode): Ditto.
+        (JSC::PropertyListNode::emitBytecode): Ditto.
+        (JSC::BracketAccessorNode::emitBytecode): Ditto.
+        (JSC::DotAccessorNode::emitBytecode): Ditto.
+        (JSC::ArgumentListNode::emitBytecode): Ditto.
+        (JSC::NewExprNode::emitBytecode): Ditto.
+        (JSC::EvalFunctionCallNode::emitBytecode): Ditto.
+        (JSC::FunctionCallValueNode::emitBytecode): Ditto.
+        (JSC::FunctionCallResolveNode::emitBytecode): Ditto.
+        (JSC::FunctionCallBracketNode::emitBytecode): Ditto.
+        (JSC::FunctionCallDotNode::emitBytecode): Ditto.
+        (JSC::CallFunctionCallDotNode::emitBytecode): Ditto.
+        (JSC::ApplyFunctionCallDotNode::emitBytecode): Ditto.
+        (JSC::PostfixBracketNode::emitBytecode): Ditto.
+        (JSC::PostfixDotNode::emitBytecode): Ditto.
+        (JSC::DeleteBracketNode::emitBytecode): Ditto.
+        (JSC::DeleteDotNode::emitBytecode): Ditto.
+        (JSC::DeleteValueNode::emitBytecode): Ditto.
+        (JSC::VoidNode::emitBytecode): Ditto.
+        (JSC::TypeOfValueNode::emitBytecode): Ditto.
+        (JSC::PrefixBracketNode::emitBytecode): Ditto.
+        (JSC::PrefixDotNode::emitBytecode): Ditto.
+        (JSC::UnaryOpNode::emitBytecode): Ditto.
+        (JSC::BinaryOpNode::emitStrcat): Ditto.
+        (JSC::BinaryOpNode::emitBytecode): Ditto.
+        (JSC::EqualNode::emitBytecode): Ditto.
+        (JSC::StrictEqualNode::emitBytecode): Ditto.
+        (JSC::ReverseBinaryOpNode::emitBytecode): Ditto.
+        (JSC::ThrowableBinaryOpNode::emitBytecode): Ditto.
+        (JSC::InstanceOfNode::emitBytecode): Ditto.
+        (JSC::LogicalOpNode::emitBytecode): Ditto.
+        (JSC::ConditionalNode::emitBytecode): Ditto.
+        (JSC::ReadModifyResolveNode::emitBytecode): Ditto.
+        (JSC::AssignResolveNode::emitBytecode): Ditto.
+        (JSC::AssignDotNode::emitBytecode): Ditto.
+        (JSC::ReadModifyDotNode::emitBytecode): Ditto.
+        (JSC::AssignBracketNode::emitBytecode): Ditto.
+        (JSC::ReadModifyBracketNode::emitBytecode): Ditto.
+        (JSC::CommaNode::emitBytecode): Ditto.
+        (JSC::ConstDeclNode::emitCodeSingle): Ditto.
+        (JSC::ConstDeclNode::emitBytecode): Ditto.
+        (JSC::ConstStatementNode::emitBytecode): Ditto.
+        (JSC::statementListEmitCode): Ditto.
+        (JSC::BlockNode::emitBytecode): Ditto.
+        (JSC::ExprStatementNode::emitBytecode): Ditto.
+        (JSC::VarStatementNode::emitBytecode): Ditto.
+        (JSC::IfNode::emitBytecode): Ditto.
+        (JSC::IfElseNode::emitBytecode): Ditto.
+        (JSC::DoWhileNode::emitBytecode): Ditto.
+        (JSC::WhileNode::emitBytecode): Ditto.
+        (JSC::ForNode::emitBytecode): Ditto.
+        (JSC::ForInNode::emitBytecode): Ditto.
+        (JSC::ReturnNode::emitBytecode): Ditto.
+        (JSC::WithNode::emitBytecode): Ditto.
+        (JSC::CaseBlockNode::tryOptimizedSwitch): Ditto.
+        (JSC::CaseBlockNode::emitBytecodeForBlock): Ditto.
+        (JSC::SwitchNode::emitBytecode): Ditto.
+        (JSC::LabelNode::emitBytecode): Ditto.
+        (JSC::ThrowNode::emitBytecode): Ditto.
+        (JSC::TryNode::emitBytecode): Ditto.
+        (JSC::ScopeNodeData::ScopeNodeData): Use swap to transfer ownership
+        of the arena, varStack and functionStack.
+        (JSC::ScopeNode::ScopeNode): Pass in the arena when creating the
+        ScopeNodeData.
+        (JSC::ProgramNode::ProgramNode): Made this inline since it's used
+        in only one place.
+        (JSC::ProgramNode::create): Changed this to return a PassRefPtr since
+        we plan to have the scope nodes be outside the arena, so they will need
+        some kind of ownership transfer (maybe auto_ptr instead of PassRefPtr
+        in the future, though). Remove the node from the newly-created arena to
+        avoid a circular reference. Later we'll keep the node out of the arena
+        by using a different operator new, but for now it's the ParserRefCounted
+        constructor that puts the node into the arena, and there's no way to
+        bypass that.
+        (JSC::EvalNode::EvalNode): Ditto.
+        (JSC::EvalNode::create): Ditto.
+        (JSC::FunctionBodyNode::FunctionBodyNode): Ditto.
+        (JSC::FunctionBodyNode::createNativeThunk): Moved the code that
+        reseets the arena here instead of the caller.
+        (JSC::FunctionBodyNode::create): Same change as the other create
+        functions above.
+        (JSC::FunctionBodyNode::emitBytecode): Use raw pointers.
+
+        * parser/Nodes.h: Removed NodeReleaser. Changed FunctionStack to
+        use raw pointers. Removed the releaseNodes function. Added an override
+        of operator new that takes a JSGlobalData* to prepare for future arena use.
+        Use raw pointers instead of RefPtr everywhere possible.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::reparseInPlace): Pass the arena in.
+
+        * parser/Parser.h:
+        (JSC::Parser::parse): Updated for name change of parserObjects to parserArena.
+        (JSC::Parser::reparse): Ditto.
+        * runtime/FunctionConstructor.cpp:
+        (JSC::extractFunctionBody): Ditto.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): Ditto.
+        (JSC::JSGlobalData::createNativeThunk): Moved arena manipulation into the
+        FunctionBodyNode::createNativeThunk function.
+
+        * runtime/JSGlobalData.h: Tweaked formatting and renamed parserObjects to
+        parserArena.
+
+        * wtf/NotFound.h: Added the usual "using WTF" to this header to match the
+        rest of WTF.
+
 2009-05-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Geoffrey Garen.
