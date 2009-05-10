@@ -1,3 +1,17 @@
+2009-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=25602
+          REGRESSION: fast/overflow/overflow-focus-ring.html seems double-drawn
+          on ToT
+
+        Test: fast/layers/self-painting-outline.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer): Paint the layer's own outline only
+        if it is a self-painting layer.
+
 2009-05-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen and Mark Rowe.

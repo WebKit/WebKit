@@ -1,3 +1,18 @@
+2009-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        - new test and correct results for https://bugs.webkit.org/show_bug.cgi?id=25602
+          REGRESSION: fast/overflow/overflow-focus-ring.html seems double-drawn
+          on ToT
+
+        * fast/layers/self-painting-outline.html: Added.
+        * platform/mac/fast/overflow/overflow-focus-ring-expected.checksum: Updated.
+        * platform/mac/fast/overflow/overflow-focus-ring-expected.png: Updated.
+        * platform/mac/fast/layers/self-painting-outline-expected.checksum: Added.
+        * platform/mac/fast/layers/self-painting-outline-expected.png: Added.
+        * platform/mac/fast/layers/self-painting-outline-expected.txt: Added.
+
 2009-05-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen and Mark Rowe.
