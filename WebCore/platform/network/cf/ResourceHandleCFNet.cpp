@@ -100,7 +100,7 @@ static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
 static CFURLResponseRef createCFURLResponseWithDefaultMIMEType(CFURLResponseRef response)
 {
     // We should never be applying the default MIMEType if we told the networking layer to do content sniffing for this URL.
-    ASSERT(!ResourceHandle::shouldContentSniffURL(CFURLResponseGetURL(response));
+    ASSERT(!ResourceHandle::shouldContentSniffURL(CFURLResponseGetURL(response)));
     
     return CFURLResponseCreate(kCFAllocatorDefault, CFURLResponseGetURL(response), (CFStringRef)ResourceHandle::defaultMIMEType(), 
         CFURLResponseGetExpectedContentLength(response), CFURLResponseGetTextEncodingName(response));
