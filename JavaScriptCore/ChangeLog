@@ -1,3 +1,9 @@
+2009-05-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix. Adding ParserArena to the autotools build.
+
+        * GNUmakefile.am:
+
 2009-05-11  Adam Roben  <aroben@apple.com>
 
         More Windows build fixes after r43479
