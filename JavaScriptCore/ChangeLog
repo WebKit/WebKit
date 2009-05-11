@@ -1,15 +1,3 @@
-2009-05-11  Jan Michael Alonzo  <jmalonzo@webkit.org>
-
-        Reviewed by NOBODY (BuildFix).
-
-        Add ParserArena to AllInOneFile as well as gtk, qt and wx build
-        scripts.
-
-        * AllInOneFile.cpp:
-        * GNUmakefile.am:
-        * JavaScriptCore.pri:
-        * JavaScriptCoreSources.bkl:
-
 2009-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff Garen.

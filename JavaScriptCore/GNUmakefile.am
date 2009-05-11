@@ -303,8 +303,6 @@ javascriptcore_sources += \
 	JavaScriptCore/parser/Nodes.h \
 	JavaScriptCore/parser/Parser.cpp \
 	JavaScriptCore/parser/Parser.h \
-	JavaScriptCore/parser/ParserArena.cpp \
-	JavaScriptCore/parser/ParserArena.h \
 	JavaScriptCore/parser/ResultType.h \
 	JavaScriptCore/parser/SourceCode.h \
 	JavaScriptCore/parser/SourceProvider.h \
