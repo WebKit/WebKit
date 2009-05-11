@@ -1,3 +1,13 @@
+2009-05-11  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        V8CustomBinding.cpp is missing a header file
+
+        https://bugs.webkit.org/show_bug.cgi?id=25644
+
+        * bindings/v8/custom/V8CustomBinding.cpp: Added #include "V8Proxy.h".
+
 2009-05-11  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Fisher.
