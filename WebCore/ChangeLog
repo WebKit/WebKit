@@ -1,3 +1,13 @@
+2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        The Symbian tools can't compile and link this without this include.
+        It's not clear why this is different from other toolsets or why it affects
+        only this header file, but adding the include for now.
+
+        * editing/RemoveCSSPropertyCommand.h: Added include of CSSMutableStyleDeclaration.h.
+
 2009-05-11  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.
