@@ -152,16 +152,16 @@ ACCESSOR_SETTER(ElementEventHandler)
             return;
 
         if (RefPtr<EventListener> listener = proxy->FindOrCreateV8EventListener(value, true))
-            node->setInlineEventListenerForType(eventType, listener);
+            node->setAttributeEventListener(eventType, listener);
     } else
-        node->removeInlineEventListenerForType(eventType);
+        node->clearAttributeEventListener(eventType);
 }
 
 ACCESSOR_GETTER(ElementEventHandler)
 {
     Node* node = V8Proxy::DOMWrapperToNode<Node>(info.Holder());
 
-    EventListener* listener = node->inlineEventListenerForType(toEventType(name));
+    EventListener* listener = node->getAttributeEventListener(toEventType(name));
     return V8Proxy::EventListenerToV8Object(listener);
 }
 

@@ -1,3 +1,14 @@
+2009-05-11  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25626
+        Update V8ElementCustom.cpp to match the current API of Node.
+
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::ACCESSOR_SETTER): Changed a couple of method names to match current names.
+        (WebCore::ACCESSOR_GETTER): Changed a method name to match current name.
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Fix Windows build
