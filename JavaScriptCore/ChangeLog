@@ -1,5 +1,12 @@
 2009-05-10  David Kilzer  <ddkilzer@apple.com>
 
+        Try to fix the Windows build by removing an unknown symbol
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-05-10  David Kilzer  <ddkilzer@apple.com>
+
         Touch Nodes.cpp to try to fix Windows build
 
         * parser/Nodes.cpp: Removed whitespace.
