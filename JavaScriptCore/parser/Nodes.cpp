@@ -99,7 +99,7 @@ RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator
     generator.emitThrow(exception);
     return exception;
 }
-    
+
 // ------------------------------ StatementNode --------------------------------
 
 void StatementNode::setLoc(int firstLine, int lastLine)

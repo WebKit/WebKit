@@ -1,3 +1,9 @@
+2009-05-10  David Kilzer  <ddkilzer@apple.com>
+
+        Touch Nodes.cpp to try to fix Windows build
+
+        * parser/Nodes.cpp: Removed whitespace.
+
 2009-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
