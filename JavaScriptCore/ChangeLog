@@ -1,3 +1,91 @@
+2009-05-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov and Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25348
+        Change WTF::ThreadIdentifier to be an actual (but wrapped) thread id, remove ThreadMap.
+
+        * wtf/Threading.h:
+        (WTF::ThreadIdentifier::ThreadIdentifier):
+        (WTF::ThreadIdentifier::isValid):
+        (WTF::ThreadIdentifier::invalidate):
+        (WTF::ThreadIdentifier::platformId):
+        ThreadIdentifier is now a class, containing a PlatformThreadIdentifier and
+        methods that are used across the code on thread ids: construction, comparisons,
+        check for 'valid' state etc. '0' is used as invalid id, which happens to just work
+        with all platform-specific thread id implementations.
+
+        All the following files repeatedly reflect the new ThreadIdentifier for each platform.
+        We remove ThreadMap and threadMapMutex from all of them, remove the functions that
+        populated/searched/cleared the map and add platform-specific comparison operators
+        for ThreadIdentifier.
+
+        There are specific temporary workarounds for Safari 4 beta on OSX and Win32 since the
+        public build uses WTF threading functions with old type of ThreadingIdentifier.
+        The next time Safari 4 is rebuilt, it will 'automatically' pick up the new type and new
+        functions so the deprecated ones can be removed.
+
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::ThreadIdentifier::operator==):
+        (WTF::ThreadIdentifier::operator!=):
+        (WTF::initializeThreading):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::currentThread):
+
+        * wtf/ThreadingNone.cpp:
+        (WTF::ThreadIdentifier::operator==):
+        (WTF::ThreadIdentifier::operator!=):
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ThreadIdentifier::operator==):
+        (WTF::ThreadIdentifier::operator!=):
+        (WTF::initializeThreading):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::currentThread):
+        (WTF::waitForThreadCompletion): This is a workaround for Safari 4 beta on Mac.
+        Safari 4 is linked against old definition of ThreadIdentifier so it treats it as uint32_t.
+        This 'old' variant of waitForThreadCompletion takes uint32_t and has the old decorated name, so Safari can
+        load it from JavaScriptCore library. The other functions (CurrentThread() etc) happen to match their previous
+        decorated names and, while they return pthread_t now, it is a pointer which round-trips through a uint32_t.
+        This function will be removed as soon as Safari 4 will release next public build.
+
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::ThreadIdentifier::operator==):
+        (WTF::ThreadIdentifier::operator!=):
+        (WTF::initializeThreading):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::currentThread):
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadIdentifier::operator==):
+        (WTF::ThreadIdentifier::operator!=):
+        (WTF::initializeThreading):
+        (WTF::createThreadInternal): All the platforms (except Windows) used a sequential
+        counter as a thread ID and mapped it into platform ID. Windows was using native thread
+        id and mapped it into thread handle. Since we can always obtain a thread handle
+        by thread id, createThread now closes the handle.
+        (WTF::waitForThreadCompletion): obtains another one using OpenThread(id) API. If can not obtain a handle,
+        it means the thread already exited.
+        (WTF::detachThread):
+        (WTF::currentThread):
+        (WTF::detachThreadDeprecated): old function, renamed (for Win Safari 4 beta which uses it for now).
+        (WTF::waitForThreadCompletionDeprecated): same.
+        (WTF::currentThreadDeprecated): same.
+        (WTF::createThreadDeprecated): same.
+
+        * bytecode/SamplingTool.h:
+        * bytecode/SamplingTool.cpp: Use DEFINE_STATIC_LOCAL for a static ThreadIdentifier variable, to avoid static constructor.
+
+        * JavaScriptCore.exp: export lists - updated decorated names of the WTF threading functions
+        since they now take a different type as a parameter.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: ditto for Windows, plus added "deprecated" functions
+        that take old parameter type - turns out public beta of Safari 4 uses those, so they need to be kept along for a while.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: ditto.
+
 2009-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

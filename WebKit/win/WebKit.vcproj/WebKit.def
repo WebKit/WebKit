@@ -114,11 +114,12 @@ EXPORTS
         ??0ThreadCondition@WTF@@QAE@XZ
         ??1Mutex@WTF@@QAE@XZ
         ??1ThreadCondition@WTF@@QAE@XZ
+        ??8ThreadIdentifier@WTF@@QBE_NABV01@@Z
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-        ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
-        ?currentThread@WTF@@YAIXZ
-        ?detachThread@WTF@@YAXI@Z
+        ?createThread@WTF@@YA?AVThreadIdentifier@1@P6APAXPAX@Z0PBD@Z
+        ?currentThread@WTF@@YA?AVThreadIdentifier@1@XZ
+        ?detachThread@WTF@@YAXVThreadIdentifier@1@@Z
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?isMainThread@WTF@@YA_NXZ
@@ -132,5 +133,8 @@ EXPORTS
         ?unlock@Mutex@WTF@@QAEXXZ
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
-        ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
-        ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
+        ?waitForThreadCompletion@WTF@@YAHVThreadIdentifier@1@PAPAX@Z
+        ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z=?createThreadDeprecated@WTF@@YAIP6APAXPAX@Z0PBD@Z
+        ?currentThread@WTF@@YAIXZ=?currentThreadDeprecated@WTF@@YAIXZ
+        ?detachThread@WTF@@YAXI@Z=?detachThreadDeprecated@WTF@@YAXI@Z
+        ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z=?waitForThreadCompletionDeprecated@WTF@@YAHIPAPAX@Z

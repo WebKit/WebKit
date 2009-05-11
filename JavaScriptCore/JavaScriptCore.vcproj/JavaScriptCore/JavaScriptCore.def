@@ -32,6 +32,7 @@ EXPORTS
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??4UString@JSC@@QAEAAV01@PBD@Z
     ??8JSC@@YA_NABVUString@0@0@Z
+    ??8ThreadIdentifier@WTF@@QBE_NABV01@@Z
     ?UTF8String@UString@JSC@@QBE?AVCString@2@_N@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@URep@UString@JSC@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAURep@UString@2@@Z
@@ -74,9 +75,8 @@ EXPORTS
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@XZ
     ?createStructure@JSByteArray@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@VJSValue@2@@Z
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
-    ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
-    ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
-    ?currentThread@WTF@@YAIXZ
+    ?createThread@WTF@@YA?AVThreadIdentifier@1@P6APAXPAX@Z0PBD@Z
+    ?currentThread@WTF@@YA?AVThreadIdentifier@1@XZ
     ?currentTime@WTF@@YANXZ
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
@@ -96,7 +96,7 @@ EXPORTS
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
     ?detach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
-    ?detachThread@WTF@@YAXI@Z
+    ?detachThread@WTF@@YAXVThreadIdentifier@1@@Z
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
@@ -254,7 +254,7 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
-    ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
+    ?waitForThreadCompletion@WTF@@YAHVThreadIdentifier@1@PAPAX@Z
     WTFLog
     WTFLogVerbose
     WTFReportArgumentAssertionFailure
@@ -265,3 +265,7 @@ EXPORTS
     ?substr@UString@JSC@@QBE?AV12@HH@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?putDirectFunction@JSObject@JSC@@QAEXPAVExecState@2@PAVInternalFunction@2@I@Z
+    ?createThreadDeprecated@WTF@@YAIP6APAXPAX@Z0PBD@Z
+    ?currentThreadDeprecated@WTF@@YAIXZ
+    ?detachThreadDeprecated@WTF@@YAXI@Z
+    ?waitForThreadCompletionDeprecated@WTF@@YAHIPAPAX@Z

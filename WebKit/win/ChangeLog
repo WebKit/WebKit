@@ -1,3 +1,18 @@
+2009-05-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov and Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25348
+        Change WTF::ThreadIdentifier to be an actual (but wrapped) thread id, remove ThreadMap.
+
+        Most of the change is in WTF and WebCore.
+
+        * WebKit.vcproj/WebKit.def: replaced decorated names of WTF threading functions with new ones.
+        Also, aliased the old implementations so the public Safari 4 beta can load the old WTF functions
+        which it uses. Next time Safari 4 builds, it will pick up new functions and the deprecated ones
+        can be removed.
+        * WebKit.vcproj/WebKit_debug.def: same.
+
 2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

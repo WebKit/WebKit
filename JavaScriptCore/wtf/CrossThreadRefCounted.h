@@ -74,9 +74,6 @@ namespace WTF {
         CrossThreadRefCounted(T* data, ThreadSafeSharedBase* threadedCounter)
             : m_threadSafeRefCounter(threadedCounter)
             , m_data(data)
-#ifndef NDEBUG
-            , m_threadId(0)
-#endif
         {
         }
 
@@ -99,7 +96,7 @@ namespace WTF {
     template<class T>
     void CrossThreadRefCounted<T>::ref()
     {
-        ASSERT(!m_threadId || m_threadId == currentThread());
+        ASSERT(!m_threadId.isValid() || m_threadId == currentThread());
         m_refCounter.ref();
 #ifndef NDEBUG
         // Store the threadId as soon as the ref count gets to 2.
@@ -107,7 +104,7 @@ namespace WTF {
         // to another thread where to ref count get increased.  This
         // is a heuristic but it seems to always work and has helped
         // find some bugs.
-        if (!m_threadId && m_refCounter.refCount() == 2)
+        if (!m_threadId.isValid() && m_refCounter.refCount() == 2)
             m_threadId = currentThread();
 #endif
     }
@@ -115,7 +112,7 @@ namespace WTF {
     template<class T>
     void CrossThreadRefCounted<T>::deref()
     {
-        ASSERT(!m_threadId || m_threadId == currentThread());
+        ASSERT(!m_threadId.isValid() || m_threadId == currentThread());
         if (m_refCounter.derefBase()) {
             threadSafeDeref();
             delete this;
@@ -124,7 +121,7 @@ namespace WTF {
             // Clear the threadId when the ref goes to 1 because it
             // is safe to be passed to another thread at this point.
             if (m_threadId && m_refCounter.refCount() == 1)
-                m_threadId = 0;
+                m_threadId.invalidate();
 #endif
         }
     }

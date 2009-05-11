@@ -135,11 +135,10 @@ bool IconDatabase::open(const String& databasePath)
     // completes and m_syncThreadRunning is properly set
     m_syncLock.lock();
     m_syncThread = createThread(IconDatabase::iconDatabaseSyncThreadStart, this, "WebCore: IconDatabase");
-    m_syncThreadRunning = m_syncThread;
+    m_syncThreadRunning = m_syncThread.isValid();
     m_syncLock.unlock();
-    if (!m_syncThread)
-        return false;
-    return true;
+
+    return m_syncThreadRunning;
 }
 
 void IconDatabase::close()
