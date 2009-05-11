@@ -1,3 +1,9 @@
+2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix. Build ParserAreana.cpp for Qt
+
+        * JavaScriptCore.pri:
+
 2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
