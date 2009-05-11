@@ -26,6 +26,7 @@
 #ifndef ProfileGenerator_h
 #define ProfileGenerator_h
 
+#include "Profile.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
