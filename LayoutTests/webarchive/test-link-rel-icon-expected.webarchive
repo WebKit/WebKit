@@ -9,30 +9,11 @@
 &lt;script&gt;
 function runTest()
 {
-    if (!location.href.match('\\?')) {
-        if (window.layoutTestController) {
-            layoutTestController.setIconDatabaseEnabled(true);
-            layoutTestController.dumpDOMAsWebArchive();
-            layoutTestController.waitUntilDone();
-        }
-        // Reload once since we just enabled the icon database
-        redirect('1');
-    } else if (!location.href.match('\\?2')) {
-        // Reload twice to work around Bug 21026 / &lt;rdar://problem/6240826&gt;
-        redirect('2');
-    } else {
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
-        }
+    if (window.layoutTestController) {
+        layoutTestController.setIconDatabaseEnabled(true);
+        layoutTestController.dumpDOMAsWebArchive();
+        layoutTestController.queueReload();
     }
-}
-
-function redirect(arg)
-{
-    var loc = '' + document.location;
-    if (loc.indexOf('?') &gt; 0)
-        loc = loc.substring(0, loc.indexOf('?'));
-    document.location = loc + '?' + arg;
 }
 &lt;/script&gt;
 &lt;link rel="icon" href="resources/favicon.ico" type="image/x-icon"&gt;
@@ -47,7 +28,7 @@ function redirect(arg)
 		<key>WebResourceTextEncodingName</key>
 		<string>UTF-8</string>
 		<key>WebResourceURL</key>
-		<string>file:///LayoutTests/webarchive/test-link-rel-icon.html?2</string>
+		<string>file:///LayoutTests/webarchive/test-link-rel-icon.html</string>
 	</dict>
 	<key>WebSubresources</key>
 	<array>
