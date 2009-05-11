@@ -1,3 +1,13 @@
+2009-05-11  Adam Roben  <aroben@apple.com>
+
+        Windows build fixes after r43479
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added
+        ParserArena to the project.
+
+        * parser/NodeConstructors.h: Added a missing include.
+        (JSC::ParserArenaDeletable::operator new): Marked these as inline.
+
 2009-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff Garen.

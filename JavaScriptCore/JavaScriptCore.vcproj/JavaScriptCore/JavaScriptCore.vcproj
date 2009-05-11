@@ -1171,6 +1171,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\parser\ParserArena.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\ParserArena.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecompiler\RegisterID.h"
 				>
 			</File>

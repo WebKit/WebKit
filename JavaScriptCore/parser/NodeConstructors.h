@@ -23,17 +23,18 @@
 
 #include "Nodes.h"
 #include "Lexer.h"
+#include "Parser.h"
 
 namespace JSC {
 
-    void* ParserArenaDeletable::operator new(size_t size, JSGlobalData* globalData)
+    inline void* ParserArenaDeletable::operator new(size_t size, JSGlobalData* globalData)
     {
         ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(fastMalloc(size));
         globalData->parser->arena().deleteWithArena(deletable);
         return deletable;
     }
 
-    void* ParserArenaDeletable::operator new(size_t size)
+    inline void* ParserArenaDeletable::operator new(size_t size)
     {
         return fastMalloc(size);
     }
