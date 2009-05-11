@@ -1,5 +1,14 @@
 2009-05-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by NOBODY (build fix).
+
+        Also add ParserArena, in addition to AllInOne, for release builds,
+        since adding it to AllInOne breaks Mac.
+
+        * GNUmakefile.am:
+
+2009-05-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed build fix. Adding ParserArena to the autotools build.
 
         * GNUmakefile.am:
