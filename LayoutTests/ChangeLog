@@ -1,5 +1,11 @@
 2009-05-11  David Kilzer  <ddkilzer@apple.com>
 
+        Added webarchive/test-link-rel-icon.html to gtk Skipped list
+
+        * platform/gtk/Skipped: Added webarchive/test-link-rel-icon.html.
+
+2009-05-11  David Kilzer  <ddkilzer@apple.com>
+
         Bug 23331: LayoutTests/webarchive/test-link-rel-icon.html fails in different ways on buildbots
 
         <https://bugs.webkit.org/show_bug.cgi?id=23331>

@@ -5930,6 +5930,7 @@ webarchive/test-frameset.html
 webarchive/test-img-src.html
 webarchive/test-input-src.html
 webarchive/test-link-href.html
+webarchive/test-link-rel-icon.html
 webarchive/test-object-data.html
 webarchive/test-script-src.html
 webarchive/test-table-background.html
