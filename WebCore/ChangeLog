@@ -4,6 +4,14 @@
 
         * platform/network/cf/ResourceHandleCFNet.cpp:
         (WebCore::createCFURLResponseWithDefaultMIMEType):
+        (WebCore::WebCoreSynchronousLoader::load):
+
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Fix Windows build
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::createCFURLResponseWithDefaultMIMEType):
 
 2009-05-11  Nate Chapin  <japhet@google.com>
 

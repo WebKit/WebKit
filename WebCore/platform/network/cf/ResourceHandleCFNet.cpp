@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 
@@ -102,7 +103,7 @@ static CFURLResponseRef createCFURLResponseWithDefaultMIMEType(CFURLResponseRef 
     // We should never be applying the default MIMEType if we told the networking layer to do content sniffing for this URL.
     ASSERT(!ResourceHandle::shouldContentSniffURL(CFURLResponseGetURL(response)));
     
-    return CFURLResponseCreate(kCFAllocatorDefault, CFURLResponseGetURL(response), (CFStringRef)ResourceHandle::defaultMIMEType(), 
+    return CFURLResponseCreate(kCFAllocatorDefault, CFURLResponseGetURL(response), (CFStringRef)MIMETypeRegistry::defaultMIMEType(), 
         CFURLResponseGetExpectedContentLength(response), CFURLResponseGetTextEncodingName(response));
 }
 
@@ -677,7 +678,7 @@ RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& reque
 
     ResourceRequest requestWithoutCredentials(request);
     requestWithoutCredentials.removeCredentials();
-    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(requestWithoutCredentials, ResourceHandle::shouldContentSniffRequest(request)));
+    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(requestWithoutCredentials, ResourceHandle::shouldContentSniffURL(request.url())));
 
     CFURLConnectionClient_V3 client = { 3, &loader, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, 0, didReceiveChallenge, 0, shouldUseCredentialStorage, 0 };
 
