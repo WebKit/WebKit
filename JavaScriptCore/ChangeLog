@@ -1,3 +1,10 @@
+2009-05-11  Adam Roben  <aroben@apple.com>
+
+        Build fix for newer versions of GCC
+
+        * wtf/ThreadingPthreads.cpp: Added a declaration of
+        waitForThreadCompletion before its definition to silence a warning.
+
 2009-05-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov and Adam Roben.
