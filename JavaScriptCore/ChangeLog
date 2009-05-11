@@ -1,3 +1,9 @@
+2009-05-11  Dmitry Titov  <dimich@chromium.org>
+
+        GTK build fix - the deprecated waitForThreadCompletion is not needed on GTK.
+
+        * wtf/ThreadingPthreads.cpp: used #ifdef PLATFORM(DARWIN) around waitForThreadCompletion().
+
 2009-05-11  Adam Roben  <aroben@apple.com>
 
         Build fix for newer versions of GCC

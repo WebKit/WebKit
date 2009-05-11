@@ -262,6 +262,7 @@ void ThreadCondition::broadcast()
     ASSERT_UNUSED(result, !result);
 }
 
+#if PLATFORM(DARWIN)
 // Derecated function. Safari 4 beta, until recompiled next time, uses ThreadIdentifier as uint32_t.
 // pthread_t is a pointer. So they get a pointer casted into uint32_t from CurrentThread()
 // and then pass it here. We cast it back to pointer. This is an ugly hack which is very temporary
@@ -279,6 +280,7 @@ int waitForThreadCompletion(uint32_t threadID, void** result)
 
     return joinResult;
 }
+#endif
 
 } // namespace WTF
 
