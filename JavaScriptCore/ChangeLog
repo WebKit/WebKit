@@ -1,3 +1,17 @@
+2009-05-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Rename emitGetFromCallFrameHeader to emitGetFromCallFrameHeaderPtr
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix. Build ParserAreana.cpp for Qt

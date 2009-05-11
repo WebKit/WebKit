@@ -387,7 +387,7 @@ void JIT::privateCompileMainPass()
         case op_get_scoped_var: {
             int skip = currentInstruction[3].u.operand + m_codeBlock->needsFullScopeChain();
 
-            emitGetFromCallFrameHeader(RegisterFile::ScopeChain, regT0);
+            emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
             while (skip--)
                 loadPtr(Address(regT0, FIELD_OFFSET(ScopeChainNode, next)), regT0);
 
@@ -399,7 +399,7 @@ void JIT::privateCompileMainPass()
         case op_put_scoped_var: {
             int skip = currentInstruction[2].u.operand + m_codeBlock->needsFullScopeChain();
 
-            emitGetFromCallFrameHeader(RegisterFile::ScopeChain, regT1);
+            emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
             emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
             while (skip--)
                 loadPtr(Address(regT1, FIELD_OFFSET(ScopeChainNode, next)), regT1);
@@ -431,10 +431,10 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
 
             // Grab the return address.
-            emitGetFromCallFrameHeader(RegisterFile::ReturnPC, regT1);
+            emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
 
             // Restore our caller's "r".
-            emitGetFromCallFrameHeader(RegisterFile::CallerFrame, callFrameRegister);
+            emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
 
             // Return.
             push(regT1);
@@ -1789,8 +1789,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeader(RegisterFile::CallerFrame, regT1);
-    emitGetFromCallFrameHeader(RegisterFile::ScopeChain, regT1, regT1);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT1);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
     
 
@@ -1823,7 +1823,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // edx currently points to the first argument, edx-sizeof(Register) points to 'this'
     loadPtr(Address(X86::edx, -(int32_t)sizeof(Register)), X86::edx);
     
-    emitGetFromCallFrameHeader(RegisterFile::Callee, X86::esi);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86::esi);
 
     move(callFrameRegister, X86::edi); 
 
@@ -1831,7 +1831,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
 #else
-    emitGetFromCallFrameHeader(RegisterFile::ArgumentCount, regT0);
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     /* We have two structs that we use to describe the stackframe we set up for our
      * call to native code.  NativeCallFrameStructure describes the how we set up the stack
@@ -1899,7 +1899,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     addPtr(Imm32(FIELD_OFFSET(NativeCallFrameStructure, result)), stackPointerRegister, X86::ecx);
 
     // Plant callee
-    emitGetFromCallFrameHeader(RegisterFile::Callee, X86::eax);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86::eax);
     storePtr(X86::eax, Address(stackPointerRegister, FIELD_OFFSET(NativeCallFrameStructure, callee)));
 
     // Plant callframe
@@ -1911,7 +1911,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(X86::eax), X86::eax);
 #else
     // Plant callee
-    emitGetFromCallFrameHeader(RegisterFile::Callee, X86::edx);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, X86::edx);
 
     // Plant callframe
     move(callFrameRegister, X86::ecx);
@@ -1929,10 +1929,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Jump exceptionHandler = branchTestPtr(NonZero, regT2);
 
     // Grab the return address.
-    emitGetFromCallFrameHeader(RegisterFile::ReturnPC, regT1);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
     
     // Restore our caller's "r".
-    emitGetFromCallFrameHeader(RegisterFile::CallerFrame, callFrameRegister);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     
     // Return.
     push(regT1);
@@ -1941,11 +1941,11 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Handle an exception
     exceptionHandler.link(this);
     // Grab the return address.
-    emitGetFromCallFrameHeader(RegisterFile::ReturnPC, regT1);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
     move(ImmPtr(reinterpret_cast<void*>(ctiVMThrowTrampoline)), regT2);
-    emitGetFromCallFrameHeader(RegisterFile::CallerFrame, callFrameRegister);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
     push(regT2);
     ret();
