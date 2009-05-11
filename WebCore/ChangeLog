@@ -1,3 +1,14 @@
+2009-05-11  David Kilzer  <ddkilzer@apple.com>
+
+        Fix typo "APPLICATION_CAHE_DYNAMIC_ENTRIES" to "APPLICATION_CACHE_DYNAMIC_ENTRIES"
+
+        This was added in r39816 to disable dynamic entries.  They are
+        still disabled after fixing the typo since this feature define
+        is never set anywhere.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        * loader/appcache/DOMApplicationCache.idl:
+
 2009-05-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov and Adam Roben.
