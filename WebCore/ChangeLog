@@ -1,3 +1,25 @@
+2009-05-11  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25634
+        Change V8Proxy::retrieveActiveFrame() call sites to V8Proxy::retrieveFrameForEnteredContext().
+
+        Also, change instances of ScriptController::retrieveActiveFrame() to
+        V8::retrieveFrameForEnteredContext() for consistency.
+
+
+        See http://codereview.chromium.org/113085 for the corresponding Chromium change.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetLocation):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

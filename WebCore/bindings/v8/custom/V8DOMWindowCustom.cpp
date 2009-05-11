@@ -172,7 +172,7 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     INC_STATS("DOM.DOMWindow.postMessage()");
     DOMWindow* window = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
 
-    DOMWindow* source = V8Proxy::retrieveActiveFrame()->domWindow();
+    DOMWindow* source = V8Proxy::retrieveFrameForEnteredContext()->domWindow();
     ASSERT(source->frame());
 
     String uri = source->frame()->loader()->url().string();
@@ -216,7 +216,7 @@ static bool canShowModalDialogNow(const Frame* frame)
 
 static bool allowPopUp()
 {
-    Frame* frame = V8Proxy::retrieveActiveFrame();
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
 
     ASSERT(frame);
     if (frame->script()->processingUserGesture())
@@ -263,7 +263,7 @@ static Frame* createWindow(Frame* openerFrame,
                            const WindowFeatures& windowFeatures,
                            v8::Local<v8::Value> dialogArgs)
 {
-    Frame* activeFrame = V8Proxy::retrieveActiveFrame();
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
 
     ResourceRequest request;
     if (activeFrame)
@@ -407,7 +407,7 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
     if (!V8Proxy::CanAccessFrame(frame, true))
       return v8::Undefined();
 
-    Frame* activeFrame = V8Proxy::retrieveActiveFrame();
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!activeFrame)
       return v8::Undefined();
 
@@ -587,7 +587,7 @@ void V8Custom::WindowSetLocation(DOMWindow* window, const String& v)
     if (!window->frame())
         return;
 
-    Frame* activeFrame = ScriptController::retrieveActiveFrame();
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!activeFrame)
         return;
 
