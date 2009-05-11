@@ -1,3 +1,15 @@
+2009-05-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Re-add experimental PGO configs.
+        
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+
 2009-05-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey "1" Garen.
