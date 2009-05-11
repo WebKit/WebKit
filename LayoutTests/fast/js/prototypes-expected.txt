@@ -1,0 +1,26 @@
+Test prototoypes of various objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ('').__proto__ is String.prototype
+PASS (0).__proto__ is Number.prototype
+PASS ([]).__proto__ is Array.prototype
+PASS ({}).__proto__ is Object.prototype
+PASS (new Date).__proto__ is Date.prototype
+PASS (new Number).__proto__ is Number.prototype
+PASS (new Object).__proto__ is Object.prototype
+PASS (new String).__proto__ is String.prototype
+PASS Array.prototype.__proto__ is Object.prototype
+PASS Date.prototype.__proto__ is Object.prototype
+PASS Number.prototype.__proto__ is Object.prototype
+PASS Object.prototype.__proto__ is null
+PASS String.prototype.__proto__ is Object.prototype
+PASS Array.__proto__ is Object.__proto__
+PASS Date.__proto__ is Object.__proto__
+PASS Number.__proto__ is Object.__proto__
+PASS String.__proto__ is Object.__proto__
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

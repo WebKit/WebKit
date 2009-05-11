@@ -494,6 +494,8 @@ inline JSValue JSValue::get(ExecState* exec, const Identifier& propertyName, Pro
 {
     if (UNLIKELY(!isCell())) {
         JSObject* prototype = JSImmediate::prototype(asValue(), exec);
+        if (propertyName == exec->propertyNames().underscoreProto)
+            return prototype;
         if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
         return slot.getValue(exec, propertyName);

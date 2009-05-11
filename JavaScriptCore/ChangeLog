@@ -1,3 +1,20 @@
+2009-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 25560: REGRESSION (r34821): "string value".__proto__ gets the wrong object.
+        https://bugs.webkit.org/show_bug.cgi?id=25560
+        rdar://problem/6861069
+
+        I missed this case back a year ago when I sped up handling
+        of JavaScript wrappers. Easy to fix.
+
+        * runtime/JSObject.h:
+        (JSC::JSValue::get): Return the prototype itself if the property name
+        is __proto__.
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot): Ditto.
+
 2009-05-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

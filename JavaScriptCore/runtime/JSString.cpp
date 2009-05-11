@@ -88,6 +88,10 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
     // This function should only be called by JSValue::get.
     if (getStringPropertySlot(exec, propertyName, slot))
         return true;
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        slot.setValue(exec->lexicalGlobalObject()->stringPrototype());
+        return true;
+    }
     slot.setBase(this);
     JSObject* object;
     for (JSValue prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype.isNull(); prototype = object->prototype()) {
