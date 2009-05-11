@@ -1,3 +1,21 @@
+2009-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey "1" Garen.
+
+        Rip out the !USE(CTI_REPATCH_PIC) code.  It was untested and unused.
+
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compileCTIMachineTrampolines):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::tryCachePutByID):
+        (JSC::JITStubs::tryCacheGetByID):
+
 2009-05-11  Dmitry Titov  <dimich@chromium.org>
 
         GTK build fix - the deprecated waitForThreadCompletion is not needed on GTK.

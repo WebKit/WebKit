@@ -394,33 +394,8 @@ void JIT::privateCompilePatchGetArrayLength(ProcessorReturnAddress returnAddress
     jumpLocation.relink(entryLabel);
 }
 
-void JIT::privateCompileGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
-{
-    // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
-    Jump failureCases2 = checkStructure(regT0, structure);
-
-    // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(regT0, regT0, structure, cachedOffset);
-    ret();
-
-    Call failureCases1Call = makeTailRecursiveCall(failureCases1);
-    Call failureCases2Call = makeTailRecursiveCall(failureCases2);
-
-    void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
-    PatchBuffer patchBuffer(code);
-
-    patchBuffer.link(failureCases1Call, JITStubs::cti_op_get_by_id_self_fail);
-    patchBuffer.link(failureCases2Call, JITStubs::cti_op_get_by_id_self_fail);
-
-    stubInfo->stubRoutine = patchBuffer.entry();
-
-    returnAddress.relinkCallerToFunction(code);
-}
-
 void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, ProcessorReturnAddress returnAddress, CallFrame* callFrame)
 {
-#if USE(CTI_REPATCH_PIC)
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     returnAddress.relinkCallerToFunction(JITStubs::cti_op_get_by_id_proto_list);
 
@@ -463,38 +438,8 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
     jumpLocation.relink(entryLabel);
-#else
-    // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
-    // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-
-    // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
-    Jump failureCases2 = checkStructure(regT0, structure);
-
-    // Check the prototype object's Structure had not changed.
-    Structure** prototypeStructureAddress = &(protoObject->m_structure);
-    Jump failureCases3 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
-
-    // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
-
-    ret();
-
-    void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
-    PatchBuffer patchBuffer(code);
-
-    patchBuffer.link(failureCases1, JITStubs::cti_op_get_by_id_proto_fail);
-    patchBuffer.link(failureCases2, JITStubs::cti_op_get_by_id_proto_fail);
-    patchBuffer.link(failureCases3, JITStubs::cti_op_get_by_id_proto_fail);
-
-    stubInfo->stubRoutine = patchBuffer.entry();
-
-    returnAddress.relinkCallerToFunction(code);
-#endif
 }
 
-#if USE(CTI_REPATCH_PIC)
 void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, size_t cachedOffset)
 {
     Jump failureCase = checkStructure(regT0, structure);
@@ -623,11 +568,9 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
     jumpLocation.relink(entryLabel);
 }
-#endif
 
 void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, ProcessorReturnAddress returnAddress, CallFrame* callFrame)
 {
-#if USE(CTI_REPATCH_PIC)
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     returnAddress.relinkCallerToFunction(JITStubs::cti_op_get_by_id_proto_list);
 
@@ -675,72 +618,9 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
     jumpLocation.relink(entryLabel);
-#else
-    ASSERT(count);
-    
-    JumpList bucketsOfFail;
-
-    // Check eax is an object of the right Structure.
-    bucketsOfFail.append(emitJumpIfNotJSCell(regT0));
-    bucketsOfFail.append(checkStructure(regT0, structure));
-
-    Structure* currStructure = structure;
-    RefPtr<Structure>* chainEntries = chain->head();
-    JSObject* protoObject = 0;
-    for (unsigned i = 0; i < count; ++i) {
-        protoObject = asObject(currStructure->prototypeForLookup(callFrame));
-        currStructure = chainEntries[i].get();
-
-        // Check the prototype object's Structure had not changed.
-        Structure** prototypeStructureAddress = &(protoObject->m_structure);
-#if PLATFORM(X86_64)
-        move(ImmPtr(currStructure), regT3);
-        bucketsOfFail.append(branchPtr(NotEqual, regT3, AbsoluteAddress(prototypeStructureAddress)));
-#else
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
-#endif
-    }
-    ASSERT(protoObject);
-
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
-    compilePutDirectOffset(regT0, regT1, structure, cachedOffset);
-    ret();
-
-    void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
-
-    patchBuffer.link(bucketsOfFail, JITStubs::cti_op_get_by_id_proto_fail);
-
-    stubInfo->stubRoutine = patchBuffer.entry();
-
-    returnAddress.relinkCallerToFunction(code);
-#endif
 }
 
-void JIT::privateCompilePutByIdReplace(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
-{
-    // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
-    Jump failureCases2 = checkStructure(regT0, structure);
-
-    // checks out okay! - putDirectOffset
-    compilePutDirectOffset(regT0, regT1, structure, cachedOffset);
-    ret();
-
-    Call failureCases1Call = makeTailRecursiveCall(failureCases1);
-    Call failureCases2Call = makeTailRecursiveCall(failureCases2);
-
-    void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
-    PatchBuffer patchBuffer(code);
-    
-    patchBuffer.link(failureCases1Call, JITStubs::cti_op_put_by_id_fail);
-    patchBuffer.link(failureCases2Call, JITStubs::cti_op_put_by_id_fail);
-
-    stubInfo->stubRoutine = patchBuffer.entry();
-    
-    returnAddress.relinkCallerToFunction(code);
-}
-
-#endif
+#endif // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 } // namespace JSC
 

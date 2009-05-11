@@ -291,11 +291,7 @@ NEVER_INLINE void JITStubs::tryCachePutByID(CallFrame* callFrame, CodeBlock* cod
     
     stubInfo->initPutByIdReplace(structure);
 
-#if USE(CTI_REPATCH_PIC)
     JIT::patchPutByIdReplace(stubInfo, structure, slot.cachedOffset(), returnAddress);
-#else
-    JIT::compilePutByIdReplace(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress);
-#endif
 }
 
 NEVER_INLINE void JITStubs::tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, void* returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot)
@@ -312,11 +308,7 @@ NEVER_INLINE void JITStubs::tryCacheGetByID(CallFrame* callFrame, CodeBlock* cod
     JSGlobalData* globalData = &callFrame->globalData();
 
     if (isJSArray(globalData, baseValue) && propertyName == callFrame->propertyNames().length) {
-#if USE(CTI_REPATCH_PIC)
         JIT::compilePatchGetArrayLength(callFrame->scopeChain()->globalData, codeBlock, returnAddress);
-#else
-        ctiPatchCallByReturnAddress(returnAddress, globalData->jitStubs.ctiArrayLengthTrampoline());
-#endif
         return;
     }
     
@@ -351,12 +343,8 @@ NEVER_INLINE void JITStubs::tryCacheGetByID(CallFrame* callFrame, CodeBlock* cod
     if (slot.slotBase() == baseValue) {
         // set this up, so derefStructures can do it's job.
         stubInfo->initGetByIdSelf(structure);
-        
-#if USE(CTI_REPATCH_PIC)
+
         JIT::patchGetByIdSelf(stubInfo, structure, slot.cachedOffset(), returnAddress);
-#else
-        JIT::compileGetByIdSelf(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress);
-#endif
         return;
     }
 
