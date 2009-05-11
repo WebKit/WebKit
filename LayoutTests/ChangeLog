@@ -1,3 +1,14 @@
+2009-05-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25701
+        REGRESSION(r38788 & r42020): styled searchfields look wrong on Windows, affects Facebook
+
+        * fast/forms/search-styled.html: Added.
+        * platform/mac/fast/forms/search-styled-expected.txt: Added.
+        * platform/win/fast/forms/search-styled-expected.txt: Added.
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

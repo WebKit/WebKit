@@ -1,3 +1,21 @@
+2009-05-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25701
+        REGRESSION(r38788 & r42020): styled searchfields look wrong on Windows, affects Facebook
+
+        Test: fast/forms/search-styled.html
+
+        * css/themeWin.css:
+        Remove the overriding of -webkit-appearance for searchfields. This will cause background
+        images to not be honored when styling searchfields
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle):
+        * rendering/RenderThemeWin.h:
+        Re-instate final adjustments to searchfield styling that were removed in r42020
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Fix Windows build

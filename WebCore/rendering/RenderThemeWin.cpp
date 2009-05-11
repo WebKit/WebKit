@@ -780,6 +780,16 @@ bool RenderThemeWin::paintSearchField(RenderObject* o, const RenderObject::Paint
     return paintTextField(o, i, r);
 }
 
+void RenderThemeWin::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    // Override paddingSize to match AppKit text positioning.
+    const int padding = 1;
+    style->setPaddingLeft(Length(padding, Fixed));
+    style->setPaddingRight(Length(padding, Fixed));
+    style->setPaddingTop(Length(padding, Fixed));
+    style->setPaddingBottom(Length(padding, Fixed));
+}
+
 bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
