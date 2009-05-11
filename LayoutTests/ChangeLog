@@ -1,3 +1,14 @@
+2009-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix failure seen on most of the buildbots.
+
+        * fast/forms/text-control-intrinsic-widths-expected.txt: Rolled back to the
+        version before Hyatt's recent intrinsic margin check-in. According to Dan,
+        that should not have had any effect on this test, so these results reflect
+        some other sort of difference on Hyatt's computer.
+
 2009-05-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
