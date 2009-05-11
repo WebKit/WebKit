@@ -1288,6 +1288,10 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             -lversion
     }
 
+} else {
+    SOURCES += \
+        plugins/PluginPackageNone.cpp \
+        plugins/PluginViewNone.cpp
 }
 
 contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {

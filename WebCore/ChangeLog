@@ -1,3 +1,13 @@
+2009-05-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Build fix Symbian; clean Up WebKit/Qt if ENABLE_NETSCAPE_PLUGIN_API=0
+        https://bugs.webkit.org/show_bug.cgi?id=24688
+
+        * WebCore.pro: Use platform independent plugin stubs if ENABLE_NETSCAPE_PLUGIN_API=0
+        * platform/qt/TemporaryLinkStubs.cpp: Remove stub functions for plugins
+
 2009-05-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
