@@ -1,3 +1,17 @@
+2009-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        - fixed REGRESSION(r43432): Many JavaScriptCore tests crash in 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=25680
+
+        Accound for the 64-bit instruction prefix when rewriting mov to lea on 64-bit.
+        
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+
 2009-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.
