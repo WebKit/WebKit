@@ -217,13 +217,15 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
+    close();
+
     if (m_scriptState)
         ScriptGlobalObject::remove(m_scriptState, "InspectorController");
 
-    if (m_page)
+    if (m_page) {
         m_page->setParentInspectorController(0);
-
-    close();
+        m_page = 0;
+    }
 
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
