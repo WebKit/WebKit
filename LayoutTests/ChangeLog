@@ -1,3 +1,14 @@
+2009-05-10  David Kilzer  <ddkilzer@apple.com>
+
+        Test for Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer
+
+        Rubber-stamped by Geoff Garen.
+
+        Original test by Simon Fraser.
+
+        * fast/css/compare-content-style.html: Added.
+        * platform/mac/fast/css/compare-content-style-expected.txt: Added.
+
 2009-05-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Kilzer.
