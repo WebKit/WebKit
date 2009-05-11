@@ -26,19 +26,27 @@
 
 namespace JSC {
 
-#ifdef NDEBUG
-    inline ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
+    void* ParserArenaDeletable::operator new(size_t size, JSGlobalData* globalData)
     {
-        globalData->parserArena.append(adoptRef(this));
+        ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(fastMalloc(size));
+        globalData->parser->arena().deleteWithArena(deletable);
+        return deletable;
     }
-#endif
+
+    void* ParserArenaDeletable::operator new(size_t size)
+    {
+        return fastMalloc(size);
+    }
+
+    inline ParserArenaRefCounted::ParserArenaRefCounted(JSGlobalData* globalData)
+    {
+        globalData->parser->arena().derefWithArena(adoptRef(this));
+    }
 
     inline Node::Node(JSGlobalData* globalData)
-        : ParserRefCounted(globalData)
-        , m_line(globalData->lexer->lineNumber())
+        : m_line(globalData->lexer->lineNumber())
     {
     }
-
 
     inline ExpressionNode::ExpressionNode(JSGlobalData* globalData, ResultType resultType)
         : Node(globalData)
@@ -94,17 +102,15 @@ namespace JSC {
     {
     }
 
-    inline ElementNode::ElementNode(JSGlobalData* globalData, int elision, ExpressionNode* node)
-        : ParserRefCounted(globalData)
-        , m_next(0)
+    inline ElementNode::ElementNode(JSGlobalData*, int elision, ExpressionNode* node)
+        : m_next(0)
         , m_elision(elision)
         , m_node(node)
     {
     }
 
-    inline ElementNode::ElementNode(JSGlobalData* globalData, ElementNode* l, int elision, ExpressionNode* node)
-        : ParserRefCounted(globalData)
-        , m_next(0)
+    inline ElementNode::ElementNode(JSGlobalData*, ElementNode* l, int elision, ExpressionNode* node)
+        : m_next(0)
         , m_elision(elision)
         , m_node(node)
     {
@@ -135,9 +141,8 @@ namespace JSC {
     {
     }
 
-    inline PropertyNode::PropertyNode(JSGlobalData* globalData, const Identifier& name, ExpressionNode* assign, Type type)
-        : ParserRefCounted(globalData)
-        , m_name(name)
+    inline PropertyNode::PropertyNode(JSGlobalData*, const Identifier& name, ExpressionNode* assign, Type type)
+        : m_name(name)
         , m_assign(assign)
         , m_type(type)
     {
@@ -200,15 +205,13 @@ namespace JSC {
         listNode->m_next = this;
     }
 
-    inline ArgumentsNode::ArgumentsNode(JSGlobalData* globalData)
-        : ParserRefCounted(globalData)
-        , m_listNode(0)
+    inline ArgumentsNode::ArgumentsNode(JSGlobalData*)
+        : m_listNode(0)
     {
     }
 
-    inline ArgumentsNode::ArgumentsNode(JSGlobalData* globalData, ArgumentListNode* listNode)
-        : ParserRefCounted(globalData)
-        , m_listNode(listNode)
+    inline ArgumentsNode::ArgumentsNode(JSGlobalData*, ArgumentListNode* listNode)
+        : m_listNode(listNode)
     {
     }
 
@@ -666,8 +669,7 @@ namespace JSC {
     {
     }
 
-    inline SourceElements::SourceElements(JSGlobalData* globalData)
-        : ParserRefCounted(globalData)
+    inline SourceElements::SourceElements(JSGlobalData*)
     {
     }
 
@@ -791,24 +793,22 @@ namespace JSC {
     {
     }
 
-    inline ParameterNode::ParameterNode(JSGlobalData* globalData, const Identifier& ident)
-        : ParserRefCounted(globalData)
-        , m_ident(ident)
+    inline ParameterNode::ParameterNode(JSGlobalData*, const Identifier& ident)
+        : m_ident(ident)
         , m_next(0)
     {
     }
 
-    inline ParameterNode::ParameterNode(JSGlobalData* globalData, ParameterNode* l, const Identifier& ident)
-        : ParserRefCounted(globalData)
-        , m_ident(ident)
+    inline ParameterNode::ParameterNode(JSGlobalData*, ParameterNode* l, const Identifier& ident)
+        : m_ident(ident)
         , m_next(0)
     {
         l->m_next = this;
     }
 
-        
     inline FuncExprNode::FuncExprNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : ExpressionNode(globalData)
+        , ParserArenaRefCounted(globalData)
         , m_ident(ident)
         , m_body(body)
     {
@@ -817,44 +817,40 @@ namespace JSC {
 
     inline FuncDeclNode::FuncDeclNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : StatementNode(globalData)
+        , ParserArenaRefCounted(globalData)
         , m_ident(ident)
         , m_body(body)
     {
         m_body->finishParsing(source, parameter);
     }
 
-    inline CaseClauseNode::CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : ParserRefCounted(globalData)
-        , m_expr(expr)
+    inline CaseClauseNode::CaseClauseNode(JSGlobalData*, ExpressionNode* expr)
+        : m_expr(expr)
     {
     }
 
-    inline CaseClauseNode::CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr, SourceElements* children)
-        : ParserRefCounted(globalData)
-        , m_expr(expr)
+    inline CaseClauseNode::CaseClauseNode(JSGlobalData*, ExpressionNode* expr, SourceElements* children)
+        : m_expr(expr)
     {
         if (children)
             children->releaseContentsIntoVector(m_children);
     }
 
-    inline ClauseListNode::ClauseListNode(JSGlobalData* globalData, CaseClauseNode* clause)
-        : ParserRefCounted(globalData)
-        , m_clause(clause)
+    inline ClauseListNode::ClauseListNode(JSGlobalData*, CaseClauseNode* clause)
+        : m_clause(clause)
         , m_next(0)
     {
     }
 
-    inline ClauseListNode::ClauseListNode(JSGlobalData* globalData, ClauseListNode* clauseList, CaseClauseNode* clause)
-        : ParserRefCounted(globalData)
-        , m_clause(clause)
+    inline ClauseListNode::ClauseListNode(JSGlobalData*, ClauseListNode* clauseList, CaseClauseNode* clause)
+        : m_clause(clause)
         , m_next(0)
     {
         clauseList->m_next = this;
     }
 
-    inline CaseBlockNode::CaseBlockNode(JSGlobalData* globalData, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2)
-        : ParserRefCounted(globalData)
-        , m_list1(list1)
+    inline CaseBlockNode::CaseBlockNode(JSGlobalData*, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2)
+        : m_list1(list1)
         , m_defaultClause(defaultClause)
         , m_list2(list2)
     {

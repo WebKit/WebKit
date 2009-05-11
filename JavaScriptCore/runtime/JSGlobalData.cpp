@@ -183,8 +183,6 @@ JSGlobalData::~JSGlobalData()
     deleteIdentifierTable(identifierTable);
 
     delete clientData;
-    
-    ASSERT(parserArena.isEmpty());
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::create(bool isShared)
@@ -194,14 +192,10 @@ PassRefPtr<JSGlobalData> JSGlobalData::create(bool isShared)
 
 PassRefPtr<JSGlobalData> JSGlobalData::createLeaked()
 {
-#ifndef NDEBUG
     Structure::startIgnoringLeaks();
     RefPtr<JSGlobalData> data = create();
     Structure::stopIgnoringLeaks();
     return data.release();
-#else
-    return create();
-#endif
 }
 
 bool JSGlobalData::sharedInstanceExists()
@@ -228,12 +222,14 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
     return sharedInstance;
 }
 
+#if ENABLE(JIT)
+
 void JSGlobalData::createNativeThunk()
 {
-#if ENABLE(JIT)
     lazyNativeFunctionThunk = FunctionBodyNode::createNativeThunk(this);
-#endif
 }
+
+#endif
 
 // FIXME: We can also detect forms like v1 < v2 ? -1 : 0, reverse comparison, etc.
 const Vector<Instruction>& JSGlobalData::numericCompareFunction(ExecState* exec)

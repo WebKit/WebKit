@@ -39,7 +39,7 @@ namespace JSC {
 
 void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
 {
-    ASSERT(!m_sourceElements);
+    m_sourceElements = 0;
 
     int defaultErrLine;
     UString defaultErrMsg;
@@ -63,7 +63,7 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
     if (parseError || lexError) {
         *errLine = lineNumber;
         *errMsg = "Parse error";
-        m_sourceElements.clear();
+        m_sourceElements = 0;
     }
 }
 
@@ -76,8 +76,8 @@ void Parser::reparseInPlace(JSGlobalData* globalData, FunctionBodyNode* function
     parse(globalData, 0, 0);
     ASSERT(m_sourceElements);
 
-    functionBodyNode->adoptData(std::auto_ptr<ScopeNodeData>(new ScopeNodeData(globalData->parserArena,
-        m_sourceElements.get(),
+    functionBodyNode->adoptData(std::auto_ptr<ScopeNodeData>(new ScopeNodeData(globalData->parser->arena(),
+        m_sourceElements,
         m_varDeclarations ? &m_varDeclarations->data : 0, 
         m_funcDeclarations ? &m_funcDeclarations->data : 0,
         m_numConstants)));
@@ -86,7 +86,7 @@ void Parser::reparseInPlace(JSGlobalData* globalData, FunctionBodyNode* function
     if (usesArguments && !functionBodyNode->usesArguments())
         functionBodyNode->setUsesArguments();
 
-    ASSERT(globalData->parserArena.isEmpty());
+    ASSERT(globalData->parser->arena().isEmpty());
 
     m_source = 0;
     m_sourceElements = 0;
@@ -94,8 +94,8 @@ void Parser::reparseInPlace(JSGlobalData* globalData, FunctionBodyNode* function
     m_funcDeclarations = 0;
 }
 
-void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants)
+void Parser::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
+                              ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants)
 {
     m_sourceElements = sourceElements;
     m_varDeclarations = varStack;

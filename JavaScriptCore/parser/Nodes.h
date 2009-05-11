@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "JITCode.h"
 #include "Opcode.h"
+#include "ParserArena.h"
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
@@ -101,30 +102,37 @@ namespace JSC {
         SwitchType switchType;
     };
 
-    class ParserRefCounted : public RefCounted<ParserRefCounted> {
+    class ParserArenaDeletable {
     protected:
-        ParserRefCounted(JSGlobalData*);
+        ParserArenaDeletable() { }
 
     public:
-        virtual ~ParserRefCounted();
+        virtual ~ParserArenaDeletable() { }
 
-        // Placeholder: To be changed to arena allocation.
-        void* operator new(size_t size, JSGlobalData*) { return fastMalloc(size); }
+        // Objects created with this version of new are deleted when the arena is deleted.
+        void* operator new(size_t, JSGlobalData*);
 
-    private:
+        // Objects created with this version of new are not deleted when the arena is deleted.
+        // Other arrangements must be made.
         void* operator new(size_t);
     };
 
-#ifdef NDEBUG
-    inline ParserRefCounted::~ParserRefCounted()
-    {
-    }
-#endif
+    class ParserArenaRefCounted : public RefCounted<ParserArenaRefCounted> {
+    protected:
+        ParserArenaRefCounted(JSGlobalData*);
 
-    class Node : public ParserRefCounted {
     public:
+        virtual ~ParserArenaRefCounted()
+        {
+            ASSERT(deletionHasBegun());
+        }
+    };
+
+    class Node : public ParserArenaDeletable {
+    protected:
         Node(JSGlobalData*);
 
+    public:
         /*
             Return value: The register holding the production's value.
                      dst: An optional parameter specifying the most efficient
@@ -386,7 +394,7 @@ namespace JSC {
         int32_t m_startOffset;
     };
 
-    class ElementNode : public ParserRefCounted {
+    class ElementNode : public ParserArenaDeletable {
     public:
         ElementNode(JSGlobalData*, int elision, ExpressionNode*);
         ElementNode(JSGlobalData*, ElementNode*, int elision, ExpressionNode*);
@@ -419,7 +427,7 @@ namespace JSC {
         bool m_optional;
     };
 
-    class PropertyNode : public ParserRefCounted {
+    class PropertyNode : public ParserArenaDeletable {
     public:
         enum Type { Constant, Getter, Setter };
 
@@ -504,7 +512,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
-    class ArgumentsNode : public ParserRefCounted {
+    class ArgumentsNode : public ParserArenaDeletable {
     public:
         ArgumentsNode(JSGlobalData*);
         ArgumentsNode(JSGlobalData*, ArgumentListNode*);
@@ -1129,7 +1137,7 @@ namespace JSC {
 
     typedef Vector<StatementNode*> StatementVector;
 
-    class SourceElements : public ParserRefCounted {
+    class SourceElements : public ParserArenaDeletable {
     public:
         SourceElements(JSGlobalData*);
 
@@ -1356,7 +1364,7 @@ namespace JSC {
         bool m_catchHasEval;
     };
 
-    class ParameterNode : public ParserRefCounted {
+    class ParameterNode : public ParserArenaDeletable {
     public:
         ParameterNode(JSGlobalData*, const Identifier&);
         ParameterNode(JSGlobalData*, ParameterNode*, const Identifier&);
@@ -1368,9 +1376,6 @@ namespace JSC {
         Identifier m_ident;
         ParameterNode* m_next;
     };
-
-    // Placholder. Later this will become a true arena.
-    typedef Vector<RefPtr<ParserRefCounted> > ParserArena;
 
     struct ScopeNodeData {
         typedef DeclarationStacks::VarStack VarStack;
@@ -1387,7 +1392,7 @@ namespace JSC {
         void mark();
     };
 
-    class ScopeNode : public StatementNode {
+    class ScopeNode : public StatementNode, public ParserArenaRefCounted {
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
@@ -1397,7 +1402,7 @@ namespace JSC {
 
         void adoptData(std::auto_ptr<ScopeNodeData> data)
         {
-            ASSERT(data->m_arena.find(this) == notFound);
+            ASSERT(!data->m_arena.contains(this));
             ASSERT(!m_data);
             m_data.adopt(data);
         }
@@ -1567,7 +1572,7 @@ namespace JSC {
         OwnPtr<CodeBlock> m_code;
     };
 
-    class FuncExprNode : public ExpressionNode {
+    class FuncExprNode : public ExpressionNode, public ParserArenaRefCounted {
     public:
         FuncExprNode(JSGlobalData*, const Identifier&, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter = 0);
 
@@ -1584,7 +1589,7 @@ namespace JSC {
         RefPtr<FunctionBodyNode> m_body;
     };
 
-    class FuncDeclNode : public StatementNode {
+    class FuncDeclNode : public StatementNode, public ParserArenaRefCounted {
     public:
         FuncDeclNode(JSGlobalData*, const Identifier&, FunctionBodyNode*, const SourceCode&, ParameterNode* = 0);
 
@@ -1600,7 +1605,7 @@ namespace JSC {
         RefPtr<FunctionBodyNode> m_body;
     };
 
-    class CaseClauseNode : public ParserRefCounted {
+    class CaseClauseNode : public ParserArenaDeletable {
     public:
         CaseClauseNode(JSGlobalData*, ExpressionNode*);
         CaseClauseNode(JSGlobalData*, ExpressionNode*, SourceElements*);
@@ -1613,7 +1618,7 @@ namespace JSC {
         StatementVector m_children;
     };
 
-    class ClauseListNode : public ParserRefCounted {
+    class ClauseListNode : public ParserArenaDeletable {
     public:
         ClauseListNode(JSGlobalData*, CaseClauseNode*);
         ClauseListNode(JSGlobalData*, ClauseListNode*, CaseClauseNode*);
@@ -1626,7 +1631,7 @@ namespace JSC {
         ClauseListNode* m_next;
     };
 
-    class CaseBlockNode : public ParserRefCounted {
+    class CaseBlockNode : public ParserArenaDeletable {
     public:
         CaseBlockNode(JSGlobalData*, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,10 +44,8 @@ struct OpaqueJSClassContextData;
 
 namespace JSC {
 
-    class ArgList;
     class CommonIdentifiers;
     class FunctionBodyNode;
-    class Heap;
     class IdentifierTable;
     class Instruction;
     class Interpreter;
@@ -55,7 +53,6 @@ namespace JSC {
     class JSObject;
     class Lexer;
     class Parser;
-    class ParserRefCounted;
     class ScopeNode;
     class Structure;
     class UString;
@@ -147,7 +144,6 @@ namespace JSC {
 
         HashSet<JSObject*> arrayVisitedElements;
 
-        Vector<RefPtr<ParserRefCounted> > parserArena;
         ScopeNode* scopeNodeBeingReparsed;
 
     private:
@@ -155,6 +151,7 @@ namespace JSC {
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
     };
+
 } // namespace JSC
 
 #endif // JSGlobalData_h

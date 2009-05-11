@@ -51,25 +51,6 @@ namespace JSC {
 
 static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
 
-// ------------------------------ ParserRefCounted -----------------------------------------
-
-#ifndef NDEBUG
-
-static RefCountedLeakCounter parserRefCountedCounter("JSC::Node");
-
-ALWAYS_INLINE ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
-{
-    globalData->parserArena.append(adoptRef(this));
-    parserRefCountedCounter.increment();
-}
-
-ALWAYS_INLINE ParserRefCounted::~ParserRefCounted()
-{
-    parserRefCountedCounter.decrement();
-}
-
-#endif
-
 // ------------------------------ ThrowableExpressionData --------------------------------
 
 static void substitute(UString& string, const UString& substring)
@@ -1839,6 +1820,7 @@ void ScopeNodeData::mark()
 
 ScopeNode::ScopeNode(JSGlobalData* globalData)
     : StatementNode(globalData)
+    , ParserArenaRefCounted(globalData)
     , m_features(NoFeatures)
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
@@ -1848,7 +1830,8 @@ ScopeNode::ScopeNode(JSGlobalData* globalData)
 
 ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
     : StatementNode(globalData)
-    , m_data(new ScopeNodeData(globalData->parserArena, children, varStack, funcStack, numConstants))
+    , ParserArenaRefCounted(globalData)
+    , m_data(new ScopeNodeData(globalData->parser->arena(), children, varStack, funcStack, numConstants))
     , m_features(features)
     , m_source(source)
 {
@@ -1866,11 +1849,11 @@ inline ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* childr
 
 PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<ProgramNode> node = new (globalData) ProgramNode(globalData, children, varStack, funcStack, source, features, numConstants);
+    RefPtr<ProgramNode> node = new ProgramNode(globalData, children, varStack, funcStack, source, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();
-    ASSERT(node->data()->m_arena.find(node.get()) == notFound);
+    ASSERT(!node->data()->m_arena.contains(node.get()));
 
     return node.release();
 }
@@ -1910,11 +1893,11 @@ inline EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, Va
 
 PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<EvalNode> node = new (globalData) EvalNode(globalData, children, varStack, funcStack, source, features, numConstants);
+    RefPtr<EvalNode> node = new EvalNode(globalData, children, varStack, funcStack, source, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();
-    ASSERT(node->data()->m_arena.find(node.get()) == notFound);
+    ASSERT(!node->data()->m_arena.contains(node.get()));
 
     return node.release();
 }
@@ -2025,8 +2008,8 @@ void FunctionBodyNode::mark()
 #if ENABLE(JIT)
 PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* globalData)
 {
-    RefPtr<FunctionBodyNode> body = new (globalData) FunctionBodyNode(globalData);
-    globalData->parserArena.shrink(0);
+    RefPtr<FunctionBodyNode> body = new FunctionBodyNode(globalData);
+    globalData->parser->arena().reset();
     body->m_jitCode = globalData->jitStubs.ctiNativeCallThunk();
     return body.release();
 }
@@ -2034,16 +2017,16 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* g
 
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
 {
-    return new (globalData) FunctionBodyNode(globalData);
+    return new FunctionBodyNode(globalData);
 }
 
 PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
 {
-    RefPtr<FunctionBodyNode> node = new (globalData) FunctionBodyNode(globalData, children, varStack, funcStack, sourceCode, features, numConstants);
+    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, children, varStack, funcStack, sourceCode, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();
-    ASSERT(node->data()->m_arena.find(node.get()) == notFound);
+    ASSERT(!node->data()->m_arena.contains(node.get()));
 
     return node.release();
 }

@@ -83,6 +83,13 @@ protected:
         return &m_refCount;
     }
 
+#ifndef NDEBUG
+    bool deletionHasBegun() const
+    {
+        return m_deletionHasBegun;
+    }
+#endif
+
 private:
     template<class T>
     friend class CrossThreadRefCounted;

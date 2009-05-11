@@ -99,24 +99,24 @@ static ExpressionNode* combineVarInitializers(void*, ExpressionNode* list, Assig
 #define YYPARSE_PARAM globalPtr
 #define YYLEX_PARAM globalPtr
 
-template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
-                                                                       ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls,
+template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserArenaData<DeclarationStacks::VarStack>* varDecls, 
+                                                                       ParserArenaData<DeclarationStacks::FunctionStack>* funcDecls,
                                                                        CodeFeatures info,
                                                                        int numConstants) 
 {
     ASSERT((info & ~AllFeatures) == 0);
-    NodeDeclarationInfo<T> result = {node, varDecls, funcDecls, info, numConstants};
+    NodeDeclarationInfo<T> result = { node, varDecls, funcDecls, info, numConstants };
     return result;
 }
 
 template <typename T> NodeInfo<T> createNodeInfo(T node, CodeFeatures info, int numConstants)
 {
     ASSERT((info & ~AllFeatures) == 0);
-    NodeInfo<T> result = {node, info, numConstants};
+    NodeInfo<T> result = { node, info, numConstants };
     return result;
 }
 
-template <typename T> T mergeDeclarationLists(T decls1, T decls2) 
+template <typename T> inline T mergeDeclarationLists(T decls1, T decls2) 
 {
     // decls1 or both are null
     if (!decls1)
@@ -128,23 +128,23 @@ template <typename T> T mergeDeclarationLists(T decls1, T decls2)
     // Both are non-null
     decls1->data.append(decls2->data);
     
-    // We manually release the declaration lists to avoid accumulating many many
-    // unused heap allocated vectors
-    decls2->ref();
-    decls2->deref();
+    // Manually release as much as possible from the now-defunct declaration lists
+    // to avoid accumulating so many unused heap allocated vectors.
+    decls2->data.clear();
+
     return decls1;
 }
 
-static void appendToVarDeclarationList(void* globalPtr, ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
+static void appendToVarDeclarationList(void* globalPtr, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
 {
     if (!varDecls)
-        varDecls = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+        varDecls = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
 
     varDecls->data.append(make_pair(ident, attrs));
 
 }
 
-static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
+static inline void appendToVarDeclarationList(void* globalPtr, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
 {
     unsigned attrs = DeclarationStacks::IsConstant;
     if (decl->hasInitializer())
@@ -264,7 +264,7 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 %type <expressionNode>  Initializer InitializerNoIn
 %type <statementNode>   FunctionDeclaration
 %type <funcExprNode>    FunctionExpr
-%type <functionBodyNode>  FunctionBody
+%type <functionBodyNode> FunctionBody
 %type <sourceElements>  SourceElements
 %type <parameterList>   FormalParameterList
 %type <op>              AssignmentOperator
@@ -828,7 +828,7 @@ VariableStatement:
 
 VariableDeclarationList:
     IDENT                               { $$.m_node = 0;
-                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
@@ -837,7 +837,7 @@ VariableDeclarationList:
   | IDENT Initializer                   { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.first_column + 1, @2.last_column);
                                           $$.m_node = node;
-                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features;
@@ -865,7 +865,7 @@ VariableDeclarationList:
 
 VariableDeclarationListNoIn:
     IDENT                               { $$.m_node = 0;
-                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
@@ -874,7 +874,7 @@ VariableDeclarationListNoIn:
   | IDENT InitializerNoIn               { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @2.first_column + 1, @2.last_column);
                                           $$.m_node = node;
-                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
                                           $$.m_features = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_features;
@@ -911,7 +911,7 @@ ConstStatement:
 ConstDeclarationList:
     ConstDeclaration                    { $$.m_node.head = $1.m_node;
                                           $$.m_node.tail = $$.m_node.head;
-                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
+                                          $$.m_varDeclarations = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, $1.m_node);
                                           $$.m_funcDeclarations = 0; 
                                           $$.m_features = $1.m_features;
@@ -958,7 +958,8 @@ IfStatement:
                                           DBG($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) IfElseNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node), 
-                                                                                         mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations),
+                                                                                         mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations),
+                                                                                         mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations),
                                                                                          $3.m_features | $5.m_features | $7.m_features,
                                                                                          $3.m_numConstants + $5.m_numConstants + $7.m_numConstants); 
                                           DBG($$.m_node, @1, @4); }
@@ -1168,10 +1169,10 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       { 
-          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments(); 
           DBG($7, @6, @8);
@@ -1180,18 +1181,18 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
     | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
       { 
-          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0); 
+          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0); 
           if ($3.m_features & ArgumentsFeature) 
               $6->setUsesArguments();
           DBG($6, @5, @7); 
       }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
       { 
-          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
           DBG($7, @6, @8); 
@@ -1971,7 +1972,7 @@ static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Ident
         type = PropertyNode::Setter;
     else
         return 0;
-    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
+    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
 }
 
 static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)

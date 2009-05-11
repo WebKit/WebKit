@@ -43,8 +43,8 @@ namespace JSC {
     
     template <typename T> struct NodeDeclarationInfo {
         T m_node;
-        ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
-        ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+        ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
+        ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
         CodeFeatures m_features;
         int m_numConstants;
     };

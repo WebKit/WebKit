@@ -1,3 +1,80 @@
+2009-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 25674: syntax tree nodes should use arena allocation
+        https://bugs.webkit.org/show_bug.cgi?id=25674
+
+        Part two: Remove reference counting from most nodes.
+
+        * JavaScriptCore.exp: Updated.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added ParserArena.h and .cpp.
+
+        * parser/Grammar.y: Replaced uses of ParserRefCountedData with uses of
+        ParserArenaData. Took out now-nonfunctional code that tries to manually
+        release declaration list. Changed the new calls that create FuncDeclNode
+        and FuncExprNode so that they use the proper version of operator new for
+        the reference-counted idiom, not the deletion idiom.
+
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaDeletable::operator new): Added.
+        (JSC::ParserArenaRefCounted::ParserArenaRefCounted): Added.
+        (JSC::Node::Node): Removed ParserRefCounted initializer.
+        (JSC::ElementNode::ElementNode): Ditto.
+        (JSC::PropertyNode::PropertyNode): Ditto.
+        (JSC::ArgumentsNode::ArgumentsNode): Ditto.
+        (JSC::SourceElements::SourceElements): Ditto.
+        (JSC::ParameterNode::ParameterNode): Ditto.
+        (JSC::FuncExprNode::FuncExprNode): Added ParserArenaRefCounted initializer.
+        (JSC::FuncDeclNode::FuncDeclNode): Ditto.
+        (JSC::CaseClauseNode::CaseClauseNode): Removed ParserRefCounted initializer.
+        (JSC::ClauseListNode::ClauseListNode): Ditto.
+        (JSC::CaseBlockNode::CaseBlockNode): Ditto.
+
+        * parser/NodeInfo.h: Replaced uses of ParserRefCountedData with uses of
+        ParserArenaData.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode): Added ParserArenaRefCounted initializer.
+        (JSC::ProgramNode::create): Use the proper version of operator new for
+        the reference-counted idiom, not the deletion idiom. Use the arena
+        contains function instead of the vecctor find function.
+        (JSC::EvalNode::create): Use the proper version of operator new for
+        the reference-counted idiom, not the deletion idiom. Use the arena
+        reset function instead of the vector shrink function.
+        (JSC::FunctionBodyNode::createNativeThunk): Use the proper version
+        of operator new for the reference-counted idiom, not the deletion idiom.
+        (JSC::FunctionBodyNode::create): More of the same.
+
+        * parser/Nodes.h: Added ParserArenaDeletable and ParserArenaRefCounted
+        to replace ParserRefCounted. Fixed inheritance so only the classes that
+        need reference counting inherit from ParserArenaRefCounted.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::parse): Set m_sourceElements to 0 since it now starts
+        uninitialized. Just set it to 0 again in the failure case, since it's
+        now just a raw pointer, not an owning one.
+        (JSC::Parser::reparseInPlace): Removed now-unneeded get() function.
+        (JSC::Parser::didFinishParsing): Replaced uses of ParserRefCountedData
+        with uses of ParserArenaData.
+
+        * parser/Parser.h: Less RefPtr, more arena.
+
+        * parser/ParserArena.cpp: Added.
+        * parser/ParserArena.h: Added.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): Removed arena-related code, since it's
+        now in the Parser.
+        (JSC::JSGlobalData::createLeaked): Removed unneeded #ifndef.
+        (JSC::JSGlobalData::createNativeThunk): Tweaked #if a bit.
+
+        * runtime/JSGlobalData.h: Removed parserArena, which is now in Parser.
+
+        * wtf/RefCounted.h: Added deletionHasBegun function, for use in
+        assertions to catch deletion not done by the deref function.
+
 2009-05-10  David Kilzer  <ddkilzer@apple.com>
 
         Part 2: Try to fix the Windows build by adding a symbol which is really just a re-mangling of a changed method signature
