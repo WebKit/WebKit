@@ -1,3 +1,12 @@
+2009-05-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Include SunSpider tests in production builds.
+        
+        Reviewed by Adam Roben.
+
+        * SunSpider.make: Added.
+        * xcopy.excludes: Added.
+
 2009-03-04  Oliver Hunt  <oliver@apple.com>
 
         Added a few more tests to ubench
