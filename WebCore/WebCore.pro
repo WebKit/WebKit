@@ -14,7 +14,7 @@ CONFIG(QTDIR_build) {
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 } else {
-    win32-*:!static: DEFINES += QT_MAKEDLL
+    !static: DEFINES += QT_MAKEDLL
 
     CONFIG(debug, debug|release) {
         isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/debug

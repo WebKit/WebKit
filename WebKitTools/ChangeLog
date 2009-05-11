@@ -1,3 +1,12 @@
+2009-05-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Make sure that public APIs are properly exported on all Qt platforms
+        https://bugs.webkit.org/show_bug.cgi?id=25601
+
+        * Scripts/webkitdirs.pm: Remove QT_SHARED define from Qt builds, define QT_MAKEDLL in WebCore.pro instead
+
 2009-05-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for Python extension and DRT.
