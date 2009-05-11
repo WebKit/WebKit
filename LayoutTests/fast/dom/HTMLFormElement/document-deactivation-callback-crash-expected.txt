@@ -1,0 +1,5 @@
+Test for a crash when deactivating a document that had adopted a <form> element.
+
+The test passed if it did not crash.
+
+

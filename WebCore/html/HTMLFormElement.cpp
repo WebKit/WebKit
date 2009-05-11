@@ -633,7 +633,7 @@ void HTMLFormElement::willMoveToNewOwnerDocument()
 
 void HTMLFormElement::didMoveToNewOwnerDocument()
 {
-    if(m_autocomplete)
+    if (!m_autocomplete)
         document()->registerForDocumentActivationCallbacks(this);
     HTMLElement::didMoveToNewOwnerDocument();
 }

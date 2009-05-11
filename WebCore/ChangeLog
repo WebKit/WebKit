@@ -1,3 +1,17 @@
+2009-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a crash when deactivating a document that had adopted a <form>
+          element
+
+        Test: fast/dom/HTMLFormElement/document-deactivation-callback-crash.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument): Corrected the
+        logic here: <form> elements should be registered for document activation
+        callbacks if and only if autocomplete is off.
+
 2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

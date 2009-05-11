@@ -1,3 +1,13 @@
+2009-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for a crash when deactivating a document that had adopted a
+          <form> element
+
+        * fast/dom/HTMLFormElement/document-deactivation-callback-crash-expected.txt: Added.
+        * fast/dom/HTMLFormElement/document-deactivation-callback-crash.html: Added.
+
 2009-05-10  David Kilzer  <ddkilzer@apple.com>
 
         Test for Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer
