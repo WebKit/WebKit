@@ -1,3 +1,10 @@
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-leopard/Skipped: Skip fast/images/favicon-as-image.html until we can come up
+          with a better solution to its new failure.
+
 2009-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

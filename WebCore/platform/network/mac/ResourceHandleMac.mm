@@ -33,6 +33,7 @@
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "MIMETypeRegistry.h"
 #import "Page.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
@@ -42,6 +43,10 @@
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/UnusedParam.h>
+
+#ifndef BUILDING_ON_TIGER
+#import <objc/objc-class.h>
+#endif
 
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
@@ -77,6 +82,9 @@ using namespace WebCore;
 @end
 
 static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
+
+static IMP oldNSURLResponseMIMETypeIMP = 0;
+static NSString *webNSURLResponseMIMEType(id, SEL);
 
 #endif
 
@@ -342,13 +350,21 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 
     ASSERT(!request.isEmpty());
     
+    NSURLRequest *nsRequest;
+    if (!shouldContentSniffURL(request.url())) {
+        NSMutableURLRequest *mutableRequest = [request.nsURLRequest() mutableCopy];
+        wkSetNSURLRequestShouldContentSniff(mutableRequest, NO);
+        nsRequest = mutableRequest;
+    } else
+        nsRequest = request.nsURLRequest();
+            
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
 #ifndef BUILDING_ON_TIGER
-    result = [WebCoreSynchronousLoader loadRequest:request.nsURLRequest() allowStoredCredentials:(storedCredentials == AllowStoredCredentials) returningResponse:&nsURLResponse error:&nsError];
+    result = [WebCoreSynchronousLoader loadRequest:nsRequest allowStoredCredentials:(storedCredentials == AllowStoredCredentials) returningResponse:&nsURLResponse error:&nsError];
 #else
     UNUSED_PARAM(storedCredentials);
-    result = [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
+    result = [NSURLConnection sendSynchronousRequest:nsRequest returningResponse:&nsURLResponse error:&nsError];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -579,6 +595,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
+
+#ifndef BUILDING_ON_TIGER
+    if (!oldNSURLResponseMIMETypeIMP) {
+        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod(objc_getClass("NSURLResponse"), @selector(MIMEType));
+        ASSERT(nsURLResponseMIMETypeMethod);
+        oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
+    }
+#endif
+
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
 
@@ -907,5 +932,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 
 @end
+
+static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
+{
+    ASSERT(oldNSURLResponseMIMETypeIMP);
+    if (NSString *result = oldNSURLResponseMIMETypeIMP(self, _cmd))
+        return result;
+
+    static NSString *defaultMIMETypeString = [(NSString *)defaultMIMEType() retain];
+    return defaultMIMETypeString;
+}
 
 #endif

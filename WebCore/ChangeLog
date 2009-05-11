@@ -1,3 +1,40 @@
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5972751> Local image files (BMP, ico) can be misidentified as HTML.
+
+        First part of the fix - Disable content sniffing for file resources which never should've been happening anyways.
+        Second part of the fix - If the networking layer doesn't give us back a MIME type default to "application/octet-stream".
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::defaultMIMEType): "application/octet-stream"
+        * platform/MIMETypeRegistry.h:
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::create): If content sniffing is true, double check with "shouldContentSniffRequest()" which
+          might override it to false.
+        (WebCore::ResourceHandle::shouldContentSniffURL): Return false for file:// urls, true for everything else.
+        * platform/network/ResourceHandle.h:
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::createCFURLResponseWithDefaultMIMEType): Create a copy of the CFURLRequest with the default MIME type instead
+          of null.
+        (WebCore::didReceiveResponse): If the MIME type for the response is null, create a copy with the default MIME type.
+        (WebCore::WebCoreSynchronousLoader::load): Use shouldContentSniffRequest() to make synchronous loads have the same 
+          sniffing policy as asynchronous loads.  Also, correct a null MIME type by creating a copy with the default type.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Use shouldContentSniffRequest() to make synchronous loads have the
+          same sniffing policy as asynchronous loads.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Set up the [NSURLResponse MIMEType] swizzling if
+          it hasn't been set up yet.
+        (_web_NSURLResponse_MIMEType): Either return the actual MIME type of the response, or the default MIME type if it's nil.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously): Remove the workaround added in r29370 as it will now be covered by
+          the new mechanism.
+
 2009-05-11  David Kilzer  <ddkilzer@apple.com>
 
         Fix typo "APPLICATION_CAHE_DYNAMIC_ENTRIES" to "APPLICATION_CACHE_DYNAMIC_ENTRIES"

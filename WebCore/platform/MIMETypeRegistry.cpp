@@ -32,6 +32,7 @@
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(CG)
 #include "ImageSourceCG.h"
@@ -342,6 +343,12 @@ HashSet<String>& MIMETypeRegistry::getSupportedMediaMIMETypes()
     if (!supportedMediaMIMETypes)
         initializeSupportedMediaMIMETypes();
     return *supportedMediaMIMETypes;
+}
+
+const String& defaultMIMEType()
+{
+    DEFINE_STATIC_LOCAL(const String, defaultMIMEType, ("application/octet-stream"));
+    return defaultMIMEType;
 }
 
 } // namespace WebCore

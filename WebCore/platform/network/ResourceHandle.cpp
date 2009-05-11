@@ -45,6 +45,9 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleCli
 PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client,
     Frame* frame, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle)
 {
+    if (shouldContentSniff)
+        shouldContentSniff = shouldContentSniffURL(request.url());
+
     RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff, mightDownloadFromHandle)));
 
     if (!request.url().isValid()) {
@@ -200,4 +203,10 @@ static bool portAllowed(const ResourceRequest& request)
     return false;
 }
   
+bool ResourceHandle::shouldContentSniffURL(const KURL& url)
+{
+    // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
+    return !url.protocolIs("file");
+}
+
 } // namespace WebCore

@@ -73,6 +73,8 @@ public:
     static HashSet<String>& getSupportedMediaMIMETypes();
 };
 
+const String& defaultMIMEType();
+
 } // namespace WebCore
 
 #endif // MIMETypeRegistry_h

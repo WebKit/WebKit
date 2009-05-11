@@ -97,6 +97,15 @@ static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
     return certs;
 }
 
+static CFURLResponseRef createCFURLResponseWithDefaultMIMEType(CFURLResponseRef response)
+{
+    // We should never be applying the default MIMEType if we told the networking layer to do content sniffing for this URL.
+    ASSERT(!ResourceHandle::shouldContentSniffURL(CFURLResponseGetURL(response));
+    
+    return CFURLResponseCreate(kCFAllocatorDefault, CFURLResponseGetURL(response), (CFStringRef)ResourceHandle::defaultMIMEType(), 
+        CFURLResponseGetExpectedContentLength(response), CFURLResponseGetTextEncodingName(response));
+}
+
 CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
@@ -123,8 +132,15 @@ void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, co
 
     LOG(Network, "CFNet - didReceiveResponse(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
 
-    if (handle->client())
+    if (!handle->client())
+        return;
+
+    if (CFURLResponseGetMIMEType(cfResponse))
         handle->client()->didReceiveResponse(handle, cfResponse);
+    else {
+        RetainPtr<CFURLResponseRef> newResponse(AdoptCF, createCFURLResponseWithDefaultMIMEType(cfResponse));
+        handle->client()->didReceiveResponse(handle, newResponse.get());
+    }
 }
 
 void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLength, const void* clientInfo) 
@@ -661,7 +677,7 @@ RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& reque
 
     ResourceRequest requestWithoutCredentials(request);
     requestWithoutCredentials.removeCredentials();
-    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(requestWithoutCredentials, true));
+    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(requestWithoutCredentials, ResourceHandle::shouldContentSniffRequest(request)));
 
     CFURLConnectionClient_V3 client = { 3, &loader, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, 0, didReceiveChallenge, 0, shouldUseCredentialStorage, 0 };
 
@@ -675,6 +691,11 @@ RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& reque
         CFRunLoopRunInMode(WebCoreSynchronousLoaderRunLoopMode, UINT_MAX, true);
 
     CFURLConnectionCancel(connection.get());
+    
+    if (error.isNull() && loader.m_response.mimeType().isNull()) {
+        RetainPtr<CFURLResponseRef> cfResponse(AdoptCF, createCFURLResponseWithDefaultMIMEType(loader.m_response.cfURLResponse()));
+        loader.m_response = cfResponse.get();
+    }
 
     return loader.m_data;
 }
