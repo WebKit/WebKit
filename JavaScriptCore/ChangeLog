@@ -1,5 +1,13 @@
 2009-05-11  Adam Roben  <aroben@apple.com>
 
+        More Windows build fixes after r43479
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        Export ParserArena::reset.
+
+2009-05-11  Adam Roben  <aroben@apple.com>
+
         Windows build fixes after r43479
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added

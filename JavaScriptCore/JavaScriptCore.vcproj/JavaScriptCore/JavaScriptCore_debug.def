@@ -194,6 +194,7 @@ EXPORTS
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
     ?recordExtraCost@Heap@JSC@@AAEXI@Z
+    ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z
