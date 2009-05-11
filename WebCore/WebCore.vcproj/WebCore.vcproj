@@ -5487,26 +5487,6 @@
 							/>
 						</FileConfiguration>
 					</File>
-					<File
-						RelativePath="..\platform\network\cf\ResourceResponseCFNet.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
 				</Filter>
 				<Filter
 					Name="win"

@@ -1,3 +1,14 @@
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove unused header that declared one function which was never defined anywhere.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/cf/ResourceResponseCFNet.cpp: Change to include ResourceResponse.h (which really means
+          platform/network/cf/ResourceResponse.h)
+        * platform/network/cf/ResourceResponseCFNet.h: Removed.
+
 2009-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.

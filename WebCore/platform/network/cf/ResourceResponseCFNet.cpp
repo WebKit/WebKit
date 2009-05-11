@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "ResourceResponseCFNet.h"
+#include "ResourceResponse.h"
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "ResourceResponse.h"
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <wtf/RetainPtr.h>
 
