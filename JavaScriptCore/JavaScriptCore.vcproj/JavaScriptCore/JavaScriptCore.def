@@ -66,6 +66,7 @@ EXPORTS
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?copyParameters@FunctionBodyNode@JSC@@QAEPAVIdentifier@2@XZ
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
+    ?create@FunctionBodyNode@JSC@@SA?AV?$PassRefPtr@VFunctionBodyNode@JSC@@@WTF@@PAVJSGlobalData@2@PAVSourceElements@2@PAV?$Vector@U?$pair@VIdentifier@JSC@@I@std@@$0A@@4@PAV?$Vector@PAVFuncDeclNode@JSC@@$0A@@4@ABVSourceCode@2@IH@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@_N@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z

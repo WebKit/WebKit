@@ -1,5 +1,12 @@
 2009-05-10  David Kilzer  <ddkilzer@apple.com>
 
+        Part 2: Try to fix the Windows build by adding a symbol which is really just a re-mangling of a changed method signature
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-05-10  David Kilzer  <ddkilzer@apple.com>
+
         Try to fix the Windows build by removing an unknown symbol
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
