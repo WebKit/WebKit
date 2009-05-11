@@ -3,20 +3,8 @@ TARGET = jsc
 DESTDIR = .
 SOURCES = jsc.cpp
 QT -= gui
-INCLUDEPATH += $$PWD \
-    $$PWD/parser \
-    $$PWD/bindings \
-    $$PWD/bindings/c \
-    $$PWD/wtf \
-    $$PWD/jit \
-    $$PWD/bytecode
 CONFIG -= app_bundle
-DEFINES += BUILDING_QT__
 CONFIG += building-libs
-
-CONFIG(release) {
-    DEFINES += NDEBUG USE_SYSTEM_MALLOC
-}
 
 include($$PWD/../WebKit.pri)
 

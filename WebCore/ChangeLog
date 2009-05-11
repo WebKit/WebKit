@@ -1,3 +1,11 @@
+2009-05-11  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24284
+
+        * WebCore.pro: duplicated values removed from INCLUDEPATH
+
 2009-05-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

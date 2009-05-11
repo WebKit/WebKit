@@ -138,17 +138,6 @@ CONFIG(QTDIR_build) {
 
 DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
-INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
-               $$PWD/../JavaScriptCore/interpreter \
-               $$PWD/../JavaScriptCore/bytecode \
-               $$PWD/../JavaScriptCore/debugger \
-               $$PWD/../JavaScriptCore/parser \
-               $$PWD/../JavaScriptCore/runtime \
-               $$PWD/../JavaScriptCore/bindings \
-               $$PWD/../JavaScriptCore/wrec \
-               $$PWD/../JavaScriptCore/jit \
-               $$PWD/../JavaScriptCore/wtf \
-
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 RESOURCES += \
@@ -161,20 +150,15 @@ INCLUDEPATH += \
     $$PWD/platform/graphics/transforms \
     $$PWD/platform/graphics/qt \
     $$PWD/svg/graphics/qt \
-    $$PWD/loader \
     $$PWD/page/qt \
     $$PWD/../WebKit/qt/WebCoreSupport \
-    $$PWD/../WebKit/qt/Api \
-    $$PWD/bridge/qt
 
 # Make sure storage/ appears before JavaScriptCore/. Both provide LocalStorage.h
 # but the header from the former include path is included across directories while
 # LocalStorage.h is included only from files within the same directory
 INCLUDEPATH = $$PWD/storage $$INCLUDEPATH
 
-INCLUDEPATH +=  $$PWD \
-                $$PWD/ForwardingHeaders \
-                $$PWD/.. \
+INCLUDEPATH +=  $$PWD/ForwardingHeaders \
                 $$PWD/platform \
                 $$PWD/platform/animation \
                 $$PWD/platform/network \
@@ -192,7 +176,6 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/dom \
                 $$PWD/page \
                 $$PWD/page/animation \
-                $$PWD/bridge \
                 $$PWD/editing \
                 $$PWD/rendering \
                 $$PWD/rendering/style \
@@ -208,8 +191,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/plugins \
                 $$PWD/bridge \
                 $$PWD/bridge/c \
-                $$PWD/bridge/qt \
-                $$GENERATED_SOURCES_DIR
+                $$PWD/bridge/qt
+INCLUDEPATH *=  $$GENERATED_SOURCES_DIR
 
 QT += network
 lessThan(QT_MINOR_VERSION, 4): QT += xml
