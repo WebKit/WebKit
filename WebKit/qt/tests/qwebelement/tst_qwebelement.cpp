@@ -463,6 +463,19 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
     QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
 
+    p.setStyleProperty("color", "green");
+    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
+    p.setStyleProperty("color", "green !important");
+    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+    p.setStyleProperty("color", "blue");
+    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+    p.setStyleProperty("color", "blue", QWebElement::ImportantStylePriority);
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+
     QString html5 = "<head>"
         "<style type=\"text/css\">"
             "p { color: green }"

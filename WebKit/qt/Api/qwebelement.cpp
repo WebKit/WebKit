@@ -928,8 +928,23 @@ QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) 
 
 /*!
     Sets the value of the style named \a name to \a value.
+
+    Setting a value, doesn't necessarily mean that it will become the applied
+    value, due to the fact that the style property's value might have been set
+    earlier with priority in external or embedded style declarations.
+
+    In order to ensure that the value will be applied, ImportantStylePriority
+    should be used as \a priority.
+
+    Following the CSS syntax for property values, this is equal to appending
+    "!important" to the value.
+
+    This syntax is supported when using DeclaredStylePriority as \a priority.
+
+    Using NormalStylePriority as \a priority, the property will have normal
+    priority, and any "!important" declaration will be ignored.
 */
-void QWebElement::setStyleProperty(const QString &name, const QString &value)
+void QWebElement::setStyleProperty(const QString &name, const QString &value, const StylePriority priority)
 {
     if (!m_element || !m_element->isStyledElement())
         return;
@@ -940,7 +955,25 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
         return;
 
     ExceptionCode exception = 0;
-    style->setProperty(name, value, exception);
+
+    const QRegExp hasImportantTest(QLatin1String("!\\s*important"));
+    int index = value.indexOf(hasImportantTest);
+
+    QString newValue = (index != -1) ? value.left(index - 1) : value;
+
+    switch (priority) {
+    case NormalStylePriority:
+        style->setProperty(name, newValue, "", exception);
+        break;
+    case DeclaredStylePriority:
+        style->setProperty(name, newValue, (index != -1) ? "important" : "", exception);
+        break;
+    case ImportantStylePriority:
+        style->setProperty(name, newValue, "important", exception);
+        break;
+    default:
+        break;
+    }
 }
 
 /*!
