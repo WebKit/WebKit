@@ -64,6 +64,7 @@ Source files for JSCore.
         parser/Lexer.cpp
         parser/Nodes.cpp
         parser/Parser.cpp
+        parser/ParserArena.cpp
     </set>
     <set append="1" var="JSCORE_PROFILER_SOURCES">
         profiler/HeavyProfile.cpp
