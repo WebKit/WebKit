@@ -1,3 +1,17 @@
+2009-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6702386> Incorrect bound check in SVGList::insertItemBefore
+
+        SVGList::insertItemBefore would not perform a bounds check on the
+        index it was provided, potentially leading to a buffer overflow. 
+
+        Test: svg/dom/svglist-exception-on-out-bounds-error.html
+
+        * svg/SVGList.h:
+        (WebCore::SVGList::insertItemBefore):
+
 2009-05-12  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Dimitri Glazkov.
