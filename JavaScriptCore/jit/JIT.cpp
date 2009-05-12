@@ -122,6 +122,18 @@ void JIT::emitTimeoutCheck()
         NEXT_OPCODE(name); \
     }
 
+#define DEFINE_OP(name) \
+    case name: { \
+        emit_##name(currentInstruction); \
+        NEXT_OPCODE(name); \
+    }
+
+#define DEFINE_SLOWCASE_OP(name) \
+    case name: { \
+        emitSlow_##name(currentInstruction, iter); \
+        NEXT_OPCODE(name); \
+    }
+
 void JIT::privateCompileMainPass()
 {
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
@@ -162,405 +174,99 @@ void JIT::privateCompileMainPass()
         DEFINE_UNARY_OP(op_negate)
         DEFINE_UNARY_OP(op_typeof)
 
-        // Arithmetic
+        DEFINE_OP(op_add)
+        DEFINE_OP(op_bitand)
+        DEFINE_OP(op_bitnot)
+        DEFINE_OP(op_bitor)
+        DEFINE_OP(op_bitxor)
+        DEFINE_OP(op_call)
+        DEFINE_OP(op_call_eval)
+        DEFINE_OP(op_call_varargs)
+        DEFINE_OP(op_catch)
+        DEFINE_OP(op_construct)
+        DEFINE_OP(op_construct_verify)
+        DEFINE_OP(op_convert_this)
+        DEFINE_OP(op_create_arguments)
+        DEFINE_OP(op_debug)
+        DEFINE_OP(op_del_by_id)
+        DEFINE_OP(op_end)
+        DEFINE_OP(op_enter)
+        DEFINE_OP(op_enter_with_activation)
+        DEFINE_OP(op_eq)
+        DEFINE_OP(op_eq_null)
+        DEFINE_OP(op_get_by_id)
+        DEFINE_OP(op_get_by_val)
+        DEFINE_OP(op_get_global_var)
+        DEFINE_OP(op_get_scoped_var)
+        DEFINE_OP(op_instanceof)
+        DEFINE_OP(op_jeq_null)
+        DEFINE_OP(op_jfalse)
+        DEFINE_OP(op_jmp)
+        DEFINE_OP(op_jmp_scopes)
+        DEFINE_OP(op_jneq_null)
+        DEFINE_OP(op_jneq_ptr)
+        DEFINE_OP(op_jnless)
+        DEFINE_OP(op_jnlesseq)
+        DEFINE_OP(op_jsr)
+        DEFINE_OP(op_jtrue)
+        DEFINE_OP(op_load_varargs)
+        DEFINE_OP(op_loop)
+        DEFINE_OP(op_loop_if_less)
+        DEFINE_OP(op_loop_if_lesseq)
+        DEFINE_OP(op_loop_if_true)
+        DEFINE_OP(op_lshift)
+        DEFINE_OP(op_mod)
+        DEFINE_OP(op_mov)
+        DEFINE_OP(op_mul)
+        DEFINE_OP(op_neq)
+        DEFINE_OP(op_neq_null)
+        DEFINE_OP(op_new_array)
+        DEFINE_OP(op_new_error)
+        DEFINE_OP(op_new_func)
+        DEFINE_OP(op_new_func_exp)
+        DEFINE_OP(op_new_object)
+        DEFINE_OP(op_new_regexp)
+        DEFINE_OP(op_next_pname)
+        DEFINE_OP(op_not)
+        DEFINE_OP(op_nstricteq)
+        DEFINE_OP(op_pop_scope)
+        DEFINE_OP(op_post_dec)
+        DEFINE_OP(op_post_inc)
+        DEFINE_OP(op_pre_dec)
+        DEFINE_OP(op_pre_inc)
+        DEFINE_OP(op_profile_did_call)
+        DEFINE_OP(op_profile_will_call)
+        DEFINE_OP(op_push_new_scope)
+        DEFINE_OP(op_push_scope)
+        DEFINE_OP(op_put_by_id)
+        DEFINE_OP(op_put_by_index)
+        DEFINE_OP(op_put_by_val)
+        DEFINE_OP(op_put_getter)
+        DEFINE_OP(op_put_global_var)
+        DEFINE_OP(op_put_scoped_var)
+        DEFINE_OP(op_put_setter)
+        DEFINE_OP(op_resolve)
+        DEFINE_OP(op_resolve_base)
+        DEFINE_OP(op_resolve_func)
+        DEFINE_OP(op_resolve_global)
+        DEFINE_OP(op_resolve_skip)
+        DEFINE_OP(op_resolve_with_base)
+        DEFINE_OP(op_ret)
+        DEFINE_OP(op_rshift)
+        DEFINE_OP(op_sret)
+        DEFINE_OP(op_strcat)
+        DEFINE_OP(op_stricteq)
+        DEFINE_OP(op_sub)
+        DEFINE_OP(op_switch_char)
+        DEFINE_OP(op_switch_imm)
+        DEFINE_OP(op_switch_string)
+        DEFINE_OP(op_tear_off_activation)
+        DEFINE_OP(op_tear_off_arguments)
+        DEFINE_OP(op_throw)
+        DEFINE_OP(op_to_jsnumber)
+        DEFINE_OP(op_to_primitive)
+        DEFINE_OP(op_unexpected_load)
 
-        case op_add: {
-            emit_op_add(currentInstruction);
-            NEXT_OPCODE(op_add);
-        }
-        case op_sub: {
-            emit_op_sub(currentInstruction);
-            NEXT_OPCODE(op_sub);
-        }
-        case op_mul: {
-            emit_op_mul(currentInstruction);
-            NEXT_OPCODE(op_mul);
-        }
-        case op_mod: {
-            emit_op_mod(currentInstruction);
-            NEXT_OPCODE(op_mod);
-        }
-        case op_bitand: {
-            emit_op_bitand(currentInstruction);
-            NEXT_OPCODE(op_bitand);
-        }
-        case op_lshift: {
-            emit_op_lshift(currentInstruction);
-            NEXT_OPCODE(op_lshift);
-        }
-        case op_rshift: {
-            emit_op_rshift(currentInstruction);
-            NEXT_OPCODE(op_rshift);
-        }
-        case op_pre_inc: {
-            emit_op_pre_inc(currentInstruction);
-            NEXT_OPCODE(op_pre_inc);
-        }
-        case op_pre_dec: {
-            emit_op_pre_dec(currentInstruction);
-            NEXT_OPCODE(op_pre_dec);
-        }
-        case op_post_inc: {
-            emit_op_post_inc(currentInstruction);
-            NEXT_OPCODE(op_post_inc);
-        }
-        case op_post_dec: {
-            emit_op_post_dec(currentInstruction);
-            NEXT_OPCODE(op_post_dec);
-        }
-
-        /* in JITOpcodes */
-        case op_bitnot: {
-            emit_op_bitnot(currentInstruction);
-            NEXT_OPCODE(op_bitnot);
-        }
-        case op_bitxor: {
-            emit_op_bitxor(currentInstruction);
-            NEXT_OPCODE(op_bitxor);
-        }
-        case op_bitor: {
-            emit_op_bitor(currentInstruction);
-            NEXT_OPCODE(op_bitor);
-        }
-        case op_not: {
-            emit_op_not(currentInstruction);
-            NEXT_OPCODE(op_not);
-        }
-        /* in JITOpcodes */
-
-
-        // Comparison
-
-        case op_eq: {
-            emit_op_eq(currentInstruction);
-            NEXT_OPCODE(op_eq);
-        }
-        case op_neq: {
-            emit_op_neq(currentInstruction);
-            NEXT_OPCODE(op_neq);
-        }
-        case op_eq_null: {
-            emit_op_eq_null(currentInstruction);
-            NEXT_OPCODE(op_eq_null);
-        }
-        case op_neq_null: {
-            emit_op_neq_null(currentInstruction);
-            NEXT_OPCODE(op_neq_null);
-        }
-        case op_stricteq: {
-            emit_op_stricteq(currentInstruction);
-            NEXT_OPCODE(op_stricteq);
-        }
-        case op_nstricteq: {
-            emit_op_nstricteq(currentInstruction);
-            NEXT_OPCODE(op_nstricteq);
-        }
-
-
-        // Jump / Loop
-
-        case op_jnless: {
-            emit_op_jnless(currentInstruction);
-            NEXT_OPCODE(op_jnless);
-        }
-        case op_jnlesseq: {
-            emit_op_jnlesseq(currentInstruction);
-            NEXT_OPCODE(op_jnlesseq);
-        }
-        case op_jmp: {
-            emit_op_jmp(currentInstruction);
-            NEXT_OPCODE(op_jmp);
-        }
-        case op_loop: {
-            emit_op_loop(currentInstruction);
-            NEXT_OPCODE(op_loop);
-        }
-        case op_loop_if_less: {
-            emit_op_loop_if_less(currentInstruction);
-            NEXT_OPCODE(op_loop_if_less);
-        }
-        case op_loop_if_lesseq: {
-            emit_op_loop_if_lesseq(currentInstruction);
-            NEXT_OPCODE(op_loop_if_lesseq);
-        }
-        case op_loop_if_true: {
-            emit_op_loop_if_true(currentInstruction);
-            NEXT_OPCODE(op_loop_if_true);
-        }
-        case op_jtrue: {
-            emit_op_jtrue(currentInstruction);
-            NEXT_OPCODE(op_jtrue);
-        }
-        case op_jfalse: {
-            emit_op_jfalse(currentInstruction);
-            NEXT_OPCODE(op_jfalse);
-        }
-        case op_jeq_null: {
-            emit_op_jeq_null(currentInstruction);
-            NEXT_OPCODE(op_jeq_null);
-        }
-        case op_jneq_null: {
-            emit_op_jneq_null(currentInstruction);
-            NEXT_OPCODE(op_jneq_null);
-        }
-        case op_jneq_ptr: {
-            emit_op_jneq_ptr(currentInstruction);
-            NEXT_OPCODE(op_jneq_ptr);
-        }
-
-
-        // Property Access
-
-        case op_get_by_id: {
-            emit_op_get_by_id(currentInstruction);
-            NEXT_OPCODE(op_get_by_id);
-        }
-        case op_put_by_id: {
-            emit_op_put_by_id(currentInstruction);
-            NEXT_OPCODE(op_put_by_id);
-        }
-        case op_del_by_id: {
-            emit_op_del_by_id(currentInstruction);
-            NEXT_OPCODE(op_del_by_id);
-        }
-        case op_get_by_val: {
-            emit_op_get_by_val(currentInstruction);
-            NEXT_OPCODE(op_get_by_val);
-        }
-        case op_put_by_val: {
-            emit_op_put_by_val(currentInstruction);
-            NEXT_OPCODE(op_put_by_val);
-        }
-        case op_put_by_index: {
-            emit_op_put_by_index(currentInstruction);
-            NEXT_OPCODE(op_put_by_index);
-        }
-        case op_put_getter: {
-            emit_op_put_getter(currentInstruction);
-            NEXT_OPCODE(op_put_getter);
-        }
-        case op_put_setter: {
-            emit_op_put_setter(currentInstruction);
-            NEXT_OPCODE(op_put_setter);
-        }
-        
-        // Variables
-
-        case op_get_global_var: {
-            emit_op_get_global_var(currentInstruction);
-            NEXT_OPCODE(op_get_global_var);
-        }
-        case op_put_global_var: {
-            emit_op_put_global_var(currentInstruction);
-            NEXT_OPCODE(op_put_global_var);
-        }
-        case op_get_scoped_var: {
-            emit_op_get_scoped_var(currentInstruction);
-            NEXT_OPCODE(op_get_scoped_var);
-        }
-        case op_put_scoped_var: {
-            emit_op_put_scoped_var(currentInstruction);
-            NEXT_OPCODE(op_put_scoped_var);
-        }
-
-        // Call
-
-        case op_call: {
-            emit_op_call(currentInstruction);
-            NEXT_OPCODE(op_call);
-        }
-        case op_call_eval: {
-            emit_op_call_eval(currentInstruction);
-            NEXT_OPCODE(op_call_eval);
-        }
-        case op_load_varargs: {
-            emit_op_load_varargs(currentInstruction);
-            NEXT_OPCODE(op_load_varargs);
-        }
-        case op_call_varargs: {
-            emit_op_call_varargs(currentInstruction);
-            NEXT_OPCODE(op_call_varargs);
-        }
-        case op_construct: {
-            emit_op_construct(currentInstruction);
-            NEXT_OPCODE(op_construct);
-        }
-        case op_tear_off_activation: {
-            emit_op_tear_off_activation(currentInstruction);
-            NEXT_OPCODE(op_tear_off_activation);
-        }
-        case op_tear_off_arguments: {
-            emit_op_tear_off_arguments(currentInstruction);
-            NEXT_OPCODE(op_tear_off_arguments);
-        }
-        case op_ret: {
-            emit_op_ret(currentInstruction);
-            NEXT_OPCODE(op_ret);
-        }
-
-
-        // Profiling / Debugging
-
-        case op_profile_will_call: {
-            emit_op_profile_will_call(currentInstruction);
-            NEXT_OPCODE(op_profile_will_call);
-        }
-        case op_profile_did_call: {
-            emit_op_profile_did_call(currentInstruction);
-            NEXT_OPCODE(op_profile_did_call);
-        }
-        case op_debug: {
-            emit_op_debug(currentInstruction);
-            NEXT_OPCODE(op_debug);
-        }
-
-
-        // Unsorted
-
-        case op_mov: {
-            emit_op_mov(currentInstruction);
-            NEXT_OPCODE(op_mov);
-        }
-        case op_end: {
-            emit_op_end(currentInstruction);
-            NEXT_OPCODE(op_end);
-        }
-        case op_new_object: {
-            emit_op_new_object(currentInstruction);
-            NEXT_OPCODE(op_new_object);
-        }
-        case op_instanceof: {
-            emit_op_instanceof(currentInstruction);
-            NEXT_OPCODE(op_instanceof);
-        }
-        case op_new_func: {
-            emit_op_new_func(currentInstruction);
-            NEXT_OPCODE(op_new_func);
-        }
-        case op_new_array: {
-            emit_op_new_array(currentInstruction);
-            NEXT_OPCODE(op_new_array);
-        }
-        case op_resolve: {
-            emit_op_resolve(currentInstruction);
-            NEXT_OPCODE(op_resolve);
-        }
-        case op_construct_verify: {
-            emit_op_construct_verify(currentInstruction);
-            NEXT_OPCODE(op_construct_verify);
-        }
-        case op_to_primitive: {
-            emit_op_to_primitive(currentInstruction);
-            NEXT_OPCODE(op_to_primitive);
-        }
-        case op_strcat: {
-            emit_op_strcat(currentInstruction);
-            NEXT_OPCODE(op_strcat);
-        }
-        case op_resolve_func: {
-            emit_op_resolve_func(currentInstruction);
-            NEXT_OPCODE(op_resolve_func);
-        }
-        case op_resolve_base: {
-            emit_op_resolve_base(currentInstruction);
-            NEXT_OPCODE(op_resolve_base);
-        }
-        case op_resolve_skip: {
-            emit_op_resolve_skip(currentInstruction);
-            NEXT_OPCODE(op_resolve_skip);
-        }
-        case op_resolve_global: {
-            emit_op_resolve_global(currentInstruction);
-            NEXT_OPCODE(op_resolve_global);
-        }
-        case op_unexpected_load: {
-            emit_op_unexpected_load(currentInstruction);
-            NEXT_OPCODE(op_unexpected_load);
-        }
-        case op_jsr: {
-            emit_op_jsr(currentInstruction);
-            NEXT_OPCODE(op_jsr);
-        }
-        case op_sret: {
-            emit_op_sret(currentInstruction);
-            NEXT_OPCODE(op_sret);
-        }
-        case op_resolve_with_base: {
-            emit_op_resolve_with_base(currentInstruction);
-            NEXT_OPCODE(op_resolve_with_base);
-        }
-        case op_new_func_exp: {
-            emit_op_new_func_exp(currentInstruction);
-            NEXT_OPCODE(op_new_func_exp);
-        }
-        case op_new_regexp: {
-            emit_op_new_regexp(currentInstruction);
-            NEXT_OPCODE(op_new_regexp);
-        }
-        case op_throw: {
-            emit_op_throw(currentInstruction);
-            NEXT_OPCODE(op_throw);
-        }
-        case op_next_pname: {
-            emit_op_next_pname(currentInstruction);
-            NEXT_OPCODE(op_next_pname);
-        }
-        case op_push_scope: {
-            emit_op_push_scope(currentInstruction);
-            NEXT_OPCODE(op_push_scope);
-        }
-        case op_pop_scope: {
-            emit_op_pop_scope(currentInstruction);
-            NEXT_OPCODE(op_pop_scope);
-        }
-        case op_to_jsnumber: {
-            emit_op_to_jsnumber(currentInstruction);
-            NEXT_OPCODE(op_to_jsnumber);
-        }
-        case op_push_new_scope: {
-            emit_op_push_new_scope(currentInstruction);
-            NEXT_OPCODE(op_push_new_scope);
-        }
-        case op_catch: {
-            emit_op_catch(currentInstruction);
-            NEXT_OPCODE(op_catch);
-        }
-        case op_jmp_scopes: {
-            emit_op_jmp_scopes(currentInstruction);
-            NEXT_OPCODE(op_jmp_scopes);
-        }
-        case op_switch_imm: {
-            emit_op_switch_imm(currentInstruction);
-            NEXT_OPCODE(op_switch_imm);
-        }
-        case op_switch_char: {
-            emit_op_switch_char(currentInstruction);
-            NEXT_OPCODE(op_switch_char);
-        }
-        case op_switch_string: {
-            emit_op_switch_string(currentInstruction);
-            NEXT_OPCODE(op_switch_string);
-        }
-        case op_new_error: {
-            emit_op_new_error(currentInstruction);
-            NEXT_OPCODE(op_new_error);
-        }
-        case op_enter: {
-            emit_op_enter(currentInstruction);
-            NEXT_OPCODE(op_enter);
-        }
-        case op_enter_with_activation: {
-            emit_op_enter_with_activation(currentInstruction);
-            NEXT_OPCODE(op_enter_with_activation);
-        }
-        case op_create_arguments: {
-            emit_op_create_arguments(currentInstruction);
-            NEXT_OPCODE(op_create_arguments);
-        }
-        case op_convert_this: {
-            emit_op_convert_this(currentInstruction);
-            NEXT_OPCODE(op_convert_this);
-        }
         case op_get_array_length:
         case op_get_by_id_chain:
         case op_get_by_id_generic:
@@ -612,163 +318,45 @@ void JIT::privateCompileSlowCases()
         Instruction* currentInstruction = instructionsBegin + m_bytecodeIndex;
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
-        case op_add: {
-            emitSlow_op_add(currentInstruction, iter);
-            NEXT_OPCODE(op_add);
-        }
-        case op_sub: {
-            emitSlow_op_sub(currentInstruction, iter);
-            NEXT_OPCODE(op_sub);
-        }
-        case op_mul: {
-            emitSlow_op_mul(currentInstruction, iter);
-            NEXT_OPCODE(op_mul);
-        }
-        case op_mod: {
-            emitSlow_op_mod(currentInstruction, iter);
-            NEXT_OPCODE(op_mod);
-        }
-        case op_bitand: {
-            emitSlow_op_bitand(currentInstruction, iter);
-            NEXT_OPCODE(op_bitand);
-        }
-        case op_lshift: {
-            emitSlow_op_lshift(currentInstruction, iter);
-            NEXT_OPCODE(op_lshift);
-        }
-        case op_rshift: {
-            emitSlow_op_rshift(currentInstruction, iter);
-            NEXT_OPCODE(op_rshift);
-        }
-        case op_jnless: {
-            emitSlow_op_jnless(currentInstruction, iter);
-            NEXT_OPCODE(op_jnless);
-        }
-        case op_jnlesseq: {
-            emitSlow_op_jnlesseq(currentInstruction, iter);
-            NEXT_OPCODE(op_jnlesseq);
-        }
-        case op_pre_dec: {
-            emitSlow_op_pre_dec(currentInstruction, iter);
-            NEXT_OPCODE(op_pre_dec);
-        }
-        case op_pre_inc: {
-            emitSlow_op_pre_inc(currentInstruction, iter);
-            NEXT_OPCODE(op_pre_inc);
-        }
-        case op_post_inc: {
-            emitSlow_op_post_inc(currentInstruction, iter);
-            NEXT_OPCODE(op_post_inc);
-        }
-        case op_post_dec: {
-            emitSlow_op_post_dec(currentInstruction, iter);
-            NEXT_OPCODE(op_post_dec);
-        }
-        case op_convert_this: {
-            emitSlow_op_convert_this(currentInstruction, iter);
-            NEXT_OPCODE(op_convert_this);
-        }
-        case op_construct_verify: {
-            emitSlow_op_construct_verify(currentInstruction, iter);
-            NEXT_OPCODE(op_construct_verify);
-        }
-        case op_to_primitive: {
-            emitSlow_op_to_primitive(currentInstruction, iter);
-            NEXT_OPCODE(op_to_primitive);
-        }
-        case op_get_by_val: {
-            emitSlow_op_get_by_val(currentInstruction, iter);
-            NEXT_OPCODE(op_get_by_val);
-        }
-        case op_loop_if_less: {
-            emitSlow_op_loop_if_less(currentInstruction, iter);
-            NEXT_OPCODE(op_loop_if_less);
-        }
-        case op_put_by_id: {
-            emitSlow_op_put_by_id(currentInstruction, iter);
-            NEXT_OPCODE(op_put_by_id);
-        }
-        case op_get_by_id: {
-            emitSlow_op_get_by_id(currentInstruction, iter);
-            NEXT_OPCODE(op_get_by_id);
-        }
-        case op_loop_if_lesseq: {
-            emitSlow_op_loop_if_lesseq(currentInstruction, iter);
-            NEXT_OPCODE(op_loop_if_lesseq);
-        }
-        case op_put_by_val: {
-            emitSlow_op_put_by_val(currentInstruction, iter);
-            NEXT_OPCODE(op_put_by_val);
-        }
-        case op_loop_if_true: {
-            emitSlow_op_loop_if_true(currentInstruction, iter);
-            NEXT_OPCODE(op_loop_if_true);
-        }
-        case op_not: {
-            emitSlow_op_not(currentInstruction, iter);
-            NEXT_OPCODE(op_not);
-        }
-        case op_jfalse: {
-            emitSlow_op_jfalse(currentInstruction, iter);
-            NEXT_OPCODE(op_jfalse);
-        }
-        case op_bitnot: {
-            emitSlow_op_bitnot(currentInstruction, iter);
-            NEXT_OPCODE(op_bitnot);
-        }
-        case op_jtrue: {
-            emitSlow_op_jtrue(currentInstruction, iter);
-            NEXT_OPCODE(op_jtrue);
-        }
-        case op_bitxor: {
-            emitSlow_op_bitxor(currentInstruction, iter);
-            NEXT_OPCODE(op_bitxor);
-        }
-        case op_bitor: {
-            emitSlow_op_bitor(currentInstruction, iter);
-            NEXT_OPCODE(op_bitor);
-        }
-        case op_eq: {
-            emitSlow_op_eq(currentInstruction, iter);
-            NEXT_OPCODE(op_eq);
-        }
-        case op_neq: {
-            emitSlow_op_neq(currentInstruction, iter);
-            NEXT_OPCODE(op_neq);
-        }
-        case op_stricteq: {
-            emitSlow_op_stricteq(currentInstruction, iter);
-            NEXT_OPCODE(op_stricteq);
-        }
-        case op_nstricteq: {
-            emitSlow_op_nstricteq(currentInstruction, iter);
-            NEXT_OPCODE(op_nstricteq);
-        }
-        case op_instanceof: {
-            emitSlow_op_instanceof(currentInstruction, iter);
-            NEXT_OPCODE(op_instanceof);
-        }
-        case op_call: {
-            emitSlow_op_call(currentInstruction, iter);
-            NEXT_OPCODE(op_call);
-        }
-        case op_call_eval: {
-            emitSlow_op_call_eval(currentInstruction, iter);
-            NEXT_OPCODE(op_call_eval);
-        }
-        case op_call_varargs: {
-            emitSlow_op_call_varargs(currentInstruction, iter);
-            NEXT_OPCODE(op_call_varargs);
-        }
-        case op_construct: {
-            emitSlow_op_construct(currentInstruction, iter);
-            NEXT_OPCODE(op_construct);
-        }
-        case op_to_jsnumber: {
-            emitSlow_op_to_jsnumber(currentInstruction, iter);
-            NEXT_OPCODE(op_to_jsnumber);
-        }
-
+        DEFINE_SLOWCASE_OP(op_add)
+        DEFINE_SLOWCASE_OP(op_bitand)
+        DEFINE_SLOWCASE_OP(op_bitnot)
+        DEFINE_SLOWCASE_OP(op_bitor)
+        DEFINE_SLOWCASE_OP(op_bitxor)
+        DEFINE_SLOWCASE_OP(op_call)
+        DEFINE_SLOWCASE_OP(op_call_eval)
+        DEFINE_SLOWCASE_OP(op_call_varargs)
+        DEFINE_SLOWCASE_OP(op_construct)
+        DEFINE_SLOWCASE_OP(op_construct_verify)
+        DEFINE_SLOWCASE_OP(op_convert_this)
+        DEFINE_SLOWCASE_OP(op_eq)
+        DEFINE_SLOWCASE_OP(op_get_by_id)
+        DEFINE_SLOWCASE_OP(op_get_by_val)
+        DEFINE_SLOWCASE_OP(op_instanceof)
+        DEFINE_SLOWCASE_OP(op_jfalse)
+        DEFINE_SLOWCASE_OP(op_jnless)
+        DEFINE_SLOWCASE_OP(op_jnlesseq)
+        DEFINE_SLOWCASE_OP(op_jtrue)
+        DEFINE_SLOWCASE_OP(op_loop_if_less)
+        DEFINE_SLOWCASE_OP(op_loop_if_lesseq)
+        DEFINE_SLOWCASE_OP(op_loop_if_true)
+        DEFINE_SLOWCASE_OP(op_lshift)
+        DEFINE_SLOWCASE_OP(op_mod)
+        DEFINE_SLOWCASE_OP(op_mul)
+        DEFINE_SLOWCASE_OP(op_neq)
+        DEFINE_SLOWCASE_OP(op_not)
+        DEFINE_SLOWCASE_OP(op_nstricteq)
+        DEFINE_SLOWCASE_OP(op_post_dec)
+        DEFINE_SLOWCASE_OP(op_post_inc)
+        DEFINE_SLOWCASE_OP(op_pre_dec)
+        DEFINE_SLOWCASE_OP(op_pre_inc)
+        DEFINE_SLOWCASE_OP(op_put_by_id)
+        DEFINE_SLOWCASE_OP(op_put_by_val)
+        DEFINE_SLOWCASE_OP(op_rshift)
+        DEFINE_SLOWCASE_OP(op_stricteq)
+        DEFINE_SLOWCASE_OP(op_sub)
+        DEFINE_SLOWCASE_OP(op_to_jsnumber)
+        DEFINE_SLOWCASE_OP(op_to_primitive)
         default:
             ASSERT_NOT_REACHED();
         }

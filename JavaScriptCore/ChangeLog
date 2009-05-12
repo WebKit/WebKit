@@ -2,6 +2,17 @@
 
         Reviewed by Geoffrey Garen.
 
+        More re-factoring of JIT code generation.  Use a macro to
+        forward the main switch-statement cases to the helper functions.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+
+2009-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
         More re-factoring of JIT code generation to move opcode generation
         to helper functions outside the main switch-statement and gave those
         helper functions standardized names. This patch covers the remaining
