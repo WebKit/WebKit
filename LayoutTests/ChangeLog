@@ -1,3 +1,13 @@
+2009-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6276843> REGRESSION: TextIterator generates
+        an extra newline for ranges that start outside of body
+
+        * editing/text-iterator/basic-iteration-expected.txt:
+        Expect success, not failure.
+
 2009-05-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Enable the new passing test, and skip two new failing tests.

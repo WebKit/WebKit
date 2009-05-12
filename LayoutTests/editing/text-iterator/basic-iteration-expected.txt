@@ -13,8 +13,7 @@ FAIL range.selectNodeContents(testDocument.body); plainText.plainText(range) sho
 
 .
 PASS range.selectNodeContents(testDocument.body); plainText.plainText(range) is "hey"
-FAIL range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); plainText.plainText(range) should be hey. Was 
-hey.
+PASS range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); plainText.plainText(range) is "hey"
 PASS successfullyParsed is true
 
 TEST COMPLETE

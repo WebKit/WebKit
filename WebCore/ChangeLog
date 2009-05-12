@@ -1,3 +1,14 @@
+2009-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6276843> REGRESSION: TextIterator generates
+        an extra newline for ranges that start outside of body
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        Check startPos for null, not just currPos.
+
 2009-05-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

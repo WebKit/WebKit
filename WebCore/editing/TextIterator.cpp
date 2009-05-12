@@ -613,11 +613,13 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     if (!m_node->renderer() || m_node->renderer()->style()->visibility() != VISIBLE)
         return false;
     
-    // The currPos.isNotNull() check is needed because positions in non-html content
-    // (like svg) do not have visible positions, and we don't want to emit for them either.
+    // The startPos.isNotNull() check is needed because the start could be before the body,
+    // and in that case we'll get null. We don't want to put in newlines at the start in that case.
+    // The currPos.isNotNull() check is needed because positions in non-HTML content
+    // (like SVG) do not have visible positions, and we don't want to emit for them either.
     VisiblePosition startPos = VisiblePosition(m_startContainer, m_startOffset, DOWNSTREAM);
     VisiblePosition currPos = VisiblePosition(m_node, 0, DOWNSTREAM);
-    return currPos.isNotNull() && !inSameLine(startPos, currPos);
+    return startPos.isNotNull() && currPos.isNotNull() && !inSameLine(startPos, currPos);
 }
 
 bool TextIterator::shouldEmitSpaceBeforeAndAfterNode(Node* node)
