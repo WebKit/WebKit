@@ -44,6 +44,107 @@ using namespace std;
 
 namespace JSC {
 
+void JIT::emit_op_put_by_id(Instruction* currentInstruction)
+{
+    compilePutByIdHotPath(currentInstruction[1].u.operand, &(m_codeBlock->identifier(currentInstruction[2].u.operand)), currentInstruction[3].u.operand, m_propertyAccessInstructionIndex++);
+}
+
+void JIT::emit_op_get_by_id(Instruction* currentInstruction)
+{
+    compileGetByIdHotPath(currentInstruction[1].u.operand, currentInstruction[2].u.operand, &(m_codeBlock->identifier(currentInstruction[3].u.operand)), m_propertyAccessInstructionIndex++);
+}
+
+void JIT::emit_op_get_by_val(Instruction* currentInstruction)
+{
+    emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
+    emitJumpSlowCaseIfNotImmediateInteger(regT1);
+#if USE(ALTERNATE_JSIMMEDIATE)
+    // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
+    // We check the value as if it was a uint32 against the m_fastAccessCutoff - which will always fail if
+    // number was signed since m_fastAccessCutoff is always less than intmax (since the total allocation
+    // size is always less than 4Gb).  As such zero extending wil have been correct (and extending the value
+    // to 64-bits is necessary since it's used in the address calculation.  We zero extend rather than sign
+    // extending since it makes it easier to re-tag the value in the slow case.
+    zeroExtend32ToPtr(regT1, regT1);
+#else
+    emitFastArithImmToInt(regT1);
+#endif
+    emitJumpSlowCaseIfNotJSCell(regT0);
+    addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
+
+    // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
+    loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT2);
+    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, FIELD_OFFSET(JSArray, m_fastAccessCutoff))));
+
+    // Get the value from the vector
+    loadPtr(BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_by_val(Instruction* currentInstruction)
+{
+    emitGetVirtualRegisters(currentInstruction[1].u.operand, regT0, currentInstruction[2].u.operand, regT1);
+    emitJumpSlowCaseIfNotImmediateInteger(regT1);
+#if USE(ALTERNATE_JSIMMEDIATE)
+    // See comment in op_get_by_val.
+    zeroExtend32ToPtr(regT1, regT1);
+#else
+    emitFastArithImmToInt(regT1);
+#endif
+    emitJumpSlowCaseIfNotJSCell(regT0);
+    addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
+
+    // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
+    loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT2);
+    Jump inFastVector = branch32(Below, regT1, Address(regT0, FIELD_OFFSET(JSArray, m_fastAccessCutoff)));
+    // No; oh well, check if the access if within the vector - if so, we may still be okay.
+    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT2, FIELD_OFFSET(ArrayStorage, m_vectorLength))));
+
+    // This is a write to the slow part of the vector; first, we have to check if this would be the first write to this location.
+    // FIXME: should be able to handle initial write to array; increment the the number of items in the array, and potentially update fast access cutoff. 
+    addSlowCase(branchTestPtr(Zero, BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0]))));
+
+    // All good - put the value into the array.
+    inFastVector.link(this);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+    storePtr(regT0, BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])));
+}
+
+void JIT::emit_op_put_by_index(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, JITStubs::cti_op_put_by_index);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
+    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+    stubCall.call();
+}
+
+void JIT::emit_op_put_getter(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, JITStubs::cti_op_put_getter);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
+    stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+    stubCall.call();
+}
+
+void JIT::emit_op_put_setter(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, JITStubs::cti_op_put_setter);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
+    stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+    stubCall.call();
+}
+
+void JIT::emit_op_del_by_id(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, JITStubs::cti_op_del_by_id);
+    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
+    stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
 #if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned)

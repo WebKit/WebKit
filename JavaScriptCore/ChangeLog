@@ -1,3 +1,21 @@
+2009-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Start re-factoring JIT code generation to move op_code generation
+        to helper functions outside the main switch-statement and gave those
+        helper functions standardized names.  This patch only covers the main
+        pass and all the arithmetic opcodes in the slow path.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITOpcodes.cpp: Copied from jit/JIT.cpp.
+        * jit/JITPropertyAccess.cpp:
+
 2009-05-11  Steve Falkenburg  <sfalken@apple.com>
 
         Re-add experimental PGO configs.

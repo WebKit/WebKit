@@ -349,6 +349,7 @@
 		BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203460E17135E002C7E82 /* DateConstructor.h */; };
 		BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203480E17135E002C7E82 /* DatePrototype.h */; };
 		BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */; };
+		BCDD51EB0FB8DF74004A8BDC /* JITOpcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */; };
 		BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE3AB10E6C82CF001453A7 /* Structure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* Structure.cpp */; };
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -801,6 +802,7 @@
 		BCD203470E17135E002C7E82 /* DatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatePrototype.cpp; sourceTree = "<group>"; };
 		BCD203480E17135E002C7E82 /* DatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.h; sourceTree = "<group>"; };
 		BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.lut.h; sourceTree = "<group>"; };
+		BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes.cpp; sourceTree = "<group>"; };
 		BCDE3AB00E6C82CF001453A7 /* Structure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Structure.cpp; sourceTree = "<group>"; };
 		BCDE3AB10E6C82CF001453A7 /* Structure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Structure.h; sourceTree = "<group>"; };
 		BCF605110E203EF800B9A64D /* ArgList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgList.cpp; sourceTree = "<group>"; };
@@ -1023,6 +1025,7 @@
 				A782F1A40EEC9FA20036273F /* ExecutableAllocatorPosix.cpp */,
 				86DB645F0F954E9100D7D921 /* ExecutableAllocatorWin.cpp */,
 				1429D92D0ED22D7000B89619 /* JIT.cpp */,
+				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
 				1429D92E0ED22D7000B89619 /* JIT.h */,
 				86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
@@ -2169,6 +2172,7 @@
 				86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
 				93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */,
+				BCDD51EB0FB8DF74004A8BDC /* JITOpcodes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
