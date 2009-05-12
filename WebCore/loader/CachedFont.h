@@ -39,9 +39,10 @@ namespace WebCore {
 
 class DocLoader;
 class Cache;
-class FontCustomPlatformData;
 class FontPlatformData;
 class SVGFontElement;
+
+struct FontCustomPlatformData;
 
 class CachedFont : public CachedResource {
 public:

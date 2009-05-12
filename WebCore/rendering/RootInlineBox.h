@@ -28,9 +28,10 @@
 
 namespace WebCore {
 
-class BidiStatus;
 class EllipsisBox;
 class HitTestResult;
+
+struct BidiStatus;
 struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {

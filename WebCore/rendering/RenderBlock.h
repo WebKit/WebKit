@@ -35,10 +35,11 @@
 namespace WebCore {
 
 class InlineIterator;
-class BidiRun;
 class Position;
 class RenderInline;
 class RootInlineBox;
+
+struct BidiRun;
 
 template <class Iterator, class Run> class BidiResolver;
 typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;

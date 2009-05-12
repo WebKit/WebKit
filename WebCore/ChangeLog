@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
 
+        class/struct mix-up in forward declarations
+
+        * inspector/InspectorResource.h:
+        * loader/CachedFont.h:
+        * loader/appcache/ApplicationCache.h:
+        * rendering/RenderBlock.h:
+        * rendering/RootInlineBox.h:
+        * rendering/SVGInlineTextBox.h:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGHKernElement.h:
+
+2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
         The Symbian tools can't compile and link this without this include.
         It's not clear why this is different from other toolsets or why it affects
         only this header file, but adding the include for now.

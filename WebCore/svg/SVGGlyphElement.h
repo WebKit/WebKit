@@ -31,7 +31,7 @@
 namespace WebCore {
 
     class AtomicString;
-    struct SVGFontData;
+    class SVGFontData;
 
     // Describe a SVG <glyph> element
     struct SVGGlyphIdentifier {

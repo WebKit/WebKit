@@ -1,3 +1,11 @@
+2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        class/struct mix-up in forward declarations
+
+        * Api/qwebpage.h:
+
 2009-05-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.

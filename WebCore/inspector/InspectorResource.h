@@ -44,11 +44,13 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
     class CachedResource;
     class DocumentLoader;
     class Frame;
-    class ResourceRequest;
     class ResourceResponse;
+
+    struct ResourceRequest;
 
     class InspectorResource : public RefCounted<InspectorResource> {
     public:

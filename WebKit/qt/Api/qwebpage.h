@@ -52,10 +52,11 @@ namespace WebCore {
     class ChromeClientQt;
     class EditorClientQt;
     class FrameLoaderClientQt;
-    class FrameLoadRequest;
     class InspectorClientQt;
     class ResourceHandle;
     class HitTestResult;
+
+    struct FrameLoadRequest;
 }
 
 class QWEBKIT_EXPORT QWebPage : public QObject
