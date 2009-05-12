@@ -1,3 +1,12 @@
+2009-05-12  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25732
+        Update V8ElementCustom.cpp to match the current API of V8Proxy.
+
+        (WebCore::ACCESSOR_SETTER): Change retrieveActiveFrame() to retrieveFrameForEnteredContext().
+
 2009-05-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

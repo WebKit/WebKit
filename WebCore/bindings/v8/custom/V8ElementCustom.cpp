@@ -147,7 +147,7 @@ ACCESSOR_SETTER(ElementEventHandler)
         // the document might be created using createDocument,
         // which does not have a frame, use the active frame
         if (!proxy)
-            proxy = V8Proxy::retrieve(V8Proxy::retrieveActiveFrame());
+            proxy = V8Proxy::retrieve(V8Proxy::retrieveFrameForEnteredContext());
         if (!proxy)
             return;
 
