@@ -35,13 +35,22 @@ namespace JSC {
     static const unsigned MasqueradesAsUndefined = 1;
     static const unsigned ImplementsHasInstance = 1 << 1;
     static const unsigned OverridesHasInstance = 1 << 2;
-    static const unsigned NeedsThisConversion = 1 << 3;
-    static const unsigned HasStandardGetOwnPropertySlot = 1 << 4;
+    static const unsigned ImplementsDefaultHasInstance = 1 << 3;
+    static const unsigned NeedsThisConversion = 1 << 4;
+    static const unsigned HasStandardGetOwnPropertySlot = 1 << 5;
 
     class TypeInfo {
         friend class JIT;
     public:
-        TypeInfo(JSType type, unsigned flags = 0) : m_type(type), m_flags(flags) { }
+        TypeInfo(JSType type, unsigned flags = 0)
+            : m_type(type)
+        {
+            // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
+            if ((flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
+                m_flags = flags | ImplementsDefaultHasInstance;
+            else
+                m_flags = flags;
+        }
 
         JSType type() const { return m_type; }
 

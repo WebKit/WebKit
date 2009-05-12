@@ -912,13 +912,13 @@ EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS_DECLARATION)
         return JSValue::encode(jsBoolean(false));
 
     if (!typeInfo.overridesHasInstance()) {
+        if (!value.isObject())
+            return JSValue::encode(jsBoolean(false));
+
         if (!proto.isObject()) {
             throwError(callFrame, TypeError, "instanceof called on an object with an invalid prototype property.");
             VM_THROW_EXCEPTION();
         }
-
-        if (!value.isObject())
-            return JSValue::encode(jsBoolean(false));
     }
 
     JSValue result = jsBoolean(baseObj->hasInstance(callFrame, value, proto));

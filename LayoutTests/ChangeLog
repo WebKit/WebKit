@@ -1,3 +1,16 @@
+2009-05-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add a layout test for instanceof.
+
+        * fast/js/instance-of-immediates-expected.txt: Added.
+        * fast/js/instance-of-immediates.html: Added.
+        * fast/js/resources/instance-of-immediates.js: Added.
+        (testInstanceOf):
+        ():
+        (testSet):
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by David Kilzer.

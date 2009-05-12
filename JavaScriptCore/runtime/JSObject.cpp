@@ -387,13 +387,13 @@ JSValue JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
 
 bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)
 {
+    if (!value.isObject())
+        return false;
+
     if (!proto.isObject()) {
         throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
         return false;
     }
-
-    if (!value.isObject())
-        return false;
 
     JSObject* object = asObject(value);
     while ((object = object->prototype().getObject())) {

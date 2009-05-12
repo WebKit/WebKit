@@ -148,54 +148,51 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0); // value
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT2); // baseVal
-    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1); // proto
+    // Load the operands (baseVal, proto, and value respectively) into registers.
+    // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT2);
 
-    // check if any are immediates
-    move(regT0, regT3);
-    orPtr(regT2, regT3);
-    orPtr(regT1, regT3);
-    emitJumpSlowCaseIfNotJSCell(regT3);
+    // Check that baseVal & proto are cells.
+    emitJumpSlowCaseIfNotJSCell(regT0);
+    emitJumpSlowCaseIfNotJSCell(regT1);
 
-    // check that all are object type - this is a bit of a bithack to avoid excess branching;
-    // we check that the sum of the three type codes from Structures is exactly 3 * ObjectType,
-    // this works because NumberType and StringType are smaller
-    move(Imm32(3 * ObjectType), regT3);
+    // Check that baseVal is an object, that it 'ImplementsHasInstance' but that it does not 'OverridesHasInstance'.
     loadPtr(Address(regT0, FIELD_OFFSET(JSCell, m_structure)), regT0);
-    loadPtr(Address(regT2, FIELD_OFFSET(JSCell, m_structure)), regT2);
-    loadPtr(Address(regT1, FIELD_OFFSET(JSCell, m_structure)), regT1);
-    sub32(Address(regT0, FIELD_OFFSET(Structure, m_typeInfo.m_type)), regT3);
-    sub32(Address(regT2, FIELD_OFFSET(Structure, m_typeInfo.m_type)), regT3);
-    addSlowCase(branch32(NotEqual, Address(regT1, FIELD_OFFSET(Structure, m_typeInfo.m_type)), regT3));
+    addSlowCase(branch32(NotEqual, Address(regT0, FIELD_OFFSET(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+    addSlowCase(branchTest32(Zero, Address(regT0, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
 
-    // check that baseVal's flags include ImplementsHasInstance but not OverridesHasInstance
-    load32(Address(regT2, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), regT2);
-    and32(Imm32(ImplementsHasInstance | OverridesHasInstance), regT2);
-    addSlowCase(branch32(NotEqual, regT2, Imm32(ImplementsHasInstance)));
+    // If value is not an Object, return false.
+    Jump valueIsImmediate = emitJumpIfNotJSCell(regT2);
+    loadPtr(Address(regT2, FIELD_OFFSET(JSCell, m_structure)), regT0);
+    Jump valueIsNotObject = branch32(NotEqual, Address(regT0, FIELD_OFFSET(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
 
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT2); // reload value
-    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1); // reload proto
+    // Check proto is object.
+    loadPtr(Address(regT1, FIELD_OFFSET(JSCell, m_structure)), regT0);
+    addSlowCase(branch32(NotEqual, Address(regT0, FIELD_OFFSET(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
 
-    // optimistically load true result
+    // Optimistically load the result true, and start looping.
+    // Initially, regT1 still contains proto and regT2 still contains value.
+    // As we loop regT2 will be updated with its prototype, recursively walking the prototype chain.
     move(ImmPtr(JSValue::encode(jsBoolean(true))), regT0);
-
     Label loop(this);
 
-    // load value's prototype
+    // Load the prototype of the object in regT2.  If this is equal to regT1 - WIN!
+    // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
     loadPtr(Address(regT2, FIELD_OFFSET(JSCell, m_structure)), regT2);
     loadPtr(Address(regT2, FIELD_OFFSET(Structure, m_prototype)), regT2);
-
-    Jump exit = branchPtr(Equal, regT2, regT1);
-
+    Jump isInstance = branchPtr(Equal, regT2, regT1);
     branchPtr(NotEqual, regT2, ImmPtr(JSValue::encode(jsNull())), loop);
 
+    // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
+    valueIsImmediate.link(this);
+    valueIsNotObject.link(this);
     move(ImmPtr(JSValue::encode(jsBoolean(false))), regT0);
 
-    exit.link(this);
-
+    // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
+    isInstance.link(this);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
-
 }
 
 void JIT::emit_op_new_func(Instruction* currentInstruction)
@@ -1154,6 +1151,8 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    linkSlowCase(iter);
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
