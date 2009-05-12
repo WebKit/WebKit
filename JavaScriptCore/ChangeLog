@@ -1,3 +1,31 @@
+2009-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        A little more JIT refactoring.
+        
+        Rearranged code to more clearly indicate what's conditionally compiled
+        and why. Now, all shared code is at the top of our JIT files, and all
+        #if'd code is at the bottom. #if'd code is delineated by large comments.
+        
+        Moved functions that relate to the JIT but don't explicitly do codegen
+        into JIT.cpp. Refactored SSE2 check to store its result as a data member
+        in the JIT.
+
+        * jit/JIT.cpp:
+        (JSC::isSSE2Present):
+        (JSC::JIT::JIT):
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        * jit/JIT.h:
+        (JSC::JIT::isSSE2Present):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix.

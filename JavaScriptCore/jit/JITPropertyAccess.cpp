@@ -146,7 +146,10 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
+
 #if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+
+/* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
 
 void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned)
 {
@@ -188,7 +191,9 @@ void JIT::compilePutByIdSlowCase(int, Identifier*, int, Vector<SlowCaseEntry>::i
     ASSERT_NOT_REACHED();
 }
 
-#else
+#else // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+
+/* ------------------------------ BEGIN: ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
 
 void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsigned propertyAccessInstructionIndex)
 {
@@ -721,6 +726,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
     jumpLocation.relink(entryLabel);
 }
+
+/* ------------------------------ END: !ENABLE / ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
 
 #endif // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 

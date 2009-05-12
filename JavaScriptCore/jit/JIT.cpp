@@ -56,6 +56,53 @@ void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress retu
     returnAddress.relinkNearCallerToFunction(newCalleeFunction);
 }
 
+// All X86 Macs are guaranteed to support at least SSE2
+#if PLATFORM(X86_64) || (PLATFORM(X86) && PLATFORM(MAC))
+
+static inline bool isSSE2Present()
+{
+    return true;
+}
+
+#else
+
+static bool isSSE2Present()
+{
+    static const int SSE2FeatureBit = 1 << 26;
+    struct SSE2Check {
+        SSE2Check()
+        {
+            int flags;
+#if COMPILER(MSVC)
+            _asm {
+                mov eax, 1 // cpuid function 1 gives us the standard feature set
+                cpuid;
+                mov flags, edx;
+            }
+#elif COMPILER(GCC)
+            asm (
+                 "movl $0x1, %%eax;"
+                 "pushl %%ebx;"
+                 "cpuid;"
+                 "popl %%ebx;"
+                 "movl %%edx, %0;"
+                 : "=g" (flags)
+                 :
+                 : "%eax", "%ecx", "%edx"
+                 );
+#else
+            flags = 0;
+#endif
+            present = (flags & SSE2FeatureBit) != 0;
+        }
+        bool present;
+    };
+    static SSE2Check check;
+    return check.present;
+}
+
+#endif // PLATFORM(X86_64) || (PLATFORM(X86) && PLATFORM(MAC))
+
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
@@ -65,6 +112,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
+    , m_isSSE2Present(JSC::isSSE2Present())
 {
 }
 
@@ -885,6 +933,32 @@ void JIT::emitPutVariableObjectRegister(RegisterID src, RegisterID variableObjec
     loadPtr(Address(variableObject, FIELD_OFFSET(JSVariableObject, d)), variableObject);
     loadPtr(Address(variableObject, FIELD_OFFSET(JSVariableObject::JSVariableObjectData, registers)), variableObject);
     storePtr(src, Address(variableObject, index * sizeof(Register)));
+}
+
+void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
+{
+    // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
+    // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
+    // match).  Reset the check so it no longer matches.
+    callLinkInfo->hotPathBegin.repatch(JSValue::encode(JSValue()));
+}
+
+void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
+{
+    // Currently we only link calls with the exact number of arguments.
+    // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
+    if (!calleeCodeBlock || callerArgCount == calleeCodeBlock->m_numParameters) {
+        ASSERT(!callLinkInfo->isLinked());
+    
+        if (calleeCodeBlock)
+            calleeCodeBlock->addCaller(callLinkInfo);
+    
+        callLinkInfo->hotPathBegin.repatch(callee);
+        callLinkInfo->hotPathOther.relink(ctiCode.addressForCall());
+    }
+
+    // patch the instruction that jumps out to the cold path, so that we only try to link once.
+    callLinkInfo->hotPathBegin.jumpAtOffset(patchOffsetOpCallCompareToJump).relink(callLinkInfo->coldPathOther);
 }
 
 } // namespace JSC

@@ -633,6 +633,8 @@ namespace JSC {
         void sampleInstruction(Instruction*, bool) {}
 #endif
 
+        bool isSSE2Present() const { return m_isSSE2Present; }
+
         Interpreter* m_interpreter;
         JSGlobalData* m_globalData;
         CodeBlock* m_codeBlock;
@@ -650,6 +652,7 @@ namespace JSC {
 
         int m_lastResultBytecodeRegister;
         unsigned m_jumpTargetsPosition;
+        const bool m_isSSE2Present;
 
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_globalResolveInfoIndex;
