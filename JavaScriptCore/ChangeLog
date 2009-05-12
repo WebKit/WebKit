@@ -1,3 +1,21 @@
+2009-05-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        instanceof should throw if the constructor being tested does not implement
+        'HasInstance" (i.e. is a function).  Instead we were returning false.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::isInvalidParamForIn):
+        (JSC::isInvalidParamForInstanceOf):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_instanceof):
+        * tests/mozilla/ecma_2/instanceof/instanceof-003.js:
+            Fix broken test case.
+        * tests/mozilla/ecma_2/instanceof/regress-7635.js:
+            Remove broken test case (was an exact duplicate of a test in instanceof-003.js).
+
 2009-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

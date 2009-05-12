@@ -1,3 +1,13 @@
+2009-05-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Test was checked in with one test case disabled since it exposed an existing bug;
+        enable it now.
+
+        * fast/js/instance-of-immediates-expected.txt:
+        * fast/js/resources/instance-of-immediates.js:
+
 2009-05-11  Brady Eidson  <beidson@apple.com>
 
         Add a third copy of the test results for this test to make Tiger bots happy.

@@ -16,6 +16,19 @@ I think this should be 'false'
 
     Author:             christine@netscape.com
     Date:               12 november 1997
+
+
+The test case described above is correct, however the second test case in this file is not,
+'o instanceof o' should thow an exception.  According to ECMA-262:
+
+    8.6.2 Internal Properties and Methods:
+        "... only Function objects implement [[HasInstance]]"
+    11.8.6 The instanceof operator:
+        "6.If Result(4) does not have a [[HasInstance]] method, throw a TypeError exception."
+
+{} does not implement [[HasInstance]] (since it is not a function), so passing it as the
+constructor to be tested to instanceof should result in a TypeError being thrown.
+
 */
     var SECTION = "instanceof-003";
     var VERSION = "ECMA_2";
@@ -35,12 +48,10 @@ I think this should be 'false'
         theproto instanceof Foo );
 
 
-    var o = {};
-
     AddTestCase(
         "o = {}; o instanceof o",
-        false,
-        o instanceof o );
+        "EXCEPTION",
+        (function(){ try { var o = {}; o instanceof o; return "no exception"; } catch (e) { return "EXCEPTION"; } } )() );
 
 
     test();

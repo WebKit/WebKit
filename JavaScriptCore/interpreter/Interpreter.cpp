@@ -317,11 +317,19 @@ ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newC
     return CallFrame::create(r);
 }
 
-static NEVER_INLINE bool isNotObject(CallFrame* callFrame, bool forInstanceOf, CodeBlock* codeBlock, const Instruction* vPC, JSValue value, JSValue& exceptionData)
+static NEVER_INLINE bool isInvalidParamForIn(CallFrame* callFrame, CodeBlock* codeBlock, const Instruction* vPC, JSValue value, JSValue& exceptionData)
 {
     if (value.isObject())
         return false;
-    exceptionData = createInvalidParamError(callFrame, forInstanceOf ? "instanceof" : "in" , value, vPC - codeBlock->instructions().begin(), codeBlock);
+    exceptionData = createInvalidParamError(callFrame, "in" , value, vPC - codeBlock->instructions().begin(), codeBlock);
+    return true;
+}
+
+static NEVER_INLINE bool isInvalidParamForInstanceOf(CallFrame* callFrame, CodeBlock* codeBlock, const Instruction* vPC, JSValue value, JSValue& exceptionData)
+{
+    if (value.isObject() && asObject(value)->structure()->typeInfo().implementsHasInstance())
+        return false;
+    exceptionData = createInvalidParamError(callFrame, "instanceof" , value, vPC - codeBlock->instructions().begin(), codeBlock);
     return true;
 }
 
@@ -1812,16 +1820,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         JSValue baseVal = callFrame[base].jsValue();
 
-        if (isNotObject(callFrame, true, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
+        if (isInvalidParamForInstanceOf(callFrame, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
             goto vm_throw;
 
-        JSObject* baseObj = asObject(baseVal);
-        if (baseObj->structure()->typeInfo().implementsHasInstance()) {
-            bool result = baseObj->hasInstance(callFrame, callFrame[value].jsValue(), callFrame[baseProto].jsValue());
-            CHECK_FOR_EXCEPTION();
-            callFrame[dst] = jsBoolean(result);
-        } else
-            callFrame[dst] = jsBoolean(false);
+        bool result = asObject(baseVal)->hasInstance(callFrame, callFrame[value].jsValue(), callFrame[baseProto].jsValue());
+        CHECK_FOR_EXCEPTION();
+        callFrame[dst] = jsBoolean(result);
 
         vPC += 5;
         NEXT_INSTRUCTION();
@@ -1938,7 +1942,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int base = (++vPC)->u.operand;
 
         JSValue baseVal = callFrame[base].jsValue();
-        if (isNotObject(callFrame, false, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
+        if (isInvalidParamForIn(callFrame, callFrame->codeBlock(), vPC, baseVal, exceptionValue))
             goto vm_throw;
 
         JSObject* baseObj = asObject(baseVal);

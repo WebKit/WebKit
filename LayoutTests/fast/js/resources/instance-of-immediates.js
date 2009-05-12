@@ -17,9 +17,8 @@ function testSet(constructor, testMethod)
 testSet("1", { "1":shouldThrow, "{}":shouldThrow, "obj":shouldThrow });
 
 // Test set 2, test passsing an empty object ({}) as the constructor to be tested for.
-// Fixme: these should thow exceptions, since {} is not function (specifically, since {} does not implemet HasInstance).
-// Currently WebKit returns false in these three cases.
-//testSet("{}", { "1":shouldThrow, "{}":shouldThrow, "obj":shouldThrow });
+// As well as being an object, the constructor must implement 'HasInstance' (i.e. be a function), so these should all throw too.
+testSet("{}", { "1":shouldThrow, "{}":shouldThrow, "obj":shouldThrow });
 
 // Test set 3, test passsing Constructor as the constructor to be tested for.
 // Nothing should except, the third test should pass, since obj is an instance of Constructor.

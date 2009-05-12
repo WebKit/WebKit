@@ -893,23 +893,23 @@ EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS_DECLARATION)
     JSValue baseVal = stackFrame.args[1].jsValue();
     JSValue proto = stackFrame.args[2].jsValue();
 
-    // at least one of these checks must have failed to get to the slow case
+    // At least one of these checks must have failed to get to the slow case.
     ASSERT(!value.isCell() || !baseVal.isCell() || !proto.isCell()
            || !value.isObject() || !baseVal.isObject() || !proto.isObject() 
            || (asObject(baseVal)->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
 
-    if (!baseVal.isObject()) {
+
+    // ECMA-262 15.3.5.3:
+    // Throw an exception either if baseVal is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
+    TypeInfo typeInfo(UnspecifiedType, 0);
+    if (!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance()) {
         CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();
         unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
         stackFrame.globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal, vPCIndex, codeBlock);
         VM_THROW_EXCEPTION();
     }
-
-    JSObject* baseObj = asObject(baseVal);
-    TypeInfo typeInfo = baseObj->structure()->typeInfo();
-    if (!typeInfo.implementsHasInstance())
-        return JSValue::encode(jsBoolean(false));
+    ASSERT(typeInfo.type() != UnspecifiedType);
 
     if (!typeInfo.overridesHasInstance()) {
         if (!value.isObject())
@@ -921,7 +921,7 @@ EncodedJSValue JITStubs::cti_op_instanceof(STUB_ARGS_DECLARATION)
         }
     }
 
-    JSValue result = jsBoolean(baseObj->hasInstance(callFrame, value, proto));
+    JSValue result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
     CHECK_FOR_EXCEPTION_AT_END();
 
     return JSValue::encode(result);
