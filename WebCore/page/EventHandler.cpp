@@ -1969,21 +1969,22 @@ void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
     String key = event->keyIdentifier();           
     bool isShifted = event->getModifierState("Shift");
     bool isOptioned = event->getModifierState("Alt");
+    bool isCommanded = event->getModifierState("Meta");
     
     if (key == "Up") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::BACKWARD, LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::BACKWARD, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     }
     else if (key == "Down") { 
-        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::FORWARD, LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::FORWARD, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     }
     else if (key == "Left") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::LEFT, (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::LEFT, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     }
     else if (key == "Right") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::RIGHT, (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::RIGHT, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     }    
 }

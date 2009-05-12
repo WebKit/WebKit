@@ -1,3 +1,16 @@
+2009-05-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 25700: Regression:WebKit:cmd-left and cmd-right use to go to the beginning and end of a line in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=25700
+
+        Keyboard selection movement handlers need to also watch for the Cmd key when Accessibility is enabled.
+        Note: This code is only used when accessibility is enabled.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleKeyboardSelectionMovement):
+
 2009-05-11  David Kilzer  <ddkilzer@apple.com>
 
         Bug 25087: Test for ENABLE_FOO macros consistently in IDL files
