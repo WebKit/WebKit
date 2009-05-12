@@ -1,3 +1,34 @@
+2009-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Some JIT refactoring.
+        
+        Moved JITStubCall* into its own header.
+        
+        Modified JITStubCall to ASSERT that its return value is handled correctly.
+        Also, replaced function template with explicit instantiations to resolve
+        some confusion.
+        
+        Replaced all uses of emit{Get,Put}CTIArgument with explicit peeks, pokes,
+        and calls to killLastResultRegister().
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITStubCall.h: Copied from jit/JIT.h.
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::addArgument):
+        (JSC::JITStubCall::call):
+        (JSC::JITStubCall::):
+
 2009-05-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

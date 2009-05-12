@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "JITInlineMethods.h"
+#include "JITStubCall.h"
 #include "JSCell.h"
 
 namespace JSC {
@@ -702,7 +703,8 @@ void JIT::emit_op_push_new_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    emitGetCTIParam(offsetof(struct JITStackFrame, callFrame) / sizeof (void*), callFrameRegister);
+    killLastResultRegister(); // FIXME: Implicitly treat op_catch as a labeled statement, and remove this line of code.
+    peek(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -879,11 +881,11 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
-    emitGetCTIParam(FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*), regT0);
-    Jump noProfiler = branchTestPtr(Zero, Address(regT0));
+    peek(regT1, FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*));
+    Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
     JITStubCall stubCall(this, JITStubs::cti_op_profile_will_call);
-    stubCall.addArgument(currentInstruction[1].u.operand, regT0);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT1);
     stubCall.call();
     noProfiler.link(this);
 
@@ -891,11 +893,11 @@ void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 
 void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 {
-    emitGetCTIParam(FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*), regT0);
-    Jump noProfiler = branchTestPtr(Zero, Address(regT0));
+    peek(regT1, FIELD_OFFSET(JITStackFrame, enabledProfilerReference) / sizeof (void*));
+    Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
     JITStubCall stubCall(this, JITStubs::cti_op_profile_did_call);
-    stubCall.addArgument(currentInstruction[1].u.operand, regT0);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT1);
     stubCall.call();
     noProfiler.link(this);
 

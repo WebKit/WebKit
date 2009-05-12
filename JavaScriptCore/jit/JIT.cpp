@@ -30,10 +30,11 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
+#include "Interpreter.h"
 #include "JITInlineMethods.h"
+#include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "Interpreter.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 
@@ -561,10 +562,6 @@ void JIT::privateCompileMainPass()
             emit_op_convert_this(currentInstruction);
             NEXT_OPCODE(op_convert_this);
         }
-
-
-        // No implementation
-
         case op_get_array_length:
         case op_get_by_id_chain:
         case op_get_by_id_generic:
@@ -972,7 +969,7 @@ void JIT::privateCompile()
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
-        emitGetCTIParam(FIELD_OFFSET(JITStackFrame, registerFile) / sizeof (void*), regT0);
+        peek(regT0, FIELD_OFFSET(JITStackFrame, registerFile) / sizeof (void*));
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
         
         slowRegisterFileCheck = branch32(GreaterThan, regT1, Address(regT0, FIELD_OFFSET(RegisterFile, m_end)));
@@ -1402,7 +1399,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     storePtr(regT1, regT2);
     move(ImmPtr(reinterpret_cast<void*>(ctiVMThrowTrampoline)), regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
-    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
     push(regT2);
     ret();
     

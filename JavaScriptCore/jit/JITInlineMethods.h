@@ -142,22 +142,6 @@ ALWAYS_INLINE void JIT::emitPutJITStubArgFromVirtualRegister(unsigned src, unsig
     killLastResultRegister();
 }
 
-ALWAYS_INLINE void JIT::emitPutCTIParam(void* value, unsigned name)
-{
-    poke(ImmPtr(value), name);
-}
-
-ALWAYS_INLINE void JIT::emitPutCTIParam(RegisterID from, unsigned name)
-{
-    poke(from, name);
-}
-
-ALWAYS_INLINE void JIT::emitGetCTIParam(unsigned name, RegisterID to)
-{
-    peek(to, name);
-    killLastResultRegister();
-}
-
 ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
     storePtr(from, Address(callFrameRegister, entry * sizeof(Register)));
@@ -206,7 +190,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(void* function)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
-    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
@@ -220,13 +204,13 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     poke(stackPointerRegister);
-    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #else // JIT_STUB_ARGUMENT_VA_LIST
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
-    emitPutCTIParam(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #endif
