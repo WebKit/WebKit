@@ -1,3 +1,10 @@
+2009-05-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Enable the new passing test, and skip two new failing tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/css/compare-content-style-expected.txt: Added.
+
 2009-05-11  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1741,6 +1741,7 @@ fast/forms/select-dirty-parent-pref-widths.html
 fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-enter-key.html
+fast/forms/search-styled.html
 fast/forms/select-type-ahead-list-box-no-selection.html
 fast/forms/select-type-ahead-non-latin.html
 fast/forms/slider-mouse-events.html
@@ -2918,6 +2919,7 @@ fast/layers/overflow-scroll-auto-switch.html
 fast/layers/positioned-inside-root-with-margins.html
 fast/layers/remove-layer-with-nested-stacking.html
 fast/layers/scroll-rect-to-visible.html
+fast/layers/self-painting-outline.html
 fast/layers/video-layer.html
 fast/layers/zindex-inherit.html
 fast/layers/zindex-ridonkulous.html
