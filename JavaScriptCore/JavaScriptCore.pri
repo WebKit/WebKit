@@ -117,6 +117,7 @@ SOURCES += \
     jit/JIT.cpp \
     jit/JITCall.cpp \
     jit/JITArithmetic.cpp \
+    jit/JITOpcodes.cpp \
     jit/JITPropertyAccess.cpp \
     jit/ExecutableAllocator.cpp \
     jit/JITStubs.cpp \
