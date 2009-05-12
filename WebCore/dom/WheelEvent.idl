@@ -42,11 +42,11 @@ module events {
         readonly attribute long    x;
         readonly attribute long    y;
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute boolean isHorizontal;
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         void initWheelEvent(in long wheelDeltaX,
                             in long wheelDeltaY, 
                             in DOMWindow view, 

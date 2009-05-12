@@ -35,12 +35,12 @@ module html {
         attribute  [ConvertNullToNullString] DOMString            target;
         attribute  [ConvertNullToNullString] DOMString            type;
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // DOM Level 2 Style
         readonly attribute StyleSheet   sheet;
 #endif
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extension:
         readonly attribute URL absoluteLinkURL;
 #endif

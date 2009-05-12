@@ -36,7 +36,7 @@ module html {
              raises (DOMException);
         [Custom] void remove(in unsigned long index);
 
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         Node item(in unsigned long index);
         Node namedItem(in DOMString name);
 #endif

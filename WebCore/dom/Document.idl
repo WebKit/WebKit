@@ -81,7 +81,7 @@ module core {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString documentURI;
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // DOM Level 2 Events (DocumentEvents interface)
 
         Event              createEvent(in DOMString eventType)
@@ -116,7 +116,7 @@ module core {
 
         [OldStyleObjC] CSSStyleDeclaration getOverrideStyle(in Element element,
                                                             in DOMString pseudoElement);
-#if ENABLE_XPATH
+#if defined(ENABLE_XPATH) && ENABLE_XPATH
         // DOM Level 3 XPath (XPathEvaluator interface)
         [OldStyleObjC] XPathExpression createExpression(in DOMString expression,
                                                         in XPathNSResolver resolver)
@@ -137,7 +137,7 @@ module core {
                                        in boolean userInterface,
                                        in [ConvertUndefinedOrNullToNullString] DOMString value);
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // FIXME: remove the these two versions once [Optional] is implemented for Objective-C.
         boolean            execCommand(in DOMString command,
                                        in boolean userInterface);
@@ -154,7 +154,7 @@ module core {
 
                  attribute [ConvertNullToNullString] DOMString title;
         readonly attribute DOMString referrer;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [ConvertNullToNullString] DOMString domain;
 #else
         readonly attribute DOMString domain;
@@ -180,7 +180,7 @@ module core {
 
         NodeList getElementsByName(in DOMString elementName);
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [Custom] Location location;
 #endif
 
@@ -193,7 +193,7 @@ module core {
         Element            elementFromPoint(in long x, in long y);
 
         // Mozilla extensions
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         DOMSelection       getSelection();
 #endif
         readonly attribute [ConvertNullStringTo=Null] DOMString characterSet;
@@ -203,13 +203,13 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectedStylesheetSet;
 
-#if !defined(LANGUAGE_COM)
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         CSSStyleDeclaration createCSSStyleDeclaration();
 #endif
 #endif
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // DOM Level 2 Style Interface
         [OldStyleObjC, UsesView] CSSStyleDeclaration getComputedStyle(in Element element,
                                                                       in DOMString pseudoElement);
@@ -224,8 +224,8 @@ module core {
                                                   
 #endif
 
-#if !defined(LANGUAGE_COM)
-#if !defined(LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         [V8Custom] DOMObject getCSSCanvasContext(in DOMString contextId, in DOMString name, in long width, in long height);
 #endif
 #endif
@@ -239,7 +239,7 @@ module core {
         NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
-#if ENABLE_WML
+#if defined(ENABLE_WML) && ENABLE_WML
         // Only used from within WML layout tests, WML doesn't have JS support at all.
         void resetWMLPageState();
 #endif

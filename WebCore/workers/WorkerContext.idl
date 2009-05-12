@@ -36,7 +36,7 @@ module threads {
     ] WorkerContext {
 
         // WorkerGlobalScope
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [Replaceable] WorkerContext self;
 #endif
                  attribute [Replaceable] WorkerLocation location;

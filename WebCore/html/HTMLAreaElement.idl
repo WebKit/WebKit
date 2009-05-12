@@ -42,7 +42,7 @@ module html {
         readonly attribute DOMString protocol;
         readonly attribute DOMString search;
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extension:
         readonly attribute URL absoluteLinkURL;
 #endif

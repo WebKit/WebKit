@@ -39,7 +39,7 @@ module window {
         
         readonly attribute boolean onLine;
 
-#if ENABLE_GEOLOCATION
+#if defined(ENABLE_GEOLOCATION) && ENABLE_GEOLOCATION
         readonly attribute Geolocation geolocation;
 #endif
     };

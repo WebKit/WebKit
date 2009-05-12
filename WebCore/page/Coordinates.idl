@@ -34,7 +34,7 @@ module core {
         readonly attribute [Custom] double heading;
         readonly attribute [Custom] double speed;
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();
 #endif
     };

@@ -26,7 +26,7 @@ module html {
     ] HTMLBaseFontElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString color;
         attribute [ConvertNullToNullString] DOMString face;
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         attribute [ConvertToString] DOMString size; // this changed to a long, but our existing API is a string
 #else
         attribute long size;

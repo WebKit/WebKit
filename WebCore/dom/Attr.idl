@@ -39,7 +39,7 @@ module core {
         readonly attribute Element ownerElement;
         
         // extensions
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute CSSStyleDeclaration style;
 #endif
     };

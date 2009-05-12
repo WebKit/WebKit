@@ -29,7 +29,7 @@
 module window {
 
     interface [
-#if defined(V8_BINDING)
+#if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
         CustomGetOwnPropertySlot,
@@ -55,10 +55,10 @@ module window {
                  attribute [CustomSetter] DOMString search;
                  attribute [CustomSetter] DOMString hash;
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMString toString();
 #endif
-#if defined(V8_BINDING)
+#if defined(V8_BINDING) && V8_BINDING
         [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
 #endif
     };

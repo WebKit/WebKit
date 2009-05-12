@@ -62,7 +62,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString contentEditable;
         readonly attribute boolean isContentEditable;
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString titleDisplayString;
 #endif
     };

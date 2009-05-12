@@ -27,7 +27,7 @@
  */
 
 module html {
-#if !defined(LANGUAGE_JAVASCRIPT) || defined(V8_BINDING)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT || defined(V8_BINDING) && V8_BINDING
     interface [
         CustomHeader,
         HasCustomIndexGetter,

@@ -30,7 +30,7 @@ module html {
         ImplementationUUID=93e0407a-8380-4ff0-978d-f773f2dee6a3
     ] HTMLEmbedElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString align;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [ConvertNullToNullString] DOMString height;
 #else
                  attribute [ConvertFromString] long height;
@@ -38,15 +38,15 @@ module html {
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [ConvertNullToNullString] DOMString src;
                  attribute [ConvertNullToNullString] DOMString type;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [ConvertNullToNullString] DOMString width;
 #else
                  attribute [ConvertFromString] long width;
 #endif
 
-#if !defined(LANGUAGE_COM)
-#if ENABLE_SVG
-#if !defined(LANGUAGE_OBJECTIVE_C) || defined(ENABLE_SVG_DOM_OBJC_BINDINGS)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+#if defined(ENABLE_SVG) && ENABLE_SVG
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
 #endif

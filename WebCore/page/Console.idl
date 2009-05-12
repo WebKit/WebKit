@@ -30,7 +30,7 @@ module window {
 
     interface Console {
 
-#if !defined(V8_BINDING)
+#if !defined(V8_BINDING) || !V8_BINDING
         readonly attribute [CustomGetter] Array profiles;
 #endif
     
@@ -45,7 +45,7 @@ module window {
         [CustomArgumentHandling, ImplementationFunction=assertCondition] void assert(in boolean condition);
         [CustomArgumentHandling] void count();
 
-#if !defined(V8_BINDING)
+#if !defined(V8_BINDING) || !V8_BINDING
         [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
 #endif

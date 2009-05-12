@@ -58,7 +58,7 @@ module window {
         void removeAllRanges();
         void addRange(in Range range);
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();
 #endif
 

@@ -26,7 +26,7 @@
 module window {
 
     interface [
-#if defined(V8_BINDING)
+#if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
         CustomGetOwnPropertySlot,

@@ -34,7 +34,7 @@ module events {
         const unsigned short AT_TARGET           = 2;
         const unsigned short BUBBLING_PHASE      = 3;
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Reverse-engineered from Netscape
         const unsigned short MOUSEDOWN           = 1;
         const unsigned short MOUSEUP             = 2;
@@ -60,7 +60,7 @@ module events {
         readonly attribute unsigned short   eventPhase;
         readonly attribute boolean          bubbles;
         readonly attribute boolean          cancelable;
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute DOMTimeStamp     timeStamp;
 #endif
         void               stopPropagation();
@@ -74,7 +74,7 @@ module events {
                  attribute boolean          returnValue;
                  attribute boolean          cancelBubble;
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute [Custom] Clipboard        clipboardData;
 #endif
 

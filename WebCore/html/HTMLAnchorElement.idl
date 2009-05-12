@@ -47,11 +47,11 @@ module html {
         readonly attribute DOMString search;
         readonly attribute DOMString text;
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();
 #endif
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extension:
         readonly attribute URL absoluteLinkURL;
 #endif

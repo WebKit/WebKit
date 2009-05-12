@@ -27,7 +27,7 @@ module ranges {
         readonly attribute DOMString        name;
         readonly attribute DOMString        message;
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();
 #endif
 

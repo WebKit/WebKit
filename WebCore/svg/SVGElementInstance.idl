@@ -34,7 +34,7 @@ module svg {
         GenerateToJS,
         GenerateNativeConverter
     ] SVGElementInstance
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
     {
@@ -48,7 +48,7 @@ module svg {
         readonly attribute SVGElementInstance nextSibling;
 
         // EventTarget
-#if !defined(LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         attribute [DontEnum] EventListener onabort;
         attribute [DontEnum] EventListener onblur;
         attribute [DontEnum] EventListener onchange;

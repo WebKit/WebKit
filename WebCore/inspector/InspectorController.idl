@@ -52,7 +52,7 @@ module core {
         [Custom] void addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
         [Custom] Node getResourceDocumentNode(in long long identifier);
         [Custom] void search(in Node node, in DOMString query);
-#if ENABLE_DATABASE
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [Custom] DOMObject databaseTableNames(in Database database);
 #endif
         [Custom] DOMObject setting(in DOMString key);
@@ -65,7 +65,7 @@ module core {
         void setAttachedWindowHeight(in unsigned long height);
         [Custom] DOMObject wrapCallback(in DOMObject callback);
 
-#if ENABLE_JAVASCRIPT_DEBUGGER
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         void enableDebugger();
         void disableDebugger();
         void pauseInDebugger();

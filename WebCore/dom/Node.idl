@@ -31,7 +31,7 @@ module core {
         InterfaceUUID=84BA0D7A-7E3E-4a7b-B6FB-7653E8FB54ED,
         ImplementationUUID=81B47FDB-94B0-40fd-8E0C-FB2A6E53CC04
     ] Node
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
      {
@@ -128,13 +128,13 @@ module core {
         // IE extensions
         readonly attribute Element          parentElement;
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extensions
         readonly attribute boolean          isContentEditable;
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         attribute [DontEnum] EventListener onabort;
         attribute [DontEnum] EventListener onblur;
         attribute [DontEnum] EventListener onchange;

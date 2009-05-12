@@ -66,7 +66,7 @@ module core {
         [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                               in DOMString localName);
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute CSSStyleDeclaration style;
 #endif
 
@@ -109,7 +109,7 @@ module core {
         NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // ElementTraversal API
         readonly attribute Element firstElementChild;
         readonly attribute Element lastElementChild;
@@ -118,13 +118,13 @@ module core {
         readonly attribute unsigned long childElementCount;
 #endif
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // CSSOM View Module API
         ClientRectList getClientRects();
         ClientRect getBoundingClientRect();
 #endif
 
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // Objective-C extensions
         readonly attribute DOMString innerText;
 #endif

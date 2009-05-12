@@ -28,7 +28,7 @@ module html {
     ] HTMLOptionElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
                  attribute  boolean              defaultSelected;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute  [ConvertNullToNullString] DOMString            text
                      setter raises(DOMException);
 #else

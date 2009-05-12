@@ -44,7 +44,7 @@ module core {
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
                                                          in DOMString media)
             raises(DOMException);

@@ -39,7 +39,7 @@ module html {
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute boolean         readOnly;
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
                  attribute [ConvertToString] DOMString size; // DOM level 2 changed this to a long, but our existing API is a string
 #else
                  // FIXME: the spec says this should be a long, not an unsigned long

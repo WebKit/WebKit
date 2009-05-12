@@ -69,7 +69,7 @@ module css {
             raises(DOMException);
         Rect getRectValue()
             raises(DOMException);
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         RGBColor getRGBColorValue()
             raises(DOMException);
 #endif

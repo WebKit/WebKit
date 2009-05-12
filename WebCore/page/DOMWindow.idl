@@ -122,7 +122,7 @@ module window {
 
         attribute DOMString status;
         attribute DOMString defaultStatus;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // This attribute is an alias of defaultStatus and is necessary for legacy uses.
         attribute DOMString defaultstatus;
 #endif
@@ -152,14 +152,14 @@ module window {
         WebKitPoint webkitConvertPointFromPageToNode(in Node node, in WebKitPoint p);
         WebKitPoint webkitConvertPointFromNodeToPage(in Node node, in WebKitPoint p);
 
-#if ENABLE_OFFLINE_WEB_APPLICATIONS
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute DOMApplicationCache applicationCache;
 #endif    
-#if ENABLE_DATABASE
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize)
             raises(DOMException);
 #endif
-#if ENABLE_DOM_STORAGE
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         readonly attribute Storage sessionStorage;
         readonly attribute Storage localStorage;
 #endif
@@ -230,7 +230,7 @@ module window {
         [V8Custom=DOMWindowNOP] void captureEvents(/*in long eventFlags*/);
         [V8Custom=DOMWindowNOP] void releaseEvents(/*in long eventFlags*/);
 
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // Global constructors
         attribute StyleSheetConstructor StyleSheet;
         attribute CSSStyleSheetConstructor CSSStyleSheet;
@@ -397,16 +397,16 @@ module window {
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
 
-#if ENABLE_XSLT
+#if defined(ENABLE_XSLT) && ENABLE_XSLT
         attribute [JSCCustomGetter] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 #endif
 
-#if ENABLE_CHANNEL_MESSAGING
+#if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;
         attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
-#if ENABLE_WORKERS
+#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         attribute [JSCCustomGetter] WorkerConstructor Worker; // Usable with the new operator
 #endif
 
@@ -419,12 +419,12 @@ module window {
         attribute ClientRectConstructor ClientRect;
         attribute ClientRectListConstructor ClientRectList;
 
-#if ENABLE_DOM_STORAGE
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
         attribute StorageEventConstructor StorageEvent;
 #endif
 
-#if ENABLE_VIDEO
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         attribute [CustomGetter] HTMLAudioElementConstructor Audio; // Usable with the new operator
         attribute HTMLAudioElementConstructor HTMLAudioElement;
         attribute HTMLMediaElementConstructor HTMLMediaElement;
@@ -432,13 +432,13 @@ module window {
         attribute MediaErrorConstructor MediaError;
 #endif
 
-#if ENABLE_XPATH
+#if defined(ENABLE_XPATH) && ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
         attribute XPathExceptionConstructor XPathException;
 #endif
 
-#if ENABLE_SVG
+#if defined(ENABLE_SVG) && ENABLE_SVG
         attribute SVGAngleConstructor SVGAngle;
         attribute SVGColorConstructor SVGColor;
 //      attribute SVGCSSRuleConstructor SVGCSSRule;
@@ -457,7 +457,7 @@ module window {
 //      attribute SVGZoomAndPanConstructor SVGZoomAndPan;
 #endif
 
-#if ENABLE_SVG_FILTERS
+#if defined(ENABLE_SVG_FILTERS) && ENABLE_SVG_FILTERS
         attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
         attribute SVGFEBlendElementConstructor SVGFEBlendElement;
         attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
@@ -470,7 +470,7 @@ module window {
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
-#if defined(V8_BINDING)
+#if defined(V8_BINDING) && V8_BINDING
         // window.toString() requires special handling in V8
         [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
 #endif // defined(V8_BINDING)

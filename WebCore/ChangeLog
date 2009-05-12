@@ -1,3 +1,71 @@
+2009-05-11  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 25087: Test for ENABLE_FOO macros consistently in IDL files
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25087>
+
+        Reviewed by Timothy Hatcher.
+
+        Change tests for ENABLE macros to check for both existence and
+        value:
+
+        - Negative:  #if !defined(ENABLE_FOO) || !ENABLE_FOO
+        - Positive:  #if defined(ENABLE_FOO) && ENABLE_FOO
+
+        * css/CSSCharsetRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/RGBColor.idl:
+        * dom/Attr.idl:
+        * dom/DOMCoreException.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/EventException.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessagePort.idl:
+        * dom/MouseEvent.idl:
+        * dom/Node.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Range.idl:
+        * dom/RangeException.idl:
+        * dom/WheelEvent.idl:
+        * html/CanvasPixelArray.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/ImageData.idl:
+        * inspector/InspectorController.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/Console.idl:
+        * page/Coordinates.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/Geoposition.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * svg/SVGElementInstance.idl:
+        * svg/SVGException.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XPathException.idl:
+
 2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.

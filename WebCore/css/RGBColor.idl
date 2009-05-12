@@ -33,10 +33,10 @@ module css {
         readonly attribute CSSPrimitiveValue  blue;
 
         // WebKit extensions
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         readonly attribute CSSPrimitiveValue  alpha;
 #endif
-#if defined(LANGUAGE_OBJECTIVE_C)
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute Color              color;
 #endif
     };

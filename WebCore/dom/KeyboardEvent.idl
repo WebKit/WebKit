@@ -25,7 +25,7 @@ module events {
         GenerateConstructor
     ] KeyboardEvent : UIEvent {
 
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         // KeyLocationCode
         const unsigned long       KEY_LOCATION_STANDARD      = 0x00;
         const unsigned long       KEY_LOCATION_LEFT          = 0x01;
@@ -41,7 +41,7 @@ module events {
         readonly attribute boolean          metaKey;
         readonly attribute boolean          altGraphKey;
 
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         boolean getModifierState(in DOMString keyIdentifierArg);
 #endif
 
@@ -59,7 +59,7 @@ module events {
                                in boolean altGraphKey);
 
         // WebKit Extensions
-#if !defined(LANGUAGE_JAVASCRIPT)
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         readonly attribute long             keyCode;
         readonly attribute long             charCode;
         

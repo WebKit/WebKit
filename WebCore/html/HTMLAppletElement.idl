@@ -35,14 +35,14 @@ module html {
                  attribute [ConvertNullToNullString] DOMString code;
                  attribute [ConvertNullToNullString] DOMString codeBase;
                  attribute [ConvertNullToNullString] DOMString height;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [ConvertNullToNullString] DOMString hspace;
 #else
                  attribute [ConvertFromString] long hspace;
 #endif
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [ConvertNullToNullString] DOMString object;
-#if defined(LANGUAGE_JAVASCRIPT)
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [ConvertNullToNullString] DOMString vspace;
 #else
                  attribute [ConvertFromString] long vspace;

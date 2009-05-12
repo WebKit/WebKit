@@ -29,7 +29,7 @@ module html {
         attribute  [ConvertNullToNullString] DOMString            media;
         attribute  [ConvertNullToNullString] DOMString            type;
 
-#if !defined(LANGUAGE_COM)
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // DOM Level 2 Style
         readonly attribute StyleSheet sheet;
 #endif
