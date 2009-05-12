@@ -1,3 +1,12 @@
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Add a third copy of this test to make Tiger bots happy.
+
+        * platform/mac-tiger/fast/images: Added.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.checksum: Copied from platform/mac/fast/images/favicon-as-image-expected.checksum.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.png: Copied from platform/mac/fast/images/favicon-as-image-expected.png.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.txt: Copied from platform/mac/fast/images/favicon-as-image-expected.txt.
+
 2009-05-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
