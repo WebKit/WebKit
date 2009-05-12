@@ -1,3 +1,16 @@
+2009-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Unsigned underflow on 64bit cannot be treated as a negative number
+
+        This code included some placeswhere we deliberately create negative offsets
+        from unsigned values, on 32bit this is "safe", but in 64bit builds much
+        badness occurs. Solution is to use signed types as nature intended.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_load_varargs):
+
 2009-05-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
