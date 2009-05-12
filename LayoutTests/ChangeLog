@@ -1,3 +1,18 @@
+2009-05-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Added Qt-specific expected result for Canvas getImageData's test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22150
+
+        Since Qt is internally using premultiplied ARGB32 for doing
+        alpha-blending painting, reading the color back will not
+        necessarily give the same exact color.
+
+        * platform/qt/Skipped: Excluded canvas-getImageData.
+        * platform/qt/fast/canvas/canvas-getImageData-expected.txt: Added.
+
 2009-05-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
