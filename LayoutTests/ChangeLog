@@ -1,5 +1,14 @@
 2009-05-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Reviewed by Dimitri Glazkov.
+
+        Added Qt-specific expected result for toDataURL test, since Qt
+        does not support saving pixmaps to GIF.
+
+        * platform/qt/fast/canvas/toDataURL-supportedTypes-expected.txt: Added.
+
+2009-05-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Rubber-stamped by Simon Hausmann.
 
         Added Qt-specific expected result for Canvas getImageData's test.
