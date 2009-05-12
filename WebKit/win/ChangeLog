@@ -1,3 +1,10 @@
+2009-05-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix for Windows nightlies.
+        Change link order to work around CFNetwork bug.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2009-05-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov and Adam Roben.
