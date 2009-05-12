@@ -1,3 +1,29 @@
+2009-05-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by David Kilzer.
+
+        <rdar://problem/6876226> - Cleanup the fast/images/favicon situation a bit.
+
+        First off, copy fast/images/favicon-as-image.html over to http/tests/misc so it covers the original test case on all Mac platforms.
+        Second, add Leopard-specific results for the original test.
+        Then, remove it from the Leopard skipped list.
+        Finally, add it to the SnowLeopard skipped list (<rdar://problem/6877633> covers re-enabling it when we're no longer blocked).
+
+        * http/tests/misc/favicon-as-image.html: Copied from fast/images/favicon-as-image.html.
+        * http/tests/misc/resources/favicon.ico: Copied from fast/images/resources/favicon.ico.
+
+        * platform/mac/http/tests/misc/favicon-as-image-expected.checksum: Added.
+        * platform/mac/http/tests/misc/favicon-as-image-expected.png: Added.
+        * platform/mac/http/tests/misc/favicon-as-image-expected.txt: Added.
+
+        * platform/mac-leopard/fast/images: Added.
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.checksum: Copied from platform/mac/fast/images/favicon-as-image-expected.checksum.
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.png: Copied from platform/mac/fast/images/favicon-as-image-expected.png.
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.txt: Copied from platform/mac/fast/images/favicon-as-image-expected.txt.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         DRT/GTK+ lacks an AccessibilityController do not run the
