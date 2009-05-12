@@ -29,11 +29,11 @@
 
 static void test_webkit_web_frame_create_destroy(void)
 {
-    WebKitWebView* webView;
+    GtkWidget *webView;
     GtkWidget *window;
 
     g_test_bug("21837");
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    webView = webkit_web_view_new();
     g_object_ref_sink(webView);
     g_assert_cmpint(G_OBJECT(webView)->ref_count, ==, 1);
     // This crashed with the original version
@@ -41,7 +41,7 @@ static void test_webkit_web_frame_create_destroy(void)
 
     g_test_bug("25042");
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    webView = webkit_web_view_new();
     gtk_container_add(GTK_CONTAINER(window), webView);
     gtk_widget_show(window);
     gtk_widget_show(webView);

@@ -1,3 +1,14 @@
+2009-05-11  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25697
+        [GTK] Warnings building WebKit/gtk/tests/testwebframe.c
+
+        * tests/testwebframe.c:
+        (test_webkit_web_frame_create_destroy): Declare webView as a GtkWidget*
+        to fix pointer type incompatibility warnings.
+
 2009-05-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
