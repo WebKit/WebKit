@@ -717,9 +717,9 @@ bool HTMLParser::bodyCreateErrorCheck(Token*, RefPtr<Node>&)
     if (m_haveFrameSet)
         return false;
     
-    // Ensure that head exists.
+    // Ensure that head exists (unless parsing a fragment).
     // But not for older versions of Mail, where the implicit <head> isn't expected - <rdar://problem/6863795>
-    if (shouldCreateImplicitHead(m_document))
+    if (!m_isParsingFragment && shouldCreateImplicitHead(m_document))
         createHead();
     
     popBlock(headTag);
