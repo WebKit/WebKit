@@ -1,3 +1,16 @@
+2009-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        More re-factoring of JIT code generation to move opcode generation
+        to helper functions outside the main switch-statement and gave those
+        helper functions standardized names. This patch covers the remaining
+        slow cases.
+
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+
 2009-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
@@ -46,7 +59,7 @@
 
         Reviewed by Geoffrey Garen.
 
-        Start re-factoring JIT code generation to move op_code generation
+        Start re-factoring JIT code generation to move opcode generation
         to helper functions outside the main switch-statement and gave those
         helper functions standardized names.  This patch only covers the main
         pass and all the arithmetic opcodes in the slow path.

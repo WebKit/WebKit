@@ -30,6 +30,7 @@
 
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
+#include "JSArray.h"
 #include "JSCell.h"
 
 namespace JSC {
@@ -900,8 +901,299 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
     stubCall.addArgument(currentInstruction[1].u.operand, regT1);
     stubCall.call();
     noProfiler.link(this);
-
 }
+
+
+// Slow cases
+
+void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_convert_this);
+    stubCall.addArgument(regT0);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_construct_verify(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, JITStubs::cti_op_to_primitive);
+    stubCall.addArgument(regT0);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    // The slow void JIT::emitSlow_that handles accesses to arrays (below) may jump back up to here. 
+    Label beginGetByValSlow(this);
+
+    Jump notImm = getSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    emitFastArithIntToImmNoCheck(regT1, regT1);
+
+    notImm.link(this);
+    JITStubCall stubCall(this, JITStubs::cti_op_get_by_val);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
+
+    // This is slow void JIT::emitSlow_that handles accesses to arrays above the fast cut-off.
+    // First, check if this is an access to the vector
+    linkSlowCase(iter);
+    branch32(AboveOrEqual, regT1, Address(regT2, FIELD_OFFSET(ArrayStorage, m_vectorLength)), beginGetByValSlow);
+
+    // okay, missed the fast region, but it is still in the vector.  Get the value.
+    loadPtr(BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])), regT2);
+    // Check whether the value loaded is zero; if so we need to return undefined.
+    branchTestPtr(Zero, regT2, beginGetByValSlow);
+    move(regT2, regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
+}
+
+void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+    if (isOperandConstantImmediateInt(op2)) {
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(op2, regT2);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+    } else if (isOperandConstantImmediateInt(op1)) {
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
+        stubCall.addArgument(op1, regT1);
+        stubCall.addArgument(regT0);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+    } else {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(regT1);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+    }
+}
+
+void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compilePutByIdSlowCase(currentInstruction[1].u.operand, &(m_codeBlock->identifier(currentInstruction[2].u.operand)), currentInstruction[3].u.operand, iter, m_propertyAccessInstructionIndex++);
+}
+
+void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileGetByIdSlowCase(currentInstruction[1].u.operand, currentInstruction[2].u.operand, &(m_codeBlock->identifier(currentInstruction[3].u.operand)), iter, m_propertyAccessInstructionIndex++);
+}
+
+void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+    if (isOperandConstantImmediateInt(op2)) {
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, JITStubs::cti_op_loop_if_lesseq);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(currentInstruction[2].u.operand, regT2);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+    } else {
+        linkSlowCase(iter);
+        linkSlowCase(iter);
+        JITStubCall stubCall(this, JITStubs::cti_op_loop_if_lesseq);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(regT1);
+        stubCall.call();
+        emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
+    }
+}
+
+void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    // Normal slow cases - either is not an immediate imm, or is an array.
+    Jump notImm = getSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    emitFastArithIntToImmNoCheck(regT1, regT1);
+
+    notImm.link(this); {
+        JITStubCall stubCall(this, JITStubs::cti_op_put_by_val);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+        stubCall.call();
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_put_by_val));
+    }
+
+    // slow cases for immediate int accesses to arrays
+    linkSlowCase(iter);
+    linkSlowCase(iter); {
+        JITStubCall stubCall(this, JITStubs::cti_op_put_by_val_array);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+        stubCall.call();
+    }
+}
+
+void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
+    stubCall.addArgument(regT0);
+    stubCall.call();
+    emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand + 2);
+}
+
+void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
+    JITStubCall stubCall(this, JITStubs::cti_op_not);
+    stubCall.addArgument(regT0);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
+    stubCall.addArgument(regT0);
+    stubCall.call();
+    emitJumpSlowToHot(branchTest32(Zero, regT0), currentInstruction[2].u.operand + 2); // inverted!
+}
+
+void JIT::emitSlow_op_bitnot(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_bitnot);
+    stubCall.addArgument(regT0);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
+    stubCall.addArgument(regT0);
+    stubCall.call();
+    emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand + 2);
+}
+
+void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_bitxor);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_bitor);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_eq);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_neq);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_stricteq);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_nstricteq);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT1);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, JITStubs::cti_op_instanceof);
+    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
+    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
+    stubCall.addArgument(currentInstruction[4].u.operand, regT2);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_call);
+}
+
+void JIT::emitSlow_op_call_eval(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_call_eval);
+}
+
+void JIT::emitSlow_op_call_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallVarargsSlowCase(currentInstruction, iter);
+}
+
+void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_construct);
+}
+
+void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCaseIfNotJSCell(iter, currentInstruction[2].u.operand);
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, JITStubs::cti_op_to_jsnumber);
+    stubCall.addArgument(regT0);
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
 
 } // namespace JSC
 

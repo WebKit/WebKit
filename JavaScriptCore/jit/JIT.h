@@ -487,6 +487,33 @@ namespace JSC {
         void emit_op_profile_will_call(Instruction*);
         void emit_op_profile_did_call(Instruction*);
 
+        void emitSlow_op_convert_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_construct_verify(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_true(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_not(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_bitnot(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_bitxor(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_bitor(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_eq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_neq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_stricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_nstricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call_eval(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
+
 #if ENABLE(JIT_OPTIMIZE_ARITHMETIC)
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);

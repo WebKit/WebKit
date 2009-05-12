@@ -144,9 +144,8 @@ void JIT::privateCompileMainPass()
             killLastResultRegister();
         
         m_labels[m_bytecodeIndex] = label();
-        OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
 
-        switch (opcodeID) {
+        switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
         DEFINE_BINARY_OP(op_div)
         DEFINE_BINARY_OP(op_in)
@@ -612,7 +611,7 @@ void JIT::privateCompileSlowCases()
 #endif
         Instruction* currentInstruction = instructionsBegin + m_bytecodeIndex;
 
-        switch (OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
+        switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         case op_add: {
             emitSlow_op_add(currentInstruction, iter);
             NEXT_OPCODE(op_add);
@@ -666,268 +665,107 @@ void JIT::privateCompileSlowCases()
             NEXT_OPCODE(op_post_dec);
         }
         case op_convert_this: {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_convert_this);
-            stubCall.addArgument(regT0);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_convert_this(currentInstruction, iter);
             NEXT_OPCODE(op_convert_this);
         }
         case op_construct_verify: {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-            emitPutVirtualRegister(currentInstruction[1].u.operand);
-
+            emitSlow_op_construct_verify(currentInstruction, iter);
             NEXT_OPCODE(op_construct_verify);
         }
         case op_to_primitive: {
-            linkSlowCase(iter);
-
-            JITStubCall stubCall(this, JITStubs::cti_op_to_primitive);
-            stubCall.addArgument(regT0);
-            stubCall.call(currentInstruction[1].u.operand);
-
+            emitSlow_op_to_primitive(currentInstruction, iter);
             NEXT_OPCODE(op_to_primitive);
         }
         case op_get_by_val: {
-            // The slow case that handles accesses to arrays (below) may jump back up to here. 
-            Label beginGetByValSlow(this);
-
-            Jump notImm = getSlowCase(iter);
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            emitFastArithIntToImmNoCheck(regT1, regT1);
-
-            notImm.link(this);
-            JITStubCall stubCall(this, JITStubs::cti_op_get_by_val);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
-
-            // This is slow case that handles accesses to arrays above the fast cut-off.
-            // First, check if this is an access to the vector
-            linkSlowCase(iter);
-            branch32(AboveOrEqual, regT1, Address(regT2, FIELD_OFFSET(ArrayStorage, m_vectorLength)), beginGetByValSlow);
-
-            // okay, missed the fast region, but it is still in the vector.  Get the value.
-            loadPtr(BaseIndex(regT2, regT1, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])), regT2);
-            // Check whether the value loaded is zero; if so we need to return undefined.
-            branchTestPtr(Zero, regT2, beginGetByValSlow);
-            move(regT2, regT0);
-            emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
-
+            emitSlow_op_get_by_val(currentInstruction, iter);
             NEXT_OPCODE(op_get_by_val);
         }
         case op_loop_if_less: {
-            unsigned op1 = currentInstruction[1].u.operand;
-            unsigned op2 = currentInstruction[2].u.operand;
-            unsigned target = currentInstruction[3].u.operand;
-            if (isOperandConstantImmediateInt(op2)) {
-                linkSlowCase(iter);
-                JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(op2, regT2);
-                stubCall.call();
-                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
-            } else if (isOperandConstantImmediateInt(op1)) {
-                linkSlowCase(iter);
-                JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
-                stubCall.addArgument(op1, regT1);
-                stubCall.addArgument(regT0);
-                stubCall.call();
-                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
-            } else {
-                linkSlowCase(iter);
-                linkSlowCase(iter);
-                JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(regT1);
-                stubCall.call();
-                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
-            }
+            emitSlow_op_loop_if_less(currentInstruction, iter);
             NEXT_OPCODE(op_loop_if_less);
         }
         case op_put_by_id: {
-            compilePutByIdSlowCase(currentInstruction[1].u.operand, &(m_codeBlock->identifier(currentInstruction[2].u.operand)), currentInstruction[3].u.operand, iter, m_propertyAccessInstructionIndex++);
+            emitSlow_op_put_by_id(currentInstruction, iter);
             NEXT_OPCODE(op_put_by_id);
         }
         case op_get_by_id: {
-            compileGetByIdSlowCase(currentInstruction[1].u.operand, currentInstruction[2].u.operand, &(m_codeBlock->identifier(currentInstruction[3].u.operand)), iter, m_propertyAccessInstructionIndex++);
+            emitSlow_op_get_by_id(currentInstruction, iter);
             NEXT_OPCODE(op_get_by_id);
         }
         case op_loop_if_lesseq: {
-            unsigned op2 = currentInstruction[2].u.operand;
-            unsigned target = currentInstruction[3].u.operand;
-            if (isOperandConstantImmediateInt(op2)) {
-                linkSlowCase(iter);
-                JITStubCall stubCall(this, JITStubs::cti_op_loop_if_lesseq);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(currentInstruction[2].u.operand, regT2);
-                stubCall.call();
-                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
-            } else {
-                linkSlowCase(iter);
-                linkSlowCase(iter);
-                JITStubCall stubCall(this, JITStubs::cti_op_loop_if_lesseq);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(regT1);
-                stubCall.call();
-                emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
-            }
+            emitSlow_op_loop_if_lesseq(currentInstruction, iter);
             NEXT_OPCODE(op_loop_if_lesseq);
         }
         case op_put_by_val: {
-            // Normal slow cases - either is not an immediate imm, or is an array.
-            Jump notImm = getSlowCase(iter);
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            emitFastArithIntToImmNoCheck(regT1, regT1);
-
-            notImm.link(this); {
-                JITStubCall stubCall(this, JITStubs::cti_op_put_by_val);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(regT1);
-                stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-                stubCall.call();
-                emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_put_by_val));
-            }
-
-            // slow cases for immediate int accesses to arrays
-            linkSlowCase(iter);
-            linkSlowCase(iter); {
-                JITStubCall stubCall(this, JITStubs::cti_op_put_by_val_array);
-                stubCall.addArgument(regT0);
-                stubCall.addArgument(regT1);
-                stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-                stubCall.call();
-            }
+            emitSlow_op_put_by_val(currentInstruction, iter);
             NEXT_OPCODE(op_put_by_val);
         }
         case op_loop_if_true: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
-            stubCall.addArgument(regT0);
-            stubCall.call();
-            emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand + 2);
+            emitSlow_op_loop_if_true(currentInstruction, iter);
             NEXT_OPCODE(op_loop_if_true);
         }
         case op_not: {
-            linkSlowCase(iter);
-            xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
-            JITStubCall stubCall(this, JITStubs::cti_op_not);
-            stubCall.addArgument(regT0);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_not(currentInstruction, iter);
             NEXT_OPCODE(op_not);
         }
         case op_jfalse: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
-            stubCall.addArgument(regT0);
-            stubCall.call();
-            emitJumpSlowToHot(branchTest32(Zero, regT0), currentInstruction[2].u.operand + 2); // inverted!
+            emitSlow_op_jfalse(currentInstruction, iter);
             NEXT_OPCODE(op_jfalse);
         }
         case op_bitnot: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_bitnot);
-            stubCall.addArgument(regT0);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_bitnot(currentInstruction, iter);
             NEXT_OPCODE(op_bitnot);
         }
         case op_jtrue: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_jtrue);
-            stubCall.addArgument(regT0);
-            stubCall.call();
-            emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand + 2);
+            emitSlow_op_jtrue(currentInstruction, iter);
             NEXT_OPCODE(op_jtrue);
         }
         case op_bitxor: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_bitxor);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_bitxor(currentInstruction, iter);
             NEXT_OPCODE(op_bitxor);
         }
         case op_bitor: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_bitor);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_bitor(currentInstruction, iter);
             NEXT_OPCODE(op_bitor);
         }
         case op_eq: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_eq);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_eq(currentInstruction, iter);
             NEXT_OPCODE(op_eq);
         }
         case op_neq: {
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_neq);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_neq(currentInstruction, iter);
             NEXT_OPCODE(op_neq);
         }
         case op_stricteq: {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_stricteq);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_stricteq(currentInstruction, iter);
             NEXT_OPCODE(op_stricteq);
         }
         case op_nstricteq: {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_nstricteq);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT1);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_nstricteq(currentInstruction, iter);
             NEXT_OPCODE(op_nstricteq);
         }
         case op_instanceof: {
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            linkSlowCase(iter);
-            JITStubCall stubCall(this, JITStubs::cti_op_instanceof);
-            stubCall.addArgument(currentInstruction[2].u.operand, regT2);
-            stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-            stubCall.addArgument(currentInstruction[4].u.operand, regT2);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_instanceof(currentInstruction, iter);
             NEXT_OPCODE(op_instanceof);
         }
         case op_call: {
-            compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, opcodeID);
+            emitSlow_op_call(currentInstruction, iter);
             NEXT_OPCODE(op_call);
         }
         case op_call_eval: {
-            compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, opcodeID);
+            emitSlow_op_call_eval(currentInstruction, iter);
             NEXT_OPCODE(op_call_eval);
         }
         case op_call_varargs: {
-            compileOpCallVarargsSlowCase(currentInstruction, iter);
+            emitSlow_op_call_varargs(currentInstruction, iter);
             NEXT_OPCODE(op_call_varargs);
         }
         case op_construct: {
-            compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, opcodeID);
+            emitSlow_op_construct(currentInstruction, iter);
             NEXT_OPCODE(op_construct);
         }
         case op_to_jsnumber: {
-            linkSlowCaseIfNotJSCell(iter, currentInstruction[2].u.operand);
-            linkSlowCase(iter);
-
-            JITStubCall stubCall(this, JITStubs::cti_op_to_jsnumber);
-            stubCall.addArgument(regT0);
-            stubCall.call(currentInstruction[1].u.operand);
+            emitSlow_op_to_jsnumber(currentInstruction, iter);
             NEXT_OPCODE(op_to_jsnumber);
         }
 
