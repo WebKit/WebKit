@@ -1,0 +1,2 @@
+Test passed
+this is an on click handler

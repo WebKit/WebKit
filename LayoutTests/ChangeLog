@@ -1,3 +1,13 @@
+2009-05-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25713: AX: Control Elements not identified in HTML content
+        https://bugs.webkit.org/show_bug.cgi?id=25713
+
+        * accessibility/onclick-handlers-expected.txt: Added.
+        * accessibility/onclick-handlers.html: Added.
+
 2009-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -569,7 +569,12 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     Node* node = m_renderer->node();
     if (!node)
         return 0;
-    if (!node->isElementNode())
+    
+    // check if our parent is a mouse button listener
+    while (node && !node->isElementNode())
+        node = node->parent();
+
+    if (!node)
         return 0;
 
     // FIXME: Do the continuation search like anchorElement does
