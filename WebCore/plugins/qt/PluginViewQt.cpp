@@ -48,6 +48,7 @@
 #include "PluginContainerQt.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
+#include "PluginMainThreadScheduler.h"
 #include "RenderLayer.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -231,6 +232,8 @@ void PluginView::stop()
     m_isStarted = false;
 
     JSC::JSLock::DropAllLocks dropAllLocks(false);
+
+    PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
 
     // Clear the window
     m_npWindow.window = 0;
