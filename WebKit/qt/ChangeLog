@@ -1,3 +1,17 @@
+2009-05-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Working with Antonio Gomes.
+
+        Add support for finding the style property actually applied to the element.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+
 2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.

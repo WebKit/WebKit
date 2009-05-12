@@ -129,7 +129,9 @@ public:
     void setScriptableProperty(const QString &name, const QVariant &value);
     QStringList scriptableProperties() const;
 
-    QString styleProperty(const QString &name) const;
+    enum ResolveRule { IgnoreCascadingStyles, RespectCascadingStyles };
+
+    QString styleProperty(const QString &name, const ResolveRule = IgnoreCascadingStyles) const;
     void setStyleProperty(const QString &name, const QString &value);
 
     QString computedStyleProperty(const QString &name) const;

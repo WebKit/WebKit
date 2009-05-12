@@ -384,7 +384,20 @@ void tst_QWebElement::frame()
 
 void tst_QWebElement::style()
 {
-    QString html = "<body><p style=\"color: blue;\">some text</p></body>";
+    QString html = "<head>"
+        "<style type=\"text/css\">"
+            "div,p {color: green !important }"
+            "#singlep {width: 20px !important ; color: red }"
+        "</style>"
+        "<style type=\"text/css\">"
+            ".bg {background-color: #ff0000 !important;}"
+            " p {height: 11px! important; width : 12px !important; }"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id=\"singlep\" class=\"bg\" style=\"color: blue;\">some text</p>"
+    "</body>";
+
     m_mainFrame->setHtml(html);
 
     QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
@@ -395,7 +408,77 @@ void tst_QWebElement::style()
     p.setStyleProperty("cursor", "auto");
 
     QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
     QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
+
+    QString html2 = "<head>"
+        "<style type=\"text/css\">"
+            "p { color: green }"
+            "#singlep { color: red }"
+            ".classp { color: yellow }"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id=\"singlep\" class=\"classp\" style=\"color: blue;\">some text</p>"
+    "</body>";
+
+    m_mainFrame->setHtml(html2);
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+
+    QString html3 = "<head>"
+        "<style type=\"text/css\">"
+            "p { color: green !important }"
+            "#singlep { color: red !important}"
+            ".classp { color: yellow !important}"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id=\"singlep\" class=\"classp\" style=\"color: blue !important;\">some text</p>"
+    "</body>";
+
+    m_mainFrame->setHtml(html3);
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+
+    QString html4 = "<head>"
+        "<style type=\"text/css\">"
+            "p { color: green !important }"
+            "#singlep { color: red !important}"
+            "#singlep { color: black}"
+            ".classp { color: yellow !important}"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id=\"singlep\" class=\"classp\" style=\"color: blue;\">some text</p>"
+    "</body>";
+
+    m_mainFrame->setHtml(html4);
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
+
+    QString html5 = "<head>"
+        "<style type=\"text/css\">"
+            "p { color: green }"
+            "#singlep { color: red }"
+            ".classp { color: yellow }"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id=\"singlep\" class=\"classp\">some text</p>"
+    "</body>";
+
+    m_mainFrame->setHtml(html5);
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+
+    QCOMPARE(p.styleProperty("color"), QLatin1String(""));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
 }
 
 void tst_QWebElement::computedStyle()

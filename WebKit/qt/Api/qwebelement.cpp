@@ -21,7 +21,12 @@
 #include "qwebelement.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
+#include "CSSRuleList.h"
+#include "CSSRule.h"
+#include "CSSStyleRule.h"
+#include "CString.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "FrameView.h"
@@ -74,7 +79,7 @@ public:
 
     The element's attributes can be read using attribute() and changed using setAttribute().
 
-    The content of the child elements can be converted to plain text using toPlainText() and to 
+    The content of the child elements can be converted to plain text using toPlainText() and to
     x(html) using toXml(), and it is possible to replace the content using setPlainText() and setXml().
 
     Depending on the type of the underlying element there may be extra functionality available, not
@@ -857,19 +862,68 @@ QStringList QWebElement::scriptableProperties() const
 }
 
 /*!
-    Returns the value of the style named \a name or an empty string if the style has no such name.
+    Returns the value of the style named \a name or an empty string if such one
+    does not exist.
+
+    If \a rule is IgnoreCascadingStyles, the value defined inside the element
+    (inline in CSS terminology) is returned.
+
+    if \a rule is RespectCascadingStyles, the actual style applied to the
+    element is returned.
+
+    In CSS, the cascading part has to do with which CSS rule has priority and
+    is thus applied. Generally speaking, the last defined rule has priority,
+    thus an inline style rule has priority over an embedded block style rule,
+    which in return has priority over an external style rule.
+
+    If the !important declaration is set on one of those, the declaration gets
+    highest priority, unless other declarations also use the !important
+    declaration, in which the last !important declaration takes predecence.
 */
-QString QWebElement::styleProperty(const QString &name) const
+QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) const
 {
     if (!m_element || !m_element->isStyledElement())
         return QString();
 
     int propID = cssPropertyID(name);
-    CSSStyleDeclaration* style = static_cast<StyledElement*>(m_element)->style();
-    if (!propID || !style)
+
+    if (!propID)
         return QString();
 
-    return style->getPropertyValue(propID);
+    CSSStyleDeclaration* style = static_cast<StyledElement*>(m_element)->style();
+
+    if (rule == IgnoreCascadingStyles)
+        return style->getPropertyValue(propID);
+
+    if (rule == RespectCascadingStyles) {
+        if (style->getPropertyPriority(propID))
+            return style->getPropertyValue(propID);
+
+        // We are going to resolve the style property by walking through the
+        // list of non-inline matched CSS rules for the element, looking for
+        // the highest priority definition.
+
+        // Get an array of matched CSS rules for the given element sorted
+        // by importance and inheritance order. This include external CSS
+        // declarations, as well as embedded and inline style declarations.
+
+        DOMWindow* domWindow = m_element->document()->frame()->domWindow();
+        RefPtr<CSSRuleList> rules = domWindow->getMatchedCSSRules(m_element, "");
+
+        for (int i = rules->length(); i > 0; --i) {
+            CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
+
+            if (rule->style()->getPropertyPriority(propID))
+                return rule->style()->getPropertyValue(propID);
+
+            if (style->getPropertyValue(propID).isEmpty())
+                style = rule->style();
+        }
+
+        return style->getPropertyValue(propID);
+    }
+
+    return QString();
 }
 
 /*!
