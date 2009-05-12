@@ -69,6 +69,7 @@ accessibility/iframe-bastardization.html
 accessibility/ignore-spacer-elements.html
 accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
+accessibility/onclick-handlers.html
 accessibility/nochildren-elements.html
 accessibility/placeholder.html
 accessibility/radio-button-checkbox-size.html

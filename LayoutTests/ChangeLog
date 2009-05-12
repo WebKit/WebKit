@@ -1,3 +1,10 @@
+2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        DRT/GTK+ lacks an AccessibilityController do not run the
+        accessibility/onclick-handlers.thtml test.
+
+        * platform/gtk/Skipped:
+
 2009-05-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
