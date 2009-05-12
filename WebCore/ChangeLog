@@ -1,3 +1,23 @@
+2009-05-12  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixes to build with latest skia:  SkTypeface::Create() is now
+        SkTypeface::CreateFromName(); computeBounds() has been reworked
+        as getBounds().  The changes are placed behind an #ifdef for now,
+        so that we can roll back the skia version in Chromium if necessary
+        without having to roll back this change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25705
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::boundingRect):
+        (WebCore::boundingBoxForCurrentStroke):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::SkPathContainsPoint):
+
 2009-05-12  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.
