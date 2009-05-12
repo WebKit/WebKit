@@ -2,7 +2,8 @@
 
         Reviewed by Darin Adler.
 
-        class/struct mix-up in forward declarations
+        Bug 24538: class/struct mixup in forward declarations
+        https://bugs.webkit.org/show_bug.cgi?id=24538
 
         * Api/qwebpage.h:
 

@@ -2,7 +2,8 @@
 
         Reviewed by Darin Adler.
 
-        class/struct mix-up in forward declarations
+        Bug 24538: class/struct mixup in forward declarations
+        https://bugs.webkit.org/show_bug.cgi?id=24538
 
         * inspector/InspectorResource.h:
         * loader/CachedFont.h:
@@ -16,6 +17,9 @@
 2009-05-11  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
+
+        Bug 24539: Unresolved CSSMutableStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=24539
 
         The Symbian tools can't compile and link this without this include.
         It's not clear why this is different from other toolsets or why it affects
