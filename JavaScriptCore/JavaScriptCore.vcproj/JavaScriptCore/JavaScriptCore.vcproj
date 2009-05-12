@@ -1589,6 +1589,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITOpcodes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITStubCall.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITArithmetic.cpp"
 				>
 			</File>
