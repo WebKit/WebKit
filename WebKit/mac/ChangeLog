@@ -1,3 +1,12 @@
+2009-05-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - declare a forgotten method
+
+        * DOM/WebDOMOperationsPrivate.h: Declare -[DOMNode markupString] in the
+        WebDOMNodeOperationsPendingPublic category.
+
 2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
