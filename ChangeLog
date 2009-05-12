@@ -1,3 +1,14 @@
+2009-05-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Various autotools build refactoring and fixes
+        https://bugs.webkit.org/show_bug.cgi?id=25286
+
+        Refactor use of CFLAGS, CXXFLAGS, LIBADD and LDFLAGS.
+
+        * GNUmakefile.am:
+
 2009-05-09  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

@@ -38,21 +38,38 @@ CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
 
 # Libraries and support components
 bin_PROGRAMS :=
-
 noinst_PROGRAMS :=
-
 noinst_HEADERS :=
-
 lib_LIBRARIES :=
-
 IDL_BINDINGS :=
-
 TEST_PROGS :=
-
-# Gettext stuff
 POFILES :=
-
 MOFILES :=
+
+# local vars used throughout the build
+javascriptcore_h_api :=
+javascriptcore_cppflags:=
+javascriptcore_sources :=
+javascriptcore_built_sources :=
+javascriptcore_built_nosources :=
+javascriptcore_dist :=
+webcore_cppflags :=
+webcore_ldflags :=
+webcore_sources :=
+webcore_built_sources :=
+webcore_built_nosources :=
+webcore_dist :=
+webcoregtk_cppflags :=
+webcoregtk_sources :=
+webkitgtk_h_api :=
+webkitgtk_sources :=
+webkitgtk_cppflags :=
+webkitgtk_built_sources :=
+webkitgtk_built_nosources :=
+webkitgtk_cleanfiles :=
+
+no_undefined :=
+version_script :=
 
 # Global flags to CPP
 global_cppflags :=
@@ -80,12 +97,39 @@ endif
 # -no-undefined required for building DLLs on Windows
 # It breaks the build on other platforms, so we use it conditionally
 if OS_WIN32
-no_undefined = -no-undefined
+no_undefined += -no-undefined
 endif
 
 if OS_GNU
-version_script = -Wl,--version-script,$(srcdir)/autotools/symbols.filter
+version_script += -Wl,--version-script,$(srcdir)/autotools/symbols.filter
 endif
+
+
+# CFLAGS/CXXFLAGS used by WebCore and WebKit
+#
+# Gtk+.pc already include glib, cairo, freetype and pango CFLAGS
+# Don't include them for now to reduce the noise when compiling
+# $(GLIB_CFLAGS) $(CAIRO_CFLAGS) $(PANGO_CFLAGS)  $(FREETYPE_CFLAGS)
+webkit_cflags := \
+	$(COVERAGE_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
+	$(GNOMEKEYRING_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(HILDON_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(LIBXSLT_CFLAGS) \
+	$(SQLITE3_CFLAGS) \
+	$(UNICODE_CFLAGS) \
+	$(XT_CFLAGS)
+
+webkit_cppflags := \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags)
 
 # Shared libraries
 lib_LTLIBRARIES = \
@@ -96,15 +140,7 @@ noinst_LTLIBRARIES = \
 	libJavaScriptCore.la \
 	libWebCore.la
 
-#
-# JavaScriptCore
-javascriptcore_h_api :=
-javascriptcore_cppflags:=
-javascriptcore_sources :=
-javascriptcore_built_sources :=
-javascriptcore_built_nosources :=
-javascriptcore_dist :=
-
+# JavaScriptCore convenience lib
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
@@ -126,11 +162,6 @@ libJavaScriptCore_la_HEADERS = $(javascriptcore_h_api)
 libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_sources)
 
-libJavaScriptCore_la_LIBADD = \
-	$(UNICODE_LIBS) \
-	$(GLIB_LIBS) \
-	-lpthread
-
 libJavaScriptCore_la_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(libJavaScriptCore_la_CFLAGS)
@@ -146,17 +177,11 @@ libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-#
-# WebCore
-webcore_cppflags :=
-webcore_sources :=
-webcore_libadd :=
-webcore_built_sources :=
-webcore_built_nosources :=
-webcore_dist :=
-webcoregtk_cppflags :=
-webcoregtk_sources :=
+libJavaScriptCore_la_LIBADD = \
+	$(GLIB_LIBS) \
+	$(UNICODE_LIBS)
 
+# WebCore convenience lib
 nodist_EXTRA_libWebCore_la_SOURCES = \
 	$(webcore_built_nosources)
 
@@ -167,67 +192,19 @@ libWebCore_la_SOURCES = \
 	$(webcore_sources) \
 	$(webcoregtk_sources)
 
+libWebCore_la_CPPFLAGS = \
+	$(webkit_cppflags)
+
 libWebCore_la_CXXFLAGS = \
 	$(global_cxxflags) \
-	$(libWebCore_la_CFLAGS)
+	$(webkit_cflags)
 
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(GLIB_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(CAIRO_CFLAGS) \
-	$(PANGO_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(XT_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(FREETYPE_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(HILDON_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(GEOCLUE_CFLAGS)
+	$(webkit_cflags)
 
-libWebCore_la_CPPFLAGS = \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
-	$(javascriptcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(HILDON_CPPFLAGS)
-
-libWebCore_la_LIBADD = \
-	libJavaScriptCore.la \
-	libWebCoreJS.la \
-	$(webcore_libadd) \
-	$(GLIB_LIBS) \
-	$(LIBXML_LIBS) \
-	$(CAIRO_LIBS) \
-	$(PANGO_LIBS) \
-	$(GTK_LIBS) \
-	$(XT_LIBS) \
-	$(LIBSOUP_LIBS) \
-	$(FREETYPE_LIBS) \
-	$(UNICODE_LIBS) \
-	$(SQLITE3_LIBS) \
-	$(GSTREAMER_LIBS) \
-	$(LIBXSLT_LIBS) \
-	$(HILDON_LIBS) \
-	$(JPEG_LIBS) \
-	$(PNG_LIBS) \
-	$(GEOCLUE_LIBS) \
-	-lpthread
-
-# WebKit
-webkitgtk_h_api :=
-webkitgtk_sources :=
-webkitgtk_cppflags :=
-webkitgtk_built_sources :=
-webkitgtk_built_nosources :=
-webkitgtk_cleanfiles :=
-
+# WebKit convenience lib
 nodist_libwebkit_1_0_la_SOURCES = \
 	$(webkitgtk_built_sources)
 
@@ -240,26 +217,49 @@ libwebkit_1_0_la_SOURCES = \
 	$(webkitgtk_sources)
 
 libwebkit_1_0_la_CXXFLAGS = \
-	$(libWebCore_la_CXXFLAGS)
+	$(global_cxxflags) \
+	$(webkit_cflags)
 
 libwebkit_1_0_la_CFLAGS = \
-	$(libWebCore_la_CFLAGS) \
-	$(GNOMEKEYRING_CFLAGS)
+	-fno-strict-aliasing \
+	$(global_cflags) \
+	$(webkit_cflags)
 
 libwebkit_1_0_la_CPPFLAGS = \
-	$(libWebCore_la_CPPFLAGS) \
-	$(webkitgtk_cppflags)
+	$(webkit_cppflags) \
+	$(webkitgtk_cppflags) \
+	$(HILDON_CPPFLAGS)
 
-libwebkit_1_0_la_LDFLAGS = \
+libwebkit_1_0_la_LIBADD = \
+	$(webcore_ldflags) \
+	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
+	$(ENCHANT_LIBS) \
+	$(FREETYPE_LIBS) \
+	$(GEOCLUE_LIBS) \
+	$(GLIB_LIBS) \
+	$(GNOMEKEYRING_LIBS) \
+	$(GSTREAMER_LIBS) \
+	$(GTK_LIBS) \
+	$(HILDON_LIBS) \
+	$(JPEG_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(LIBXML_LIBS) \
+	$(LIBXSLT_LIBS) \
+	$(PANGO_LIBS) \
+	$(PNG_LIBS) \
+	$(SQLITE3_LIBS) \
+	$(UNICODE_LIBS) \
+	$(XT_LIBS) \
+	-lpthread \
+	libJavaScriptCore.la \
+	libWebCoreJS.la \
+	libWebCore.la
+
+ libwebkit_1_0_la_LDFLAGS = \
 	-version-info @LIBWEBKITGTK_VERSION@ \
 	$(version_script) \
 	$(no_undefined)
-
-libwebkit_1_0_la_LIBADD = \
-	libWebCore.la \
-	$(ENCHANT_LIBS) \
-	$(GNOMEKEYRING_LIBS)
 
 #
 # Extra checks and flags
@@ -308,7 +308,7 @@ global_cppflags += \
 endif
 
 if ENABLE_VIDEO
-webcore_libadd += -lgstinterfaces-0.10 -lgstvideo-0.10
+webcore_ldflags += -lgstinterfaces-0.10 -lgstvideo-0.10
 endif
 
 webkitgtk_h_api += \
