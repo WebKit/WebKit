@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * GNUmakefile.am: Added JITOpcodes.cpp and JITStubCall.h to the project.
+
+2009-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added
         JITOpcodes.cpp and JITStubCall.h to the project.
 

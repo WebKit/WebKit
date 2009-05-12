@@ -76,6 +76,7 @@ javascriptcore_sources += \
 	JavaScriptCore/JavaScriptCorePrefix.h \
 	JavaScriptCore/jit/ExecutableAllocator.h \
 	JavaScriptCore/jit/JIT.cpp \
+	JavaScriptCore/jit/JITOpcodes.cpp \
 	JavaScriptCore/jit/JITCall.cpp \
 	JavaScriptCore/jit/JITCode.h \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \
