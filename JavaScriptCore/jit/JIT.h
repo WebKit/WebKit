@@ -605,32 +605,20 @@ namespace JSC {
 
         void killLastResultRegister();
 
-#if ENABLE(CODEBLOCK_SAMPLING)
-        void sampleCodeBlock(CodeBlock* codeBlock)
-        {
-#if PLATFORM(X86_64)
-            move(ImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86::ecx);
-            storePtr(ImmPtr(codeBlock), X86::ecx);
-#else
-            storePtr(ImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
-        }
-#else
-        void sampleCodeBlock(CodeBlock*) {}
+
+#if ENABLE(SAMPLING_FLAGS)
+        void setSamplingFlag(int flag, RegisterID scratch);
+        void clearSamplingFlag(int flag, RegisterID scratch);
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)
-        void sampleInstruction(Instruction* instruction, bool inHostFunction=false)
-        {
-#if PLATFORM(X86_64)
-            move(ImmPtr(m_interpreter->sampler()->sampleSlot()), X86::ecx);
-            storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86::ecx);
-#else
-            storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
+        void sampleInstruction(Instruction*, bool = false);
 #endif
-        }
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+        void sampleCodeBlock(CodeBlock*);
 #else
-        void sampleInstruction(Instruction*, bool) {}
+        void sampleCodeBlock(CodeBlock*) {}
 #endif
 
         bool isSSE2Present() const { return m_isSSE2Present; }

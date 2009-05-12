@@ -1,5 +1,19 @@
 2009-05-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Enable use of SamplingFlags directly from JIT code.
+
+        * bytecode/SamplingTool.h:
+        * jit/JIT.h:
+        (JSC::JIT::sampleCodeBlock):
+        (JSC::JIT::sampleInstruction):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::setSamplingFlag):
+        (JSC::JIT::clearSamplingFlag):
+
+2009-05-11  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Implement JIT generation for instanceof for non-objects (always returns false).

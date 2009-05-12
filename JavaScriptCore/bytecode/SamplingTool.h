@@ -39,6 +39,7 @@
 namespace JSC {
 
     class SamplingFlags {
+        friend class JIT;
     public:
         static void start();
         static void stop();

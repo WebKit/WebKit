@@ -386,6 +386,55 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
     jump.linkTo(m_labels[m_bytecodeIndex + relativeOffset], this);
 }
 
+#if ENABLE(SAMPLING_FLAGS)
+ALWAYS_INLINE void JIT::setSamplingFlag(int flag, RegisterID scratch)
+{
+    ASSERT(flag >= 1);
+    ASSERT(flag <= 32);
+    load32(&SamplingFlags::s_flags, scratch);
+    or32(Imm32(1u << (flag - 1)), scratch);
+    store32(scratch, &SamplingFlags::s_flags);
+}
+
+ALWAYS_INLINE void JIT::clearSamplingFlag(int flag, RegisterID scratch)
+{
+    ASSERT(flag >= 1);
+    ASSERT(flag <= 32);
+    load32(&SamplingFlags::s_flags, scratch);
+    and32(Imm32(~(1u << (flag - 1))), scratch);
+    store32(scratch, &SamplingFlags::s_flags);
+}
+#endif
+
+#if ENABLE(OPCODE_SAMPLING)
+#if PLATFORM(X86_64)
+ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
+{
+    move(ImmPtr(m_interpreter->sampler()->sampleSlot()), X86::ecx);
+    storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86::ecx);
+}
+#else
+ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
+{
+    storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
+}
+#endif
+#endif
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+#if PLATFORM(X86_64)
+ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
+{
+    move(ImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86::ecx);
+    storePtr(ImmPtr(codeBlock), X86::ecx);
+}
+#else
+ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
+{
+    storePtr(ImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
+}
+#endif
+#endif
 }
 
 #endif // ENABLE(JIT)
