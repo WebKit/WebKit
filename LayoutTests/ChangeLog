@@ -1,3 +1,55 @@
+2009-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        <rdar://problem/6497461> Many media layout tests failing on SnowLeopard.
+        
+        Turn media tests back on for SnowLeopard, and generate new pixel results. Put override
+        results in platform/mac-leopard when necessary.
+        
+        media/video-size-intrinsic-scale.html fails and is still skipped: <rdar://problem/6877291>
+
+        * platform/mac-leopard/media/audio-controls-rendering-expected.checksum: Added.
+        * platform/mac-leopard/media/audio-controls-rendering-expected.png: Added.
+        * platform/mac-leopard/media/video-aspect-ratio-expected.checksum: Added.
+        * platform/mac-leopard/media/video-aspect-ratio-expected.png: Added.
+        * platform/mac-leopard/media/video-controls-rendering-expected.checksum: Added.
+        * platform/mac-leopard/media/video-controls-rendering-expected.png: Added.
+        * platform/mac-leopard/media/video-display-toggle-expected.checksum: Added.
+        * platform/mac-leopard/media/video-display-toggle-expected.png: Added.
+        * platform/mac-leopard/media/video-empty-source-expected.checksum: Added.
+        * platform/mac-leopard/media/video-empty-source-expected.png: Added.
+        * platform/mac-leopard/media/video-layer-crash-expected.checksum: Added.
+        * platform/mac-leopard/media/video-layer-crash-expected.png: Added.
+        * platform/mac-leopard/media/video-transformed-expected.checksum: Added.
+        * platform/mac-leopard/media/video-transformed-expected.png: Added.
+        * platform/mac-leopard/media/video-zoom-controls-expected.checksum: Added.
+        * platform/mac-leopard/media/video-zoom-controls-expected.png: Added.
+        * platform/mac-leopard/media/video-zoom-expected.checksum: Added.
+        * platform/mac-leopard/media/video-zoom-expected.png: Added.
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac/Skipped:
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/video-aspect-ratio-expected.checksum:
+        * platform/mac/media/video-aspect-ratio-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-visible-audio-only-expected.checksum: Removed.
+        * platform/mac/media/video-controls-visible-audio-only-expected.png: Removed.
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-empty-source-expected.checksum:
+        * platform/mac/media/video-empty-source-expected.png:
+        * platform/mac/media/video-layer-crash-expected.checksum:
+        * platform/mac/media/video-layer-crash-expected.png:
+        * platform/mac/media/video-transformed-expected.checksum:
+        * platform/mac/media/video-transformed-expected.png:
+        * platform/mac/media/video-zoom-controls-expected.checksum:
+        * platform/mac/media/video-zoom-controls-expected.png:
+        * platform/mac/media/video-zoom-expected.checksum:
+        * platform/mac/media/video-zoom-expected.png:
+
 2009-03-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

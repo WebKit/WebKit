@@ -1,8 +1,8 @@
 # <rdar://problem/6530010> NPN_SetException is not working
 plugins/netscape-throw-exception.html
 
-# <rdar://problem/6497461> Many media tests fail due to logging, etc.
-media
+# <rdar://problem/6877291> media/video-size-intrinsic-scale.html test fails
+media/video-size-intrinsic-scale.html
 
 # <rdar://problem/6719019&6719106&6719597&6719661> Incorrect MIME type for some local files
 http/tests/misc/createElementNamespace1.xml
