@@ -1,3 +1,16 @@
+2009-05-12  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Many methods were not considering the case of the element not having
+        siblings or children when inserting nodes, and thus broke in some
+        situations. This patch fixes that.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::prependInside):
+        (QWebElement::appendOutside):
+        (QWebElement::encloseWith):
+
 2009-05-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.
