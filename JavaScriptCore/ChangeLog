@@ -1,3 +1,15 @@
+2009-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        - allow all of strictEqual to be inlined into cti_op_stricteq once again
+        
+        We had this optimization once but accidentally lost it at some point.
+
+        * runtime/Operations.h:
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        (JSC::JSValue::strictEqual):
+
 2009-05-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
