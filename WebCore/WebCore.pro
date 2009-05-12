@@ -84,23 +84,23 @@ CONFIG(QTDIR_build) {
 
 # Optional components (look for defs in config.h and included files!)
 
-# turn off database support if we do not have sqlite3 support 
-!CONFIG(QTDIR_build):win32-*:!exists( $${SQLITE3SRCDIR}/sqlite3.c ): DEFINES += ENABLE_DATABASE=0 ENABLE_ICONDATABASE=0 ENABLE_OFFLINE_WEB_APPLICATIONS=0 ENABLE_DOM_STORAGE=0
+# turn off SQLITE support if we do not have sqlite3 available
+!CONFIG(QTDIR_build):win32-*:!exists( $${SQLITE3SRCDIR}/sqlite3.c ): DEFINES += ENABLE_SQLITE=0 ENABLE_DATABASE=0 ENABLE_ICONDATABASE=0 ENABLE_OFFLINE_WEB_APPLICATIONS=0 ENABLE_DOM_STORAGE=0
 
 !contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=.): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
+!contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=.): DEFINES += ENABLE_OFFLINE_WEB_APPLICATIONS=1
 !contains(DEFINES, ENABLE_DOM_STORAGE=.): DEFINES += ENABLE_DOM_STORAGE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 
-# turn on database support if any of the dependent features are turned on
-!contains(DEFINES, ENABLE_DATABASE=1) {
-  contains(DEFINES, ENABLE_ICONDATABASE=1)|contains(DEFINES, ENABLE_DOM_STORAGE=1)|contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
-    DEFINES += ENABLE_DATABASE=1
+# turn on SQLITE support if any of the dependent features are turned on
+!contains(DEFINES, ENABLE_SQLITE=.) {
+  contains(DEFINES, ENABLE_DATABASE=1)|contains(DEFINES, ENABLE_ICONDATABASE=1)|contains(DEFINES, ENABLE_DOM_STORAGE=1)|contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
+    DEFINES += ENABLE_SQLITE=1
+  } else {
+    DEFINES += ENABLE_SQLITE=0
   }
 }
-
-# if database support is not on by now, turn it off 
-!contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=0
 
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
@@ -1281,9 +1281,7 @@ contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {
     DASHBOARDSUPPORTCSSPROPERTIES -= $$PWD/css/DashboardSupportCSSPropertyNames.in
 }
 
-contains(DEFINES, ENABLE_DATABASE=1) {
-    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
-
+contains(DEFINES, ENABLE_SQLITE=1) {
     # somewhat copied from src/plugins/sqldrivers/sqlite/sqlite.pro
     CONFIG(QTDIR_build):system-sqlite {
         LIBS *= $$QT_LFLAGS_SQLITE
@@ -1308,20 +1306,21 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         platform/sql/SQLiteStatement.cpp \
         platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \
-        storage/ChangeVersionWrapper.cpp \
-        storage/DatabaseAuthorizer.cpp \
         storage/Database.cpp \
+        storage/DatabaseAuthorizer.cpp
+}
+
+
+contains(DEFINES, ENABLE_DATABASE=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
+
+    SOURCES += \
+        storage/ChangeVersionWrapper.cpp \
         storage/DatabaseTask.cpp \
         storage/DatabaseThread.cpp \
         storage/DatabaseTracker.cpp \
-        storage/LocalStorage.cpp \
-        storage/LocalStorageArea.cpp \
-        storage/LocalStorageTask.cpp \
-        storage/LocalStorageThread.cpp \
         storage/OriginQuotaManager.cpp \
         storage/OriginUsageRecord.cpp \
-        storage/StorageArea.cpp \
-        storage/StorageMap.cpp \
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \
@@ -1352,7 +1351,13 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/SessionStorageArea.h
 
     SOURCES += \
+        storage/LocalStorage.cpp \
+        storage/LocalStorageArea.cpp \
+        storage/LocalStorageTask.cpp \
+        storage/LocalStorageThread.cpp \
         storage/Storage.cpp \
+        storage/StorageArea.cpp \
+        storage/StorageMap.cpp \
         storage/StorageEvent.cpp \
         storage/SessionStorage.cpp \
         storage/SessionStorageArea.cpp \
