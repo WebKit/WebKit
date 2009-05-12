@@ -482,6 +482,7 @@ namespace JSC {
         void emit_op_neq_null(Instruction*);
         void emit_op_enter(Instruction*);
         void emit_op_enter_with_activation(Instruction*);
+        void emit_op_init_arguments(Instruction*);
         void emit_op_create_arguments(Instruction*);
         void emit_op_convert_this(Instruction*);
         void emit_op_profile_will_call(Instruction*);

@@ -1148,7 +1148,8 @@ void JITStubs::cti_op_tear_off_arguments(STUB_ARGS_DECLARATION)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(stackFrame.callFrame->codeBlock()->usesArguments() && !stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    stackFrame.callFrame->optionalCalleeArguments()->copyRegisters();
+    if (stackFrame.callFrame->optionalCalleeArguments())
+        stackFrame.callFrame->optionalCalleeArguments()->copyRegisters();
 }
 
 void JITStubs::cti_op_profile_will_call(STUB_ARGS_DECLARATION)
@@ -1583,7 +1584,26 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS_DECLARATION)
     int argsOffset = stackFrame.args[0].int32();
     JSValue arguments = callFrame[argsOffset].jsValue();
     uint32_t argCount = 0;
-    if (!arguments.isUndefinedOrNull()) {
+    if (!arguments) {
+        argCount = (uint32_t)(callFrame[RegisterFile::ArgumentCount].u.i) - 1;
+        int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
+        Register* newEnd = callFrame->registers() + sizeDelta;
+        if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
+            stackFrame.globalData->exception = createStackOverflowError(callFrame);
+            VM_THROW_EXCEPTION();
+        }
+        uint32_t expectedParams = asFunction(callFrame[RegisterFile::Callee].jsValue())->body()->parameterCount();
+        uint32_t inplaceArgs = min(argCount, expectedParams);
+        uint32_t i = 0;
+        Register* argStore = callFrame->registers() + argsOffset;
+        
+        // First step is to copy the "expected" parameters from their normal location relative to the callframe
+        for (; i < inplaceArgs; i++)
+            argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams];
+        // Then we copy any additional arguments that may be further up the stack ('-1' to account for 'this')
+        for (; i < argCount; i++)
+            argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - argCount - 1];
+    } else if (!arguments.isUndefinedOrNull()) {
         if (!arguments.isObject()) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);

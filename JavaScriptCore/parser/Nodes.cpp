@@ -459,7 +459,15 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             RefPtr<RegisterID> argsRegister = generator.newTemporary();
             generator.emitNode(thisRegister.get(), m_args->m_listNode->m_expr);
             ArgumentListNode* args = m_args->m_listNode->m_next;
-            generator.emitNode(argsRegister.get(), args->m_expr);
+            bool isArgumentsApply = false;
+            if (args->m_expr->isResolveNode()) {
+                ResolveNode* resolveNode = static_cast<ResolveNode*>(args->m_expr);
+                isArgumentsApply = generator.willResolveToArguments(resolveNode->identifier());
+                if (isArgumentsApply)
+                    generator.emitMove(argsRegister.get(), generator.uncheckedRegisterForArguments());
+            }
+            if (!isArgumentsApply)
+                generator.emitNode(argsRegister.get(), args->m_expr);
             while ((args = args->m_next))
                 generator.emitNode(args->m_expr);
 

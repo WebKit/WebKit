@@ -1,3 +1,43 @@
+2009-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve function call forwarding performance
+
+        Make creation of the Arguments object occur lazily, so it
+        is not necessarily created for every function that references
+        it.  Then add logic to Function.apply to allow it to avoid
+        allocating the Arguments object at all.  Helps a lot with
+        the function forwarding/binding logic in jQuery, Prototype,
+        and numerous other JS libraries.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::willResolveToArguments):
+        (JSC::BytecodeGenerator::uncheckedRegisterForArguments):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitPushScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_init_arguments):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_tear_off_arguments):
+        (JSC::JITStubs::cti_op_load_varargs):
+        * parser/Nodes.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+
 2009-05-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

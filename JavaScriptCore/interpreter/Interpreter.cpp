@@ -3085,7 +3085,26 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         JSValue arguments = callFrame[argsOffset].jsValue();
         uint32_t argCount = 0;
-        if (!arguments.isUndefinedOrNull()) {
+        if (!arguments) {
+            argCount = (uint32_t)(callFrame[RegisterFile::ArgumentCount].u.i) - 1;
+            int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
+            Register* newEnd = callFrame->registers() + sizeDelta;
+            if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
+                exceptionValue = createStackOverflowError(callFrame);
+                goto vm_throw;
+            }
+            uint32_t expectedParams = asFunction(callFrame[RegisterFile::Callee].jsValue())->body()->parameterCount();
+            uint32_t inplaceArgs = min(argCount, expectedParams);
+            uint32_t i = 0;
+            Register* argStore = callFrame->registers() + argsOffset;
+
+            // First step is to copy the "expected" parameters from their normal location relative to the callframe
+            for (; i < inplaceArgs; i++)
+                argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams];
+            // Then we copy any additional arguments that may be further up the stack ('-1' to account for 'this')
+            for (; i < argCount; i++)
+                argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - argCount - 1];
+        } else if (!arguments.isUndefinedOrNull()) {
             if (!arguments.isObject()) {
                 exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - callFrame->codeBlock()->instructions().begin(), callFrame->codeBlock());
                 goto vm_throw;
@@ -3249,8 +3268,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
 
         ASSERT(callFrame->codeBlock()->usesArguments() && !callFrame->codeBlock()->needsFullScopeChain());
-
-        callFrame->optionalCalleeArguments()->copyRegisters();
+        if (callFrame->optionalCalleeArguments())
+            callFrame->optionalCalleeArguments()->copyRegisters();
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -3356,21 +3375,33 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ++vPC;
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_init_arguments) {
+        /* create_arguments
+
+           Initialises the arguments object reference to null to ensure
+           we can correctly detect that we need to create it later (or
+           avoid creating it altogether).
+
+           This opcode should only be used at the beginning of a code
+           block.
+         */
+        callFrame[RegisterFile::ArgumentsRegister] = JSValue();
+        ++vPC;
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_create_arguments) {
         /* create_arguments
 
            Creates the 'arguments' object and places it in both the
            'arguments' call frame slot and the local 'arguments'
-           register.
-
-           This opcode should only be used at the beginning of a code
-           block.
-        */
-
-        Arguments* arguments = new (globalData) Arguments(callFrame);
-        callFrame->setCalleeArguments(arguments);
-        callFrame[RegisterFile::ArgumentsRegister] = arguments;
+           register, if it has not already been initialised.
+         */
         
+         if (!callFrame->optionalCalleeArguments()) {
+             Arguments* arguments = new (globalData) Arguments(callFrame);
+             callFrame->setCalleeArguments(arguments);
+             callFrame[RegisterFile::ArgumentsRegister] = arguments;
+         }
         ++vPC;
         NEXT_INSTRUCTION();
     }
@@ -3838,6 +3869,11 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
         ASSERT(codeBlock->codeType() == FunctionCode);
         SymbolTable& symbolTable = codeBlock->symbolTable();
         int argumentsIndex = symbolTable.get(functionCallFrame->propertyNames().arguments.ustring().rep()).getIndex();
+        if (!functionCallFrame[argumentsIndex].arguments()) {
+            Arguments* arguments = new (callFrame) Arguments(functionCallFrame);
+            functionCallFrame->setCalleeArguments(arguments);
+            functionCallFrame[RegisterFile::ArgumentsRegister] = arguments;
+        }
         return functionCallFrame[argumentsIndex].jsValue();
     }
 

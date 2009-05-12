@@ -81,6 +81,9 @@ namespace JSC {
         // such register exists. Registers returned by registerFor do not
         // require explicit reference counting.
         RegisterID* registerFor(const Identifier&);
+        
+        bool willResolveToArguments(const Identifier&);
+        RegisterID* uncheckedRegisterForArguments();
 
         // Behaves as registerFor does, but ignores dynamic scope as
         // dynamic scope should not interfere with const initialisation
@@ -425,6 +428,8 @@ namespace JSC {
         bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval(); }
 
         RegisterID* emitThrowExpressionTooDeepException();
+
+        void createArgumentsIfNecessary();
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;

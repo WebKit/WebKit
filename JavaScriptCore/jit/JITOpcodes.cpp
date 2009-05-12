@@ -861,10 +861,17 @@ void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_create_arguments(Instruction*)
 {
+    Jump argsCreated = branchTestPtr(NonZero, Address(callFrameRegister, sizeof(Register) * RegisterFile::ArgumentsRegister));
     if (m_codeBlock->m_numParameters == 1)
         JITStubCall(this, JITStubs::cti_op_create_arguments_no_params).call();
     else
         JITStubCall(this, JITStubs::cti_op_create_arguments).call();
+    argsCreated.link(this);
+}
+    
+void JIT::emit_op_init_arguments(Instruction*)
+{
+    storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * RegisterFile::ArgumentsRegister));
 }
 
 void JIT::emit_op_convert_this(Instruction* currentInstruction)

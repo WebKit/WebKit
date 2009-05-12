@@ -332,8 +332,8 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     } else
         emitOpcode(op_enter);
 
-    if (usesArguments)
-        emitOpcode(op_create_arguments);
+     if (usesArguments)
+        emitOpcode(op_init_arguments);
 
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i) {
@@ -428,6 +428,36 @@ RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
     if (entry.isNull())
         return 0;
 
+    if (ident == propertyNames().arguments)
+        createArgumentsIfNecessary();
+
+    return &registerFor(entry.getIndex());
+}
+
+bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
+{
+    if (ident != propertyNames().arguments)
+        return false;
+    
+    if (!shouldOptimizeLocals())
+        return false;
+    
+    SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
+    if (entry.isNull())
+        return false;
+    
+    if (m_codeBlock->usesArguments() && m_codeType == FunctionCode)
+        return true;
+    
+    return false;
+}
+
+RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
+{
+    ASSERT(willResolveToArguments(propertyNames().arguments));
+
+    SymbolTableEntry entry = symbolTable().get(propertyNames().arguments.ustring().rep());
+    ASSERT(!entry.isNull());
     return &registerFor(entry.getIndex());
 }
 
@@ -1346,8 +1376,15 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Regis
     return emitCall(op_call, dst, func, thisRegister, argumentsNode, divot, startOffset, endOffset);
 }
 
+void BytecodeGenerator::createArgumentsIfNecessary()
+{
+    if (m_codeBlock->usesArguments() && m_codeType == FunctionCode)
+        emitOpcode(op_create_arguments);
+}
+
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
+    createArgumentsIfNecessary();
     return emitCall(op_call_eval, dst, func, thisRegister, argumentsNode, divot, startOffset, endOffset);
 }
 
@@ -1572,6 +1609,7 @@ RegisterID* BytecodeGenerator::emitPushScope(RegisterID* scope)
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_dynamicScopeDepth++;
+    createArgumentsIfNecessary();
 
     return emitUnaryNoDstOp(op_push_scope, scope);
 }
