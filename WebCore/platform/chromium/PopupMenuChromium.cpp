@@ -1063,13 +1063,26 @@ void PopupListBox::layout()
     }
 
     int windowHeight = 0;
+
+#if PLATFORM(DARWIN)
+    // Set the popup's window to contain all available items on Mac only, which
+    // uses native controls that manage their own scrolling. This allows hit
+    // testing to work when selecting items in popups that have more menu entries
+    // than the maximum window size.
+    m_visibleRows = numItems();
+#else
     m_visibleRows = min(numItems(), kMaxVisibleRows);
+#endif
+
     for (int i = 0; i < m_visibleRows; ++i) {
         int rowHeight = getRowHeight(i);
+#if !PLATFORM(DARWIN)
+        // Only clip the window height for non-Mac platforms.
         if (windowHeight + rowHeight > kMaxHeight) {
             m_visibleRows = i;
             break;
         }
+#endif
 
         windowHeight += rowHeight;
     }

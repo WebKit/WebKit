@@ -1,3 +1,18 @@
+2009-05-12  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 25708: Cannot choose menu items in popups with many entries in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=25708
+
+        This change sets the window size for popups on Mac to include all items
+        in the menu. This is required for hit testing on Mac, where we use native
+        controls to manage the popups and don't want to artificially limit the
+        valid hit testing region to a limited scroll window.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::layout):
+
 2009-05-12  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.
