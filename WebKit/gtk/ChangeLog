@@ -1,3 +1,14 @@
+2009-05-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Various autotools build refactoring and fixes
+        https://bugs.webkit.org/show_bug.cgi?id=25286
+
+        Add glib-2.0 to the list of required package.
+
+        * webkit.pc.in:
+
 2009-05-11  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.
