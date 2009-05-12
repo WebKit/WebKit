@@ -1,3 +1,13 @@
+2009-05-12  Soren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25687
+        Missing check for valid function in V8 bindings for toString function for event listeners.
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::getWrappedListenerFunction): Added empty handle checks.
+
 2009-05-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Holger Freyther.

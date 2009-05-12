@@ -197,19 +197,23 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
                 // is that some web sites uses toString on event functions and the evals the source returned (some times a RegExp is applied as
                 // well) for some other use. That fails miserably if the actual wrapper source is returned.
                 v8::Local<v8::FunctionTemplate> toStringTemplate = v8::FunctionTemplate::New(V8LazyEventListenerToString);
-                v8::Local<v8::Function> toStringFunction = toStringTemplate->GetFunction();
-                String toStringResult = "function ";
-                toStringResult.append(m_functionName);
-                toStringResult.append("(");
-                if (m_isSVGEvent)
-                    toStringResult.append("evt");
-                else
-                    toStringResult.append("event");
-                toStringResult.append(") {\n  ");
-                toStringResult.append(m_code);
-                toStringResult.append(  "\n}");
-                toStringFunction->SetHiddenValue(v8::String::New("toStringString"), v8ExternalString(toStringResult));
-                m_wrappedFunction->Set(v8::String::New("toString"), toStringFunction);
+                v8::Local<v8::Function> toStringFunction;
+                if (!toStringTemplate.IsEmpty())
+                    toStringFunction = toStringTemplate->GetFunction();
+                if (!toStringFunction.IsEmpty()) {
+                    String toStringResult = "function ";
+                    toStringResult.append(m_functionName);
+                    toStringResult.append("(");
+                    if (m_isSVGEvent)
+                        toStringResult.append("evt");
+                    else
+                        toStringResult.append("event");
+                    toStringResult.append(") {\n  ");
+                    toStringResult.append(m_code);
+                    toStringResult.append("\n}");
+                    toStringFunction->SetHiddenValue(v8::String::New("toStringString"), v8ExternalString(toStringResult));
+                    m_wrappedFunction->Set(v8::String::New("toString"), toStringFunction);
+                }
 
 #ifndef NDEBUG
                 V8Proxy::RegisterGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
