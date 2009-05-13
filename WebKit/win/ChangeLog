@@ -1,3 +1,13 @@
+2009-05-13  Dmitry Titov  <dimich@chromium.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25746
+        Revert http://trac.webkit.org/changeset/43507 which caused crash in PPC nightlies with Safari 4.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2009-05-12  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix for Windows nightlies.

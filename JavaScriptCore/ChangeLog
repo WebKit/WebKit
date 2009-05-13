@@ -1,3 +1,69 @@
+2009-05-13  Dmitry Titov  <dimich@chromium.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25746
+        Revert http://trac.webkit.org/changeset/43507 which caused crash in PPC nightlies with Safari 4.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingThread::start):
+        (JSC::SamplingThread::stop):
+        * bytecode/SamplingTool.h:
+        * wtf/CrossThreadRefCounted.h:
+        (WTF::CrossThreadRefCounted::CrossThreadRefCounted):
+        (WTF::::ref):
+        (WTF::::deref):
+        * wtf/Threading.h:
+        * wtf/ThreadingNone.cpp:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::threadMap):
+        (WTF::identifierByPthreadHandle):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::pthreadHandleForIdentifier):
+        (WTF::clearPthreadHandleForIdentifier):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::currentThread):
+        * wtf/ThreadingWin.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::threadMap):
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::threadHandleForIdentifier):
+        (WTF::clearThreadHandleForIdentifier):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::currentThread):
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::threadMap):
+        (WTF::identifierByGthreadHandle):
+        (WTF::establishIdentifierForThread):
+        (WTF::threadForIdentifier):
+        (WTF::clearThreadForIdentifier):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::currentThread):
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        (WTF::identifierByQthreadHandle):
+        (WTF::establishIdentifierForThread):
+        (WTF::clearThreadForIdentifier):
+        (WTF::threadForIdentifier):
+        (WTF::initializeThreading):
+        (WTF::createThreadInternal):
+        (WTF::waitForThreadCompletion):
+        (WTF::currentThread):
+
 2009-05-13  Darin Adler  <darin@apple.com>
 
         Revert the parser arena change. It was a slowdown, not a speedup.

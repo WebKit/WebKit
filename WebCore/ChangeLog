@@ -1,3 +1,35 @@
+2009-05-13  Dmitry Titov  <dimich@chromium.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25746
+        Revert http://trac.webkit.org/changeset/43507 which caused crash in PPC nightlies with Safari 4.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::matchFunc):
+        (WebCore::openFunc):
+        (WebCore::createStringParser):
+        (WebCore::createMemoryParser):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::close):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::LocalStorageThread):
+        (WebCore::LocalStorageThread::start):
+        (WebCore::LocalStorageThread::localStorageThread):
+        (WebCore::LocalStorageThread::scheduleImport):
+        (WebCore::LocalStorageThread::scheduleSync):
+        (WebCore::LocalStorageThread::terminate):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::start):
+
 2009-05-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
