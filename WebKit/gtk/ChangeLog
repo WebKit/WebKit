@@ -1,5 +1,12 @@
 2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Add information about the SVG index bounds check committed in
+        r43590.
+
+        * NEWS:
+
+2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         Note changes since 1.1.6.

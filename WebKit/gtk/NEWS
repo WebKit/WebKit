@@ -4,6 +4,9 @@ WebKitGTK+ 1.1.7
 
 What's new in WebKitGTK+ 1.1.7?
 
+  - This release includes a security fix:
+    SVGList::insertItemBefore would not perform a bounds check on the
+    index it was provided, potentially leading to a buffer overflow.
   - New frame loading properties supersede various load-* signals, and
     are also accessible in the WebView, for convenience, making this
     API saner.
