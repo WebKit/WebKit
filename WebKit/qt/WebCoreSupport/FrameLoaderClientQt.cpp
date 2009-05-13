@@ -338,10 +338,6 @@ void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
     if (!m_webFrame)
         return;
 
-
-
-    // ### hack
-    emit m_webFrame->urlChanged(m_webFrame->url());
     emit titleChanged(title);
 }
 
@@ -354,6 +350,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 
+    emit m_webFrame->urlChanged(m_webFrame->url());
     m_webFrame->page()->d->updateNavigationActions();
 
     // We should assume first the frame has no title. If it has, then the above dispatchDidReceiveTitle()

@@ -1,3 +1,14 @@
+2009-05-13  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Move emitting the signal QWebFrame::urlChanged to FrameLoaderClientQt::dispatchDidCommitLoad().
+        This is to ensure that urlChanged() is emitted even if the frame has no title.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+
 2009-05-13  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Rubberstamped by Ariya Hidayat.
