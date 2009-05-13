@@ -132,44 +132,15 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         if (diff >= StyleDifferenceRepaint && node() &&
                 (node()->hasTagName(htmlTag) || node()->hasTagName(bodyTag)))
             view()->repaint();
-        else if (parent() && !isText()) {
-            // Do a repaint with the old style first, e.g., for example if we go from
-            // having an outline to not having an outline.
-            if (diff == StyleDifferenceRepaintLayer) {
-                layer()->repaintIncludingDescendants();
-                if (!(style()->clip() == newStyle->clip()))
-                    layer()->clearClipRectsIncludingDescendants();
-            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < style()->outlineSize())
-                repaint();
-        }
-
-        if (diff == StyleDifferenceLayout) {
-            // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
-            // end up being destroyed.
-            if (hasLayer()) {
-                if (style()->position() != newStyle->position() ||
-                    style()->zIndex() != newStyle->zIndex() ||
-                    style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                    !(style()->clip() == newStyle->clip()) ||
-                    style()->hasClip() != newStyle->hasClip() ||
-                    style()->opacity() != newStyle->opacity() ||
-                    style()->transform() != newStyle->transform())
-                layer()->repaintIncludingDescendants();
-            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
-                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
-                //  then we need to repaint the old position of the object.
-                repaint();
-            }
         
-            // When a layout hint happens and an object's position style changes, we have to do a layout
-            // to dirty the render tree using the old position value now.
-            if (parent() && style()->position() != newStyle->position()) {
-                markContainingBlocksForLayout();
-                if (style()->position() == StaticPosition)
-                    repaint();
-                if (isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
-                    removeFloatingOrPositionedChildFromBlockLists();
-            }
+        // When a layout hint happens and an object's position style changes, we have to do a layout
+        // to dirty the render tree using the old position value now.
+        if (diff == StyleDifferenceLayout && parent() && style()->position() != newStyle->position()) {
+            markContainingBlocksForLayout();
+            if (style()->position() == StaticPosition)
+                repaint();
+            if (isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
+                removeFloatingOrPositionedChildFromBlockLists();
         }
     }
 

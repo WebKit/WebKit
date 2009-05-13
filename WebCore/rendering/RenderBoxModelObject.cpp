@@ -41,6 +41,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 bool RenderBoxModelObject::s_wasFloating = false;
+bool RenderBoxModelObject::s_hadLayer = false;
+bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 
 RenderBoxModelObject::RenderBoxModelObject(Node* node)
     : RenderObject(node)
@@ -81,10 +83,43 @@ bool RenderBoxModelObject::hasSelfPaintingLayer() const
 void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     s_wasFloating = isFloating();
+    s_hadLayer = hasLayer();
+    if (s_hadLayer)
+        s_layerWasSelfPainting = layer()->isSelfPaintingLayer();
 
     // If our z-index changes value or our visibility changes,
     // we need to dirty our stacking context's z-order list.
     if (style() && newStyle) {
+        if (parent()) {
+            // Do a repaint with the old style first, e.g., for example if we go from
+            // having an outline to not having an outline.
+            if (diff == StyleDifferenceRepaintLayer) {
+                layer()->repaintIncludingDescendants();
+                if (!(style()->clip() == newStyle->clip()))
+                    layer()->clearClipRectsIncludingDescendants();
+            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < style()->outlineSize())
+                repaint();
+        }
+        
+        if (diff == StyleDifferenceLayout) {
+            // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
+            // end up being destroyed.
+            if (hasLayer()) {
+                if (style()->position() != newStyle->position() ||
+                    style()->zIndex() != newStyle->zIndex() ||
+                    style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
+                    !(style()->clip() == newStyle->clip()) ||
+                    style()->hasClip() != newStyle->hasClip() ||
+                    style()->opacity() != newStyle->opacity() ||
+                    style()->transform() != newStyle->transform())
+                layer()->repaintIncludingDescendants();
+            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
+                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
+                //  then we need to repaint the old position of the object.
+                repaint();
+            }
+        }
+
         if (hasLayer() && (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
                            style()->zIndex() != newStyle->zIndex() ||
                            style()->visibility() != newStyle->visibility())) {
@@ -120,8 +155,11 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
             setChildNeedsLayout(true);
     }
 
-    if (m_layer)
-        m_layer->styleChanged(diff, oldStyle);
+    if (layer()) {
+        layer()->styleChanged(diff, oldStyle);
+        if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
+            setChildNeedsLayout(true);
+    }
 }
 
 void RenderBoxModelObject::updateBoxModelInfoFromStyle()

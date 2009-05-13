@@ -111,6 +111,8 @@ private:
     
     // Used to store state between styleWillChange and styleDidChange
     static bool s_wasFloating;
+    static bool s_hadLayer;
+    static bool s_layerWasSelfPainting;
 };
 
 inline RenderBoxModelObject* toRenderBoxModelObject(RenderObject* o)

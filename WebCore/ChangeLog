@@ -1,3 +1,24 @@
+2009-05-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin and Darin Adler.
+
+        Fix for <rdar://problem/6869687> REGRESSION (r41203): Facebook friend suggestions disappear on update.
+        
+        Make sure that renderers are marked for layout if a style change causes them to switch from having a self-painting layer
+        to a non-self-painting layer (and vice versa).
+        
+        Move misplaced layer repainting code that was in RenderBox up into RenderBoxModelObject so that inlines with layers
+        repaint properly on opacity changes, etc.
+
+        Added fast/repaint/opacity-change-on-overflow-float.html.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        (WebCore::RenderBoxModelObject::styleDidChange):
+        * rendering/RenderBoxModelObject.h:
+
 2009-05-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Not reviewed, build fix.

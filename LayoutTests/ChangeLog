@@ -1,3 +1,14 @@
+2009-05-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin and Darin Adler.
+
+        Add a repaint test for <rdar://problem/6869687> REGRESSION (r41203): Facebook friend suggestions disappear on update.
+
+        * fast/repaint/opacity-change-on-overflow-float.html: Added.
+        * platform/mac/fast/repaint/opacity-change-on-overflow-float-expected.checksum: Added.
+        * platform/mac/fast/repaint/opacity-change-on-overflow-float-expected.png: Added.
+        * platform/mac/fast/repaint/opacity-change-on-overflow-float-expected.txt: Added.
+
 2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Disable new tests. We are not going to be adding more new test
