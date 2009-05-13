@@ -1,3 +1,10 @@
+2009-05-13  Darin Adler  <darin@apple.com>
+
+        Tiger build fix.
+
+        * parser/Grammar.y: Add back empty code blocks, needed by older
+        versions of bison on certain rules.
+
 2009-05-13  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

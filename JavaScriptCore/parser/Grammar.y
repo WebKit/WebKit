@@ -1248,16 +1248,16 @@ Literal_NoNode:
     NULLTOKEN
   | TRUETOKEN
   | FALSETOKEN
-  | NUMBER
-  | STRING
+  | NUMBER { /* keep old bison happy */ }
+  | STRING { /* keep old bison happy */ }
   | '/' /* regexp */ { if (!LEXER->skipRegExp()) YYABORT; }
   | DIVEQUAL /* regexp with /= */ { if (!LEXER->skipRegExp()) YYABORT; }
 ;
 
 Property_NoNode:
-    IDENT ':' AssignmentExpr_NoNode
-  | STRING ':' AssignmentExpr_NoNode
-  | NUMBER ':' AssignmentExpr_NoNode
+    IDENT ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
+  | STRING ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
+  | NUMBER ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
   | IDENT IDENT '(' FormalParameterList_NoNode ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
 ;
@@ -1269,17 +1269,17 @@ PropertyList_NoNode:
 
 PrimaryExpr_NoNode:
     PrimaryExprNoBrace_NoNode
-  | OPENBRACE CLOSEBRACE
-  | OPENBRACE PropertyList_NoNode CLOSEBRACE
+  | OPENBRACE CLOSEBRACE { /* keep old bison happy */ }
+  | OPENBRACE PropertyList_NoNode CLOSEBRACE { /* keep old bison happy */ }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE
+  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE { /* keep old bison happy */ }
 ;
 
 PrimaryExprNoBrace_NoNode:
     THISTOKEN
   | Literal_NoNode
   | ArrayLiteral_NoNode
-  | IDENT
+  | IDENT { /* keep old bison happy */ }
   | '(' Expr_NoNode ')'
 ;
 
@@ -1647,8 +1647,8 @@ Statement_NoNode:
 ;
 
 Block_NoNode:
-    OPENBRACE CLOSEBRACE
-  | OPENBRACE SourceElements_NoNode CLOSEBRACE
+    OPENBRACE CLOSEBRACE { /* keep old bison happy */ }
+  | OPENBRACE SourceElements_NoNode CLOSEBRACE { /* keep old bison happy */ }
 ;
 
 VariableStatement_NoNode:
@@ -1657,15 +1657,15 @@ VariableStatement_NoNode:
 ;
 
 VariableDeclarationList_NoNode:
-    IDENT
-  | IDENT Initializer_NoNode
+    IDENT { /* keep old bison happy */ }
+  | IDENT Initializer_NoNode { /* keep old bison happy */ }
   | VariableDeclarationList_NoNode ',' IDENT
   | VariableDeclarationList_NoNode ',' IDENT Initializer_NoNode
 ;
 
 VariableDeclarationListNoIn_NoNode:
-    IDENT
-  | IDENT InitializerNoIn_NoNode
+    IDENT { /* keep old bison happy */ }
+  | IDENT InitializerNoIn_NoNode { /* keep old bison happy */ }
   | VariableDeclarationListNoIn_NoNode ',' IDENT
   | VariableDeclarationListNoIn_NoNode ',' IDENT InitializerNoIn_NoNode
 ;
@@ -1681,8 +1681,8 @@ ConstDeclarationList_NoNode:
 ;
 
 ConstDeclaration_NoNode:
-    IDENT
-  | IDENT Initializer_NoNode
+    IDENT { /* keep old bison happy */ }
+  | IDENT Initializer_NoNode { /* keep old bison happy */ }
 ;
 
 Initializer_NoNode:
@@ -1758,8 +1758,8 @@ SwitchStatement_NoNode:
 ;
 
 CaseBlock_NoNode:
-    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE
-  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE
+    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE { /* keep old bison happy */ }
+  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE { /* keep old bison happy */ }
 ;
 
 CaseClausesOpt_NoNode:
@@ -1783,7 +1783,7 @@ DefaultClause_NoNode:
 ;
 
 LabelledStatement_NoNode:
-    IDENT ':' Statement_NoNode
+    IDENT ':' Statement_NoNode { /* keep old bison happy */ }
 ;
 
 ThrowStatement_NoNode:
@@ -1815,7 +1815,7 @@ FunctionExpr_NoNode:
 ;
 
 FormalParameterList_NoNode:
-    IDENT
+    IDENT { /* keep old bison happy */ }
   | FormalParameterList_NoNode ',' IDENT
 ;
 
