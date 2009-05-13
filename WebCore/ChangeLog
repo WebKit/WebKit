@@ -1,3 +1,13 @@
+2009-05-13  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix LayoutTests/fast/dom/Element/attr-param-typechecking.html crashing with V8.
+        https://bugs.webkit.org/show_bug.cgi?id=25758
+
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): return the result of throwError() if it is called.
+
 2009-05-13  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dave Hyatt.

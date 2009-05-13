@@ -72,7 +72,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNode)
 {
     INC_STATS("DOM.Element.setAttributeNode()");
     if (!V8Attr::HasInstance(args[0]))
-        throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR);
 
     Attr* newAttr = V8Proxy::DOMWrapperToNode<Attr>(args[0]);
     Element* element = V8Proxy::DOMWrapperToNode<Element>(args.Holder());
