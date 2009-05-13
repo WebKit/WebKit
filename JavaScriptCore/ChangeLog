@@ -1,3 +1,9 @@
+2009-05-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+
 2009-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

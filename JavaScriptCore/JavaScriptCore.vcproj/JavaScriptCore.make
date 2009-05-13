@@ -10,7 +10,6 @@ install:
     set WebKitOutputDir=$(OBJROOT)
 !IF "$(BUILDSTYLE)"=="Release"
     devenv "JavaScriptCoreSubmit.sln" /rebuild Release_PGOInstrument
-    -mkdir "$(OBJROOT)\tests\SunSpider"
     set PATH=$(SYSTEMDRIVE)\cygwin\bin;$(PATH)
     xcopy "$(SRCROOT)\AppleInternal\tests\SunSpider\*" "$(OBJROOT)\tests\SunSpider" /e/v/i/h/y
     cd "$(OBJROOT)\tests\SunSpider"
@@ -19,9 +18,14 @@ install:
 !ELSE
     devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
 !ENDIF
-    -xcopy "$(OBJROOT)\bin\*.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    xcopy "$(OBJROOT)\bin\*.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
-    xcopy "$(OBJROOT)\bin\*.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\JavaScriptCore.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\JavaScriptCore_debug.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\JavaScriptCore.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\JavaScriptCore_debug.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\jsc.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\jsc_debug.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\jsc.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
+    -xcopy "$(OBJROOT)\bin\jsc_debug.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
     xcopy "$(OBJROOT)\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y    
     xcopy "$(OBJROOT)\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y    
     xcopy "$(OBJROOT)\bin\JavaScriptCore.resources\*" "$(DSTROOT)\AppleInternal\bin\JavaScriptCore.resources" /e/v/i/h/y
