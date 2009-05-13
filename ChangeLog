@@ -1,5 +1,11 @@
 2009-05-13  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed: bump versions in preparation for 1.1.7 release.
+
+        * configure.ac:
+
+2009-05-13  Xan Lopez  <xlopez@igalia.com>
+
         Rubber-stamped by Gustavo Noronha.
 
         Revert commit r43563, since it breaks WebKitGTK+ when compiled
