@@ -1,3 +1,32 @@
+2009-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 25674: syntax tree nodes should use arena allocation
+        https://bugs.webkit.org/show_bug.cgi?id=25674
+
+        * bindings/js/JSDOMBinding.h: Removed include of JSFunction.h.
+        We don't want the entire DOM binding to depend on that file.
+
+        * bindings/js/JSAudioConstructor.cpp: Added include of Error.h.
+        Before we inherited this automatically because JDDOMBinding.h
+        included JSFunction.h, but that was excessive.
+        * bindings/js/JSDOMWindowCustom.cpp: Ditto.
+        * bindings/js/JSHTMLInputElementCustom.cpp: Ditto.
+        * bindings/js/JSImageConstructor.cpp: Ditto.
+        * bindings/js/JSLazyEventListener.cpp: Ditto, but for JSFunction.h.
+        * bindings/js/JSMessageChannelConstructor.cpp: Ditto.
+        * bindings/js/JSOptionConstructor.cpp: Ditto.
+        * bindings/js/JSWorkerConstructor.cpp: Ditto.
+        * bindings/js/JSXMLHttpRequestConstructor.cpp: Ditto.
+        * bridge/jni/jni_jsobject.mm: Ditto, but for SourceCode.h.
+        * inspector/InspectorController.cpp: Ditto.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctions):
+        Moved mose of this function into the base class in JavaScriptCore,
+        so the details of compilation don't have to be exposed.
+
 2009-05-13  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Darin Adler.

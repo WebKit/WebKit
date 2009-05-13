@@ -826,7 +826,7 @@ JSValue Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject*
         const DeclarationStacks::VarStack& varStack = codeBlock->ownerNode()->varStack();
         DeclarationStacks::VarStack::const_iterator varStackEnd = varStack.end();
         for (DeclarationStacks::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
-            const Identifier& ident = (*it).first;
+            const Identifier& ident = *it->first;
             if (!variableObject->hasProperty(callFrame, ident)) {
                 PutPropertySlot slot;
                 variableObject->put(callFrame, ident, jsUndefined(), slot);

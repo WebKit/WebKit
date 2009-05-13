@@ -71,14 +71,12 @@ FunctionBodyNode* extractFunctionBody(ProgramNode* program)
     if (!program)
         return 0;
 
-    StatementVector& children = program->children();
-    if (children.size() != 1)
+    StatementNode* exprStatement = program->singleStatement();
+    if (!exprStatement)
         return 0;
 
-    StatementNode* exprStatement = children[0];
-    ASSERT(exprStatement);
     ASSERT(exprStatement->isExprStatement());
-    if (!exprStatement || !exprStatement->isExprStatement())
+    if (!exprStatement->isExprStatement())
         return 0;
 
     ExpressionNode* funcExpr = static_cast<ExprStatementNode*>(exprStatement)->expr();

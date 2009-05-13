@@ -27,6 +27,7 @@
 #include "JSHTMLInputElement.h"
 
 #include "HTMLInputElement.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

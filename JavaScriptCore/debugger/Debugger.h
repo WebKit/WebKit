@@ -50,6 +50,8 @@ namespace JSC {
         virtual void didExecuteProgram(const DebuggerCallFrame&, intptr_t sourceID, int lineno) = 0;
         virtual void didReachBreakpoint(const DebuggerCallFrame&, intptr_t sourceID, int lineno) = 0;
 
+        void recompileAllJSFunctions(JSGlobalData*, bool callSourceParsed);
+
     private:
         HashSet<JSGlobalObject*> m_globalObjects;
     };

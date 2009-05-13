@@ -533,7 +533,7 @@ static const size_t kNumClasses = 68;
 static const size_t kPageMapBigAllocationThreshold = 128 << 20;
 
 // Minimum number of pages to fetch from system at a time.  Must be
-// significantly bigger than kBlockSize to amortize system-call
+// significantly bigger than kPageSize to amortize system-call
 // overhead, and also to reduce external fragementation.  Also, we
 // should keep this value big because various incarnations of Linux
 // have small limits on the number of mmap() regions per

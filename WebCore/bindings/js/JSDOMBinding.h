@@ -24,7 +24,6 @@
 #include "JSDOMGlobalObject.h"
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
-#include <runtime/JSFunction.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

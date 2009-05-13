@@ -57,6 +57,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
+#include <runtime/Error.h>
 #include <runtime/JSObject.h>
 
 using namespace JSC;

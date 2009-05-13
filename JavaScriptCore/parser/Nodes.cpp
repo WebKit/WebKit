@@ -49,7 +49,28 @@ using namespace WTF;
 
 namespace JSC {
 
-static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
+/*
+    Details of the emitBytecode function.
+
+    Return value: The register holding the production's value.
+             dst: An optional parameter specifying the most efficient destination at
+                  which to store the production's value. The callee must honor dst.
+
+    The dst argument provides for a crude form of copy propagation. For example,
+
+        x = 1
+
+    becomes
+    
+        load r[x], 1
+    
+    instead of 
+
+        load r0, 1
+        mov r[x], r0
+    
+    because the assignment node, "x =", passes r[x] as dst to the number node, "1".
+*/
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 
@@ -63,22 +84,27 @@ static void substitute(UString& string, const UString& substring)
     string = newString;
 }
 
-RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType e, const char* msg)
+RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* message)
 {
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalData(), msg));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), type, jsString(generator.globalData(), message));
     generator.emitThrow(exception);
     return exception;
 }
 
-RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType e, const char* msg, const Identifier& label)
+RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* messageTemplate, const UString& label)
 {
-    UString message = msg;
-    substitute(message, label.ustring());
+    UString message = messageTemplate;
+    substitute(message, label);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalData(), message));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), type, jsString(generator.globalData(), message));
     generator.emitThrow(exception);
     return exception;
+}
+
+inline RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* messageTemplate, const Identifier& label)
+{
+    return emitThrowError(generator, type, messageTemplate, label.ustring());
 }
 
 // ------------------------------ StatementNode --------------------------------
@@ -96,6 +122,18 @@ void SourceElements::append(StatementNode* statement)
     if (statement->isEmptyStatement())
         return;
     m_statements.append(statement);
+}
+
+inline StatementNode* SourceElements::singleStatement() const
+{
+    size_t size = m_statements.size();
+    return size == 1 ? m_statements[0] : 0;
+}
+
+inline StatementNode* SourceElements::lastStatement() const
+{
+    size_t size = m_statements.size();
+    return size ? m_statements[size - 1] : 0;
 }
 
 // ------------------------------ NullNode -------------------------------------
@@ -138,9 +176,9 @@ RegisterID* StringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern, m_flags);
+    RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern.ustring(), m_flags.ustring());
     if (!regExp->isValid())
-        return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(regExp->errorMessage())).UTF8String().c_str());
+        return emitThrowError(generator, SyntaxError, "Invalid regular expression: %s", regExp->errorMessage());
     if (dst == generator.ignoredResult())
         return 0;
     return generator.emitNewRegExp(generator.finalDestination(dst), regExp.get());
@@ -592,7 +630,9 @@ RegisterID* PostfixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 
 RegisterID* PostfixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus ? "Postfix ++ operator applied to value that is not a reference." : "Postfix -- operator applied to value that is not a reference.");
+    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus
+        ? "Postfix ++ operator applied to value that is not a reference."
+        : "Postfix -- operator applied to value that is not a reference.");
 }
 
 // ------------------------------ DeleteResolveNode -----------------------------------
@@ -754,7 +794,9 @@ RegisterID* PrefixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
 RegisterID* PrefixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus ? "Prefix ++ operator applied to value that is not a reference." : "Prefix -- operator applied to value that is not a reference.");
+    return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus
+        ? "Prefix ++ operator applied to value that is not a reference."
+        : "Prefix -- operator applied to value that is not a reference.");
 }
 
 // ------------------------------ Unary Operation Nodes -----------------------------------
@@ -1224,20 +1266,26 @@ RegisterID* ConstStatementNode::emitBytecode(BytecodeGenerator& generator, Regis
     return generator.emitNode(m_next);
 }
 
-// ------------------------------ Helper functions for handling Vectors of StatementNode -------------------------------
+// ------------------------------ SourceElements -------------------------------
 
-static inline void statementListEmitCode(const StatementVector& statements, BytecodeGenerator& generator, RegisterID* dst)
+inline void SourceElements::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    size_t size = statements.size();
+    size_t size = m_statements.size();
     for (size_t i = 0; i < size; ++i)
-        generator.emitNode(dst, statements[i]);
+        generator.emitNode(dst, m_statements[i]);
 }
 
 // ------------------------------ BlockNode ------------------------------------
 
+inline StatementNode* BlockNode::lastStatement() const
+{
+    return m_statements ? m_statements->lastStatement() : 0;
+}
+
 RegisterID* BlockNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    statementListEmitCode(m_children, generator, dst);
+    if (m_statements)
+        m_statements->emitBytecode(generator, dst);
     return 0;
 }
 
@@ -1542,6 +1590,14 @@ RegisterID* WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
     return result;
 }
 
+// ------------------------------ CaseClauseNode --------------------------------
+
+inline void CaseClauseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (m_statements)
+        m_statements->emitBytecode(generator, dst);
+}
+
 // ------------------------------ CaseBlockNode --------------------------------
 
 enum SwitchKind { 
@@ -1663,17 +1719,17 @@ RegisterID* CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, Re
     size_t i = 0;
     for (ClauseListNode* list = m_list1; list; list = list->getNext()) {
         generator.emitLabel(labelVector[i++].get());
-        statementListEmitCode(list->getClause()->children(), generator, dst);
+        list->getClause()->emitBytecode(generator, dst);
     }
 
     if (m_defaultClause) {
         generator.emitLabel(defaultLabel.get());
-        statementListEmitCode(m_defaultClause->children(), generator, dst);
+        m_defaultClause->emitBytecode(generator, dst);
     }
 
     for (ClauseListNode* list = m_list2; list; list = list->getNext()) {
         generator.emitLabel(labelVector[i++].get());
-        statementListEmitCode(list->getClause()->children(), generator, dst);
+        list->getClause()->emitBytecode(generator, dst);
     }
     if (!m_defaultClause)
         generator.emitLabel(defaultLabel.get());
@@ -1801,16 +1857,15 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 // -----------------------------ScopeNodeData ---------------------------
 
-ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, int numConstants)
+ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, VarStack* varStack, FunctionStack* funcStack, int numConstants)
     : m_numConstants(numConstants)
+    , m_statements(statements)
 {
     m_arena.swap(arena);
     if (varStack)
         m_varStack.swap(*varStack);
     if (funcStack)
         m_functionStack.swap(*funcStack);
-    if (children)
-        children->releaseContentsIntoVector(m_children);
 }
 
 void ScopeNodeData::mark()
@@ -1850,6 +1905,17 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceE
 #endif
 }
 
+inline void ScopeNode::emitStatementsBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (m_data->m_statements)
+        m_data->m_statements->emitBytecode(generator, dst);
+}
+
+inline StatementNode* ScopeNode::singleStatement() const
+{
+    return m_data->m_statements ? m_data->m_statements->singleStatement() : 0;
+}
+
 // ------------------------------ ProgramNode -----------------------------
 
 inline ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
@@ -1874,7 +1940,7 @@ RegisterID* ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
     RefPtr<RegisterID> dstRegister = generator.newTemporary();
     generator.emitLoad(dstRegister.get(), jsUndefined());
-    statementListEmitCode(children(), generator, dstRegister.get());
+    emitStatementsBytecode(generator, dstRegister.get());
 
     generator.emitDebugHook(DidExecuteProgram, firstLine(), lastLine());
     generator.emitEnd(dstRegister.get());
@@ -1918,7 +1984,7 @@ RegisterID* EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
     RefPtr<RegisterID> dstRegister = generator.newTemporary();
     generator.emitLoad(dstRegister.get(), jsUndefined());
-    statementListEmitCode(children(), generator, dstRegister.get());
+    emitStatementsBytecode(generator, dstRegister.get());
 
     generator.emitDebugHook(DidExecuteProgram, firstLine(), lastLine());
     generator.emitEnd(dstRegister.get());
@@ -1936,8 +2002,7 @@ void EvalNode::generateBytecode(ScopeChainNode* scopeChainNode)
     generator.generate();
 
     // Eval code needs to hang on to its declaration stacks to keep declaration info alive until Interpreter::execute time,
-    // so the entire ScopeNodeData cannot be destoyed.
-    children().clear();
+    // so the ScopeNodeData cannot be destroyed at this point. Maybe we can destroy part of it in the future?
 }
 
 EvalCodeBlock& EvalNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode, CodeBlock* codeBlockBeingRegeneratedFrom)
@@ -2091,10 +2156,11 @@ CodeBlock& FunctionBodyNode::bytecodeForExceptionInfoReparse(ScopeChainNode* sco
 RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     generator.emitDebugHook(DidEnterCallFrame, firstLine(), lastLine());
-    statementListEmitCode(children(), generator, generator.ignoredResult());
-    if (children().size() && children().last()->isBlock()) {
-        BlockNode* blockNode = static_cast<BlockNode*>(children().last());
-        if (blockNode->children().size() && blockNode->children().last()->isReturnNode())
+    emitStatementsBytecode(generator, generator.ignoredResult());
+    StatementNode* singleStatement = this->singleStatement();
+    if (singleStatement && singleStatement->isBlock()) {
+        StatementNode* lastStatementInBlock = static_cast<BlockNode*>(singleStatement)->lastStatement();
+        if (lastStatementInBlock && lastStatementInBlock->isReturnNode())
             return 0;
     }
 

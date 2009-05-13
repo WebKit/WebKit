@@ -23,7 +23,7 @@
 #define Lexer_h
 
 #include "Lookup.h"
-#include "SegmentedVector.h"
+#include "ParserArena.h"
 #include "SourceCode.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
@@ -42,7 +42,7 @@ namespace JSC {
         static UChar convertUnicode(int c1, int c2, int c3, int c4);
 
         // Functions to set up parsing.
-        void setCode(const SourceCode&);
+        void setCode(const SourceCode&, ParserArena&);
         void setIsReparsing() { m_isReparsing = true; }
 
         // Functions for the parser itself.
@@ -50,9 +50,8 @@ namespace JSC {
         int lineNumber() const { return m_lineNumber; }
         bool prevTerminator() const { return m_terminator; }
         SourceCode sourceCode(int openBrace, int closeBrace, int firstLine);
-        bool scanRegExp();
-        const UString& pattern() const { return m_pattern; }
-        const UString& flags() const { return m_flags; }
+        bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar prefix = 0);
+        bool skipRegExp();
 
         // Functions for use after parsing.
         bool sawError() const { return m_error; }
@@ -79,12 +78,11 @@ namespace JSC {
         int currentOffset() const;
         const UChar* currentCharacter() const;
 
-        JSC::Identifier* makeIdentifier(const UChar* buffer, size_t length);
+        const Identifier* makeIdentifier(const UChar* characters, size_t length);
 
         bool lastTokenWasRestrKeyword() const;
 
         static const size_t initialReadBufferCapacity = 32;
-        static const size_t initialIdentifierTableCapacity = 64;
 
         int m_lineNumber;
 
@@ -108,12 +106,9 @@ namespace JSC {
         int m_next2;
         int m_next3;
         
-        SegmentedVector<JSC::Identifier, initialIdentifierTableCapacity> m_identifiers;
+        IdentifierArena* m_arena;
 
         JSGlobalData* m_globalData;
-
-        UString m_pattern;
-        UString m_flags;
 
         const HashTable m_keywordTable;
 

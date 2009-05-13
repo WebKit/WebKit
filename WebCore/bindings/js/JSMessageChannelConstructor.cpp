@@ -30,6 +30,7 @@
 #include "JSDocument.h"
 #include "JSMessageChannel.h"
 #include "MessageChannel.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

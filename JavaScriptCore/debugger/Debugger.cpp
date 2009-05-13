@@ -22,8 +22,9 @@
 #include "config.h"
 #include "Debugger.h"
 
-#include "JSGlobalObject.h"
+#include "CollectorHeapIterator.h"
 #include "Interpreter.h"
+#include "JSGlobalObject.h"
 #include "Parser.h"
 
 namespace JSC {
@@ -51,6 +52,63 @@ void Debugger::detach(JSGlobalObject* globalObject)
     ASSERT(m_globalObjects.contains(globalObject));
     m_globalObjects.remove(globalObject);
     globalObject->setDebugger(0);
+}
+
+void Debugger::recompileAllJSFunctions(JSGlobalData* globalData, bool callSourceParsed)
+{
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    ASSERT(!globalData->dynamicGlobalObject);
+    if (globalData->dynamicGlobalObject)
+        return;
+
+    Vector<ProtectedPtr<JSFunction> > functions;
+    Heap::iterator heapEnd = globalData->heap.primaryHeapEnd();
+    for (Heap::iterator it = globalData->heap.primaryHeapBegin(); it != heapEnd; ++it) {
+        if ((*it)->isObject(&JSFunction::info)) {
+            JSFunction* function = static_cast<JSFunction*>(*it);
+            FunctionBodyNode* body = function->body();
+            if (body && !body->isHostFunction())
+                functions.append(function);
+        }
+    }
+
+    typedef HashMap<RefPtr<FunctionBodyNode>, RefPtr<FunctionBodyNode> > FunctionBodyMap;
+    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
+
+    FunctionBodyMap functionBodies;
+    SourceProviderMap sourceProviders;
+
+    size_t size = functions.size();
+    for (size_t i = 0; i < size; ++i) {
+        JSFunction* function = functions[i];
+
+        FunctionBodyNode* oldBody = function->body();
+        pair<FunctionBodyMap::iterator, bool> result = functionBodies.add(oldBody, 0);
+        if (!result.second) {
+            function->setBody(result.first->second.get());
+            continue;
+        }
+
+        ExecState* exec = function->scope().globalObject()->JSGlobalObject::globalExec();
+        const SourceCode& sourceCode = oldBody->source();
+
+        RefPtr<FunctionBodyNode> newBody = globalData->parser->parse<FunctionBodyNode>(exec, 0, sourceCode);
+        ASSERT(newBody);
+        newBody->finishParsing(oldBody->copyParameters(), oldBody->parameterCount());
+
+        result.first->second = newBody;
+        function->setBody(newBody.release());
+
+        if (callSourceParsed && function->scope().globalObject()->debugger() == this)
+            sourceProviders.add(sourceCode.provider(), exec);
+    }
+
+    // Call sourceParsed() after reparsing all functions because it will execute
+    // JavaScript in the inspector.
+    SourceProviderMap::const_iterator end = sourceProviders.end();
+    for (SourceProviderMap::const_iterator iter = sourceProviders.begin(); iter != end; ++iter)
+        sourceParsed((*iter).second, SourceCode((*iter).first), -1, 0);
 }
 
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)

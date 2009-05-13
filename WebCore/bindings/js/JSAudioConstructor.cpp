@@ -34,6 +34,7 @@
 #include "JSHTMLAudioElement.h"
 #include "ScriptExecutionContext.h"
 #include "Text.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

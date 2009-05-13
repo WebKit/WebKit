@@ -1,3 +1,191 @@
+2009-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 25674: syntax tree nodes should use arena allocation
+        https://bugs.webkit.org/show_bug.cgi?id=25674
+
+        Step 3: Add some actual arena allocation. About 1% SunSpider speedup.
+
+        * JavaScriptCore.exp: Updated.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Updated since VarStack
+        contains const Identifier* now.
+        (JSC::BytecodeGenerator::emitPushNewScope): Updated to take a const
+        Identifier&.
+        * bytecompiler/BytecodeGenerator.h: Ditto
+
+        * bytecompiler/SegmentedVector.h: Added isEmpty.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions): Moved this function here from
+        WebCore so WebCore doesn't need the details of FunctionBodyNode.
+        * debugger/Debugger.h: Ditto.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute): Updated since VarStack contains const
+        Identifier* now.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_vm_lazyLinkCall): Call isHostFunction on the body
+        rather than on the function object, since we can't easily have inlined
+        access to the FunctionBodyNode in JSFunction.h since WebCore needs
+        access to that header.
+        (JSC::JITStubs::cti_op_construct_JSConstruct): Ditto.
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier): Ditto.
+
+        * parser/Grammar.y: Use JSGlobalData* to pass the global data pointer
+        around whenever possible instead of using void*. Changed
+        SET_EXCEPTION_LOCATION from a macro to an inline function. Marked
+        the structure-creating functions inline. Changed the VarStack to use
+        identifier pointers instead of actual identifiers. This takes
+        advantage of the fact that all identifier pointers come from the
+        arena and avoids referenc count churn. Changed Identifier* to
+        const Identifier* to make sure we don't modify any by accident.
+        Used identifiers for regular expression strings too, using the new
+        scanRegExp that has out parameters instead of the old one that relied
+        on side effects in the Lexer. Move the creation of numeric identifiers
+        out of this file and into the PropertyNode constructor.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::setCode): Pass in ParserArena, used for identifiers.
+        (JSC::Lexer::makeIdentifier): Changed return type to const Identifier*
+        and changed to call ParserArena.
+        (JSC::Lexer::scanRegExp): Added out arguments that are const Identifier*
+        as well as a prefix character argument so we can handle the /= case
+        without a string append.
+        (JSC::Lexer::skipRegExp): Added. Skips a regular expression without
+        allocating Identifier objects.
+        (JSC::Lexer::clear): Removed the code to manage m_identifiers, m_pattern,
+        and m_flags, and added code to set m_arena to 0.
+        * parser/Lexer.h: Updated for changes above.
+
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaFreeable::operator new): Added. Calls allocateFreeable
+        on the arena.
+        (JSC::ParserArenaDeletable::operator new): Changed to call the
+        allocateDeletable function on the arena instead of deleteWithArena.
+        (JSC::RegExpNode::RegExpNode): Changed arguments to Identifier instead
+        of UString since these come from the parser which makes identifiers.
+        (JSC::PropertyNode::PropertyNode): Added new constructor that makes
+        numeric identifiers. Some day we might want to optimize this for
+        integers so it doesn't create a string for each one.
+        (JSC::ContinueNode::ContinueNode): Initialize m_ident to nullIdentifier
+        since it's now a const Identifier& so it can't be left uninitialized.
+        (JSC::BreakNode::BreakNode): Ditto.
+        (JSC::CaseClauseNode::CaseClauseNode): Updated to use SourceElements*
+        to keep track of the statements rather than a separate statement vector.
+        (JSC::BlockNode::BlockNode): Ditto.
+        (JSC::ForInNode::ForInNode): Initialize m_ident to nullIdentifier.
+
+        * parser/Nodes.cpp: Moved the comment explaining emitBytecode in here.
+        It seemed strangely out of place in the header.
+        (JSC::ThrowableExpressionData::emitThrowError): Added an overload for
+        UString as well as Identifier.
+        (JSC::SourceElements::singleStatement): Added.
+        (JSC::SourceElements::lastStatement): Added.
+        (JSC::RegExpNode::emitBytecode): Updated since the pattern and flags
+        are now Identifier instead of UString. Also changed the throwError code
+        to use the substitution mechanism instead of doing a string append.
+        (JSC::SourceElements::emitBytecode): Added. Replaces the old
+        statementListEmitCode function, since we now keep the SourceElements
+        objects around.
+        (JSC::BlockNode::lastStatement): Added.
+        (JSC::BlockNode::emitBytecode): Changed to use emitBytecode instead of
+        statementListEmitCode.
+        (JSC::CaseClauseNode::emitBytecode): Added.
+        (JSC::CaseBlockNode::emitBytecodeForBlock): Changed to use emitBytecode
+        instead of statementListEmitCode.
+        (JSC::ScopeNodeData::ScopeNodeData): Changed to store the
+        SourceElements* instead of using releaseContentsIntoVector.
+        (JSC::ScopeNode::emitStatementsBytecode): Added.
+        (JSC::ScopeNode::singleStatement): Added.
+        (JSC::ProgramNode::emitBytecode): Call emitStatementsBytecode instead
+        of statementListEmitCode.
+        (JSC::EvalNode::emitBytecode): Ditto.
+        (JSC::EvalNode::generateBytecode): Removed code to clear the children
+        vector. This optimization is no longer possible since everything is in
+        a single arena.
+        (JSC::FunctionBodyNode::emitBytecode): Call emitStatementsBytecode
+        insetad of statementListEmitCode and check for the return node using
+        the new functions.
+
+        * parser/Nodes.h: Changed VarStack to store const Identifier* instead
+        of Identifier and rely on the arena to control lifetime. Added a new
+        ParserArenaFreeable class. Made ParserArenaDeletable inherit from
+        FastAllocBase instead of having its own operator new. Base the Node
+        class on ParserArenaFreeable. Changed the various Node classes
+        to use const Identifier& instead of Identifier to avoid the need to
+        call their destructors and allow them to function as "freeable" in the
+        arena. Removed extraneous JSC_FAST_CALL on definitions of inline functions.
+        Changed ElementNode, PropertyNode, ArgumentsNode, ParameterNode,
+        CaseClauseNode, ClauseListNode, and CaseBlockNode to use ParserArenaFreeable
+        as a base class since they do not descend from Node. Eliminated the
+        StatementVector type and instead have various classes use SourceElements*
+        instead of StatementVector. This prevents those classes from having th
+        use ParserArenaDeletable to make sure the vector destructor is called.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::parse): Pass the arena to the lexer.
+
+        * parser/Parser.h: Added an include of ParserArena.h, which is no longer
+        included by Nodes.h.
+
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::ParserArena): Added. Initializes the new members,
+        m_freeableMemory, m_freeablePoolEnd, and m_identifiers.
+        (JSC::ParserArena::freeablePool): Added. Computes the pool pointer,
+        since we store only the current pointer and the end of pool pointer.
+        (JSC::ParserArena::deallocateObjects): Added. Contains the common
+        memory-deallocation logic used by both the destructor and the
+        reset function.
+        (JSC::ParserArena::~ParserArena): Changed to call deallocateObjects.
+        (JSC::ParserArena::reset): Ditto. Also added code to zero out the
+        new structures, and switched to use clear() instead of shrink(0) since
+        we don't really reuse arenas.
+        (JSC::ParserArena::makeNumericIdentifier): Added.
+        (JSC::ParserArena::allocateFreeablePool): Added. Used when the pool
+        is empty.
+        (JSC::ParserArena::isEmpty): Added. No longer inline, which is fine
+        since this is used only for assertions at the moment.
+
+        * parser/ParserArena.h: Added an actual arena of "freeable" objects,
+        ones that don't need destructors to be called. Also added the segmented
+        vector of identifiers that used to be in the Lexer.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::extractFunctionBody): Use singleStatement function rather than
+        getting at a StatementVector.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString): Call isHostFunction on the body
+        rather than the function object.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction): Moved the structure version of this in
+        here from the header. It's not hot enough that it needs to be inlined.
+        (JSC::JSFunction::isHostFunction): Moved this in here from the header.
+        It's now a helper to be used only within the class.
+        (JSC::JSFunction::setBody): Moved this in here. It's not hot enough that
+        it needs to be inlined, and we want to be able to compile the header
+        without the definition of FunctionBodyNode.
+
+        * runtime/JSFunction.h: Eliminated the include of "Nodes.h". This was
+        exposing too much JavaScriptCore dependency to WebCore. Because of this
+        change and some changes made to WebCore, we could now export a lot fewer
+        headers from JavaScriptCore, but I have not done that yet in this check-in.
+        Made a couple functions non-inline. Removes some isHostFunction() assertions.
+        
+        * wtf/FastAllocBase.h: Added the conventional using statements we use in
+        WTF so we can use identifiers from the WTF namespace without explicit
+        namespace qualification or namespace directive. This is the usual WTF style,
+        although it's unconventional in the C++ world. We use the namespace primarily
+        for link-time disambiguation, not compile-time.
+
+        * wtf/FastMalloc.cpp: Fixed an incorrect comment.
+
 2009-05-13  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix: add JITStubCall.h to files list.
