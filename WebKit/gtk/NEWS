@@ -4,7 +4,7 @@ WebKitGTK+ 1.1.7
 
 What's new in WebKitGTK+ 1.1.7?
 
-  - New frame loading properties superseed various load-* signals, and
+  - New frame loading properties supersede various load-* signals, and
     are also accessible in the WebView, for convenience, making this
     API saner.
   - JIT is now supported for X86-64 on Linux, and enabled by default!
