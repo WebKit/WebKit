@@ -1,3 +1,14 @@
+2009-05-13  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 25763: Need to move v8 custom binding to the custom directory.
+        https://bugs.webkit.org/show_bug.cgi?id=25763
+
+        No test due to no change in behavior.
+
+        * bindings/v8/custom/V8CanvasPixelArrayCustom.cpp: Renamed from WebCore/bindings/v8/V8CanvasPixelArrayCustom.cpp.
+
 2009-05-13  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.
