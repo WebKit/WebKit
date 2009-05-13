@@ -1,3 +1,20 @@
+2009-05-13  Adam Roben  <aroben@apple.com>
+
+        Windows build fixes after r43642
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        Updated.
+
+        * debugger/Debugger.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/StringPrototype.cpp:
+        Added missing #includes.
+
 2009-05-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.
