@@ -41,10 +41,6 @@
 #endif
 #endif
 
-#if PLATFORM(DARWIN)
-#include <CoreFoundation/CFBundle.h>
-#endif
-
 #include <time.h>
 
 #include <wtf/Platform.h>

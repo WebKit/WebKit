@@ -1,5 +1,20 @@
 2009-05-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Rubber Stamped by Oliver Hunt.
+
+        [GTK] Fix Gtk+/X11 build on OSX
+
+        Including the CoreFoundation header here and X11 headers
+        later will result in different definitions of Boolean. The
+        CoreFoundation include does not seem to be necessary here
+        and my mac build was successfull without it. I will remove
+        it for now. If the build bots disagree this will be replaced
+        by a #if PLATFORM(CF).
+
+        * platform/FileSystem.h:
+
+2009-05-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Rubber Stamped by Gustavo Noronha.
 
         [GTK] Move the #ifdef around for a buildfix for Gtk+ on OSX
