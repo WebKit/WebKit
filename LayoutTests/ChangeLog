@@ -1,5 +1,16 @@
 2009-05-13  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Add layout test for <rdar://problem/6872894> REGRESSION (r41896-42143): First letter cut off in styled select menus.
+
+        * fast/overflow/border-radius-clipping.html: Added.
+        * platform/mac/fast/overflow/border-radius-clipping-expected.checksum: Added.
+        * platform/mac/fast/overflow/border-radius-clipping-expected.png: Added.
+        * platform/mac/fast/overflow/border-radius-clipping-expected.txt: Added.
+
+2009-05-13  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Beth Dakin and Darin Adler.
 
         Add a repaint test for <rdar://problem/6869687> REGRESSION (r41203): Facebook friend suggestions disappear on update.

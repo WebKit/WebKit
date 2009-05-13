@@ -1,3 +1,18 @@
+2009-05-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fix for <rdar://problem/6872894> REGRESSION (r41896-42143): First letter cut off in styled select menus
+        
+        Make sure to do rounded clipping for overflow and controls relative to the border box and not to the overflow/control clip rect
+        (which is typically clipped to the padding or content box).  Doing so was causing rounded clips to be incorrectly applied to padding and
+        content.
+    
+        Added fast/overflow/border-radius-clipping.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+
 2009-05-13  Darin Adler  <darin@apple.com>
 
         Revert the parser arena change. It was a slowdown, not a speedup.
