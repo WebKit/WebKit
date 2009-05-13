@@ -288,16 +288,15 @@ public:
 
 private:
 
-#if defined(XP_MACOSX)
+#if PLATFORM(GTK) || defined(Q_WS_X11)
+        void setNPWindowIfNeeded();
+#elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;
         OwnPtr<Timer<PluginView> > m_nullEventTimer;
 
         void setNPWindowIfNeeded();
         void nullEventTimerFired(Timer<PluginView>*);
         Point globalMousePosForPlugin() const;
-#endif
-#if PLATFORM(GTK) || defined(Q_WS_X11)
-        void setNPWindowIfNeeded();
 #endif
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in

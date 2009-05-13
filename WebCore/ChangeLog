@@ -1,5 +1,18 @@
 2009-05-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Rubber Stamped by Gustavo Noronha.
+
+        [GTK] Move the #ifdef around for a buildfix for Gtk+ on OSX
+
+        When building Gtk+ on OSX we ended up declaring
+        setNPWindowIfNeeded twice. Fix that by moving
+        the #if PLATFORM(GTK) up and using elif instead of
+        else.
+
+        * plugins/PluginView.h:
+
+2009-05-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Xan Lopez.
 
         https://bugs.webkit.org/show_bug.cgi?id=25685
