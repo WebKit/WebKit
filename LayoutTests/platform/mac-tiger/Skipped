@@ -37,3 +37,6 @@ platform/mac/accessibility/table-updating.html
 # Tests of font features not supported by ATSUI
 platform/mac/fast/text/myanmar-shaping.html
 platform/mac/fast/text/thai-combining-mark-positioning.html
+
+# <rdar://problem/6877291> media/video-size-intrinsic-scale.html test fails
+media/video-size-intrinsic-scale.html

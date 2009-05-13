@@ -1,5 +1,14 @@
 2009-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+        
+        media/video-size-intrinsic-scale.html fails on Tiger, so add it to the skipped
+        list.
+
+        * platform/mac-tiger/Skipped:
+
+2009-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
         
         <rdar://problem/6497461> Many media layout tests failing on SnowLeopard.
