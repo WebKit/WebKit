@@ -1,3 +1,9 @@
+2009-05-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * SunSpider.make:
+
 2009-05-11  Steve Falkenburg  <sfalken@apple.com>
 
         Include SunSpider tests in production builds.
