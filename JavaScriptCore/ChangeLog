@@ -1,3 +1,10 @@
+2009-05-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Revert r43562 - [Gtk] WTF_USE_JSC is already defined in
+        WebCore/config.h.
+
+        * wtf/Platform.h:
+
 2009-05-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

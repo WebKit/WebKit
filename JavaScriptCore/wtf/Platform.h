@@ -336,7 +336,6 @@
 #endif
 
 #if PLATFORM(GTK)
-#define WTF_USE_JSC 1
 #if HAVE(PTHREAD_H)
 #define WTF_USE_PTHREADS 1
 #endif
