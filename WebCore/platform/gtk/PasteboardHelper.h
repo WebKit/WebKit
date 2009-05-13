@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Luca Bruno <lethalman88@gmail.com>
+ * Copyright (C) 2009 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +38,7 @@ class PasteboardHelper {
 public:
     virtual ~PasteboardHelper() {};
 
+    virtual GtkClipboard* getCurrentTarget(Frame*) const = 0;
     virtual GtkClipboard* getClipboard(Frame*) const = 0;
     virtual GtkClipboard* getPrimary(Frame*) const = 0;
     virtual GtkTargetList* getCopyTargetList(Frame*) const = 0;

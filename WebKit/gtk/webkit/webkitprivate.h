@@ -118,6 +118,7 @@ extern "C" {
         char* customEncoding;
 
         gboolean disposing;
+        gboolean usePrimaryForPaste;
     };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
@@ -211,6 +212,9 @@ extern "C" {
 
     GSList*
     webkit_web_settings_get_spell_languages(WebKitWebView* web_view);
+
+    bool
+    webkit_web_view_use_primary_for_paste(WebKitWebView* web_view);
 }
 
 #endif

@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2007 Luca Bruno <lethalman88@gmail.com>
+ *  Copyright (C) 2009 Holger Hans Peter Freyther
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,6 +30,16 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+GtkClipboard* PasteboardHelperGtk::getCurrentTarget(Frame* frame) const
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
+
+    if (webkit_web_view_use_primary_for_paste(webView))
+        return getPrimary(frame);
+    else
+        return getClipboard(frame);
+}
 
 GtkClipboard* PasteboardHelperGtk::getClipboard(Frame* frame) const
 {

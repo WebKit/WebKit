@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Luca Bruno <lethalman88@gmail.com>
+ * Copyright (C) 2009 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -39,6 +40,7 @@ namespace WebKit {
 class PasteboardHelperGtk : public PasteboardHelper {
 public:
     PasteboardHelperGtk() { }
+    virtual GtkClipboard* getCurrentTarget(Frame*) const;
     virtual GtkClipboard* getClipboard(Frame*) const;
     virtual GtkClipboard* getPrimary(Frame*) const;
     virtual GtkTargetList* getCopyTargetList(Frame*) const;

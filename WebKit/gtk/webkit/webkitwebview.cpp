@@ -474,7 +474,23 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     if (!frame->view())
         return FALSE;
 
-    return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+    gboolean result = frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+#if PLATFORM(X11)
+    /* Copy selection to the X11 selection clipboard */
+    if (event->button == 2) {
+        bool primary = webView->priv->usePrimaryForPaste;
+        webView->priv->usePrimaryForPaste = true;
+
+        Editor* editor = webView->priv->corePage->focusController()->focusedOrMainFrame()->editor();
+        result = result || editor->canPaste() || editor->canDHTMLPaste();
+        editor->paste();
+
+        webView->priv->usePrimaryForPaste = primary;
+    }
+#endif
+
+    return result;
 }
 
 static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)
@@ -2162,6 +2178,11 @@ void webkit_web_view_request_download(WebKitWebView* webView, WebKitNetworkReque
     }
 
     webkit_download_start(download);
+}
+
+bool webkit_web_view_use_primary_for_paste(WebKitWebView* webView)
+{
+    return webView->priv->usePrimaryForPaste;
 }
 
 void webkit_web_view_set_settings(WebKitWebView* webView, WebKitWebSettings* webSettings)
