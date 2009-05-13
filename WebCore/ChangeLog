@@ -1,5 +1,15 @@
 2009-05-13  Chris Fleizach  <cfleizach@apple.com>
 
+        Bug 25755: Implement ARIA grid role
+        https://bugs.webkit.org/show_bug.cgi?id=25755
+
+        Fix build bustage from last checkin.
+
+        * page/AccessibilityAriaGrid.cpp:
+        (WebCore::AccessibilityAriaGrid::addChild):
+
+2009-05-13  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         Bug 25755: Implement ARIA grid role
