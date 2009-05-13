@@ -1,3 +1,16 @@
+2009-05-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix <rdar://problem/6882919> REGRESSION: page at Metroauto site crashes in cti_op_loop_if_less (25730)
+
+        op_loop_if_less (imm < op) was loading op into regT1, but in the slow path spills regT0.
+        This leads to bad happen.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emitSlow_op_loop_if_less):
+
 2009-05-13  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by Mark Rowe.

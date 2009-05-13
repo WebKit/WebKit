@@ -101,14 +101,14 @@ void JIT::emit_op_loop_if_less(Instruction* currentInstruction)
 #endif
         addJump(branch32(LessThan, regT0, Imm32(op2imm)), target + 3);
     } else if (isOperandConstantImmediateInt(op1)) {
-        emitGetVirtualRegister(op2, regT1);
-        emitJumpSlowCaseIfNotImmediateInteger(regT1);
+        emitGetVirtualRegister(op2, regT0);
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
 #if USE(ALTERNATE_JSIMMEDIATE)
         int32_t op1imm = getConstantOperandImmediateInt(op1);
 #else
         int32_t op1imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op1)));
 #endif
-        addJump(branch32(GreaterThan, regT1, Imm32(op1imm)), target + 3);
+        addJump(branch32(GreaterThan, regT0, Imm32(op1imm)), target + 3);
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT1);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
@@ -981,7 +981,7 @@ void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowC
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
         JITStubCall stubCall(this, JITStubs::cti_op_loop_if_less);
-        stubCall.addArgument(op1, regT1);
+        stubCall.addArgument(op1, regT2);
         stubCall.addArgument(regT0);
         stubCall.call();
         emitJumpSlowToHot(branchTest32(NonZero, regT0), target + 3);
