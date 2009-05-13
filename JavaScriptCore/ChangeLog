@@ -1,5 +1,10 @@
 2009-05-13  Darin Adler  <darin@apple.com>
 
+        Revert the parser arena change. It was a slowdown, not a speedup.
+        Better luck next time (I'll break it up into pieces).
+
+2009-05-13  Darin Adler  <darin@apple.com>
+
         Tiger build fix.
 
         * parser/Grammar.y: Add back empty code blocks, needed by older

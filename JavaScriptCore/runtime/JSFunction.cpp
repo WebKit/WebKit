@@ -45,16 +45,12 @@ ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
 const ClassInfo JSFunction::info = { "Function", &InternalFunction::info, 0, 0 };
 
-JSFunction::JSFunction(PassRefPtr<Structure> structure)
-    : InternalFunction(structure)
-{
-    clearScopeChain();
-}
-
 JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(&exec->globalData(), structure, name)
 #if ENABLE(JIT)
     , m_body(exec->globalData().nativeFunctionThunk())
+#else
+    , m_body(0)
 #endif
 {
 #if ENABLE(JIT)
@@ -74,15 +70,6 @@ JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode
     setScopeChain(scopeChainNode);
 }
 
-inline bool JSFunction::isHostFunction() const
-{
-#if ENABLE(JIT)
-    return m_body && m_body->isHostFunction();
-#else
-    return false;
-#endif
-}
-
 JSFunction::~JSFunction()
 {
 #if ENABLE(JIT) 
@@ -94,6 +81,7 @@ JSFunction::~JSFunction()
             m_body->generatedBytecode().unlinkCallers();
         scopeChain().~ScopeChain();
     }
+    
 #endif
 }
 
@@ -225,11 +213,6 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     if (exec->hadException() || !result.isObject())
         return thisObj;
     return asObject(result);
-}
-
-void JSFunction::setBody(PassRefPtr<FunctionBodyNode> body)
-{
-    m_body = body;
 }
 
 } // namespace JSC

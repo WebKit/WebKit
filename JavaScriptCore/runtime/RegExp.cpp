@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RegExp.h"
 #include "Lexer.h"
-#include "Nodes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

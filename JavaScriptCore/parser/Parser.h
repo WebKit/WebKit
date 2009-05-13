@@ -25,7 +25,6 @@
 
 #include "Debugger.h"
 #include "Nodes.h"
-#include "ParserArena.h"
 #include "SourceProvider.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

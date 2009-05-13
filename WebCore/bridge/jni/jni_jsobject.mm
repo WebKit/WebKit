@@ -29,20 +29,19 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "Frame.h"
-#include "ScriptController.h"
 #include "WebCoreFrameView.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "ScriptController.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <interpreter/CallFrame.h>
-#include <parser/SourceCode.h>
-#include <parser/SourceProvider.h>
-#include <runtime/Completion.h>
-#include <runtime/Completion.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
+#include <runtime/Completion.h>
+#include <runtime/Completion.h>
 #include <wtf/Assertions.h>
+#include <parser/SourceProvider.h>
 
 using WebCore::Frame;
 

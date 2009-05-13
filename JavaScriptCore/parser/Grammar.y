@@ -25,17 +25,17 @@
 
 #include "config.h"
 
-#include "CommonIdentifiers.h"
-#include "JSGlobalData.h"
-#include "JSObject.h"
-#include "JSString.h"
+#include <string.h>
+#include <stdlib.h>
 #include "JSValue.h"
-#include "Lexer.h"
+#include "JSObject.h"
 #include "NodeConstructors.h"
+#include "Lexer.h"
+#include "JSString.h"
+#include "JSGlobalData.h"
+#include "CommonIdentifiers.h"
 #include "NodeInfo.h"
 #include "Parser.h"
-#include <stdlib.h>
-#include <string.h>
 #include <wtf/MathExtras.h>
 
 #define YYMAXDEPTH 10000
@@ -51,42 +51,36 @@
 
 int jscyylex(void* lvalp, void* llocp, void* globalPtr);
 int jscyyerror(const char*);
-
 static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)
 #define LEXER (GLOBAL_DATA->lexer)
 
 #define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*LEXER, yychar)) YYABORT; } while (0)
+#define SET_EXCEPTION_LOCATION(node, start, divot, end) node->setExceptionSourceCode((divot), (divot) - (start), (end) - (divot))
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace JSC;
 using namespace std;
 
-static ExpressionNode* makeAssignNode(JSGlobalData*, ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end);
-static ExpressionNode* makePrefixNode(JSGlobalData*, ExpressionNode* expr, Operator, int start, int divot, int end);
-static ExpressionNode* makePostfixNode(JSGlobalData*, ExpressionNode* expr, Operator, int start, int divot, int end);
-static PropertyNode* makeGetterOrSetterPropertyNode(JSGlobalData*, const Identifier& getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*, const SourceCode&);
-static ExpressionNodeInfo makeFunctionCallNode(JSGlobalData*, ExpressionNodeInfo func, ArgumentsNodeInfo, int start, int divot, int end);
-static ExpressionNode* makeTypeOfNode(JSGlobalData*, ExpressionNode*);
-static ExpressionNode* makeDeleteNode(JSGlobalData*, ExpressionNode*, int start, int divot, int end);
-static ExpressionNode* makeNegateNode(JSGlobalData*, ExpressionNode*);
-static NumberNode* makeNumberNode(JSGlobalData*, double);
-static ExpressionNode* makeBitwiseNotNode(JSGlobalData*, ExpressionNode*);
-static ExpressionNode* makeMultNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static ExpressionNode* makeDivNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static ExpressionNode* makeAddNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static ExpressionNode* makeSubNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static ExpressionNode* makeLeftShiftNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static ExpressionNode* makeRightShiftNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static StatementNode* makeVarStatementNode(JSGlobalData*, ExpressionNode*);
-static ExpressionNode* combineVarInitializers(JSGlobalData*, ExpressionNode* list, AssignResolveNode* init);
-
-// FIXME: This used to be a macro and is still named like one. It should be renamed.
-static inline void SET_EXCEPTION_LOCATION(ThrowableExpressionData* node, unsigned start, unsigned divot, unsigned end)
-{
-    node->setExceptionSourceCode(divot, divot - start, end - divot);
-}
+static ExpressionNode* makeAssignNode(void*, ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end);
+static ExpressionNode* makePrefixNode(void*, ExpressionNode* expr, Operator, int start, int divot, int end);
+static ExpressionNode* makePostfixNode(void*, ExpressionNode* expr, Operator, int start, int divot, int end);
+static PropertyNode* makeGetterOrSetterPropertyNode(void*, const Identifier &getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*, const SourceCode&);
+static ExpressionNodeInfo makeFunctionCallNode(void*, ExpressionNodeInfo func, ArgumentsNodeInfo, int start, int divot, int end);
+static ExpressionNode* makeTypeOfNode(void*, ExpressionNode*);
+static ExpressionNode* makeDeleteNode(void*, ExpressionNode*, int start, int divot, int end);
+static ExpressionNode* makeNegateNode(void*, ExpressionNode*);
+static NumberNode* makeNumberNode(void*, double);
+static ExpressionNode* makeBitwiseNotNode(void*, ExpressionNode*);
+static ExpressionNode* makeMultNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeDivNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeAddNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeSubNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeLeftShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeRightShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static StatementNode* makeVarStatementNode(void*, ExpressionNode*);
+static ExpressionNode* combineVarInitializers(void*, ExpressionNode* list, AssignResolveNode* init);
 
 #if COMPILER(MSVC)
 
@@ -105,17 +99,17 @@ static inline void SET_EXCEPTION_LOCATION(ThrowableExpressionData* node, unsigne
 #define YYPARSE_PARAM globalPtr
 #define YYLEX_PARAM globalPtr
 
-template <typename T> inline NodeDeclarationInfo<T> createNodeDeclarationInfo(T node,
-    ParserArenaData<DeclarationStacks::VarStack>* varDecls, 
-    ParserArenaData<DeclarationStacks::FunctionStack>* funcDecls,
-    CodeFeatures info, int numConstants) 
+template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserArenaData<DeclarationStacks::VarStack>* varDecls, 
+                                                                       ParserArenaData<DeclarationStacks::FunctionStack>* funcDecls,
+                                                                       CodeFeatures info,
+                                                                       int numConstants) 
 {
     ASSERT((info & ~AllFeatures) == 0);
     NodeDeclarationInfo<T> result = { node, varDecls, funcDecls, info, numConstants };
     return result;
 }
 
-template <typename T> NodeInfo<T> inline createNodeInfo(T node, CodeFeatures info, int numConstants)
+template <typename T> NodeInfo<T> createNodeInfo(T node, CodeFeatures info, int numConstants)
 {
     ASSERT((info & ~AllFeatures) == 0);
     NodeInfo<T> result = { node, info, numConstants };
@@ -141,20 +135,21 @@ template <typename T> inline T mergeDeclarationLists(T decls1, T decls2)
     return decls1;
 }
 
-static void appendToVarDeclarationList(JSGlobalData* globalData, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
+static void appendToVarDeclarationList(void* globalPtr, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
 {
     if (!varDecls)
-        varDecls = new (globalData) ParserArenaData<DeclarationStacks::VarStack>;
+        varDecls = new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::VarStack>;
 
-    varDecls->data.append(make_pair(&ident, attrs));
+    varDecls->data.append(make_pair(ident, attrs));
+
 }
 
-static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
+static inline void appendToVarDeclarationList(void* globalPtr, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
 {
     unsigned attrs = DeclarationStacks::IsConstant;
     if (decl->hasInitializer())
         attrs |= DeclarationStacks::HasInitializer;        
-    appendToVarDeclarationList(globalData, varDecls, decl->ident(), attrs);
+    appendToVarDeclarationList(globalPtr, varDecls, decl->ident(), attrs);
 }
 
 %}
@@ -162,7 +157,7 @@ static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserAr
 %union {
     int                 intValue;
     double              doubleValue;
-    const Identifier*   ident;
+    Identifier*         ident;
 
     // expression subtrees
     ExpressionNodeInfo  expressionNode;
@@ -298,22 +293,20 @@ Literal:
   | NUMBER                              { $$ = createNodeInfo<ExpressionNode*>(makeNumberNode(GLOBAL_DATA, $1), 0, 1); }
   | STRING                              { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StringNode(GLOBAL_DATA, *$1), 0, 1); }
   | '/' /* regexp */                    {
-                                            const Identifier* pattern;
-                                            const Identifier* flags;
-                                            if (!LEXER->scanRegExp(pattern, flags))
+                                            Lexer& l = *LEXER;
+                                            if (!l.scanRegExp())
                                                 YYABORT;
-                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, *pattern, *flags);
-                                            int size = pattern->size() + 2; // + 2 for the two /'s
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, l.pattern(), l.flags());
+                                            int size = l.pattern().size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
                                         }
   | DIVEQUAL /* regexp with /= */       {
-                                            const Identifier* pattern;
-                                            const Identifier* flags;
-                                            if (!LEXER->scanRegExp(pattern, flags, '='))
+                                            Lexer& l = *LEXER;
+                                            if (!l.scanRegExp())
                                                 YYABORT;
-                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, *pattern, *flags);
-                                            int size = pattern->size() + 2; // + 2 for the two /'s
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, "=" + l.pattern(), l.flags());
+                                            int size = l.pattern().size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
                                         }
@@ -322,11 +315,11 @@ Literal:
 Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, $1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(GLOBAL_DATA, *$1, *$2, 0, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
+  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
+  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
                                                              {
-                                                                 $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(GLOBAL_DATA, *$1, *$2, $4.m_node.head, $7, LEXER->sourceCode($6, $8, @6.first_line)), $4.m_features | ClosureFeature, 0); 
+                                                                 $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, LEXER->sourceCode($6, $8, @6.first_line)), $4.m_features | ClosureFeature, 0); 
                                                                  if ($4.m_features & ArgumentsFeature)
                                                                      $7->setUsesArguments(); 
                                                                  DBG($7, @6, @8); 
@@ -440,8 +433,8 @@ NewExprNoBF:
 ;
 
 CallExpr:
-    MemberExpr Arguments                { $$ = makeFunctionCallNode(GLOBAL_DATA, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
-  | CallExpr Arguments                  { $$ = makeFunctionCallNode(GLOBAL_DATA, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
+    MemberExpr Arguments                { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
+  | CallExpr Arguments                  { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
   | CallExpr '[' Expr ']'               { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
@@ -452,8 +445,8 @@ CallExpr:
 ;
 
 CallExprNoBF:
-    MemberExprNoBF Arguments            { $$ = makeFunctionCallNode(GLOBAL_DATA, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
-  | CallExprNoBF Arguments              { $$ = makeFunctionCallNode(GLOBAL_DATA, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
+    MemberExprNoBF Arguments            { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
+  | CallExprNoBF Arguments              { $$ = makeFunctionCallNode(globalPtr, $1, $2, @1.first_column, @1.last_column, @2.last_column); }
   | CallExprNoBF '[' Expr ']'           { BracketAccessorNode* node = new (GLOBAL_DATA) BracketAccessorNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @1.first_column, @1.last_column, @4.last_column);
                                           $$ = createNodeInfo<ExpressionNode*>(node, $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); 
@@ -819,9 +812,9 @@ Statement:
 ;
 
 Block:
-    OPENBRACE CLOSEBRACE                { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
+    OPENBRACE CLOSEBRACE                             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | OPENBRACE SourceElements CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
+  | OPENBRACE SourceElements CLOSEBRACE              { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
                                           DBG($$.m_node, @1, @3); }
 ;
 
@@ -1248,16 +1241,16 @@ Literal_NoNode:
     NULLTOKEN
   | TRUETOKEN
   | FALSETOKEN
-  | NUMBER { /* keep old bison happy */ }
-  | STRING { /* keep old bison happy */ }
-  | '/' /* regexp */ { if (!LEXER->skipRegExp()) YYABORT; }
-  | DIVEQUAL /* regexp with /= */ { if (!LEXER->skipRegExp()) YYABORT; }
+  | NUMBER { }
+  | STRING { }
+  | '/' /* regexp */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
+  | DIVEQUAL /* regexp with /= */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
 ;
 
 Property_NoNode:
-    IDENT ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
-  | STRING ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
-  | NUMBER ':' AssignmentExpr_NoNode { /* keep old bison happy */ }
+    IDENT ':' AssignmentExpr_NoNode { }
+  | STRING ':' AssignmentExpr_NoNode { }
+  | NUMBER ':' AssignmentExpr_NoNode { }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
   | IDENT IDENT '(' FormalParameterList_NoNode ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
 ;
@@ -1269,17 +1262,17 @@ PropertyList_NoNode:
 
 PrimaryExpr_NoNode:
     PrimaryExprNoBrace_NoNode
-  | OPENBRACE CLOSEBRACE { /* keep old bison happy */ }
-  | OPENBRACE PropertyList_NoNode CLOSEBRACE { /* keep old bison happy */ }
+  | OPENBRACE CLOSEBRACE { }
+  | OPENBRACE PropertyList_NoNode CLOSEBRACE { }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE { /* keep old bison happy */ }
+  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE { }
 ;
 
 PrimaryExprNoBrace_NoNode:
     THISTOKEN
   | Literal_NoNode
   | ArrayLiteral_NoNode
-  | IDENT { /* keep old bison happy */ }
+  | IDENT { }
   | '(' Expr_NoNode ')'
 ;
 
@@ -1647,8 +1640,8 @@ Statement_NoNode:
 ;
 
 Block_NoNode:
-    OPENBRACE CLOSEBRACE { /* keep old bison happy */ }
-  | OPENBRACE SourceElements_NoNode CLOSEBRACE { /* keep old bison happy */ }
+    OPENBRACE CLOSEBRACE { }
+  | OPENBRACE SourceElements_NoNode CLOSEBRACE { }
 ;
 
 VariableStatement_NoNode:
@@ -1657,15 +1650,15 @@ VariableStatement_NoNode:
 ;
 
 VariableDeclarationList_NoNode:
-    IDENT { /* keep old bison happy */ }
-  | IDENT Initializer_NoNode { /* keep old bison happy */ }
+    IDENT { }
+  | IDENT Initializer_NoNode { }
   | VariableDeclarationList_NoNode ',' IDENT
   | VariableDeclarationList_NoNode ',' IDENT Initializer_NoNode
 ;
 
 VariableDeclarationListNoIn_NoNode:
-    IDENT { /* keep old bison happy */ }
-  | IDENT InitializerNoIn_NoNode { /* keep old bison happy */ }
+    IDENT { }
+  | IDENT InitializerNoIn_NoNode { }
   | VariableDeclarationListNoIn_NoNode ',' IDENT
   | VariableDeclarationListNoIn_NoNode ',' IDENT InitializerNoIn_NoNode
 ;
@@ -1681,8 +1674,8 @@ ConstDeclarationList_NoNode:
 ;
 
 ConstDeclaration_NoNode:
-    IDENT { /* keep old bison happy */ }
-  | IDENT Initializer_NoNode { /* keep old bison happy */ }
+    IDENT { }
+  | IDENT Initializer_NoNode { }
 ;
 
 Initializer_NoNode:
@@ -1758,8 +1751,8 @@ SwitchStatement_NoNode:
 ;
 
 CaseBlock_NoNode:
-    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE { /* keep old bison happy */ }
-  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE { /* keep old bison happy */ }
+    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE { }
+  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE { }
 ;
 
 CaseClausesOpt_NoNode:
@@ -1783,7 +1776,7 @@ DefaultClause_NoNode:
 ;
 
 LabelledStatement_NoNode:
-    IDENT ':' Statement_NoNode { /* keep old bison happy */ }
+    IDENT ':' Statement_NoNode { }
 ;
 
 ThrowStatement_NoNode:
@@ -1815,7 +1808,7 @@ FunctionExpr_NoNode:
 ;
 
 FormalParameterList_NoNode:
-    IDENT { /* keep old bison happy */ }
+    IDENT { }
   | FormalParameterList_NoNode ',' IDENT
 ;
 
@@ -1833,28 +1826,26 @@ SourceElements_NoNode:
 
 %%
 
-#undef GLOBAL_DATA
-
-static ExpressionNode* makeAssignNode(JSGlobalData* globalData, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
+static ExpressionNode* makeAssignNode(void* globalPtr, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
 {
     if (!loc->isLocation())
-        return new (globalData) AssignErrorNode(globalData, loc, op, expr, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) AssignErrorNode(GLOBAL_DATA, loc, op, expr, divot, divot - start, end - divot);
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
-            AssignResolveNode* node = new (globalData) AssignResolveNode(globalData, resolve->identifier(), expr, exprHasAssignments);
+            AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, resolve->identifier(), expr, exprHasAssignments);
             SET_EXCEPTION_LOCATION(node, start, divot, end);
             return node;
         } else
-            return new (globalData) ReadModifyResolveNode(globalData, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+            return new (GLOBAL_DATA) ReadModifyResolveNode(GLOBAL_DATA, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
         if (op == OpEqual)
-            return new (globalData) AssignBracketNode(globalData, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
+            return new (GLOBAL_DATA) AssignBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
         else {
-            ReadModifyBracketNode* node = new (globalData) ReadModifyBracketNode(globalData, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
+            ReadModifyBracketNode* node = new (GLOBAL_DATA) ReadModifyBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
             node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
             return node;
         }
@@ -1862,117 +1853,117 @@ static ExpressionNode* makeAssignNode(JSGlobalData* globalData, ExpressionNode* 
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
     if (op == OpEqual)
-        return new (globalData) AssignDotNode(globalData, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
+        return new (GLOBAL_DATA) AssignDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
 
-    ReadModifyDotNode* node = new (globalData) ReadModifyDotNode(globalData, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+    ReadModifyDotNode* node = new (GLOBAL_DATA) ReadModifyDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
 
-static ExpressionNode* makePrefixNode(JSGlobalData* globalData, ExpressionNode* expr, Operator op, int start, int divot, int end)
+static ExpressionNode* makePrefixNode(void* globalPtr, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (globalData) PrefixErrorNode(globalData, expr, op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PrefixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (globalData) PrefixResolveNode(globalData, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PrefixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PrefixBracketNode* node = new (globalData) PrefixBracketNode(globalData, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PrefixBracketNode* node = new (GLOBAL_DATA) PrefixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->startOffset());
         return node;
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PrefixDotNode* node = new (globalData) PrefixDotNode(globalData, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PrefixDotNode* node = new (GLOBAL_DATA) PrefixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->startOffset());
     return node;
 }
 
-static ExpressionNode* makePostfixNode(JSGlobalData* globalData, ExpressionNode* expr, Operator op, int start, int divot, int end)
+static ExpressionNode* makePostfixNode(void* globalPtr, ExpressionNode* expr, Operator op, int start, int divot, int end)
 { 
     if (!expr->isLocation())
-        return new (globalData) PostfixErrorNode(globalData, expr, op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PostfixErrorNode(GLOBAL_DATA, expr, op, divot, divot - start, end - divot);
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (globalData) PostfixResolveNode(globalData, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) PostfixResolveNode(GLOBAL_DATA, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PostfixBracketNode* node = new (globalData) PostfixBracketNode(globalData, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PostfixBracketNode* node = new (GLOBAL_DATA) PostfixBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return node;
         
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PostfixDotNode* node = new (globalData) PostfixDotNode(globalData, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PostfixDotNode* node = new (GLOBAL_DATA) PostfixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
 
-static ExpressionNodeInfo makeFunctionCallNode(JSGlobalData* globalData, ExpressionNodeInfo func, ArgumentsNodeInfo args, int start, int divot, int end)
+static ExpressionNodeInfo makeFunctionCallNode(void* globalPtr, ExpressionNodeInfo func, ArgumentsNodeInfo args, int start, int divot, int end)
 {
     CodeFeatures features = func.m_features | args.m_features;
     int numConstants = func.m_numConstants + args.m_numConstants;
     if (!func.m_node->isLocation())
-        return createNodeInfo<ExpressionNode*>(new (globalData) FunctionCallValueNode(globalData, func.m_node, args.m_node, divot, divot - start, end - divot), features, numConstants);
+        return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) FunctionCallValueNode(GLOBAL_DATA, func.m_node, args.m_node, divot, divot - start, end - divot), features, numConstants);
     if (func.m_node->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func.m_node);
         const Identifier& identifier = resolve->identifier();
-        if (identifier == globalData->propertyNames->eval)
-            return createNodeInfo<ExpressionNode*>(new (globalData) EvalFunctionCallNode(globalData, args.m_node, divot, divot - start, end - divot), EvalFeature | features, numConstants);
-        return createNodeInfo<ExpressionNode*>(new (globalData) FunctionCallResolveNode(globalData, identifier, args.m_node, divot, divot - start, end - divot), features, numConstants);
+        if (identifier == GLOBAL_DATA->propertyNames->eval)
+            return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) EvalFunctionCallNode(GLOBAL_DATA, args.m_node, divot, divot - start, end - divot), EvalFeature | features, numConstants);
+        return createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) FunctionCallResolveNode(GLOBAL_DATA, identifier, args.m_node, divot, divot - start, end - divot), features, numConstants);
     }
     if (func.m_node->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func.m_node);
-        FunctionCallBracketNode* node = new (globalData) FunctionCallBracketNode(globalData, bracket->base(), bracket->subscript(), args.m_node, divot, divot - start, end - divot);
+        FunctionCallBracketNode* node = new (GLOBAL_DATA) FunctionCallBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), args.m_node, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return createNodeInfo<ExpressionNode*>(node, features, numConstants);
     }
     ASSERT(func.m_node->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(func.m_node);
     FunctionCallDotNode* node;
-    if (dot->identifier() == globalData->propertyNames->call)
-        node = new (globalData) CallFunctionCallDotNode(globalData, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
-    else if (dot->identifier() == globalData->propertyNames->apply)
-        node = new (globalData) ApplyFunctionCallDotNode(globalData, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+    if (dot->identifier() == GLOBAL_DATA->propertyNames->call)
+        node = new (GLOBAL_DATA) CallFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+    else if (dot->identifier() == GLOBAL_DATA->propertyNames->apply)
+        node = new (GLOBAL_DATA) ApplyFunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     else
-        node = new (globalData) FunctionCallDotNode(globalData, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
+        node = new (GLOBAL_DATA) FunctionCallDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), args.m_node, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return createNodeInfo<ExpressionNode*>(node, features, numConstants);
 }
 
-static ExpressionNode* makeTypeOfNode(JSGlobalData* globalData, ExpressionNode* expr)
+static ExpressionNode* makeTypeOfNode(void* globalPtr, ExpressionNode* expr)
 {
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (globalData) TypeOfResolveNode(globalData, resolve->identifier());
+        return new (GLOBAL_DATA) TypeOfResolveNode(GLOBAL_DATA, resolve->identifier());
     }
-    return new (globalData) TypeOfValueNode(globalData, expr);
+    return new (GLOBAL_DATA) TypeOfValueNode(GLOBAL_DATA, expr);
 }
 
-static ExpressionNode* makeDeleteNode(JSGlobalData* globalData, ExpressionNode* expr, int start, int divot, int end)
+static ExpressionNode* makeDeleteNode(void* globalPtr, ExpressionNode* expr, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (globalData) DeleteValueNode(globalData, expr);
+        return new (GLOBAL_DATA) DeleteValueNode(GLOBAL_DATA, expr);
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (globalData) DeleteResolveNode(globalData, resolve->identifier(), divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) DeleteResolveNode(GLOBAL_DATA, resolve->identifier(), divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new (globalData) DeleteBracketNode(globalData, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
+        return new (GLOBAL_DATA) DeleteBracketNode(GLOBAL_DATA, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new (globalData) DeleteDotNode(globalData, dot->base(), dot->identifier(), divot, divot - start, end - divot);
+    return new (GLOBAL_DATA) DeleteDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), divot, divot - start, end - divot);
 }
 
-static PropertyNode* makeGetterOrSetterPropertyNode(JSGlobalData* globalData, const Identifier& getOrSet, const Identifier& name, ParameterNode* params, FunctionBodyNode* body, const SourceCode& source)
+static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Identifier& getOrSet, const Identifier& name, ParameterNode* params, FunctionBodyNode* body, const SourceCode& source)
 {
     PropertyNode::Type type;
     if (getOrSet == "get")
@@ -1981,10 +1972,10 @@ static PropertyNode* makeGetterOrSetterPropertyNode(JSGlobalData* globalData, co
         type = PropertyNode::Setter;
     else
         return 0;
-    return new (globalData) PropertyNode(globalData, name, new FuncExprNode(globalData, globalData->propertyNames->nullIdentifier, body, source, params), type);
+    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
 }
 
-static ExpressionNode* makeNegateNode(JSGlobalData* globalData, ExpressionNode* n)
+static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)
 {
     if (n->isNumber()) {
         NumberNode* number = static_cast<NumberNode*>(n);
@@ -1995,104 +1986,106 @@ static ExpressionNode* makeNegateNode(JSGlobalData* globalData, ExpressionNode* 
         }
     }
 
-    return new (globalData) NegateNode(globalData, n);
+    return new (GLOBAL_DATA) NegateNode(GLOBAL_DATA, n);
 }
 
-static NumberNode* makeNumberNode(JSGlobalData* globalData, double d)
+static NumberNode* makeNumberNode(void* globalPtr, double d)
 {
-    return new (globalData) NumberNode(globalData, d);
+    return new (GLOBAL_DATA) NumberNode(GLOBAL_DATA, d);
 }
 
-static ExpressionNode* makeBitwiseNotNode(JSGlobalData* globalData, ExpressionNode* expr)
+static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
 {
     if (expr->isNumber())
-        return makeNumberNode(globalData, ~toInt32(static_cast<NumberNode*>(expr)->value()));
-    return new (globalData) BitwiseNotNode(globalData, expr);
+        return makeNumberNode(globalPtr, ~toInt32(static_cast<NumberNode*>(expr)->value()));
+    return new (GLOBAL_DATA) BitwiseNotNode(GLOBAL_DATA, expr);
 }
 
-static ExpressionNode* makeMultNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
 
     if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
-        return new (globalData) UnaryPlusNode(globalData, expr2);
+        return new (GLOBAL_DATA) UnaryPlusNode(GLOBAL_DATA, expr2);
 
     if (expr2->isNumber() && static_cast<NumberNode*>(expr2)->value() == 1)
-        return new (globalData) UnaryPlusNode(globalData, expr1);
+        return new (GLOBAL_DATA) UnaryPlusNode(GLOBAL_DATA, expr1);
 
-    return new (globalData) MultNode(globalData, expr1, expr2, rightHasAssignments);
+    return new (GLOBAL_DATA) MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-static ExpressionNode* makeDivNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
-    return new (globalData) DivNode(globalData, expr1, expr2, rightHasAssignments);
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
+    return new (GLOBAL_DATA) DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-static ExpressionNode* makeAddNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
-    return new (globalData) AddNode(globalData, expr1, expr2, rightHasAssignments);
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
+    return new (GLOBAL_DATA) AddNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-static ExpressionNode* makeSubNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
-    return new (globalData) SubNode(globalData, expr1, expr2, rightHasAssignments);
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
+    return new (GLOBAL_DATA) SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-static ExpressionNode* makeLeftShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeLeftShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new (globalData) LeftShiftNode(globalData, expr1, expr2, rightHasAssignments);
+        return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (GLOBAL_DATA) LeftShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-static ExpressionNode* makeRightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+static ExpressionNode* makeRightShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalData, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new (globalData) RightShiftNode(globalData, expr1, expr2, rightHasAssignments);
+        return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (GLOBAL_DATA) RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-// Called by yyparse on error.
-int yyerror(const char*)
+/* called by yyparse on error */
+int yyerror(const char *)
 {
     return 1;
 }
 
-// May we automatically insert a semicolon?
+/* may we automatically insert a semicolon ? */
 static bool allowAutomaticSemicolon(Lexer& lexer, int yychar)
 {
     return yychar == CLOSEBRACE || yychar == 0 || lexer.prevTerminator();
 }
 
-static ExpressionNode* combineVarInitializers(JSGlobalData* globalData, ExpressionNode* list, AssignResolveNode* init)
+static ExpressionNode* combineVarInitializers(void* globalPtr, ExpressionNode* list, AssignResolveNode* init)
 {
     if (!list)
         return init;
-    return new (globalData) CommaNode(globalData, list, init);
+    return new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, list, init);
 }
 
 // We turn variable declarations into either assignments or empty
 // statements (which later get stripped out), because the actual
 // declaration work is hoisted up to the start of the function body
-static StatementNode* makeVarStatementNode(JSGlobalData* globalData, ExpressionNode* expr)
+static StatementNode* makeVarStatementNode(void* globalPtr, ExpressionNode* expr)
 {
     if (!expr)
-        return new (globalData) EmptyStatementNode(globalData);
-    return new (globalData) VarStatementNode(globalData, expr);
+        return new (GLOBAL_DATA) EmptyStatementNode(GLOBAL_DATA);
+    return new (GLOBAL_DATA) VarStatementNode(GLOBAL_DATA, expr);
 }
+
+#undef GLOBAL_DATA

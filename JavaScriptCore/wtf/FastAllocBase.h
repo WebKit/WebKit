@@ -394,14 +394,7 @@ namespace WTF {
         Internal::NonNullDeleteArrayImpl<T, WTF::HasTrivialDestructor<T>::value>::fastNonNullDeleteArray(p);
     }
 
-} // namespace WTF
 
-using WTF::FastAllocBase;
-using WTF::fastDelete;
-using WTF::fastDeleteArray;
-using WTF::fastNew;
-using WTF::fastNewArray;
-using WTF::fastNonNullDelete;
-using WTF::fastNonNullDeleteArray;
+} // namespace WTF
 
 #endif // FastAllocBase_h

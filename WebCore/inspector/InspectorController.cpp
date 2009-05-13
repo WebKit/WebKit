@@ -86,7 +86,6 @@
 #include "JavaScriptDebugServer.h"
 #include "JSJavaScriptCallFrame.h"
 
-#include <parser/SourceCode.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
 #include <runtime/JSLock.h>
