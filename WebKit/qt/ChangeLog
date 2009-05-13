@@ -1,3 +1,14 @@
+2009-05-12  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Added external CSS test cases to QWebElement::styleProperty() method.
+
+        Also some ::styleProperty() tests cleanup.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+
 2009-05-12  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.

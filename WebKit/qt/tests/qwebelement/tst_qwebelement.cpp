@@ -385,17 +385,14 @@ void tst_QWebElement::frame()
 void tst_QWebElement::style()
 {
     QString html = "<head>"
-        "<style type=\"text/css\">"
-            "div,p {color: green !important }"
-            "#singlep {width: 20px !important ; color: red }"
-        "</style>"
-        "<style type=\"text/css\">"
-            ".bg {background-color: #ff0000 !important;}"
-            " p {height: 11px! important; width : 12px !important; }"
+        "<style type='text/css'>"
+            "p { color: green !important }"
+            "#idP { color: red }"
+            ".classP { color : yellow ! important }"
         "</style>"
     "</head>"
     "<body>"
-        "<p id=\"singlep\" class=\"bg\" style=\"color: blue;\">some text</p>"
+        "<p id='idP' class='classP' style='color: blue;'>some text</p>"
     "</body>";
 
     m_mainFrame->setHtml(html);
@@ -408,18 +405,30 @@ void tst_QWebElement::style()
     p.setStyleProperty("cursor", "auto");
 
     QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("yellow"));
     QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
 
+    p.setStyleProperty("color", "green !important");
+    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+
+    p.setStyleProperty("color", "blue");
+    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+
+    p.setStyleProperty("color", "blue", QWebElement::ImportantStylePriority);
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+
     QString html2 = "<head>"
-        "<style type=\"text/css\">"
+        "<style type='text/css'>"
             "p { color: green }"
-            "#singlep { color: red }"
-            ".classp { color: yellow }"
+            "#idP { color: red }"
+            ".classP { color: yellow }"
         "</style>"
     "</head>"
     "<body>"
-        "<p id=\"singlep\" class=\"classp\" style=\"color: blue;\">some text</p>"
+        "<p id='idP' class='classP' style='color: blue;'>some text</p>"
     "</body>";
 
     m_mainFrame->setHtml(html2);
@@ -429,14 +438,14 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
 
     QString html3 = "<head>"
-        "<style type=\"text/css\">"
+        "<style type='text/css'>"
             "p { color: green !important }"
-            "#singlep { color: red !important}"
-            ".classp { color: yellow !important}"
+            "#idP { color: red !important}"
+            ".classP { color: yellow !important}"
         "</style>"
     "</head>"
     "<body>"
-        "<p id=\"singlep\" class=\"classp\" style=\"color: blue !important;\">some text</p>"
+        "<p id='idP' class='classP' style='color: blue !important;'>some text</p>"
     "</body>";
 
     m_mainFrame->setHtml(html3);
@@ -445,46 +454,15 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
     QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
 
-    QString html4 = "<head>"
-        "<style type=\"text/css\">"
-            "p { color: green !important }"
-            "#singlep { color: red !important}"
-            "#singlep { color: black}"
-            ".classp { color: yellow !important}"
-        "</style>"
-    "</head>"
-    "<body>"
-        "<p id=\"singlep\" class=\"classp\" style=\"color: blue;\">some text</p>"
-    "</body>";
-
-    m_mainFrame->setHtml(html4);
-    p = m_mainFrame->documentElement().findAll("p").at(0);
-
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
-
-    p.setStyleProperty("color", "green");
-    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
-    p.setStyleProperty("color", "green !important");
-    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
-    p.setStyleProperty("color", "blue");
-    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
-    p.setStyleProperty("color", "blue", QWebElement::ImportantStylePriority);
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
-
     QString html5 = "<head>"
-        "<style type=\"text/css\">"
+        "<style type='text/css'>"
             "p { color: green }"
-            "#singlep { color: red }"
-            ".classp { color: yellow }"
+            "#idP { color: red }"
+            ".classP { color: yellow }"
         "</style>"
     "</head>"
     "<body>"
-        "<p id=\"singlep\" class=\"classp\">some text</p>"
+        "<p id='idP' class='classP'>some text</p>"
     "</body>";
 
     m_mainFrame->setHtml(html5);
@@ -492,6 +470,44 @@ void tst_QWebElement::style()
 
     QCOMPARE(p.styleProperty("color"), QLatin1String(""));
     QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
+
+    QString html6 = "<head>"
+        "<link rel='stylesheet' href='qrc:/style.css' type='text/css' />"
+        "<style type='text/css'>"
+            "p { color: green }"
+            "#idP { color: red }"
+            ".classP { color: yellow ! important}"
+        "</style>"
+    "</head>"
+    "<body>"
+        "<p id='idP' class='classP' style='color: blue;'>some text</p>"
+    "</body>";
+
+    // in few seconds, the CSS should be completey loaded
+    QSignalSpy spy(m_page, SIGNAL(loadFinished(bool)));
+    m_mainFrame->setHtml(html6);
+    QTest::qWait(200);
+
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("black"));
+
+    QString html7 = "<head>"
+        "<style type='text/css'>"
+            "@import url(qrc:/style2.css);"
+        "</style>"
+        "<link rel='stylesheet' href='qrc:/style.css' type='text/css' />"
+    "</head>"
+    "<body>"
+        "<p id='idP' style='color: blue;'>some text</p>"
+    "</body>";
+
+    // in few seconds, the style should be completey loaded
+    m_mainFrame->setHtml(html7);
+    QTest::qWait(200);
+
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("black"));
 }
 
 void tst_QWebElement::computedStyle()

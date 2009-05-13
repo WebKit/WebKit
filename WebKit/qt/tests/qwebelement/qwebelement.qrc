@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file>style.css</file>
+<file>style2.css</file>
+</qresource>
+</RCC>
