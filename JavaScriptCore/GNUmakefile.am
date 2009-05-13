@@ -87,6 +87,7 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/jit/JITStubs.cpp \
 	JavaScriptCore/jit/JITStubs.h \
+	JavaScriptCore/jit/JITStubCall.h \
 	JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	JavaScriptCore/bytecode/StructureStubInfo.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
