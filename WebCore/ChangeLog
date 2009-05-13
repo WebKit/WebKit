@@ -1,3 +1,19 @@
+2009-05-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25706
+
+        Change V8 bindings to match JSC bindings with respect to using
+        the lexical or dynamic global object.
+
+        Tests: http/tests/security/aboutBlank/security-context-grandchildren-lexical.html
+               http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html
+               http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html
+
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-03-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

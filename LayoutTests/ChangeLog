@@ -1,3 +1,17 @@
+2009-05-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Test that we use the lexical global object in document.open,
+        document.write, and document.writeln.
+
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical.html: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html: Added.
+
 2009-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
