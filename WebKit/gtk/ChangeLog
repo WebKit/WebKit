@@ -1,3 +1,11 @@
+2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Updated control file, and main file for the 1.1.7
+        release.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Xan Lopez.

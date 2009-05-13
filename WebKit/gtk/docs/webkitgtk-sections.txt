@@ -81,9 +81,11 @@ WebKitWebHistoryItemClass
 <SECTION>
 <FILE>webkitwebframe</FILE>
 <TITLE>WebKitWebFrame</TITLE>
+WebKitLoadStatus
 WebKitWebFrame
 webkit_web_frame_find_frame
 webkit_web_frame_get_global_context
+webkit_web_frame_get_load_status
 webkit_web_frame_get_name
 webkit_web_frame_get_parent
 webkit_web_frame_get_title
@@ -281,8 +283,10 @@ webkit_web_view_get_encoding
 webkit_web_view_get_focused_frame
 webkit_web_view_get_full_content_zoom
 webkit_web_view_get_inspector
+webkit_web_view_get_load_status
 webkit_web_view_get_main_frame
 webkit_web_view_get_paste_target_list
+webkit_web_view_get_progress
 webkit_web_view_get_settings
 webkit_web_view_get_title
 webkit_web_view_get_transparent
