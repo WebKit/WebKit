@@ -1,5 +1,13 @@
 2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Xan Lopez.
+
+        Note changes since 1.1.6.
+
+        * NEWS:
+
+2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Updated control file, and main file for the 1.1.7
         release.
 

@@ -1,4 +1,28 @@
 ================
+WebKitGTK+ 1.1.7
+================
+
+What's new in WebKitGTK+ 1.1.7?
+
+  - New frame loading properties superseed various load-* signals, and
+    are also accessible in the WebView, for convenience, making this
+    API saner.
+  - JIT is now supported for X86-64 on Linux, and enabled by default!
+  - A regression on webkit_web_view_load_string has been fixed, making
+    it work correctly again when the document uses encodings which may
+    use more than 1 byte per character.
+  - Yet more work has been done to the ATK support, caret browsing
+    support improvements in particular.
+  - Filenames suggested by the Download functionality now correctly
+    use the filename given by the host, if available.
+  - Build fixes for IA64, and AMD64
+  - gtk-doc support has also improved, and you should now be able to
+    cd WebKit/gtk/docs and type make docs, if you --enable-gtk-doc on
+    configure, as long as you build  with srcdir == builddir.
+  - More crashes and other bugs fixed, and small improvements made
+    under the hood.
+
+================
 WebKitGTK+ 1.1.6
 ================
 
