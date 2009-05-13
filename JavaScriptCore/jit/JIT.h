@@ -32,6 +32,14 @@
 
 #define WTF_USE_CTI_REPATCH_PIC 1
 
+// We've run into some problems where changing the size of the class JIT leads to
+// performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
+#if COMPILER(GCC)
+#define JIT_CLASS_ALIGNMENT __attribute__ ((aligned (32)))
+#else
+#define JIT_CLASS_ALIGNMENT
+#endif
+
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JITCode.h"
@@ -646,7 +654,7 @@ namespace JSC {
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_globalResolveInfoIndex;
         unsigned m_callLinkInfoIndex;
-    };
+    } JIT_CLASS_ALIGNMENT;
 
 }
 

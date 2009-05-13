@@ -1,3 +1,12 @@
+2009-05-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        We've run into some problems where changing the size of the class JIT leads to
+        performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
+
+        * jit/JIT.h:
+
 2009-05-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add ParserArena.cpp to the build.
