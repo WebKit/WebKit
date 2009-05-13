@@ -387,22 +387,33 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 }
 
 #if ENABLE(SAMPLING_FLAGS)
-ALWAYS_INLINE void JIT::setSamplingFlag(int flag, RegisterID scratch)
+ALWAYS_INLINE void JIT::setSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    load32(&SamplingFlags::s_flags, scratch);
-    or32(Imm32(1u << (flag - 1)), scratch);
-    store32(scratch, &SamplingFlags::s_flags);
+    or32(Imm32(1u << (flag - 1)), AbsoluteAddress(&SamplingFlags::s_flags));
 }
 
-ALWAYS_INLINE void JIT::clearSamplingFlag(int flag, RegisterID scratch)
+ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    load32(&SamplingFlags::s_flags, scratch);
-    and32(Imm32(~(1u << (flag - 1))), scratch);
-    store32(scratch, &SamplingFlags::s_flags);
+    and32(Imm32(~(1u << (flag - 1))), AbsoluteAddress(&SamplingFlags::s_flags));
+}
+#endif
+
+#if ENABLE(SAMPLING_COUNTERS)
+ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, uint32_t count)
+{
+#if PLATFORM(X86_64) // Or any other 64-bit plattform.
+    addPtr(Imm32(count), AbsoluteAddress(&counter.m_counter));
+#elif PLATFORM(X86) // Or any other little-endian 32-bit plattform.
+    intptr_t hiWord = reinterpret_cast<intptr_t>(&counter.m_counter) + sizeof(int32_t);
+    add32(Imm32(count), AbsoluteAddress(&counter.m_counter));
+    addWithCarry32(Imm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
+#else
+#error "SAMPLING_FLAGS not implemented on this platform."
+#endif
 }
 #endif
 

@@ -419,6 +419,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     interpreter->sampler()->dump(globalObject->globalExec());
     delete interpreter->sampler();
 #endif
+#if ENABLE(SAMPLING_COUNTERS)
+    AbstractSamplingCounter::dump();
+#endif
     return success;
 }
 

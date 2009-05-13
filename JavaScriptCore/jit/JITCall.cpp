@@ -296,7 +296,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     Jump storeResultForFirstRun = jump();
 
-// FIXME: this label can be removed, since it is a fixed offset from 'callReturnLocation'.
     // This is the address for the cold path *after* the first run (which tries to link the call).
     m_callStructureStubCompilationInfo[callLinkInfoIndex].coldPathOther = MacroAssembler::Label(this);
 

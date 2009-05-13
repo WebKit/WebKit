@@ -39,7 +39,9 @@ public:
     static const Scale ScalePtr = TimesFour;
 
     using MacroAssemblerX86Common::add32;
+    using MacroAssemblerX86Common::and32;
     using MacroAssemblerX86Common::sub32;
+    using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::branch32;
@@ -55,6 +57,21 @@ public:
         m_assembler.addl_im(imm.m_value, address.m_ptr);
     }
     
+    void addWithCarry32(Imm32 imm, AbsoluteAddress address)
+    {
+        m_assembler.adcl_im(imm.m_value, address.m_ptr);
+    }
+    
+    void and32(Imm32 imm, AbsoluteAddress address)
+    {
+        m_assembler.andl_im(imm.m_value, address.m_ptr);
+    }
+    
+    void or32(Imm32 imm, AbsoluteAddress address)
+    {
+        m_assembler.orl_im(imm.m_value, address.m_ptr);
+    }
+
     void sub32(Imm32 imm, AbsoluteAddress address)
     {
         m_assembler.subl_im(imm.m_value, address.m_ptr);

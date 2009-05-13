@@ -42,6 +42,8 @@ public:
     static const Scale ScalePtr = TimesEight;
 
     using MacroAssemblerX86Common::add32;
+    using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
@@ -53,6 +55,18 @@ public:
         add32(imm, Address(scratchRegister));
     }
     
+    void and32(Imm32 imm, AbsoluteAddress address)
+    {
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        and32(imm, Address(scratchRegister));
+    }
+    
+    void or32(Imm32 imm, AbsoluteAddress address)
+    {
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        or32(imm, Address(scratchRegister));
+    }
+
     void sub32(Imm32 imm, AbsoluteAddress address)
     {
         move(ImmPtr(address.m_ptr), scratchRegister);
@@ -125,6 +139,17 @@ public:
         m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
+    void addPtr(Imm32 imm, Address address)
+    {
+        m_assembler.addq_im(imm.m_value, address.offset, address.base);
+    }
+
+    void addPtr(Imm32 imm, AbsoluteAddress address)
+    {
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        addPtr(imm, Address(scratchRegister));
+    }
+    
     void andPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.andq_rr(src, dest);

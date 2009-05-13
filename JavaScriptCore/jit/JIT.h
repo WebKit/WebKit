@@ -614,8 +614,12 @@ namespace JSC {
 
 
 #if ENABLE(SAMPLING_FLAGS)
-        void setSamplingFlag(int flag, RegisterID scratch);
-        void clearSamplingFlag(int flag, RegisterID scratch);
+        void setSamplingFlag(int32_t);
+        void clearSamplingFlag(int32_t);
+#endif
+
+#if ENABLE(SAMPLING_COUNTERS)
+        void emitCount(AbstractSamplingCounter&, uint32_t = 1);
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)

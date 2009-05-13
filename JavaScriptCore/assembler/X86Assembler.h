@@ -193,6 +193,7 @@ private:
     typedef enum {
         GROUP1_OP_ADD = 0,
         GROUP1_OP_OR  = 1,
+        GROUP1_OP_ADC = 2,
         GROUP1_OP_AND = 4,
         GROUP1_OP_SUB = 5,
         GROUP1_OP_XOR = 6,
@@ -295,6 +296,19 @@ public:
 
     // Arithmetic operations:
 
+#if !PLATFORM(X86_64)
+    void adcl_im(int imm, void* addr)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADC, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADC, addr);
+            m_formatter.immediate32(imm);
+        }
+    }
+#endif
+
     void addl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_ADD_EvGv, src, dst);
@@ -343,6 +357,17 @@ public:
             m_formatter.immediate32(imm);
         }
     }
+
+    void addq_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_ADD, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_ADD, base, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
 #else
     void addl_im(int imm, void* addr)
     {
@@ -372,6 +397,17 @@ public:
         }
     }
 
+    void andl_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_AND, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_AND, base, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+
 #if PLATFORM(X86_64)
     void andq_rr(RegisterID src, RegisterID dst)
     {
@@ -385,6 +421,17 @@ public:
             m_formatter.immediate8(imm);
         } else {
             m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_AND, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#else
+    void andl_im(int imm, void* addr)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_AND, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_AND, addr);
             m_formatter.immediate32(imm);
         }
     }
@@ -416,6 +463,17 @@ public:
         }
     }
 
+    void orl_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, base, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+
 #if PLATFORM(X86_64)
     void orq_rr(RegisterID src, RegisterID dst)
     {
@@ -429,6 +487,17 @@ public:
             m_formatter.immediate8(imm);
         } else {
             m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#else
+    void orl_im(int imm, void* addr)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, addr);
             m_formatter.immediate32(imm);
         }
     }

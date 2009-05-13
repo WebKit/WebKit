@@ -92,6 +92,11 @@ public:
         m_assembler.andl_ir(imm.m_value, dest);
     }
 
+    void and32(Imm32 imm, Address address)
+    {
+        m_assembler.andl_im(imm.m_value, address.offset, address.base);
+    }
+
     void lshift32(Imm32 imm, RegisterID dest)
     {
         m_assembler.shll_i8r(imm.m_value, dest);
@@ -142,6 +147,11 @@ public:
     void or32(Imm32 imm, RegisterID dest)
     {
         m_assembler.orl_ir(imm.m_value, dest);
+    }
+
+    void or32(Imm32 imm, Address address)
+    {
+        m_assembler.orl_im(imm.m_value, address.offset, address.base);
     }
 
     void rshift32(RegisterID shift_amount, RegisterID dest)

@@ -1,3 +1,57 @@
+2009-05-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add SamplingCounter tool to provide a simple mechanism for counting events in JSC
+        (enabled using ENABLE(SAMPLING_COUNTERS)).  To count events within a single function
+        use the class 'SamplingCounter', where the counter may be incremented from multiple
+        functions 'GlobalSamplingCounter' may be convenient; all other counters (stack or
+        heap allocated, rather than statically declared) should use the DeletableSamplingCounter.
+        Further description of these classes is provided alongside their definition in 
+        SamplingTool.h.
+
+        Counters may be incremented from c++ by calling the 'count()' method on the counter,
+        or may be incremented by JIT code by using the 'emitCount()' method within the JIT.
+
+        This patch also fixes CODEBLOCK_SAMPLING, which was missing a null pointer check.
+
+        * JavaScriptCore.exp:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::addWithCarry32):
+        (JSC::MacroAssemblerX86::and32):
+        (JSC::MacroAssemblerX86::or32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::or32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and32):
+        (JSC::MacroAssemblerX86_64::or32):
+        (JSC::MacroAssemblerX86_64::addPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::adcl_im):
+        (JSC::X86Assembler::addq_im):
+        (JSC::X86Assembler::andl_im):
+        (JSC::X86Assembler::orl_im):
+        * bytecode/SamplingTool.cpp:
+        (JSC::AbstractSamplingCounter::dump):
+        * bytecode/SamplingTool.h:
+        (JSC::AbstractSamplingCounter::count):
+        (JSC::GlobalSamplingCounter::name):
+        (JSC::SamplingCounter::SamplingCounter):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::setSamplingFlag):
+        (JSC::JIT::clearSamplingFlag):
+        (JSC::JIT::emitCount):
+        * jsc.cpp:
+        (runWithScripts):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        * wtf/Platform.h:
+
 2009-05-13  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
