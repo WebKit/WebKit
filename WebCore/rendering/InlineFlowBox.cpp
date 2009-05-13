@@ -885,18 +885,37 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
         int w = m_width - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
         RootInlineBox* rootLine = root();
         if (rootLine->ellipsisBox()) {
-            int ellipsisX = rootLine->ellipsisBox()->x();
+            int ellipsisX = m_x + rootLine->ellipsisBox()->x();
             int ellipsisWidth = rootLine->ellipsisBox()->width();
-            
-            // FIXME: Will need to work with RTL
+            bool ltr = renderer()->style()->direction() == LTR;
             if (rootLine == this) {
-                if (x + w >= ellipsisX + ellipsisWidth)
-                    w -= (x + w - ellipsisX - ellipsisWidth);
+                // Trim w and x so that the underline isn't drawn underneath the ellipsis.
+                // ltr: is our right edge farther right than the right edge of the ellipsis.
+                // rtl: is the left edge of our box farther left than the left edge of the ellipsis.
+                bool ltrTruncation = ltr && (x + w >= ellipsisX + ellipsisWidth);
+                bool rtlTruncation = !ltr && (x <= ellipsisX + ellipsisWidth);
+                if (ltrTruncation)
+                    w -= (x + w) - (ellipsisX + ellipsisWidth);
+                else if (rtlTruncation) {
+                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
+                    tx -= dx;
+                    w += dx;
+                }
             } else {
-                if (x >= ellipsisX)
+                bool ltrPastEllipsis = ltr && x >= ellipsisX;
+                bool rtlPastEllipsis = !ltr && (x + w) <= (ellipsisX + ellipsisWidth);
+                if (ltrPastEllipsis || rtlPastEllipsis)
                     return;
-                if (x + w >= ellipsisX)
+
+                bool ltrTruncation = ltr && x + w >= ellipsisX;
+                bool rtlTruncation = !ltr && x <= ellipsisX;
+                if (ltrTruncation)
                     w -= (x + w - ellipsisX);
+                else if (rtlTruncation) {
+                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
+                    tx -= dx;
+                    w += dx;
+                }
             }
         }
 
@@ -1022,13 +1041,32 @@ bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsis
     return true;
 }
 
-int InlineFlowBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox)
+int InlineFlowBox::placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth, bool& foundBox)
 {
     int result = -1;
-    for (InlineBox *box = firstChild(); box; box = box->nextOnLine()) {
-        int currResult = box->placeEllipsisBox(ltr, blockEdge, ellipsisWidth, foundBox);
+    // We iterate over all children, the foundBox variable tells us when we've found the
+    // box containing the ellipsis.  All boxes after that one in the flow are hidden.
+    // If our flow is ltr then iterate over the boxes from left to right, otherwise iterate
+    // from right to left. Varying the order allows us to correctly hide the boxes following the ellipsis.
+    InlineBox *box = ltr ? firstChild() : lastChild();
+
+    // NOTE: these will cross after foundBox = true.
+    int visibleLeftEdge = blockLeftEdge;
+    int visibleRightEdge = blockRightEdge;
+
+    while(box) {
+        int currResult = box->placeEllipsisBox(ltr, visibleLeftEdge, visibleRightEdge, ellipsisWidth, foundBox);
         if (currResult != -1 && result == -1)
             result = currResult;
+
+        if (ltr) {
+            visibleLeftEdge += box->width();
+            box = box->nextOnLine();
+        }
+        else {
+            visibleRightEdge -= box->width();
+            box = box->prevOnLine();
+        }
     }
     return result;
 }

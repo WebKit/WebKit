@@ -280,7 +280,7 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     return !(boxRect.intersects(ellipsisRect));
 }
 
-int InlineBox::placeEllipsisBox(bool, int, int, bool&)
+int InlineBox::placeEllipsisBox(bool, int, int, int, bool&)
 {
     // Use -1 to mean "we didn't set the position."
     return -1;

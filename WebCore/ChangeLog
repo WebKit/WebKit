@@ -1,3 +1,56 @@
+2009-05-13  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Fix a number of bugs relating to RTL and text-overflow:ellipsis.
+        Also refactor the relevant code to make it a little clearer.
+
+        This CL fixes 3 fundamental issues:
+        - Corrects behavior if the truncated InlineTextBox's directionality is
+          different from the overall flow direction - bug 25135.
+        - Make decoration drawing in InlineFlowbox RTL-aware - bug 24206.
+        - Full truncation on InlineBoxes in RTL flow - bug 24186
+        - Add tests for the above + reorder/cleanup tests for easier
+          interpretation of outcome.
+
+        The code for placing ellipsis has been refactored to use
+        left/right notation rather than a single variable whose meaning
+        could differ based on flow directionality.
+
+        To support differing inline directionality vs flow directionality,
+        different variables are now used in InlineTextBox::placeEllipsisBox to
+        track the two.
+
+        The drawing mode for underlines in standards mode now correctly handles
+        RTL truncation and relevant test where added.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24186
+        https://bugs.webkit.org/show_bug.cgi?id=25135
+        https://bugs.webkit.org/show_bug.cgi?id=24206
+
+        Tests: fast/css/text-overflow-ellipsis-bidi.html
+               fast/css/text-overflow-ellipsis-strict.html
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::placeEllipsisBox):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::placeEllipsisBox):
+        * rendering/RootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+
 2009-05-13  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by Mark Rowe.

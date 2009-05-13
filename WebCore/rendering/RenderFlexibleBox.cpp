@@ -771,15 +771,19 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     continue;
                 if (destBlock->style()->direction() != LTR)
                     continue;
+                int ltr = true;
 
-                int blockEdge = destBlock->rightOffset(lastVisibleLine->y(), false);
-                if (!lastVisibleLine->canAccommodateEllipsis(true, blockEdge, 
+                int blockRightEdge = destBlock->rightOffset(lastVisibleLine->y(), false);
+                int blockLeftEdge = destBlock->leftOffset(lastVisibleLine->y(), false);
+
+                int blockEdge = ltr ? blockRightEdge : blockLeftEdge;
+                if (!lastVisibleLine->canAccommodateEllipsis(ltr, blockEdge,
                                                              lastVisibleLine->x() + lastVisibleLine->width(),
                                                              totalWidth))
                     continue;
 
                 // Let the truncation code kick in.
-                lastVisibleLine->placeEllipsis(ellipsisAndSpaceStr, true, blockEdge, totalWidth, anchorBox);
+                lastVisibleLine->placeEllipsis(ellipsisAndSpaceStr, ltr, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
                 destBlock->setHasMarkupTruncation(true);
             }
         }
