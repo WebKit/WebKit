@@ -1,3 +1,9 @@
+2009-05-13  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix: add JITStubCall.h to files list.
+
+        * GNUmakefile.am:
+
 2009-05-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Unreviewed build fix, as suggested by Yael Aharon <yael.aharon@nokia.com>.
