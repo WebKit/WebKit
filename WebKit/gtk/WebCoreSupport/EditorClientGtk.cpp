@@ -495,6 +495,10 @@ static bool handleEditingKeyboardEvent(KeyboardEvent* evt)
     if (evt->charCode() < ' ')
         return false;
 
+    // Don't insert anything if a modifier is pressed
+    if (keyEvent->ctrlKey() || keyEvent->altKey())
+        return false;
+
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
 

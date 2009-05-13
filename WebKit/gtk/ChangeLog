@@ -1,3 +1,14 @@
+2009-05-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not handle KeyEvents with Ctrl or Alt modifiers that we
+        otherwise know nothing about. Otherwise shortcuts defined in the
+        WebView will never be executed.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::handleEditingKeyboardEvent):
+
 2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Add information about the SVG index bounds check committed in
