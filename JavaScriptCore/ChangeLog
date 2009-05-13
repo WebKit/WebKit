@@ -42,7 +42,7 @@
         the structure-creating functions inline. Changed the VarStack to use
         identifier pointers instead of actual identifiers. This takes
         advantage of the fact that all identifier pointers come from the
-        arena and avoids referenc count churn. Changed Identifier* to
+        arena and avoids reference count churn. Changed Identifier* to
         const Identifier* to make sure we don't modify any by accident.
         Used identifiers for regular expression strings too, using the new
         scanRegExp that has out parameters instead of the old one that relied
