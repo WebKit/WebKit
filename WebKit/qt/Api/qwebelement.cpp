@@ -908,7 +908,7 @@ QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) 
         // declarations, as well as embedded and inline style declarations.
 
         DOMWindow* domWindow = m_element->document()->frame()->domWindow();
-        if (RefPtr<CSSRuleList> rules = domWindow->getMatchedCSSRules(m_element, ""))
+        if (RefPtr<CSSRuleList> rules = domWindow->getMatchedCSSRules(m_element, "")) {
             for (int i = rules->length(); i > 0; --i) {
                 CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
 
@@ -918,6 +918,7 @@ QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) 
                 if (style->getPropertyValue(propID).isEmpty())
                     style = rule->style();
             }
+        }
 
         return style->getPropertyValue(propID);
     }
