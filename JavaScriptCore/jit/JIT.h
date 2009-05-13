@@ -30,8 +30,6 @@
 
 #if ENABLE(JIT)
 
-#define WTF_USE_CTI_REPATCH_PIC 1
-
 // We've run into some problems where changing the size of the class JIT leads to
 // performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
 #if COMPILER(GCC)

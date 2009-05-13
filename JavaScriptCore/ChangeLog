@@ -1,5 +1,14 @@
 2009-05-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoff Garen.
+
+        WTF_USE_CTI_REPATCH_PIC is no longer used, remove.
+
+        * jit/JIT.h:
+        * jit/JITStubCall.h:
+
+2009-05-12  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         We've run into some problems where changing the size of the class JIT leads to

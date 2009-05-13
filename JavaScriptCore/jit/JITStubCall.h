@@ -30,8 +30,6 @@
 
 #if ENABLE(JIT)
 
-#define WTF_USE_CTI_REPATCH_PIC 1
-
 namespace JSC {
 
     class JITStubCall {
