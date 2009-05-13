@@ -1,3 +1,12 @@
+2009-05-13  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Revert commit r43563, since it breaks WebKitGTK+ when compiled
+        with gcc 4.4.
+
+        * GNUmakefile.am:
+
 2009-05-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
