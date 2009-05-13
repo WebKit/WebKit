@@ -1,3 +1,15 @@
+2009-05-12  Roland Steiner <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 25738: Skia: CSS border style not cleared for SVG object
+        https://bugs.webkit.org/show_bug.cgi?id=25738
+
+        * platform/mac/svg/custom/no-inherited-dashed-stroke-expected.checksum: Added.
+        * platform/mac/svg/custom/no-inherited-dashed-stroke-expected.png: Added.
+        * platform/mac/svg/custom/no-inherited-dashed-stroke-expected.txt: Added.
+        * svg/custom/no-inherited-dashed-stroke.xhtml: Added.
+
 2009-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

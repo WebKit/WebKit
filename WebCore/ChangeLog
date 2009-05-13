@@ -1,3 +1,20 @@
+2009-05-12  Roland Steiner <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 25738: Skia: CSS border style not cleared for SVG object
+        https://bugs.webkit.org/show_bug.cgi?id=25738
+
+        If no dashing is set, this change reverts to solid stroke
+        (previously the code bailed and left the old setting, whatever it was)
+
+        Test case listed in above bug entry.
+        (Additional complications due to each platform rendering dotted lines differently -
+        c.f. https://bugs.webkit.org/show_bug.cgi?id=25737)
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+
 2009-05-11  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

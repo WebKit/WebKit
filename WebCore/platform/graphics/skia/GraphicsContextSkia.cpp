@@ -907,8 +907,13 @@ void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
     // FIXME: This is lifted directly off SkiaSupport, lines 49-74
     // so it is not guaranteed to work correctly.
     size_t dashLength = dashes.size();
-    if (!dashLength)
+    if (!dashLength) {
+        // If no dash is set, revert to solid stroke
+        // FIXME: do we need to set NoStroke in some cases?
+        platformContext()->setStrokeStyle(SolidStroke);
+        platformContext()->setDashPathEffect(0);
         return;
+    }
 
     size_t count = (dashLength % 2) == 0 ? dashLength : dashLength * 2;
     SkScalar* intervals = new SkScalar[count];
