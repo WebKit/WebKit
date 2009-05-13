@@ -1,3 +1,22 @@
+2009-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6438177> QTMoviePreferredTransformAttribute only supported on SnowLeopard
+        <rdar://problem/6872468> QTMovieOpenForPlaybackAttribute only supported on SnowLeopard
+
+        QTMoviePreferredTransformAttribute and QTMovieOpenForPlaybackAttribute are not supported
+        on Tiger or Leopard.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setNetworkState): Remove invalid ASSERT.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): Only request QTMoviePreferredTransformAttribute
+        when !BUILDING_ON_TIGER and !BUILDING_ON_LEOPARD.
+        (WebCore::MediaPlayerPrivate::cacheMovieScale): Only ask for QTMovieOpenForPlaybackAttribute 
+        when !BUILDING_ON_TIGER and !BUILDING_ON_LEOPARD,
+
 2009-05-12  Roland Steiner <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.

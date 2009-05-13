@@ -236,7 +236,9 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                      [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
                                      [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                                      [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
-                                     [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",     // FIXME: Use defined attribute when required version of QT supports this attribute
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+                                     [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",
+#endif
 #ifndef BUILDING_ON_TIGER
                                      QTMovieApertureModeClean, QTMovieApertureModeAttribute,
 #endif
@@ -678,19 +680,19 @@ void MediaPlayerPrivate::cacheMovieScale()
     NSSize initialSize = NSZeroSize;
     NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
 
-    // QTMovieCurrentSizeAttribute is not allowed with some versions of QuickTime so ask for the display
-    // transform attribute first. If it is supported we don't need QTMovieCurrentSizeAttribute.
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    // QTMovieCurrentSizeAttribute is not allowed with instances of QTMovie that have been 
+    // opened with QTMovieOpenForPlaybackAttribute, so ask for the display transform attribute instead.
     NSAffineTransform *displayTransform = [m_qtMovie.get() attributeForKey:@"QTMoviePreferredTransformAttribute"];
     if (displayTransform)
         initialSize = [displayTransform transformSize:naturalSize];
     else {
-        @try {
-            initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
-        } @catch (id) {
-            initialSize.width = naturalSize.width;
-            initialSize.height = naturalSize.height;
-        }
+        initialSize.width = naturalSize.width;
+        initialSize.height = naturalSize.height;
     }
+#else
+    initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
+#endif
 
     if (naturalSize.width)
         m_scaleFactor.setWidth(initialSize.width / naturalSize.width);
