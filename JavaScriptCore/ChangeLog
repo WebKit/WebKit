@@ -2,6 +2,19 @@
 
         Reviewed by Gavin Barraclough.
 
+        <rdar://problem/6881457> Crash occurs at JSC::Interpreter::execute() when loading http://www.sears.com
+
+        We created the arguments objects before an op_push_scope but not
+        before op_push_new_scope, this meant a null arguments object could
+        be resolved inside catch blocks.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushNewScope):
+
+2009-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         <rdar://problem/6879881> Crash occurs at JSC::JSActivation::mark() when loading http://www.monster.com; http://www.cnet.com
         <https://bugs.webkit.org/show_bug.cgi?id=25736> Crash loading www.google.dk/ig (and other igoogle's as well)
 

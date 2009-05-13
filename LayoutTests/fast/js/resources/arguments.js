@@ -525,4 +525,13 @@ function argumentsConstUndefined()
 }
 shouldBeUndefined("argumentsConstUndefined()");
 
+function argumentCalleeInException() {
+    try {
+        throw "";
+    } catch (e) {
+        return arguments.callee;
+    }
+}
+shouldBe("argumentCalleeInException()", "argumentCalleeInException")
+
 var successfullyParsed = true;

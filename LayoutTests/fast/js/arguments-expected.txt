@@ -128,6 +128,7 @@ PASS argumentsParam(true) is true
 PASS argumentsFunctionConstructorParam(true) is true
 FAIL argumentsVarUndefined() should be undefined. Was [object Arguments]
 FAIL argumentsConstUndefined() should be undefined. Was [object Arguments]
+PASS argumentCalleeInException() is argumentCalleeInException
 PASS successfullyParsed is true
 
 TEST COMPLETE

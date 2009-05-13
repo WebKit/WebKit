@@ -1844,6 +1844,8 @@ void BytecodeGenerator::emitPushNewScope(RegisterID* dst, Identifier& property, 
     m_scopeContextStack.append(context);
     m_dynamicScopeDepth++;
     
+    createArgumentsIfNecessary();
+
     emitOpcode(op_push_new_scope);
     instructions().append(dst->index());
     instructions().append(addConstant(property));

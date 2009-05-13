@@ -1,3 +1,15 @@
+2009-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6881457> Crash occurs at JSC::Interpreter::execute() when loading http://www.sears.com
+
+        Add a test for using the arguments object inside an exception handler.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/resources/arguments.js:
+        (argumentCalleeInException):
+
 2009-05-12  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.
