@@ -120,7 +120,7 @@ void setThreadNameInternal(const char*)
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
-    ASSERT(threadID.IsValid());
+    ASSERT(threadID.isValid());
 
     QThread* thread = threadID.platformId();
 

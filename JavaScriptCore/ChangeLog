@@ -1,3 +1,10 @@
+2009-05-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Unreviewed build fix, as suggested by Yael Aharon <yael.aharon@nokia.com>.
+
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::waitForThreadCompletion): renamed IsValid to isValid.
+
 2009-05-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Revert r43562 - [Gtk] WTF_USE_JSC is already defined in
