@@ -46,6 +46,7 @@ sub findUnmergedChangeLogs();
 sub fixChangeLogPatch($);
 sub fixMergedChangeLogs($;@);
 sub fixOneMergedChangeLog($);
+sub hasGitUnmergedFiles();
 sub mergeChanges($$$);
 sub parseFixMerged($$;$);
 sub removeChangeLogArguments();
@@ -61,10 +62,12 @@ my $SVN = "svn";
 my $GIT = "git";
 
 my $fixMerged;
+my $gitRebaseContinue = 0;
 my $printWarnings = 1;
 my $showHelp;
 
 my $getOptionsResult = GetOptions(
+    'c|continue!'    => \$gitRebaseContinue,
     'f|fix-merged:s' => \&parseFixMerged,
     'h|help'         => \$showHelp,
     'w|warnings!'    => \$printWarnings,
@@ -82,6 +85,9 @@ if (scalar(@ARGV) > 0) {
 } elsif (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
     print STDERR "ERROR: No ChangeLog files listed on command-line or found unmerged.\n";
     undef $getOptionsResult;
+} elsif (defined $gitRebaseContinue && !$isGit) {
+    print STDERR "ERROR: --continue may only be used with a git repository\n";
+    undef $getOptionsResult;
 } elsif (defined $fixMerged && !$isGit) {
     print STDERR "ERROR: --fix-merged may only be used with a git repository\n";
     undef $getOptionsResult;
@@ -91,6 +97,8 @@ sub usageAndExit()
 {
     print STDERR <<__END__;
 Usage: @{[ basename($0) ]} [options] [path/to/ChangeLog] [path/to/another/ChangeLog ...]
+  -c|--[no-]continue               run "git rebase --continue" after fixing ChangeLog
+                                   entries (default: --no-continue)
   -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
                                    is specified, run git filter-branch on the range
   -h|--help                        show this help message
@@ -118,6 +126,15 @@ if (defined $fixMerged && length($fixMerged) > 0) {
 } else {
     print STDERR "ERROR: Unknown combination of switches and arguments.\n";
     usageAndExit();
+}
+
+if ($gitRebaseContinue) {
+    if (hasGitUnmergedFiles()) {
+        print "Unmerged files; skipping '$GIT rebase --continue'.";
+    } else {
+        print "Running '$GIT rebase --continue'...\n";
+        print `$GIT rebase --continue`;
+    }
 }
 
 exit 0;
@@ -378,6 +395,12 @@ sub fixOneMergedChangeLog($)
         system($GIT, "checkout", $ENV{GIT_COMMIT} || "HEAD", $file);
         print STDERR "WARNING: Last change to ${file} could not be fixed and re-merged.\n" if $printWarnings;
     }
+}
+
+sub hasGitUnmergedFiles()
+{
+    my $output = `$GIT ls-files --unmerged`;
+    return $output ne "";
 }
 
 sub mergeChanges($$$)
