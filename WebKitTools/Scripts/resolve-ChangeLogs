@@ -85,7 +85,7 @@ if (scalar(@ARGV) > 0) {
 } elsif (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
     print STDERR "ERROR: No ChangeLog files listed on command-line or found unmerged.\n";
     undef $getOptionsResult;
-} elsif (defined $gitRebaseContinue && !$isGit) {
+} elsif ($gitRebaseContinue && !$isGit) {
     print STDERR "ERROR: --continue may only be used with a git repository\n";
     undef $getOptionsResult;
 } elsif (defined $fixMerged && !$isGit) {

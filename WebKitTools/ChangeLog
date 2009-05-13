@@ -1,3 +1,18 @@
+2009-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        Fix resolve-ChangeLogs when used with Subversion
+
+        Reviewed by Darin Adler.
+
+        Fixes the following issue when run on a Subversion repository:
+
+            $ ./WebKitTools/Scripts/resolve-ChangeLogs
+            ERROR: --continue may only be used with a git repository
+
+        * Scripts/resolve-ChangeLogs: Check for the boolean value of
+        $gitRebaseContinue, not whether it's defined, when validating
+        command-line switches.
+
 2009-05-12  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21418: resolve-ChangeLogs should have a --continue option which does git rebase --continue
