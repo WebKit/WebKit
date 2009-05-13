@@ -1,3 +1,12 @@
+2009-05-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Not reviewed, build fix.
+
+        Move an include, needed by Debugger under the corresponding guard.
+
+        * inspector/InspectorController.cpp: Moved parser/SourceCode under JAVASCRIPT_DEBUGGER
+            guard.
+
 2009-05-13  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

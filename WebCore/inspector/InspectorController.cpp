@@ -68,7 +68,6 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
-#include <parser/SourceCode.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
@@ -87,6 +86,7 @@
 #include "JavaScriptDebugServer.h"
 #include "JSJavaScriptCallFrame.h"
 
+#include <parser/SourceCode.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
 #include <runtime/JSLock.h>
