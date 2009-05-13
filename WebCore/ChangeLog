@@ -1,3 +1,14 @@
+2009-05-13  Stephan Haller  <nomad@froevel.de>
+
+        Reviewed by Gustavo Noronha.
+
+        Wrong handling of file upload if no file selected
+        https://bugs.webkit.org/show_bug.cgi?id=25649
+
+        Fixed returned path if path is empty
+
+        * WebCore/platform/gtk/FileSystemGtk.cpp:
+
 2009-05-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

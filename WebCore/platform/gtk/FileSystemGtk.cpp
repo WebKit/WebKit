@@ -180,6 +180,9 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& pathName)
 {
+    if (pathName.isEmpty())
+        return pathName;
+
     char* tmpFilename = filenameFromString(pathName);
     char* baseName = g_path_get_basename(tmpFilename);
     String fileName = String::fromUTF8(baseName);
