@@ -326,6 +326,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagCorrectSpellingAutomatically:
             frame->editor()->toggleAutomaticSpellingCorrection();
             break;
+        case ContextMenuItemTagChangeBack:
+            frame->editor()->changeBackToReplacedString(result.replacedString());
+            break;
 #endif
         case ContextMenuItemTagInspectElement:
             if (Page* page = frame->page())

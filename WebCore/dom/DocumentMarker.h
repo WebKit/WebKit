@@ -38,7 +38,8 @@ struct DocumentMarker {
         AllMarkers  = -1,
         Spelling,
         Grammar,
-        TextMatch
+        TextMatch,
+        Replacement
     };
 
     MarkerType type;

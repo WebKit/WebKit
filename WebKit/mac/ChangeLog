@@ -1,3 +1,16 @@
+2009-05-13  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6879145>
+        Generate a contextual menu item allowing autocorrections to
+        easily be changed back.  Refrain from re-correcting items
+        that have already been autocorrected once.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory contextMenuItemTagChangeBack:]):
+        * WebView/WebUIDelegatePrivate.h:
+
 2009-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

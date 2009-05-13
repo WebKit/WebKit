@@ -100,6 +100,7 @@ namespace WebCore {
     String contextMenuItemTagMakeUpperCase();
     String contextMenuItemTagMakeLowerCase();
     String contextMenuItemTagCapitalize();
+    String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagInspectElement();
 

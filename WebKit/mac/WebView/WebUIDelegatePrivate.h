@@ -84,6 +84,7 @@ enum {
     WebMenuItemTagMakeUpperCase,
     WebMenuItemTagMakeLowerCase,
     WebMenuItemTagCapitalize,
+    WebMenuItemTagChangeBack,
     WebMenuItemTagBaseApplication = 10000
 };
 @class WebGeolocation;

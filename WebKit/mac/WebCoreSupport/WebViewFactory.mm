@@ -430,6 +430,19 @@
     return UI_STRING("Capitalize", "Capitalize context menu item");
 }
 
+- (NSString *)contextMenuItemTagChangeBack:(NSString *)replacedString
+{
+    static NSString *formatString = nil;
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    static bool lookedUpString = false;
+    if (!lookedUpString) {
+        formatString = [[[NSBundle bundleForClass:[NSSpellChecker class]] localizedStringForKey:@"Change Back to \\U201C%@\\U201D" value:nil table:@"MenuCommands"] retain];
+        lookedUpString = true;
+    }
+#endif
+    return formatString ? [NSString stringWithFormat:formatString, replacedString] : replacedString;
+}
+
 - (NSString *)contextMenuItemTagInspectElement
 {
     return UI_STRING("Inspect Element", "Inspect Element context menu item");

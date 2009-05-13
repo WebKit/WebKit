@@ -744,6 +744,22 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, Do
     }
 }
 
+void InlineTextBox::computeRectForReplacementMarker(int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font& font)
+{
+    // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
+    int y = selectionTop();
+    int h = selectionHeight();
+    
+    int sPos = max(marker.startOffset - m_start, (unsigned)0);
+    int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
+    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
+    IntPoint startPoint = IntPoint(m_x + tx, y + ty);
+    
+    // Compute and store the rect associated with this marker.
+    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
+    renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+}
+    
 void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, RenderStyle* style, const Font& font, bool background)
 {
     if (!renderer()->node())
@@ -761,6 +777,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
         switch (marker.type) {
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
+            case DocumentMarker::Replacement:
                 if (background)
                     continue;
                 break;
@@ -793,6 +810,9 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
                 break;
             case DocumentMarker::TextMatch:
                 paintTextMatchMarker(pt, tx, ty, marker, style, font);
+                break;
+            case DocumentMarker::Replacement:
+                computeRectForReplacementMarker(tx, ty, marker, style, font);
                 break;
             default:
                 ASSERT_NOT_REACHED();

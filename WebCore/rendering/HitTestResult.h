@@ -65,6 +65,7 @@ public:
     IntRect boundingBox() const;
     bool isSelected() const;
     String spellingToolTip() const;
+    String replacedString() const;
     String title() const;
     String altDisplayString() const;
     String titleDisplayString() const;

@@ -2401,6 +2401,23 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 doReplacement = false;
 
+            // Don't correct spelling in an already-corrected word.
+            if (doReplacement && result->type == TextCheckingTypeCorrection) {
+                Node* node = rangeToReplace->startContainer();
+                int startOffset = rangeToReplace->startOffset();
+                int endOffset = startOffset + replacementLength;
+                Vector<DocumentMarker> markers = node->document()->markersForNode(node);
+                size_t markerCount = markers.size();
+                for (size_t i = 0; i < markerCount; ++i) {
+                    const DocumentMarker& marker = markers[i];
+                    if (marker.type == DocumentMarker::Replacement && static_cast<int>(marker.startOffset) < endOffset && static_cast<int>(marker.endOffset) > startOffset) {
+                        doReplacement = false;
+                        break;
+                    }
+                    if (static_cast<int>(marker.startOffset) >= endOffset)
+                        break;
+                }
+            }
             if (doReplacement && selectionToReplace != m_frame->selection()->selection()) {
                 if (m_frame->shouldChangeSelection(selectionToReplace)) {
                     m_frame->selection()->setSelection(selectionToReplace);
@@ -2415,11 +2432,19 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
                     if (canEditRichly())
                         applyCommand(CreateLinkCommand::create(m_frame->document(), result->replacement));
                 } else if (canEdit() && shouldInsertText(result->replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
+                    String replacedString;
+                    if (result->type == TextCheckingTypeCorrection)
+                        replacedString = plainText(rangeToReplace.get());
                     replaceSelectionWithText(result->replacement, false, false);
                     spellingRangeEndOffset += replacementLength - resultLength;
                     offsetDueToReplacement += replacementLength - resultLength;
                     if (resultLocation < selectionOffset)
                         selectionOffset += replacementLength - resultLength;
+                    if (result->type == TextCheckingTypeCorrection) {
+                        // Add a marker so that corrections can easily be undone and won't be re-corrected.
+                        RefPtr<Range> replacedRange = TextIterator::subrange(paragraphRange.get(), resultLocation, replacementLength);
+                        replacedRange->startContainer()->document()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
+                    }
                 }
             }
         }
@@ -2440,6 +2465,23 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
             m_frame->selection()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity);
         }
     }
+}
+
+void Editor::changeBackToReplacedString(const String& replacedString)
+{
+    if (replacedString.isEmpty())
+        return;
+
+    RefPtr<Range> selection = selectedRange();
+    if (!shouldInsertText(replacedString, selection.get(), EditorInsertActionPasted))
+        return;
+        
+    String paragraphString;
+    int selectionOffset;
+    RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(selection.get(), selectionOffset, paragraphString);
+    replaceSelectionWithText(replacedString, false, false);
+    RefPtr<Range> changedRange = TextIterator::subrange(paragraphRange.get(), selectionOffset, replacedString.length());
+    changedRange->startContainer()->document()->addMarker(changedRange.get(), DocumentMarker::Replacement, String());
 }
 
 #endif

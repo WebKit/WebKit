@@ -1,3 +1,35 @@
+2009-05-13  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6879145>
+        Generate a contextual menu item allowing autocorrections to
+        easily be changed back.  Refrain from re-correcting items
+        that have already been autocorrected once.
+
+        * dom/DocumentMarker.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::changeBackToReplacedString):
+        * editing/Editor.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/mac/WebCoreViewFactory.h:
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::contextMenuItemTagChangeBack):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::replacedString):
+        * rendering/HitTestResult.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+
 2009-05-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber Stamped by Oliver Hunt.

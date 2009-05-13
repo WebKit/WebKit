@@ -159,6 +159,20 @@ String HitTestResult::spellingToolTip() const
     return marker->description;
 }
 
+String HitTestResult::replacedString() const
+{
+    // Return the replaced string associated with this point, if any. This marker is created when a string is autocorrected, 
+    // and is used for generating a contextual menu item that allows it to easily be changed back if desired.
+    if (!m_innerNonSharedNode)
+        return String();
+    
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markerContainingPoint(m_point, DocumentMarker::Replacement);
+    if (!marker)
+        return String();
+    
+    return marker->description;
+}    
+    
 String HitTestResult::title() const
 {
     // Find the title in the nearest enclosing DOM node.

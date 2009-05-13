@@ -218,6 +218,7 @@ public:
     bool isAutomaticSpellingCorrectionEnabled();
     void toggleAutomaticSpellingCorrection();
     void markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* spellingRange, bool markGrammar, Range* grammarRange, bool performTextCheckingReplacements);
+    void changeBackToReplacedString(const String& replacedString);
 #endif
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();

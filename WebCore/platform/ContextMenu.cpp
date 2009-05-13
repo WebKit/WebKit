@@ -406,6 +406,16 @@ void ContextMenu::populate()
                 } else
                     appendItem(IgnoreGrammarItem);
                 appendItem(*separatorItem());
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+            } else {
+                // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
+                String replacedString = result.replacedString();
+                if (!replacedString.isEmpty()) {
+                    ContextMenuItem item(ActionType, ContextMenuItemTagChangeBack, contextMenuItemTagChangeBack(replacedString));
+                    appendItem(item);
+                    appendItem(*separatorItem());
+                }
+#endif
             }
         }
 
@@ -659,6 +669,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagMakeUpperCase:
         case ContextMenuItemTagMakeLowerCase:
         case ContextMenuItemTagCapitalize:
+        case ContextMenuItemTagChangeBack:
             shouldEnable = frame->editor()->canEdit();
             break;
         case ContextMenuItemTagCorrectSpellingAutomatically:

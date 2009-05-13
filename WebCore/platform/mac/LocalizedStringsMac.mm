@@ -529,6 +529,14 @@ String contextMenuItemTagCapitalize()
     return String();
 }
 
+String contextMenuItemTagChangeBack(const String& replacedString)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagChangeBack:replacedString];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return replacedString;
+}
+    
 String contextMenuItemTagInspectElement()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

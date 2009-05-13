@@ -137,6 +137,7 @@ namespace WebCore {
         ContextMenuItemTagMakeUpperCase,
         ContextMenuItemTagMakeLowerCase,
         ContextMenuItemTagCapitalize,
+        ContextMenuItemTagChangeBack,
 #endif
         ContextMenuItemBaseApplicationTag = 10000
     };

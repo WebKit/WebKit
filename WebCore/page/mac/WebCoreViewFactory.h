@@ -95,6 +95,7 @@
 - (NSString *)contextMenuItemTagMakeUpperCase;
 - (NSString *)contextMenuItemTagMakeLowerCase;
 - (NSString *)contextMenuItemTagCapitalize;
+- (NSString *)contextMenuItemTagChangeBack:(NSString *)replacedString;
 - (NSString *)contextMenuItemTagInspectElement;
 
 - (NSString *)searchMenuNoRecentSearchesText;
