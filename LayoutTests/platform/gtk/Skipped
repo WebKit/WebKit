@@ -1776,6 +1776,8 @@ fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html
 fast/forms/mailto/post-multiple-items.html
 fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
+fast/frames/content-opacity-1.html
+fast/frames/content-opacity-2.html
 fast/frames/frame-dead-region.html
 fast/frames/frame-deep-nested-resize.html
 fast/frames/frame-unload-crash.html
@@ -4128,6 +4130,7 @@ svg/custom/glyph-setting-d-attribute.svg
 svg/custom/image-clipped-hit.svg
 svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/no-inherited-dashed-stroke.xhtml
 svg/custom/stroke-width-click.svg
 svg/custom/svg-disallowed-in-dashboard-object.html
 svg/custom/svg-fonts-in-text-controls.html

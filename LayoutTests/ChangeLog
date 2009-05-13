@@ -1,3 +1,11 @@
+2009-05-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disable new tests. We are not going to be adding more new test
+        results for now, for we want to better sort out things such as
+        fixed DPI, and easily reproducible font configuration.
+
+        * platform/gtk/Skipped:
+
 2009-05-13  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
