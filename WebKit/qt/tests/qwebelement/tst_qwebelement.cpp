@@ -508,6 +508,14 @@ void tst_QWebElement::style()
 
     p = m_mainFrame->documentElement().findAll("p").at(0);
     QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("black"));
+
+    QString html8 = "<body><p>some text</p></body>";
+
+    m_mainFrame->setHtml(html8);
+    p = m_mainFrame->documentElement().findAll("p").at(0);
+
+    QCOMPARE(p.styleProperty("color"), QLatin1String(""));
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String(""));
 }
 
 void tst_QWebElement::computedStyle()

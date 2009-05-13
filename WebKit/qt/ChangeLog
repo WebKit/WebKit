@@ -2,6 +2,17 @@
 
         Reviewed by Ariya Hidayat.
 
+        Fixed a possible crash @styleProperty when there is no embedded/external CSS set.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+
+2009-05-12  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
         Added external CSS test cases to QWebElement::styleProperty() method.
 
         Also some ::styleProperty() tests cleanup.
