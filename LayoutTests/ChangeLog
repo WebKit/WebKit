@@ -1,3 +1,19 @@
+2009-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - tests for <rdar://problem/6805567> REGRESSION (r42348): Notes flicker
+          white when loading
+
+        * fast/frames/content-opacity-1.html: Added.
+        * fast/frames/content-opacity-2.html: Added.
+        * platform/mac/fast/frames/content-opacity-1-expected.checksum: Added.
+        * platform/mac/fast/frames/content-opacity-1-expected.png: Added.
+        * platform/mac/fast/frames/content-opacity-1-expected.txt: Added.
+        * platform/mac/fast/frames/content-opacity-2-expected.checksum: Added.
+        * platform/mac/fast/frames/content-opacity-2-expected.png: Added.
+        * platform/mac/fast/frames/content-opacity-2-expected.txt: Added.
+
 2009-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

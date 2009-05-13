@@ -144,6 +144,7 @@ public:
 
     void setUseSlowRepaints();
     void setIsOverlapped(bool);
+    void setContentIsOpaque(bool);
 
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
@@ -233,6 +234,7 @@ private:
     ScrollbarMode m_hmode;
     bool m_useSlowRepaints;
     bool m_isOverlapped;
+    bool m_contentIsOpaque;
     unsigned m_slowRepaintObjectCount;
 
     int m_borderX, m_borderY;

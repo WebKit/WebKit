@@ -339,37 +339,34 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    bool isTransparent = false;
-    if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && view()->frameView()) {
-        Node* elt = document()->ownerElement();
-        if (elt) {
-            if (!elt->hasTagName(frameTag) && document()->haveStylesheetsLoaded()) {
-                // Locate the <body> element using the DOM.  This is easier than trying
-                // to crawl around a render tree with potential :before/:after content and
-                // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
-                // render object very easily via the DOM.
-                HTMLElement* body = document()->body();
-                if (body) {
-                    // Can't scroll a frameset document anyway.
-                    isTransparent = !body->hasLocalName(framesetTag);
-                } else {
-                    // <html> will get a <body> eventually anyway, so we'll just wait for that.
-                    isTransparent = document()->documentElement() && !document()->documentElement()->hasLocalName(htmlTag);
+    bool isOpaqueRoot = false;
+    if (isRoot()) {
+        isOpaqueRoot = true;
+        if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255) && view()->frameView()) {
+            Element* ownerElement = document()->ownerElement();
+            if (ownerElement) {
+                if (!ownerElement->hasTagName(frameTag)) {
+                    // Locate the <body> element using the DOM.  This is easier than trying
+                    // to crawl around a render tree with potential :before/:after content and
+                    // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
+                    // render object very easily via the DOM.
+                    HTMLElement* body = document()->body();
+                    if (body) {
+                        // Can't scroll a frameset document anyway.
+                        isOpaqueRoot = body->hasLocalName(framesetTag);
+                    }
                 }
-            }
-        } else
-            isTransparent = view()->frameView()->isTransparent();
-
-        // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
-        if (isTransparent)
-            view()->frameView()->setUseSlowRepaints(); // The parent must show behind the child.
+            } else
+                isOpaqueRoot = !view()->frameView()->isTransparent();
+        }
+        view()->frameView()->setContentIsOpaque(isOpaqueRoot);
     }
 
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
         IntRect rect(tx, clipY, w, clipH);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
-        if (isRoot() && (!bgColor.isValid() || bgColor.alpha() < 0xFF) && !isTransparent) {
+        if (isOpaqueRoot) {
             Color baseColor = view()->frameView()->baseBackgroundColor();
             if (baseColor.alpha() > 0) {
                 context->save();

@@ -1,3 +1,32 @@
+2009-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6805567> REGRESSION (r42348): Notes flicker white
+          when loading
+
+        Tests: fast/frames/content-opacity-1.html
+               fast/frames/content-opacity-2.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset): Reset m_contentIsOpaque to false.
+        (WebCore::FrameView::useSlowRepaints): Use slow repaints if the content
+        is not known to be opaque.
+        (WebCore::FrameView::setContentIsOpaque): Added. Sets m_contentIsOpaque
+        and enables or disables fast repaints accordingly.
+        * page/FrameView.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Removed the
+        document()->haveStylesheetsLoaded() condition in determining whether the
+        root is opaque. This is what was causing the bug, as iframes were
+        considered to be opaque, and thus painted an opaque white background,
+        whenever they were pending a style sheet load.
+        Changed to call FrameView::setContentIsOpaqe() instead of
+        setUseSlowRepaints(), which allows the frame to go back to fast repaints
+        if the content becomes opaque.
+        Corrected the check for background color opacity: any alpha value other
+        than 255--not just zero--is not opaque.
+
 2009-05-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Sam Weinig.

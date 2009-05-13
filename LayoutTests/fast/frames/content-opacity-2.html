@@ -1,0 +1,23 @@
+<div style="float: left; background-image: url(../replaced/resources/1x1-green.png)">
+    <iframe id="iframe" onload="test()" src="data:text/html,
+        <html><head></head><body></body></html>
+    "></iframe>
+    <script>
+        function test()
+        {
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+
+            setTimeout(function()
+            {
+                var doc = document.getElementById("iframe").contentDocument;
+                var link = doc.createElement("link");
+                link.setAttribute("rel", "stylesheet");
+                link.setAttribute("href", "data:text/css,/* This loads asynchronously */");
+                doc.documentElement.firstChild.appendChild(link);
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, 100);
+        }
+    </script>
+</div>
