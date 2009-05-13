@@ -513,6 +513,12 @@
 		2951A2AE0E646C8800DB9ADE /* AccessibilityObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */; };
 		2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */; };
 		2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */; };
+		295890700FBA0C6300D50B3A /* AccessibilityAriaGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2958906E0FBA0C6300D50B3A /* AccessibilityAriaGrid.h */; };
+		295890710FBA0C6300D50B3A /* AccessibilityAriaGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2958906F0FBA0C6300D50B3A /* AccessibilityAriaGrid.cpp */; };
+		295890740FBA0F8C00D50B3A /* AccessibilityAriaGridRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 295890720FBA0F8C00D50B3A /* AccessibilityAriaGridRow.h */; };
+		295890750FBA0F8C00D50B3A /* AccessibilityAriaGridRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 295890730FBA0F8C00D50B3A /* AccessibilityAriaGridRow.cpp */; };
+		295890780FBA0F9500D50B3A /* AccessibilityAriaGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 295890760FBA0F9500D50B3A /* AccessibilityAriaGridCell.h */; };
+		295890790FBA0F9500D50B3A /* AccessibilityAriaGridCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 295890770FBA0F9500D50B3A /* AccessibilityAriaGridCell.cpp */; };
 		29800C3B0E522A5300025536 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C390E522A5300025536 /* AccessibilityTable.h */; };
 		29800C3C0E522A5300025536 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29800C3A0E522A5300025536 /* AccessibilityTable.cpp */; };
 		29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C930E524C8B00025536 /* AccessibilityTableRow.h */; };
@@ -5422,6 +5428,12 @@
 		2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectMac.mm; sourceTree = "<group>"; };
 		2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityImageMapLink.h; sourceTree = "<group>"; };
 		2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityImageMapLink.cpp; sourceTree = "<group>"; };
+		2958906E0FBA0C6300D50B3A /* AccessibilityAriaGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGrid.h; sourceTree = "<group>"; };
+		2958906F0FBA0C6300D50B3A /* AccessibilityAriaGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGrid.cpp; sourceTree = "<group>"; };
+		295890720FBA0F8C00D50B3A /* AccessibilityAriaGridRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGridRow.h; sourceTree = "<group>"; };
+		295890730FBA0F8C00D50B3A /* AccessibilityAriaGridRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGridRow.cpp; sourceTree = "<group>"; };
+		295890760FBA0F9500D50B3A /* AccessibilityAriaGridCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGridCell.h; sourceTree = "<group>"; };
+		295890770FBA0F9500D50B3A /* AccessibilityAriaGridCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGridCell.cpp; sourceTree = "<group>"; };
 		29800C390E522A5300025536 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
 		29800C3A0E522A5300025536 /* AccessibilityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTable.cpp; sourceTree = "<group>"; };
 		29800C930E524C8B00025536 /* AccessibilityTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableRow.h; sourceTree = "<group>"; };
@@ -10212,6 +10224,12 @@
 				4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */,
 				1AF326760D78B9440068F0C4 /* AXObjectCache.h */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
+				2958906F0FBA0C6300D50B3A /* AccessibilityAriaGrid.cpp */,
+				2958906E0FBA0C6300D50B3A /* AccessibilityAriaGrid.h */,
+				295890770FBA0F9500D50B3A /* AccessibilityAriaGridCell.cpp */,
+				295890760FBA0F9500D50B3A /* AccessibilityAriaGridCell.h */,
+				295890730FBA0F8C00D50B3A /* AccessibilityAriaGridRow.cpp */,
+				295890720FBA0F8C00D50B3A /* AccessibilityAriaGridRow.h */,
 				2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */,
 				2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */,
 				29FFBB800E7C5A3D00407730 /* AccessibilityList.cpp */,
@@ -16866,6 +16884,9 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				295890700FBA0C6300D50B3A /* AccessibilityAriaGrid.h in Headers */,
+				295890740FBA0F8C00D50B3A /* AccessibilityAriaGridRow.h in Headers */,
+				295890780FBA0F9500D50B3A /* AccessibilityAriaGridCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18881,6 +18902,9 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				295890710FBA0C6300D50B3A /* AccessibilityAriaGrid.cpp in Sources */,
+				295890750FBA0F8C00D50B3A /* AccessibilityAriaGridRow.cpp in Sources */,
+				295890790FBA0F9500D50B3A /* AccessibilityAriaGridCell.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

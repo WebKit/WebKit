@@ -838,6 +838,9 @@ SOURCES += \
     page/AccessibilityListBox.cpp \    
     page/AccessibilityListBoxOption.cpp \    
     page/AccessibilityRenderObject.cpp \    
+    page/AccessibilityAriaGrid.cpp \    
+    page/AccessibilityAriaGridCell.cpp \    
+    page/AccessibilityAriaGridRow.cpp \    
     page/AccessibilityTable.cpp \    
     page/AccessibilityTableCell.cpp \    
     page/AccessibilityTableColumn.cpp \    

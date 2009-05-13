@@ -1825,6 +1825,30 @@
 			Name="page"
 			>
 			<File
+				RelativePath="..\page\AccessibilityAriaGrid.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityAriaGrid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityAriaGridCell.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityAriaGridCell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityAriaGridRow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityAriaGridRow.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AccessibilityImageMapLink.cpp"
 				>
 			</File>

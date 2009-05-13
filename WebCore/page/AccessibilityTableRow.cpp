@@ -67,11 +67,8 @@ AccessibilityRole AccessibilityTableRow::roleValue() const
 
 bool AccessibilityTableRow::isTableRow() const
 {
-    if (!m_renderer)
-        return true;
-    
-    AccessibilityObject* renderTable = axObjectCache()->getOrCreate(static_cast<RenderTableRow*>(m_renderer)->table());
-    if (!renderTable->isDataTable())
+    AccessibilityObject* table = parentTable();
+    if (!table || !table->isDataTable())
         return false;
     
     return true;
@@ -85,8 +82,19 @@ bool AccessibilityTableRow::accessibilityIsIgnored() const
     return false;
 }
     
+AccessibilityObject* AccessibilityTableRow::parentTable() const
+{
+    if (!m_renderer || !m_renderer->isTableRow())
+        return 0;
+    
+    return axObjectCache()->getOrCreate(static_cast<RenderTableRow*>(m_renderer)->table());
+}
+    
 AccessibilityObject* AccessibilityTableRow::headerObject()
 {
+    if (!m_renderer || !m_renderer->isTableRow())
+        return 0;
+    
     AccessibilityChildrenVector rowChildren = children();
     if (!rowChildren.size())
         return 0;

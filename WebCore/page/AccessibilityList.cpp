@@ -56,10 +56,10 @@ PassRefPtr<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 bool AccessibilityList::accessibilityIsIgnored() const
 {
     // lists don't appear on tiger/leopard on the mac
-#if PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD))
-    return true;
-#else
+#if ACCESSIBILITY_LISTS
     return false;
+#else
+    return true;
 #endif
 }    
     

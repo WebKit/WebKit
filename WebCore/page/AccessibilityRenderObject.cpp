@@ -2123,6 +2123,10 @@ static const ARIARoleMap& createARIARoleMap()
     const RoleEntry roles[] = {
         { "button", ButtonRole },
         { "checkbox", CheckBoxRole },
+        { "grid", TableRole },
+        { "gridcell", CellRole },
+        { "columnheader", ColumnHeaderRole },
+        { "rowheader", RowHeaderRole },
         { "group", GroupRole },
         { "heading", HeadingRole },
         { "img", ImageRole },
@@ -2136,6 +2140,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "menuitemradio", MenuItemRole },
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
+        { "row", RowRole },
         { "range", SliderRole },
         { "slider", SliderRole },
         { "spinbutton", ProgressIndicatorRole },

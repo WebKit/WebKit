@@ -39,35 +39,15 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 
 ------------
-AXRole: AXTable
-AXSubrole: (null)
-AXRoleDescription: table
+AXRole: AXMenu
+AXRoleDescription: (null)
 AXChildren: <array of size 6>
-AXHelp: 
-AXParent: <AXTable>
-AXSize: NSSize: {85, 52}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
+AXParent: <AXMenu>
 AXEnabled: 1
-AXWindow: <AXTable>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
-AXRows: <array of size 2>
-AXVisibleRows: <array of size 2>
-AXColumns: <array of size 3>
-AXVisibleColumns: <array of size 3>
-AXVisibleCells: <array of size 6>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
+AXSize: NSSize: {85, 52}
+AXSelectedChildren: (null)
+AXVisibleChildren: (null)
+AXTitleUIElement: (null)
 
 ------------
 

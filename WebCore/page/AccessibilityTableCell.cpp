@@ -61,14 +61,19 @@ bool AccessibilityTableCell::accessibilityIsIgnored() const
     
     return false;
 }
+   
+AccessibilityObject* AccessibilityTableCell::parentTable() const
+{
+    if (!m_renderer || !m_renderer->isTableCell())
+        return false;
+    
+    return axObjectCache()->getOrCreate(static_cast<RenderTableCell*>(m_renderer)->table());
+}
     
 bool AccessibilityTableCell::isTableCell() const
 {
-    if (!m_renderer)
-        return false;
-    
-    AccessibilityObject* renderTable = axObjectCache()->getOrCreate(static_cast<RenderTableCell*>(m_renderer)->table());
-    if (!renderTable->isDataTable())
+    AccessibilityObject* table = parentTable();
+    if (!table || !table->isDataTable())
         return false;
     
     return true;
@@ -84,7 +89,7 @@ AccessibilityRole AccessibilityTableCell::roleValue() const
     
 void AccessibilityTableCell::rowIndexRange(pair<int, int>& rowRange)
 {
-    if (!m_renderer)
+    if (!m_renderer || !m_renderer->isTableCell())
         return;
     
     RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
@@ -114,7 +119,7 @@ void AccessibilityTableCell::rowIndexRange(pair<int, int>& rowRange)
     
 void AccessibilityTableCell::columnIndexRange(pair<int, int>& columnRange)
 {
-    if (!m_renderer)
+    if (!m_renderer || !m_renderer->isTableCell())
         return;
     
     RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
@@ -127,7 +132,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     // Try to find if the first cell in this row is a <th>. If it is,
     // then it can act as the title ui element. (This is only in the
     // case when the table is not appearing as an AXTable.)
-    if (!m_renderer || isTableCell())
+    if (isTableCell() || !m_renderer || !m_renderer->isTableCell())
         return 0;
     
     RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);

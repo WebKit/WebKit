@@ -1,3 +1,72 @@
+2009-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25755: Implement ARIA grid role
+        https://bugs.webkit.org/show_bug.cgi?id=25755
+
+        Test: accessibility/aria-tables.html
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::nodeIsAriaType):
+        (WebCore::AXObjectCache::getOrCreate):
+        * page/AXObjectCache.h:
+        * page/AccessibilityAriaGrid.cpp: Added.
+        (WebCore::AccessibilityAriaGrid::AccessibilityAriaGrid):
+        (WebCore::AccessibilityAriaGrid::~AccessibilityAriaGrid):
+        (WebCore::AccessibilityAriaGrid::create):
+        (WebCore::AccessibilityAriaGrid::addChild):
+        (WebCore::AccessibilityAriaGrid::addChildren):
+        (WebCore::AccessibilityAriaGrid::cellForColumnAndRow):
+        * page/AccessibilityAriaGrid.h: Added.
+        (WebCore::AccessibilityAriaGrid::isAriaTable):
+        * page/AccessibilityAriaGridCell.cpp: Added.
+        (WebCore::AccessibilityAriaGridCell::AccessibilityAriaGridCell):
+        (WebCore::AccessibilityAriaGridCell::~AccessibilityAriaGridCell):
+        (WebCore::AccessibilityAriaGridCell::create):
+        (WebCore::AccessibilityAriaGridCell::parentTable):
+        (WebCore::AccessibilityAriaGridCell::rowIndexRange):
+        (WebCore::AccessibilityAriaGridCell::columnIndexRange):
+        * page/AccessibilityAriaGridCell.h: Added.
+        * page/AccessibilityAriaGridRow.cpp: Added.
+        (WebCore::AccessibilityAriaGridRow::AccessibilityAriaGridRow):
+        (WebCore::AccessibilityAriaGridRow::~AccessibilityAriaGridRow):
+        (WebCore::AccessibilityAriaGridRow::create):
+        (WebCore::AccessibilityAriaGridRow::parentTable):
+        (WebCore::AccessibilityAriaGridRow::headerObject):
+        * page/AccessibilityAriaGridRow.h: Added.
+        * page/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::accessibilityIsIgnored):
+        * page/AccessibilityList.h:
+        * page/AccessibilityObject.h:
+        (WebCore::):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::RoleEntry::):
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        * page/AccessibilityTable.h:
+        (WebCore::AccessibilityTable::isAriaTable):
+        * page/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        (WebCore::AccessibilityTableCell::isTableCell):
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * page/AccessibilityTableCell.h:
+        * page/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::setParentTable):
+        (WebCore::AccessibilityTableColumn::headerObject):
+        * page/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::isTableRow):
+        (WebCore::AccessibilityTableRow::parentTable):
+        * page/AccessibilityTableRow.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (RoleEntry::):
+
 2009-05-13  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

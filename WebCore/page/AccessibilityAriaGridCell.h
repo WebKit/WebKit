@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityTableRow_h
-#define AccessibilityTableRow_h
+#ifndef AccessibilityAriaGridCell_h
+#define AccessibilityAriaGridCell_h
 
-#include "AccessibilityRenderObject.h"
+#include "AccessibilityTableCell.h"
 
 namespace WebCore {
     
-class AccessibilityTableRow : public AccessibilityRenderObject {
-    
-protected:
-    AccessibilityTableRow(RenderObject*);
-public:
-    static PassRefPtr<AccessibilityTableRow> create(RenderObject*);
-    virtual ~AccessibilityTableRow();
-    
-    virtual bool isTableRow() const;
-    virtual AccessibilityRole roleValue() const;
-    virtual bool accessibilityIsIgnored() const;
-
-    // retrieves the "row" header (a th tag in the rightmost column)
-    virtual AccessibilityObject* headerObject();
-    virtual AccessibilityObject* parentTable() const;
-    
-    void setRowIndex(int rowIndex) { m_rowIndex = rowIndex; }
-    int rowIndex() const { return m_rowIndex; }
-
-    // allows the table to add other children that may not originate
-    // in the row, but their col/row spans overlap into it
-    void appendChild(AccessibilityObject*);
+class AccessibilityAriaGridCell : public AccessibilityTableCell {
     
 private:
-    int m_rowIndex;
+    AccessibilityAriaGridCell(RenderObject*);
+public:
+    static PassRefPtr<AccessibilityAriaGridCell> create(RenderObject*);
+    virtual ~AccessibilityAriaGridCell();
+    
+    // fills in the start location and row span of cell
+    virtual void rowIndexRange(pair<int, int>& rowRange);
+    // fills in the start location and column span of cell
+    virtual void columnIndexRange(pair<int, int>& columnRange);
+    
+protected:
+    virtual AccessibilityObject* parentTable() const;
 }; 
-   
+    
 } // namespace WebCore 
 
-#endif // AccessibilityTableRow_h
+#endif // AccessibilityAriaGridCell_h

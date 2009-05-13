@@ -53,10 +53,10 @@ AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer),
     m_headerContainer(0)
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-    m_isAccessibilityTable = false;
-#else
+#if ACCESSIBILITY_TABLES
     m_isAccessibilityTable = isTableExposableThroughAccessibility();
+#else
+    m_isAccessibilityTable = false;
 #endif
 }
 
@@ -81,8 +81,6 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     // if the developer assigned an aria role to this, then we shouldn't 
     // expose it as a table, unless, of course, the aria role is a table
     AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole == TableRole)
-        return true;
     if (ariaRole != UnknownRole)
         return false;
     
@@ -211,7 +209,7 @@ void AccessibilityTable::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!m_renderer)
+    if (!m_renderer || !m_renderer->isTable())
         return;
     
     RenderTable* table = static_cast<RenderTable*>(m_renderer);
@@ -370,7 +368,7 @@ const unsigned AccessibilityTable::rowCount()
     
 AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
-    if (!m_renderer)
+    if (!m_renderer || !m_renderer->isTable())
         return 0;
     
     if (!hasChildren())
@@ -467,7 +465,7 @@ String AccessibilityTable::title() const
     
     // see if there is a caption
     Node* tableElement = m_renderer->node();
-    if (tableElement) {
+    if (tableElement && tableElement->hasTagName(tableTag)) {
         HTMLTableCaptionElement* caption = static_cast<HTMLTableElement*>(tableElement)->caption();
         if (caption)
             title = caption->innerText();

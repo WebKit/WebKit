@@ -98,6 +98,7 @@ namespace WebCore {
         HashSet<AXID> m_idsInUse;
         
         AXID getAXID(AccessibilityObject*);
+        bool nodeIsAriaType(Node* node, String role);
     };
 
 #if !HAVE(ACCESSIBILITY)

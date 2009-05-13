@@ -1,3 +1,17 @@
+2009-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25755: Implement ARIA grid role
+        https://bugs.webkit.org/show_bug.cgi?id=25755
+
+        * accessibility/aria-tables.html: Added.
+        * accessibility/table-with-aria-role.html:
+        * platform/mac-leopard/accessibility/aria-tables-expected.txt: Added.
+        * platform/mac-leopard/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/aria-tables-expected.txt: Added.
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+
 2009-05-13  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dave Hyatt.

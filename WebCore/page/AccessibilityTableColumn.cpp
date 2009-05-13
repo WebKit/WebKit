@@ -61,7 +61,6 @@ void AccessibilityTableColumn::setParentTable(AccessibilityTable* table)
     m_parentTable = table;
     
     clearChildren();
-    addChildren();
 }
     
 IntRect AccessibilityTableColumn::elementRect() const
@@ -87,7 +86,26 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     if (!m_parentTable)
         return 0;
     
-    RenderTable* table = static_cast<RenderTable*>(m_parentTable->renderer());
+    RenderObject* renderer = m_parentTable->renderer();
+    if (!renderer)
+        return 0;
+    
+    if (m_parentTable->isAriaTable()) {
+        AccessibilityChildrenVector rowChildren = children();
+        unsigned childrenCount = rowChildren.size();
+        for (unsigned i = 0; i < childrenCount; ++i) {
+            AccessibilityObject* cell = rowChildren[i].get();
+            if (cell->ariaRoleAttribute() == ColumnHeaderRole)
+                return cell;
+        }
+        
+        return 0;
+    }
+
+    if (!renderer->isTable())
+        return 0;
+    
+    RenderTable* table = static_cast<RenderTable*>(renderer);
     
     AccessibilityObject* headerObject = 0;
     

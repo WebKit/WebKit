@@ -29,6 +29,9 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
+#include "AccessibilityAriaGrid.h"
+#include "AccessibilityAriaGridRow.h"
+#include "AccessibilityAriaGridCell.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
@@ -76,6 +79,14 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     
     return obj;
 }
+    
+bool AXObjectCache::nodeIsAriaType(Node* node, String role)
+{
+    if (!node || !node->isElementNode())
+        return false;
+    
+    return equalIgnoringCase(static_cast<Element*>(node)->getAttribute(roleAttr), role);
+}
 
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 {
@@ -91,12 +102,23 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
             newObj = AccessibilityListBox::create(renderer);
         else if (node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
             newObj = AccessibilityList::create(renderer);
+        
+        // aria tables
+        else if (nodeIsAriaType(node, "grid"))
+            newObj = AccessibilityAriaGrid::create(renderer);
+        else if (nodeIsAriaType(node, "row"))
+            newObj = AccessibilityAriaGridRow::create(renderer);
+        else if (nodeIsAriaType(node, "gridcell") || nodeIsAriaType(node, "columnheader") || nodeIsAriaType(node, "rowheader"))
+            newObj = AccessibilityAriaGridCell::create(renderer);
+
+        // standard tables
         else if (renderer->isTable())
             newObj = AccessibilityTable::create(renderer);
         else if (renderer->isTableRow())
             newObj = AccessibilityTableRow::create(renderer);
         else if (renderer->isTableCell())
             newObj = AccessibilityTableCell::create(renderer);
+
         else
             newObj = AccessibilityRenderObject::create(renderer);
         

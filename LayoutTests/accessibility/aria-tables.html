@@ -1,0 +1,105 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+    
+    <!-- This test performs a number of tests on ARIA tables to make sure they conform as expected -->
+
+    <div role="grid">
+      <div role="row">
+        <div role="columnheader" id="h1">header 1</div>
+        <div role="columnheader">header 2</div>
+        <div role="columnheader">header 3</div>
+      </div>
+      <div role="row">
+        <div role="gridcell" headers="h1">cell </div>
+        <div role="gridcell">cell </div>
+        <div role="gridcell">cell </div>
+      </div>
+      <div role="row">
+        <div role="gridcell">cell </div>
+        <div role="gridcell">cell </div>
+        <div headers="h1" role="rowheader">cell </div>
+      </div>
+    </div>
+
+    <table border=1 role="grid">
+      <tr role="row">
+        <th role="columnheader">header 1</th>
+        <th role="columnheader">header 2</th>
+        <th role="columnheader">header 2</th>
+      </tr>
+      <tr role="row">
+        <td role="rowheader">cell</td>
+        <td role="gridcell">cell</td>
+        <td role="gridcell">cell</td>
+      </tr>
+      <tr role="row">
+        <td role="gridcell">cell</td>
+      </tr>
+    </table>
+
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var focusedElement = accessibilityController.focusedElement;
+            var table1 = focusedElement.childAtIndex(0);
+            var table2 = focusedElement.childAtIndex(1);
+
+            var failed = 0;
+            <!-- make sure they are tables -->
+            if (table1.allAttributes().indexOf("AXRole: AXTable") == -1) {
+                failed = 1;
+            }
+            if (table2.allAttributes().indexOf("AXRole: AXTable") == -1) {
+                failed = 1;
+            }
+
+            <!-- Make sure we can use cell for column and row and it works -->
+            if (table1.cellForColumnAndRow(0,0).allAttributes().indexOf("AXRole: AXCell") == -1) {
+               failed = 1;
+            }
+            if (table2.cellForColumnAndRow(0,0).allAttributes().indexOf("AXRole: AXCell") == -1) {
+               failed = 1;
+            }
+
+            if (table1.cellForColumnAndRow(2,2).allAttributes().indexOf("AXRole: AXCell") == -1) {
+               failed = 1;
+            }
+            if (table2.cellForColumnAndRow(1,1).allAttributes().indexOf("AXRole: AXCell") == -1) {
+               failed = 1;
+            }
+
+            <!-- now make sure we can call all the relevant methods without crashing -->
+            table1.attributesOfColumnHeaders();
+            table2.attributesOfColumnHeaders();
+
+            table1.attributesOfRowHeaders();
+            table2.attributesOfRowHeaders();
+    
+            table1.attributesOfColumns();
+            table2.attributesOfColumns();
+
+            table1.attributesOfRows();
+            table2.attributesOfRows();
+
+            table1.attributesOfHeader();
+            table2.attributesOfHeader();
+              
+            if (failed) {
+                result.innerText += "Test failed\n";
+            }
+            else {
+                 result.innerText += "Test passed\n";
+            }
+        }
+    </script>
+</body>
+</html>

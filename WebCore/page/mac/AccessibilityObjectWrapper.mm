@@ -1003,16 +1003,15 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { HeadingRole, @"AXHeading" },
         { ListBoxRole, NSAccessibilityListRole },
         { ListBoxOptionRole, NSAccessibilityStaticTextRole },
-        // cells don't exist on tiger or leopard
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-        { CellRole, NSAccessibilityGroupRole },
-#else
+#if ACCESSIBILITY_TABLES
         { CellRole, NSAccessibilityCellRole },
+#else
+        { CellRole, NSAccessibilityGroupRole },
 #endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
         { DefinitionListTermRole, NSAccessibilityGroupRole }
-        
+
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
