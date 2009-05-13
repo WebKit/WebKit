@@ -22,6 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+function bludgeonArguments() { if (0) arguments; return function g() {} }
+h = bludgeonArguments();
+gc();
+
 var failed = false;
 function pass(msg)
 {

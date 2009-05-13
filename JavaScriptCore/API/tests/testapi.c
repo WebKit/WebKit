@@ -699,6 +699,17 @@ static JSValueRef globalObject_call(JSContextRef ctx, JSObjectRef function, JSOb
     return JSValueMakeNumber(ctx, 3);
 }
 
+static JSValueRef functionGC(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
+    JSGarbageCollect(context);
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticValue globalObject_staticValues[] = {
     { "globalStaticValue", globalObject_get, globalObject_set, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
@@ -706,6 +717,7 @@ static JSStaticValue globalObject_staticValues[] = {
 
 static JSStaticFunction globalObject_staticFunctions[] = {
     { "globalStaticFunction", globalObject_call, kJSPropertyAttributeNone },
+    { "gc", functionGC, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
 

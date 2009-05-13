@@ -75,7 +75,7 @@ void JSActivation::mark()
 
     for ( ; i < count; ++i) {
         Register& r = registerArray[i];
-        if (!r.marked())
+        if (r.jsValue() && !r.marked())
             r.mark();
     }
 }
