@@ -1015,9 +1015,14 @@ void HTMLInputElement::setValue(const String& value)
     InputElement::notifyFormStateChanged(m_data, document());
 }
 
-String HTMLInputElement::placeholderValue() const
+String HTMLInputElement::placeholder() const
 {
     return getAttribute(placeholderAttr).string();
+}
+
+void HTMLInputElement::setPlaceholder(const String& value)
+{
+    setAttribute(placeholderAttr, value);
 }
 
 bool HTMLInputElement::searchEventsShouldBeDispatched() const

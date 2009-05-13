@@ -89,7 +89,7 @@ void InputElement::updatePlaceholderVisibility(InputElementData& data, Document*
 
     data.setPlaceholderShouldBeVisible(data.inputElement()->value().isEmpty() 
                                        && document->focusedNode() != element
-                                       && !data.inputElement()->placeholderValue().isEmpty());
+                                       && !data.inputElement()->placeholder().isEmpty());
 
     if ((oldPlaceholderShouldBeVisible != data.placeholderShouldBeVisible() || placeholderValueChanged) && element->renderer())
         static_cast<RenderTextControlSingleLine*>(element->renderer())->updatePlaceholderVisibility();

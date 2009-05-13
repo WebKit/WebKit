@@ -108,7 +108,9 @@ public:
     virtual String value() const;
     virtual void setValue(const String&);
 
-    virtual String placeholderValue() const;
+    virtual String placeholder() const;
+    virtual void setPlaceholder(const String&);
+
     virtual bool searchEventsShouldBeDispatched() const;
 
     String valueWithDefault() const;

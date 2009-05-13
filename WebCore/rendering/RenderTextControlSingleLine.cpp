@@ -484,7 +484,7 @@ void RenderTextControlSingleLine::updateFromElement()
 
     if (m_placeholderVisible) {
         ExceptionCode ec = 0;
-        innerTextElement()->setInnerText(inputElement()->placeholderValue(), ec);
+        innerTextElement()->setInnerText(inputElement()->placeholder(), ec);
         ASSERT(!ec);
     } else if (!static_cast<Element*>(node())->formControlValueMatchesRenderer() || placeholderVisibilityShouldChange)
         setInnerTextValue(inputElement()->value());

@@ -38,6 +38,7 @@ module html {
                  attribute long            maxLength;
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
+                 attribute DOMString       placeholder;
                  attribute boolean         readOnly;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
                  attribute [ConvertToString] DOMString size; // DOM level 2 changed this to a long, but our existing API is a string

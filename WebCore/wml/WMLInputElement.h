@@ -58,7 +58,8 @@ public:
     virtual const AtomicString& formControlName() const;
     virtual String value() const;
     virtual void setValue(const String&);
-    virtual String placeholderValue() const { return String(); }
+    virtual String placeholder() const { return String(); }
+    virtual void setPlaceholder(constr String&) { }
     virtual void setValueFromRenderer(const String&);
 
     virtual bool saveFormControlState(String& value) const;

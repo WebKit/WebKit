@@ -50,7 +50,9 @@ public:
     virtual int size() const = 0;
     virtual String value() const = 0;
     virtual void setValue(const String&) = 0;
-    virtual String placeholderValue() const = 0;
+
+    virtual String placeholder() const = 0;
+    virtual void setPlaceholder(const String&) = 0;
 
     virtual String constrainValue(const String&) const = 0;
     virtual void setValueFromRenderer(const String&) = 0;

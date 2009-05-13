@@ -1,3 +1,15 @@
+2009-05-12  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 21903: Adds DOM bindings for the placeholder property of the
+        HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=21903
+
+        * fast/forms/placeholder-dom-property-expected.txt: Added.
+        * fast/forms/placeholder-dom-property.html: Added.
+        * fast/forms/resources/placeholder-dom-property.js: Added.
+
 2009-05-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

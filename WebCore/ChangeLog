@@ -1,3 +1,27 @@
+2009-05-11  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 21903: Adds DOM bindings for the placeholder property of the
+        HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=21903
+
+        Test: fast/forms/placeholder-dom-property.html
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::updatePlaceholderVisibility):
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::placeholder):
+        (WebCore::HTMLInputElement::setPlaceholder):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::placeholder):
+        (WebCore::WMLInputElement::setPlaceholder):
+
 2009-05-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
