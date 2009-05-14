@@ -1,3 +1,11 @@
+2009-05-14  Adam Roben  <aroben@apple.com>
+
+        Make WebCore.vcproj's pre-build event work again
+
+        * WebCore.vcproj/WebCore.vcproj: Removed empty override of the
+        pre-build event that was accidentally left in when the pre-build event
+        was moved to WebCoreCommon.vsprops.
+
 2009-05-14  Darin Adler  <darin@apple.com>
 
         * manual-tests/right-click-crash.html: Added.
