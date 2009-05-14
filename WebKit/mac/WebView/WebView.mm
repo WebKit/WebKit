@@ -2512,11 +2512,35 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     return self;
 }
 
+static bool clientNeedsWebViewInitThreadWorkaround()
+{
+    if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_WEBVIEW_INIT_THREAD_WORKAROUND))
+        return false;
+
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+
+    // Installer.
+    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.installer"])
+        return true;
+
+    // Automator.
+    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.Automator"])
+        return true;
+
+    // Automator Runner.
+    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.AutomatorRunner"])
+        return true;
+
+    // Automator workflows.
+    if ([bundleIdentifier _webkit_hasCaseInsensitivePrefix:@"com.apple.Automator."])
+        return true;
+
+    return false;
+}
+
 static bool needsWebViewInitThreadWorkaround()
 {
-    static BOOL isOldClient = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_WEBVIEW_INIT_THREAD_WORKAROUND)
-        && ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.installer"] ||
-            [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Automator"]);
+    static bool isOldClient = clientNeedsWebViewInitThreadWorkaround();
     return isOldClient && !pthread_main_np();
 }
 

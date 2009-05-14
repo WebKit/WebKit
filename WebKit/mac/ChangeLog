@@ -1,5 +1,15 @@
 2009-05-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6879999> Automator actions that use WebKit on a background thread fail when run outside of Automator
+
+        * WebView/WebView.mm:
+        (clientNeedsWebViewInitThreadWorkaround): Added. Contains new broader rule.
+        (needsWebViewInitThreadWorkaround): Changed to call clientNeedsWebViewInitThreadWorkaround.
+
+2009-05-14  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         Bug 24049: Second right-click crashes safari when alert invoked
