@@ -165,7 +165,7 @@ void ResourceRequest::doUpdateResourceRequest()
         for (CFIndex i = 0; i < count; ++i) {
             CFStringEncoding encoding = reinterpret_cast<CFIndex>(CFArrayGetValueAtIndex(encodingFallbacks.get(), i));
             if (encoding != kCFStringEncodingInvalidId)
-                m_responseContentDispositionEncodingFallbackArray.append(CFStringGetNameOfEncoding(encoding));
+                m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
         }
     }
 

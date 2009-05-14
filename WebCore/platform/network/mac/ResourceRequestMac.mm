@@ -78,7 +78,7 @@ void ResourceRequest::doUpdateResourceRequest()
         for (NSUInteger i = 0; i < count; ++i) {
             CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([(NSNumber *)[encodingFallbacks objectAtIndex:i] unsignedLongValue]);
             if (encoding != kCFStringEncodingInvalidId)
-                m_responseContentDispositionEncodingFallbackArray.append(CFStringGetNameOfEncoding(encoding));
+                m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
         }
     }
 
