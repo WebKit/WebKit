@@ -2709,11 +2709,11 @@ static bool needsWebViewInitThreadWorkaround()
     }
 }
 
-- (void)addSizeObservers
+- (void)addSizeObserversForWindow:(NSWindow *)window
 {
     // -addSizeObservers can be called from -viewDidMoveToSuperview: below -[NSView initWithCoder:], before
     // we've had a chance to initialize _private
-    if (_private && [self window]) {
+    if (_private && window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
             name:NSViewFrameDidChangeNotification object:self];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
@@ -2722,9 +2722,8 @@ static bool needsWebViewInitThreadWorkaround()
     }
 }
 
-- (void)addWindowObservers
+- (void)addWindowObserversForWindow:(NSWindow *)window
 {
-    NSWindow *window = [self window];
     if (!_private->useDocumentViews && window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
             name:NSWindowDidBecomeKeyNotification object:nil];
@@ -2753,10 +2752,7 @@ static bool needsWebViewInitThreadWorkaround()
     // Don't do anything if the WebView isn't initialized.
     // This happens when decoding a WebView in a nib.
     // FIXME: What sets up the observer of NSWindowWillCloseNotification in this case?
-    if (!_private)
-        return;
-
-    if (_private->closed)
+    if (!_private || _private->closed)
         return;
     
     if ([self window] && [self window] != [self hostWindow])
@@ -2770,11 +2766,16 @@ static bool needsWebViewInitThreadWorkaround()
         // and over, so do them when we move into a window.
         [window setAcceptsMouseMovedEvents:YES];
         WKSetNSWindowShouldPostEventNotifications(window, YES);
-        
-        [self removeWindowObservers];
-        [self removeSizeObservers];
     } else
         _private->page->willMoveOffscreen();
+        
+    if (window != [self window]) {
+        [self removeSizeObservers];
+        [self removeWindowObservers];
+
+        [self addSizeObserversForWindow:window];
+        [self addWindowObserversForWindow:window];
+    }
 }
 
 - (void)viewDidMoveToWindow
@@ -2786,11 +2787,8 @@ static bool needsWebViewInitThreadWorkaround()
     if (!_private || _private->closed)
         return;
         
-    if ([self window]) {
-        [self addWindowObservers];
-        [self addSizeObservers];
+    if ([self window])
         _private->page->didMoveOnscreen();
-    }
 }
 
 - (void)_updateFocusedAndActiveState
@@ -3150,7 +3148,7 @@ static bool needsWebViewInitThreadWorkaround()
 - (void)viewDidMoveToSuperview
 {
     if ([self superview] != nil)
-        [self addSizeObservers];
+        [self addSizeObserversForWindow:[self window]];
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName

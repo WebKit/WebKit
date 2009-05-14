@@ -1,3 +1,24 @@
+2009-05-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix for <rdar://problem/6886217> REGRESSION (S4 beta-ToT): Adium chat window contents no longer resize.
+
+        Technically this is a bug in Adium.  It appears that Adium has subclassed the WebView and implemented
+        viewDidMoveToWindow in its subclass improperly.  It doesn't call up to the base class WebView like it
+        should and so our boundsChanged notification never gets added.
+
+        Reduce the dependence on viewDidMoveToWindow by moving the registration of observers into
+        viewWillMoveToWindow instead.
+
+        * WebView/WebView.mm:
+        (-[WebView addSizeObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+        (-[WebView viewDidMoveToSuperview]):
+
 2009-05-14  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
