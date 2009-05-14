@@ -88,6 +88,7 @@ accessibility/visible-elements.html
 accessibility/aria-describedby-on-input.html
 accessibility/aria-labelledby-on-input.html
 accessibility/aria-roles.html
+accessibility/aria-tables.html
 accessibility/image-map1.html
 accessibility/image-map2.html
 accessibility/internal-link-anchors2.html
@@ -2424,6 +2425,8 @@ fast/css/table-text-align-quirk.html
 fast/css/table-text-align-strict.html
 fast/css/target-fragment-match.html
 fast/css/text-overflow-ellipsis.html
+fast/css/text-overflow-ellipsis-bidi.html
+fast/css/text-overflow-ellipsis-strict.html
 fast/css/text-security.html
 fast/css/textCapitalizeEdgeCases.html
 fast/css/transform-default-parameter.html
@@ -3044,6 +3047,7 @@ fast/overflow/005.html
 fast/overflow/006.html
 fast/overflow/007.html
 fast/overflow/008.html
+fast/overflow/border-radius-clipping.html
 fast/overflow/childFocusRingClip.html
 fast/overflow/clip-rects-fixed-ancestor.html
 fast/overflow/dynamic-hidden.html
@@ -3163,6 +3167,7 @@ fast/repaint/lines-with-layout-delta.html
 fast/repaint/list-marker-2.html
 fast/repaint/list-marker.html
 fast/repaint/make-children-non-inline.html
+fast/repaint/opacity-change-on-overflow-float.html
 fast/repaint/outline-child-repaint.html
 fast/repaint/outline-inset.html
 fast/repaint/outline-repaint-glitch.html

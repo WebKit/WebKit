@@ -1,3 +1,7 @@
+2009-05-14  Darin Adler  <darin@apple.com>
+
+        * platform/gtk/Skipped: Added new tests to the skipped list.
+
 2009-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
