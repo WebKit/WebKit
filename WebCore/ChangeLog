@@ -1,5 +1,12 @@
 2009-05-14  Brady Eidson  <beidson@apple.com>
 
+        Build fix.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::setDefaultMIMEType):
+
+2009-05-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben.
 
         Fix http/tests/xmlhttprequest/cache-override.html on Windows

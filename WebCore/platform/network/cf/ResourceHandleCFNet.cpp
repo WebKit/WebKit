@@ -98,7 +98,7 @@ static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
     return certs;
 }
 
-static CFURLResponseRef setDefaultMIMEType(CFURLResponseRef response)
+static void setDefaultMIMEType(CFURLResponseRef response)
 {
     static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString();
     
