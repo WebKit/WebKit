@@ -94,7 +94,10 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
         // See issue 944690.
         //
         // The ECMAScript spec says (very obliquely) that the parameter to an event handler is named "evt".
-        String code = "(function (evt) {\n  ";
+        //
+        // Don't use new lines so that lines in the modified handler
+        // have the same numbers as in the original code.
+        String code = "(function (evt) {";
         code.append(m_code);
         code.append("\n})");
 
@@ -169,20 +172,19 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
         // See chrome/fast/forms/form-action.html
         //     chrome/fast/forms/selected-index-value.html
         //     base/fast/overflow/onscroll-layer-self-destruct.html
-        String code = "(function (evt) {\n" \
-                      "  with (this.ownerDocument ? this.ownerDocument : {}) {\n" \
-                      "    with (this.form ? this.form : {}) {\n" \
-                      "      with (this) {\n" \
-                      "        return (function(evt){\n";
+        //
+        // Don't use new lines so that lines in the modified handler
+        // have the same numbers as in the original code.
+        String code = "(function (evt) {" \
+                      "with (this.ownerDocument ? this.ownerDocument : {}) {" \
+                      "with (this.form ? this.form : {}) {" \
+                      "with (this) {" \
+                      "return (function(evt){";
         code.append(m_code);
-        code.append(  "\n" \
-                      "}).call(this, evt);\n" \
-                      "      }\n" \
-                      "    }\n" \
-                      "  }\n" \
-                      "})");
+        // Insert '\n' otherwise //-style comments could break the handler.
+        code.append(  "\n}).call(this, evt);}}}})");
         v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
-        v8::Handle<v8::Script> script = V8Proxy::CompileScript(codeExternalString, m_frame->document()->url(), m_lineNumber - 4);
+        v8::Handle<v8::Script> script = V8Proxy::CompileScript(codeExternalString, m_frame->document()->url(), m_lineNumber);
         if (!script.IsEmpty()) {
             V8Proxy* proxy = V8Proxy::retrieve(m_frame);
             ASSERT(proxy);

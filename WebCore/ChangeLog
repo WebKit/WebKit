@@ -1,3 +1,15 @@
+2009-05-14  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25418
+        Remove new lines from event handler wrapper to make line numbers
+        in the wrapped script conside with the lines in the original script.
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::getListenerFunction):
+        (WebCore::V8LazyEventListener::getWrappedListenerFunction):
+
 2009-05-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
