@@ -1,3 +1,27 @@
+2009-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6510362> In some situations message content is messed up
+        when indentation is decreased
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::splitTreeToNode): Calling recursively
+        here served to do nothing because this function will return if the
+        second argument is the parent of the first.  Not only does this now work
+        as intended, but is necessary for the rest of this fix.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph): To determine if we 
+        are the last node in a <blockquote>, and can therefore remove the
+        <blockquote> we need the endOfEnclosingBlock to extend to the end of
+        the <blockquote> not just the next block, which could be a <div>, for
+        example. 
+        - Also If a <blockquote> is removed, but it's the child of another
+        <blockquote> then its children are now children of the top <blockquote>.
+        In this case we want to split the parent <blockquote> because the next
+        paragraph assumes that it is the first node in its <blockquote> and if
+        that is not true, various bugs arise.
+
 2009-05-14  Brady Eidson  <beidson@apple.com>
 
         Build fix.

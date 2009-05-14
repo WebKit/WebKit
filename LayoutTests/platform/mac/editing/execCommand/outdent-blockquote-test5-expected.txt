@@ -1,0 +1,31 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of BLOCKQUOTE > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 378x18
+          text run at (0,0) width 378: "This test uses the execCommand to Outdent the text below. "
+        RenderInline {B} at (0,0) size 96x18
+          RenderText {#text} at (378,0) size 96x18
+            text run at (378,0) width 96: "This test that ."
+      RenderBlock (anonymous) at (0,18) size 784x18
+        RenderBR {BR} at (0,0) size 0x18
+      RenderBlock {DIV} at (0,52) size 784x88
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x36
+          RenderBR {BR} at (0,0) size 0x18
+          RenderText {#text} at (0,18) size 12x18
+            text run at (0,18) width 12: "A"
+        RenderBlock (anonymous) at (0,52) size 784x36
+          RenderBR {BR} at (0,0) size 0x18
+          RenderText {#text} at (0,18) size 11x18
+            text run at (0,18) width 11: "B"
+selection start: position 0 of child 1 {BR} of child 1 {BLOCKQUOTE} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 14 of child 4 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

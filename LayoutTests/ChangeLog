@@ -1,3 +1,23 @@
+2009-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6510362> In some situations message content is messed up
+        when indentation is decreased
+
+        - These tests are the various combinations of <blockquote>s that
+        revealed bugs in our old logic.
+
+        * editing/execCommand/outdent-blockquote-test1.html: Added.
+        * editing/execCommand/outdent-blockquote-test2.html: Added.
+        * editing/execCommand/outdent-blockquote-test3.html: Added.
+        * editing/execCommand/outdent-blockquote-test4.html: Added.
+        * platform/mac/editing/execCommand/outdent-blockquote-test1-expected.txt: Added.
+        * platform/mac/editing/execCommand/outdent-blockquote-test2-expected.txt: Added.
+        * platform/mac/editing/execCommand/outdent-blockquote-test3-expected.txt: Added.
+        * platform/mac/editing/execCommand/outdent-blockquote-test4-expected.txt: Added.
+        * platform/mac/editing/execCommand/outdent-blockquote-test5-expected.txt: Added.
+
 2009-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
