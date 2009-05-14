@@ -57,7 +57,11 @@ public:
                                               m_mediaFeature == MediaFeatureNames::min_widthMediaFeature ||
                                               m_mediaFeature == MediaFeatureNames::min_heightMediaFeature ||
                                               m_mediaFeature == MediaFeatureNames::max_widthMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::max_heightMediaFeature; }
+                                              m_mediaFeature == MediaFeatureNames::max_heightMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::orientationMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;  }
 private:
     AtomicString m_mediaFeature;
     RefPtr<CSSValue> m_value;

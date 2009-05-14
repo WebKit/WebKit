@@ -1,3 +1,24 @@
+2009-05-14  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25197
+
+        Add support for aspect-ratio and orientation
+        media queries.
+
+        Tests: fast/media/mq-aspect-ratio.html
+               fast/media/mq-orientation.html
+
+        * css/MediaFeatureNames.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::orientationMediaFeatureEval):
+        (WebCore::aspect_ratioMediaFeatureEval):
+        (WebCore::min_aspect_ratioMediaFeatureEval):
+        (WebCore::max_aspect_ratioMediaFeatureEval):
+        * css/MediaQueryExp.h:
+        (WebCore::MediaQueryExp::isViewportDependent):
+
 2009-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         - Resubmitting previous patch, correctly this time.

@@ -1,3 +1,21 @@
+2009-05-14  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25197
+
+        Add support for aspect-ratio and orientation
+        media queries.
+
+        * fast/media/mq-aspect-ratio.html: Added.
+        * fast/media/mq-orientation.html: Added.
+        * platform/mac/fast/media/mq-aspect-ratio-expected.checksum: Added.
+        * platform/mac/fast/media/mq-aspect-ratio-expected.png: Added.
+        * platform/mac/fast/media/mq-aspect-ratio-expected.txt: Added.
+        * platform/mac/fast/media/mq-orientation-expected.checksum: Added.
+        * platform/mac/fast/media/mq-orientation-expected.png: Added.
+        * platform/mac/fast/media/mq-orientation-expected.txt: Added.
+
 2009-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         - Resubmitting previous patch, correctly this time.
