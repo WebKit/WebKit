@@ -1,3 +1,13 @@
+2009-05-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Add a comment to QWebView::iconChanged(), mentioning that you will
+        need to set the icon database path for icons to be loaded, and thus
+        receive the signal.
+
+        * Api/qwebview.cpp:
+
 2009-05-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Ariya Hidayat.

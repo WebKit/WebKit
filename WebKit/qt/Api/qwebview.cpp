@@ -914,7 +914,10 @@ void QWebView::changeEvent(QEvent *e)
 
     This signal is emitted whenever the icon of the page is loaded or changes.
 
-    \sa icon()
+    In order for icons to be loaded, you will need to set an icon database path
+    using QWebSettings::setIconDatabasePath().
+
+    \sa icon(), QWebSettings::setIconDatabasePath()
 */
 
 /*!
