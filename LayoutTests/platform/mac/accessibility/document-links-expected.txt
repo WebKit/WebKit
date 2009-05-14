@@ -11,7 +11,7 @@ AXTitle: Link1
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXLink: 'Link1'>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -36,7 +36,7 @@ AXTitle: Link2
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXLink: 'Link2'>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)

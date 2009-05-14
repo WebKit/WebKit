@@ -1,3 +1,13 @@
+2009-05-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 25797: Pages with image maps are not properly read with Voiceover
+        https://bugs.webkit.org/show_bug.cgi?id=25797
+
+        * page/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::isEnabled):
+
 2009-05-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

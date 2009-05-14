@@ -49,6 +49,7 @@ public:
         
     virtual AccessibilityRole roleValue() const { return WebCoreLinkRole; }
     virtual bool accessibilityIsIgnored() const { return false; }
+    virtual bool isEnabled() const { return true; }
 
     virtual AccessibilityObject* parentObject() const;
     virtual Element* anchorElement() const;
