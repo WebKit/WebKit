@@ -1,3 +1,20 @@
+2009-05-13  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6871587> Smart Copy/Paste setting should persist as continuous
+        spell checking setting does
+
+        * WebView/WebPreferenceKeysPrivate.h: Added WebSmartInsertDeleteEnabled.
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]): Initialize based on WebSmartInsertDeleteEnabled
+        default.
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        Removed code that initialized here.
+        (-[WebView setSmartInsertDeleteEnabled:]): Set default here was with
+        continuous spell checking setting.
+
 2009-05-13  Darin Adler  <darin@apple.com>
 
         Revert the parser arena change. It was a slowdown, not a speedup.

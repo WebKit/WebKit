@@ -539,8 +539,10 @@ static BOOL automaticSpellingCorrectionEnabled;
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
     shouldCloseWithWindow = objc_collecting_enabled();
-    continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
 
+    smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled]
+        || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
+    continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
 #ifndef BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 #endif
@@ -551,9 +553,9 @@ static BOOL automaticSpellingCorrectionEnabled;
     automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
-    
+
     usesPageCache = YES;
-    
+
     pluginDatabaseClientCount++;
 
     shouldUpdateWhileOffscreen = YES;
@@ -763,7 +765,6 @@ static bool runningTigerMail()
     _private->catchesDelegateExceptions = YES;
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
-    _private->smartInsertDeleteEnabled = YES;
     _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
     _private->useDocumentViews = usesDocumentViews;
 
@@ -4444,7 +4445,10 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
 {
-    _private->smartInsertDeleteEnabled = flag;
+    if (_private->smartInsertDeleteEnabled != flag) {
+        _private->smartInsertDeleteEnabled = flag;
+        [[NSUserDefaults standardUserDefaults] setBool:_private->smartInsertDeleteEnabled forKey:WebSmartInsertDeleteEnabled];
+    }
     if (flag)
         [self setSelectTrailingWhitespaceEnabled:false];
 }

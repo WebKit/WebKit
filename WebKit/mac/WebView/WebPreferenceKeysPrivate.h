@@ -61,6 +61,7 @@
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
 #define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
+#define WebSmartInsertDeleteEnabled @"WebSmartInsertDeleteEnabled"
 #define WebContinuousSpellCheckingEnabled @"WebContinuousSpellCheckingEnabled"
 #define WebGrammarCheckingEnabled @"WebGrammarCheckingEnabled"
 #define WebAutomaticQuoteSubstitutionEnabled @"WebAutomaticQuoteSubstitutionEnabled"
