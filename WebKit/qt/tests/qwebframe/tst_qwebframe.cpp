@@ -570,6 +570,7 @@ private slots:
     void typeConversion();
     void symmetricUrl();
     void progressSignal();
+    void urlChange();
     void domCycles();
     void setHtml();
     void setHtmlWithResource();
@@ -2125,6 +2126,26 @@ void tst_QWebFrame::progressSignal()
     // But we always end at 100%
     QCOMPARE(progressSpy.last().first().toInt(), 100);
 }
+
+void tst_QWebFrame::urlChange()
+{
+    QSignalSpy urlSpy(m_page->mainFrame(), SIGNAL(urlChanged(QUrl)));
+
+    QUrl dataUrl("data:text/html,<h1>Test");
+    m_view->setUrl(dataUrl);
+
+    ::waitForSignal(m_page->mainFrame(), SIGNAL(urlChanged(QUrl)));
+
+    QCOMPARE(urlSpy.size(), 1);
+
+    QUrl dataUrl2("data:text/html,<html><head><title>title</title></head><body><h1>Test</body></html>");
+    m_view->setUrl(dataUrl2);
+
+    ::waitForSignal(m_page->mainFrame(), SIGNAL(urlChanged(QUrl)));
+
+    QCOMPARE(urlSpy.size(), 2);
+}
+
 
 void tst_QWebFrame::domCycles()
 {
