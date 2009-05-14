@@ -1,0 +1,8 @@
+
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/redirect302-frames.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/frameset.pl?frameURL=redirect302.pl  **nav target**
+            http://127.0.0.1:8000/navigation/resources/otherpage.html (in frame "footer")
+            http://127.0.0.1:8000/navigation/resources/redirect302.pl (in frame "main")
+===============================================

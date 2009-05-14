@@ -1,5 +1,7 @@
 <script type="text/javascript" src="resources/testcode.js"></script>
 <script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
     runBasicTest("resources/metaredirect.html", "none");
 </script>
 This page just kicks off a test, and should not appear in the expected test output.

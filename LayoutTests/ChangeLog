@@ -1,3 +1,173 @@
+2009-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Change a bunch of http tests to dumpAsText(). They are currently 
+        failing on the Windown Build Bot because of textarea metrics 
+        changes, and we have decided that these tests are most valuable as 
+        text test anyway.
+
+        * http/tests/navigation/anchor-basic-expected.txt: Added.
+        * http/tests/navigation/anchor-basic.html:
+        * http/tests/navigation/anchor-goback-expected.txt: Added.
+        * http/tests/navigation/anchor-goback.html:
+        * http/tests/navigation/anchor-subframeload-expected.txt: Added.
+        * http/tests/navigation/anchor-subframeload.html:
+        * http/tests/navigation/javascriptlink-basic-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-basic.html:
+        * http/tests/navigation/javascriptlink-goback-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-goback.html:
+        * http/tests/navigation/javascriptlink-subframeload-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-subframeload.html:
+        * http/tests/navigation/metaredirect-basic-expected.txt: Added.
+        * http/tests/navigation/metaredirect-basic.html:
+        * http/tests/navigation/metaredirect-frames-expected.txt: Added.
+        * http/tests/navigation/metaredirect-frames.html:
+        * http/tests/navigation/metaredirect-goback-expected.txt: Added.
+        * http/tests/navigation/metaredirect-goback.html:
+        * http/tests/navigation/metaredirect-subframeload-expected.txt: Added.
+        * http/tests/navigation/metaredirect-subframeload.html:
+        * http/tests/navigation/post-goback2-expected.txt: Added.
+        * http/tests/navigation/post-goback2.html:
+        * http/tests/navigation/postredirect-goback2-expected.txt: Added.
+        * http/tests/navigation/postredirect-goback2.html:
+        * http/tests/navigation/redirect302-basic-expected.txt: Added.
+        * http/tests/navigation/redirect302-basic.html:
+        * http/tests/navigation/redirect302-frames-expected.txt: Added.
+        * http/tests/navigation/redirect302-frames.html:
+        * http/tests/navigation/redirect302-goback-expected.txt: Added.
+        * http/tests/navigation/redirect302-goback.html:
+        * http/tests/navigation/redirect302-subframeload-expected.txt: Added.
+        * http/tests/navigation/redirect302-subframeload.html:
+        * http/tests/navigation/relativeanchor-basic-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-basic.html:
+        * http/tests/navigation/relativeanchor-frames-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-frames.html:
+        * http/tests/navigation/relativeanchor-goback-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-goback.html:
+        * http/tests/navigation/slowmetaredirect-basic-expected.txt: Added.
+        * http/tests/navigation/slowmetaredirect-basic.html:
+        * http/tests/navigation/slowtimerredirect-basic-expected.txt: Added.
+        * http/tests/navigation/slowtimerredirect-basic.html:
+        * http/tests/navigation/success200-basic-expected.txt: Added.
+        * http/tests/navigation/success200-basic.html:
+        * http/tests/navigation/success200-frames-expected.txt: Added.
+        * http/tests/navigation/success200-frames-loadsame-expected.txt: Added.
+        * http/tests/navigation/success200-frames-loadsame.html:
+        * http/tests/navigation/success200-frames.html:
+        * http/tests/navigation/success200-goback-expected.txt: Added.
+        * http/tests/navigation/success200-goback.html:
+        * http/tests/navigation/success200-loadsame-expected.txt: Added.
+        * http/tests/navigation/success200-loadsame.html:
+        * http/tests/navigation/success200-reload-expected.txt: Added.
+        * http/tests/navigation/success200-reload.html:
+        * http/tests/navigation/success200-subframeload-expected.txt: Added.
+        * http/tests/navigation/success200-subframeload.html:
+        * http/tests/navigation/timerredirect-basic-expected.txt: Added.
+        * http/tests/navigation/timerredirect-basic.html:
+        * http/tests/navigation/timerredirect-frames-expected.txt: Added.
+        * http/tests/navigation/timerredirect-frames.html:
+        * http/tests/navigation/timerredirect-goback-expected.txt: Added.
+        * http/tests/navigation/timerredirect-goback.html:
+        * http/tests/navigation/timerredirect-subframeload-expected.txt: Added.
+        * http/tests/navigation/timerredirect-subframeload.html:
+        * platform/mac/http/tests/navigation/anchor-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/anchor-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/anchor-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/anchor-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/anchor-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/anchor-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/anchor-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/anchor-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/anchor-subframeload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/javascriptlink-subframeload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/metaredirect-subframeload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/post-goback2-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/post-goback2-expected.png: Removed.
+        * platform/mac/http/tests/navigation/post-goback2-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/postredirect-goback2-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/postredirect-goback2-expected.png: Removed.
+        * platform/mac/http/tests/navigation/postredirect-goback2-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/redirect302-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/redirect302-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/redirect302-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/redirect302-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/redirect302-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/redirect302-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/redirect302-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/redirect302-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/redirect302-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/redirect302-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/redirect302-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/redirect302-subframeload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/relativeanchor-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/slowmetaredirect-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/slowmetaredirect-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/slowmetaredirect-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/slowtimerredirect-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/slowtimerredirect-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/slowtimerredirect-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-loadsame-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-loadsame-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-frames-loadsame-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-loadsame-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-loadsame-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-loadsame-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-reload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-reload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-reload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/success200-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/success200-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/success200-subframeload-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-goback-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-goback-expected.png: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-goback-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-subframeload-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-subframeload-expected.png: Removed.
+        * platform/mac/http/tests/navigation/timerredirect-subframeload-expected.txt: Removed.
+
 2009-05-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
