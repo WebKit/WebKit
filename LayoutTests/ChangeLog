@@ -1,5 +1,21 @@
 2009-05-14  Adam Roben  <aroben@apple.com>
 
+        Skip XHR tests that crash in Windows Debug builds
+
+        See:
+
+        Bug 25790: REGRESSION (r43518): Multiple XHR tests asserting in
+        createCFURLResponseWithDefaultMIMEType on Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25790>
+
+        Bug 25344: Some http tests crash in Debug Windows builds due to an
+        assertion in CFNetwork when releasing a CFURLConnection
+        <https://bugs.webkit.org/show_bug.cgi?id=25344>
+
+        * platform/win/Skipped: Added crashing XHR tests.
+
+2009-05-14  Adam Roben  <aroben@apple.com>
+
         Remove old render tree dumps for http tests that are now text-only
 
         Beth made the tests text-only in r43677 but forgot to remove these
