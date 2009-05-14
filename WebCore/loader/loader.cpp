@@ -255,11 +255,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         if (!request->cachedResource()->accept().isEmpty())
             resourceRequest.setHTTPAccept(request->cachedResource()->accept());
         
-        KURL referrer = docLoader->doc()->url();
-        if ((referrer.protocolIs("http") || referrer.protocolIs("https")) && referrer.path().isEmpty())
-            referrer.setPath("/");
-        resourceRequest.setHTTPReferrer(referrer.string());
-        FrameLoader::addHTTPOriginIfNeeded(resourceRequest, docLoader->doc()->securityOrigin()->toString());
+         // Do not set the referrer or HTTP origin here. That's handled by SubresourceLoader::create.
         
         if (resourceIsCacheValidator) {
             CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();
@@ -279,7 +275,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         }
 
         RefPtr<SubresourceLoader> loader = SubresourceLoader::create(docLoader->doc()->frame(),
-                                                                     this, resourceRequest, request->shouldSkipCanLoadCheck(), request->sendResourceLoadCallbacks());
+            this, resourceRequest, request->shouldSkipCanLoadCheck(), request->sendResourceLoadCallbacks());
         if (loader) {
             m_requestsLoading.add(loader.release(), request);
             request->cachedResource()->setRequestedFromNetworkingLayer();
