@@ -1,3 +1,13 @@
+2009-05-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Checking register file bounds should be a ptr comparison (m_end is a Register*).
+        Also, the compare should be unsigned, pointers don'ts go negative.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2009-05-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

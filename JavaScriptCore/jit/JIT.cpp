@@ -446,8 +446,8 @@ void JIT::privateCompile()
 
         peek(regT0, FIELD_OFFSET(JITStackFrame, registerFile) / sizeof (void*));
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
-        
-        slowRegisterFileCheck = branch32(GreaterThan, regT1, Address(regT0, FIELD_OFFSET(RegisterFile, m_end)));
+
+        slowRegisterFileCheck = branchPtr(Above, regT1, Address(regT0, FIELD_OFFSET(RegisterFile, m_end)));
         afterRegisterFileCheck = label();
     }
 
