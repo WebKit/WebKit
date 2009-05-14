@@ -1,3 +1,19 @@
+2009-05-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix invalid memory write seen in HTMLCanvasElement by Valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=25759
+
+        I can't think of any way to catch this with a layout test, so no test.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasDestroyed):
+        * css/CSSCanvasValue.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        * html/HTMLCanvasElement.h:
+
 2009-05-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

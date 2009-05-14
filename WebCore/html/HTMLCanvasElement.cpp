@@ -72,6 +72,8 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
 
 HTMLCanvasElement::~HTMLCanvasElement()
 {
+    if (m_observer)
+        m_observer->canvasDestroyed(this);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

@@ -59,6 +59,13 @@ void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
         curr->first->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
+void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement* element)
+{
+    ASSERT(element == m_element);
+    if (element == m_element)
+        m_element = 0;
+}
+
 IntSize CSSCanvasValue::fixedSize(const RenderObject* renderer)
 {
     if (HTMLCanvasElement* elt = element(renderer->document()))
