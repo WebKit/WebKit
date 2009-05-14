@@ -1,3 +1,45 @@
+2009-05-14  Adam Roben  <aroben@apple.com>
+
+        Remove old render tree dumps for http tests that are now text-only
+
+        Beth made the tests text-only in r43677 but forgot to remove these
+        Windows-specific render tree dumps.
+
+        Rubber-stamped by Dave Hyatt.
+
+        * platform/win/http/tests/navigation/anchor-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/anchor-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/anchor-subframeload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/javascriptlink-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/javascriptlink-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/javascriptlink-subframeload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/metaredirect-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/metaredirect-frames-expected.txt: Removed.
+        * platform/win/http/tests/navigation/metaredirect-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/metaredirect-subframeload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/post-goback2-expected.txt: Removed.
+        * platform/win/http/tests/navigation/postredirect-goback2-expected.txt: Removed.
+        * platform/win/http/tests/navigation/redirect302-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/redirect302-frames-expected.txt: Removed.
+        * platform/win/http/tests/navigation/redirect302-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/redirect302-subframeload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/relativeanchor-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/relativeanchor-frames-expected.txt: Removed.
+        * platform/win/http/tests/navigation/relativeanchor-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/slowmetaredirect-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/slowtimerredirect-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-frames-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-frames-loadsame-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-loadsame-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-reload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/success200-subframeload-expected.txt: Removed.
+        * platform/win/http/tests/navigation/timerredirect-basic-expected.txt: Removed.
+        * platform/win/http/tests/navigation/timerredirect-frames-expected.txt: Removed.
+        * platform/win/http/tests/navigation/timerredirect-goback-expected.txt: Removed.
+        * platform/win/http/tests/navigation/timerredirect-subframeload-expected.txt: Removed.
+
 2009-05-14  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Added new tests to the skipped list.
