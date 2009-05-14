@@ -1,0 +1,22 @@
+<p>
+    This tests that when the user style sheet location is set to a data:
+    URL with base64-encoded UTF-8 data, the style sheet is processed
+    synchronously, instead of invoking the asynchronous loader.
+</p>
+<p id="result"></p>
+<script>
+    var result = document.getElementById("result");
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.setUserStyleSheetEnabled(true);
+        layoutTestController.setUserStyleSheetLocation("data:text/css;charset=utf-8;base64,Ym9keSB7Zm9udC1zaXplOiAxMDBweH0=");
+
+        document.body.offsetTop;
+        if (getComputedStyle(document.body).fontSize == "100px")
+            result.innerText = "PASS";
+        else
+            result.innerText = "FAIL";
+    } else
+        result.innerText = "This test can only be run in DumpRenderTree.";
+</script>

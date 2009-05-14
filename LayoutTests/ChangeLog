@@ -1,3 +1,13 @@
+2009-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - test for <rdar://problem/5483015> Replies in Mail are drawn first
+          without the user style sheet and then redrawn with the style sheet
+
+        * platform/mac/fast/loader/user-stylesheet-fast-path-expected.txt: Added.
+        * platform/mac/fast/loader/user-stylesheet-fast-path.html: Added.
+
 2009-05-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

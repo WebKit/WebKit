@@ -1,3 +1,17 @@
+2009-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix <rdar://problem/5483015> Replies in Mail are drawn first without
+          the user style sheet and then redrawn with the style sheet
+
+        Test: platform/mac/fast/loader/user-stylesheet-fast-path.html
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::setUserStyleSheetLocation): For data URLs with
+        base64-encoded UTF-8 data, just decode the style sheet here an apply
+        it synchronously instead of invoking an asynchronous loader.
+
 2009-05-13  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 25755: Implement ARIA grid role

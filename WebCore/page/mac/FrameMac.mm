@@ -28,6 +28,7 @@
 #import "config.h"
 #import "Frame.h"
 
+#import "Base64.h"
 #import "BlockExceptions.h"
 #import "ColorMac.h"
 #import "Cursor.h"
@@ -532,6 +533,22 @@ void Frame::setUserStyleSheetLocation(const KURL& url)
 {
     delete m_userStyleSheetLoader;
     m_userStyleSheetLoader = 0;
+
+    // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
+    // synchronously and avoid using a loader. 
+    if (url.protocolIs("data") && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
+        const unsigned prefixLength = 35;
+        Vector<char> encodedData(url.string().length() - prefixLength);
+        for (unsigned i = prefixLength; i < url.string().length(); ++i)
+            encodedData[i - prefixLength] = static_cast<char>(url.string()[i]);
+
+        Vector<char> styleSheetAsUTF8;
+        if (base64Decode(encodedData, styleSheetAsUTF8)) {
+            m_doc->setUserStyleSheet(String::fromUTF8(styleSheetAsUTF8.data()));
+            return;
+        }
+    }
+
     if (m_doc->docLoader())
         m_userStyleSheetLoader = new UserStyleSheetLoader(m_doc, url.string());
 }
