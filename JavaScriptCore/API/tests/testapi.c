@@ -1136,6 +1136,13 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     JSStringRelease(script);
 
+    // Verify that creating a constructor for a class with no static functions does not trigger
+    // an assert inside putDirect or lead to a crash during GC. <https://bugs.webkit.org/show_bug.cgi?id=25785>
+    nullDefinition = kJSClassDefinitionEmpty;
+    nullClass = JSClassCreate(&nullDefinition);
+    myConstructor = JSObjectMakeConstructor(context, nullClass, 0);
+    JSClassRelease(nullClass);
+
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     if (!scriptUTF8) {
         printf("FAIL: Test script could not be loaded.\n");
@@ -1163,6 +1170,7 @@ int main(int argc, char* argv[])
     v = NULL;
     o = NULL;
     globalObject = NULL;
+    myConstructor = NULL;
 
     JSStringRelease(jsEmptyIString);
     JSStringRelease(jsOneIString);

@@ -105,10 +105,10 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    JSValue jsPrototype = jsClass 
-        ? jsClass->prototype(exec)
-        : exec->lexicalGlobalObject()->objectPrototype();
-    
+    JSValue jsPrototype = jsClass ? jsClass->prototype(exec) : 0;
+    if (!jsPrototype)
+        jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
+
     JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
     constructor->putDirect(exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
     return toRef(constructor);
