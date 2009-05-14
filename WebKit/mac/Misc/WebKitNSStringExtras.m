@@ -37,6 +37,8 @@
 #import <unicode/uchar.h>
 #import <sys/param.h>
 
+NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
+
 @implementation NSString (WebKitExtras)
 
 static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
@@ -295,20 +297,22 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 + (NSString *)_webkit_localCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier
 {
-    NSString* cacheDir = nil;
-    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *cacheDir = [defaults objectForKey:WebKitLocalCacheDefaultsKey];
+
+    if (!cacheDir || ![cacheDir isKindOfClass:[NSString class]]) {
 #ifdef BUILDING_ON_TIGER
-    cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+        cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
 #else
-    char cacheDirectory[MAXPATHLEN];
-    size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
+        char cacheDirectory[MAXPATHLEN];
+        size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
     
-    if (cacheDirectoryLen)
-        cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
+        if (cacheDirectoryLen)
+            cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
 #endif
+    }
 
     return [cacheDir stringByAppendingPathComponent:bundleIdentifier];
 }
-
 
 @end

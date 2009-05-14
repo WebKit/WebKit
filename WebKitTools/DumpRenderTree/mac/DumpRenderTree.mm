@@ -64,6 +64,7 @@
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebInspector.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -341,6 +342,11 @@ void testStringByEvaluatingJavaScriptFromString()
     [pool release];
 }
 
+static NSString *libraryPathForDumpRenderTree()
+{
+    return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
+}
+
 static void setDefaultsToConsistentValuesForTesting()
 {
     // Give some clear to undocumented defaults values
@@ -368,9 +374,16 @@ static void setDefaultsToConsistentValuesForTesting()
     if (initialValue)
         CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 
-    NSString *libraryPath = [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
-    [defaults setObject:[libraryPath stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
-    
+    NSString *path = libraryPathForDumpRenderTree();
+    [defaults setObject:[path stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
+    [defaults setObject:[path stringByAppendingPathComponent:@"LocalCache"] forKey:WebKitLocalCacheDefaultsKey];
+    NSURLCache *sharedCache =
+        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
+                                      diskCapacity:0
+                                          diskPath:[path stringByAppendingPathComponent:@"URLCache"]];
+    [NSURLCache setSharedURLCache:sharedCache];
+    [sharedCache release];
+
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
     [preferences setStandardFontFamily:@"Times"];
@@ -670,7 +683,7 @@ static NSData *dumpFrameAsPDF(WebFrame *frame)
     // likewise +[NSView dataWithPDFInsideRect:] also prints to a single continuous page
     // The goal of this function is to test "real" printing across multiple pages.
     // FIXME: It's possible there might be printing SPI to let us print a multi-page PDF to an NSData object
-    NSString *path = @"/tmp/test.pdf";
+    NSString *path = [libraryPathForDumpRenderTree() stringByAppendingPathComponent:@"test.pdf"];
 
     NSMutableDictionary *printInfoDict = [NSMutableDictionary dictionaryWithDictionary:[[NSPrintInfo sharedPrintInfo] dictionary]];
     [printInfoDict setObject:NSPrintSaveJob forKey:NSPrintJobDisposition];

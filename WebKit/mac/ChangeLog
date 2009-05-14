@@ -1,3 +1,16 @@
+2009-05-14  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24704
+
+        Allow the local cache directory to be set using a defaults key.
+
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.m:
+        (+[NSString _webkit_localCacheDirectoryWithBundleIdentifier:]):
+        * WebKit.exp:
+
 2009-05-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.

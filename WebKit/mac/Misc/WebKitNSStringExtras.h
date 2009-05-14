@@ -28,6 +28,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString *WebKitLocalCacheDefaultsKey;
+
 @interface NSString (WebKitExtras)
 
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;

@@ -1,3 +1,17 @@
+2009-05-14  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24704
+
+        Make paths where data is saved be scoped to the ~ directory,
+        so that one can run independent instances by setting CFFIXED_USER_HOME.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (libraryPath):
+        (setDefaultsToConsistentValuesForTesting):
+        (dumpFrameAsPDF):
+
 2009-05-13  David Kilzer  <ddkilzer@apple.com>
 
         Fix resolve-ChangeLogs when used with Subversion
