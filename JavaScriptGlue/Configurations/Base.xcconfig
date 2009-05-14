@@ -71,7 +71,12 @@ STRIP_INSTALLED_PRODUCT_normal = YES;
 STRIP_INSTALLED_PRODUCT_debug = NO;
 
 
-GCC_VERSION = $(GCC_VERSION_$(XCODE_VERSION_ACTUAL));
+// Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
+// Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
+// number.  Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
+// XCODE_VERSION_ACTUAL for the full version number.
+GCC_VERSION = $(GCC_VERSION_$(XCODE_VERSION_MINOR));
+GCC_VERSION_ = $(GCC_VERSION_$(XCODE_VERSION_ACTUAL));
 GCC_VERSION_0310 = 4.2;
 
 
