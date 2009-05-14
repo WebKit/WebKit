@@ -1,3 +1,17 @@
+2009-05-14  Adam Roben  <aroben@apple.com>
+
+        Windows jsc build fix
+
+        r43648 modified jsc.vcproj's post-build event not to try to copy files
+        that aren't present. Then r43661 mistakenly un-did that modification.
+        This patch restores the modification from r43648, but puts the code in
+        jscCommon.vsprops (where it should have been added in r43648).
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Restored empty
+        VCPostBuildEventTool tags.
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Modified the post-build
+        event command line to match the one in jsc.vcproj from r43648.
+
 2009-05-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
