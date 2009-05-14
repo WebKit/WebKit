@@ -4020,7 +4020,9 @@ media/video-dom-src.html
 media/video-error-abort.html
 media/video-error-does-not-exist.html
 media/video-load-networkState.html
+media/video-load-readyState.html
 media/video-loop.html
+media/video-muted.html
 media/video-pause-empty-events.html
 media/video-play-empty-events.html
 media/video-played-collapse.html

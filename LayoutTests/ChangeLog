@@ -1,3 +1,9 @@
+2009-05-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disabling tests that are failing intermittently.
+
+        * platform/gtk/Skipped:
+
 2009-05-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
