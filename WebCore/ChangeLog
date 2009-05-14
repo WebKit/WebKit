@@ -1,3 +1,18 @@
+2009-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=25777
+        
+        StyleGeneratedImage::imageSize() needs to take zooming into account for
+        fixed-size images (i.e. canvas) so that canvas-as-image-background
+        renders correctly with zooming.
+
+        Test: fast/canvas/canvas-bg-zoom.html
+
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize):
+
 2009-05-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
