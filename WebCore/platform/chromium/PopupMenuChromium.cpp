@@ -347,15 +347,19 @@ void PopupContainer::showPopup(FrameView* view)
 
 void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 {
-     if (!listBox())
+    if (!listBox())
         return;
 
-     listBox()->updateFromElement();
+    listBox()->updateFromElement();
 
-     // Get the ChromeClient and pass it the popup menu's listbox data.
-     ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
-          v->frame()->page()->chrome()->client());
-     client->popupOpened(this, rect, true, true);
+    // Adjust the popup position to account for scrolling.
+    IntPoint location = v->contentsToWindow(rect.location());
+    IntRect popupRect(location, rect.size());
+
+    // Get the ChromeClient and pass it the popup menu's listbox data.
+    ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
+         v->frame()->page()->chrome()->client());
+    client->popupOpened(this, popupRect, true, true);
 }
 
 void PopupContainer::hidePopup()

@@ -1,3 +1,21 @@
+2009-05-14  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug: Mac Chromium popup menus are not positioned correctly
+        on scrolled pages:
+        https://bugs.webkit.org/show_bug.cgi?id=25772
+
+        Fix Mac Chromium popup menu placement by taking into
+        account any scrolling in the current window. This mirrors
+        the positioning done in PopupContainer::show(), which is
+        used on Chromium Windows and linux.
+
+        Also fixed indenting for this method.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::showExternal):
+
 2009-05-14  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Dimitri Glazkov.
