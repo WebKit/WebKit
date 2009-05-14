@@ -352,7 +352,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
     
     NSURLRequest *nsRequest;
     if (!shouldContentSniffURL(request.url())) {
-        NSMutableURLRequest *mutableRequest = [request.nsURLRequest() mutableCopy];
+        NSMutableURLRequest *mutableRequest = [[request.nsURLRequest() mutableCopy] autorelease];
         wkSetNSURLRequestShouldContentSniff(mutableRequest, NO);
         nsRequest = mutableRequest;
     } else
@@ -798,6 +798,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
     if (redirectResponse) {
         // Take user/pass out of the URL.
+        [m_user release];
+        [m_pass release];
         m_user = [[m_url user] copy];
         m_pass = [[m_url password] copy];
         if (m_user || m_pass) {
@@ -829,6 +831,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         WebCoreCredentialStorage::set(credential, [challenge protectionSpace]);
         [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
         [credential release];
+        [m_user release];
+        [m_pass release];
         m_user = 0;
         m_pass = 0;
         return;
