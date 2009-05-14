@@ -1,3 +1,42 @@
+2009-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit side of <rdar://problem/6884476>.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetLocation):
+        Forward this to the plug-in instance proxy.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getLocation):
+        Ask the plug-in view for the location.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add MIG definition.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView locationStringForTarget:]):
+        Return the URL for a given frame.
+        
+        * Plugins/WebNetscapeContainerCheckPrivate.h:
+        Bump version. Add new declaration to the vtable.
+        
+        * Plugins/WebNetscapeContainerCheckPrivate.mm:
+        (browserContainerCheckFuncs):
+        Add new declaration to the vtable.
+        
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView locationForTarget:]):
+        Call the base class method.
+        
+        * Plugins/npapi.mm:
+        (WKN_GetLocation):
+        Forward this to the plug-in view.
+
 2009-05-13  Douglas R. Davidson  <ddavidso@apple.com>
 
         Reviewed by Darin Adler.

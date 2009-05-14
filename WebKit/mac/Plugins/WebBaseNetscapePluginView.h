@@ -41,6 +41,7 @@
 @class WebView;
 
 namespace WebCore {
+    class CString;
     class HTMLPlugInElement;
 }
 
@@ -106,12 +107,10 @@ namespace WebCore {
 
 - (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;
+- (WebCore::CString)locationStringForTarget:(const char*)target;
 
 @end
 
-namespace WebCore {
-class CString;
-}
 
 namespace WebKit {
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)

@@ -2245,6 +2245,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     return NPERR_NO_ERROR;
 }
+
+- (char*)locationForTarget:(const char*)target
+{
+    WebCore::CString location = [self locationStringForTarget:target];
+
+    if (location.isNull())
+        return 0;
+    
+    // We use strdup here because the caller needs to free it with NPN_MemFree (which calls free).
+    return strdup(location.data());
+}
+
 @end
 
 @implementation WebNetscapePluginView (Internal)

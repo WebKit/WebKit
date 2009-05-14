@@ -738,6 +738,24 @@ using namespace WebCore;
     return TRUE;
 }
 
+
+- (CString)locationStringForTarget:(const char*)target
+{
+    Frame* frame = core([self webFrame]);
+    if (!frame)
+        return CString();
+
+    Frame* targetFrame = frame->tree()->find(String::fromUTF8(target));
+    
+    if (!frame->document()->securityOrigin()->canAccess(targetFrame->document()->securityOrigin()))
+        return CString();
+    
+    const KURL& url = targetFrame->loader()->url();
+    String urlString = url.hasPath() ? url.prettyURL() : url.prettyURL() + "/";
+
+    return urlString.utf8();
+}
+
 @end
 
 namespace WebKit {

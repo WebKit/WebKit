@@ -1016,4 +1016,24 @@ kern_return_t WKPCCancelCheckIfAllowedToLoadURL(mach_port_t clientPort, uint32_t
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCGetLocation(mach_port_t clientPort, uint32_t pluginID, data_t targetData, mach_msg_type_number_t targetLength,
+                              data_t* locationData, mach_msg_type_number_t *locationLength) {
+    DataDeallocator targetDeallocator(targetData, targetLength);
+    
+    *locationData = 0;
+    *locationLength = 0;
+    
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+ 
+    instanceProxy->getLocation(targetData, *locationData, *locationLength);
+    
+    return KERN_SUCCESS;
+}
+
 #endif // USE(PLUGIN_HOST_PROCESS)
