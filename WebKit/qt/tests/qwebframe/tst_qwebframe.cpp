@@ -2156,7 +2156,7 @@ void tst_QWebFrame::domCycles()
 
 void tst_QWebFrame::setHtml()
 {
-    QString html("<html><body><p>hello world</p></body></html>");
+    QString html("<html><head></head><body><p>hello world</p></body></html>");
     m_view->page()->mainFrame()->setHtml(html);
     QCOMPARE(m_view->page()->mainFrame()->toHtml(), html);
 }

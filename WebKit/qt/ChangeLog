@@ -2,6 +2,14 @@
 
         Reviewed by Ariya Hidayat.
 
+        Fix setHtml test case by adding <head> tag to the expected result. This tag is automatically added by WebKit.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2009-05-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         Add a test case for the signal urlChanged().
         * tests/qwebframe/tst_qwebframe.cpp:
 
