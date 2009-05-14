@@ -1,3 +1,14 @@
+2009-05-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove a JSC-specific include that is already added by including
+        ScriptController.
+
+        No change in behavior, so no tests.
+
+        * dom/Document.cpp: Removed JSDOMBinding include.
+
 2009-05-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Brady Eidson.
