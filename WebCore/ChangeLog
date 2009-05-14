@@ -1,3 +1,14 @@
+2009-05-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix http/tests/xmlhttprequest/cache-override.html on Windows
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::setDefaultMIMEType): Modify the previous response so it maintains all of its data.
+        (WebCore::didReceiveResponse): Call setDefaultMIMEType() when needed.
+        (WebCore::WebCoreSynchronousLoader::load): Ditto.
+
 2009-05-14  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Dimitri Glazkov.
