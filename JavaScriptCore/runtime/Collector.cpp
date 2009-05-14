@@ -59,9 +59,7 @@
 
 #if PLATFORM(SOLARIS)
 #include <thread.h>
-#endif
-
-#if PLATFORM(OPENBSD)
+#else
 #include <pthread.h>
 #endif
 
