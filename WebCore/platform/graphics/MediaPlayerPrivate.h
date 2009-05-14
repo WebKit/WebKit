@@ -58,7 +58,9 @@ public:
     virtual void seek(float time) = 0;
     virtual bool seeking() const = 0;
 
-    virtual void setEndTime(float time) = 0;
+    virtual float startTime() const { return 0; }
+
+    virtual void setEndTime(float) = 0;
 
     virtual void setRate(float) = 0;
     virtual bool paused() const = 0;

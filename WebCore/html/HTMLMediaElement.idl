@@ -58,6 +58,7 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     // playback state
     attribute float currentTime
         setter raises (DOMException);
+    readonly attribute float startTime;
     readonly attribute float duration;
     readonly attribute boolean paused;
     attribute float defaultPlaybackRate;

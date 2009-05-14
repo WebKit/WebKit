@@ -1,3 +1,15 @@
+2009-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25791
+        Bug 25791: HTMLMediaElement: implement 'startTime' attribute
+
+        Add test for 'startTime' attribute.
+
+        * media/media-startTime-expected.txt: Added.
+        * media/media-startTime.html: Added.
+
 2009-05-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,0 +1,9 @@
+Test the, so far unused, 'startTime' attribute.
+
+RUN(video.src = 'content/test.mp4')
+EVENT(loadeddata)
+EXPECTED (video.startTime == '0') OK
+RUN(video.startTime = 10)
+EXPECTED (video.startTime == '0') OK
+END OF TEST
+

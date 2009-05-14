@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>startTime attribute test</title>
+        <script src=video-test.js></script>
+
+        <script>
+            function loadeddata()
+            {
+                testExpected("video.startTime", 0);
+                run("video.startTime = 10");
+                testExpected("video.startTime", 0);
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('loadeddata', loadeddata);
+                run("video.src = 'content/test.mp4'");
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls> </video>
+    <p>Test the, so far unused, 'startTime' attribute.</p>
+    
+    </body>
+</html>

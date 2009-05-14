@@ -856,6 +856,13 @@ void HTMLMediaElement::setCurrentTime(float time, ExceptionCode& ec)
     seek(time, ec);
 }
 
+float HTMLMediaElement::startTime() const
+{
+    if (!m_player)
+        return 0;
+    return m_player->startTime();
+}
+
 float HTMLMediaElement::duration() const
 {
     if (m_readyState >= HAVE_METADATA)

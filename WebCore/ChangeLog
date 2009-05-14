@@ -1,3 +1,29 @@
+2009-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25791
+        Bug 25791: HTMLMediaElement: implement 'startTime' attribute
+        
+        Support the recently added HTMLMediaElement 'startTime' attribute. This is a read-only 
+        value that only the media engine can know, so we just need to add the attribute 
+        to HTMLMediaElement and add methods to MediaPlayer and MediaPlayerPrivateInterface so 
+        the engine can make it available.
+
+        Test: media/media-startTime.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::startTime): New.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::startTime): New.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::startTime): New.
+
 2009-05-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.
