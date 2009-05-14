@@ -1,5 +1,19 @@
 2009-05-14  Kevin McCullough  <kmccullough@apple.com>
 
+        - Resubmitting previous patch, correctly this time.
+
+        * editing/execCommand/outdent-blockquote-test1.html: Copied from editing/execCommand/outdent-blockquote-test1.html.
+        * editing/execCommand/outdent-blockquote-test2.html: Copied from editing/execCommand/outdent-blockquote-test2.html.
+        * editing/execCommand/outdent-blockquote-test3.html: Copied from editing/execCommand/outdent-blockquote-test3.html.
+        * editing/execCommand/outdent-blockquote-test4.html: Copied from editing/execCommand/outdent-blockquote-test4.html.
+        * platform/mac/editing/execCommand/outdent-blockquote-test1-expected.txt: Copied from platform/mac/editing/execCommand/outdent-blockquote-test1-expected.txt.
+        * platform/mac/editing/execCommand/outdent-blockquote-test2-expected.txt: Copied from platform/mac/editing/execCommand/outdent-blockquote-test2-expected.txt.
+        * platform/mac/editing/execCommand/outdent-blockquote-test3-expected.txt: Copied from platform/mac/editing/execCommand/outdent-blockquote-test3-expected.txt.
+        * platform/mac/editing/execCommand/outdent-blockquote-test4-expected.txt: Copied from platform/mac/editing/execCommand/outdent-blockquote-test4-expected.txt.
+        * platform/mac/editing/execCommand/outdent-blockquote-test5-expected.txt: Copied from platform/mac/editing/execCommand/outdent-blockquote-test5-expected.txt.
+
+2009-05-14  Kevin McCullough  <kmccullough@apple.com>
+
         - Rolled out for bug and build fix.
 
         * editing/execCommand/outdent-blockquote-test1.html: Removed.
