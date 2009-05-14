@@ -1,3 +1,9 @@
+2009-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebCore.NPAPI.exp:
+
 2009-05-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
