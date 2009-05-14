@@ -1,5 +1,14 @@
 2009-05-14  Kevin McCullough  <kmccullough@apple.com>
 
+        - Rolling out to fix a bug and the build
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::splitTreeToNode):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+
+2009-05-14  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6510362> In some situations message content is messed up

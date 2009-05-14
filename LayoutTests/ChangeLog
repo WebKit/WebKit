@@ -1,5 +1,19 @@
 2009-05-14  Kevin McCullough  <kmccullough@apple.com>
 
+        - Rolled out for bug and build fix.
+
+        * editing/execCommand/outdent-blockquote-test1.html: Removed.
+        * editing/execCommand/outdent-blockquote-test2.html: Removed.
+        * editing/execCommand/outdent-blockquote-test3.html: Removed.
+        * editing/execCommand/outdent-blockquote-test4.html: Removed.
+        * platform/mac/editing/execCommand/outdent-blockquote-test1-expected.txt: Removed.
+        * platform/mac/editing/execCommand/outdent-blockquote-test2-expected.txt: Removed.
+        * platform/mac/editing/execCommand/outdent-blockquote-test3-expected.txt: Removed.
+        * platform/mac/editing/execCommand/outdent-blockquote-test4-expected.txt: Removed.
+        * platform/mac/editing/execCommand/outdent-blockquote-test5-expected.txt: Removed.
+
+2009-05-14  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6510362> In some situations message content is messed up
