@@ -1,5 +1,15 @@
 2009-05-14  Adam Roben  <aroben@apple.com>
 
+        Add a timing-out test to the Windows Skipped file
+
+        See Bug 25792: fast/encoding/percent-escaping.html times out on
+        Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=25792>
+
+        * platform/win/Skipped: Added fast/encoding/percent-escaping.html.
+
+2009-05-14  Adam Roben  <aroben@apple.com>
+
         Add new Hebrew-using tests to the Windows Skipped file
 
         See Bug 23925: Tests that use Hebrew text fail on Windows because
