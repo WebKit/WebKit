@@ -1,3 +1,19 @@
+2009-05-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6887762> and https://bugs.webkit.org/show_bug.cgi?id=25790 
+
+        Nuke the bogus ASSERT and add a legitimate ASSERT with a little help from a new accessor.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::shouldContentSniff):
+        * platform/network/ResourceHandle.h:
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::createCFURLResponseWithDefaultMIMEType):
+        (WebCore::didReceiveResponse):
+
 2009-05-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

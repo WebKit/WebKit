@@ -203,6 +203,11 @@ static bool portAllowed(const ResourceRequest& request)
     return false;
 }
   
+bool ResourceHandle::shouldContentSniff() const
+{
+    return d->m_shouldContentSniff;
+}
+
 bool ResourceHandle::shouldContentSniffURL(const KURL& url)
 {
     // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
