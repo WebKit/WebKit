@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PluginDebug.h"
+#include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
 #include "RenderLayer.h"
 #include "Settings.h"
@@ -287,6 +288,8 @@ void PluginView::stop()
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
     }
+
+    PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
 
 #ifdef XP_UNIX
     if (m_isWindowed && m_npWindow.ws_info)
