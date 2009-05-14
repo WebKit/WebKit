@@ -148,6 +148,7 @@ using namespace WTF;
 static IMP oldSetCursorIMP = NULL;
 
 #ifdef BUILDING_ON_TIGER
+
 static IMP oldResetCursorRectsIMP = NULL;
 static BOOL canSetCursor = YES;
 
@@ -173,7 +174,9 @@ static void setCursor(NSCursor* self, SEL cmd)
     if (canSetCursor)
         oldSetCursorIMP(self, cmd);
 }
+
 #else
+
 static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
 {
     NSView* view = [[self _web_borderView] hitTest:point];
@@ -188,20 +191,25 @@ static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
     }
     oldSetCursorIMP(self, cmd, point);
 }
+
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
+
 @interface WebLayerHostingView : NSView
 @end
 
 @implementation WebLayerHostingView
+
 // Empty NSViews intercept rightMouseDown: to do context menu handling, but we need the WebLayerHostingView to
 // let right mouse clicks through.
-- (void)rightMouseDown:(NSEvent *)theEvent
+- (void)rightMouseDown:(NSEvent *)event
 {
-    [[self nextResponder] performSelector:_cmd withObject:theEvent];
+    [[self nextResponder] performSelector:_cmd withObject:event];
 }
+
 @end
+
 #endif // USE(ACCELERATED_COMPOSITING)
 
 extern "C" {
@@ -210,6 +218,7 @@ extern "C" {
 
 extern NSString *NSMarkedClauseSegmentAttributeName;
 extern NSString *NSTextInputReplacementRangeAttributeName;
+
 }
 
 @interface NSView (WebNSViewDetails)
@@ -340,6 +349,7 @@ static CachedResourceClient* promisedDataClient()
 @end
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
 @interface WebHTMLView (WebHTMLViewTextCheckingInternal)
 - (void)orderFrontSubstitutionsPanel:(id)sender;
 - (BOOL)smartInsertDeleteEnabled;
@@ -361,6 +371,7 @@ static CachedResourceClient* promisedDataClient()
 - (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
 - (void)toggleAutomaticSpellingCorrection:(id)sender;
 @end
+
 #endif
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -3046,35 +3057,47 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 // Deliver mouseup events to the DOM for button 2.
 - (void)rightMouseUp:(NSEvent *)event
 {
+    // There's a chance that if we run a nested event loop the event will be released.
+    // Retaining and then autoreleasing prevents that from causing a problem later here or
+    // inside AppKit code.
+    [[event retain] autorelease];
+
     [super rightMouseUp:event];
+
     if (Frame* coreframe = core([self _frame]))
         coreframe->eventHandler()->mouseUp(event);
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
+    // There's a chance that if we run a nested event loop the event will be released.
+    // Retaining and then autoreleasing prevents that from causing a problem later here or
+    // inside AppKit code.
+    [[event retain] autorelease];
+
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
-    _private->handlingMouseDownEvent = YES;
-    BOOL handledEvent = NO;
-    Frame* coreFrame = core([self _frame]);
-
-    if (!coreFrame) {
-        _private->handlingMouseDownEvent = NO;
+    RefPtr<Frame> coreFrame = core([self _frame]);
+    if (!coreFrame)
         return nil;
-    }
 
     Page* page = coreFrame->page();
     if (!page)
         return nil;
 
+    // Match behavior of other browsers by sending a mousedown event for right clicks.
+    _private->handlingMouseDownEvent = YES;
     page->contextMenuController()->clearContextMenu();
-    // Match behavior of other browsers by sending an onmousedown event for right clicks.
     coreFrame->eventHandler()->mouseDown(event);
-    handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
+    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
+        return nil;
+
+    // Re-get page, since it might have gone away during event handling.
+    page = coreFrame->page();
+    if (!page)
         return nil;
 
     ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
@@ -3082,13 +3105,16 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
         return nil;
 
     NSArray* menuItems = coreMenu->platformDescription();
-    NSMenu* menu = nil;
-    if (menuItems && [menuItems count] > 0) {
-        menu = [[[NSMenu alloc] init] autorelease];
-        for (unsigned i = 0; i < [menuItems count]; i++)
-            [menu addItem:[menuItems objectAtIndex:i]];
-    }
+    if (!menuItems)
+        return nil;
 
+    NSUInteger count = [menuItems count];
+    if (!count)
+        return nil;
+
+    NSMenu* menu = [[[NSMenu alloc] init] autorelease];
+    for (NSUInteger i = 0; i < count; i++)
+        [menu addItem:[menuItems objectAtIndex:i]];
     return menu;
 }
 
@@ -3299,11 +3325,14 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)scrollWheel:(NSEvent *)event
 {
-    [self retain];
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     Frame* frame = core([self _frame]);
     if (!frame || !frame->eventHandler()->wheelEvent(event))
         [super scrollWheel:event];
-    [self release];
 }
 
 - (BOOL)_isSelectionEvent:(NSEvent *)event
@@ -3314,6 +3343,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     
@@ -3338,6 +3372,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     if (hitHTMLView) {
@@ -3355,6 +3394,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)mouseDown:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     RetainPtr<WebHTMLView> protector = self;
     if ([[self inputContext] wantsToHandleMouseEvents] && [[self inputContext] handleMouseEvent:event])
         return;
@@ -3402,6 +3446,11 @@ done:
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
     if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
         return;
@@ -3538,6 +3587,11 @@ noPromisedData:
 
 - (void)mouseUp:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     [self _setMouseDownEvent:nil];
 
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
@@ -3890,6 +3944,11 @@ noPromisedData:
 
 - (void)keyDown:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     RetainPtr<WebHTMLView> selfProtector = self;
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
 
@@ -3917,6 +3976,11 @@ noPromisedData:
 
 - (void)keyUp:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
 
     RetainPtr<WebHTMLView> selfProtector = self;
@@ -3929,6 +3993,11 @@ noPromisedData:
 
 - (void)flagsChanged:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->eventHandler()->capsLockStateMayHaveChanged();
@@ -4161,6 +4230,11 @@ noPromisedData:
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
     if ([self _handleStyleKeyEquivalent:event])
         return YES;
     
@@ -5171,7 +5245,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
     return;
 #endif
-
 
     // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
     // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,

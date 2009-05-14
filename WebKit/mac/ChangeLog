@@ -1,3 +1,27 @@
+2009-05-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Bug 24049: Second right-click crashes safari when alert invoked
+        https://bugs.webkit.org/show_bug.cgi?id=24049
+        rdar://problem/6878977
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView rightMouseUp:]): Added a retain/autorelease of the event.
+        (-[WebHTMLView menuForEvent:]): Ditto. Also cleaned up the logic here and
+        eliminated some use of pointers that might be invalid after calling through
+        to WebCore.
+        (-[WebHTMLView scrollWheel:]): Ditto.
+        (-[WebHTMLView acceptsFirstMouse:]): Ditto.
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]): Ditto.
+        (-[WebHTMLView mouseDown:]): Ditto.
+        (-[WebHTMLView mouseDragged:]): Ditto.
+        (-[WebHTMLView mouseUp:]): Ditto.
+        (-[WebHTMLView keyDown:]): Ditto.
+        (-[WebHTMLView keyUp:]): Ditto.
+        (-[WebHTMLView flagsChanged:]): Ditto.
+        (-[WebHTMLView performKeyEquivalent:]): Ditto.
+
 2009-05-14  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin Adler.
