@@ -607,3 +607,6 @@ http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 
 # Bug 25792: fast/encoding/percent-escaping.html times out on Windows <https://bugs.webkit.org/show_bug.cgi?id=25792>
 fast/encoding/percent-escaping.html
+
+# Bug 25794: fast/replaced/table-percent-height-text-controls fails on Windows <https://bugs.webkit.org/show_bug.cgi?id=25794>
+fast/replaced/table-percent-height-text-controls.html
