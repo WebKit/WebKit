@@ -1,3 +1,17 @@
+2009-05-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Only create a QWidget wrapper for the plugin in the case it is not
+        in the Qt window mapper, and thus receiving events from the Qt
+        event system. Native Qt based plugins running in process, will
+        already be in the window mapper, and thus creating a wrapper,
+        stops them from getting events from Qt, as they are redirected
+        to the wrapper.
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginContainerQt::on_clientIsEmbedded):
+
 2009-05-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

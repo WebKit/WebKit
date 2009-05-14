@@ -85,7 +85,16 @@ void PluginContainerQt::on_clientClosed()
 void PluginContainerQt::on_clientIsEmbedded()
 {
     delete m_clientWrapper;
-    m_clientWrapper = new PluginClientWrapper(this, clientWinId());
+    m_clientWrapper = 0;
+
+    // Only create a QWidget wrapper for the plugin in the case it isn't in the
+    // Qt window mapper, and thus receiving events from the Qt event system.
+    // This way the PluginClientWrapper receives the scroll events and passes
+    // them to the parent. NOTICE: Native Qt based plugins running in process,
+    // will already be in the window mapper, and thus creating a wrapper, stops
+    // them from getting events from Qt, as they are redirected to the wrapper.
+    if (!QWidget::find(clientWinId()))
+        m_clientWrapper = new PluginClientWrapper(this, clientWinId());
 }
 
 void PluginContainerQt::redirectWheelEventsToParent(bool enable)
