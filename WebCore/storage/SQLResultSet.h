@@ -29,6 +29,8 @@
 #ifndef SQLResultSet_h
 #define SQLResultSet_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLResultSetRowList.h"
 #include <wtf/Threading.h>
 
@@ -59,5 +61,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // SQLResultSet_h

@@ -29,6 +29,8 @@
 #ifndef SQLError_h
 #define SQLError_h
 
+#if ENABLE(DATABASE)
+
 #include "PlatformString.h"
 #include <wtf/Threading.h>
 
@@ -48,5 +50,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif // SQLError_h

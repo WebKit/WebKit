@@ -28,7 +28,9 @@
 
 module storage {
 
-    interface SQLResultSet {
+    interface [
+        Conditional=DATABASE
+    ] SQLResultSet {
         readonly attribute SQLResultSetRowList rows;
 
         readonly attribute long insertId

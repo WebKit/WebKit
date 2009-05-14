@@ -1,3 +1,41 @@
+2009-05-14  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Add more ENABLE_DATABASE guards.
+        https://bugs.webkit.org/show_bug.cgi?id=25616
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=24776 (original set of guards)
+
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementCallback.h:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.h:
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.h:
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.h:
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * storage/Database.cpp:
+        * storage/DatabaseDetails.h:
+        * storage/OriginUsageRecord.cpp:
+        * storage/OriginUsageRecord.h:
+        * storage/SQLError.h:
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.cpp:
+        * storage/SQLResultSet.h:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.cpp:
+        * storage/SQLResultSetRowList.h:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionErrorCallback.h:
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

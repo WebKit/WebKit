@@ -31,6 +31,8 @@
 #ifndef V8CustomSQLStatementErrorCallback_h
 #define V8CustomSQLStatementErrorCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLStatementErrorCallback.h"
 
 #include "SQLStatementErrorCallback.h"
@@ -60,5 +62,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // V8CustomSQLStatementErrorCallback_h

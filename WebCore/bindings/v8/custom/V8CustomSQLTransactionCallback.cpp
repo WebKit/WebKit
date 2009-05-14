@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DATABASE)
+
 #include "V8CustomSQLTransactionCallback.h"
 
 #include "Frame.h"
@@ -73,3 +76,6 @@ void V8CustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
 }
 
 } // namespace WebCore
+
+#endif
+

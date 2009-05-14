@@ -31,6 +31,8 @@
 #ifndef V8CustomSQLTransactionErrorCallback_h
 #define V8CustomSQLTransactionErrorCallback_h
 
+#if ENABLE(DATABASE)
+
 #include "SQLTransactionErrorCallback.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
@@ -59,5 +61,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // V8CustomSQLTransactionErrorCallback_h

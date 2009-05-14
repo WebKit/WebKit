@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Database.h"
 
+#include <wtf/StdLibExtras.h>
+
 #if ENABLE(DATABASE)
 #include "ChangeVersionWrapper.h"
 #include "CString.h"
@@ -49,7 +51,6 @@
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
 #include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
 #endif
 
 #if USE(JSC)

@@ -29,6 +29,8 @@
 #ifndef DatabaseDetails_h
 #define DatabaseDetails_h
 
+#if ENABLE(DATABASE)
+
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -63,5 +65,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // DatabaseDetails_h

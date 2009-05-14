@@ -28,6 +28,8 @@
 #ifndef OriginUsageRecord_h
 #define OriginUsageRecord_h
 
+#if ENABLE(DATABASE)
+
 #include "PlatformString.h"
 #include "StringHash.h"
 
@@ -63,5 +65,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif 

@@ -30,6 +30,8 @@
 
 #include "config.h"
 
+#if ENABLE(DATABASE)
+
 #include "v8_binding.h"
 #include "v8_custom.h"
 #include "v8_proxy.h"
@@ -91,3 +93,6 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
 }
 
 } // namespace WebCore
+
+#endif
+
