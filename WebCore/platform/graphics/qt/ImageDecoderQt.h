@@ -83,7 +83,7 @@ private:
 
     bool m_hasAlphaChannel;
     typedef QList<ImageData> ImageList;
-    ImageList m_imageList;
+    mutable ImageList m_imageList;
     mutable QHash<int, QPixmap> m_pixmapCache;
     int m_loopCount;
     QString m_imageFormat;

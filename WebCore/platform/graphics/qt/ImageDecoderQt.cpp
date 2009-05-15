@@ -319,6 +319,10 @@ QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
     if (!m_pixmapCache.contains(index)) {
         m_pixmapCache.insert(index,
                              QPixmap::fromImage(m_imageList[index].m_image));
+
+        // store null image since the converted pixmap is already in pixmap cache
+        Q_ASSERT(m_imageList[index].m_imageState == ImageComplete);
+        m_imageList[index].m_image = QImage();
     }
     return  &m_pixmapCache[index];
 }

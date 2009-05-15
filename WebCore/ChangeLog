@@ -2,6 +2,19 @@
 
         Reviewed by Holger Freyther.
 
+        [Qt] In the image decoder, remove the raw image data represented as QImage
+        once the image is converted to QPixmap and inserted in the pixmap cache.
+        This effectively reduces the heap usage when running on graphics system
+        other than raster (i.e the case where QImage != QPixmap).
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::imageAtIndex): Nullified the image on purpose.
+        * platform/graphics/qt/ImageDecoderQt.h: Made m_imageList mutable.
+
+2009-05-15  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Holger Freyther.
+
         [Qt] Refactor alpha channel detection the image decoder.
         Sets the boolean flag as soon as the image is being read.
 
