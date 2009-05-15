@@ -1,3 +1,18 @@
+2009-05-14  Julie Parent  <jparent@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25716
+        Convert a test located in the resources directory into being a regular js test,
+        so we can add add more tests there and run make-js-test-wrappers without clobbering this one.
+
+        * editing/pasteboard/paste-blockquote-before-blockquote-expected.txt:
+        * editing/pasteboard/paste-blockquote-before-blockquote.html:
+        * editing/pasteboard/resources/TEMPLATE.html: Added.
+        * editing/pasteboard/resources/paste-blockquote-before-blockquote.js:
+        (createLine):
+        (copyAndPasteNode):
+
 2009-05-14  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
