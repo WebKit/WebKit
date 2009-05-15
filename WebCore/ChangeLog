@@ -1,3 +1,18 @@
+2009-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25826
+        <rdar://problem/6884742> 
+        REGRESSION: In Gmail's Edit Link dialog, I can't type in the Link To: field (due to <input type=url> support)
+
+        Added a site specific quirk for mail.google.com which returns "text" when getting the type of an <input type=url>
+
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::needsGmailQuirk):
+        (WebCore::JSHTMLInputElement::type):
+        * html/HTMLInputElement.idl:
+
 2009-05-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

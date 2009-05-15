@@ -47,7 +47,7 @@ module html {
                  attribute unsigned long   size; // Changed string -> long as part of DOM level 2
 #endif
                  attribute [ConvertNullToNullString] DOMString src;
-                 attribute [ConvertNullToNullString] DOMString type; // readonly dropped as part of DOM level 2
+                 attribute [ConvertNullToNullString, CustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
         readonly attribute boolean         willValidate;
