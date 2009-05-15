@@ -79,9 +79,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
     if (match) {
         FcChar8* family;
         if (FcPatternGetString(match, FC_FAMILY, 0, &family) == FcResultMatch) {
-            FontPlatformData* fpd =
-                createFontPlatformData(font.fontDescription(), AtomicString((char*) family));
-            ret = new SimpleFontData(*fpd);
+            AtomicString fontFamily(reinterpret_cast<char*>(family));
+            ret = getCachedFontData(getCachedFontPlatformData(font.fontDescription(), fontFamily, false));
         }
         FcPatternDestroy(match);
     }

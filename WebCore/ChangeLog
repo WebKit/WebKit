@@ -1,3 +1,14 @@
+2009-05-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel and Darin Fisher.
+
+        Fix a font-related leak in Chromium's Skia backend found by Valgrind.
+        https://bugs.webkit.org/show_bug.cgi?id=25760
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        Use caches instead of "new" on every call.
+
 2009-05-14  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Eric Seidel.
