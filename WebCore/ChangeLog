@@ -1,3 +1,22 @@
+2009-05-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25810
+        Upstream V8 DOM Wrapper map declarations.
+
+        No behavior change, so no tests.
+
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::WeakReferenceMap): Added.
+        (WebCore::WeakReferenceMap::~WeakReferenceMap): Added.
+        (WebCore::WeakReferenceMap::get): Added.
+        (WebCore::WeakReferenceMap::set): Added.
+        (WebCore::WeakReferenceMap::forget): Added.
+        (WebCore::WeakReferenceMap::contains): Added.
+        (WebCore::WeakReferenceMap::impl): Added.
+        (WebCore::DOMWrapperMap::DOMWrapperMap): Added.
+
 2009-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
