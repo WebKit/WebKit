@@ -1,5 +1,15 @@
 2009-05-15  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix (and a matching Mac change, to avoid unnecessarily diverging the implementations).
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        Check strings with isEmpty(), not relying on any implicit conversions.
+
+2009-05-15  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin Adler, Brady Eidson and Eric Carlson.
 
         <rdar://problem/6875643> REGRESSION: Unable to download file with FTP URL that includes
