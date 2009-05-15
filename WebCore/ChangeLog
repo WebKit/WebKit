@@ -1,3 +1,17 @@
+2009-05-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25765
+
+        Avoid calling setNeedsStyleRecalc() when we are
+        putting an animated page in the cache. This avoids
+        the assert and subsequent problems with a dirty 
+        page going into the cache.
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::endAnimation):
+
 2009-05-15  Francisco Tolmasky  <francisco@280north.com>
 
         BUG 25467: JavaScript debugger should use function.displayName as the function's name in the call stack
