@@ -848,12 +848,14 @@ bool ResourceHandle::startGio(KURL url)
     url.setQuery(String());
     url.setPort(0);
 
+#if !PLATFORM(WIN_OS)
     // we avoid the escaping for local files, because
     // g_filename_from_uri (used internally by GFile) has problems
     // decoding strings with arbitrary percent signs
     if (url.isLocalFile())
         d->m_gfile = g_file_new_for_path(url.prettyURL().utf8().data() + sizeof("file://") - 1);
     else
+#endif
         d->m_gfile = g_file_new_for_uri(url.string().utf8().data());
     g_object_set_data(G_OBJECT(d->m_gfile), "webkit-resource", this);
     d->m_cancellable = g_cancellable_new();

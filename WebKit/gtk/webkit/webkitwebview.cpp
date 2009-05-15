@@ -2476,7 +2476,7 @@ void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
     // We used to support local paths, unlike the newer
     // function webkit_web_view_load_uri
     if (g_path_is_absolute(uri)) {
-        gchar* fileUri = g_strdup_printf("file://%s", uri);
+        gchar* fileUri = g_filename_to_uri(uri, NULL, NULL);
         webkit_web_view_load_uri(webView, fileUri);
         g_free(fileUri);
     }

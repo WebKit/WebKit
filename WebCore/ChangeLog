@@ -1,3 +1,13 @@
+2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Jan Alonzo.
+
+        Converting filename to uri by concatenating strings is broken
+        on Windows. So, don't do it for that platform.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startGio):
+
 2009-05-15  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.

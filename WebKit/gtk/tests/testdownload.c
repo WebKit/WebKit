@@ -40,7 +40,7 @@ test_webkit_download_create(void)
     g_assert(!webkit_download_get_current_size(download));
     g_assert(!webkit_download_get_progress(download));
     g_assert(!webkit_download_get_elapsed_time(download));
-    tmpDir = g_strconcat("file://", g_get_tmp_dir(), NULL);
+    tmpDir = g_filename_to_uri(g_get_tmp_dir(), NULL, NULL);
     webkit_download_set_destination_uri(download, tmpDir);
     g_assert_cmpstr(tmpDir, ==, webkit_download_get_destination_uri(download));;
     g_free(tmpDir);
