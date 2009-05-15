@@ -1,3 +1,14 @@
+2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Implement layoutTestController.waitForPolicyDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=25036
+
+        Enable fast/forms/mailto tests.
+
+        * platform/gtk/Skipped:
+
 2009-05-15  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Dimitri Glazkov

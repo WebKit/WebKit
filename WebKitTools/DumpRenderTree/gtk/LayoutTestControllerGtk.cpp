@@ -108,6 +108,7 @@ void LayoutTestController::notifyDone()
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
     m_waitToDump = false;
+    waitForPolicy = false;
 }
 
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
@@ -151,7 +152,8 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permis
 
 void LayoutTestController::waitForPolicyDelegate()
 {
-    // FIXME: implement
+    waitForPolicy = true;
+    setWaitToDump(true);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)

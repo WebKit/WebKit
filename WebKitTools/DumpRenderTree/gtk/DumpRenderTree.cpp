@@ -70,6 +70,7 @@ static WebKitWebView* webView;
 WebKitWebFrame* mainFrame = 0;
 WebKitWebFrame* topLoadingFrame = 0;
 guint waitToDumpWatchdog = 0;
+bool waitForPolicy = false;
 
 // current b/f item at the end of the previous test
 static WebKitWebHistoryItem* prevTestBFItem = NULL;
@@ -218,6 +219,8 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
         g_source_remove(waitToDumpWatchdog);
         waitToDumpWatchdog = 0;
     }
+
+    waitForPolicy = false;
 }
 
 static void resetWebViewToConsistentStateBeforeTesting()
@@ -463,6 +466,52 @@ static void webViewTitleChanged(WebKitWebView* view, WebKitWebFrame* frame, cons
         printf("TITLE CHANGED: %s\n", title ? title : "");
 }
 
+static bool webViewNavigationPolicyDecisionRequested(WebKitWebView* view, WebKitWebFrame* frame,
+                                                     WebKitNetworkRequest* request,
+                                                     WebKitWebNavigationAction* navAction,
+                                                     WebKitWebPolicyDecision* policyDecision)
+{
+    // Use the default handler if we're not waiting for policy,
+    // i.e., LayoutTestController::waitForPolicyDelegate
+    if (!waitForPolicy)
+        return FALSE;
+
+    gchar* typeDescription;
+    WebKitWebNavigationReason reason;
+    g_object_get(G_OBJECT(navAction), "reason", &reason, NULL);
+
+    switch(reason) {
+        case WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED:
+            typeDescription = g_strdup("link clicked");
+            break;
+        case WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED:
+            typeDescription = g_strdup("form submitted");
+            break;
+        case WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD:
+            typeDescription = g_strdup("back/forward");
+            break;
+        case WEBKIT_WEB_NAVIGATION_REASON_RELOAD:
+            typeDescription = g_strdup("reload");
+            break;
+        case WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED:
+            typeDescription = g_strdup("form resubmitted");
+            break;
+        case WEBKIT_WEB_NAVIGATION_REASON_OTHER:
+            typeDescription = g_strdup("other");
+            break;
+        default:
+            typeDescription = g_strdup("illegal value");
+    }
+
+    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", webkit_network_request_get_uri(request), typeDescription);
+    g_free(typeDescription);
+
+    webkit_web_policy_decision_ignore(policyDecision);
+    gLayoutTestController->notifyDone();
+
+    return TRUE;
+}
+
 int main(int argc, char* argv[])
 {
     g_thread_init(NULL);
@@ -502,6 +551,7 @@ int main(int argc, char* argv[])
     g_signal_connect(G_OBJECT(webView), "script-prompt", G_CALLBACK(webViewScriptPrompt), 0);
     g_signal_connect(G_OBJECT(webView), "script-confirm", G_CALLBACK(webViewScriptConfirm), 0);
     g_signal_connect(G_OBJECT(webView), "title-changed", G_CALLBACK(webViewTitleChanged), 0);
+    g_signal_connect(G_OBJECT(webView), "navigation-policy-decision-requested", G_CALLBACK(webViewNavigationPolicyDecisionRequested), 0);
 
     setDefaultsToConsistentStateValuesForTesting();
 

@@ -1,3 +1,22 @@
+2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Implement layoutTestController.waitForPolicyDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=25036
+
+        Connect to 'navigation-policy-decision-requested' and handle
+        waitForPolicy in the callback.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+        (webViewNavigationPolicyDecisionRequested):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::waitForPolicyDelegate):
+
 2009-05-14  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -35,6 +35,7 @@
 extern WebKitWebFrame* mainFrame;
 extern WebKitWebFrame* topLoadingFrame;
 extern guint waitToDumpWatchdog;
+extern bool waitForPolicy;
 
 gchar* JSStringCopyUTF8CString(JSStringRef jsString);
 
