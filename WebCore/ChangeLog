@@ -1,3 +1,25 @@
+2009-05-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler, Brady Eidson and Eric Carlson.
+
+        <rdar://problem/6875643> REGRESSION: Unable to download file with FTP URL that includes
+        username and password (Lightwave 9.6 for Mac from Newtek site)
+
+        CFNetwork only invokes didReceiveAuthenticationChallenge for HTTP requests. Credentials
+        for other protocols (including FTP) should be included as part of the URL.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::WebCoreSynchronousLoader::load):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (+[WebCoreSynchronousLoader loadRequest:allowStoredCredentials:returningResponse:error:]):
+        Put credentials in URL for non-HTTP requests.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::makeSimpleCrossOriginAccessRequest):
+        Bail out quickly if the URL is non-HTTP. Cross-origin requests require specific HTTP
+        headers to be received, so they cannot work with other protocols.
+
 2009-05-15  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Holger Freyther.

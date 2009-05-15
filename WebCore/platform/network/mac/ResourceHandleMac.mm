@@ -159,6 +159,14 @@ bool ResourceHandle::start(Frame* frame)
     } else 
         delegate = ResourceHandle::delegate();
 
+    if ((d->m_user || d->m_pass) && !d->m_request.url().protocolInHTTPFamily()) {
+        // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
+        KURL urlWithCredentials(d->m_request.url());
+        urlWithCredentials.setUser(d->m_user);
+        urlWithCredentials.setPass(d->m_pass);
+        d->m_request.setURL(urlWithCredentials);
+    }
+
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         associateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream], this);
 
@@ -909,8 +917,12 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     delegate->m_user = [[url user] copy];
     delegate->m_pass = [[url password] copy];
     delegate->m_allowStoredCredentials = allowStoredCredentials;
+
     NSURLConnection *connection;
-    if (delegate->m_user || delegate->m_pass) {
+
+    // Take user/pass out of the URL.
+    // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
+    if ((delegate->m_user || delegate->m_pass) && KURL(url).protocolInHTTPFamily()) {
         ResourceRequest requestWithoutCredentials = request;
         requestWithoutCredentials.removeCredentials();
         connection = [[NSURLConnection alloc] initWithRequest:requestWithoutCredentials.nsURLRequest() delegate:delegate startImmediately:NO];

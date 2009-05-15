@@ -518,10 +518,17 @@ void XMLHttpRequest::makeSimpleCrossOriginAccessRequest(ExceptionCode& ec)
 {
     ASSERT(isSimpleCrossOriginAccessRequest(m_method, m_requestHeaders));
 
+    // Cross-origin requests are only defined for HTTP. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
+    if (!m_url.protocolInHTTPFamily()) {
+        ec = XMLHttpRequestException::NETWORK_ERR;
+        networkError();
+        return;
+    }
+
     KURL url = m_url;
     url.setUser(String());
     url.setPass(String());
- 
+
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
