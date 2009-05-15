@@ -771,7 +771,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
     m_rootPlatformLayer->setPosition(FloatPoint(0, 0));
 
-    if (GraphicsLayer::graphicsContextsFlipped())
+    if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
         m_rootPlatformLayer->setChildrenTransform(flipTransform());
 
     // Need to clip to prevent transformed content showing outside this frame

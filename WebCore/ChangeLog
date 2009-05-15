@@ -1,3 +1,33 @@
+2009-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25773
+        
+        Rename GraphicsLayer::graphicsContextsFlipped() to 
+        GraphicsLayer::compositingCoordinatesOrientation() in order to clarify the usage.
+
+        Clean up code around the GraphicsLayer "contents" layer that makes use of this
+        flag, by removing the setHasContentsLayer() method, and just using setContentsLayer(),
+        which can then always do the flipping if necessary.
+
+        Only affects ACCELERATED_COMPOSITING builds.
+        
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::contentsLayer):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayer::compositingCoordinatesOrientation):
+        (WebCore::GraphicsLayerCA::setBackgroundColor):
+        (WebCore::GraphicsLayerCA::clearBackgroundColor):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::clearContents):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::setContentsLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+
 2009-05-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

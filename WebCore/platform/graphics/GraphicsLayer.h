@@ -288,8 +288,10 @@ public:
     int incrementRepaintCount() { return ++m_repaintCount; }
 #endif
 
-    // Platform behaviors
-    static bool graphicsContextsFlipped();
+    // Report whether the underlying compositing system uses a top-down
+    // or a bottom-up coordinate system.
+    enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
+    static CompositingCoordinatesOrientation compositingCoordinatesOrientation();
 
 #ifndef NDEBUG
     static bool showDebugBorders();

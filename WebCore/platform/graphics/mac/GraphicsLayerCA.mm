@@ -271,9 +271,9 @@ static bool forceSoftwareAnimation()
     return forceSoftwareAnimation;
 }
 
-bool GraphicsLayer::graphicsContextsFlipped()
+GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
 {
-    return true;
+    return CompositingCoordinatesBottomUp;
 }
 
 #ifndef NDEBUG
@@ -763,7 +763,14 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color, const Animation* tr
     GraphicsLayer::setBackgroundColor(color, transition, beginTime);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    setHasContentsLayer(true);
+    
+    if (!m_contentsLayer.get()) {
+        WebLayer* colorLayer = [WebLayer layer];
+#ifndef NDEBUG
+        [colorLayer setName:@"Color Layer"];
+#endif
+        setContentsLayer(colorLayer);
+    }
     
     if (transition && !transition->isEmptyOrZeroDuration()) {
         CALayer* presLayer = [m_contentsLayer.get() presentationLayer];
@@ -779,7 +786,6 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color, const Animation* tr
         CGColorRelease(bgColor);
     } else {
         removeAllAnimationsForProperty(AnimatedPropertyBackgroundColor);    
-        setHasContentsLayer(true);
         setLayerBackgroundColor(m_contentsLayer.get(), m_backgroundColor);
     }
 
@@ -789,7 +795,7 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color, const Animation* tr
 void GraphicsLayerCA::clearBackgroundColor()
 {
     if (!m_contentLayerForImageOrVideo)
-        setHasContentsLayer(false);
+        setContentsLayer(0);
     else
         clearLayerBackgroundColor(m_contentsLayer.get());
 }
@@ -1084,35 +1090,27 @@ bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValue
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        setHasContentsLayer(true);
-
-        // FIXME: is image flipping really a property of the graphics context?
-        bool needToFlip = GraphicsLayer::graphicsContextsFlipped();
-        CGPoint anchorPoint = needToFlip ? CGPointMake(0.0f, 1.0f) : CGPointZero;
-
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         {
-            CGImageRef theImage = image->nativeImageForCurrentFrame();
-            // FIXME: maybe only do trilinear if the image is being scaled down,
-            // but then what if the layer size changes?
-#if HAVE_MODERN_QUARTZCORE
-            [m_contentsLayer.get() setMinificationFilter:kCAFilterTrilinear];
+            if (!m_contentsLayer.get()) {
+                WebLayer* imageLayer = [WebLayer layer];
+#ifndef NDEBUG
+                [imageLayer setName:@"Image Layer"];
 #endif
-            if (needToFlip) {
-                CATransform3D flipper = {
-                    1.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f, -1.0f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f};
-                [m_contentsLayer.get() setTransform:flipper];
+                setContentsLayer(imageLayer);
             }
 
-            [m_contentsLayer.get() setAnchorPoint:anchorPoint];
+            // FIXME: maybe only do trilinear if the image is being scaled down,
+            // but then what if the layer size changes?
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+            [m_contentsLayer.get() setMinificationFilter:kCAFilterTrilinear];
+#endif
+            CGImageRef theImage = image->nativeImageForCurrentFrame();
             [m_contentsLayer.get() setContents:(id)theImage];
         }
         END_BLOCK_OBJC_EXCEPTIONS
     } else
-        setHasContentsLayer(false);
+        setContentsLayer(0);
 
     m_contentLayerForImageOrVideo = (image != 0);
 }
@@ -1126,7 +1124,7 @@ void GraphicsLayerCA::setContentsToVideo(PlatformLayer* videoLayer)
 void GraphicsLayerCA::clearContents()
 {
     if (m_contentLayerForImageOrVideo) {
-        setHasContentsLayer(false);
+        setContentsLayer(0);
         m_contentLayerForImageOrVideo = false;
     }
 }
@@ -1433,7 +1431,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
         [tiledLayer setLevelsOfDetail:1];
         [tiledLayer setLevelsOfDetailBias:0];
 
-        if (GraphicsLayer::graphicsContextsFlipped())
+        if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
             [tiledLayer setContentsGravity:@"bottomLeft"];
         else
             [tiledLayer setContentsGravity:@"topLeft"];
@@ -1478,24 +1476,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
 #endif
 }
 
-void GraphicsLayerCA::setHasContentsLayer(bool hasLayer)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    if (hasLayer && !m_contentsLayer) {
-        // create the inner layer
-        WebLayer* contentsLayer = [WebLayer layer];
-#ifndef NDEBUG
-        [contentsLayer setName:@"Contents Layer"];
-#endif
-        setContentsLayer(contentsLayer);
-
-    } else if (!hasLayer && m_contentsLayer)
-        setContentsLayer(0);
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
 {
     if (contentsLayer == m_contentsLayer)
@@ -1513,14 +1493,26 @@ void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
         [contentsLayer setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
 
         m_contentsLayer.adoptNS([contentsLayer retain]);
-        [m_contentsLayer.get() setAnchorPoint:CGPointZero];
-        [m_layer.get() addSublayer:m_contentsLayer.get()];
+
+        bool needToFlip = GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp;
+        CGPoint anchorPoint = needToFlip ? CGPointMake(0.0f, 1.0f) : CGPointZero;
+
+        // If the layer world is flipped, we need to un-flip the contents layer
+        if (needToFlip) {
+            CATransform3D flipper = {
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, -1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f};
+            [m_contentsLayer.get() setTransform:flipper];
+        }
+        [m_contentsLayer.get() setAnchorPoint:anchorPoint];
+
+        // Insert the content layer first. Video elements require this, because they have
+        // shadow content that must display in front of the video.
+        [m_layer.get() insertSublayer:m_contentsLayer.get() atIndex:0];
 
         updateContentsRect();
-
-        // Set contents to nil if the layer does not draw its own content.
-        if (m_client && !drawsContent())
-            [m_layer.get() setContents:nil];
 
 #ifndef NDEBUG
         if (showDebugBorders()) {
