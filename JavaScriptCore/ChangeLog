@@ -1,3 +1,19 @@
+2009-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Looking like MSVC doesn't like static variables in inline methods?
+        Make the state of the SSE2 check a static variable on the class
+        MacroAssemblerX86Common as a speculative build fix for Windows.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::isSSE2Present):
+        (JSC::MacroAssemblerX86Common::):
+        * jit/JIT.cpp:
+
 2009-05-15  Adam Roben  <aroben@apple.com>
 
         Add some assembler headers to JavaScriptCore.vcproj

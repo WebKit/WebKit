@@ -327,11 +327,13 @@ public:
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
+        ASSERT(isSSE2Present());
         m_assembler.cvtsi2sd_rr(src, dest);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
+        ASSERT(isSSE2Present());
         m_assembler.ucomisd_rr(right, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
@@ -342,6 +344,7 @@ public:
     // (specifically, in this case, INT_MIN).
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
+        ASSERT(isSSE2Present());
         m_assembler.cvttsd2si_rr(src, dest);
         return branch32(Equal, dest, Imm32(0x80000000));
     }
@@ -706,50 +709,68 @@ private:
     // x86_64, and clients & subclasses of MacroAssembler should be using 'supportsFloatingPoint()'.
     friend class MacroAssemblerX86;
 
-#if PLATFORM(X86_64)
-#ifndef NDEBUG
-    static bool isSSE2Present() { return true; }
-#endif
-#else
+#if PLATFORM(X86)
+#if PLATFORM(MAC)
+
+    // All X86 Macs are guaranteed to support at least SSE2,
     static bool isSSE2Present()
     {
-#if PLATFORM(MAC)
-        // All X86 Macs are guaranteed to support at least SSE2
         return true;
-#else
-        static const int SSE2FeatureBit = 1 << 26;
-        struct SSE2Check {
-            SSE2Check()
-            {
-                int flags;
-#if COMPILER(MSVC)
-                _asm {
-                    mov eax, 1 // cpuid function 1 gives us the standard feature set
-                    cpuid;
-                    mov flags, edx;
-                }
-#elif COMPILER(GCC)
-                asm (
-                     "movl $0x1, %%eax;"
-                     "pushl %%ebx;"
-                     "cpuid;"
-                     "popl %%ebx;"
-                     "movl %%edx, %0;"
-                     : "=g" (flags)
-                     :
-                     : "%eax", "%ecx", "%edx"
-                     );
-#else
-                flags = 0;
-#endif
-                present = (flags & SSE2FeatureBit) != 0;
-            }
-            bool present;
-        };
-        static SSE2Check check;
-        return check.present;
-#endif // !PLATFORM(MAC)
     }
+
+#else // PLATFORM(MAC)
+
+    enum SSE2CheckState {
+        NotCheckedSSE2,
+        HasSSE2,
+        NoSSE2
+    };
+
+    static bool isSSE2Present()
+    {
+        if (s_sse2CheckState == NotCheckedSSE2) {
+            // Default the flags value to zero; if the compiler is
+            // not MSVC or GCC we will read this as SSE2 not present.
+            int flags = 0;
+#if COMPILER(MSVC)
+            _asm {
+                mov eax, 1 // cpuid function 1 gives us the standard feature set
+                cpuid;
+                mov flags, edx;
+            }
+#elif COMPILER(GCC)
+            asm (
+                 "movl $0x1, %%eax;"
+                 "pushl %%ebx;"
+                 "cpuid;"
+                 "popl %%ebx;"
+                 "movl %%edx, %0;"
+                 : "=g" (flags)
+                 :
+                 : "%eax", "%ecx", "%edx"
+                 );
+#endif
+            static const int SSE2FeatureBit = 1 << 26;
+            s_sse2CheckState = (flags & SSE2FeatureBit) ? HasSSE2 : NoSSE2;
+        }
+        // Only check once.
+        ASSERT(s_sse2CheckState != NotCheckedSSE2);
+
+        return s_sse2CheckState == HasSSE2;
+    }
+    
+    static SSE2CheckState s_sse2CheckState;
+
+#endif // PLATFORM(MAC)
+#elif !defined(NDEBUG) // PLATFORM(X86)
+
+    // On x86-64 we should never be checking for SSE2 in a non-debug build,
+    // but non debug add this method to keep the asserts above happy.
+    static bool isSSE2Present()
+    {
+        return true;
+    }
+
 #endif
 };
 
