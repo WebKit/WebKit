@@ -1,3 +1,17 @@
+2009-05-15  Francisco Tolmasky  <francisco@280north.com>
+
+        BUG 25467: JavaScript debugger should use function.displayName as the function's name in the call stack
+        <https://bugs.webkit.org/show_bug.cgi?id=25467>
+        
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.exp: Added calculatedFunctionName
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Added calculatedFunctionName
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Added calculatedFunctionName
+        * debugger/DebuggerCallFrame.cpp: Added calculatedFunctionName to match existing one in ProfileNode.
+        (JSC::DebuggerCallFrame::calculatedFunctionName):
+        * debugger/DebuggerCallFrame.h: Added calculatedFunctionName to match existing one in ProfileNode.
+
 2009-05-14  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix, not reviewed.
