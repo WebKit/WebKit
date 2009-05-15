@@ -295,20 +295,30 @@ public:
         return DataLabel32(this);
     }
 
+    void movePtrToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.movq_rr(src, dest);
+    }
+
+    void moveDoubleToPtr(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.movq_rr(src, dest);
+    }
+
     void setPtr(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testq_rr(left, left);
         else
             m_assembler.cmpq_ir(right.m_value, left);
-        m_assembler.setCC_r(cond, dest);
+        m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
     Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
@@ -319,7 +329,7 @@ public:
                 m_assembler.testq_rr(left, left);
             else
                 m_assembler.cmpq_ir(imm, left);
-            return Jump(m_assembler.jCC(cond));
+            return Jump(m_assembler.jCC(x86Condition(cond)));
         } else {
             move(right, scratchRegister);
             return branchPtr(cond, left, scratchRegister);
@@ -329,7 +339,7 @@ public:
     Jump branchPtr(Condition cond, RegisterID left, Address right)
     {
         m_assembler.cmpq_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
@@ -341,7 +351,7 @@ public:
     Jump branchPtr(Condition cond, Address left, RegisterID right)
     {
         m_assembler.cmpq_rm(right, left.offset, left.base);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtr(Condition cond, Address left, ImmPtr right)
@@ -353,7 +363,7 @@ public:
     Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.testq_rr(reg, mask);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTestPtr(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
@@ -365,7 +375,7 @@ public:
             m_assembler.testb_i8r(mask.m_value, reg);
         else
             m_assembler.testq_i32r(mask.m_value, reg);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))
@@ -374,7 +384,7 @@ public:
             m_assembler.cmpq_im(0, address.offset, address.base);
         else
             m_assembler.testq_i32m(mask.m_value, address.offset, address.base);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTestPtr(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
@@ -383,7 +393,7 @@ public:
             m_assembler.cmpq_im(0, address.offset, address.base, address.index, address.scale);
         else
             m_assembler.testq_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
 
@@ -391,14 +401,14 @@ public:
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         addPtr(src, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchSubPtr(Condition cond, Imm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         subPtr(imm, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
@@ -425,6 +435,8 @@ public:
         storePtr(scratchRegister, address);
         return label;
     }
+
+    bool supportsFloatingPoint() const { return true; }
 };
 
 } // namespace JSC

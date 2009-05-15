@@ -193,6 +193,10 @@ namespace JSC {
         static const RegisterID regT2 = X86::ecx;
         // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
         static const RegisterID regT3 = X86::ebx;
+
+        static const FPRegisterID fpRegT0 = X86::xmm0;
+        static const FPRegisterID fpRegT1 = X86::xmm1;
+        static const FPRegisterID fpRegT2 = X86::xmm2;
 #elif PLATFORM(X86)
         static const RegisterID returnValueRegister = X86::eax;
         static const RegisterID cachedResultRegister = X86::eax;
@@ -208,6 +212,10 @@ namespace JSC {
         static const RegisterID regT2 = X86::ecx;
         // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
         static const RegisterID regT3 = X86::ebx;
+
+        static const FPRegisterID fpRegT0 = X86::xmm0;
+        static const FPRegisterID fpRegT1 = X86::xmm1;
+        static const FPRegisterID fpRegT2 = X86::xmm2;
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -632,8 +640,6 @@ namespace JSC {
         void sampleCodeBlock(CodeBlock*) {}
 #endif
 
-        bool isSSE2Present() const { return m_isSSE2Present; }
-
         Interpreter* m_interpreter;
         JSGlobalData* m_globalData;
         CodeBlock* m_codeBlock;
@@ -651,7 +657,6 @@ namespace JSC {
 
         int m_lastResultBytecodeRegister;
         unsigned m_jumpTargetsPosition;
-        const bool m_isSSE2Present;
 
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_globalResolveInfoIndex;

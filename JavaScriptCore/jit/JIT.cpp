@@ -56,53 +56,6 @@ void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress retu
     returnAddress.relinkNearCallerToFunction(newCalleeFunction);
 }
 
-// All X86 Macs are guaranteed to support at least SSE2
-#if PLATFORM(X86_64) || (PLATFORM(X86) && PLATFORM(MAC))
-
-static inline bool isSSE2Present()
-{
-    return true;
-}
-
-#else
-
-static bool isSSE2Present()
-{
-    static const int SSE2FeatureBit = 1 << 26;
-    struct SSE2Check {
-        SSE2Check()
-        {
-            int flags;
-#if COMPILER(MSVC)
-            _asm {
-                mov eax, 1 // cpuid function 1 gives us the standard feature set
-                cpuid;
-                mov flags, edx;
-            }
-#elif COMPILER(GCC)
-            asm (
-                 "movl $0x1, %%eax;"
-                 "pushl %%ebx;"
-                 "cpuid;"
-                 "popl %%ebx;"
-                 "movl %%edx, %0;"
-                 : "=g" (flags)
-                 :
-                 : "%eax", "%ecx", "%edx"
-                 );
-#else
-            flags = 0;
-#endif
-            present = (flags & SSE2FeatureBit) != 0;
-        }
-        bool present;
-    };
-    static SSE2Check check;
-    return check.present;
-}
-
-#endif // PLATFORM(X86_64) || (PLATFORM(X86) && PLATFORM(MAC))
-
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
@@ -112,7 +65,6 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
-    , m_isSSE2Present(JSC::isSSE2Present())
 {
 }
 

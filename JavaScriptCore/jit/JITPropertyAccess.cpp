@@ -382,7 +382,12 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     if (willNeedStorageRealloc) {
         pop(X86::ebx);
 #if PLATFORM(X86_64)
-        move(Imm32(newStructure->propertyStorageCapacity()), regT1);
+        // Setup arguments in edi, esi, edx.  Since baseObject is in regT0,
+        // regT0 had better not be any of these registers.
+        ASSERT(regT0 != X86::edx);
+        ASSERT(regT0 != X86::esi);
+        ASSERT(regT0 != X86::edi);
+        move(Imm32(newStructure->propertyStorageCapacity()), X86::edx);
         move(Imm32(oldStructure->propertyStorageCapacity()), X86::esi);
         move(regT0, X86::edi);
         callTarget = call();

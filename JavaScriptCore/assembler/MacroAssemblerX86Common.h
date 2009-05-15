@@ -38,20 +38,31 @@ namespace JSC {
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 public:
 
-    typedef X86Assembler::Condition Condition;
-    static const Condition Equal = X86Assembler::ConditionE;
-    static const Condition NotEqual = X86Assembler::ConditionNE;
-    static const Condition Above = X86Assembler::ConditionA;
-    static const Condition AboveOrEqual = X86Assembler::ConditionAE;
-    static const Condition Below = X86Assembler::ConditionB;
-    static const Condition BelowOrEqual = X86Assembler::ConditionBE;
-    static const Condition GreaterThan = X86Assembler::ConditionG;
-    static const Condition GreaterThanOrEqual = X86Assembler::ConditionGE;
-    static const Condition LessThan = X86Assembler::ConditionL;
-    static const Condition LessThanOrEqual = X86Assembler::ConditionLE;
-    static const Condition Overflow = X86Assembler::ConditionO;
-    static const Condition Zero = X86Assembler::ConditionE;
-    static const Condition NonZero = X86Assembler::ConditionNE;
+    enum Condition {
+        Equal = X86Assembler::ConditionE,
+        NotEqual = X86Assembler::ConditionNE,
+        Above = X86Assembler::ConditionA,
+        AboveOrEqual = X86Assembler::ConditionAE,
+        Below = X86Assembler::ConditionB,
+        BelowOrEqual = X86Assembler::ConditionBE,
+        GreaterThan = X86Assembler::ConditionG,
+        GreaterThanOrEqual = X86Assembler::ConditionGE,
+        LessThan = X86Assembler::ConditionL,
+        LessThanOrEqual = X86Assembler::ConditionLE,
+        Overflow = X86Assembler::ConditionO,
+        Signed = X86Assembler::ConditionS,
+        Zero = X86Assembler::ConditionE,
+        NonZero = X86Assembler::ConditionNE
+    };
+
+    enum DoubleCondition {
+        DoubleEqual = X86Assembler::ConditionE,
+        DoubleNotEqual = X86Assembler::ConditionNE,
+        DoubleGreaterThan = X86Assembler::ConditionA,
+        DoubleGreaterThanOrEqual = X86Assembler::ConditionAE,
+        DoubleLessThan = X86Assembler::ConditionB,
+        DoubleLessThanOrEqual = X86Assembler::ConditionBE,
+    };
 
     static const RegisterID stackPointerRegister = X86::esp;
 
@@ -260,7 +271,81 @@ public:
     {
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
-    
+
+
+    // Floating-point operation:
+    //
+    // Presently only supports SSE, not x87 floating point.
+
+    void loadDouble(ImplicitAddress address, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_mr(address.offset, address.base, dest);
+    }
+
+    void storeDouble(FPRegisterID src, ImplicitAddress address)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_rm(src, address.offset, address.base);
+    }
+
+    void addDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.addsd_rr(src, dest);
+    }
+
+    void addDouble(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.addsd_mr(src.offset, src.base, dest);
+    }
+
+    void subDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.subsd_rr(src, dest);
+    }
+
+    void subDouble(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.subsd_mr(src.offset, src.base, dest);
+    }
+
+    void mulDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.mulsd_rr(src, dest);
+    }
+
+    void mulDouble(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.mulsd_mr(src.offset, src.base, dest);
+    }
+
+    void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.cvtsi2sd_rr(src, dest);
+    }
+
+    Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
+    {
+        m_assembler.ucomisd_rr(right, left);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    // Truncates 'src' to an integer, and places the resulting 'dest'.
+    // If the result is not representable as a 32 bit value, branch.
+    // May also branch for some values that are representable in 32 bits
+    // (specifically, in this case, INT_MIN).
+    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.cvttsd2si_rr(src, dest);
+        return branch32(Equal, dest, Imm32(0x80000000));
+    }
+
 
     // Stack manipulation operations:
     //
@@ -289,6 +374,7 @@ public:
     {
         m_assembler.push_i32(imm.m_value);
     }
+
 
     // Register move operations:
     //
@@ -386,7 +472,7 @@ public:
     Jump branch32(Condition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch32(Condition cond, RegisterID left, Imm32 right)
@@ -395,37 +481,37 @@ public:
             m_assembler.testl_rr(left, left);
         else
             m_assembler.cmpl_ir(right.m_value, left);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branch32(Condition cond, RegisterID left, Address right)
     {
         m_assembler.cmpl_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branch32(Condition cond, Address left, RegisterID right)
     {
         m_assembler.cmpl_rm(right, left.offset, left.base);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch32(Condition cond, Address left, Imm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch32(Condition cond, BaseIndex left, Imm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base, left.index, left.scale);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch16(Condition cond, BaseIndex left, RegisterID right)
     {
         m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch16(Condition cond, BaseIndex left, Imm32 right)
@@ -433,14 +519,14 @@ public:
         ASSERT(!(right.m_value & 0xFFFF0000));
 
         m_assembler.cmpw_im(right.m_value, left.offset, left.base, left.index, left.scale);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         m_assembler.testl_rr(reg, mask);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTest32(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
@@ -453,7 +539,7 @@ public:
             m_assembler.testb_i8r(mask.m_value, reg);
         else
             m_assembler.testl_i32r(mask.m_value, reg);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTest32(Condition cond, Address address, Imm32 mask = Imm32(-1))
@@ -463,7 +549,7 @@ public:
             m_assembler.cmpl_im(0, address.offset, address.base);
         else
             m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchTest32(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
@@ -473,7 +559,7 @@ public:
             m_assembler.cmpl_im(0, address.offset, address.base, address.index, address.scale);
         else
             m_assembler.testl_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump jump()
@@ -505,44 +591,44 @@ public:
     
     Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
-    
+
     Jump branchAdd32(Condition cond, Imm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(src, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchMul32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(imm, src, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchSub32(Condition cond, Imm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
-        return Jump(m_assembler.jCC(cond));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
 
@@ -576,7 +662,7 @@ public:
     void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);
-        m_assembler.setCC_r(cond, dest);
+        m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
@@ -586,7 +672,7 @@ public:
             m_assembler.testl_rr(left, left);
         else
             m_assembler.cmpl_ir(right.m_value, left);
-        m_assembler.setCC_r(cond, dest);
+        m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
@@ -600,9 +686,71 @@ public:
             m_assembler.cmpl_im(0, address.offset, address.base);
         else
             m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-        m_assembler.setCC_r(cond, dest);
+        m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
+
+protected:
+    X86Assembler::Condition x86Condition(Condition cond)
+    {
+        return static_cast<X86Assembler::Condition>(cond);
+    }
+
+    X86Assembler::Condition x86Condition(DoubleCondition cond)
+    {
+        return static_cast<X86Assembler::Condition>(cond);
+    }
+
+private:
+    // Only MacroAssemblerX86 should be using the following method; SSE2 is always available on
+    // x86_64, and clients & subclasses of MacroAssembler should be using 'supportsFloatingPoint()'.
+    friend class MacroAssemblerX86;
+
+#if PLATFORM(X86_64)
+#ifndef NDEBUG
+    static bool isSSE2Present() { return true; }
+#endif
+#else
+    static bool isSSE2Present()
+    {
+#if PLATFORM(MAC)
+        // All X86 Macs are guaranteed to support at least SSE2
+        return true;
+#else
+        static const int SSE2FeatureBit = 1 << 26;
+        struct SSE2Check {
+            SSE2Check()
+            {
+                int flags;
+#if COMPILER(MSVC)
+                _asm {
+                    mov eax, 1 // cpuid function 1 gives us the standard feature set
+                    cpuid;
+                    mov flags, edx;
+                }
+#elif COMPILER(GCC)
+                asm (
+                     "movl $0x1, %%eax;"
+                     "pushl %%ebx;"
+                     "cpuid;"
+                     "popl %%ebx;"
+                     "movl %%edx, %0;"
+                     : "=g" (flags)
+                     :
+                     : "%eax", "%ecx", "%edx"
+                     );
+#else
+                flags = 0;
+#endif
+                present = (flags & SSE2FeatureBit) != 0;
+            }
+            bool present;
+        };
+        static SSE2Check check;
+        return check.present;
+#endif // !PLATFORM(MAC)
+    }
+#endif
 };
 
 } // namespace JSC

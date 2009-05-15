@@ -84,6 +84,7 @@ class X86Assembler {
 public:
     typedef X86::RegisterID RegisterID;
     typedef X86::XMMRegisterID XMMRegisterID;
+    typedef XMMRegisterID FPRegisterID;
 
     typedef enum {
         ConditionO,

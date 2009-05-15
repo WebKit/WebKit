@@ -1,3 +1,66 @@
+2009-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add FP support to the MacroAssembler, port JITArithmetic over to make use of this. Also add
+        API to determine whether FP support is available 'MacroAssembler::supportsFloatingPoint()',
+        FP is presently only supported on SSE2 platforms, not x87.  On platforms where a suitable
+        hardware FPU is not available 'supportsFloatingPoint()' may simply return false, and all
+        other methods ASSERT_NOT_REACHED().
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::branch32):
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86::supportsFloatingPoint):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::):
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::storeDouble):
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::subDouble):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::branch16):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+        (JSC::MacroAssemblerX86Common::set32):
+        (JSC::MacroAssemblerX86Common::setTest32):
+        (JSC::MacroAssemblerX86Common::x86Condition):
+        (JSC::MacroAssemblerX86Common::isSSE2Present):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::movePtrToDouble):
+        (JSC::MacroAssemblerX86_64::moveDoubleToPtr):
+        (JSC::MacroAssemblerX86_64::setPtr):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        (JSC::MacroAssemblerX86_64::branchAddPtr):
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPoint):
+        * assembler/X86Assembler.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2009-05-15  Francisco Tolmasky  <francisco@280north.com>
 
         BUG 25467: JavaScript debugger should use function.displayName as the function's name in the call stack
