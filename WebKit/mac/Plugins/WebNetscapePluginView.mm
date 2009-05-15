@@ -2246,9 +2246,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_NO_ERROR;
 }
 
-- (char*)locationForTarget:(const char*)target
+- (char*)resolveURL:(const char*)url forTarget:(const char*)target
 {
-    WebCore::CString location = [self locationStringForTarget:target];
+    WebCore::CString location = [self resolvedURLStringForURL:url target:target];
 
     if (location.isNull())
         return 0;

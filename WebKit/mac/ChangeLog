@@ -1,3 +1,34 @@
+2009-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6892055> 
+        Replace WKN_GetLocation with WKN_ResolveURL (WKN_GetLocation was confusing and did not take the base URL into account)
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCResolveURL):
+        New MIG callback.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::resolveURL):
+        Use FrameLoader::complete URL here.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add new MIG definition.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView resolvedURLStringForURL:target:]):        
+        * Plugins/WebNetscapeContainerCheckPrivate.h:
+        * Plugins/WebNetscapeContainerCheckPrivate.mm:
+        (browserContainerCheckFuncs):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView resolveURL:forTarget:]):
+        * Plugins/npapi.mm:
+        (WKN_ResolveURL):
+
 2009-05-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

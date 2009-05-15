@@ -175,7 +175,7 @@ typedef union PluginPort {
 - (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32)port scheme:(const char*)scheme realm:(const char*)realm
                                     username:(char**)username usernameLength:(uint32*)usernameLength 
                                     password:(char**)password passwordLength:(uint32*)passwordLength;
-- (char*)locationForTarget:(const char*)target;
+- (char*)resolveURL:(const char*)url forTarget:(const char*)target;
 @end
 
 WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs();

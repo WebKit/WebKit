@@ -227,9 +227,9 @@ void WKN_CancelCheckIfAllowedToLoadURL(NPP instance, uint32 checkID)
     [pluginViewForInstance(instance) cancelCheckIfAllowedToLoadURL:checkID];
 }
 
-char *WKN_GetLocation(NPP instance, const char *target)
+char* WKN_ResolveURL(NPP instance, const char* url, const char* target)
 {
-    return [pluginViewForInstance(instance) locationForTarget:target];
+    return [pluginViewForInstance(instance) resolveURL:url forTarget:target];
 }
 
 #endif

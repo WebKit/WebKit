@@ -739,21 +739,25 @@ using namespace WebCore;
 }
 
 
-- (CString)locationStringForTarget:(const char*)target
+- (CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
 {
+    String relativeURLString = String::fromUTF8(url);
+    if (relativeURLString.isNull())
+        return CString();
+    
     Frame* frame = core([self webFrame]);
     if (!frame)
         return CString();
 
     Frame* targetFrame = frame->tree()->find(String::fromUTF8(target));
+    if (!targetFrame)
+        return CString();
     
     if (!frame->document()->securityOrigin()->canAccess(targetFrame->document()->securityOrigin()))
         return CString();
-    
-    const KURL& url = targetFrame->loader()->url();
-    String urlString = url.hasPath() ? url.prettyURL() : url.prettyURL() + "/";
-
-    return urlString.utf8();
+  
+    KURL absoluteURL = targetFrame->loader()->completeURL(relativeURLString);
+    return absoluteURL.string().utf8();
 }
 
 @end

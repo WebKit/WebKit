@@ -37,7 +37,7 @@ WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
         WKNVBrowserContainerCheckFuncsVersion,
         WKN_CheckIfAllowedToLoadURL,
         WKN_CancelCheckIfAllowedToLoadURL,
-        WKN_GetLocation,
+        WKN_ResolveURL
     };
     
     return &funcs;

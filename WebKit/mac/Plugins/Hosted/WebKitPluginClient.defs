@@ -200,10 +200,11 @@ simpleroutine PCCancelCheckIfAllowedToLoadURL(clientPort :mach_port_t;
                                               pluginID :uint32_t;
                                               checkID :uint32_t);
 
-routine PCGetLocation(clientPort :mach_port_t;
-                      pluginID :uint32_t;
-                      target :data_t;
-                      out location :data_t, dealloc);
+routine PCResolveURL(clientPort :mach_port_t;
+                     pluginID :uint32_t;
+                     url :data_t;
+                     target :data_t;
+                     out resolvedURL :data_t, dealloc);
                       
 // Replies
 simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;

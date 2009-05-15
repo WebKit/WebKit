@@ -159,7 +159,7 @@ public:
     void cancelCheckIfAllowedToLoadURL(uint32_t checkID);
     void checkIfAllowedToLoadURLResult(uint32_t checkID, bool allowed);
 
-    void getLocation(const char* target, data_t& locationData, mach_msg_type_number_t& locationLength);
+    void resolveURL(const char* url, const char* target, data_t& resolvedURLData, mach_msg_type_number_t& resolvedURLLength);
     
     // Reply structs
     struct Reply {

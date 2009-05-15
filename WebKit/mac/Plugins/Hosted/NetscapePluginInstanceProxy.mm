@@ -1402,15 +1402,15 @@ void NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult(uint32_t checkID
     _WKPHCheckIfAllowedToLoadURLResult(m_pluginHostProxy->port(), m_pluginID, checkID, allowed);
 }
 
-void NetscapePluginInstanceProxy::getLocation(const char* target, data_t& locationData, mach_msg_type_number_t& locationLength)
+void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target, data_t& resolvedURLData, mach_msg_type_number_t& resolvedURLLength)
 {
     ASSERT(m_pluginView);
-
-    WebCore::CString location = [m_pluginView locationStringForTarget:target];
     
-    locationLength = location.length();
-    mig_allocate(reinterpret_cast<vm_address_t*>(&locationData), locationLength);
-    memcpy(locationData, location.data(), locationLength);
+    WebCore::CString resolvedURL = [m_pluginView resolvedURLStringForURL:url target:target];
+    
+    resolvedURLLength = resolvedURL.length();
+    mig_allocate(reinterpret_cast<vm_address_t*>(&resolvedURLData), resolvedURLLength);
+    memcpy(resolvedURLData, resolvedURL.data(), resolvedURLLength);
 }
 
 } // namespace WebKit
