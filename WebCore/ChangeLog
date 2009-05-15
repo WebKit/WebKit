@@ -1,3 +1,18 @@
+2009-05-14  Rahul Kuchhal  <kuchhal@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Initialize m_spreadMethod in the second constructor too. Not sure if
+        a test case can be written, so no test case.
+        https://bugs.webkit.org/show_bug.cgi?id=25814
+
+        No test possible: spreadMethod() is only used by SVG, doesn't seem possible to hit
+        this case, since several other SVG tests already should be calling
+        spreadMethod().
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::Gradient):
+
 2009-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
