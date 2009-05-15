@@ -1,3 +1,13 @@
+2009-05-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        Add a settings entry to en/disable web font support
+        https://bugs.webkit.org/show_bug.cgi?id=25239
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+
 2009-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg.

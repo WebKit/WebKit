@@ -100,6 +100,9 @@ Settings::Settings(Page* page)
         EditingWindowsBehavior
 #endif
         )
+    // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
+    // they can't use by. Leaving enabled for now to not change existing behavior.
+    , m_downloadableBinaryFontsEnabled(true)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -448,6 +451,11 @@ void Settings::setAllowScriptsToCloseWindows(bool allowScriptsToCloseWindows)
 void Settings::setCaretBrowsingEnabled(bool caretBrowsingEnabled)
 {
     m_caretBrowsingEnabled = caretBrowsingEnabled;
+}
+
+void Settings::setDownloadableBinaryFontsEnabled(bool downloadableBinaryFontsEnabled)
+{
+    m_downloadableBinaryFontsEnabled = downloadableBinaryFontsEnabled;
 }
 
 } // namespace WebCore

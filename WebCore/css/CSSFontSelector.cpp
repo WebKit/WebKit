@@ -233,10 +233,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     int srcLength = srcList->length();
 
     bool foundLocal = false;
-
-#if ENABLE(SVG_FONTS)
     bool foundSVGFont = false;
-#endif
 
     for (int i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
@@ -246,9 +243,10 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #if ENABLE(SVG_FONTS)
         foundSVGFont = item->isSVGFontFaceSrc() || item->svgFontFaceElement();
 #endif
-
         if (!item->isLocal()) {
-            if (item->isSupportedFormat() && m_document) {
+            Settings* settings = m_document ? m_document->frame() ? m_document->frame()->settings() : 0 : 0;
+            bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
+            if (allowDownloading && item->isSupportedFormat() && m_document) {
                 CachedFont* cachedFont = m_document->docLoader()->requestFont(item->resource());
                 if (cachedFont) {
 #if ENABLE(SVG_FONTS)

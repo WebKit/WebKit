@@ -234,6 +234,9 @@ namespace WebCore {
 
         void setEditingBehavior(EditingBehavior behavior) { m_editingBehavior = behavior; }
         EditingBehavior editingBehavior() const { return static_cast<EditingBehavior>(m_editingBehavior); }
+        
+        void setDownloadableBinaryFontsEnabled(bool);
+        bool downloadableBinaryFontsEnabled() const { return m_downloadableBinaryFontsEnabled; }
 
     private:
         Page* m_page;
@@ -293,6 +296,7 @@ namespace WebCore {
         bool m_usesEncodingDetector : 1;
         bool m_allowScriptsToCloseWindows : 1;
         unsigned m_editingBehavior : 1;
+        bool m_downloadableBinaryFontsEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
