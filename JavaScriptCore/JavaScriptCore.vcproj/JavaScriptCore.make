@@ -15,7 +15,7 @@ install:
     cd "$(OBJROOT)\tests\SunSpider"
     perl sunspider --shell ../../bin/jsc.exe --runs 3
     cd "$(SRCROOT)\JavaScriptCore.vcproj"
-    devenv "JavaScriptCoreSubmit.sln" /build Release_PGOOptimize
+    devenv "JavaScriptCoreSubmit.sln" /rebuild Release_PGOOptimize
 !ELSE
     devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
 !ENDIF

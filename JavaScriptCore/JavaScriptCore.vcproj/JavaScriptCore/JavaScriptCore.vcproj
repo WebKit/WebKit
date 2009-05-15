@@ -299,7 +299,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkTimeCodeGeneration="3"
 			/>
 			<Tool
 				Name="VCALinkTool"

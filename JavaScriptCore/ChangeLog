@@ -1,5 +1,12 @@
 2009-05-14  Steve Falkenburg  <sfalken@apple.com>
 
+        Back out incorrect Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2009-05-14  Steve Falkenburg  <sfalken@apple.com>
+
         Windows build fix
 
         * JavaScriptCore.vcproj/JavaScriptCore.make:
