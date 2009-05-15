@@ -197,7 +197,8 @@ ImageDecoderQt* ImageDecoderQt::create(const SharedBuffer& data)
 }
 
 ImageDecoderQt::ImageDecoderQt(const QString &imageFormat)
-    : m_imageFormat(imageFormat)
+    : m_hasAlphaChannel(false)
+    , m_imageFormat(imageFormat)
 {
 }
 
@@ -212,6 +213,7 @@ bool ImageDecoderQt::hasFirstImageHeader() const
 
 void ImageDecoderQt::reset()
 {
+    m_hasAlphaChannel = false;
     m_failed = false;
     m_imageList.clear();
     m_pixmapCache.clear();
@@ -229,6 +231,9 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
         qDebug() << " setData " << data.size() << " image bytes, complete=" << allDataReceived;
 
     const  ReadContext::ReadResult readResult =  readContext.read(allDataReceived);
+
+    if (hasFirstImageHeader())
+        m_hasAlphaChannel = m_imageList[0].m_image.hasAlphaChannel();
 
     if (debugImageDecoderQt)
         qDebug()  << " read returns " << readResult;
@@ -280,7 +285,7 @@ int ImageDecoderQt::repetitionCount() const
 
 bool ImageDecoderQt::supportsAlpha() const
 {
-    return hasFirstImageHeader() && m_imageList[0].m_image.hasAlphaChannel();
+    return m_hasAlphaChannel;
 }
 
 int ImageDecoderQt::duration(size_t index) const

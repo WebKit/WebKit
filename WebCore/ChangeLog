@@ -1,3 +1,17 @@
+2009-05-15  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Refactor alpha channel detection the image decoder.
+        Sets the boolean flag as soon as the image is being read.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ImageDecoderQt): Initialized m_hasAlphaChannel.
+        (WebCore::ImageDecoderQt::setData): Set the flag when appropriate.
+        (WebCore::ImageDecoderQt::supportsAlpha): Simplified.
+        (WebCore::ImageDecoderQt::reset): Resetted the flag.
+        * platform/graphics/qt/ImageDecoderQt.h: Added m_hasAlphaChannel.
+
 2009-05-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
