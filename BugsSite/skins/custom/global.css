@@ -102,6 +102,10 @@ table#bug_details #flags td {
         font-weight: bold;
 }
 
+#summary_fields input {
+  width: 50em;
+}
+
 span.bz_comment {
 	display: block;
 	background-color: #ddd;
