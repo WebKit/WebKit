@@ -1,5 +1,15 @@
 2009-05-14  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+
+        Fix Windows build after renaming MediaControlElements to MediaControlElementType.
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+        * rendering/RenderMediaControls.h:
+
+2009-05-14  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
         
         <rdar://problem/6739671> Movie controller’s play button does not change into a pause

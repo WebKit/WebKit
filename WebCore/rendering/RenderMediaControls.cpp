@@ -90,7 +90,7 @@ static HTMLMediaElement* parentMediaElement(RenderObject* o)
     return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
-bool RenderMediaControls::paintMediaControlsPart(MediaControlElements part, RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
 

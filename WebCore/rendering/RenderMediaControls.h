@@ -34,7 +34,7 @@ namespace WebCore {
 class HTMLMediaElement;
 class RenderMediaControls {
 public:
-    static bool paintMediaControlsPart(MediaControlElements, RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     static void adjustMediaSliderThumbSize(RenderObject*);
 };
 
