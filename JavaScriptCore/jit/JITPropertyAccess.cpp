@@ -183,7 +183,7 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     stubCall.addArgument(regT0);
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(regT1);
-    stubCall.call(resultVReg);
+    stubCall.call();
 }
 
 void JIT::compilePutByIdSlowCase(int, Identifier*, int, Vector<SlowCaseEntry>::iterator&, unsigned)
