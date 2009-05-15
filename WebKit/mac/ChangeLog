@@ -1,3 +1,11 @@
+2009-05-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        Look for libWebKitSystemInterface.a in a more reasonable location.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2009-05-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Tim Hatcher.
