@@ -32,10 +32,10 @@
 #include "HTMLOptionsCollection.h"
 
 #include "HTMLOptionElement.h"
-#include "HTMLSelectElement.h"
 #include "ExceptionCode.h"
 
 #include "V8Binding.h"
+#include "V8Collection.h"
 #include "V8CustomBinding.h"
 #include "V8HTMLOptionElement.h"
 #include "V8HTMLSelectElementCustom.h"
@@ -111,6 +111,26 @@ ACCESSOR_SETTER(HTMLOptionsCollectionLength)
         imp->setLength(value->Uint32Value(), ec);
 
     V8Proxy::SetDOMException(ec);
+}
+
+INDEXED_PROPERTY_GETTER(HTMLOptionsCollection)
+{
+    INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertyGetter");
+    HTMLOptionsCollection* collection = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+
+    RefPtr<Node> result = collection->item(index);
+    if (!result)
+        return notHandledByInterceptor();
+
+    return V8Proxy::NodeToV8Object(result.get());
+}
+
+INDEXED_PROPERTY_SETTER(HTMLOptionsCollection)
+{
+    INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertySetter");
+    HTMLOptionsCollection* collection = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(collection->base());
+    return toOptionsCollectionSetter(index, value, base);
 }
 
 } // namespace WebCore

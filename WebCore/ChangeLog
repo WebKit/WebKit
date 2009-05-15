@@ -1,3 +1,19 @@
+2009-05-15  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream V8 bindings for HTMLOptionsCollection and HTMLSelectElementCollection.
+        https://bugs.webkit.org/show_bug.cgi?id=25739
+
+        * bindings/v8/V8Collection.cpp: Added.
+        (WebCore::toOptionsCollectionSetter): Moved from v8_custom.cpp.
+        * bindings/v8/V8Collection.h: Added prototype for toOptionsCollectionSetter().
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_SETTER): Moved from v8_custom.cpp.
+        * bindings/v8/custom/V8HTMLSelectElementCollectionCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):  Moved from v8_custom.cpp.
+        (WebCore::INDEXED_PROPERTY_SETTER):  Moved from v8_custom.cpp.
+
 2009-05-15  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6649936> Add *.exp export files to WebCore Xcode project

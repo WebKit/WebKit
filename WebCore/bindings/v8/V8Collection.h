@@ -32,6 +32,7 @@
 #define V8Collection_h
 
 #include "HTMLFormElement.h"
+#include "HTMLSelectElement.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include <v8.h>
@@ -206,6 +207,8 @@ namespace WebCore {
     {
         desc->InstanceTemplate()->SetIndexedPropertyHandler(collectionStringOrNullIndexedPropertyGetter<Collection>, 0, 0, 0, collectionIndexedPropertyEnumerator<Collection>);
     }
+
+    v8::Handle<v8::Value> toOptionsCollectionSetter(uint32_t index, v8::Handle<v8::Value>, HTMLSelectElement*);
 
 } // namespace WebCore
 
