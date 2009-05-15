@@ -1,3 +1,16 @@
+2009-05-14  Eric Seidel  <eric@webkit.org>
+
+        No review, rollout only.
+
+        Roll out r43753 as it caused a test to fail
+        Turns out more than one test was using the modified JS file.
+
+        * editing/pasteboard/paste-blockquote-before-blockquote-expected.txt:
+        * editing/pasteboard/paste-blockquote-before-blockquote.html:
+        * editing/pasteboard/resources/TEMPLATE.html: Removed.
+        * editing/pasteboard/resources/paste-blockquote-before-blockquote.js:
+        (copyAndPasteNode):
+
 2009-05-14  Julie Parent  <jparent@google.com>
 
         Reviewed by Eric Seidel.
