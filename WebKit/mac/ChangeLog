@@ -1,3 +1,16 @@
+2009-05-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6889823> hash table iterator used after hash table modified in
+        ProxyInstance::fieldNamed() when viewing movie trailer
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodsNamed): Move add call after the waitForReply call.
+        Anders says that by the time we return someone else might have done the same add
+        for us.
+        (WebKit::ProxyInstance::fieldNamed): Ditto.
+
 2009-05-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

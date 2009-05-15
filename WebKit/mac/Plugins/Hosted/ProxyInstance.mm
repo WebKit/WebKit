@@ -266,14 +266,12 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
 MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
 {
-    pair<MethodMap::iterator, bool> result = m_methods.add(identifier.ustring().rep(), 0);
-
-    if (!result.second) {
-        // The method is already in the map.
+    // If we already have an entry in the map, use it.
+    MethodMap::iterator existingMapEntry = m_methods.find(identifier.ustring().rep());
+    if (existingMapEntry != m_methods.end()) {
         MethodList methodList;
-        
-        if (result.first->second)
-            methodList.append(result.first->second);
+        if (existingMapEntry->second)
+            methodList.append(existingMapEntry->second);
         return methodList;
     }
     
@@ -282,66 +280,48 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
     
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
                                m_instanceProxy->pluginID(), requestID,
-                               m_objectID, methodName) != KERN_SUCCESS) {
-        // If we just added the method, remove it.
-        if (result.second)
-            m_methods.remove(result.first);
+                               m_objectID, methodName) != KERN_SUCCESS)
         return MethodList();
-    }
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (!reply.get()) {
-        // If we just added the method, remove it.
-        if (result.second)
-            m_methods.remove(result.first);
+    if (!reply.get())
         return MethodList();
-    }
-    
+
+    // Add a new entry to the map unless an entry was added while we were in waitForReply.
+    pair<MethodMap::iterator, bool> mapAddResult = m_methods.add(identifier.ustring().rep(), 0);
+    if (mapAddResult.second && reply->m_result)
+        mapAddResult.first->second = new ProxyMethod(methodName);
+
     MethodList methodList;
-    
-    if (reply->m_result) {
-        result.first->second = new ProxyMethod(methodName);
-        methodList.append(result.first->second);
-    }
-    
+    if (mapAddResult.first->second)
+        methodList.append(mapAddResult.first->second);
     return methodList;
 }
 
 Field* ProxyInstance::fieldNamed(const Identifier& identifier)
 {
-    pair<FieldMap::iterator, bool> result = m_fields.add(identifier.ustring().rep(), 0);
-    
-    if (!result.second) {
-        // The field is already in the map.
-        return result.first->second;
-    }
+    // If we already have an entry in the map, use it.
+    FieldMap::iterator existingMapEntry = m_fields.find(identifier.ustring().rep());
+    if (existingMapEntry != m_fields.end())
+        return existingMapEntry->second;
     
     uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
                                  m_instanceProxy->pluginID(), requestID,
-                                 m_objectID, propertyName) != KERN_SUCCESS) {
-        // If we just added the field, remove it.
-        if (result.second)
-            m_fields.remove(result.first);
-        
+                                 m_objectID, propertyName) != KERN_SUCCESS)
         return 0;
-    }
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (!reply.get()) {
-        // If we just added the field, remove it.
-        if (result.second)
-            m_fields.remove(result.first);
-
+    if (!reply.get())
         return 0;
-    }
     
-    if (reply->m_result)
-        result.first->second = new ProxyField(propertyName);
-    
-    return result.first->second;
+    // Add a new entry to the map unless an entry was added while we were in waitForReply.
+    pair<FieldMap::iterator, bool> mapAddResult = m_fields.add(identifier.ustring().rep(), 0);
+    if (mapAddResult.second && reply->m_result)
+        mapAddResult.first->second = new ProxyField(propertyName);
+    return mapAddResult.first->second;
 }
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
