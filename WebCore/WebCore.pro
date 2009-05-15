@@ -104,6 +104,7 @@ CONFIG(QTDIR_build) {
 
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
+!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=0
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
 !contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
@@ -402,8 +403,7 @@ IDL_BINDINGS += \
     xml/XMLHttpRequestException.idl \
     xml/XMLHttpRequestProgressEvent.idl \
     xml/XMLHttpRequestUpload.idl \
-    xml/XMLSerializer.idl \
-    xml/XSLTProcessor.idl
+    xml/XMLSerializer.idl
 
 
 SOURCES += \
@@ -474,8 +474,6 @@ SOURCES += \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
-    bindings/js/JSXSLTProcessorConstructor.cpp \
-    bindings/js/JSXSLTProcessorCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
     bindings/js/JSPluginArrayCustom.cpp \
     bindings/js/JSMessageChannelConstructor.cpp \
@@ -1066,30 +1064,9 @@ SOURCES += \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
     xml/DOMParser.cpp \
-    xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestUpload.cpp \
-    xml/XMLSerializer.cpp \
-    xml/XPathEvaluator.cpp \
-    xml/XPathExpression.cpp \
-    xml/XPathExpressionNode.cpp \
-    xml/XPathFunctions.cpp \
-    xml/XPathNamespace.cpp \
-    xml/XPathNodeSet.cpp \
-    xml/XPathNSResolver.cpp \
-    xml/XPathParser.cpp \
-    xml/XPathPath.cpp \
-    xml/XPathPredicate.cpp \
-    xml/XPathResult.cpp \
-    xml/XPathStep.cpp \
-    xml/XPathUtil.cpp \
-    xml/XPathValue.cpp \
-    xml/XPathVariableReference.cpp \
-    xml/XSLImportRule.cpp \
-    xml/XSLStyleSheet.cpp \
-    xml/XSLTExtensions.cpp \
-    xml/XSLTUnicodeSort.cpp \
-    xml/XSLTProcessor.cpp
+    xml/XMLSerializer.cpp 
 
 HEADERS += \
     $$PWD/platform/graphics/qt/StillImageQt.h \
@@ -1454,6 +1431,24 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathExpression.idl \
         xml/XPathResult.idl \
         xml/XPathEvaluator.idl
+
+    SOURCES += \
+        xml/NativeXPathNSResolver.cpp \
+        xml/XPathEvaluator.cpp \
+        xml/XPathExpression.cpp \
+        xml/XPathExpressionNode.cpp \
+        xml/XPathFunctions.cpp \
+        xml/XPathNamespace.cpp \
+        xml/XPathNodeSet.cpp \
+        xml/XPathNSResolver.cpp \
+        xml/XPathParser.cpp \
+        xml/XPathPath.cpp \
+        xml/XPathPredicate.cpp \
+        xml/XPathResult.cpp \
+        xml/XPathStep.cpp \
+        xml/XPathUtil.cpp \
+        xml/XPathValue.cpp \
+        xml/XPathVariableReference.cpp
 }
 
 unix:!mac:CONFIG += link_pkgconfig
@@ -1470,6 +1465,18 @@ contains(DEFINES, ENABLE_XSLT=1) {
     win32-msvc* {
         LIBS += -llibxml2 -llibxslt
     }
+
+    IDL_BINDINGS += \
+        xml/XSLTProcessor.idl
+
+    SOURCES += \
+        bindings/js/JSXSLTProcessorConstructor.cpp \
+        bindings/js/JSXSLTProcessorCustom.cpp \
+        xml/XSLImportRule.cpp \
+        xml/XSLStyleSheet.cpp \
+        xml/XSLTExtensions.cpp \
+        xml/XSLTProcessor.cpp \
+        xml/XSLTUnicodeSort.cpp
 }
 
 contains(DEFINES, ENABLE_XBL=1) {
