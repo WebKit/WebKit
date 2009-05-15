@@ -106,6 +106,10 @@ table#bug_details #flags td {
   width: 50em;
 }
 
+#comment {
+  width: 60em;
+}
+
 span.bz_comment {
 	display: block;
 	background-color: #ddd;
