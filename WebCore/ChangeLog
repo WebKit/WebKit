@@ -1,5 +1,14 @@
 2009-05-15  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Steve Falkenburg.
+
+        Remove dead youtube site specific hack that was commented out.
+
+        * bindings/js/JSNavigatorCustom.cpp:
+        * page/Navigator.idl:
+
+2009-05-15  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Beth Dakin.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=25826

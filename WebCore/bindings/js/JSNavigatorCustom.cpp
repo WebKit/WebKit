@@ -2,7 +2,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  *  This library is free software; you can redistribute it and/or
@@ -23,91 +23,11 @@
 #include "config.h"
 #include "JSNavigator.h"
 
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "KURL.h"
 #include "Navigator.h"
-#include "Settings.h"
 
 namespace WebCore {
 
 using namespace JSC;
-
-static bool needsYouTubeQuirk(ExecState*, Frame*);
-
-#if 1
-
-static inline bool needsYouTubeQuirk(ExecState*, Frame*)
-{
-    return false;
-}
-
-#else
-
-static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
-{
-    // This quirk works around a mistaken check in an ad at youtube.com.
-    // There's a function called isSafari that returns false if the function
-    // called isWindows returns true; thus the site malfunctions with Windows Safari.
-
-    // Do the quirk only if the function's name is "isWindows".
-    JSFunction* function = exec->function();
-    if (!function)
-        return false;
-    DEFINE_STATIC_LOCAL(const Identifier, isWindowsFunctionName, (exec, "isWindows"));
-    if (function->functionName() != isWindowsFunctionName)
-        return false;
-
-    // Do the quirk only if the function is called by an "isSafari" function.
-    // However, that function is not itself named -- it is stored in the isSafari
-    // property, though, so that's how we recognize it.
-    ExecState* callingExec = exec->callingExecState();
-    if (!callingExec)
-        return false;
-    JSFunction* callingFunction = callingExec->function();
-    if (!callingFunction)
-        return false;
-    JSObject* thisObject = callingExec->thisValue();
-    if (!thisObject)
-        return false;
-    DEFINE_STATIC_LOCAL(const Identifier, isSafariFunction, (exec, "isSafari"));
-    JSValue isSafariFunction = thisObject->getDirect(isSafariFunctionName);
-    if (isSafariFunction != callingFunction)
-        return false;
-
-    Document* document = frame->document();
-
-    // Do the quirk only on the front page of the global version of YouTube.
-    const KURL& url = document->url();
-    if (url.host() != "youtube.com" && url.host() != "www.youtube.com")
-        return false;
-    if (url.path() != "/")
-        return false;
-
-    // As with other site-specific quirks, allow website developers to turn this off.
-    // In theory, this allows website developers to check if their fixes are effective.
-    Settings* settings = frame->settings();
-    if (!settings)
-        return false;
-    if (!settings->needsSiteSpecificQuirks())
-        return false;
-
-    return true;
-}
-
-#endif
-
-JSValue JSNavigator::appVersion(ExecState* exec) const
-{
-    Navigator* imp = static_cast<Navigator*>(impl());
-    Frame* frame = imp->frame();
-    if (!frame)
-        return jsString(exec, "");
-
-    if (needsYouTubeQuirk(exec, frame))
-        return jsString(exec, "");
-    return jsString(exec, imp->appVersion());
-}
 
 void JSNavigator::mark()
 {

@@ -24,7 +24,7 @@ module window {
     ] Navigator {
         readonly attribute DOMString appCodeName;
         readonly attribute DOMString appName;
-        readonly attribute [CustomGetter] DOMString appVersion;
+        readonly attribute DOMString appVersion;
         readonly attribute DOMString language;
         readonly attribute DOMString userAgent;
         readonly attribute DOMString platform;
