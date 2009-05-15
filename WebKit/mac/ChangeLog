@@ -1,3 +1,14 @@
+2009-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6892052> WebTextIterator should not “emit
+          characters between all visible positions”
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]): Changed to construct a TextIterator
+        with emitCharactersBetweenAllVisiblePositions set to false.
+
 2009-05-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dave Kilzer.
