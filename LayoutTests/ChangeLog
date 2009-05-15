@@ -1,3 +1,15 @@
+2009-05-15  Eric Seidel  <eric@webkit.org>
+
+        Mark Rowe says skipping tests doesn't need review. :)
+
+        Add new tests from r43759 to windows and tiger skipped lists until bug 25816 can be resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=25816
+
+        Original bug: http://bugs.webkit.org/show_bug.cgi?id=25464
+
+        * platform/win/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

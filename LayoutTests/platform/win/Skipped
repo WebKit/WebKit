@@ -348,6 +348,10 @@ svg/custom/stroke-width-click.svg
 # Assertion failure in FrameLoader::loadWithDocumentLoader <https://bugs.webkit.org/show_bug.cgi?id=23921>
 fast/loader/frame-creation-removal.html
 
+# New results needed after r43759, see <https://bugs.webkit.org/show_bug.cgi?id=25816>
+fast/text/international/danda-space.html
+fast/text/international/thai-baht-space.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

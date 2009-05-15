@@ -40,3 +40,6 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 
 # <rdar://problem/6877291> media/video-size-intrinsic-scale.html test fails
 media/video-size-intrinsic-scale.html
+
+# New results needed after r43759, see <https://bugs.webkit.org/show_bug.cgi?id=25816>
+fast/text/international/thai-baht-space.html
