@@ -43,7 +43,6 @@
 #include "FrameLoader.h"
 #include "InspectorController.h"
 #include "InspectorResource.h"
-#include "JavaScriptProfile.h"
 #include "JSDOMWindow.h"
 #include "JSInspectedObjectWrapper.h"
 #include "JSInspectorCallbackWrapper.h"
@@ -53,8 +52,6 @@
 #include "Page.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
-#include <profiler/Profile.h>
-#include <profiler/Profiler.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <wtf/Vector.h>
@@ -62,7 +59,10 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
+#include "JavaScriptProfile.h"
 #include "JSJavaScriptCallFrame.h"
+#include <profiler/Profile.h>
+#include <profiler/Profiler.h>
 #endif
 
 using namespace JSC;

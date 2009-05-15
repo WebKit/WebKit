@@ -26,6 +26,8 @@
 #ifndef JavaScriptProfile_h
 #define JavaScriptProfile_h
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include <runtime/JSValue.h>
 
 namespace JSC {
@@ -38,5 +40,7 @@ namespace WebCore {
     JSC::JSValue toJS(JSC::ExecState*, JSC::Profile*);
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif

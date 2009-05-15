@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JavaScriptDebugServer.h"
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include "DOMWindow.h"
 #include "EventLoop.h"
 #include "Frame.h"
@@ -625,3 +627,5 @@ void JavaScriptDebugServer::didRemoveLastListener()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)

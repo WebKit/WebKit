@@ -29,6 +29,8 @@
 #ifndef JavaScriptDebugListener_h
 #define JavaScriptDebugListener_h
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 namespace JSC {
     class ExecState;
     class SourceCode;
@@ -51,5 +53,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // JavaScriptDebugListener_h

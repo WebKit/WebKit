@@ -1,3 +1,27 @@
+2009-05-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Finish support for disabling the JavaScript Debugger and Profiler 
+        at compile time in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=24917
+
+        * bindings/js/JSInspectorControllerCustom.cpp: ENABLE_JAVASCRIPT_DEBUGGER guard
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp: Ditto.
+        * inspector/JavaScriptCallFrame.cpp: Ditto.
+        * inspector/JavaScriptCallFrame.h: Ditto.
+        * inspector/JavaScriptCallFrame.idl: Ditto.
+        * inspector/JavaScriptDebugListener.h: Ditto.
+        * inspector/JavaScriptDebugServer.cpp: Ditto.
+        * inspector/JavaScriptDebugServer.h: Ditto.
+        * inspector/JavaScriptProfile.cpp: Ditto.
+        * inspector/JavaScriptProfile.h: Ditto.
+        * inspector/JavaScriptProfileNode.cpp: Ditto.
+        * inspector/JavaScriptProfileNode.h: Ditto.
+        * page/Console.cpp: Use guard ENABLE(JAVASCRIPT_DEBUGGER) instead of USE(JSC)
+        * page/Console.h: Ditto.
+        * page/Console.idl: Use guard ENABLE(JAVASCRIPT_DEBUGGER) instead of !defined(V8_BINDING)
+
 2009-05-15  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Dimitri Glazkov

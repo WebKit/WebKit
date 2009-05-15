@@ -39,7 +39,7 @@
 #include "PageGroup.h"
 #include "PlatformString.h"
 
-#if USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 #include <profiler/Profiler.h>
 #endif
 
