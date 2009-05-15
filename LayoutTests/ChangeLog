@@ -1,3 +1,26 @@
+2009-05-15  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Dimitri Glazkov
+
+        http://bugs.webkit.org/show_bug.cgi?id=25464
+
+        Improve the font fallback for characters belonging to 'common' scripts
+        in ChromiumWin port. Make characters like Danda, Double Danda (punctuation
+        marks in North Indian scripts) and currency signs (e.g. Thai Baht)
+        rendered correctly in Chromium on Win. 
+
+        - danda-space.html has two setences in Gurumukhi script
+        (supported on Mac and Windows) ended with Danda. The first Danda 
+        is followed by a space, which was misrendered in Chromium on Windows.
+
+        - thai-baht-space.html has Thai Baht signs before and after a space,
+          which was misrendered by Chromium on Windows.
+
+        * fast/text/international/danda-space.html: Added.
+        * fast/text/international/thai-baht-space.html: Added.
+        * platform/mac/fast/text/international/danda-space-expected.txt: Added.
+        * platform/mac/fast/text/international/thai-baht-space-expected.txt: Added.
+
 2009-05-14  Eric Seidel  <eric@webkit.org>
 
         No review, rollout only.
