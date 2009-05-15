@@ -1,3 +1,11 @@
+2009-05-15  Adam Roben  <aroben@apple.com>
+
+        Add some assembler headers to JavaScriptCore.vcproj
+
+        This is just a convenience for Windows developers.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2009-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

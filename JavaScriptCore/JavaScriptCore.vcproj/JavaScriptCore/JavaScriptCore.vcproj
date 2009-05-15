@@ -1465,7 +1465,23 @@
 			Name="assembler"
 			>
 			<File
+				RelativePath="..\..\assembler\AbstractMacroAssembler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\assembler\AssemblerBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\MacroAssembler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\MacroAssemblerX86.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\MacroAssemblerX86Common.h"
 				>
 			</File>
 			<File
