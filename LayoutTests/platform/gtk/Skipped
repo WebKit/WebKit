@@ -766,6 +766,10 @@ editing/execCommand/createLink.html
 editing/execCommand/enabling-and-selection-2.html
 editing/execCommand/enabling-and-selection.html
 editing/execCommand/findString-diacriticals.html
+editing/execCommand/outdent-blockquote-test1.html
+editing/execCommand/outdent-blockquote-test2.html
+editing/execCommand/outdent-blockquote-test3.html
+editing/execCommand/outdent-blockquote-test4.html
 editing/execCommand/queryCommandState-01.html
 editing/execCommand/unlink.html
 editing/input/textarea-arrow-navigation.html
@@ -1566,6 +1570,7 @@ editing/unsupported-content/table-type-before.html
 
 # Tests in fast/ directory
 #   Tests failing
+fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/canvas/canvas-transform-identity.html
@@ -1798,9 +1803,11 @@ fast/selectors/lang-inheritance2.html
 fast/selectors/lang-inheritance.html
 fast/selectors/lang-vs-xml-lang-xhtml.xhtml
 fast/selectors/lang-vs-xml-lang.html
+fast/text/international/danda-space.html
+fast/text/international/thai-baht-space.html
+fast/text/international/thai-offsetForPosition-inside-character.html
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/reset-drag-on-mouse-down.html
-fast/text/international/thai-offsetForPosition-inside-character.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 #   Tests timing out
 fast/loader/null-request-after-willSendRequest.html
@@ -2958,6 +2965,7 @@ fast/media/media-type-syntax-01.html
 fast/media/media-type-syntax-02.html
 fast/media/monochrome.html
 fast/media/mq-animation.html
+fast/media/mq-aspect-ratio.html
 fast/media/mq-compound-query-01.html
 fast/media/mq-compound-query-02.html
 fast/media/mq-compound-query-03.html
@@ -2985,6 +2993,7 @@ fast/media/mq-js-stylesheet-media-04.html
 fast/media/mq-max-pixel-ratio.html
 fast/media/mq-min-constraint.html
 fast/media/mq-min-pixel-ratio.html
+fast/media/mq-orientation.html
 fast/media/mq-pixel-ratio.html
 fast/media/mq-relative-constraints-02.html
 fast/media/mq-relative-constraints-03.html
