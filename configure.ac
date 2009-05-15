@@ -11,7 +11,7 @@ AC_CONFIG_AUX_DIR([autotools])
 AC_SUBST(ACLOCAL_AMFLAGS, "-I autotools")
 
 AC_CONFIG_HEADERS([autotoolsconfig.h])
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_HOST
 
 WEBKIT_MAJOR_VERSION=webkit_major_version
 WEBKIT_MINOR_VERSION=webkit_minor_version
@@ -495,14 +495,14 @@ AC_ARG_ENABLE([jit],
                              [Enable JIT compilation default=yes]),
               [],[enable_jit="yes"])
 if test "$enable_jit" = "yes"; then
-    case "$target_cpu" in
+    case "$host_cpu" in
         i*86|x86_64)
             AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
             AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_CALL], [1], [Define to enable optimizing calls])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS], [1], [Define to enable optimized property access])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_ARITHMETIC], [1], [Define to enable optimized arithmetic])
-            case "$target_cpu" in
+            case "$host_cpu" in
                 i*86)
                     AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_VA_LIST], [1], [Use stub va_list])
                 ;;
@@ -513,7 +513,7 @@ if test "$enable_jit" = "yes"; then
             esac
         ;;
         *)
-            enable_jit="no (CPU '$target_cpu' not supported)"
+            enable_jit="no (CPU '$host_cpu' not supported)"
         ;;
     esac
 fi

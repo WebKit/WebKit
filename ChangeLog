@@ -1,3 +1,12 @@
+2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Jan Alonzo.
+
+        Use AC_CANONICAL_HOST instead of AC_CANONICAL_SYSTEM, since
+        the JIT compiler is not a cross-compiler
+
+        * configure.ac:
+
 2009-05-13  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed: bump versions in preparation for 1.1.7 release.
