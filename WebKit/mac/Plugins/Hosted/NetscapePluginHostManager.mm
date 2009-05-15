@@ -246,7 +246,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
 
     auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
     if (!reply.get() || reply->m_resultCode != KERN_SUCCESS) {
-        instance->invalidate();
+        instance->cleanup();
         return 0;
     }
     

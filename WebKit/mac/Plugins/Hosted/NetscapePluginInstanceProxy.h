@@ -147,6 +147,7 @@ public:
     void addInstance(ProxyInstance*);
     void removeInstance(ProxyInstance*);
     
+    void cleanup();
     void invalidate();
     
     void willCallPluginFunction();
@@ -264,8 +265,6 @@ private:
     
     void stopAllStreams();
     Reply* processRequestsAndWaitForReply(uint32_t requestID);
-    
-    void cleanup();
     
     NetscapePluginHostProxy* m_pluginHostProxy;
     WebHostedNetscapePluginView *m_pluginView;

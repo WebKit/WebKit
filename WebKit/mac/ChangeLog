@@ -1,3 +1,17 @@
+2009-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <rdar://problem/6875398>.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        If we failed to instantiate the plug-in, call cleanup() so that any streams created by the plug-in from its
+        NPP_New callback are destroyed.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        Make cleanup() public.
+
 2009-05-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
