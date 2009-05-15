@@ -43,7 +43,7 @@ namespace WebCore {
 class Event;
 class Frame;
 
-enum MediaControlElements {
+enum MediaControlElementType {
     MediaFullscreenButton, MediaMuteButton, MediaPlayButton,
     MediaSeekBackButton, MediaSeekForwardButton, MediaSlider, MediaSliderThumb,
     MediaUnMuteButton, MediaPauseButton, MediaTimelineContainer, MediaCurrentTimeDisplay, 
@@ -88,14 +88,19 @@ public:
 
 class MediaControlInputElement : public HTMLInputElement {
 public:
-    MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*);
+    MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*, MediaControlElementType);
     void attachToParent(Element*);
     void update();
     void updateStyle();
     bool hitTest(const IntPoint& absPoint);
+
 protected:
+    virtual void updateDisplayType() { }
+    void setDisplayType(MediaControlElementType);
+
     HTMLMediaElement* m_mediaElement;   
     PseudoId m_pseudoStyleId;
+    MediaControlElementType m_displayType;  // some elements can show multiple types (e.g. play/pause)
 };
 
 // ----------------------------
@@ -104,6 +109,7 @@ class MediaControlMuteButtonElement : public MediaControlInputElement {
 public:
     MediaControlMuteButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
+    virtual void updateDisplayType();
 };
 
 // ----------------------------
@@ -112,6 +118,7 @@ class MediaControlPlayButtonElement : public MediaControlInputElement {
 public:
     MediaControlPlayButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
+    virtual void updateDisplayType();
 };
 
 // ----------------------------

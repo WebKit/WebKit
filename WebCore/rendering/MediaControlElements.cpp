@@ -118,10 +118,11 @@ MediaTimeDisplayElement::MediaTimeDisplayElement(Document* doc, HTMLMediaElement
 
 // ----------------------------
 
-MediaControlInputElement::MediaControlInputElement(Document* doc, PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement) 
+MediaControlInputElement::MediaControlInputElement(Document* doc, PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement, MediaControlElementType displayType) 
     : HTMLInputElement(inputTag, doc)
     , m_mediaElement(mediaElement)
     , m_pseudoStyleId(pseudo)
+    , m_displayType(displayType)
 {
     setInputType(type);
     RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
@@ -142,6 +143,7 @@ void MediaControlInputElement::attachToParent(Element* parent)
 
 void MediaControlInputElement::update()
 {
+    updateDisplayType();
     if (renderer())
         renderer()->updateFromElement();
 }
@@ -162,10 +164,20 @@ bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
     return false;
 }
 
+void MediaControlInputElement::setDisplayType(MediaControlElementType displayType)
+{
+    if (displayType == m_displayType)
+        return;
+
+    m_displayType = displayType;
+    if (RenderObject* o = renderer())
+        o->repaint();
+}
+
 // ----------------------------
 
 MediaControlMuteButtonElement::MediaControlMuteButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, MEDIA_CONTROLS_MUTE_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_MUTE_BUTTON, "button", element, element->muted() ? MediaUnMuteButton : MediaMuteButton)
 {
 }
 
@@ -178,10 +190,15 @@ void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
     HTMLInputElement::defaultEventHandler(event);
 }
 
+void MediaControlMuteButtonElement::updateDisplayType()
+{
+    setDisplayType(m_mediaElement->muted() ? MediaUnMuteButton : MediaMuteButton);
+}
+
 // ----------------------------
 
 MediaControlPlayButtonElement::MediaControlPlayButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, MEDIA_CONTROLS_PLAY_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_PLAY_BUTTON, "button", element, element->canPlay() ? MediaPlayButton : MediaPauseButton)
 {
 }
 
@@ -194,10 +211,16 @@ void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
     HTMLInputElement::defaultEventHandler(event);
 }
 
+void MediaControlPlayButtonElement::updateDisplayType()
+{
+    setDisplayType(m_mediaElement->canPlay() ? MediaPlayButton : MediaPauseButton);
+}
+
 // ----------------------------
 
 MediaControlSeekButtonElement::MediaControlSeekButtonElement(Document* doc, HTMLMediaElement* element, bool forward)
-    : MediaControlInputElement(doc, forward ? MEDIA_CONTROLS_SEEK_FORWARD_BUTTON : MEDIA_CONTROLS_SEEK_BACK_BUTTON, "button", element)
+    : MediaControlInputElement(doc, forward ? MEDIA_CONTROLS_SEEK_FORWARD_BUTTON : MEDIA_CONTROLS_SEEK_BACK_BUTTON,
+                               "button", element, forward ? MediaSeekForwardButton : MediaSeekBackButton)
     , m_forward(forward)
     , m_seeking(false)
     , m_capturing(false)
@@ -246,7 +269,7 @@ void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonE
 // ----------------------------
 
 MediaControlTimelineElement::MediaControlTimelineElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_TIMELINE, "range", element)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_TIMELINE, "range", element, MediaTimelineContainer)
 { 
 }
 
@@ -287,7 +310,7 @@ void MediaControlTimelineElement::update(bool updateDuration)
 // ----------------------------
 
 MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element, MediaFullscreenButton)
 {
 }
 

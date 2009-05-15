@@ -1,3 +1,40 @@
+2009-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        <rdar://problem/6739671> Movie controller’s play button does not change into a pause
+        button
+
+        Fix a controls repaint issue when the playing state of a video changes by
+        educating the MediaControlInputElements about the state they are currently
+        displaying, and making them repaint when that state changes. This applies
+        to the play/pause and mute/unmute buttons, which both have two states.
+        
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        Pass in and initialize the MediaControlElementType.
+        
+        (WebCore::MediaControlInputElement::update):
+        Update the display type too
+        
+        (WebCore::MediaControlInputElement::setDisplayType):
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement):
+        (WebCore::MediaControlMuteButtonElement::updateDisplayType):
+        Choose muted vs. unmuted display.
+        
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlPlayButtonElement::updateDisplayType):
+        Choose play vs. paused display.
+
+        * rendering/MediaControlElements.h:
+        Renamed the MediaControlElements enum to MediaControlElementType.
+        (WebCore::MediaControlInputElement::updateDisplayType):
+        Add a MediaControlElementType member variable with a setter to allow
+        the element to know what type it is displaying.
+
 2009-05-14  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
