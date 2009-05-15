@@ -1,3 +1,13 @@
+2009-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6649936> Add *.exp export files to WebCore Xcode project
+
+        Reviewed by Darin Adler and Timothy Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj: Added Exports group, moved
+        WebCore.base.exp into the group, and added 10 other *.exp files
+        in WebCore.
+
 2009-05-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

@@ -5589,6 +5589,16 @@
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
+		449195940FBE17D700D9F824 /* WebCore.VideoProxy.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.VideoProxy.exp; sourceTree = "<group>"; };
+		449195950FBE17D700D9F824 /* WebCore.Tiger.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.Tiger.exp; sourceTree = "<group>"; };
+		449195960FBE17D700D9F824 /* WebCore.SVG.ForeignObject.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.ForeignObject.exp; sourceTree = "<group>"; };
+		449195970FBE17D700D9F824 /* WebCore.SVG.Filters.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.Filters.exp; sourceTree = "<group>"; };
+		449195980FBE17D700D9F824 /* WebCore.SVG.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.exp; sourceTree = "<group>"; };
+		449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.Animation.exp; sourceTree = "<group>"; };
+		4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.NPAPI.exp; sourceTree = "<group>"; };
+		4491959B0FBE17D700D9F824 /* WebCore.LP64.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.LP64.exp; sourceTree = "<group>"; };
+		4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.JNI.exp; sourceTree = "<group>"; };
+		4491959D0FBE17D700D9F824 /* WebCore.DashboardSupport.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.DashboardSupport.exp; sourceTree = "<group>"; };
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
 		464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crossHairCursor.png; sourceTree = "<group>"; };
@@ -9389,7 +9399,6 @@
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
 				93F19B1908245E59001E9ABC /* Info.plist */,
-				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				1A569CC40D7E2B60007C3983 /* bridge */,
 				F523D18402DE42E8018635CA /* css */,
@@ -9413,6 +9422,7 @@
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
+				449195900FBE175B00D9F824 /* Exports */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
@@ -9811,6 +9821,24 @@
 				316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */,
 			);
 			name = animation;
+			sourceTree = "<group>";
+		};
+		449195900FBE175B00D9F824 /* Exports */ = {
+			isa = PBXGroup;
+			children = (
+				4491959D0FBE17D700D9F824 /* WebCore.DashboardSupport.exp */,
+				4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */,
+				4491959B0FBE17D700D9F824 /* WebCore.LP64.exp */,
+				4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */,
+				449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */,
+				449195970FBE17D700D9F824 /* WebCore.SVG.Filters.exp */,
+				449195960FBE17D700D9F824 /* WebCore.SVG.ForeignObject.exp */,
+				449195980FBE17D700D9F824 /* WebCore.SVG.exp */,
+				449195950FBE17D700D9F824 /* WebCore.Tiger.exp */,
+				449195940FBE17D700D9F824 /* WebCore.VideoProxy.exp */,
+				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
+			);
+			name = Exports;
 			sourceTree = "<group>";
 		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
