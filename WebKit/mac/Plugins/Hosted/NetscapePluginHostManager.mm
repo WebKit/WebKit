@@ -29,6 +29,7 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "NetscapePluginInstanceProxy.h"
+#import "WebLocalizableStrings.h"
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginPackage.h"
 #import <mach/mach_port.h>
@@ -134,7 +135,10 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
         return false;
     }
     
-    NSString *visibleName = [NSString stringWithFormat:@"%@ - %@", [package filename], [[NSProcessInfo processInfo] processName]];
+    NSString *visibleName = [NSString stringWithFormat:UI_STRING("%@ (%@ Internet plug-in)",
+                                                                 "visible name of the plug-in host process. The first argument is the plug-in name "
+                                                                 "and the second argument is the application name."),
+                             [[package filename] stringByDeletingPathExtension], [[NSProcessInfo processInfo] processName]];
     
     NSDictionary *hostProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                     visibleName, @"visibleName",

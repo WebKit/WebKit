@@ -1,3 +1,12 @@
+2009-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Dan Bernstein.
+
+        Fix <rdar://problem/6889644>
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
 2009-05-16  Dan Bernstein  <mitz@apple.com>
 
         - revert an accidental change from r43802.
