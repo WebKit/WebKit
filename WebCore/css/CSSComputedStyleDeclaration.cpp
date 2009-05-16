@@ -588,7 +588,7 @@ static int identifierForFamily(const AtomicString& family)
     return 0;
 }
 
-PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
+static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
 {
     if (int familyIdentifier = identifierForFamily(family))
         return CSSPrimitiveValue::createIdentifier(familyIdentifier);
