@@ -4063,9 +4063,6 @@ plugins/undefined-property-crash.html
 plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
-plugins/netscape-destroy-plugin-script-objects.html
-plugins/netscape-plugin-setwindow-size-2.html
-plugins/netscape-plugin-setwindow-size.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
 #   Tests generating new results

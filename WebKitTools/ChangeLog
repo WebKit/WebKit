@@ -4,6 +4,22 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=25787
 
+        Merge r41819 into Gtk. Do not use printf but send messages
+        through the log command.
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (log):
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_destroy_instance):
+        (webkit_test_plugin_set_window):
+        (webkit_test_plugin_handle_event):
+
+2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Jan Michael Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25787
+
         Forward port r39877 from main.c of OSX to TestNetscapePlugin
         of Gtk.
 
