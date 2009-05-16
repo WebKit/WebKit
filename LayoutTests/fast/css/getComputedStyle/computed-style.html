@@ -11,39 +11,14 @@ function test() {
     }
     document.getElementById("exposed").textContent = text;
     var others = [
-        "background-position",
+        "background-position-x",
+        "background-position-y",
         "border-spacing",
         "overflow",
+        "-webkit-mask-position-x",
+        "-webkit-mask-position-y",
         "-webkit-match-nearest-mail-blockquote-color",
         "-webkit-text-size-adjust",
-    ];
-    var unimplemented = [
-        "background",
-        "border",
-        "border-bottom",
-        "border-color",
-        "border-left",
-        "border-right",
-        "border-style",
-        "border-top",
-        "border-width",
-        "clip",
-        "content",
-        "counter-increment",
-        "counter-reset",
-        "font",
-        "font-stretch",
-        "list-style",
-        "margin",
-        "-webkit-marquee",
-        "-webkit-marquee-speed",
-        "outline",
-        "outline-offset",
-        "outline-width",
-        "padding",
-        "page",
-        "quotes",
-        "size",
     ];
     text = "";
     for (var i = 0; i != others.length; ++i) {

@@ -20,6 +20,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     bottom: auto
     caption-side: top
     clear: none
+    clip: auto
     color: rgb(0, 0, 0)
     cursor: auto
     direction: ltr
@@ -77,6 +78,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     white-space: normal
     widows: 2
     width: 50%
+    word-break: normal
     word-spacing: 0px
     word-wrap: normal
     z-index: auto
@@ -93,9 +95,13 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-composite: source-over
     -webkit-background-origin: padding-box
     -webkit-background-size: auto auto
+    -webkit-border-bottom-left-radius: 0px
+    -webkit-border-bottom-right-radius: 0px
     -webkit-border-fit: border
-    -webkit-border-image: none
     -webkit-border-horizontal-spacing: 0px
+    -webkit-border-image: none
+    -webkit-border-top-left-radius: 0px
+    -webkit-border-top-right-radius: 0px
     -webkit-border-vertical-spacing: 0px
     -webkit-box-align: stretch
     -webkit-box-direction: normal
@@ -117,6 +123,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-column-rule-style: none
     -webkit-column-rule-width: 0px
     -webkit-column-width: auto
+    -webkit-dashboard-region: null
     -webkit-highlight: none
     -webkit-line-break: normal
     -webkit-line-clamp: none
@@ -128,12 +135,12 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-marquee-style: scroll
     -webkit-mask-attachment: scroll
     -webkit-mask-box-image: none
-    -webkit-mask-image: none
-    -webkit-mask-position: 0% 0%
-    -webkit-mask-repeat: repeat
     -webkit-mask-clip: border-box
     -webkit-mask-composite: source-over
+    -webkit-mask-image: none
     -webkit-mask-origin: border-box
+    -webkit-mask-position: 0% 0%
+    -webkit-mask-repeat: repeat
     -webkit-mask-size: auto auto
     -webkit-nbsp-mode: normal
     -webkit-perspective: none
@@ -154,11 +161,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-user-drag: auto
     -webkit-user-modify: read-only
     -webkit-user-select: text
-    -webkit-dashboard-region: null
-    -webkit-border-bottom-left-radius: 0px
-    -webkit-border-bottom-right-radius: 0px
-    -webkit-border-top-left-radius: 0px
-    -webkit-border-top-right-radius: 0px
     clip-path: none
     clip-rule: nonzero
     mask: none
@@ -196,9 +198,12 @@ Computed style of an element whose parent's 'display' value is 'none':
     writing-mode: lr-tb
     glyph-orientation-horizontal: 0deg
     glyph-orientation-vertical: auto
-    background-position: 0% 0%
+    background-position-x: 0%
+    background-position-y: 0%
     border-spacing: 0px 0px
     overflow: visible
+    -webkit-mask-position-x: 0%
+    -webkit-mask-position-y: 0%
     -webkit-match-nearest-mail-blockquote-color: normal
     -webkit-text-size-adjust: auto
 

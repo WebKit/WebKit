@@ -1,3 +1,21 @@
+2009-05-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6883872> REGRESSION (r43243): computed style for font-family is returning
+        only the generic font, if any generic font is in the family list
+
+        Test: fast/css/getComputedStyle/computed-style-font-family.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        Sorted computedProperties alphabetically. Added CSSPropertyClip and CSSPropertyWordBreak.
+        (WebCore::identifierForFamily): Added. Maps internal font family names to identifiers.
+        (WebCore::valueForFamily): Added. Creates either an identifier or a string as appropriate.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Implemented the font-family
+        property as specified in the CSS standard. Fixed clip to return "auto" when there is no
+        clip set instead of nothing at all. Gave inheritableProperties and numInheritableProperties
+        internal linkage since there was no reason for them to have external linkage.
+
 2009-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -1,3 +1,21 @@
+2009-05-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6883872> REGRESSION (r43243): computed style for font-family is returning
+        only the generic font, if any generic font is in the family list
+
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-font-family.html: Added.
+
+        * fast/css/getComputedStyle/computed-style.html: Updated array of properties to dump
+        that are not visible when iterating the computed style object. Removed pointless
+        unused array of unimplemented properties.
+        * fast/css/getComputedStyle/computed-style-without-renderer.html: Ditto.
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt: Updated.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Ditto.
+
 2009-05-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.
