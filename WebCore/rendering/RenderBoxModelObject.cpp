@@ -348,9 +348,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, 0);
         if (box)
             box->paint(info, tx - box->x(), ty - box->y());
-        else
-            paint(info, tx, ty);
-            
+        else {
+            int x = isBox() ? toRenderBox(this)->x() : 0;
+            int y = isBox() ? toRenderBox(this)->y() : 0;
+            paint(info, tx - x, ty - y);
+        }
+        
         // The mask has been created.  Now we just need to clip to it.
         context->save();
         context->clipToImageBuffer(maskRect, maskImage.get());
