@@ -1,3 +1,13 @@
+2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Jan Michael Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25787
+
+        Enable plugins/npruntime.html
+
+        * platform/gtk/Skipped:
+
 2009-05-15  Darin Adler  <darin@apple.com>
 
         Fix some failures from recent changes.

@@ -4066,7 +4066,6 @@ plugins/mouse-events.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/netscape-plugin-setwindow-size-2.html
 plugins/netscape-plugin-setwindow-size.html
-plugins/npruntime.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
 #   Tests generating new results

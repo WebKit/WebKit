@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Zan Dobersek <zandobersek@gmail.com>
+ * Copyright (C) 2009 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,6 +68,8 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
                 obj->returnErrorFromNewStream = TRUE;
             else if (strcasecmp(argn[i], "logfirstsetwindow") == 0)
                 obj->logSetWindow = TRUE;
+            else if (strcasecmp(argn[i], "testnpruntime") == 0)
+                testNPRuntime(instance);
         }
 
         instance->pdata = obj;
