@@ -670,7 +670,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        acceptedEvent = ![_pluginPackage.get() pluginFuncs]->event(plugin, event);
+        acceptedEvent = [_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
     [self didCallPlugInFunction];
         

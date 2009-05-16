@@ -1,3 +1,14 @@
+2009-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6895347> Mouse wheeling in the QuickTime plug-in (incorrectly) scrolls the page
+        
+        Fix logic. The plug-in returns true if it handled the event.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+
 2009-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
