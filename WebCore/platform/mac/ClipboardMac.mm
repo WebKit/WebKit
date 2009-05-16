@@ -184,6 +184,8 @@ String ClipboardMac::getData(const String& type, bool& success) const
                 }
             }
         }
+    } else if ([cocoaType isEqualToString:NSStringPboardType]) {
+        cocoaValue = [[m_pasteboard.get() stringForType:cocoaType] precomposedStringWithCanonicalMapping];
     } else if (cocoaType) {        
         cocoaValue = [m_pasteboard.get() stringForType:cocoaType];
     }

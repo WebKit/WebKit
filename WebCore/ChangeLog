@@ -1,3 +1,22 @@
+2009-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix <rdar://problem/6873305> Two distinct characters are not displayed
+          correctly with 2 of the font selections from the stickies widget
+
+        Test: platform/mac/editing/pasteboard/text-precomposed.html
+
+        Ensure that "text/plain" data retrieved from the clipboard is always
+        precomposed. This makes Clipboard::getData() and
+        Pasteboard::documentFragment() consistent with Pasteboard::plainText()
+        and -[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:].
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::getData):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::documentFragment):
+
 2009-05-16  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

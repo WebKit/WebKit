@@ -1,3 +1,14 @@
+2009-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - test for <rdar://problem/6873305> Two distinct characters are not
+          displayed correctly with 2 of the font selections from the stickies
+          widget
+
+        * platform/mac/editing/pasteboard/text-precomposed-expected.txt: Added.
+        * platform/mac/editing/pasteboard/text-precomposed.html: Added.
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Jan Michael Alonzo.

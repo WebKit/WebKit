@@ -178,6 +178,11 @@ using namespace WebCore;
     return [[[WebInspector alloc] init] autorelease];
 }
 
++ (WebInspector *)sharedWebInspector
+{
+    return [self webInspector];
+}
+
 - (void)setWebFrame:(WebFrame *)frame
 {
     // Safari 3.0 calls this method

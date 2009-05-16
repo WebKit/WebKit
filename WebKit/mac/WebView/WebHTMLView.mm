@@ -789,7 +789,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     NSArray *types = [pasteboard types];
     
     if ([types containsObject:NSStringPboardType])
-        return [pasteboard stringForType:NSStringPboardType];
+        return [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping];
     
     NSAttributedString *attributedString = nil;
     NSString *string;

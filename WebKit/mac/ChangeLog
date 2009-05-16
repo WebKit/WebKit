@@ -1,3 +1,15 @@
+2009-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix <rdar://problem/6873305> Two distinct characters are not displayed
+          correctly with 2 of the font selections from the stickies widget
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _plainTextFromPasteboard:]): Return precomposed text.
+        This is consistent with
+        -_documentFragmentFromPasteboard:forType:inContext:subresources:.
+
 2009-05-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

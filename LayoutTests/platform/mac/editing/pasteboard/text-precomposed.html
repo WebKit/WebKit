@@ -1,0 +1,44 @@
+<body>
+    <p>
+        Test that text retrieved from the clipboard is always precomposed.
+    </p>
+    <pre id="console"></pre>
+    <div contenteditable id="paste-target"></div>
+    <script>
+        function log(message)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+        }
+
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+
+            document.body.addEventListener("copy", function(event) {
+                event.preventDefault();
+                event.clipboardData.setData("text/plain", "e\u0301");
+            }, true);
+
+            document.body.addEventListener("paste", function(event) {
+                var data = event.clipboardData.getData("text/plain");
+                if (data === "\u00e9")
+                    log("PASS: text/plain data on the clipboard is precomposed");
+                else
+                    log("FAIL: text/plain data on the clipboard is \"" + data + "\"");
+            }, true);
+
+            document.execCommand("Copy");
+
+            var target = document.getElementById("paste-target");
+            target.focus();
+            document.execCommand("Paste");
+            var data = target.firstChild.data;
+            if (data === "\u00e9")
+                log("PASS: pasted text is precomposed");
+            else
+                log("FAIL: pasted text is \"" + data + "\"");
+
+            target.innerText = "";
+        } else
+            log("This test is designed to run in DumpRenderTree only.");
+    </script>
+</body>

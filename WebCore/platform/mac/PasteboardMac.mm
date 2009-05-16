@@ -368,7 +368,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     
     if (allowPlainText && [types containsObject:NSStringPboardType]) {
         chosePlainText = true;
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), [m_pasteboard.get() stringForType:NSStringPboardType]);
+        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), [[m_pasteboard.get() stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]);
         if (fragment)
             return fragment.release();
     }
