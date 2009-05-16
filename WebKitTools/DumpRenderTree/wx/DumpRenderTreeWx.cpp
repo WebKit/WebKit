@@ -43,7 +43,6 @@
 #include <wtf/Assertions.h>
 
 #include <cassert>
-#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -51,7 +50,6 @@
 volatile bool done = true;
 volatile bool notified = false;
 static bool printSeparators = true;
-static int testRepaintDefault;
 static int dumpPixels;
 static int dumpTree = 1;
 time_t startTime; // to detect timeouts / failed tests
@@ -277,24 +275,24 @@ bool MyApp::OnInit()
     }
 
     wxLogMessage(wxT("Starting DumpRenderTool, %d args.\n"), argc);
-    
-    struct option options[] = {
-        {"notree", no_argument, &dumpTree, false},
-        {"pixel-tests", no_argument, &dumpPixels, true},
-        {"repaint", no_argument, &testRepaintDefault, true},
-        {"tree", no_argument, &dumpTree, true},
-        {NULL, 0, NULL, 0}
-    };
 
-    int option;
-    while ((option = getopt_long(argc, (char* const*)argv, "", options, NULL)) != -1)
-        switch (option) {
-            case '?':   // unknown or ambiguous option
-            case ':':   // missing argument
-                exit(1);
-                break;
+    for (int i = 1; i < argc; ++i) {
+        wxString option = wxString(argv[i]);
+        if (!option.CmpNoCase(_T("--notree"))) {
+            dumpTree = false;
+            continue;
         }
-
+        
+        if (!option.CmpNoCase(_T("--pixel-tests"))) {
+            dumpPixels = true;
+            continue;
+        }
+        
+        if (!option.CmpNoCase(_T("--tree"))) {
+            dumpTree = true;
+            continue;
+        }
+    }
     wxInitAllImageHandlers();
         
     // create the main application window

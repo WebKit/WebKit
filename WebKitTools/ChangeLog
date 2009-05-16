@@ -1,3 +1,10 @@
+2009-05-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Don't parse args using getopt since it isn't available on Windows.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (MyApp::OnInit):
+
 2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
