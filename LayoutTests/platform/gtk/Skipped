@@ -1817,6 +1817,7 @@ fast/backgrounds/001.html
 fast/backgrounds/animated-gif-as-background.html
 fast/backgrounds/animated-svg-as-background.html
 fast/backgrounds/animated-svg-as-mask.html
+fast/backgrounds/background-clip-text.html
 fast/backgrounds/background-inherit-color-bug.html
 fast/backgrounds/background-origin-root-element.html
 fast/backgrounds/background-position-1.html

@@ -1,5 +1,19 @@
 2009-05-15  Darin Adler  <darin@apple.com>
 
+        Fix some failures from recent changes.
+
+        * platform/gtk/Skipped: Added recently-added test to the "no expected results" section.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Updated.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Ditto.
+        * svg/css/getComputedStyle-basic-expected.txt: Ditto.
+
+2009-05-15  Darin Adler  <darin@apple.com>
+
+        * svg/css/getComputedStyle-basic-expected.txt: Updated for change to getComputedStyle.
+
+2009-05-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6883872> REGRESSION (r43243): computed style for font-family is returning
