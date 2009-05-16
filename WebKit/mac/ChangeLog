@@ -1,3 +1,9 @@
+2009-05-16  Dan Bernstein  <mitz@apple.com>
+
+        - revert an accidental change from r43802.
+
+        * WebInspector/WebInspector.mm:
+
 2009-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
