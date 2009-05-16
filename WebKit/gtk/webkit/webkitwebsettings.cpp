@@ -427,6 +427,14 @@ static void webkit_web_settings_init(WebKitWebSettings* web_settings)
     web_settings->priv = WEBKIT_WEB_SETTINGS_GET_PRIVATE(web_settings);
 }
 
+static void free_spell_checking_language(gpointer data, gpointer user_data)
+{
+    SpellLanguage* language = static_cast<SpellLanguage*>(data);
+    enchant_broker_free_dict(language->config, language->speller);
+    enchant_broker_free(language->config);
+    g_slice_free(SpellLanguage, language);
+}
+
 static void webkit_web_settings_finalize(GObject* object)
 {
     WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
@@ -442,6 +450,7 @@ static void webkit_web_settings_finalize(GObject* object)
     g_free(priv->user_stylesheet_uri);
     g_free(priv->spell_checking_languages);
 
+    g_slist_foreach(priv->spell_checking_languages_list, free_spell_checking_language, NULL);
     g_slist_free(priv->spell_checking_languages_list);
 
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
@@ -557,6 +566,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
 
             spellLanguages = g_slist_append(spellLanguages, lang);
         }
+        g_slist_foreach(priv->spell_checking_languages_list, free_spell_checking_language, NULL);
         g_slist_free(priv->spell_checking_languages_list);
         priv->spell_checking_languages_list = spellLanguages;
         break;

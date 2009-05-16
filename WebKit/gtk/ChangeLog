@@ -1,3 +1,14 @@
+2009-05-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Plug memory leak.
+
+        * webkit/webkitwebsettings.cpp:
+        (free_spell_checking_language):
+        (webkit_web_settings_finalize):
+        (webkit_web_settings_set_property):
+
 2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Jan Alonzo.
