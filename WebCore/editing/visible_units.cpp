@@ -539,6 +539,15 @@ static Node* previousLeafWithSameEditability(Node* node)
     return 0;
 }
 
+static Node* enclosingNodeWithNonInlineRenderer(Node* n)
+{
+    for (Node* p = n; p; p = p->parentNode()) {
+        if (p->renderer() && !p->renderer()->isInline())
+            return p;
+    }
+    return 0;
+}
+
 VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int x)
 {
     Position p = visiblePosition.deepEquivalent();
@@ -568,9 +577,9 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         // This containing editable block does not have a previous line.
         // Need to move back to previous containing editable block in this root editable
         // block and find the last root line box in that block.
-        Node* startBlock = enclosingBlock(node);
+        Node* startBlock = enclosingNodeWithNonInlineRenderer(node);
         Node* n = previousLeafWithSameEditability(node);
-        while (n && startBlock == enclosingBlock(n))
+        while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
             n = previousLeafWithSameEditability(n);
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)
@@ -670,9 +679,9 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // This containing editable block does not have a next line.
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
-        Node* startBlock = enclosingBlock(node);
+        Node* startBlock = enclosingNodeWithNonInlineRenderer(node);
         Node* n = nextLeafWithSameEditability(node, p.deprecatedEditingOffset());
-        while (n && startBlock == enclosingBlock(n))
+        while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
             n = nextLeafWithSameEditability(n);
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)

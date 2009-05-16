@@ -1,3 +1,14 @@
+2009-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for <rdar://problem/6888244> REGRESSION: Using the Up or Down
+          keyboard arrows, I can't navigate caret between To Do items in a Note
+          message
+
+        * editing/selection/move-by-line-004-expected.txt: Added.
+        * editing/selection/move-by-line-004.html: Added.
+
 2009-05-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Disable new tests.

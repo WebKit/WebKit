@@ -1,3 +1,22 @@
+2009-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6888244> REGRESSION: Using the Up or Down keyboard
+          arrows, I can't navigate caret between To Do items in a Note message
+
+        Test: editing/selection/move-by-line-004.html
+
+        * editing/visible_units.cpp:
+        (WebCore::enclosingNodeWithNonInlineRenderer): Added this helper
+        function.
+        (WebCore::previousLinePosition): When advancing to the next candidate
+        node, stop when leaving the closest ancestor of the original node that
+        is not an inline. The code, incorrectly, was trying to exit the closest
+        ancestor of that type which was editable, and therefore missing other
+        blocks in the same editable root.
+        (WebCore::nextLinePosition): Ditto.
+
 2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Jan Alonzo.

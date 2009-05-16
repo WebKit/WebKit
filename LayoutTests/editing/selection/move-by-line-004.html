@@ -1,0 +1,49 @@
+<p>
+    Test that moving the caret with line granularity within the highest
+    editable root works across non-editable content.
+</p>
+<pre id="console"></pre>
+<div contenteditable="true">
+    <div contenteditable="false">
+        <span id="pie" contenteditable="true">apple pie</span>
+    </div>
+    <div contenteditable="false">
+        pineapple
+    </div>
+    <div contenteditable="false">
+        <span id="juice" contenteditable="true">apple juice</span>
+    </div>
+</div>
+<script>
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var fail = false;
+    var pie = document.getElementById("pie");
+    var juice = document.getElementById("juice");
+
+    var sel = getSelection();
+    sel.setPosition(pie.firstChild, 3);
+    sel.modify("move", "forward", "line");
+
+    if (sel.anchorNode !== juice.firstChild || sel.anchorOffset != 3) {
+        log("FAIL: Did not move to the next line");
+        fail = true;
+    }
+
+    sel.setPosition(juice.firstChild, 3);
+    sel.modify("move", "backward", "line");
+
+    if (sel.anchorNode !== pie.firstChild || sel.anchorOffset != 3) {
+        log("FAIL: Did not move to the previous line");
+        fail = true;
+    }
+
+    if (!fail)
+        log("PASS");
+</script>
