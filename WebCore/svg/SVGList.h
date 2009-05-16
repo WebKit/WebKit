@@ -94,13 +94,13 @@ namespace WebCore {
             return m_vector[index];
         }
 
-        Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode& ec)
+        Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode&)
         {
-            if (index >= m_vector.size()) {
-                ec = INDEX_SIZE_ERR;
-                return TypeOperations::nullItem();
+            if (index < m_vector.size()) {
+                m_vector.insert(index, newItem);
+            } else {
+                m_vector.append(newItem);
             }
-            m_vector.insert(index, newItem);
             return newItem;
         }
 

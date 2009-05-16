@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Tests that insertItemBefore correctly appends if its index is out of bounds.");
+    var path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    var seg00 = path.createSVGPathSegMovetoAbs(0,0);
+    var seg01 = path.createSVGPathSegMovetoAbs(0,1);
+    var seg11 = path.createSVGPathSegMovetoAbs(1,1);
+    var seg10 = path.createSVGPathSegMovetoAbs(1,0);
+    var svgList = path.pathSegList;
+    shouldBe("svgList.numberOfItems", "0");
+    svgList.appendItem(seg01);
+    shouldBe("svgList.numberOfItems", "1");
+    shouldBe("svgList.getItem(0)", "seg01");
+    svgList.appendItem(seg11);
+    shouldBe("svgList.numberOfItems", "2");
+    shouldBe("svgList.getItem(0)", "seg01");
+    shouldBe("svgList.getItem(1)", "seg11");
+    svgList.insertItemBefore(seg00, 0);
+    shouldBe("svgList.numberOfItems", "3");
+    shouldBe("svgList.getItem(0)", "seg00");
+    shouldBe("svgList.getItem(1)", "seg01");
+    shouldBe("svgList.getItem(2)", "seg11");
+    svgList.insertItemBefore(seg10, 42);
+    shouldBe("svgList.numberOfItems", "4");
+    shouldBe("svgList.getItem(0)", "seg00");
+    shouldBe("svgList.getItem(1)", "seg01");
+    shouldBe("svgList.getItem(2)", "seg11");
+    shouldBe("svgList.getItem(3)", "seg10");
+    successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -14,7 +14,8 @@
     var indicesToTest = [-Infinity, NaN, -1, 0, 1, Infinity];
     for (var i = 0; i < indicesToTest.length; i++) {
          shouldThrow("svgList.getItem(i)");
-         shouldThrow("svgList.insertItemBefore(null, i)");
+         shouldBeNull("svgList.insertItemBefore(null, i)");
+         svgList.removeItem(0);
          shouldThrow("svgList.replaceItem(null, i)");
          shouldThrow("svgList.removeItem(i)");
     }

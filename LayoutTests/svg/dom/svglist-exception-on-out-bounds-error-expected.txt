@@ -4,27 +4,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.getItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgList.insertItemBefore(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgList.insertItemBefore(null, i) is null
 PASS svgList.replaceItem(null, i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgList.removeItem(i) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS successfullyParsed is true
