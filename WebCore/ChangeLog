@@ -1,3 +1,12 @@
+2009-05-17  George Staikos  <george.staikos@torchmobile.com>
+
+        Not reviewed - build fix.
+
+        Fix typo: constr -> const.
+
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::setPlaceholder):
+
 2009-05-17  Darin Adler  <darin@apple.com>
 
         Fix done by Simon Fraser (reviewed by me).
