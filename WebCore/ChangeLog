@@ -1,3 +1,24 @@
+2009-05-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 25840: fix some warnings seen on the GTK bot
+        https://bugs.webkit.org/show_bug.cgi?id=25840
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::platformScrollbarModes): Initialize results here.
+        This is really just to quiet warnings. I think this code is unreachable.
+        Someone could put ASSERT_NOT_REACHED() in here too at some point.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): Use proper printf format for int
+        here, %d, not %lu. This could cause a real problem when compiled 64-bit,
+        so it's good to fix.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::getNextSoftBreak): Initialize breakOffset to 0 here. This is
+        really just to quiet the warning, but still seems like a good idea.
+
 2009-05-17  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

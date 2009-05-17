@@ -848,6 +848,7 @@ void ScrollView::removePanScrollIcon()
 }
 
 #if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT)
+
 void ScrollView::platformInit()
 {
 }
@@ -855,9 +856,11 @@ void ScrollView::platformInit()
 void ScrollView::platformDestroy()
 {
 }
+
 #endif
 
 #if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(MAC)
+
 void ScrollView::platformAddChild(Widget*)
 {
 }
@@ -865,21 +868,27 @@ void ScrollView::platformAddChild(Widget*)
 void ScrollView::platformRemoveChild(Widget*)
 {
 }
+
 #endif
 
 #if !PLATFORM(MAC)
+
 void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 {
 }
+
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(WX)
+
 void ScrollView::platformSetScrollbarModes()
 {
 }
 
 void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const
 {
+    horizontal = ScrollbarAuto;
+    vertical = ScrollbarAuto;
 }
 
 void ScrollView::platformSetCanBlitOnScroll(bool)
@@ -932,9 +941,11 @@ bool ScrollView::platformIsOffscreen() const
 {
     return false;
 }
+
 #endif
 
 #if !PLATFORM(GTK)
+
 bool ScrollView::platformHandleHorizontalAdjustment(const IntSize&)
 {
     return false;
@@ -958,4 +969,3 @@ bool ScrollView::platformHasVerticalAdjustment() const
 #endif
 
 }
-

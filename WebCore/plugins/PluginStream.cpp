@@ -143,7 +143,7 @@ void PluginStream::startStream()
         Vector<UChar> stringBuilder;
         String separator(": ");
 
-        String statusLine = String::format("HTTP %lu OK\n", m_resourceResponse.httpStatusCode());
+        String statusLine = String::format("HTTP %d OK\n", m_resourceResponse.httpStatusCode());
 
         stringBuilder.append(statusLine.characters(), statusLine.length());
 
