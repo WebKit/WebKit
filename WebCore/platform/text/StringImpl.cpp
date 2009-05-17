@@ -965,21 +965,33 @@ PassRefPtr<StringImpl> StringImpl::adopt(Vector<UChar>& vector)
     return adoptRef(new StringImpl(vector.releaseBuffer(), size, AdoptBuffer()));
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
+PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
 {
-    if (!characters || !length)
+    if (!length) {
+        data = 0;
         return empty();
+    }
 
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one 
     // heap allocation from this call.
     size_t size = sizeof(StringImpl) + length * sizeof(UChar);
     char* buffer = static_cast<char*>(fastMalloc(size));
-    UChar* data = reinterpret_cast<UChar*>(buffer + sizeof(StringImpl));
-    memcpy(data, characters, length * sizeof(UChar));
+    data = reinterpret_cast<UChar*>(buffer + sizeof(StringImpl));
     StringImpl* string = new (buffer) StringImpl(data, length, AdoptBuffer());
     string->m_bufferIsInternal = true;
     return adoptRef(string);
+}
+
+PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
+{
+    if (!characters || !length)
+        return empty();
+
+    UChar* data;
+    PassRefPtr<StringImpl> string = createUninitialized(length, data);
+    memcpy(data, characters, length * sizeof(UChar));
+    return string;
 }
 
 PassRefPtr<StringImpl> StringImpl::create(const char* characters, unsigned length)
@@ -987,19 +999,13 @@ PassRefPtr<StringImpl> StringImpl::create(const char* characters, unsigned lengt
     if (!characters || !length)
         return empty();
 
-    // Allocate a single buffer large enough to contain the StringImpl
-    // struct as well as the data which it contains. This removes one 
-    // heap allocation from this call.
-    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
-    char* buffer = static_cast<char*>(fastMalloc(size));
-    UChar* data = reinterpret_cast<UChar*>(buffer + sizeof(StringImpl));
+    UChar* data;
+    PassRefPtr<StringImpl> string = createUninitialized(length, data);
     for (unsigned i = 0; i != length; ++i) {
         unsigned char c = characters[i];
         data[i] = c;
     }
-    StringImpl* string = new (buffer) StringImpl(data, length, AdoptBuffer());
-    string->m_bufferIsInternal = true;
-    return adoptRef(string);
+    return string;
 }
 
 PassRefPtr<StringImpl> StringImpl::create(const char* string)

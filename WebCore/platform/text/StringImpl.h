@@ -78,6 +78,7 @@ public:
     static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*);
+    static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
 
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
 

@@ -162,6 +162,11 @@ public:
     
     static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 
+    // Returns an uninitialized string. The characters needs to be written
+    // into the buffer returned in data before the returned string is used.
+    // Failure to do this will have unpredictable results.
+    static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
+
     void split(const String& separator, Vector<String>& result) const;
     void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
     void split(UChar separator, Vector<String>& result) const;

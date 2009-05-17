@@ -1,3 +1,20 @@
+2009-05-16  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Darin Adler.
+
+        Allow Strings to be created with one malloc node with no copying
+        https://bugs.webkit.org/show_bug.cgi?id=25779
+
+        Add new methods to String and StringImpl, refactoring existing
+        methods in StringImpl to use new createUninitialized() method.
+
+        * platform/text/PlatformString.h:
+        (WebCore::String::createUninitialized):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::createUninitialized):
+        (WebCore::StringImpl::create):
+        * platform/text/StringImpl.h:
+
 2009-05-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
