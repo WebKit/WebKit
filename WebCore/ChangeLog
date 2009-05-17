@@ -1,3 +1,15 @@
+2009-05-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6870241> REGRESSION: Programmatically selected popup menu item not shown
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Added a call to updateFromElement and
+        also a type check on the selected index to avoid a bad cast to HTMLOptionElement.
+
+        * manual-tests/select-option-in-onload.html: Added.
+
 2009-05-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson

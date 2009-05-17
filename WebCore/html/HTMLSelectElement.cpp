@@ -165,11 +165,9 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
     HTMLOptionElement* element = 0;
-
     if (!multiple())
         deselect = true;
-
-    if (listIndex >= 0) {
+    if (listIndex >= 0 && items[listIndex]->hasLocalName(optionTag)) {
         if (m_activeSelectionAnchorIndex < 0 || deselect)
             setActiveSelectionAnchorIndex(listIndex);
         if (m_activeSelectionEndIndex < 0 || deselect)
@@ -177,9 +175,12 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
         element = static_cast<HTMLOptionElement*>(items[listIndex]);
         element->setSelectedState(true);
     }
-
     if (deselect)
         deselectItems(element);
+
+    // For the menu list case, this is what makes the selected element appear.
+    if (renderer())
+        renderer()->updateFromElement();
 
     scrollToSelection();
 
@@ -958,7 +959,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         String text = static_cast<HTMLOptionElement*>(items[index])->textIndentedToRespectGroupLabel();
         if (stripLeadingWhiteSpace(text).startsWith(prefix, false)) {
             setSelectedIndex(listToOptionIndex(index));
-            if(!usesMenuList())
+            if (!usesMenuList())
                 listBoxOnChange();
             setNeedsStyleRecalc();
             return;
