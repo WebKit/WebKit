@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "RenderObject.h"
+#include "RenderView.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 
@@ -465,6 +465,10 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     RenderStyle* oldStyle = renderer->style();
 
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle->animations() && !newStyle->transitions()))
+        return newStyle;
+
+    // Don't run transitions when printing.
+    if (renderer->view()->printing())
         return newStyle;
 
     // Fetch our current set of implicit animations from a hashtable.  We then compare them

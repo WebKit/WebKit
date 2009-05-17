@@ -1,5 +1,17 @@
 2009-05-17  Darin Adler  <darin@apple.com>
 
+        Fix done by Simon Fraser (reviewed by me).
+
+        <rdar://problem/6893775> Page with screen-only stylesheet with overflow and height
+        transitions has bad layout and overlapping garbled text when printing
+
+        * manual-tests/print-with-height-transition-in-screen-stylesheet.html: Added.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations): Don't run transitions when printing.
+
+2009-05-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Simon Fraser.
 
         <rdar://problem/6870241> REGRESSION: Programmatically selected popup menu item not shown
