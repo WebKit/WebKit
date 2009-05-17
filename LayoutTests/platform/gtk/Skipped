@@ -4016,6 +4016,7 @@ media/video-load-networkState.html
 media/video-load-readyState.html
 media/video-loop.html
 media/video-muted.html
+media/video-no-autoplay.html
 media/video-pause-empty-events.html
 media/video-play-empty-events.html
 media/video-played-collapse.html

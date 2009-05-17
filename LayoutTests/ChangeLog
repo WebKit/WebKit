@@ -1,3 +1,8 @@
+2009-05-17  Darin Adler  <darin@apple.com>
+
+        * platform/gtk/Skipped: Disable another media test that seems to be failing at least
+        intermittently.
+
 2009-05-17  Kai Brüning  <kai@granus.net>
 
         Reviewed by Darin Adler.
