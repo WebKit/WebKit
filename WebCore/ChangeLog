@@ -1,3 +1,20 @@
+2009-05-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6827041> WebCore should stop throwing away the CGImageSourceRef to
+        dramatically improve animated GIF decoding performance
+
+        Recent versions of ImageIO discard previously decoded image frames if the client
+        application no longer holds references to them, so there's no need to throw away
+        the decoder unless we're explicitly asked to destroy all of the frames.
+
+        This drops peak CPU usage when displaying <http://www.aintitcool.com/files/HoD2.gif>
+        from over 90% to below 3%.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear):
+
 2009-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
