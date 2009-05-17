@@ -350,7 +350,7 @@ void AccessibilityTable::cells(AccessibilityObject::AccessibilityChildrenVector&
     }
 }
     
-const unsigned AccessibilityTable::columnCount()
+unsigned AccessibilityTable::columnCount()
 {
     if (!hasChildren())
         addChildren();
@@ -358,7 +358,7 @@ const unsigned AccessibilityTable::columnCount()
     return m_columns.size();    
 }
     
-const unsigned AccessibilityTable::rowCount()
+unsigned AccessibilityTable::rowCount()
 {
     if (!hasChildren())
         addChildren();

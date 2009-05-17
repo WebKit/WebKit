@@ -63,8 +63,8 @@ public:
     AccessibilityChildrenVector& columns();
     AccessibilityChildrenVector& rows();
     
-    const unsigned columnCount();
-    const unsigned rowCount();
+    unsigned columnCount();
+    unsigned rowCount();
     
     virtual String title() const;
     

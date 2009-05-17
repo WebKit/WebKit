@@ -1,3 +1,15 @@
+2009-05-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 25769: Fix accessibility warnings on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=25769
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columnCount): Get rid of excess const.
+        (WebCore::AccessibilityTable::rowCount): Ditto.
+        * page/AccessibilityTable.h: Ditto.
+
 2009-05-17  Kai Brüning  <kai@granus.net>
 
         Reviewed by Darin Adler.
