@@ -561,43 +561,57 @@ void Node::remove(ExceptionCode& ec)
 void Node::normalize()
 {
     // Go through the subtree beneath us, normalizing all nodes. This means that
-    // any two adjacent text nodes are merged together.
+    // any two adjacent text nodes are merged and any empty text nodes are removed.
 
     RefPtr<Node> node = this;
     while (Node* firstChild = node->firstChild())
         node = firstChild;
-    for (; node; node = node->traverseNextNodePostOrder()) {
+    while (node) {
         NodeType type = node->nodeType();
         if (type == ELEMENT_NODE)
             static_cast<Element*>(node.get())->normalizeAttributes();
 
-        Node* firstChild = node->firstChild();
-        if (firstChild && !firstChild->nextSibling() && firstChild->isTextNode()) {
-            Text* text = static_cast<Text*>(firstChild);
-            if (!text->length()) {
-                ExceptionCode ec;
-                text->remove(ec);
-            }
-        }
-
         if (node == this)
             break;
 
-        if (type == TEXT_NODE) {
-            while (1) {
-                Node* nextSibling = node->nextSibling();
-                if (!nextSibling || !nextSibling->isTextNode())
-                    break;
-                // Current child and the next one are both text nodes. Merge them.
-                Text* text = static_cast<Text*>(node.get());
-                RefPtr<Text> nextText = static_cast<Text*>(nextSibling);
-                unsigned offset = text->length();
-                ExceptionCode ec;
-                text->appendData(nextText->data(), ec);
-                document()->textNodesMerged(nextText.get(), offset);
-                nextText->remove(ec);
-            }
+        if (type != TEXT_NODE) {
+            node = node->traverseNextNodePostOrder();
+            continue;
         }
+
+        Text* text = static_cast<Text*>(node.get());
+
+        // Remove empty text nodes.
+        if (!text->length()) {
+            // Care must be taken to get the next node before removing the current node.
+            node = node->traverseNextNodePostOrder();
+            ExceptionCode ec;
+            text->remove(ec);
+            continue;
+        }
+
+        // Merge text nodes.
+        while (Node* nextSibling = node->nextSibling()) {
+            if (!nextSibling->isTextNode())
+                break;
+            RefPtr<Text> nextText = static_cast<Text*>(nextSibling);
+
+            // Remove empty text nodes.
+            if (!nextText->length()) {
+                ExceptionCode ec;
+                nextText->remove(ec);
+                continue;
+            }
+
+            // Both non-empty text nodes. Merge them.
+            unsigned offset = text->length();
+            ExceptionCode ec;
+            text->appendData(nextText->data(), ec);
+            document()->textNodesMerged(nextText.get(), offset);
+            nextText->remove(ec);
+        }
+
+        node = node->traverseNextNodePostOrder();
     }
 }
 

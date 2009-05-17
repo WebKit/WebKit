@@ -1,3 +1,15 @@
+2009-05-17  Kai Brüning  <kai@granus.net>
+
+        Reviewed by Darin Adler.
+        
+        Test case for bug 25822: DOM normalize does not remove empty text node between element nodes
+        https://bugs.webkit.org/show_bug.cgi?id=25822
+        
+        The test case strives to test the whole functionality of Node's normalize().
+
+        * fast/dom/Node/normalize-expected.txt: Added.
+        * fast/dom/Node/normalize.html: Added.
+
 2009-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,3 +1,15 @@
+2009-05-17  Kai Brüning  <kai@granus.net>
+
+        Reviewed by Darin Adler.
+
+        bug 25822: DOM normalize does not remove empty text node between element nodes
+        https://bugs.webkit.org/show_bug.cgi?id=25822
+
+        Test: fast/dom/Node/normalize.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::normalize): Changed to remove any empty text nodes.
+
 2009-05-16  Dave Moore  <davemoore@google.com>
 
         Reviewed by Darin Adler.
