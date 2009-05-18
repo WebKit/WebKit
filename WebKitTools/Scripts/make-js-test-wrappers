@@ -105,6 +105,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/id-fastpath-strict\.js$:;
         next if $file =~ m:resources/intersectsNode\.js$:;
         next if $file =~ m:resources/p-in-scope\.js$:;
+        next if $file =~ m:resources/paste-blockquote-before-blockquote\.js$:;
         next if $file =~ m:resources/script-element-gc\.js$:;
         next if $file =~ m:resources/script-element-gc\.js$:;
         next if $file =~ m:resources/script3\.js$:;

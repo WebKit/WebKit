@@ -1,3 +1,11 @@
+2009-05-18  Julie Parent  <jparent@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25716
+
+        * Scripts/make-js-test-wrappers: Added exception to avoid overwriting a custom-written test.
+
 2009-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Jan Michael Alonzo.
