@@ -1,3 +1,18 @@
+2009-05-18  Balazs Kelemen  <kelemen.balazs@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24551
+
+        [Qt] Fix the leak in FontFallbackList::fontDataAt() function.
+        When creating a new instance of SimpleFontData, put it in the font list
+        so that it can deleted later on.
+
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::releaseFontData):
+        (WebCore::FontFallbackList::fontDataAt):
+
 2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
          Reviewed by Xan Lopez.
