@@ -636,9 +636,7 @@ JSValue Interpreter::execute(ProgramNode* programNode, CallFrame* callFrame, Sco
 
         m_reentryDepth++;
 #if ENABLE(JIT)
-        if (!codeBlock->jitCode())
-            JIT::compile(scopeChain->globalData, codeBlock);
-        result = codeBlock->jitCode().execute(&m_registerFile, newCallFrame, scopeChain->globalData, exception);
+        result = programNode->jitCode(scopeChain).execute(&m_registerFile, newCallFrame, scopeChain->globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif
@@ -755,7 +753,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionBodyNode* functionBod
     functionBodyNode->jitCode(scopeChain);
 #endif
 
-    CallFrameClosure result = { callFrame, newCallFrame, function, codeBlock, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
+    CallFrameClosure result = { callFrame, newCallFrame, function, functionBodyNode, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
     return result;
 }
 
@@ -772,8 +770,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure, JSValue* exception)
         
         m_reentryDepth++;
 #if ENABLE(JIT)
-        ASSERT(closure.codeBlock->jitCode());
-        result = closure.codeBlock->jitCode().execute(&m_registerFile, closure.newCallFrame, closure.globalData, exception);
+        result = closure.functionBody->generatedJITCode().execute(&m_registerFile, closure.newCallFrame, closure.globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, closure.newCallFrame, exception);
 #endif
@@ -868,9 +865,7 @@ JSValue Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject*
 
         m_reentryDepth++;
 #if ENABLE(JIT)
-        if (!codeBlock->jitCode())
-            JIT::compile(scopeChain->globalData, codeBlock);
-        result = codeBlock->jitCode().execute(&m_registerFile, newCallFrame, scopeChain->globalData, exception);
+        result = evalNode->jitCode(scopeChain).execute(&m_registerFile, newCallFrame, scopeChain->globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif

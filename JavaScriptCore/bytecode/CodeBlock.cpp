@@ -1463,7 +1463,7 @@ void CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
 
 #if ENABLE(JIT)
             JIT::compile(m_globalData, &newCodeBlock);
-            ASSERT(newCodeBlock.m_jitCode.codeSize == m_jitCode.codeSize);
+            ASSERT(newFunctionBody->generatedJITCode().size() == ownerNode()->generatedJITCode().size());
 #endif
 
             m_exceptionInfo.set(newCodeBlock.m_exceptionInfo.release());
@@ -1484,7 +1484,7 @@ void CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
 
 #if ENABLE(JIT)
             JIT::compile(m_globalData, &newCodeBlock);
-            ASSERT(newCodeBlock.m_jitCode.codeSize == m_jitCode.codeSize);
+            ASSERT(newEvalBody->generatedJITCode().size() == ownerNode()->generatedJITCode().size());
 #endif
 
             m_exceptionInfo.set(newCodeBlock.m_exceptionInfo.release());
@@ -1678,9 +1678,9 @@ bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
 #endif
 
 #if ENABLE(JIT)
-void CodeBlock::setJITCode(JITCodeRef& jitCode)
+void CodeBlock::setJITCode(JITCode jitCode)
 {
-    m_jitCode = jitCode;
+    ownerNode()->setJITCode(jitCode);
 #if !ENABLE(OPCODE_SAMPLING)
     if (!BytecodeGenerator::dumpsGeneratedCode())
         m_instructions.clear();

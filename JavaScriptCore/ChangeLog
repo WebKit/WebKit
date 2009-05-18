@@ -1,3 +1,110 @@
+2009-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Refactor JIT code-handle objects.  The representation of generated code is currently
+        a bit of a mess.  We have a class JITCode which wraps the pointer to a block of
+        generated code, but this object does not reference the executable pool meaning that
+        external events (the pool being derefed) could make the pointer become invalid.
+        To overcome this both the JIT and Yarr implement further (and similar) objects to
+        wrap the code pointer with a RefPtr to the pool.  To add to the mire, as well as the
+        CodeBlock containing a handle onto the code the FunctionBodyNode also contains a
+        copy of the code pointer which is used almost (but not entirely) uniquely to access
+        the JIT code for a function.
+
+        Rationalization of all this:
+
+            * Add a new type 'MacroAssembler::CodeRef' as a handle for a block of JIT generated code.
+            * Change the JIT & Yarr to internally handle code using CodeRefs.
+            * Move the CodeRef (formerly anow defunct JITCodeRef) from CodeBlock to its owner node.
+            * Remove the (now) redundant code pointer from FunctionBodyNode.
+
+        While tidying this up I've made the PatchBuffer return code in new allocations using a CodeRef,
+        and have enforced an interface that the PatchBuffer will always be used, and 'finalizeCode()' or
+        'finalizeCodeAddendum()' will always be called exactly once on the PatchBuffer to complete code generation.
+
+        This gives us a potentially useful hook ('PatchBuffer::performFinalization()') at the end of generation,
+        which may have a number of uses.  It may be helpful should we wish to switch our generation
+        model to allow RW/RX exclusive memory, and it may be useful on non-cache-coherent platforms to
+        give us an oportunity to cache flush as necessary.
+
+        No performance impact.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::CodeRef::CodeRef):
+        (JSC::AbstractMacroAssembler::CodeRef::trampolineAt):
+        (JSC::AbstractMacroAssembler::PatchBuffer::PatchBuffer):
+        (JSC::AbstractMacroAssembler::PatchBuffer::~PatchBuffer):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::linkTailRecursive):
+        (JSC::AbstractMacroAssembler::PatchBuffer::patch):
+        (JSC::AbstractMacroAssembler::PatchBuffer::complete):
+        (JSC::AbstractMacroAssembler::PatchBuffer::finalize):
+        (JSC::AbstractMacroAssembler::PatchBuffer::entry):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::setJITCode):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getBytecodeIndex):
+        (JSC::CodeBlock::executablePool):
+        * interpreter/CallFrameClosure.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::linkCall):
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::operator bool):
+        (JSC::JITCode::addressForCall):
+        (JSC::JITCode::offsetOf):
+        (JSC::JITCode::execute):
+        (JSC::JITCode::size):
+        (JSC::JITCode::executablePool):
+        (JSC::JITCode::HostFunction):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_vm_dontLazyLinkCall):
+        (JSC::JITStubs::cti_vm_lazyLinkCall):
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::generateJITCode):
+        (JSC::EvalNode::generateJITCode):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::createNativeThunk):
+        (JSC::FunctionBodyNode::generateJITCode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::generatedJITCode):
+        (JSC::ScopeNode::getExecutablePool):
+        (JSC::ScopeNode::setJITCode):
+        (JSC::ProgramNode::jitCode):
+        (JSC::EvalNode::jitCode):
+        (JSC::FunctionBodyNode::jitCode):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+        (JSC::Yarr::jitCompileRegex):
+        (JSC::Yarr::executeRegex):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::RegexCodeBlock):
+        (JSC::Yarr::RegexCodeBlock::pcreFallback):
+        (JSC::Yarr::RegexCodeBlock::setFallback):
+        (JSC::Yarr::RegexCodeBlock::operator bool):
+        (JSC::Yarr::RegexCodeBlock::set):
+        (JSC::Yarr::RegexCodeBlock::execute):
+
 2009-05-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
          Reviewed by Xan Lopez.

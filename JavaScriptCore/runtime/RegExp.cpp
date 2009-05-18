@@ -121,7 +121,7 @@ int RegExp::match(const UString& s, int startOffset, OwnArrayPtr<int>* ovector)
         return -1;
 
 #if ENABLE(YARR_JIT)
-    if (m_regExpJITCode.m_jitCode) {
+    if (!!m_regExpJITCode) {
 #else
     if (m_regExpBytecode) {
 #endif
