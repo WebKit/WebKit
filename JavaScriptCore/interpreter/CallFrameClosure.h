@@ -32,7 +32,7 @@ struct CallFrameClosure {
     CallFrame* oldCallFrame;
     CallFrame* newCallFrame;
     JSFunction* function;
-    FunctionBodyNode* functionBody;
+    CodeBlock* codeBlock;
     JSGlobalData* globalData;
     Register* oldEnd;
     ScopeChainNode* scopeChain;

@@ -337,7 +337,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount);
+        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount);
         static void unlinkCall(CallLinkInfo*);
 
     private:

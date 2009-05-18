@@ -419,7 +419,14 @@ void JIT::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    PatchBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
+    RefPtr<ExecutablePool> allocator = m_globalData->executableAllocator.poolForSize(m_assembler.size());
+    void* code = m_assembler.executableCopy(allocator.get());
+    JITCodeRef codeRef(code, allocator);
+#ifndef NDEBUG
+    codeRef.codeSize = m_assembler.size();
+#endif
+
+    PatchBuffer patchBuffer(code);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -486,7 +493,7 @@ void JIT::privateCompile()
     }
 #endif
 
-    m_codeBlock->setJITCode(patchBuffer.finalizeCode());
+    m_codeBlock->setJITCode(codeRef);
 }
 
 void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, void** ctiArrayLengthTrampoline, void** ctiStringLengthTrampoline, void** ctiVirtualCallPreLink, void** ctiVirtualCallLink, void** ctiVirtualCall, void** ctiNativeCallThunk)
@@ -646,10 +653,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
     push(regT3);
-    loadPtr(Address(regT2, FIELD_OFFSET(JSFunction, m_body)), regT3); // reload the function body nody, so we can reload the code pointer.
     arityCheckOkay3.link(this);
     // load ctiCode from the new codeBlock.
-    loadPtr(Address(regT3, FIELD_OFFSET(FunctionBodyNode, m_jitCode)), regT0);
+    loadPtr(Address(regT0, FIELD_OFFSET(CodeBlock, m_jitCode)), regT0);
+    
     isNativeFunc3.link(this);
 
     compileOpCallInitializeCallFrame();
@@ -834,8 +841,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    PatchBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
+    *executablePool = m_globalData->executableAllocator.poolForSize(m_assembler.size());
+    void* code = m_assembler.executableCopy((*executablePool).get());
 
+    PatchBuffer patchBuffer(code);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(array_failureCases1Call, JITStubs::cti_op_get_by_id_array_fail);
     patchBuffer.link(array_failureCases2Call, JITStubs::cti_op_get_by_id_array_fail);
@@ -843,6 +852,12 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases1Call, JITStubs::cti_op_get_by_id_string_fail);
     patchBuffer.link(string_failureCases2Call, JITStubs::cti_op_get_by_id_string_fail);
     patchBuffer.link(string_failureCases3Call, JITStubs::cti_op_get_by_id_string_fail);
+
+    *ctiArrayLengthTrampoline = patchBuffer.trampolineAt(arrayLengthBegin);
+    *ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
+#else
+    UNUSED_PARAM(ctiArrayLengthTrampoline);
+    UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
     patchBuffer.link(callArityCheck1, JITStubs::cti_op_call_arityCheck);
     patchBuffer.link(callArityCheck2, JITStubs::cti_op_call_arityCheck);
@@ -853,20 +868,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callDontLazyLinkCall, JITStubs::cti_vm_dontLazyLinkCall);
     patchBuffer.link(callLazyLinkCall, JITStubs::cti_vm_lazyLinkCall);
 
-    CodeRef finalCode = patchBuffer.finalizeCode();
-    *executablePool = finalCode.m_executablePool;
-
-    *ctiVirtualCallPreLink = finalCode.trampolineAt(virtualCallPreLinkBegin);
-    *ctiVirtualCallLink = finalCode.trampolineAt(virtualCallLinkBegin);
-    *ctiVirtualCall = finalCode.trampolineAt(virtualCallBegin);
-    *ctiNativeCallThunk = finalCode.trampolineAt(nativeCallThunk);
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    *ctiArrayLengthTrampoline = finalCode.trampolineAt(arrayLengthBegin);
-    *ctiStringLengthTrampoline = finalCode.trampolineAt(stringLengthBegin);
-#else
-    UNUSED_PARAM(ctiArrayLengthTrampoline);
-    UNUSED_PARAM(ctiStringLengthTrampoline);
-#endif
+    *ctiVirtualCallPreLink = patchBuffer.trampolineAt(virtualCallPreLinkBegin);
+    *ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
+    *ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
+    *ctiNativeCallThunk = patchBuffer.trampolineAt(nativeCallThunk);
 }
 
 void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)
@@ -891,7 +896,7 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
     callLinkInfo->hotPathBegin.repatch(JSValue::encode(JSValue()));
 }
 
-void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode& code, CallLinkInfo* callLinkInfo, int callerArgCount)
+void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
 {
     // Currently we only link calls with the exact number of arguments.
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
@@ -902,7 +907,7 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode& code
             calleeCodeBlock->addCaller(callLinkInfo);
     
         callLinkInfo->hotPathBegin.repatch(callee);
-        callLinkInfo->hotPathOther.relink(code.addressForCall());
+        callLinkInfo->hotPathOther.relink(ctiCode.addressForCall());
     }
 
     // patch the instruction that jumps out to the cold path, so that we only try to link once.

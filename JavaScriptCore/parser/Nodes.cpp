@@ -1894,17 +1894,6 @@ void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
     destroyData();
 }
 
-#if ENABLE(JIT)
-void ProgramNode::generateJITCode(ScopeChainNode* scopeChainNode)
-{
-    bytecode(scopeChainNode);
-    ASSERT(m_code);
-    ASSERT(!m_jitCode);
-    JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
-}
-#endif
-
 // ------------------------------ EvalNode -----------------------------
 
 inline EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
@@ -1973,21 +1962,13 @@ void EvalNode::mark()
     data()->mark();
 }
 
-#if ENABLE(JIT)
-void EvalNode::generateJITCode(ScopeChainNode* scopeChainNode)
-{
-    bytecode(scopeChainNode);
-    ASSERT(m_code);
-    ASSERT(!m_jitCode);
-    JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
-}
-#endif
-
 // ------------------------------ FunctionBodyNode -----------------------------
 
 inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
     : ScopeNode(globalData)
+#if ENABLE(JIT)
+    , m_jitCode(0)
+#endif
     , m_parameters(0)
     , m_parameterCount(0)
 {
@@ -1995,6 +1976,9 @@ inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
 
 inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(globalData, sourceCode, children, varStack, funcStack, features, numConstants)
+#if ENABLE(JIT)
+    , m_jitCode(0)
+#endif
     , m_parameters(0)
     , m_parameterCount(0)
 {
@@ -2036,7 +2020,7 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* g
 {
     RefPtr<FunctionBodyNode> body = new FunctionBodyNode(globalData);
     globalData->parser->arena().reset();
-    body->m_jitCode = JITCode(JITCode::HostFunction(globalData->jitStubs.ctiNativeCallThunk()));
+    body->m_jitCode = globalData->jitStubs.ctiNativeCallThunk();
     return body.release();
 }
 #endif
@@ -2081,9 +2065,10 @@ void FunctionBodyNode::generateJITCode(ScopeChainNode* scopeChainNode)
 {
     bytecode(scopeChainNode);
     ASSERT(m_code);
-    ASSERT(!m_jitCode);
+    ASSERT(!m_code->jitCode());
     JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
+    ASSERT(m_code->jitCode());
+    m_jitCode = m_code->jitCode();
 }
 #endif
 
