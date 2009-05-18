@@ -3,17 +3,18 @@
 <style type="text/css">
 .failure {
     background: red;
-    border: 0px solid black;
+    border: 1px solid black;
     height: 16px;
     width: 16px;
 }
 </style>
 </head>
 <body style="margin: 0px;">
-<div>Two green 16x16 pixel squares should appear below stacked vertically.</div>
+<div>Three green 16x16 pixel squares should appear below, stacked vertically.</div>
 <div class="failure">
   <img src="resources/favicon.ico">
 </div>
-<iframe src="resources/favicon.ico" class="failure"></iframe>
+<iframe src="resources/favicon.ico" class="failure"></iframe><br>
+<iframe src="resources/favicon-vnd-ms.ico" class="failure"></iframe>
 </body>
 </html>

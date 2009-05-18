@@ -72,7 +72,9 @@ static void initializeSupportedImageMIMETypes()
     supportedImageResourceMIMETypes->add("image/bmp");
 
     // Favicons don't have a MIME type in the registry either.
+    supportedImageMIMETypes->add("image/vnd.microsoft.icon");
     supportedImageMIMETypes->add("image/x-icon");
+    supportedImageResourceMIMETypes->add("image/vnd.microsoft.icon");
     supportedImageResourceMIMETypes->add("image/x-icon");
 
     //  We only get one MIME type per UTI, hence our need to add these manually
@@ -112,6 +114,7 @@ static void initializeSupportedImageMIMETypes()
         "image/png",
         "image/gif",
         "image/bmp",
+        "image/vnd.microsoft.icon",    // ico
         "image/x-icon",    // ico
         "image/x-xbitmap"  // xbm
     };

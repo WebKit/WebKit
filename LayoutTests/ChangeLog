@@ -1,3 +1,21 @@
+2009-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 20652: WebKit doesn't display favicons with MIME type image/vnd.microsoft.icon
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20652>
+
+        Reviewed by Darin Adler.
+
+        Updated existing favicon-as-image.html test to display a third
+        image having MIME type image/vnd.microsoft.icon.
+
+        * http/tests/misc/favicon-as-image.html: Updated.
+        * http/tests/misc/resources/.htaccess: Added.
+        * http/tests/misc/resources/favicon-vnd-ms.ico: Copied from LayoutTests/fast/images/resources/favicon.ico.
+        * platform/mac/http/tests/misc/favicon-as-image-expected.checksum: Updated.
+        * platform/mac/http/tests/misc/favicon-as-image-expected.png: Updated.
+        * platform/mac/http/tests/misc/favicon-as-image-expected.txt: Updated.
+
 2009-05-18  Julie Parent  <jparent@google.com>
 
         Reviewed by Eric Seidel.
