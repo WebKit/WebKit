@@ -1,3 +1,13 @@
+2009-05-18  Zoltan Horvath <horvath.zoltan.6@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        Makes QtLauncher to accept multiple urls in command line and opens these in separate windows.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::newWindow):
+        (main):
+
 2009-05-14  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.
