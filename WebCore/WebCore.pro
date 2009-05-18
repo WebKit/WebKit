@@ -159,7 +159,8 @@ INCLUDEPATH += \
 # LocalStorage.h is included only from files within the same directory
 INCLUDEPATH = $$PWD/storage $$INCLUDEPATH
 
-INCLUDEPATH +=  $$PWD/ForwardingHeaders \
+INCLUDEPATH +=  $$PWD/accessibility \
+                $$PWD/ForwardingHeaders \
                 $$PWD/platform \
                 $$PWD/platform/animation \
                 $$PWD/platform/network \

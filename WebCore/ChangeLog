@@ -1,3 +1,12 @@
+2009-05-18  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Fixed build for the Qt port by adding the WebCore/accessibility
+        directory to the includepath.
+
+        * WebCore.pro:
+
 2009-05-18  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 25776: accessibility should have its own folder in WebCore project
