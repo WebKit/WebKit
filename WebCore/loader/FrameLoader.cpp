@@ -3237,10 +3237,12 @@ CachePolicy FrameLoader::cachePolicy() const
 {
     if (m_isComplete)
         return CachePolicyVerify;
-    
+
+    // FIXME: This will return CachePolicyReload for any subresource of a document resulting from a POST request,
+    // making WebCore cache malfunction for such documents (see DocLoader::checkForReload()).
     if (m_loadType == FrameLoadTypeReloadFromOrigin || documentLoader()->request().cachePolicy() == ReloadIgnoringCacheData)
         return CachePolicyReload;
-    
+
     if (Frame* parentFrame = m_frame->tree()->parent()) {
         CachePolicy parentCachePolicy = parentFrame->loader()->cachePolicy();
         if (parentCachePolicy != CachePolicyVerify)

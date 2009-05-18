@@ -349,7 +349,9 @@ void DocLoader::checkForPendingPreloads()
         return;
     for (unsigned i = 0; i < count; ++i) {
         PendingPreload& preload = m_pendingPreloads[i];
-        requestPreload(preload.m_type, preload.m_url, preload.m_charset);
+        // Don't request preload if the resource already loaded normally (this will result in double load if the page is being reloaded with cached results ignored).
+        if (!cachedResource(m_doc->completeURL(preload.m_url)))
+            requestPreload(preload.m_type, preload.m_url, preload.m_charset);
     }
     m_pendingPreloads.clear();
 }

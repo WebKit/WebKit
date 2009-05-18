@@ -1,3 +1,23 @@
+2009-05-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6881160> REGRESSION (r41425): Unable to create battle.net account due to
+        CAPTCHA failure.
+
+        The problem was that after loading and displaying a CAPTCHA image, it was loaded from
+        the server again due to preloading. So, the server expected the last loaded (invisible)
+        CAPTCHA text to be typed and posted back.
+
+        I don't know how to make tests for preloading.
+
+        * loader/DocLoader.cpp: (WebCore::DocLoader::checkForPendingPreloads): There is never a reason
+        to preload after loading for real - and if cache policy is CachePolicyReload, that actually
+        results in another load from network layer.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::cachePolicy): It's not good for cachePolicy()
+        to lie, but I don't know how to re-do r41425 properly. Added a FIXME.
+
 2009-05-18  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.
