@@ -26,7 +26,10 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "Font.h"
+#include "StringHash.h"
 #include <wtf/StdLibExtras.h>
+
+#include <QHash>
 
 namespace WebCore {
 
@@ -44,9 +47,31 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 {
 }
 
+typedef QHash<FontDescription, FontPlatformData*> FontPlatformDataCache;
+
+// using Q_GLOBAL_STATIC leads to crash. TODO investigate the way to fix this.
+static FontPlatformDataCache* gFontPlatformDataCache;
+
+uint qHash(const FontDescription& key)
+{
+    uint value = CaseFoldingHash::hash(key.family().family());
+    value ^= key.computedPixelSize();
+    value ^= static_cast<int>(key.weight());
+    return value;
+}
+
 FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& description, const AtomicString& family, bool checkingAlternateName)
 {
-    return new FontPlatformData(description);
+    if (!gFontPlatformDataCache)
+        gFontPlatformDataCache = new FontPlatformDataCache;
+
+    FontPlatformData* fontData = gFontPlatformDataCache->value(description, 0);
+    if (!fontData) {
+        fontData =  new FontPlatformData(description);
+        gFontPlatformDataCache->insert(description, fontData);
+    }
+
+    return fontData;
 }
 
 SimpleFontData* FontCache::getCachedFontData(const FontPlatformData*)

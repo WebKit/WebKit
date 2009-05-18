@@ -1,3 +1,19 @@
+2009-05-18  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Done together with Balazs Kelemen  <kelemen.balazs@stud.u-szeged.hu>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24551
+
+        [Qt] Reuse FontPlatformData for the same FontDescription.
+        This effectively prevents growing heap usage for loading every web page.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::qHash): Necessary for FontPlatformDataCache.
+        (WebCore::FontCache::getCachedFontPlatformData): Reuse the instance if
+        it exists, otherwise create a new one and insert it in the cache.
+
 2009-05-18  Balazs Kelemen  <kelemen.balazs@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
