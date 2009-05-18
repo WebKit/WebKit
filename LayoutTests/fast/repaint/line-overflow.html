@@ -2,18 +2,18 @@
         "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-	<script src="repaint.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	   function repaintTest()
-	   {
-	       var target = document.getElementById('t');
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
+           var target = document.getElementById('t');
            target.style.borderTop = "30px solid blue";
            target.style.margin = "0";
-	   }
-	</script>
-	<style type="text/css">
-	   span#t { margin: 30px; }
-	</style>
+       }
+    </script>
+    <style type="text/css">
+       span#t { margin: 30px; }
+    </style>
 </head>
 <body onload="runRepaintTest();">
     <p>

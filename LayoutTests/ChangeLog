@@ -1,3 +1,13 @@
+2009-05-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by David Kilzer.
+
+        - move fast/repaint/repaint.js into the resources subdirectory
+
+        * fast/repaint/repaint.js: Removed.
+        * fast/repaint/resources/repaint.js: Copied from fast/repaint/repaint.js.
+        * (89 tests changed to load the script from the new location)
+
 2009-05-17  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Disable another media test that seems to be failing at least

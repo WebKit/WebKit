@@ -6,16 +6,16 @@
             margin: 10px 0 10px 0;
         }
     </style>
-	<script src="repaint.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	   function repaintTest()
-	   {
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
            document.getElementById('t').style.borderColor = 'green';
            document.getElementById('r').removeChild(document.getElementById('d'));
            document.getElementById('r2').removeChild(document.getElementById('d2'));
            document.getElementById('d3').innerHTML = 'ipsum dolor';
-	   }
-	</script>
+       }
+    </script>
 </head>
 <body onload="runRepaintTest();">
     <table id="t">

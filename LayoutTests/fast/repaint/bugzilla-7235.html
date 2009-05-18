@@ -2,27 +2,27 @@
         "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-	<style type="text/css">
-	#p {
-		position: relative;
-		left: -100px;
-		margin-left: 100px;
-	}
-	#t {
-		display: none;
-		position: absolute;
-		width: 100px;
-		height: 100px;
-		background: green;
-	}
-	</style>
-	<script src="repaint.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	   function repaintTest()
-	   {
+    <style type="text/css">
+    #p {
+        position: relative;
+        left: -100px;
+        margin-left: 100px;
+    }
+    #t {
+        display: none;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+    </style>
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
            document.getElementById('t').style.display='block';
-	   }
-	</script>
+       }
+    </script>
 </head>
 <body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7235">Bugzilla bug 7235</a> Pure CSS Tooltips method renders wrong and creates artifacts</p>

@@ -2,13 +2,13 @@
         "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-	<script src="repaint.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	   function repaintTest()
-	   {
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
            document.getElementById('outside').style.left = '-100px';
-	   }
-	</script>
+       }
+    </script>
 </head>
 <body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6388">Bugzilla bug 6388</a> REGRESSION: Incomplete repaint when dragging the map on Google maps</p>
