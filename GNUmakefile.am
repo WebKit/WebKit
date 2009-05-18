@@ -36,6 +36,10 @@ GENPROGRAMS := $(top_builddir)/Programs
 # Script for creating hash tables
 CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
 
+# Programs to run the WebKitGtk unit tests
+GTESTER = gtester
+GTESTER_REPORT = gtester-report
+
 # Libraries and support components
 bin_PROGRAMS :=
 noinst_PROGRAMS :=
@@ -575,3 +579,23 @@ install-data-local: po-install-data-local
 installdirs-data-local: po-installdirs-data-local
 
 uninstall-local: po-uninstall-local
+
+# Run all tests in cwd
+# FIXME: we should run this under xvfb
+test: $(TEST_PROGS)
+	$(GTESTER) --verbose $(TEST_PROGS);
+
+# test-report: run tests in cwd and generate report
+# full-report: run tests in cwd with -m perf and -m slow and generate report
+# perf-report: run tests in cwd with -m perf and generate report
+test-report full-report perf-report: $(TEST_PROGS)
+	@ case $@ in \
+	  test-report) test_options="-k";; \
+	  full-report) test_options="-k -m=perf";; \
+	  perf-report) test_options="-k -m=perf -m=slow";; \
+	  esac ; \
+	  $(GTESTER) --verbose $$test_options -o test-report.xml $(TEST_PROGS); \
+	  $(GTESTER_REPORT) test-report.xml > test-report.html ;
+
+.PHONY: test test-report perf-report full-report
+check-local: test
