@@ -34,6 +34,7 @@ wxWebCore port Bakefile project file.
     <include file="WebCoreSources.bkl" />
 
     <set var="WEBCORE_BASE_SOURCES">
+        $(WEBCORE_SOURCES_ACCESSIBILITY)
         $(WEBCORE_SOURCES_BMP)
         $(WEBCORE_SOURCES_BRIDGE)
         $(WEBCORE_SOURCES_CSS)
@@ -62,6 +63,7 @@ wxWebCore port Bakefile project file.
 
     <template id="webcore_base" template="xml2,iconv,xslt,icu,jscore,curl,sqlite3">
         <include>$(SRCDIR)</include>
+        <include>$(SRCDIR)/accessibility</include>
         <include>$(SRCDIR)/bindings/js</include>
         <include>$(SRCDIR)/bridge</include>
         <include>$(SRCDIR)/bridge/c</include>
