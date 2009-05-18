@@ -14,8 +14,9 @@ install:
     xcopy "$(SRCROOT)\AppleInternal\tests\SunSpider\*" "$(OBJROOT)\tests\SunSpider" /e/v/i/h/y
     cd "$(OBJROOT)\tests\SunSpider"
     perl sunspider --shell ../../bin/jsc.exe --runs 3
+    del "$(OBJROOT)\bin\JavaScriptCore.dll"
     cd "$(SRCROOT)\JavaScriptCore.vcproj"
-    devenv "JavaScriptCoreSubmit.sln" /rebuild Release_PGOOptimize
+    devenv "JavaScriptCoreSubmit.sln" /build Release_PGOOptimize
 !ELSE
     devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
 !ENDIF

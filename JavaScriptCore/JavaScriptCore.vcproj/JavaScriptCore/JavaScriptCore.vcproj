@@ -268,7 +268,7 @@
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops"
 			CharacterSet="1"
-			WholeProgramOptimization="4"
+			WholeProgramOptimization="3"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
