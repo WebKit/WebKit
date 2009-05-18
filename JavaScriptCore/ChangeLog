@@ -1,3 +1,15 @@
+2009-05-17  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Various autotools build refactoring and fixes
+        https://bugs.webkit.org/show_bug.cgi?id=25286
+
+        Add JavaScriptCore/ to JSC include path only since it's not
+        required when building WebCore.
+
+        * GNUmakefile.am:
+
 2009-05-17  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix

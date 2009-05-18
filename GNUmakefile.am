@@ -54,21 +54,78 @@ POFILES :=
 
 MOFILES :=
 
-# Global flags to CPP
+javascriptcore_h_api :=
+javascriptcore_cppflags:=
+javascriptcore_sources :=
+javascriptcore_built_sources :=
+javascriptcore_built_nosources :=
+javascriptcore_dist :=
+webcore_cppflags :=
+webcore_sources :=
+webcore_libadd :=
+webcore_built_sources :=
+webcore_built_nosources :=
+webcore_dist :=
+webcoregtk_cppflags :=
+webcoregtk_sources :=
+webkitgtk_h_api :=
+webkitgtk_sources :=
+webkitgtk_cppflags :=
+webkitgtk_built_sources :=
+webkitgtk_built_nosources :=
+webkitgtk_cleanfiles :=
 global_cppflags :=
+global_cflags :=
+global_cxxflags :=
+corekit_cflags :=
+corekit_cppflags :=
 
+# CFLAGS/CXXFLAGS used by WebCore and WebKit
+#
+# Gtk+.pc already include glib, cairo, freetype and pango CFLAGS
+# Don't include them for now to reduce the noise when compiling
+# $(GLIB_CFLAGS) $(CAIRO_CFLAGS) $(PANGO_CFLAGS)  $(FREETYPE_CFLAGS)
+
+corekit_cflags += \
+	-fno-strict-aliasing \
+	$(COVERAGE_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GNOMEKEYRING_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(HILDON_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(LIBXSLT_CFLAGS) \
+	$(SQLITE3_CFLAGS) \
+	$(UNICODE_CFLAGS) \
+	$(XT_CFLAGS)
+
+# When building webcore/webkit, we want WebCore/config.h and NOT
+# JavaScriptCore/config.h, hence it's important that WebCore should come first
+# before JavaScriptCore in the include path.
+corekit_cppflags += \
+	$(global_cppflags) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
+	$(javascriptcore_cppflags)
+
+# Global flags to CPP
 global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1
 
 # Default compiler flags
-global_cflags := \
+global_cflags += \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
 	-Wno-unused-parameter -Wno-parentheses \
 	-fno-exceptions
 
-global_cxxflags := \
+global_cxxflags += \
+	$(global_cflags) \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	-fno-rtti
 
@@ -96,17 +153,9 @@ noinst_LTLIBRARIES = \
 	libJavaScriptCore.la \
 	libWebCore.la
 
-#
-# JavaScriptCore
-javascriptcore_h_api :=
-javascriptcore_cppflags:=
-javascriptcore_sources :=
-javascriptcore_built_sources :=
-javascriptcore_built_nosources :=
-javascriptcore_dist :=
 
+# JavaScriptCore
 javascriptcore_cppflags += \
-	-I$(srcdir)/JavaScriptCore \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/parser \
 	-I$(srcdir)/JavaScriptCore/wtf \
@@ -169,34 +218,14 @@ libWebCore_la_SOURCES = \
 
 libWebCore_la_CXXFLAGS = \
 	$(global_cxxflags) \
-	$(libWebCore_la_CFLAGS)
+	$(corekit_cflags)
 
 libWebCore_la_CFLAGS = \
-	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(GLIB_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(CAIRO_CFLAGS) \
-	$(PANGO_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(XT_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(FREETYPE_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(HILDON_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(GEOCLUE_CFLAGS)
+	$(corekit_cflags)
 
 libWebCore_la_CPPFLAGS = \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
-	$(javascriptcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(HILDON_CPPFLAGS)
+	$(corekit_cppflags)
 
 libWebCore_la_LIBADD = \
 	libJavaScriptCore.la \
@@ -221,13 +250,6 @@ libWebCore_la_LIBADD = \
 	-lpthread
 
 # WebKit
-webkitgtk_h_api :=
-webkitgtk_sources :=
-webkitgtk_cppflags :=
-webkitgtk_built_sources :=
-webkitgtk_built_nosources :=
-webkitgtk_cleanfiles :=
-
 nodist_libwebkit_1_0_la_SOURCES = \
 	$(webkitgtk_built_sources)
 
@@ -240,15 +262,17 @@ libwebkit_1_0_la_SOURCES = \
 	$(webkitgtk_sources)
 
 libwebkit_1_0_la_CXXFLAGS = \
-	$(libWebCore_la_CXXFLAGS)
+	$(global_cxxflags) \
+	$(corekit_cflags)
 
 libwebkit_1_0_la_CFLAGS = \
-	$(libWebCore_la_CFLAGS) \
-	$(GNOMEKEYRING_CFLAGS)
+	$(global_cflags) \
+	$(corekit_cflags)
 
 libwebkit_1_0_la_CPPFLAGS = \
-	$(libWebCore_la_CPPFLAGS) \
-	$(webkitgtk_cppflags)
+	$(corekit_cppflags) \
+	$(webkitgtk_cppflags) \
+	$(HILDON_CPPFLAGS)
 
 libwebkit_1_0_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \

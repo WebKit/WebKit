@@ -1,4 +1,5 @@
 javascriptcore_cppflags += \
+	-I$(srcdir)/JavaScriptCore \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/interpreter \
