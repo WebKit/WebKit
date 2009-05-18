@@ -1,3 +1,77 @@
+2009-05-18  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos (and others).
+
+        Add XHTMLMP support to Webkit
+        XHTMLMP is a strict subset of XHTML 1.1. It extends XHTML Basic and add enhanced
+        functionality. Most of the functionalities have already been implemented by Webkit.
+        
+        The changes include:
+        1) Adding <noscript> support
+        2) Document conformance validation
+        3) User Agent conformance validation
+ 
+        refer to the specification: OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf
+
+        Tests: fast/xhtmlmp/check-doctype-declaration.xhtml
+               fast/xhtmlmp/check-rootelement.xhtml
+               fast/xhtmlmp/noscript-in-multiscripts.xhtml
+               fast/xhtmlmp/noscript-nested.xhtml
+               fast/xhtmlmp/noscript.xhtml
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::isXHTMLMPDocument):
+        * dom/Document.h:
+        (WebCore::Document::shouldProcessNoscriptElement):
+        (WebCore::Document::setShouldProcessNoscriptElement):
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/Node.h:
+        * dom/XMLTokenizer.h:
+        (WebCore::XMLTokenizer::setIsXHTMLMPDocument):
+        (WebCore::XMLTokenizer::isXHTMLMPDocument):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::endDocument):
+        (WebCore::XMLTokenizer::internalSubset):
+        (WebCore::getEntityHandler):
+        (WebCore::externalSubsetHandler):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::parse):
+        (WebCore::XMLTokenizer::parseStartElement):
+        (WebCore::XMLTokenizer::parseEndElement):
+        (WebCore::):
+        * dom/make_names.pl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLNoScriptElement.cpp: Added.
+        (WebCore::HTMLNoScriptElement::HTMLNoScriptElement):
+        (WebCore::HTMLNoScriptElement::~HTMLNoScriptElement):
+        (WebCore::HTMLNoScriptElement::checkDTD):
+        (WebCore::HTMLNoScriptElement::attach):
+        (WebCore::HTMLNoScriptElement::recalcStyle):
+        (WebCore::HTMLNoScriptElement::childShouldCreateRenderer):
+        (WebCore::HTMLNoScriptElement::styleForRenderer):
+        * html/HTMLNoScriptElement.h: Added.
+        (WebCore::HTMLNoScriptElement::rendererIsNeeded):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode):
+        (WebCore::HTMLParser::isInline):
+        * html/HTMLTagNames.in:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes):
+
 2009-05-18  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

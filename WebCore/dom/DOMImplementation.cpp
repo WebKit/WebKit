@@ -4,7 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -315,14 +315,22 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
 PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, bool inViewSourceMode)
 {
     if (inViewSourceMode) {
-        if (type == "text/html" || type == "application/xhtml+xml" || type == "image/svg+xml" || isTextMIMEType(type) || isXMLMIMEType(type))
+        if (type == "text/html" || type == "application/xhtml+xml" || type == "image/svg+xml" || isTextMIMEType(type) || isXMLMIMEType(type)
+#if ENABLE(XHTMLMP)
+            || type == "application/vnd.wap.xhtml+xml"
+#endif
+           )
             return HTMLViewSourceDocument::create(frame, type);
     }
 
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
         return HTMLDocument::create(frame);
-    if (type == "application/xhtml+xml")
+    if (type == "application/xhtml+xml"
+#if ENABLE(XHTMLMP)
+        || type == "application/vnd.wap.xhtml+xml"
+#endif
+        )
         return Document::createXHTML(frame);
 
 #if ENABLE(WML)

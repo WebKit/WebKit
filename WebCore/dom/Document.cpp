@@ -4,7 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 David Levin (levin@chromium.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -163,6 +163,10 @@
 #include "WMLElement.h"
 #include "WMLElementFactory.h"
 #include "WMLNames.h"
+#endif
+
+#if ENABLE(XHTMLMP)
+#include "HTMLNoScriptElement.h"
 #endif
 
 using namespace std;
@@ -386,6 +390,9 @@ Document::Document(Frame* frame, bool isXHTML)
 
     static int docID = 0;
     m_docID = docID++;
+#if ENABLE(XHTMLMP)
+    m_shouldProcessNoScriptElement = settings() && !settings()->isJavaScriptEnabled();
+#endif
 }
 
 void Document::removedLastRef()
@@ -4417,5 +4424,15 @@ void Document::displayBufferModifiedByEncoding(UChar* buffer, unsigned len) cons
     if (m_decoder)
         m_decoder->encoding().displayBuffer(buffer, len);
 }
+
+#if ENABLE(XHTMLMP)
+bool Document::isXHTMLMPDocument() const
+{
+    // As per section 7.2 of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, a conforming user agent
+    // MUST accept XHTMLMP document identified as "application/vnd.wap.xhtml+xml"
+    // and SHOULD accept it identified as "application/xhtml+xml"
+    return frame()->loader()->responseMIMEType() == "application/vnd.wap.xhtml+xml" || frame()->loader()->responseMIMEType() == "application/xhtml+xml";
+}
+#endif
 
 } // namespace WebCore

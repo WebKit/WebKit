@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -199,6 +199,9 @@ static void initializeSupportedNonImageMimeTypes()
         "text/",
         "application/xml",
         "application/xhtml+xml",
+#if ENABLE(XHTMLMP)
+        "application/vnd.wap.xhtml+xml",
+#endif
         "application/rss+xml",
         "application/atom+xml",
 #if ENABLE(SVG)

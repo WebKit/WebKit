@@ -5,7 +5,7 @@
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Holger Hans Peter Freyther
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,6 +61,11 @@
 
 #if ENABLE(XSLT)
 #include <libxslt/xslt.h>
+#endif
+
+#if ENABLE(XHTMLMP)
+#include "HTMLNames.h"
+#include "HTMLScriptElement.h"
 #endif
 
 using namespace std;
@@ -526,6 +531,10 @@ XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+#if ENABLE(XHTMLMP)
+    , m_isXHTMLMPDocument(false)
+    , m_hasDocTypeDeclaration(false)
+#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -549,6 +558,10 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+#if ENABLE(XHTMLMP)
+    , m_isXHTMLMPDocument(false)
+    , m_hasDocTypeDeclaration(false)
+#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -704,8 +717,13 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         return;
     }
 
-    bool isFirstElement = !m_sawFirstElement;
-    m_sawFirstElement = true;
+#if ENABLE(XHTMLMP) 
+    // check if the DOCTYPE Declaration of XHTMLMP document exists
+    if (!m_hasDocTypeDeclaration && m_doc->isXHTMLMPDocument()) {
+        handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
+        return;
+    }
+#endif
 
     exitText();
 
@@ -719,6 +737,27 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         else
             uri = m_defaultNamespaceURI;
     }
+
+#if ENABLE(XHTMLMP)
+    if (!m_sawFirstElement && isXHTMLMPDocument()) {
+        // As per the section 7.1 of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, 
+        // we should make sure that the root element MUST be 'html' and 
+        // ensure the name of the default namespace on the root elment 'html' 
+        // MUST be 'http://www.w3.org/1999/xhtml'
+        if (localName != HTMLNames::htmlTag.localName()) {
+            handleError(fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
+            return;
+        }
+
+        if (uri.isNull()) {
+            m_defaultNamespaceURI = HTMLNames::xhtmlNamespaceURI; 
+            uri = m_defaultNamespaceURI;
+        }
+    }
+#endif
+
+    bool isFirstElement = !m_sawFirstElement;
+    m_sawFirstElement = true;
 
     QualifiedName qName(prefix, localName, uri);
     RefPtr<Element> newElement = m_doc->createElement(qName, true);
@@ -798,22 +837,28 @@ void XMLTokenizer::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    String scriptHref = scriptElement->sourceAttributeValue();
-    if (!scriptHref.isEmpty()) {
-        // we have a src attribute 
-        String scriptCharset = scriptElement->scriptCharset();
-        if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
-            m_scriptElement = element;
-            m_pendingScript->addClient(this);
+#if ENABLE(XHTMLMP)
+    if (!scriptElement->shouldExecuteAsJavaScript())
+        m_doc->setShouldProcessNoscriptElement(true);
+    else 
+#endif
+    {
+        String scriptHref = scriptElement->sourceAttributeValue();
+        if (!scriptHref.isEmpty()) {
+            // we have a src attribute 
+            String scriptCharset = scriptElement->scriptCharset();
+            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+                m_scriptElement = element;
+                m_pendingScript->addClient(this);
 
-            // m_pendingScript will be 0 if script was already loaded and ref() executed it
-            if (m_pendingScript)
-                pauseParsing();
-        } else 
-            m_scriptElement = 0;
-    } else
-        m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
-
+                // m_pendingScript will be 0 if script was already loaded and ref() executed it
+                if (m_pendingScript)
+                    pauseParsing();
+            } else 
+                m_scriptElement = 0;
+        } else
+            m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+    }
     m_requestingScript = false;
     setCurrentNode(parent.get());
 }
@@ -942,6 +987,9 @@ void XMLTokenizer::startDocument(const xmlChar* version, const xmlChar* encoding
 void XMLTokenizer::endDocument()
 {
     exitText();
+#if ENABLE(XHTMLMP)
+    m_hasDocTypeDeclaration = false;
+#endif
 }
 
 void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
@@ -955,8 +1003,10 @@ void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID
     }
     
     if (m_doc) {
-#if ENABLE(WML)
+#if ENABLE(WML) || ENABLE(XHTMLMP)
         String extId = toString(externalID);
+#endif
+#if ENABLE(WML)
         if (isWMLDocument()
             && extId != "-//WAPFORUM//DTD WML 1.3//EN"
             && extId != "-//WAPFORUM//DTD WML 1.2//EN"
@@ -964,8 +1014,31 @@ void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID
             && extId != "-//WAPFORUM//DTD WML 1.0//EN")
             handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
 #endif
+#if ENABLE(XHTMLMP)
+        String dtdName = toString(name);
+        if (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
+            || extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN") {
+            if (dtdName != HTMLNames::htmlTag.localName()) {
+                handleError(fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
+                return;
+            } 
 
+            if (m_doc->isXHTMLMPDocument())
+                setIsXHTMLMPDocument(true);
+            else
+                setIsXHTMLDocument(true);
+
+            m_hasDocTypeDeclaration = true;
+        }
+#endif
+
+#if ENABLE(XHTMLMP)
+        m_doc->addChild(DocumentType::create(m_doc, dtdName, extId, toString(systemID)));
+#elif ENABLE(WML)
+        m_doc->addChild(DocumentType::create(m_doc, toString(name), extId, toString(systemID)));
+#else
         m_doc->addChild(DocumentType::create(m_doc, toString(name), toString(externalID), toString(systemID)));
+#endif
     }
 }
 
@@ -1108,6 +1181,9 @@ static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
 
     ent = xmlGetDocEntity(ctxt->myDoc, name);
     if (!ent && (getTokenizer(closure)->isXHTMLDocument()
+#if ENABLE(XHTMLMP)
+                 || getTokenizer(closure)->isXHTMLMPDocument()
+#endif
 #if ENABLE(WML)
                  || getTokenizer(closure)->isWMLDocument()
 #endif
@@ -1149,7 +1225,10 @@ static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* 
         || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))
+#if !ENABLE(XHTMLMP)
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
+#endif
+       )
         getTokenizer(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Holger Hans Peter Freyther
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,6 +56,11 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(XHTMLMP)
+#include "HTMLNames.h"
+#include "HTMLScriptElement.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -85,6 +90,10 @@ XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+#if ENABLE(XHTMLMP)
+    , m_isXHTMLMPDocument(false)
+    , m_hasDocTypeDeclaration(false)
+#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -110,6 +119,10 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+#if ENABLE(XHTMLMP)
+    , m_isXHTMLMPDocument(false)
+    , m_hasDocTypeDeclaration(false)
+#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -419,6 +432,12 @@ void XMLTokenizer::parse()
         }
             break;
         case QXmlStreamReader::StartElement: {
+#if ENABLE(XHTMLMP)
+            if (m_doc->isXHTMLMPDocument() && !m_hasDocTypeDeclaration) {
+                handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
+                break;
+            }
+#endif 
             parseStartElement();
         }
             break;
@@ -443,12 +462,18 @@ void XMLTokenizer::parse()
         case QXmlStreamReader::DTD: {
             //qDebug()<<"------------- DTD";
             parseDtd();
+#if ENABLE(XHTMLMP)
+            m_hasDocTypeDeclaration = true;
+#endif
         }
             break;
         case QXmlStreamReader::EntityReference: {
             //qDebug()<<"---------- ENTITY = "<<m_stream.name().toString()
             //        <<", t = "<<m_stream.text().toString();
             if (isXHTMLDocument()
+#if ENABLE(XHTMLMP)
+                || isXHTMLMPDocument()
+#endif
 #if ENABLE(WML)
                 || isWMLDocument()
 #endif
@@ -508,9 +533,6 @@ void XMLTokenizer::parseStartElement()
         return;
     }
 
-    bool isFirstElement = !m_sawFirstElement;
-    m_sawFirstElement = true;
-
     exitText();
 
     String localName = m_stream.name();
@@ -528,6 +550,28 @@ void XMLTokenizer::parseStartElement()
         stopParsing();
         return;
     }
+
+#if ENABLE(XHTMLMP)
+    if (!m_sawFirstElement && isXHTMLMPDocument()) {
+        // As per 7.1 section of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, 
+        // we should make sure that the root element MUST be 'html' and 
+        // ensure the name of the default namespace on the root elment 'html' 
+        // MUST be 'http://www.w3.org/1999/xhtml'
+        if (localName != HTMLNames::htmlTag.localName()) {
+            handleError(fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
+            return;
+        } 
+
+        if (uri.isNull()) {
+            m_defaultNamespaceURI = HTMLNames::xhtmlNamespaceURI; 
+            uri = m_defaultNamespaceURI;
+            m_stream.addExtraNamespaceDeclaration(QXmlStreamNamespaceDeclaration(prefix, HTMLNames::xhtmlNamespaceURI));
+        }
+    }
+#endif
+
+    bool isFirstElement = !m_sawFirstElement;
+    m_sawFirstElement = true;
 
     ExceptionCode ec = 0;
     handleElementNamespaces(newElement.get(), m_stream.namespaceDeclarations(), ec);
@@ -583,22 +627,28 @@ void XMLTokenizer::parseEndElement()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    String scriptHref = scriptElement->sourceAttributeValue();
-    if (!scriptHref.isEmpty()) {
-        // we have a src attribute 
-        String scriptCharset = scriptElement->scriptCharset();
-        if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
-            m_scriptElement = element;
-            m_pendingScript->addClient(this);
+#if ENABLE(XHTMLMP)
+    if (!scriptElement->shouldExecuteAsJavaScript())
+        m_doc->setShouldProcessNoscriptElement(true);
+    else
+#endif
+    {
+        String scriptHref = scriptElement->sourceAttributeValue();
+        if (!scriptHref.isEmpty()) {
+            // we have a src attribute 
+            String scriptCharset = scriptElement->scriptCharset();
+            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+                m_scriptElement = element;
+                m_pendingScript->addClient(this);
 
-            // m_pendingScript will be 0 if script was already loaded and ref() executed it
-            if (m_pendingScript)
-                pauseParsing();
-        } else 
-            m_scriptElement = 0;
-    } else
-        m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
-
+                // m_pendingScript will be 0 if script was already loaded and ref() executed it
+                if (m_pendingScript)
+                    pauseParsing();
+            } else 
+                m_scriptElement = 0;
+        } else
+            m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+    }
     m_requestingScript = false;
     setCurrentNode(parent.get());
 }
@@ -662,6 +712,9 @@ void XMLTokenizer::parseComment()
 
 void XMLTokenizer::endDocument()
 {
+#if ENABLE(XHTMLMP)
+    m_hasDocTypeDeclaration = false;
+#endif
 }
 
 bool XMLTokenizer::hasError() const
@@ -755,9 +808,25 @@ void XMLTokenizer::parseDtd()
         || (publicId == QLatin1String("-//W3C//DTD XHTML Basic 1.0//EN"))
         || (publicId == QLatin1String("-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"))
         || (publicId == QLatin1String("-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"))
-        || (publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))) {
+#if !ENABLE(XHTMLMP)
+        || (publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))
+#endif
+       )
         setIsXHTMLDocument(true); // controls if we replace entities or not.
+#if ENABLE(XHTMLMP)
+    else if ((publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.1//EN"))
+             || (publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))) {
+        if (AtomicString(name) != HTMLNames::htmlTag.localName()) {
+            handleError(fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
+            return;
+        } 
+
+        if (m_doc->isXHTMLMPDocument()) // check if the MIME type is correct with this method
+            setIsXHTMLMPDocument(true);
+        else
+            setIsXHTMLDocument(true);
     }
+#endif
 #if ENABLE(WML)
     else if (m_doc->isWMLDocument()
              && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.3//EN")
@@ -771,5 +840,4 @@ void XMLTokenizer::parseDtd()
     
 }
 }
-
 

@@ -73,7 +73,11 @@ nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
+#if ENABLE_XHTMLMP
+noscript interfaceName=HTMLNoScriptElement
+#else
 noscript interfaceName=HTMLElement
+#endif
 object constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement

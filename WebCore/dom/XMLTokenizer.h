@@ -3,6 +3,7 @@
  * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,6 +73,10 @@ namespace WebCore {
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
+#if ENABLE(XHTMLMP)
+        void setIsXHTMLMPDocument(bool isXHTML) { m_isXHTMLMPDocument = isXHTML; }
+        bool isXHTMLMPDocument() const { return m_isXHTMLMPDocument; }
+#endif
 #if ENABLE(WML)
         bool isWMLDocument() const;
 #endif
@@ -149,6 +154,10 @@ public:
         bool m_sawXSLTransform;
         bool m_sawFirstElement;
         bool m_isXHTMLDocument;
+#if ENABLE(XHTMLMP)
+        bool m_isXHTMLMPDocument;
+        bool m_hasDocTypeDeclaration;
+#endif
 
         bool m_parserPaused;
         bool m_requestingScript;
