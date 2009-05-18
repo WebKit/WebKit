@@ -1,8 +1,9 @@
 Event log
 
 ondragstart src
-ondrag src
 ondragenter left target
+ondrag src
+ondragover left target
 ondrag src
 ondragover left target
 ondrag src

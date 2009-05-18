@@ -100,6 +100,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
          [pboard setPropertyList:[NSArray arrayWithObject:@"DRTFakeFile"] forType:NSFilenamesPboardType];
      }
      draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
+     [sender draggingUpdated:draggingInfo];
      [EventSendingController replaySavedEvents];
 }
 

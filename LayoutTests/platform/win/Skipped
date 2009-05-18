@@ -100,6 +100,7 @@ editing/pasteboard/paste-xml.xhtml
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/get-data-text-plain-drop.html
 editing/selection/drag-in-iframe.html
 fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html
