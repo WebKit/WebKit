@@ -524,9 +524,9 @@
 		29A812330FBB9C1D00510293 /* AccessibilityAriaGridRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812150FBB9C1D00510293 /* AccessibilityAriaGridRow.h */; };
 		29A812340FBB9C1D00510293 /* AccessibilityAriaGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812160FBB9C1D00510293 /* AccessibilityAriaGrid.h */; };
 		29A812350FBB9C1D00510293 /* AccessibilityTableColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812170FBB9C1D00510293 /* AccessibilityTableColumn.cpp */; };
-		29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812180FBB9C1D00510293 /* AccessibilityObject.h */; };
+		29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812180FBB9C1D00510293 /* AccessibilityObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29A812370FBB9C1D00510293 /* AXObjectCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812190FBB9C1D00510293 /* AXObjectCache.cpp */; };
-		29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8121A0FBB9C1D00510293 /* AXObjectCache.h */; };
+		29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8121A0FBB9C1D00510293 /* AXObjectCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8121B0FBB9C1D00510293 /* AccessibilityRenderObject.h */; };
 		29A8123A0FBB9C1D00510293 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8121C0FBB9C1D00510293 /* AccessibilityImageMapLink.cpp */; };
 		29A8123B0FBB9C1D00510293 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8121D0FBB9C1D00510293 /* AccessibilityImageMapLink.h */; };

@@ -1,3 +1,9 @@
+2009-05-18  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-05-18  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Rubber-stamped by Gustavo Noronha.
