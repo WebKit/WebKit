@@ -787,6 +787,8 @@ editing/pasteboard/copy-crash.html
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-paste-float.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/get-data-text-plain-drop.html
+editing/pasteboard/get-data-text-plain-paste.html
 editing/pasteboard/paste-blockquote-before-blockquote.html
 editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
 editing/pasteboard/paste-into-anchor-text.html

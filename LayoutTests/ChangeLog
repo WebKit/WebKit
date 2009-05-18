@@ -1,5 +1,14 @@
 2009-05-18  Julie Parent  <jparent@google.com>
 
+        Reviewed by Eric Seidel.
+
+        Skip new tests from r43822 on Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=25780
+
+        * platform/gtk/Skipped:
+
+2009-05-18  Julie Parent  <jparent@google.com>
+
         Reviewed by Oliver Hunt.
 
         Add missing files from r43821
