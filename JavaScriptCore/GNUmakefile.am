@@ -510,7 +510,6 @@ Programs_minidom_CPPFLAGS = \
 Programs_minidom_CFLAGS = \
 	-ansi \
 	-fno-strict-aliasing \
-	-O2 \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)
 
@@ -518,6 +517,10 @@ Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
 	 -lm \
 	 -lstdc++
+
+Programs_minidom_LDFLAGS = \
+	-no-install \
+	-no-fast-install
 
 # jsc
 Programs_jsc_SOURCES = \
@@ -529,7 +532,6 @@ Programs_jsc_CPPFLAGS = \
 
 Programs_jsc_CXXFLAGS = \
 	-fno-strict-aliasing \
-	-O2 \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \

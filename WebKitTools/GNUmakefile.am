@@ -15,7 +15,6 @@ Programs_GtkLauncher_SOURCES = \
 Programs_GtkLauncher_CFLAGS = \
 	-ansi \
 	-fno-strict-aliasing \
-	-O2 \
 	$(global_cflags) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
@@ -24,6 +23,10 @@ Programs_GtkLauncher_LDADD = \
 	libwebkit-1.0.la \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS)
+
+Programs_GtkLauncher_LDFLAGS = \
+	-no-fast-install \
+	-no-install
 
 # DumpRenderTree
 dumprendertree_cppflags := \
@@ -64,7 +67,6 @@ Programs_DumpRenderTree_CXXFLAGS = \
 
 Programs_DumpRenderTree_CFLAGS = \
 	-fno-strict-aliasing \
-	-O2 \
 	$(dumprendertree_cppflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
@@ -79,6 +81,10 @@ Programs_DumpRenderTree_LDADD = \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS)
+
+Programs_DumpRenderTree_LDFLAGS = \
+	-no-fast-install \
+	-no-install
 
 # clean target
 CLEANFILES += \

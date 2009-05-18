@@ -1,3 +1,16 @@
+2009-05-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Various autotools build refactoring and fixes
+        https://bugs.webkit.org/show_bug.cgi?id=25286
+
+        Add -no-install and -no-fast-install to programs and tests that we
+        don't install. Also remove -O2 since this is already handled at
+        configure time.
+
+        * GNUmakefile.am:
+
 2009-05-18  Julie Parent  <jparent@google.com>
 
         Reviewed by Oliver Hunt.
