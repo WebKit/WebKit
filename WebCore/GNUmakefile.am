@@ -10,6 +10,7 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
+	-I$(srcdir)/WebCore/accessibility \
 	-I$(srcdir)/WebCore/bindings/js \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/bridge/c \
@@ -48,6 +49,7 @@ webcore_cppflags += \
 
 webcoregtk_cppflags += \
 	-DWTF_USE_SOUP=1 \
+	-I$(srcdir)/WebCore/accessibility/gtk \
 	-I$(srcdir)/WebCore/loader/gtk \
 	-I$(srcdir)/WebCore/page/gtk \
 	-I$(srcdir)/WebCore/platform/graphics/cairo \
@@ -246,6 +248,36 @@ IDL_BINDINGS += \
 
 webcore_sources += \
 	WebCore/WebCorePrefix.h \
+        WebCore/accessibility/AXObjectCache.cpp \
+	WebCore/accessibility/AXObjectCache.h \
+	WebCore/accessibility/AccessibilityAriaGrid.cpp \
+	WebCore/accessibility/AccessibilityAriaGrid.h \
+	WebCore/accessibility/AccessibilityAriaGridCell.cpp \
+	WebCore/accessibility/AccessibilityAriaGridCell.h \
+	WebCore/accessibility/AccessibilityAriaGridRow.cpp \
+	WebCore/accessibility/AccessibilityAriaGridRow.h \
+	WebCore/accessibility/AccessibilityImageMapLink.cpp \
+	WebCore/accessibility/AccessibilityImageMapLink.h \
+	WebCore/accessibility/AccessibilityList.cpp \
+	WebCore/accessibility/AccessibilityList.h \
+	WebCore/accessibility/AccessibilityListBox.cpp \
+	WebCore/accessibility/AccessibilityListBox.h \
+	WebCore/accessibility/AccessibilityListBoxOption.cpp \
+	WebCore/accessibility/AccessibilityListBoxOption.h \
+	WebCore/accessibility/AccessibilityObject.cpp \
+	WebCore/accessibility/AccessibilityObject.h \
+	WebCore/accessibility/AccessibilityRenderObject.cpp \
+	WebCore/accessibility/AccessibilityRenderObject.h \
+	WebCore/accessibility/AccessibilityTable.cpp \
+	WebCore/accessibility/AccessibilityTable.h \
+	WebCore/accessibility/AccessibilityTableCell.cpp \
+	WebCore/accessibility/AccessibilityTableCell.h \
+	WebCore/accessibility/AccessibilityTableColumn.cpp \
+	WebCore/accessibility/AccessibilityTableColumn.h \
+	WebCore/accessibility/AccessibilityTableHeaderContainer.cpp \
+	WebCore/accessibility/AccessibilityTableHeaderContainer.h \
+	WebCore/accessibility/AccessibilityTableRow.cpp \
+	WebCore/accessibility/AccessibilityTableRow.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
@@ -1147,36 +1179,6 @@ webcore_sources += \
 	WebCore/loader/icon/IconLoader.h \
 	WebCore/loader/loader.cpp \
 	WebCore/loader/loader.h \
-	WebCore/page/AXObjectCache.cpp \
-	WebCore/page/AXObjectCache.h \
-	WebCore/page/AccessibilityAriaGrid.cpp \
-	WebCore/page/AccessibilityAriaGrid.h \
-	WebCore/page/AccessibilityAriaGridCell.cpp \
-	WebCore/page/AccessibilityAriaGridCell.h \
-	WebCore/page/AccessibilityAriaGridRow.cpp \
-	WebCore/page/AccessibilityAriaGridRow.h \
-	WebCore/page/AccessibilityImageMapLink.cpp \
-	WebCore/page/AccessibilityImageMapLink.h \
-	WebCore/page/AccessibilityList.cpp \
-	WebCore/page/AccessibilityList.h \
-	WebCore/page/AccessibilityListBox.cpp \
-	WebCore/page/AccessibilityListBox.h \
-	WebCore/page/AccessibilityListBoxOption.cpp \
-	WebCore/page/AccessibilityListBoxOption.h \
-	WebCore/page/AccessibilityObject.cpp \
-	WebCore/page/AccessibilityObject.h \
-	WebCore/page/AccessibilityRenderObject.cpp \
-	WebCore/page/AccessibilityRenderObject.h \
-	WebCore/page/AccessibilityTable.cpp \
-	WebCore/page/AccessibilityTable.h \
-	WebCore/page/AccessibilityTableCell.cpp \
-	WebCore/page/AccessibilityTableCell.h \
-	WebCore/page/AccessibilityTableColumn.cpp \
-	WebCore/page/AccessibilityTableColumn.h \
-	WebCore/page/AccessibilityTableHeaderContainer.cpp \
-	WebCore/page/AccessibilityTableHeaderContainer.h \
-	WebCore/page/AccessibilityTableRow.cpp \
-	WebCore/page/AccessibilityTableRow.h \
 	WebCore/page/BarInfo.cpp \
 	WebCore/page/BarInfo.h \
 	WebCore/page/Chrome.cpp \
@@ -1768,10 +1770,10 @@ webcoregtk_sources += \
 endif
 
 webcoregtk_sources += \
-	WebCore/page/gtk/AXObjectCacheAtk.cpp \
-	WebCore/page/gtk/AccessibilityObjectAtk.cpp \
-	WebCore/page/gtk/AccessibilityObjectWrapperAtk.cpp \
-	WebCore/page/gtk/AccessibilityObjectWrapperAtk.h \
+	WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
+	WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp \
+	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp \
+	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.h \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \

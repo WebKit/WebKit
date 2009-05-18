@@ -1,3 +1,115 @@
+2009-05-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25776: accessibility should have its own folder in WebCore project
+        https://bugs.webkit.org/show_bug.cgi?id=25776
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * accessibility: Added.
+        * accessibility/AXObjectCache.cpp: Copied from WebCore/page/AXObjectCache.cpp.
+        * accessibility/AXObjectCache.h: Copied from WebCore/page/AXObjectCache.h.
+        * accessibility/AccessibilityAriaGrid.cpp: Copied from WebCore/page/AccessibilityAriaGrid.cpp.
+        * accessibility/AccessibilityAriaGrid.h: Copied from WebCore/page/AccessibilityAriaGrid.h.
+        * accessibility/AccessibilityAriaGridCell.cpp: Copied from WebCore/page/AccessibilityAriaGridCell.cpp.
+        * accessibility/AccessibilityAriaGridCell.h: Copied from WebCore/page/AccessibilityAriaGridCell.h.
+        * accessibility/AccessibilityAriaGridRow.cpp: Copied from WebCore/page/AccessibilityAriaGridRow.cpp.
+        * accessibility/AccessibilityAriaGridRow.h: Copied from WebCore/page/AccessibilityAriaGridRow.h.
+        * accessibility/AccessibilityImageMapLink.cpp: Copied from WebCore/page/AccessibilityImageMapLink.cpp.
+        * accessibility/AccessibilityImageMapLink.h: Copied from WebCore/page/AccessibilityImageMapLink.h.
+        * accessibility/AccessibilityList.cpp: Copied from WebCore/page/AccessibilityList.cpp.
+        * accessibility/AccessibilityList.h: Copied from WebCore/page/AccessibilityList.h.
+        * accessibility/AccessibilityListBox.cpp: Copied from WebCore/page/AccessibilityListBox.cpp.
+        * accessibility/AccessibilityListBox.h: Copied from WebCore/page/AccessibilityListBox.h.
+        * accessibility/AccessibilityListBoxOption.cpp: Copied from WebCore/page/AccessibilityListBoxOption.cpp.
+        * accessibility/AccessibilityListBoxOption.h: Copied from WebCore/page/AccessibilityListBoxOption.h.
+        * accessibility/AccessibilityObject.cpp: Copied from WebCore/page/AccessibilityObject.cpp.
+        * accessibility/AccessibilityObject.h: Copied from WebCore/page/AccessibilityObject.h.
+        * accessibility/AccessibilityRenderObject.cpp: Copied from WebCore/page/AccessibilityRenderObject.cpp.
+        * accessibility/AccessibilityRenderObject.h: Copied from WebCore/page/AccessibilityRenderObject.h.
+        * accessibility/AccessibilityTable.cpp: Copied from WebCore/page/AccessibilityTable.cpp.
+        * accessibility/AccessibilityTable.h: Copied from WebCore/page/AccessibilityTable.h.
+        * accessibility/AccessibilityTableCell.cpp: Copied from WebCore/page/AccessibilityTableCell.cpp.
+        * accessibility/AccessibilityTableCell.h: Copied from WebCore/page/AccessibilityTableCell.h.
+        * accessibility/AccessibilityTableColumn.cpp: Copied from WebCore/page/AccessibilityTableColumn.cpp.
+        * accessibility/AccessibilityTableColumn.h: Copied from WebCore/page/AccessibilityTableColumn.h.
+        * accessibility/AccessibilityTableHeaderContainer.cpp: Copied from WebCore/page/AccessibilityTableHeaderContainer.cpp.
+        * accessibility/AccessibilityTableHeaderContainer.h: Copied from WebCore/page/AccessibilityTableHeaderContainer.h.
+        * accessibility/AccessibilityTableRow.cpp: Copied from WebCore/page/AccessibilityTableRow.cpp.
+        * accessibility/AccessibilityTableRow.h: Copied from WebCore/page/AccessibilityTableRow.h.
+        * accessibility/chromium: Added.
+        * accessibility/chromium/AXObjectCacheChromium.cpp: Copied from WebCore/page/chromium/AXObjectCacheChromium.cpp.
+        * accessibility/chromium/AccessibilityObjectChromium.cpp: Copied from WebCore/page/chromium/AccessibilityObjectChromium.cpp.
+        * accessibility/chromium/AccessibilityObjectWrapper.h: Copied from WebCore/page/chromium/AccessibilityObjectWrapper.h.
+        * accessibility/gtk: Added.
+        * accessibility/gtk/AXObjectCacheAtk.cpp: Copied from WebCore/page/gtk/AXObjectCacheAtk.cpp.
+        * accessibility/gtk/AccessibilityObjectAtk.cpp: Copied from WebCore/page/gtk/AccessibilityObjectAtk.cpp.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp: Copied from WebCore/page/gtk/AccessibilityObjectWrapperAtk.cpp.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.h: Copied from WebCore/page/gtk/AccessibilityObjectWrapperAtk.h.
+        * accessibility/mac: Added.
+        * accessibility/mac/AXObjectCacheMac.mm: Copied from WebCore/page/mac/AXObjectCacheMac.mm.
+        * accessibility/mac/AccessibilityObjectMac.mm: Copied from WebCore/page/mac/AccessibilityObjectMac.mm.
+        * accessibility/mac/AccessibilityObjectWrapper.h: Copied from WebCore/page/mac/AccessibilityObjectWrapper.h.
+        * accessibility/mac/AccessibilityObjectWrapper.mm: Copied from WebCore/page/mac/AccessibilityObjectWrapper.mm.
+        * accessibility/qt: Added.
+        * accessibility/qt/AccessibilityObjectQt.cpp: Copied from WebCore/page/qt/AccessibilityObjectQt.cpp.
+        * accessibility/win: Added.
+        * accessibility/win/AXObjectCacheWin.cpp: Copied from WebCore/page/win/AXObjectCacheWin.cpp.
+        * accessibility/win/AccessibilityObjectWin.cpp: Copied from WebCore/page/win/AccessibilityObjectWin.cpp.
+        * accessibility/win/AccessibilityObjectWrapperWin.h: Copied from WebCore/page/win/AccessibilityObjectWrapperWin.h.
+        * accessibility/wx: Added.
+        * accessibility/wx/AccessibilityObjectWx.cpp: Copied from WebCore/page/wx/AccessibilityObjectWx.cpp.
+        * page/AXObjectCache.cpp: Removed.
+        * page/AXObjectCache.h: Removed.
+        * page/AccessibilityAriaGrid.cpp: Removed.
+        * page/AccessibilityAriaGrid.h: Removed.
+        * page/AccessibilityAriaGridCell.cpp: Removed.
+        * page/AccessibilityAriaGridCell.h: Removed.
+        * page/AccessibilityAriaGridRow.cpp: Removed.
+        * page/AccessibilityAriaGridRow.h: Removed.
+        * page/AccessibilityImageMapLink.cpp: Removed.
+        * page/AccessibilityImageMapLink.h: Removed.
+        * page/AccessibilityList.cpp: Removed.
+        * page/AccessibilityList.h: Removed.
+        * page/AccessibilityListBox.cpp: Removed.
+        * page/AccessibilityListBox.h: Removed.
+        * page/AccessibilityListBoxOption.cpp: Removed.
+        * page/AccessibilityListBoxOption.h: Removed.
+        * page/AccessibilityObject.cpp: Removed.
+        * page/AccessibilityObject.h: Removed.
+        * page/AccessibilityRenderObject.cpp: Removed.
+        * page/AccessibilityRenderObject.h: Removed.
+        * page/AccessibilityTable.cpp: Removed.
+        * page/AccessibilityTable.h: Removed.
+        * page/AccessibilityTableCell.cpp: Removed.
+        * page/AccessibilityTableCell.h: Removed.
+        * page/AccessibilityTableColumn.cpp: Removed.
+        * page/AccessibilityTableColumn.h: Removed.
+        * page/AccessibilityTableHeaderContainer.cpp: Removed.
+        * page/AccessibilityTableHeaderContainer.h: Removed.
+        * page/AccessibilityTableRow.cpp: Removed.
+        * page/AccessibilityTableRow.h: Removed.
+        * page/chromium/AXObjectCacheChromium.cpp: Removed.
+        * page/chromium/AccessibilityObjectChromium.cpp: Removed.
+        * page/chromium/AccessibilityObjectWrapper.h: Removed.
+        * page/gtk/AXObjectCacheAtk.cpp: Removed.
+        * page/gtk/AccessibilityObjectAtk.cpp: Removed.
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp: Removed.
+        * page/gtk/AccessibilityObjectWrapperAtk.h: Removed.
+        * page/mac/AXObjectCacheMac.mm: Removed.
+        * page/mac/AccessibilityObjectMac.mm: Removed.
+        * page/mac/AccessibilityObjectWrapper.h: Removed.
+        * page/mac/AccessibilityObjectWrapper.mm: Removed.
+        * page/qt/AccessibilityObjectQt.cpp: Removed.
+        * page/win/AXObjectCacheWin.cpp: Removed.
+        * page/win/AccessibilityObjectWin.cpp: Removed.
+        * page/win/AccessibilityObjectWrapperWin.h: Removed.
+        * page/wx/AccessibilityObjectWx.cpp: Removed.
+
 2009-05-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.

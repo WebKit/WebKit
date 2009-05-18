@@ -32,6 +32,24 @@ This file contains the list of files needed to build WebCore.
 -->
 
 <makefile>
+    <set append="1" var="WEBCORE_SOURCES_ACCESSIBILITY">
+        accessibility/AccessibilityAriaGrid.cpp
+        accessibility/AccessibilityAriaGridCell.cpp
+        accessibility/AccessibilityAriaGridRow.cpp
+        accessibility/AccessibilityImageMapLink.cpp
+        accessibility/AccessibilityObject.cpp
+        accessibility/AccessibilityList.cpp
+        accessibility/AccessibilityListBox.cpp
+        accessibility/AccessibilityListBoxOption.cpp
+        accessibility/AccessibilityRenderObject.cpp
+        accessibility/AccessibilityTable.cpp
+        accessibility/AccessibilityTableCell.cpp
+        accessibility/AccessibilityTableColumn.cpp
+        accessibility/AccessibilityTableHeaderContainer.cpp
+        accessibility/AccessibilityTableRow.cpp
+        accessibility/AXObjectCache.cpp
+    </set>
+    
     <set append="1" var="WEBCORE_SOURCES_JS">
         bindings/js/GCController.cpp
         bindings/js/JSAttrCustom.cpp
@@ -689,26 +707,11 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PAGE">
-        page/AccessibilityAriaGrid.cpp
-        page/AccessibilityAriaGridCell.cpp
-        page/AccessibilityAriaGridRow.cpp
-        page/AccessibilityImageMapLink.cpp
-        page/AccessibilityObject.cpp
-        page/AccessibilityList.cpp
-        page/AccessibilityListBox.cpp
-        page/AccessibilityListBoxOption.cpp
-        page/AccessibilityRenderObject.cpp
-        page/AccessibilityTable.cpp
-        page/AccessibilityTableCell.cpp
-        page/AccessibilityTableColumn.cpp
-        page/AccessibilityTableHeaderContainer.cpp
-        page/AccessibilityTableRow.cpp
         page/animation/AnimationBase.cpp
         page/animation/AnimationController.cpp
         page/animation/CompositeAnimation.cpp
         page/animation/ImplicitAnimation.cpp
         page/animation/KeyframeAnimation.cpp
-        page/AXObjectCache.cpp
         page/BarInfo.cpp
         page/Chrome.cpp
         page/Console.cpp

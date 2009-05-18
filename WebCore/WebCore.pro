@@ -407,6 +407,21 @@ IDL_BINDINGS += \
 
 
 SOURCES += \
+    accessibility/AccessibilityImageMapLink.cpp \
+    accessibility/AccessibilityObject.cpp \    
+    accessibility/AccessibilityList.cpp \    
+    accessibility/AccessibilityListBox.cpp \    
+    accessibility/AccessibilityListBoxOption.cpp \    
+    accessibility/AccessibilityRenderObject.cpp \    
+    accessibility/AccessibilityAriaGrid.cpp \    
+    accessibility/AccessibilityAriaGridCell.cpp \    
+    accessibility/AccessibilityAriaGridRow.cpp \    
+    accessibility/AccessibilityTable.cpp \    
+    accessibility/AccessibilityTableCell.cpp \    
+    accessibility/AccessibilityTableColumn.cpp \    
+    accessibility/AccessibilityTableHeaderContainer.cpp \    
+    accessibility/AccessibilityTableRow.cpp \    
+    accessibility/AXObjectCache.cpp \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCDATASectionCustom.cpp \
@@ -830,26 +845,11 @@ SOURCES += \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
     loader/WorkerThreadableLoader.cpp \
-    page/AccessibilityImageMapLink.cpp \
-    page/AccessibilityObject.cpp \    
-    page/AccessibilityList.cpp \    
-    page/AccessibilityListBox.cpp \    
-    page/AccessibilityListBoxOption.cpp \    
-    page/AccessibilityRenderObject.cpp \    
-    page/AccessibilityAriaGrid.cpp \    
-    page/AccessibilityAriaGridCell.cpp \    
-    page/AccessibilityAriaGridRow.cpp \    
-    page/AccessibilityTable.cpp \    
-    page/AccessibilityTableCell.cpp \    
-    page/AccessibilityTableColumn.cpp \    
-    page/AccessibilityTableHeaderContainer.cpp \    
-    page/AccessibilityTableRow.cpp \    
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
     page/animation/CompositeAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
-    page/AXObjectCache.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
@@ -1086,11 +1086,11 @@ HEADERS += \
 
 
 SOURCES += \
+    accessibility/qt/AccessibilityObjectQt.cpp \
     bindings/js/ScriptControllerQt.cpp \
     bridge/qt/qt_class.cpp \
     bridge/qt/qt_instance.cpp \
     bridge/qt/qt_runtime.cpp \
-    page/qt/AccessibilityObjectQt.cpp \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \

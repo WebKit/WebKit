@@ -1817,120 +1817,148 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="page"
+			Name="accessibility"
 			>
 			<File
-				RelativePath="..\page\AccessibilityAriaGrid.cpp"
+				RelativePath="..\accessibility\AccessibilityAriaGrid.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityAriaGrid.h"
+				RelativePath="..\accessibility\AccessibilityAriaGrid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityAriaGridCell.cpp"
+				RelativePath="..\accessibility\AccessibilityAriaGridCell.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityAriaGridCell.h"
+				RelativePath="..\accessibility\AccessibilityAriaGridCell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityAriaGridRow.cpp"
+				RelativePath="..\accessibility\AccessibilityAriaGridRow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityAriaGridRow.h"
+				RelativePath="..\accessibility\AccessibilityAriaGridRow.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityImageMapLink.cpp"
+				RelativePath="..\accessibility\AccessibilityImageMapLink.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityImageMapLink.h"
+				RelativePath="..\accessibility\AccessibilityImageMapLink.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityList.cpp"
+				RelativePath="..\accessibility\AccessibilityList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityList.h"
+				RelativePath="..\accessibility\AccessibilityList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityListBox.cpp"
+				RelativePath="..\accessibility\AccessibilityListBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityListBox.h"
+				RelativePath="..\accessibility\AccessibilityListBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityListBoxOption.cpp"
+				RelativePath="..\accessibility\AccessibilityListBoxOption.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityListBoxOption.h"
+				RelativePath="..\accessibility\AccessibilityListBoxOption.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityObject.cpp"
+				RelativePath="..\accessibility\AccessibilityObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityObject.h"
+				RelativePath="..\accessibility\AccessibilityObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityRenderObject.cpp"
+				RelativePath="..\accessibility\AccessibilityRenderObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityRenderObject.h"
+				RelativePath="..\accessibility\AccessibilityRenderObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTable.cpp"
+				RelativePath="..\accessibility\AccessibilityTable.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTable.h"
+				RelativePath="..\accessibility\AccessibilityTable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableCell.cpp"
+				RelativePath="..\accessibility\AccessibilityTableCell.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableCell.h"
+				RelativePath="..\accessibility\AccessibilityTableCell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableColumn.cpp"
+				RelativePath="..\accessibility\AccessibilityTableColumn.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableColumn.h"
+				RelativePath="..\accessibility\AccessibilityTableColumn.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableHeaderContainer.cpp"
+				RelativePath="..\accessibility\AccessibilityTableHeaderContainer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableHeaderContainer.h"
+				RelativePath="..\accessibility\AccessibilityTableHeaderContainer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableRow.cpp"
+				RelativePath="..\accessibility\AccessibilityTableRow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\AccessibilityTableRow.h"
+				RelativePath="..\accessibility\AccessibilityTableRow.h"
 				>
 			</File>
+      			<File
+				RelativePath="..\accessibility\AXObjectCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AXObjectCache.h"
+				>
+			</File>
+                        <Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\accessibility\win\AccessibilityObjectWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\accessibility\win\AccessibilityObjectWrapperWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\accessibility\win\AXObjectCacheWin.cpp"
+					>
+				</File>
+			</Filter>
+                </Filter>
+		<Filter
+			Name="page"
+			>
 			<File
 				RelativePath="..\page\animation\AnimationBase.cpp"
 				>
@@ -1949,14 +1977,6 @@
 			</File>
 			<File
 				RelativePath="..\page\animation\AnimationControllerPrivate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\AXObjectCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\AXObjectCache.h"
 				>
 			</File>
 			<File
@@ -2274,18 +2294,6 @@
 			<Filter
 				Name="win"
 				>
-				<File
-					RelativePath="..\page\win\AccessibilityObjectWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\page\win\AccessibilityObjectWrapperWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\page\win\AXObjectCacheWin.cpp"
-					>
-				</File>
 				<File
 					RelativePath="..\page\win\FrameCairoWin.cpp"
 					>
