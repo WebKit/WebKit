@@ -1,3 +1,14 @@
+2009-05-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+         Reviewed by Xan Lopez.
+
+         [Gtk] Various autotools build refactoring and fixes
+         https://bugs.webkit.org/show_bug.cgi?id=25286
+
+         Style fixes
+
+         * GNUmakefile.am:
+
 2009-05-17  George Staikos  <george.staikos@torchmobile.com>
 
         Not reviewed - build fix.

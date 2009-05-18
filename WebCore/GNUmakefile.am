@@ -47,11 +47,13 @@ webcore_cppflags += \
 	-I$(top_builddir)/WebCore/bindings/js
 
 webcoregtk_cppflags += \
+	-DWTF_USE_SOUP=1 \
 	-I$(srcdir)/WebCore/loader/gtk \
 	-I$(srcdir)/WebCore/page/gtk \
 	-I$(srcdir)/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/WebCore/platform/graphics/gtk \
-	-I$(srcdir)/WebCore/platform/gtk
+	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore/platform/network/soup
 
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
@@ -1850,13 +1852,6 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
-
-webcore_cppflags += \
-	-DWTF_USE_SOUP=1 \
-	-I$(srcdir)/WebCore/platform/network/soup
-
-webcore_sources += \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
 	WebCore/platform/network/soup/CookieJarSoup.cpp \
 	WebCore/platform/network/soup/CookieJarSoup.h \
@@ -1864,12 +1859,8 @@ webcore_sources += \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
-	WebCore/platform/network/soup/ResourceResponse.h
-
-if USE_GNOMEKEYRING
-webcore_cppflags += \
-	-DWTF_USE_GNOMEKEYRING=1
-endif
+	WebCore/platform/network/soup/ResourceResponse.h \
+	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
 # ---
 # Freetype font backend
@@ -2022,6 +2013,9 @@ webcore_sources += \
 	WebCore/storage/SQLTransactionCallback.h \
 	WebCore/storage/SQLTransactionErrorCallback.h
 
+else
+webcore_cppflags += -DENABLE_DATABASE=0
+
 endif # END ENABLE_DATABASE
 
 # ----
@@ -2081,6 +2075,8 @@ else
 webcore_sources += \
 	WebCore/loader/icon/IconDatabaseNone.cpp
 
+webcore_cppflags += -DENABLE_ICONDATABASE=0
+
 endif # END ENABLE_ICONDATABASE
 
 # ----
@@ -2131,6 +2127,10 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.h \
 	WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp \
 	WebCore/platform/graphics/gtk/VideoSinkGStreamer.h
+
+webcore_libadd += \
+	-lgstinterfaces-0.10 \
+	-lgstvideo-0.10
 
 endif # END ENABLE_VIDEO
 
@@ -2279,7 +2279,7 @@ webcore_built_sources += \
 
 webcore_cppflags += \
 	-DENABLE_WML=1 \
-	-I\$(top_srcdir)/WebCore/wml
+	-I$(top_srcdir)/WebCore/wml
 
 webcore_sources += \
 	WebCore/wml/WMLAElement.cpp \
@@ -2511,10 +2511,10 @@ IDL_BINDINGS += \
 
 webcore_cppflags += \
 	-DENABLE_SVG=1 \
-	-I\$(top_srcdir)/WebCore/svg \
-	-I\$(top_srcdir)/WebCore/svg/animation \
-	-I\$(top_srcdir)/WebCore/svg/graphics \
-	-I\$(top_srcdir)/WebCore/svg/graphics/filters
+	-I$(top_srcdir)/WebCore/svg \
+	-I$(top_srcdir)/WebCore/svg/animation \
+	-I$(top_srcdir)/WebCore/svg/graphics \
+	-I$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
@@ -3187,8 +3187,6 @@ webcore_dist += \
 	WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files
-webcore_cppflags += -DDATA_DIR=\"${datadir}\"
-
 webinspectordir = ${datadir}/webkit-1.0/webinspector
 dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \

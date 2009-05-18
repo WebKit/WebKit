@@ -38,22 +38,13 @@ CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
 
 # Libraries and support components
 bin_PROGRAMS :=
-
 noinst_PROGRAMS :=
-
 noinst_HEADERS :=
-
 lib_LIBRARIES :=
-
 IDL_BINDINGS :=
-
 TEST_PROGS :=
-
-# Gettext stuff
 POFILES :=
-
 MOFILES :=
-
 javascriptcore_h_api :=
 javascriptcore_cppflags:=
 javascriptcore_sources :=
@@ -82,10 +73,9 @@ corekit_cppflags :=
 
 # CFLAGS/CXXFLAGS used by WebCore and WebKit
 #
-# Gtk+.pc already include glib, cairo, freetype and pango CFLAGS
+# gtk+.pc already include glib, cairo, freetype and pango CFLAGS
 # Don't include them for now to reduce the noise when compiling
 # $(GLIB_CFLAGS) $(CAIRO_CFLAGS) $(PANGO_CFLAGS)  $(FREETYPE_CFLAGS)
-
 corekit_cflags += \
 	-fno-strict-aliasing \
 	$(COVERAGE_CFLAGS) \
@@ -104,7 +94,7 @@ corekit_cflags += \
 	$(XT_CFLAGS)
 
 # When building webcore/webkit, we want WebCore/config.h and NOT
-# JavaScriptCore/config.h, hence it's important that WebCore should come first
+# JavaScriptCore/config.h, hence, it's important that WebCore/ should come first
 # before JavaScriptCore in the include path.
 corekit_cppflags += \
 	$(global_cppflags) \
@@ -112,9 +102,9 @@ corekit_cppflags += \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags)
 
-# Global flags to CPP
-global_cppflags += \
-	-DWTF_USE_ICU_UNICODE=1
+if TARGET_X11
+corekit_cppflags += -DXP_UNIX
+endif
 
 # Default compiler flags
 global_cflags += \
@@ -128,11 +118,6 @@ global_cxxflags += \
 	$(global_cflags) \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	-fno-rtti
-
-if !ENABLE_DEBUG
-global_cflags += \
-	$(SYMBOL_VISIBILITY)
-endif
 
 # -no-undefined required for building DLLs on Windows
 # It breaks the build on other platforms, so we use it conditionally
@@ -153,7 +138,6 @@ noinst_LTLIBRARIES = \
 	libJavaScriptCore.la \
 	libWebCore.la
 
-
 # JavaScriptCore
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
@@ -161,8 +145,6 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/wtf \
 	-I$(top_builddir)/DerivedSources
 
-# The variables above are already included below so no need to touch
-# these variables unless you really have to
 nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_nosources)
 
@@ -195,17 +177,7 @@ libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-#
 # WebCore
-webcore_cppflags :=
-webcore_sources :=
-webcore_libadd :=
-webcore_built_sources :=
-webcore_built_nosources :=
-webcore_dist :=
-webcoregtk_cppflags :=
-webcoregtk_sources :=
-
 nodist_EXTRA_libWebCore_la_SOURCES = \
 	$(webcore_built_nosources)
 
@@ -291,19 +263,17 @@ global_cppflags += \
 	-DBUILDING_CAIRO__=1 \
 	-DBUILDING_GTK__=1 \
 	-DWTF_CHANGES \
-	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"
+	-DWTF_USE_ICU_UNICODE=1
 
 if !ENABLE_FAST_MALLOC
 global_cppflags += \
 	-DUSE_SYSTEM_MALLOC
 endif
 
-if TARGET_X11
-global_cppflags += -DXP_UNIX
-endif
-
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
+global_cflags += $(SYMBOL_VISIBILITY)
+
 else
 webcoregtk_cppflags += \
 	-DG_DISABLE_DEPRECATED \
@@ -317,22 +287,10 @@ webcoregtk_cppflags += \
 #	-DGTK_MULTIHEAD_SAFE
 endif
 
-if !ENABLE_DATABASE
-global_cppflags += -DENABLE_DATABASE=0
-endif
-
-if !ENABLE_ICONDATABASE
-global_cppflags += -DENABLE_ICONDATABASE=0
-endif
-
 if ENABLE_COVERAGE
 global_cppflags += \
 	-DGCC_GENERATE_TEST_COVERAGE_FILES \
 	-DGCC_INSTRUMENT_PROGRAM_FLOW_ARCS
-endif
-
-if ENABLE_VIDEO
-webcore_libadd += -lgstinterfaces-0.10 -lgstvideo-0.10
 endif
 
 webkitgtk_h_api += \
@@ -393,15 +351,25 @@ webkitgtk_sources += \
 
 webkitgtk_cppflags += \
 	-DBUILDING_WEBKIT \
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
+	-DDATA_DIR=\"${datadir}\" \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
 	-I$(srcdir)/WebKit/gtk/webkit \
 	-I$(top_builddir)/WebKit/gtk/webkit
 
+if USE_GNOMEKEYRING
+webkitgtk_cppflags += \
+	-DWTF_USE_GNOMEKEYRING=1
+endif
+
 webkitgtk_cleanfiles += \
+	$(srcdir)/WebKit/gtk/docs/version.xml \
+	$(srcdir)/WebKit/gtk/docs/GNUmakefile \
 	$(top_builddir)/Programs/GtkLauncher \
 	$(top_builddir)/WebKit/gtk/webkit-1.0.pc \
-	$(top_builddir)/WebKit/gtk/webkit/webkitenumtypes.h
+	$(top_builddir)/WebKit/gtk/webkit/webkitenumtypes.h \
+	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
@@ -503,9 +471,9 @@ dist_resources_DATA = \
 # END WEBKIT GTK+
 
 # Files that will be cleaned
-MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile
-DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool WebKit/gtk/docs/version.xml WebKit/gtk/docs/GNUmakefile
-CLEANFILES := $(stamp_files) $(BUILT_SOURCES) WebKit/gtk/docs/GNUmakefile
+MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
+DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
+CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
 
 # Include module makefiles
 include JavaScriptCore/GNUmakefile.am
