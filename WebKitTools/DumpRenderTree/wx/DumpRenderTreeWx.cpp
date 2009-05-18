@@ -306,6 +306,7 @@ bool MyApp::OnInit()
         eventHandler->bindEvents();
     }
 
+    int optind = 1;
     time(&startTime);
     wxString option_str = wxString(argv[optind]);
     if (argc == optind+1 && option_str.Find(_T("-")) == 0) {
