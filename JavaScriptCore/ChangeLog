@@ -1,5 +1,17 @@
 2009-05-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        - tighten up the code for the load_varargs stub
+        
+        ~1-2% on v8-raytrace
+        
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_load_varargs): Hoist some loop invariants that
+        the compiler didn't feel like hoisting for us. Remove unneeded exception check.
+
+2009-05-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Geoff Garen.
 
         - Improve code generation for access to prototype properties

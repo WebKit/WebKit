@@ -1595,15 +1595,23 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS_DECLARATION)
         }
         int32_t expectedParams = asFunction(callFrame[RegisterFile::Callee].jsValue())->body()->parameterCount();
         int32_t inplaceArgs = min(providedParams, expectedParams);
-        int32_t i = 0;
-        Register* argStore = callFrame->registers() + argsOffset;
         
+        Register* inplaceArgsDst = callFrame->registers() + argsOffset;
+
+        Register* inplaceArgsEnd = inplaceArgsDst + inplaceArgs;
+        Register* inplaceArgsEnd2 = inplaceArgsDst + providedParams;
+
+        Register* inplaceArgsSrc = callFrame->registers() - RegisterFile::CallFrameHeaderSize - expectedParams;
+        Register* inplaceArgsSrc2 = inplaceArgsSrc - providedParams - 1 + inplaceArgs;
+ 
         // First step is to copy the "expected" parameters from their normal location relative to the callframe
-        for (; i < inplaceArgs; i++)
-            argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams];
+        while (inplaceArgsDst < inplaceArgsEnd)
+            *inplaceArgsDst++ = *inplaceArgsSrc++;
+
         // Then we copy any additional arguments that may be further up the stack ('-1' to account for 'this')
-        for (; i < providedParams; i++)
-            argStore[i] = callFrame->registers()[i - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams - 1];
+        while (inplaceArgsDst < inplaceArgsEnd2)
+            *inplaceArgsDst++ = *inplaceArgsSrc2++;
+
     } else if (!arguments.isUndefinedOrNull()) {
         if (!arguments.isObject()) {
             CodeBlock* codeBlock = callFrame->codeBlock();
@@ -1652,7 +1660,7 @@ int JITStubs::cti_op_load_varargs(STUB_ARGS_DECLARATION)
             VM_THROW_EXCEPTION();
         }
     }
-    CHECK_FOR_EXCEPTION_AT_END();
+
     return argCount + 1;
 }
 
