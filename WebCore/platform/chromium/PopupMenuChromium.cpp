@@ -352,6 +352,11 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 
     listBox()->updateFromElement();
 
+    if (listBox()->numItems() < 1) {
+        hidePopup();
+        return;
+    }
+
     // Adjust the popup position to account for scrolling.
     IntPoint location = v->contentsToWindow(rect.location());
     IntRect popupRect(location, rect.size());

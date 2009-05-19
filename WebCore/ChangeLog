@@ -1,3 +1,14 @@
+2009-05-19  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a crash in Mac Chromium when displaying an HTML select element
+        with no items.
+        https://bugs.webkit.org/show_bug.cgi?id=25874
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::showExternal):
+
 2009-05-19  Nate Chapin  <japhet@google.com>
 
         Reviewed by Darin Fisher.
