@@ -121,9 +121,8 @@ void ClipboardMac::clearData(const String& type)
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
-    if (cocoaType) {
+    if (cocoaType)
         [m_pasteboard.get() setString:@"" forType:cocoaType];
-    }
 }
 
 void ClipboardMac::clearAllData()
@@ -136,59 +135,71 @@ void ClipboardMac::clearAllData()
     [m_pasteboard.get() declareTypes:[NSArray array] owner:nil];
 }
 
+static NSArray *absoluteURLsFromPasteboardFilenames(NSPasteboard* pasteboard, bool onlyFirstURL)
+{
+    NSArray *fileList = [pasteboard propertyListForType:NSFilenamesPboardType];
+
+    // FIXME: Why does this code need to guard against bad values on the pasteboard?
+    ASSERT(!fileList || [fileList isKindOfClass:[NSArray class]]);
+    if (!fileList || ![fileList isKindOfClass:[NSArray class]] || ![fileList count])
+        return nil;
+
+    NSUInteger count = onlyFirstURL ? 1 : [fileList count];
+    NSMutableArray *urls = [NSMutableArray array];
+    for (NSUInteger i = 0; i < count; i++) {
+        NSString *string = [fileList objectAtIndex:i];
+
+        ASSERT([string isKindOfClass:[NSString class]]);  // Added to understand why this if code is here
+        if (![string isKindOfClass:[NSString class]])
+            return nil; // Non-string object in the list, bail out!  FIXME: When can this happen?
+
+        NSURL *url = [NSURL fileURLWithPath:string];
+        [urls addObject:[url absoluteString]];
+    }
+    return urls;
+}
+
+static NSArray *absoluteURLsFromPasteboard(NSPasteboard* pasteboard, bool onlyFirstURL)
+{
+    // NOTE: We must always check [availableTypes containsObject:] before accessing pasteboard data
+    // or CoreFoundation will printf when there is not data of the corresponding type.
+    NSArray *availableTypes = [pasteboard types];
+
+    // Try NSFilenamesPboardType because it contains a list
+    if ([availableTypes containsObject:NSFilenamesPboardType]) {
+        if (NSArray* absoluteURLs = absoluteURLsFromPasteboardFilenames(pasteboard, onlyFirstURL))
+            return absoluteURLs;
+    }
+
+    // Fallback to NSURLPboardType (which is a single URL)
+    if ([availableTypes containsObject:NSURLPboardType]) {
+        if (NSURL *url = [NSURL URLFromPasteboard:pasteboard])
+            return [NSArray arrayWithObject:[url absoluteString]];
+    }
+
+    // No file paths on the pasteboard, return nil
+    return nil;
+}
+
 String ClipboardMac::getData(const String& type, bool& success) const
 {
     success = false;
     if (policy() != ClipboardReadable)
         return String();
-    
+
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaValue = nil;
-    NSArray *availableTypes = [m_pasteboard.get() types];
 
-    // Fetch the data in different ways for the different Cocoa types
-
+    // Grab the value off the pasteboard corresponding to the cocoaType
     if ([cocoaType isEqualToString:NSURLPboardType]) {
-        // When both URL and filenames are present, filenames is superior since it can contain a list.
-        // must check this or we get a printf from CF when there's no data of this type
-        if ([availableTypes containsObject:NSFilenamesPboardType]) {
-            NSArray *fileList = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
-            if (fileList && [fileList isKindOfClass:[NSArray class]]) {
-                unsigned count = [fileList count];
-                if (count > 0) {
-                    if (type != "text/uri-list")
-                        count = 1;
-                    NSMutableString *urls = [NSMutableString string];
-                    unsigned i;
-                    for (i = 0; i < count; i++) {
-                        if (i > 0) {
-                            [urls appendString:@"\n"];
-                        }
-                        NSString *string = [fileList objectAtIndex:i];
-                        if (![string isKindOfClass:[NSString class]])
-                            break;
-                        NSURL *url = [NSURL fileURLWithPath:string];
-                        [urls appendString:[url absoluteString]];
-                    }
-                    if (i == count)
-                        cocoaValue = urls;
-                }
-            }
-        }
-        if (!cocoaValue) {
-            // must check this or we get a printf from CF when there's no data of this type
-            if ([availableTypes containsObject:NSURLPboardType]) {
-                NSURL *url = [NSURL URLFromPasteboard:m_pasteboard.get()];
-                if (url) {
-                    cocoaValue = [url absoluteString];
-                }
-            }
-        }
+        // "URL" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromMIMEType(), "URL" only wants the first URL
+        bool onlyFirstURL = (type == "URL");
+        NSArray *absoluteURLs = absoluteURLsFromPasteboard(m_pasteboard.get(), onlyFirstURL);
+        cocoaValue = [absoluteURLs componentsJoinedByString:@"\n"];
     } else if ([cocoaType isEqualToString:NSStringPboardType]) {
         cocoaValue = [[m_pasteboard.get() stringForType:cocoaType] precomposedStringWithCanonicalMapping];
-    } else if (cocoaType) {        
+    } else if (cocoaType)
         cocoaValue = [m_pasteboard.get() stringForType:cocoaType];
-    }
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
@@ -246,18 +257,15 @@ HashSet<String> ClipboardMac::types() const
         return HashSet<String>();
 
     HashSet<String> result;
-    if (types) {
-        unsigned count = [types count];
-        unsigned i;
-        for (i = 0; i < count; i++) {
-            NSString *pbType = [types objectAtIndex:i];
-            if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"])
-                continue;   // skip this ancient type that gets auto-supplied by some system conversion
+    NSUInteger count = [types count];
+    for (NSUInteger i = 0; i < count; i++) {
+        NSString *pbType = [types objectAtIndex:i];
+        if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"])
+            continue;   // skip this ancient type that gets auto-supplied by some system conversion
 
-            String str = MIMETypeFromCocoaType(pbType);
-            if (!result.contains(str))
-                result.add(str);
-        }
+        String str = MIMETypeFromCocoaType(pbType);
+        if (!result.contains(str))
+            result.add(str);
     }
     return result;
 }

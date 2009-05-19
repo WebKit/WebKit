@@ -1,3 +1,33 @@
+2009-05-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        ClipboardMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=25847
+
+        I'm mostly just moving code, however there are 3 changes I made while moving, detailed below.
+
+        No functional changes, so no tests.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::clearData):
+        (WebCore::absoluteURLsFromPasteboardFilenames):
+          Broke out logic for filenames into its own function to make the caller more readable.
+        (WebCore::absoluteURLsFromPasteboard):
+          Broke out logic from getData into absoluteURLsFromPasteboard. This returns an NSArray
+          so that we can use -[NSArray componentsJoinedByString] in the caller (which is
+          cleaner than the manual "\n" addition before).
+          This also access to the full list of file urls for future callers.
+        (WebCore::ClipboardMac::getData):
+          unsigned count = (type == "URL") ? 1 : [fileList count]; is now an
+          explicit check for "URL", before it was a check for != "text/uri-list" which
+          was much more confusing in my opinion.  text/uri-list and URL are the only
+          two types which map to NSURLPboardType in cocoaTypeFromMIMEType().
+        (WebCore::ClipboardMac::types):
+          I removed an extra if (!types) check, right before [types count].  In Obj-C
+          messaging nil will return 0 (size of a pointer), so it's safe to message nil
+          here and expect it to return 0.
+
 2009-05-18  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.
