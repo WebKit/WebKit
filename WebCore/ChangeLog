@@ -1,3 +1,14 @@
+2009-05-18  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Change ScriptElement to support XHTMLMP in a better way
+
+        * dom/ScriptElement.h:
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.h:
+        (WebCore::SVGScriptElement::shouldExecuteAsJavaScript):
+
 2009-05-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, finish up changes after the accessibility dir split.

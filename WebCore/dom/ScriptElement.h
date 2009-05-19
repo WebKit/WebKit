@@ -50,6 +50,8 @@ public:
     // A charset for loading the script (may be overridden by HTTP headers or a BOM).
     virtual String scriptCharset() const = 0;
 
+    virtual bool shouldExecuteAsJavaScript() const = 0;
+
 protected:
     // Helper functions used by our parent classes.
     static void insertedIntoDocument(ScriptElementData&, const String& sourceUrl);

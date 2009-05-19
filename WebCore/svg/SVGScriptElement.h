@@ -57,6 +57,8 @@ namespace WebCore {
 
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+        virtual bool shouldExecuteAsJavaScript() const { return false; }
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         virtual bool haveLoadedRequiredResources();
