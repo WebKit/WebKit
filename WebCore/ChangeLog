@@ -7,6 +7,14 @@
 
         * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp: Moved bindings from v8_custom.cpp.
 
+2009-05-19  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Windows Build Fix.
+
+        * WebCore.vcproj/WebCore.vcproj: Copy accessibility headers from WebCore.
+
 2009-05-19  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/6889218> REGRESSION: Some iChat transcript resources are not
